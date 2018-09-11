@@ -11,14 +11,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "unsigned long"
+                    "idlType": "unsigned long",
+                    "extAttrs": []
                 },
                 "name": "id",
+                "escapedName": "id",
                 "extAttrs": []
             },
             {
@@ -28,14 +29,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "DOMString"
+                    "idlType": "DOMString",
+                    "extAttrs": []
                 },
                 "name": "name",
+                "escapedName": "name",
                 "extAttrs": []
             }
         ],
@@ -43,7 +45,9 @@
         "extAttrs": [
             {
                 "name": "Constructor",
-                "arguments": null
+                "arguments": null,
+                "type": "extended-attribute",
+                "rhs": null
             }
         ]
     }

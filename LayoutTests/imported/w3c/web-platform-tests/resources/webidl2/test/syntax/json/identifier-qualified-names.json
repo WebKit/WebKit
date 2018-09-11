@@ -2,46 +2,14 @@
     {
         "type": "typedef",
         "idlType": {
-            "sequence": false,
+            "type": "typedef-type",
             "generic": null,
             "nullable": false,
-            "array": false,
             "union": false,
-            "idlType": "float"
+            "idlType": "float",
+            "extAttrs": []
         },
         "name": "number",
-        "extAttrs": []
-    },
-    {
-        "type": "exception",
-        "name": "FrameworkException",
-        "members": [
-            {
-                "type": "const",
-                "nullable": false,
-                "idlType": "long",
-                "name": "ERR_NOT_FOUND",
-                "value": {
-                    "type": "number",
-                    "value": 1
-                },
-                "extAttrs": []
-            },
-            {
-                "type": "field",
-                "name": "code",
-                "idlType": {
-                    "sequence": false,
-                    "generic": null,
-                    "nullable": false,
-                    "array": false,
-                    "union": false,
-                    "idlType": "long"
-                },
-                "extAttrs": []
-            }
-        ],
-        "inheritance": null,
         "extAttrs": []
     },
     {
@@ -53,34 +21,35 @@
                 "type": "operation",
                 "getter": false,
                 "setter": false,
-                "creator": false,
                 "deleter": false,
-                "legacycaller": false,
                 "static": false,
                 "stringifier": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "return-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "object"
+                    "idlType": "object",
+                    "extAttrs": []
                 },
                 "name": "createObject",
+                "escapedName": "createObject",
                 "arguments": [
                     {
                         "optional": false,
                         "variadic": false,
+                        "default": null,
                         "extAttrs": [],
                         "idlType": {
-                            "sequence": false,
+                            "type": "argument-type",
                             "generic": null,
                             "nullable": false,
-                            "array": false,
                             "union": false,
-                            "idlType": "DOMString"
+                            "idlType": "DOMString",
+                            "extAttrs": []
                         },
-                        "name": "interface"
+                        "name": "interface",
+                        "escapedName": "_interface"
                     }
                 ],
                 "extAttrs": []
@@ -89,34 +58,35 @@
                 "type": "operation",
                 "getter": true,
                 "setter": false,
-                "creator": false,
                 "deleter": false,
-                "legacycaller": false,
                 "static": false,
                 "stringifier": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "return-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "DOMString"
+                    "idlType": "DOMString",
+                    "extAttrs": []
                 },
                 "name": null,
+                "escapedName": null,
                 "arguments": [
                     {
                         "optional": false,
                         "variadic": false,
+                        "default": null,
                         "extAttrs": [],
                         "idlType": {
-                            "sequence": false,
+                            "type": "argument-type",
                             "generic": null,
                             "nullable": false,
-                            "array": false,
                             "union": false,
-                            "idlType": "DOMString"
+                            "idlType": "DOMString",
+                            "extAttrs": []
                         },
-                        "name": "keyName"
+                        "name": "keyName",
+                        "escapedName": "keyName"
                     }
                 ],
                 "extAttrs": []
@@ -137,14 +107,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "boolean"
+                    "idlType": "boolean",
+                    "extAttrs": []
                 },
                 "name": "const",
+                "escapedName": "_const",
                 "extAttrs": []
             },
             {
@@ -154,14 +125,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": true,
-                    "array": false,
                     "union": false,
-                    "idlType": "DOMString"
+                    "idlType": "DOMString",
+                    "extAttrs": []
                 },
                 "name": "value",
+                "escapedName": "_value",
                 "extAttrs": []
             }
         ],
@@ -170,41 +142,42 @@
     },
     {
         "type": "interface",
-        "name": "Foo",
+        "name": "FooEventTarget",
         "partial": false,
         "members": [
             {
                 "type": "operation",
                 "getter": false,
                 "setter": false,
-                "creator": false,
                 "deleter": false,
-                "legacycaller": false,
                 "static": false,
                 "stringifier": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "return-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "void"
+                    "idlType": "void",
+                    "extAttrs": []
                 },
-                "name": "op",
+                "name": "addEventListener",
+                "escapedName": "addEventListener",
                 "arguments": [
                     {
                         "optional": false,
                         "variadic": false,
+                        "default": null,
                         "extAttrs": [],
                         "idlType": {
-                            "sequence": false,
+                            "type": "argument-type",
                             "generic": null,
-                            "nullable": false,
-                            "array": false,
+                            "nullable": true,
                             "union": false,
-                            "idlType": "object"
+                            "idlType": "EventListener",
+                            "extAttrs": []
                         },
-                        "name": "interface"
+                        "name": "callback",
+                        "escapedName": "callback"
                     }
                 ],
                 "extAttrs": []

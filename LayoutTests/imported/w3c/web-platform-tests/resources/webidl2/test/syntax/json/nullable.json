@@ -7,7 +7,14 @@
             {
                 "type": "const",
                 "nullable": true,
-                "idlType": "boolean",
+                "idlType": {
+                    "type": "const-type",
+                    "generic": null,
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "boolean",
+                    "extAttrs": []
+                },
                 "name": "ARE_WE_THERE_YET",
                 "value": {
                     "type": "boolean",
@@ -31,14 +38,15 @@
                 "inherit": false,
                 "readonly": true,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": true,
-                    "array": false,
                     "union": false,
-                    "idlType": "DOMString"
+                    "idlType": "DOMString",
+                    "extAttrs": []
                 },
                 "name": "namespaceURI",
+                "escapedName": "namespaceURI",
                 "extAttrs": []
             }
         ],

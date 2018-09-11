@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 482: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
 dictionary GainOptions : AudioNodeOptions {
              float gain = 1.0;
 };
@@ -9,27 +11,15 @@ interface GainNode : AudioNode {
 
 };
 
-FAIL webaudio Gain interfaces promise_test: Unhandled rejection with value: object "Unrecognised tokens, line 1 (tokens: '{"error": {')
-[
-    {
-        "type": "other",
-        "value": "{"
-    },
-    {
-        "type": "string",
-        "value": "\"error\""
-    },
-    {
-        "type": "other",
-        "value": ":"
-    },
-    {
-        "type": "whitespace",
-        "value": " "
-    },
-    {
-        "type": "other",
-        "value": "{"
-    }
-]"
+PASS webaudio Gain interfaces 
+PASS GainNode interface: existence and properties of interface object 
+FAIL GainNode interface object length assert_equals: wrong value for GainNode.length expected 1 but got 0
+PASS GainNode interface object name 
+PASS GainNode interface: existence and properties of interface prototype object 
+PASS GainNode interface: existence and properties of interface prototype object's "constructor" property 
+PASS GainNode interface: existence and properties of interface prototype object's @@unscopables property 
+PASS GainNode interface: attribute gain 
+PASS GainNode must be primary interface of gain_node 
+PASS Stringification of gain_node 
+PASS GainNode interface: gain_node must inherit property "gain" with the proper type 
 

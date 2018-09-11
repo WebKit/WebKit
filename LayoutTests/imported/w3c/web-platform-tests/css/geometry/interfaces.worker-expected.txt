@@ -7,19 +7,12 @@ PASS DOMPointReadOnly interface: existence and properties of interface prototype
 PASS DOMPointReadOnly interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMPointReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMPointReadOnly interface: operation fromPoint(DOMPointInit) 
-PASS Unscopable handled correctly for fromPoint(DOMPointInit) on DOMPointReadOnly 
 PASS DOMPointReadOnly interface: attribute x 
-PASS Unscopable handled correctly for x property on DOMPointReadOnly 
 PASS DOMPointReadOnly interface: attribute y 
-PASS Unscopable handled correctly for y property on DOMPointReadOnly 
 PASS DOMPointReadOnly interface: attribute z 
-PASS Unscopable handled correctly for z property on DOMPointReadOnly 
 PASS DOMPointReadOnly interface: attribute w 
-PASS Unscopable handled correctly for w property on DOMPointReadOnly 
 PASS DOMPointReadOnly interface: operation matrixTransform(DOMMatrixInit) 
-PASS Unscopable handled correctly for matrixTransform(DOMMatrixInit) on DOMPointReadOnly 
 PASS DOMPointReadOnly interface: operation toJSON() 
-PASS Unscopable handled correctly for toJSON() on DOMPointReadOnly 
 PASS DOMPointReadOnly must be primary interface of new DOMPointReadOnly() 
 PASS Stringification of new DOMPointReadOnly() 
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "fromPoint(DOMPointInit)" with the proper type 
@@ -40,15 +33,10 @@ PASS DOMPoint interface: existence and properties of interface prototype object
 PASS DOMPoint interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMPoint interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMPoint interface: operation fromPoint(DOMPointInit) 
-PASS Unscopable handled correctly for fromPoint(DOMPointInit) on DOMPoint 
 PASS DOMPoint interface: attribute x 
-PASS Unscopable handled correctly for x property on DOMPoint 
 PASS DOMPoint interface: attribute y 
-PASS Unscopable handled correctly for y property on DOMPoint 
 PASS DOMPoint interface: attribute z 
-PASS Unscopable handled correctly for z property on DOMPoint 
 PASS DOMPoint interface: attribute w 
-PASS Unscopable handled correctly for w property on DOMPoint 
 PASS DOMPoint must be primary interface of new DOMPoint() 
 PASS Stringification of new DOMPoint() 
 PASS DOMPoint interface: new DOMPoint() must inherit property "fromPoint(DOMPointInit)" with the proper type 
@@ -74,25 +62,15 @@ PASS DOMRectReadOnly interface: existence and properties of interface prototype 
 PASS DOMRectReadOnly interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMRectReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMRectReadOnly interface: operation fromRect(DOMRectInit) 
-PASS Unscopable handled correctly for fromRect(DOMRectInit) on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute x 
-PASS Unscopable handled correctly for x property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute y 
-PASS Unscopable handled correctly for y property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute width 
-PASS Unscopable handled correctly for width property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute height 
-PASS Unscopable handled correctly for height property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute top 
-PASS Unscopable handled correctly for top property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute right 
-PASS Unscopable handled correctly for right property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute bottom 
-PASS Unscopable handled correctly for bottom property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: attribute left 
-PASS Unscopable handled correctly for left property on DOMRectReadOnly 
 PASS DOMRectReadOnly interface: operation toJSON() 
-PASS Unscopable handled correctly for toJSON() on DOMRectReadOnly 
 PASS DOMRectReadOnly must be primary interface of new DOMRectReadOnly() 
 PASS Stringification of new DOMRectReadOnly() 
 PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "fromRect(DOMRectInit)" with the proper type 
@@ -115,15 +93,10 @@ PASS DOMRect interface: existence and properties of interface prototype object
 PASS DOMRect interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMRect interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMRect interface: operation fromRect(DOMRectInit) 
-PASS Unscopable handled correctly for fromRect(DOMRectInit) on DOMRect 
 PASS DOMRect interface: attribute x 
-PASS Unscopable handled correctly for x property on DOMRect 
 PASS DOMRect interface: attribute y 
-PASS Unscopable handled correctly for y property on DOMRect 
 PASS DOMRect interface: attribute width 
-PASS Unscopable handled correctly for width property on DOMRect 
 PASS DOMRect interface: attribute height 
-PASS Unscopable handled correctly for height property on DOMRect 
 PASS DOMRect must be primary interface of new DOMRect() 
 PASS Stringification of new DOMRect() 
 PASS DOMRect interface: new DOMRect() must inherit property "fromRect(DOMRectInit)" with the proper type 
@@ -152,21 +125,13 @@ PASS DOMQuad interface: existence and properties of interface prototype object
 PASS DOMQuad interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMQuad interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMQuad interface: operation fromRect(DOMRectInit) 
-PASS Unscopable handled correctly for fromRect(DOMRectInit) on DOMQuad 
 PASS DOMQuad interface: operation fromQuad(DOMQuadInit) 
-PASS Unscopable handled correctly for fromQuad(DOMQuadInit) on DOMQuad 
 PASS DOMQuad interface: attribute p1 
-PASS Unscopable handled correctly for p1 property on DOMQuad 
 PASS DOMQuad interface: attribute p2 
-PASS Unscopable handled correctly for p2 property on DOMQuad 
 PASS DOMQuad interface: attribute p3 
-PASS Unscopable handled correctly for p3 property on DOMQuad 
 PASS DOMQuad interface: attribute p4 
-PASS Unscopable handled correctly for p4 property on DOMQuad 
 PASS DOMQuad interface: operation getBounds() 
-PASS Unscopable handled correctly for getBounds() on DOMQuad 
 PASS DOMQuad interface: operation toJSON() 
-PASS Unscopable handled correctly for toJSON() on DOMQuad 
 PASS DOMQuad must be primary interface of new DOMQuad() 
 PASS Stringification of new DOMQuad() 
 PASS DOMQuad interface: new DOMQuad() must inherit property "fromRect(DOMRectInit)" with the proper type 
@@ -187,92 +152,49 @@ PASS DOMMatrixReadOnly interface: existence and properties of interface prototyp
 PASS DOMMatrixReadOnly interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMMatrixReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMMatrixReadOnly interface: operation fromMatrix(DOMMatrixInit) 
-PASS Unscopable handled correctly for fromMatrix(DOMMatrixInit) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation fromFloat32Array(Float32Array) 
-PASS Unscopable handled correctly for fromFloat32Array(Float32Array) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation fromFloat64Array(Float64Array) 
-PASS Unscopable handled correctly for fromFloat64Array(Float64Array) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute a 
-PASS Unscopable handled correctly for a property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute b 
-PASS Unscopable handled correctly for b property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute c 
-PASS Unscopable handled correctly for c property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute d 
-PASS Unscopable handled correctly for d property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute e 
-PASS Unscopable handled correctly for e property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute f 
-PASS Unscopable handled correctly for f property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m11 
-PASS Unscopable handled correctly for m11 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m12 
-PASS Unscopable handled correctly for m12 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m13 
-PASS Unscopable handled correctly for m13 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m14 
-PASS Unscopable handled correctly for m14 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m21 
-PASS Unscopable handled correctly for m21 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m22 
-PASS Unscopable handled correctly for m22 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m23 
-PASS Unscopable handled correctly for m23 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m24 
-PASS Unscopable handled correctly for m24 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m31 
-PASS Unscopable handled correctly for m31 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m32 
-PASS Unscopable handled correctly for m32 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m33 
-PASS Unscopable handled correctly for m33 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m34 
-PASS Unscopable handled correctly for m34 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m41 
-PASS Unscopable handled correctly for m41 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m42 
-PASS Unscopable handled correctly for m42 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m43 
-PASS Unscopable handled correctly for m43 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute m44 
-PASS Unscopable handled correctly for m44 property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute is2D 
-PASS Unscopable handled correctly for is2D property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: attribute isIdentity 
-PASS Unscopable handled correctly for isIdentity property on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation translate(unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for translate(unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation rotate(unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for rotate(unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation rotateFromVector(unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for rotateFromVector(unrestricted double, unrestricted double) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation skewX(unrestricted double) 
-PASS Unscopable handled correctly for skewX(unrestricted double) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation skewY(unrestricted double) 
-PASS Unscopable handled correctly for skewY(unrestricted double) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation multiply(DOMMatrixInit) 
-PASS Unscopable handled correctly for multiply(DOMMatrixInit) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation flipX() 
-PASS Unscopable handled correctly for flipX() on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation flipY() 
-PASS Unscopable handled correctly for flipY() on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation inverse() 
-PASS Unscopable handled correctly for inverse() on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation transformPoint(DOMPointInit) 
-PASS Unscopable handled correctly for transformPoint(DOMPointInit) on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation toFloat32Array() 
-PASS Unscopable handled correctly for toFloat32Array() on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: operation toFloat64Array() 
-PASS Unscopable handled correctly for toFloat64Array() on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly interface: member undefined 
 PASS DOMMatrixReadOnly interface: operation toJSON() 
-PASS Unscopable handled correctly for toJSON() on DOMMatrixReadOnly 
 PASS DOMMatrixReadOnly must be primary interface of new DOMMatrixReadOnly() 
 PASS Stringification of new DOMMatrixReadOnly() 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
@@ -343,77 +265,41 @@ PASS DOMMatrix interface: existence and properties of interface prototype object
 PASS DOMMatrix interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMMatrix interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMMatrix interface: operation fromMatrix(DOMMatrixInit) 
-PASS Unscopable handled correctly for fromMatrix(DOMMatrixInit) on DOMMatrix 
 PASS DOMMatrix interface: operation fromFloat32Array(Float32Array) 
-PASS Unscopable handled correctly for fromFloat32Array(Float32Array) on DOMMatrix 
 PASS DOMMatrix interface: operation fromFloat64Array(Float64Array) 
-PASS Unscopable handled correctly for fromFloat64Array(Float64Array) on DOMMatrix 
 PASS DOMMatrix interface: attribute a 
-PASS Unscopable handled correctly for a property on DOMMatrix 
 PASS DOMMatrix interface: attribute b 
-PASS Unscopable handled correctly for b property on DOMMatrix 
 PASS DOMMatrix interface: attribute c 
-PASS Unscopable handled correctly for c property on DOMMatrix 
 PASS DOMMatrix interface: attribute d 
-PASS Unscopable handled correctly for d property on DOMMatrix 
 PASS DOMMatrix interface: attribute e 
-PASS Unscopable handled correctly for e property on DOMMatrix 
 PASS DOMMatrix interface: attribute f 
-PASS Unscopable handled correctly for f property on DOMMatrix 
 PASS DOMMatrix interface: attribute m11 
-PASS Unscopable handled correctly for m11 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m12 
-PASS Unscopable handled correctly for m12 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m13 
-PASS Unscopable handled correctly for m13 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m14 
-PASS Unscopable handled correctly for m14 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m21 
-PASS Unscopable handled correctly for m21 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m22 
-PASS Unscopable handled correctly for m22 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m23 
-PASS Unscopable handled correctly for m23 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m24 
-PASS Unscopable handled correctly for m24 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m31 
-PASS Unscopable handled correctly for m31 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m32 
-PASS Unscopable handled correctly for m32 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m33 
-PASS Unscopable handled correctly for m33 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m34 
-PASS Unscopable handled correctly for m34 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m41 
-PASS Unscopable handled correctly for m41 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m42 
-PASS Unscopable handled correctly for m42 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m43 
-PASS Unscopable handled correctly for m43 property on DOMMatrix 
 PASS DOMMatrix interface: attribute m44 
-PASS Unscopable handled correctly for m44 property on DOMMatrix 
 PASS DOMMatrix interface: operation multiplySelf(DOMMatrixInit) 
-PASS Unscopable handled correctly for multiplySelf(DOMMatrixInit) on DOMMatrix 
 PASS DOMMatrix interface: operation preMultiplySelf(DOMMatrixInit) 
-PASS Unscopable handled correctly for preMultiplySelf(DOMMatrixInit) on DOMMatrix 
 PASS DOMMatrix interface: operation translateSelf(unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for translateSelf(unrestricted double, unrestricted double, unrestricted double) on DOMMatrix 
 PASS DOMMatrix interface: operation scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix 
 PASS DOMMatrix interface: operation scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix 
 PASS DOMMatrix interface: operation rotateSelf(unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for rotateSelf(unrestricted double, unrestricted double, unrestricted double) on DOMMatrix 
 PASS DOMMatrix interface: operation rotateFromVectorSelf(unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for rotateFromVectorSelf(unrestricted double, unrestricted double) on DOMMatrix 
 PASS DOMMatrix interface: operation rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS Unscopable handled correctly for rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix 
 PASS DOMMatrix interface: operation skewXSelf(unrestricted double) 
-PASS Unscopable handled correctly for skewXSelf(unrestricted double) on DOMMatrix 
 PASS DOMMatrix interface: operation skewYSelf(unrestricted double) 
-PASS Unscopable handled correctly for skewYSelf(unrestricted double) on DOMMatrix 
 PASS DOMMatrix interface: operation invertSelf() 
-PASS Unscopable handled correctly for invertSelf() on DOMMatrix 
 PASS DOMMatrix interface: member setMatrixValue 
 PASS DOMMatrix must be primary interface of new DOMMatrix() 
 PASS Stringification of new DOMMatrix() 

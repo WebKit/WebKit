@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 331: callback not yet supported
-CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
 
 PASS Test driver 
 PASS DOMException interface: existence and properties of interface object 
@@ -9,11 +9,8 @@ PASS DOMException interface: existence and properties of interface prototype obj
 PASS DOMException interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMException interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DOMException interface: attribute name 
-PASS Unscopable handled correctly for name property on DOMException 
 PASS DOMException interface: attribute message 
-PASS Unscopable handled correctly for message property on DOMException 
 PASS DOMException interface: attribute code 
-PASS Unscopable handled correctly for code property on DOMException 
 PASS DOMException interface: constant INDEX_SIZE_ERR on interface object 
 PASS DOMException interface: constant INDEX_SIZE_ERR on interface prototype object 
 PASS DOMException interface: constant DOMSTRING_SIZE_ERR on interface object 

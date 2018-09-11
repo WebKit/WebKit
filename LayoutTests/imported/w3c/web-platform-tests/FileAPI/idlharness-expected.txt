@@ -1,11 +1,9 @@
-CONSOLE MESSAGE: line 331: callback not yet supported
 File API automated IDL tests
 
 
-PASS URL interface: operation createObjectURL(Blob) 
-PASS Unscopable handled correctly for createObjectURL(Blob) on URL 
-PASS URL interface: operation revokeObjectURL(DOMString) 
-PASS Unscopable handled correctly for revokeObjectURL(DOMString) on URL 
+PASS idl_test setup 
+PASS Partial interface URL: original interface defined 
+PASS Partial interface URL: valid exposure set 
 PASS Blob interface: existence and properties of interface object 
 PASS Blob interface object length 
 PASS Blob interface object name 
@@ -13,11 +11,8 @@ PASS Blob interface: existence and properties of interface prototype object
 PASS Blob interface: existence and properties of interface prototype object's "constructor" property 
 PASS Blob interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Blob interface: attribute size 
-PASS Unscopable handled correctly for size property on Blob 
 PASS Blob interface: attribute type 
-PASS Unscopable handled correctly for type property on Blob 
 PASS Blob interface: operation slice(long long, long long, DOMString) 
-PASS Unscopable handled correctly for slice(long long, long long, DOMString) on Blob 
 PASS Blob must be primary interface of new Blob(["TEST"]) 
 PASS Stringification of new Blob(["TEST"]) 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "size" with the proper type 
@@ -31,9 +26,7 @@ PASS File interface: existence and properties of interface prototype object
 PASS File interface: existence and properties of interface prototype object's "constructor" property 
 PASS File interface: existence and properties of interface prototype object's @@unscopables property 
 PASS File interface: attribute name 
-PASS Unscopable handled correctly for name property on File 
 PASS File interface: attribute lastModified 
-PASS Unscopable handled correctly for lastModified property on File 
 PASS File must be primary interface of new File(["myFileBits"], "myFileName") 
 PASS Stringification of new File(["myFileBits"], "myFileName") 
 PASS File interface: new File(["myFileBits"], "myFileName") must inherit property "name" with the proper type 
@@ -49,14 +42,12 @@ PASS FileList interface: existence and properties of interface prototype object
 PASS FileList interface: existence and properties of interface prototype object's "constructor" property 
 PASS FileList interface: existence and properties of interface prototype object's @@unscopables property 
 PASS FileList interface: operation item(unsigned long) 
-PASS Unscopable handled correctly for item(unsigned long) on FileList 
 PASS FileList interface: attribute length 
-PASS Unscopable handled correctly for length property on FileList 
-PASS FileList must be primary interface of file_input.files 
-PASS Stringification of file_input.files 
-PASS FileList interface: file_input.files must inherit property "item(unsigned long)" with the proper type 
-PASS FileList interface: calling item(unsigned long) on file_input.files with too few arguments must throw TypeError 
-PASS FileList interface: file_input.files must inherit property "length" with the proper type 
+PASS FileList must be primary interface of document.querySelector("#fileChooser").files 
+PASS Stringification of document.querySelector("#fileChooser").files 
+PASS FileList interface: document.querySelector("#fileChooser").files must inherit property "item(unsigned long)" with the proper type 
+PASS FileList interface: calling item(unsigned long) on document.querySelector("#fileChooser").files with too few arguments must throw TypeError 
+PASS FileList interface: document.querySelector("#fileChooser").files must inherit property "length" with the proper type 
 PASS FileReader interface: existence and properties of interface object 
 PASS FileReader interface object length 
 PASS FileReader interface object name 
@@ -64,15 +55,10 @@ PASS FileReader interface: existence and properties of interface prototype objec
 PASS FileReader interface: existence and properties of interface prototype object's "constructor" property 
 PASS FileReader interface: existence and properties of interface prototype object's @@unscopables property 
 PASS FileReader interface: operation readAsArrayBuffer(Blob) 
-PASS Unscopable handled correctly for readAsArrayBuffer(Blob) on FileReader 
 PASS FileReader interface: operation readAsBinaryString(Blob) 
-PASS Unscopable handled correctly for readAsBinaryString(Blob) on FileReader 
 PASS FileReader interface: operation readAsText(Blob, DOMString) 
-PASS Unscopable handled correctly for readAsText(Blob, DOMString) on FileReader 
 PASS FileReader interface: operation readAsDataURL(Blob) 
-PASS Unscopable handled correctly for readAsDataURL(Blob) on FileReader 
 PASS FileReader interface: operation abort() 
-PASS Unscopable handled correctly for abort() on FileReader 
 PASS FileReader interface: constant EMPTY on interface object 
 PASS FileReader interface: constant EMPTY on interface prototype object 
 PASS FileReader interface: constant LOADING on interface object 
@@ -80,23 +66,14 @@ PASS FileReader interface: constant LOADING on interface prototype object
 PASS FileReader interface: constant DONE on interface object 
 PASS FileReader interface: constant DONE on interface prototype object 
 PASS FileReader interface: attribute readyState 
-PASS Unscopable handled correctly for readyState property on FileReader 
 PASS FileReader interface: attribute result 
-PASS Unscopable handled correctly for result property on FileReader 
 PASS FileReader interface: attribute error 
-PASS Unscopable handled correctly for error property on FileReader 
 PASS FileReader interface: attribute onloadstart 
-PASS Unscopable handled correctly for onloadstart property on FileReader 
 PASS FileReader interface: attribute onprogress 
-PASS Unscopable handled correctly for onprogress property on FileReader 
 PASS FileReader interface: attribute onload 
-PASS Unscopable handled correctly for onload property on FileReader 
 PASS FileReader interface: attribute onabort 
-PASS Unscopable handled correctly for onabort property on FileReader 
 PASS FileReader interface: attribute onerror 
-PASS Unscopable handled correctly for onerror property on FileReader 
 PASS FileReader interface: attribute onloadend 
-PASS Unscopable handled correctly for onloadend property on FileReader 
 PASS FileReader must be primary interface of new FileReader() 
 PASS Stringification of new FileReader() 
 PASS FileReader interface: new FileReader() must inherit property "readAsArrayBuffer(Blob)" with the proper type 
@@ -121,4 +98,6 @@ PASS FileReader interface: new FileReader() must inherit property "onabort" with
 PASS FileReader interface: new FileReader() must inherit property "onerror" with the proper type 
 PASS FileReader interface: new FileReader() must inherit property "onloadend" with the proper type 
 PASS FileReaderSync interface: existence and properties of interface object 
+PASS URL interface: operation createObjectURL(Blob) 
+PASS URL interface: operation revokeObjectURL(DOMString) 
 

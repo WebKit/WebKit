@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 331: callback not yet supported
-CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
 dictionary AudioBufferOptions {
              unsigned long numberOfChannels = 1;
     required unsigned long length;
@@ -26,19 +26,12 @@ PASS AudioBuffer interface: existence and properties of interface prototype obje
 PASS AudioBuffer interface: existence and properties of interface prototype object's "constructor" property 
 PASS AudioBuffer interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AudioBuffer interface: attribute sampleRate 
-PASS Unscopable handled correctly for sampleRate property on AudioBuffer 
 PASS AudioBuffer interface: attribute length 
-PASS Unscopable handled correctly for length property on AudioBuffer 
 PASS AudioBuffer interface: attribute duration 
-PASS Unscopable handled correctly for duration property on AudioBuffer 
 PASS AudioBuffer interface: attribute numberOfChannels 
-PASS Unscopable handled correctly for numberOfChannels property on AudioBuffer 
 PASS AudioBuffer interface: operation getChannelData(unsigned long) 
-PASS Unscopable handled correctly for getChannelData(unsigned long) on AudioBuffer 
 FAIL AudioBuffer interface: operation copyFromChannel(Float32Array, unsigned long, unsigned long) assert_own_property: interface prototype object missing non-static operation expected property "copyFromChannel" missing
-PASS Unscopable handled correctly for copyFromChannel(Float32Array, unsigned long, unsigned long) on AudioBuffer 
 FAIL AudioBuffer interface: operation copyToChannel(Float32Array, unsigned long, unsigned long) assert_own_property: interface prototype object missing non-static operation expected property "copyToChannel" missing
-PASS Unscopable handled correctly for copyToChannel(Float32Array, unsigned long, unsigned long) on AudioBuffer 
 PASS AudioBuffer must be primary interface of audio_buffer 
 PASS Stringification of audio_buffer 
 PASS AudioBuffer interface: audio_buffer must inherit property "sampleRate" with the proper type 

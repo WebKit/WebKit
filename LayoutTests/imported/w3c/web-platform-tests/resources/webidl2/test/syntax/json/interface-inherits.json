@@ -11,14 +11,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "DOMString"
+                    "idlType": "DOMString",
+                    "extAttrs": []
                 },
                 "name": "name",
+                "escapedName": "name",
                 "extAttrs": []
             }
         ],
@@ -37,14 +38,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "Dog"
+                    "idlType": "Dog",
+                    "extAttrs": []
                 },
                 "name": "pet",
+                "escapedName": "pet",
                 "extAttrs": []
             }
         ],
@@ -63,14 +65,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "Human"
+                    "idlType": "Human",
+                    "extAttrs": []
                 },
                 "name": "owner",
+                "escapedName": "owner",
                 "extAttrs": []
             }
         ],

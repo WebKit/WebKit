@@ -6,9 +6,7 @@ PASS AnimationEffectReadOnly interface: existence and properties of interface pr
 PASS AnimationEffectReadOnly interface: existence and properties of interface prototype object's "constructor" property 
 PASS AnimationEffectReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AnimationEffectReadOnly interface: attribute timing 
-PASS Unscopable handled correctly for timing property on AnimationEffectReadOnly 
 PASS AnimationEffectReadOnly interface: operation getComputedTiming() 
-PASS Unscopable handled correctly for getComputedTiming() on AnimationEffectReadOnly 
 PASS KeyframeEffectReadOnly interface: existence and properties of interface object 
 PASS KeyframeEffectReadOnly interface object length 
 PASS KeyframeEffectReadOnly interface object name 
@@ -16,13 +14,9 @@ PASS KeyframeEffectReadOnly interface: existence and properties of interface pro
 PASS KeyframeEffectReadOnly interface: existence and properties of interface prototype object's "constructor" property 
 PASS KeyframeEffectReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
 PASS KeyframeEffectReadOnly interface: attribute target 
-PASS Unscopable handled correctly for target property on KeyframeEffectReadOnly 
 PASS KeyframeEffectReadOnly interface: attribute iterationComposite 
-PASS Unscopable handled correctly for iterationComposite property on KeyframeEffectReadOnly 
 PASS KeyframeEffectReadOnly interface: attribute composite 
-PASS Unscopable handled correctly for composite property on KeyframeEffectReadOnly 
 PASS KeyframeEffectReadOnly interface: operation getKeyframes() 
-PASS Unscopable handled correctly for getKeyframes() on KeyframeEffectReadOnly 
 PASS KeyframeEffectReadOnly must be primary interface of new KeyframeEffectReadOnly(null, null) 
 PASS Stringification of new KeyframeEffectReadOnly(null, null) 
 PASS KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "target" with the proper type 
@@ -38,13 +32,9 @@ PASS KeyframeEffect interface: existence and properties of interface prototype o
 PASS KeyframeEffect interface: existence and properties of interface prototype object's "constructor" property 
 PASS KeyframeEffect interface: existence and properties of interface prototype object's @@unscopables property 
 PASS KeyframeEffect interface: attribute target 
-PASS Unscopable handled correctly for target property on KeyframeEffect 
 PASS KeyframeEffect interface: attribute iterationComposite 
-PASS Unscopable handled correctly for iterationComposite property on KeyframeEffect 
 PASS KeyframeEffect interface: attribute composite 
-PASS Unscopable handled correctly for composite property on KeyframeEffect 
 PASS KeyframeEffect interface: operation setKeyframes(object) 
-PASS Unscopable handled correctly for setKeyframes(object) on KeyframeEffect 
 PASS KeyframeEffect must be primary interface of new KeyframeEffect(null, null) 
 PASS Stringification of new KeyframeEffect(null, null) 
 PASS KeyframeEffect interface: new KeyframeEffect(null, null) must inherit property "target" with the proper type 

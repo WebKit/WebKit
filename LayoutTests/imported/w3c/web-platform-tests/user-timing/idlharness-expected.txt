@@ -1,14 +1,11 @@
 User Timing IDL tests
 
 
+PASS Partial interface Performance: original interface defined 
 PASS Performance interface: operation mark(DOMString) 
-PASS Unscopable handled correctly for mark(DOMString) on Performance 
 PASS Performance interface: operation clearMarks(DOMString) 
-PASS Unscopable handled correctly for clearMarks(DOMString) on Performance 
 PASS Performance interface: operation measure(DOMString, DOMString, DOMString) 
-PASS Unscopable handled correctly for measure(DOMString, DOMString, DOMString) on Performance 
 PASS Performance interface: operation clearMeasures(DOMString) 
-PASS Unscopable handled correctly for clearMeasures(DOMString) on Performance 
 PASS Performance interface: window.performance must inherit property "mark(DOMString)" with the proper type 
 PASS Performance interface: calling mark(DOMString) on window.performance with too few arguments must throw TypeError 
 PASS Performance interface: window.performance must inherit property "clearMarks(DOMString)" with the proper type 

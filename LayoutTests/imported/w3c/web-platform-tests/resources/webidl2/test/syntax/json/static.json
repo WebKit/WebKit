@@ -19,14 +19,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "float"
+                    "idlType": "float",
+                    "extAttrs": []
                 },
                 "name": "cx",
+                "escapedName": "cx",
                 "extAttrs": []
             },
             {
@@ -36,14 +37,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "float"
+                    "idlType": "float",
+                    "extAttrs": []
                 },
                 "name": "cy",
+                "escapedName": "cy",
                 "extAttrs": []
             },
             {
@@ -53,14 +55,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "float"
+                    "idlType": "float",
+                    "extAttrs": []
                 },
                 "name": "radius",
+                "escapedName": "radius",
                 "extAttrs": []
             },
             {
@@ -70,76 +73,82 @@
                 "inherit": false,
                 "readonly": true,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "long"
+                    "idlType": "long",
+                    "extAttrs": []
                 },
                 "name": "triangulationCount",
+                "escapedName": "triangulationCount",
                 "extAttrs": []
             },
             {
                 "type": "operation",
                 "getter": false,
                 "setter": false,
-                "creator": false,
                 "deleter": false,
-                "legacycaller": false,
                 "static": true,
                 "stringifier": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "return-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "Point"
+                    "idlType": "Point",
+                    "extAttrs": []
                 },
                 "name": "triangulate",
+                "escapedName": "triangulate",
                 "arguments": [
                     {
                         "optional": false,
                         "variadic": false,
+                        "default": null,
                         "extAttrs": [],
                         "idlType": {
-                            "sequence": false,
+                            "type": "argument-type",
                             "generic": null,
                             "nullable": false,
-                            "array": false,
                             "union": false,
-                            "idlType": "Circle"
+                            "idlType": "Circle",
+                            "extAttrs": []
                         },
-                        "name": "c1"
+                        "name": "c1",
+                        "escapedName": "c1"
                     },
                     {
                         "optional": false,
                         "variadic": false,
+                        "default": null,
                         "extAttrs": [],
                         "idlType": {
-                            "sequence": false,
+                            "type": "argument-type",
                             "generic": null,
                             "nullable": false,
-                            "array": false,
                             "union": false,
-                            "idlType": "Circle"
+                            "idlType": "Circle",
+                            "extAttrs": []
                         },
-                        "name": "c2"
+                        "name": "c2",
+                        "escapedName": "c2"
                     },
                     {
                         "optional": false,
                         "variadic": false,
+                        "default": null,
                         "extAttrs": [],
                         "idlType": {
-                            "sequence": false,
+                            "type": "argument-type",
                             "generic": null,
                             "nullable": false,
-                            "array": false,
                             "union": false,
-                            "idlType": "Circle"
+                            "idlType": "Circle",
+                            "extAttrs": []
                         },
-                        "name": "c3"
+                        "name": "c3",
+                        "escapedName": "c3"
                     }
                 ],
                 "extAttrs": []

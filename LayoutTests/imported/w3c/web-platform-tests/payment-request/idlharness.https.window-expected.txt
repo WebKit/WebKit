@@ -1,4 +1,79 @@
-CONSOLE MESSAGE: line 8: ReferenceError: Can't find variable: idl_test
 
-FAIL Untitled ReferenceError: Can't find variable: idl_test
+PASS idl_test setup 
+PASS PaymentRequest interface: existence and properties of interface object 
+PASS PaymentRequest interface object length 
+PASS PaymentRequest interface object name 
+PASS PaymentRequest interface: existence and properties of interface prototype object 
+PASS PaymentRequest interface: existence and properties of interface prototype object's "constructor" property 
+PASS PaymentRequest interface: existence and properties of interface prototype object's @@unscopables property 
+PASS PaymentRequest interface: operation show() 
+PASS PaymentRequest interface: operation abort() 
+PASS PaymentRequest interface: operation canMakePayment() 
+PASS PaymentRequest interface: attribute id 
+PASS PaymentRequest interface: attribute shippingAddress 
+PASS PaymentRequest interface: attribute shippingOption 
+PASS PaymentRequest interface: attribute shippingType 
+PASS PaymentRequest interface: attribute onshippingaddresschange 
+PASS PaymentRequest interface: attribute onshippingoptionchange 
+PASS PaymentRequest must be primary interface of paymentRequest 
+PASS Stringification of paymentRequest 
+PASS PaymentRequest interface: paymentRequest must inherit property "show()" with the proper type 
+PASS PaymentRequest interface: paymentRequest must inherit property "abort()" with the proper type 
+PASS PaymentRequest interface: paymentRequest must inherit property "canMakePayment()" with the proper type 
+PASS PaymentRequest interface: paymentRequest must inherit property "id" with the proper type 
+PASS PaymentRequest interface: paymentRequest must inherit property "shippingAddress" with the proper type 
+PASS PaymentRequest interface: paymentRequest must inherit property "shippingOption" with the proper type 
+PASS PaymentRequest interface: paymentRequest must inherit property "shippingType" with the proper type 
+PASS PaymentRequest interface: paymentRequest must inherit property "onshippingaddresschange" with the proper type 
+PASS PaymentRequest interface: paymentRequest must inherit property "onshippingoptionchange" with the proper type 
+PASS PaymentAddress interface: existence and properties of interface object 
+PASS PaymentAddress interface object length 
+PASS PaymentAddress interface object name 
+PASS PaymentAddress interface: existence and properties of interface prototype object 
+PASS PaymentAddress interface: existence and properties of interface prototype object's "constructor" property 
+PASS PaymentAddress interface: existence and properties of interface prototype object's @@unscopables property 
+PASS PaymentAddress interface: operation toJSON() 
+PASS PaymentAddress interface: attribute country 
+PASS PaymentAddress interface: attribute addressLine 
+PASS PaymentAddress interface: attribute region 
+FAIL PaymentAddress interface: attribute regionCode assert_true: The prototype object must have a property "regionCode" expected true got false
+PASS PaymentAddress interface: attribute city 
+PASS PaymentAddress interface: attribute dependentLocality 
+PASS PaymentAddress interface: attribute postalCode 
+PASS PaymentAddress interface: attribute sortingCode 
+FAIL PaymentAddress interface: attribute languageCode assert_true: The prototype object must have a property "languageCode" expected true got false
+PASS PaymentAddress interface: attribute organization 
+PASS PaymentAddress interface: attribute recipient 
+PASS PaymentAddress interface: attribute phone 
+FAIL PaymentResponse interface: existence and properties of interface object assert_equals: prototype of self's property "PaymentResponse" is not Function.prototype expected function "function () {
+    [native code]
+}" but got function "function EventTarget() {
+    [native code]
+}"
+PASS PaymentResponse interface object length 
+PASS PaymentResponse interface object name 
+FAIL PaymentResponse interface: existence and properties of interface prototype object assert_equals: prototype of PaymentResponse.prototype is not Object.prototype expected object "[object Object]" but got object "[object EventTargetPrototype]"
+PASS PaymentResponse interface: existence and properties of interface prototype object's "constructor" property 
+PASS PaymentResponse interface: existence and properties of interface prototype object's @@unscopables property 
+PASS PaymentResponse interface: operation toJSON() 
+PASS PaymentResponse interface: attribute requestId 
+PASS PaymentResponse interface: attribute methodName 
+PASS PaymentResponse interface: attribute details 
+PASS PaymentResponse interface: attribute shippingAddress 
+PASS PaymentResponse interface: attribute shippingOption 
+PASS PaymentResponse interface: attribute payerName 
+PASS PaymentResponse interface: attribute payerEmail 
+PASS PaymentResponse interface: attribute payerPhone 
+PASS PaymentResponse interface: operation complete(PaymentComplete) 
+PASS PaymentRequestUpdateEvent interface: existence and properties of interface object 
+PASS PaymentRequestUpdateEvent interface object length 
+PASS PaymentRequestUpdateEvent interface object name 
+PASS PaymentRequestUpdateEvent interface: existence and properties of interface prototype object 
+PASS PaymentRequestUpdateEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS PaymentRequestUpdateEvent interface: existence and properties of interface prototype object's @@unscopables property 
+PASS PaymentRequestUpdateEvent interface: operation updateWith([object Object]) 
+PASS PaymentRequestUpdateEvent must be primary interface of new PaymentRequestUpdateEvent("paymentrequestupdate") 
+PASS Stringification of new PaymentRequestUpdateEvent("paymentrequestupdate") 
+PASS PaymentRequestUpdateEvent interface: new PaymentRequestUpdateEvent("paymentrequestupdate") must inherit property "updateWith([object Object])" with the proper type 
+PASS PaymentRequestUpdateEvent interface: calling updateWith([object Object]) on new PaymentRequestUpdateEvent("paymentrequestupdate") with too few arguments must throw TypeError 
 

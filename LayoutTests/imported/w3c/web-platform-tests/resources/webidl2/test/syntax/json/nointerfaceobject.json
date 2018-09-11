@@ -8,34 +8,35 @@
                 "type": "operation",
                 "getter": false,
                 "setter": false,
-                "creator": false,
                 "deleter": false,
-                "legacycaller": false,
                 "static": false,
                 "stringifier": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "return-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "any"
+                    "idlType": "any",
+                    "extAttrs": []
                 },
                 "name": "lookupEntry",
+                "escapedName": "lookupEntry",
                 "arguments": [
                     {
                         "optional": false,
                         "variadic": false,
+                        "default": null,
                         "extAttrs": [],
                         "idlType": {
-                            "sequence": false,
+                            "type": "argument-type",
                             "generic": null,
                             "nullable": false,
-                            "array": false,
                             "union": false,
-                            "idlType": "unsigned long"
+                            "idlType": "unsigned long",
+                            "extAttrs": []
                         },
-                        "name": "key"
+                        "name": "key",
+                        "escapedName": "key"
                     }
                 ],
                 "extAttrs": []
@@ -45,7 +46,9 @@
         "extAttrs": [
             {
                 "name": "NoInterfaceObject",
-                "arguments": null
+                "arguments": null,
+                "type": "extended-attribute",
+                "rhs": null
             }
         ]
     }

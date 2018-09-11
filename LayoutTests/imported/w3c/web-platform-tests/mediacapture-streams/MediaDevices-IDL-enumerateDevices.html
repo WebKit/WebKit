@@ -19,21 +19,17 @@
 <script src=/resources/idlharness.js></script>
 <script>
   "use strict";
+  idl_test(
+    ['mediacapture-main'],
+    ['dom', 'html'],
+    async idl_array => {
+      assert_true(undefined !== navigator.mediaDevices.enumerateDevices,
+        "navigator.mediaDevices.enumerateDevices exists");
 
-  function doIdlTest(idlText) {
-    const MDI_idl = new IdlArray();
-
-    MDI_idl.add_untested_idls("interface Navigator {};");
-    MDI_idl.add_idls(idlText);
-
-    assert_true(undefined !== navigator.mediaDevices.enumerateDevices,
-      "navigator.mediaDevices.enumerateDevices exists");
-
-    return navigator.mediaDevices.enumerateDevices()
-    .then(function(list) {
+      const list = await navigator.mediaDevices.enumerateDevices();
       if( list.length > 0 ) {
         window._mediaInfo = list[0];
-        MDI_idl.add_objects({MediaDeviceInfo: ["_mediaInfo"]});
+        idl_array.add_objects({MediaDeviceInfo: ["_mediaInfo"]});
       }
 
       for(const media of list) {
@@ -46,17 +42,8 @@
           assert_unreached("media.kind should be one of 'audioinput', 'videoinput', or 'audiooutput'.")
         }
       }
-
-      MDI_idl.test();
-    });
-  }
-
-  promise_test(() => {
-    return fetch('/interfaces/mediacapture-main.idl')
-      .then(response => response.text())
-      .then(doIdlTest);
-
-  }, "Test MediaDevices.enumerateDevices call and result. Types only.");
+    }
+  );
 </script>
 </body>
 </html>

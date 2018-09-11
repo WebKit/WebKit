@@ -1,18 +1,13 @@
-CONSOLE MESSAGE: line 331: callback not yet supported
-CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
 Description
 
 This test checks for the presence of the navigator.mediaDevices.getUserMedia method.
 
 
-PASS Test driver 
-PASS Navigator interface: attribute mediaDevices 
-PASS Unscopable handled correctly for mediaDevices property on Navigator 
-FAIL Navigator interface: operation getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) assert_own_property: interface prototype object missing non-static operation expected property "getUserMedia" missing
-PASS Unscopable handled correctly for getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) on Navigator 
-PASS Navigator interface: navigator must inherit property "mediaDevices" with the proper type 
-FAIL Navigator interface: navigator must inherit property "getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback)" with the proper type assert_inherits: property "getUserMedia" not found in prototype chain
-FAIL Navigator interface: calling getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) on navigator with too few arguments must throw TypeError assert_inherits: property "getUserMedia" not found in prototype chain
+PASS idl_test setup 
+PASS Partial interface NavigatorUserMedia: original interface defined 
+PASS Partial interface MediaDevices: original interface defined 
 PASS MediaStream interface: existence and properties of interface object 
 PASS MediaStream interface object length 
 PASS MediaStream interface object name 
@@ -20,27 +15,16 @@ PASS MediaStream interface: existence and properties of interface prototype obje
 PASS MediaStream interface: existence and properties of interface prototype object's "constructor" property 
 PASS MediaStream interface: existence and properties of interface prototype object's @@unscopables property 
 PASS MediaStream interface: attribute id 
-PASS Unscopable handled correctly for id property on MediaStream 
 PASS MediaStream interface: operation getAudioTracks() 
-PASS Unscopable handled correctly for getAudioTracks() on MediaStream 
 PASS MediaStream interface: operation getVideoTracks() 
-PASS Unscopable handled correctly for getVideoTracks() on MediaStream 
 PASS MediaStream interface: operation getTracks() 
-PASS Unscopable handled correctly for getTracks() on MediaStream 
 PASS MediaStream interface: operation getTrackById(DOMString) 
-PASS Unscopable handled correctly for getTrackById(DOMString) on MediaStream 
 PASS MediaStream interface: operation addTrack(MediaStreamTrack) 
-PASS Unscopable handled correctly for addTrack(MediaStreamTrack) on MediaStream 
 PASS MediaStream interface: operation removeTrack(MediaStreamTrack) 
-PASS Unscopable handled correctly for removeTrack(MediaStreamTrack) on MediaStream 
 PASS MediaStream interface: operation clone() 
-PASS Unscopable handled correctly for clone() on MediaStream 
 PASS MediaStream interface: attribute active 
-PASS Unscopable handled correctly for active property on MediaStream 
 PASS MediaStream interface: attribute onaddtrack 
-PASS Unscopable handled correctly for onaddtrack property on MediaStream 
 PASS MediaStream interface: attribute onremovetrack 
-PASS Unscopable handled correctly for onremovetrack property on MediaStream 
 PASS MediaStreamTrack interface: existence and properties of interface object 
 PASS MediaStreamTrack interface object length 
 PASS MediaStreamTrack interface object name 
@@ -48,61 +32,35 @@ PASS MediaStreamTrack interface: existence and properties of interface prototype
 PASS MediaStreamTrack interface: existence and properties of interface prototype object's "constructor" property 
 PASS MediaStreamTrack interface: existence and properties of interface prototype object's @@unscopables property 
 PASS MediaStreamTrack interface: attribute kind 
-PASS Unscopable handled correctly for kind property on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute id 
-PASS Unscopable handled correctly for id property on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute label 
-PASS Unscopable handled correctly for label property on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute enabled 
-PASS Unscopable handled correctly for enabled property on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute muted 
-PASS Unscopable handled correctly for muted property on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute onmute 
-PASS Unscopable handled correctly for onmute property on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute onunmute 
-PASS Unscopable handled correctly for onunmute property on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute readyState 
-PASS Unscopable handled correctly for readyState property on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute onended 
-PASS Unscopable handled correctly for onended property on MediaStreamTrack 
 PASS MediaStreamTrack interface: operation clone() 
-PASS Unscopable handled correctly for clone() on MediaStreamTrack 
 PASS MediaStreamTrack interface: operation stop() 
-PASS Unscopable handled correctly for stop() on MediaStreamTrack 
 PASS MediaStreamTrack interface: operation getCapabilities() 
-PASS Unscopable handled correctly for getCapabilities() on MediaStreamTrack 
 PASS MediaStreamTrack interface: operation getConstraints() 
-PASS Unscopable handled correctly for getConstraints() on MediaStreamTrack 
 PASS MediaStreamTrack interface: operation getSettings() 
-PASS Unscopable handled correctly for getSettings() on MediaStreamTrack 
 PASS MediaStreamTrack interface: operation applyConstraints(MediaTrackConstraints) 
-PASS Unscopable handled correctly for applyConstraints(MediaTrackConstraints) on MediaStreamTrack 
 PASS MediaStreamTrack interface: attribute onoverconstrained 
-PASS Unscopable handled correctly for onoverconstrained property on MediaStreamTrack 
-FAIL MediaStreamTrackEvent interface: existence and properties of interface object undefined is not an object (evaluating 'this.array
-                     .members[this.base]
-                     .has_extended_attribute')
+PASS MediaStreamTrackEvent interface: existence and properties of interface object 
 PASS MediaStreamTrackEvent interface object length 
 PASS MediaStreamTrackEvent interface object name 
-FAIL MediaStreamTrackEvent interface: existence and properties of interface prototype object undefined is not an object (evaluating 'this.array
-                         .members[inherit_interface]
-                         .has_extended_attribute')
+PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object 
 PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS MediaStreamTrackEvent interface: attribute track 
-PASS Unscopable handled correctly for track property on MediaStreamTrackEvent 
-FAIL OverconstrainedErrorEvent interface: existence and properties of interface object undefined is not an object (evaluating 'this.array
-                     .members[this.base]
-                     .has_extended_attribute')
+PASS OverconstrainedErrorEvent interface: existence and properties of interface object 
 FAIL OverconstrainedErrorEvent interface object length assert_equals: wrong value for OverconstrainedErrorEvent.length expected 2 but got 1
 PASS OverconstrainedErrorEvent interface object name 
-FAIL OverconstrainedErrorEvent interface: existence and properties of interface prototype object undefined is not an object (evaluating 'this.array
-                         .members[inherit_interface]
-                         .has_extended_attribute')
+PASS OverconstrainedErrorEvent interface: existence and properties of interface prototype object 
 PASS OverconstrainedErrorEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS OverconstrainedErrorEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS OverconstrainedErrorEvent interface: attribute error 
-PASS Unscopable handled correctly for error property on OverconstrainedErrorEvent 
 FAIL MediaDevices interface: existence and properties of interface object assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
 FAIL MediaDevices interface object length assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
 FAIL MediaDevices interface object name assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
@@ -110,13 +68,9 @@ FAIL MediaDevices interface: existence and properties of interface prototype obj
 FAIL MediaDevices interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
 FAIL MediaDevices interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
 FAIL MediaDevices interface: attribute ondevicechange assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-PASS Unscopable handled correctly for ondevicechange property on MediaDevices 
 FAIL MediaDevices interface: operation enumerateDevices() assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-PASS Unscopable handled correctly for enumerateDevices() on MediaDevices 
 FAIL MediaDevices interface: operation getSupportedConstraints() assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-PASS Unscopable handled correctly for getSupportedConstraints() on MediaDevices 
 FAIL MediaDevices interface: operation getUserMedia(MediaStreamConstraints) assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-PASS Unscopable handled correctly for getUserMedia(MediaStreamConstraints) on MediaDevices 
 FAIL MediaDevices must be primary interface of navigator.mediaDevices assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
 PASS Stringification of navigator.mediaDevices 
 PASS MediaDevices interface: navigator.mediaDevices must inherit property "ondevicechange" with the proper type 
@@ -131,15 +85,10 @@ PASS MediaDeviceInfo interface: existence and properties of interface prototype 
 PASS MediaDeviceInfo interface: existence and properties of interface prototype object's "constructor" property 
 PASS MediaDeviceInfo interface: existence and properties of interface prototype object's @@unscopables property 
 PASS MediaDeviceInfo interface: attribute deviceId 
-PASS Unscopable handled correctly for deviceId property on MediaDeviceInfo 
 PASS MediaDeviceInfo interface: attribute kind 
-PASS Unscopable handled correctly for kind property on MediaDeviceInfo 
 PASS MediaDeviceInfo interface: attribute label 
-PASS Unscopable handled correctly for label property on MediaDeviceInfo 
 PASS MediaDeviceInfo interface: attribute groupId 
-PASS Unscopable handled correctly for groupId property on MediaDeviceInfo 
 PASS MediaDeviceInfo interface: operation toJSON() 
-PASS Unscopable handled correctly for toJSON() on MediaDeviceInfo 
 FAIL InputDeviceInfo interface: existence and properties of interface object assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL InputDeviceInfo interface object length assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL InputDeviceInfo interface object name assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
@@ -147,5 +96,10 @@ FAIL InputDeviceInfo interface: existence and properties of interface prototype 
 FAIL InputDeviceInfo interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL InputDeviceInfo interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL InputDeviceInfo interface: operation getCapabilities() assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-PASS Unscopable handled correctly for getCapabilities() on InputDeviceInfo 
+PASS Navigator interface: attribute mediaDevices 
+FAIL Navigator interface: operation getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) assert_own_property: interface prototype object missing non-static operation expected property "getUserMedia" missing
+PASS Navigator interface: navigator must inherit property "mediaDevices" with the proper type 
+FAIL Navigator interface: navigator must inherit property "getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback)" with the proper type assert_inherits: property "getUserMedia" not found in prototype chain
+FAIL Navigator interface: calling getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) on navigator with too few arguments must throw TypeError assert_inherits: property "getUserMedia" not found in prototype chain
+PASS WorkerNavigator interface: existence and properties of interface object 
 

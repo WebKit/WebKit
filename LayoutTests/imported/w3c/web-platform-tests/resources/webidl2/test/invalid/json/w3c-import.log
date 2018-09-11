@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,18 +14,43 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/array.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/caller.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/dict-required-default.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/duplicate.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/enum-empty.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/enum-wo-comma.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/enum.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/exception.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/extattr-empty-ids.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/id-underscored-number.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/implements_and_includes_ws.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/iterator.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/maplike-1type.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/module.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/namespace-readwrite.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/no-semicolon-callback.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/no-semicolon.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/nonnullableany.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/nonnullableobjects.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/promise-nullable.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/promise-with-extended-attribute.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/raises.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/readonly-iterable.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/record-key-with-extended-attribute.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/record-key.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/record-single.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/scopedname.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/sequenceAsAttribute.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/setlike-2types.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/setter-creator.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/spaced-negative-infinity.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/spaced-variadic.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/special-omittable.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/stray-slash.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/stringconstants.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/typedef-nested.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/union-dangling-or.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/union-one.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/union-zero.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/unknown-generic.json

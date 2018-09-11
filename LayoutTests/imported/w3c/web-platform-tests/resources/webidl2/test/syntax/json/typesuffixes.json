@@ -8,42 +8,42 @@
                 "type": "operation",
                 "getter": false,
                 "setter": false,
-                "creator": false,
                 "deleter": false,
-                "legacycaller": false,
                 "static": false,
                 "stringifier": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "return-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "void"
+                    "idlType": "void",
+                    "extAttrs": []
                 },
                 "name": "test",
+                "escapedName": "test",
                 "arguments": [
                     {
                         "optional": false,
                         "variadic": false,
+                        "default": null,
                         "extAttrs": [],
                         "idlType": {
-                            "sequence": true,
+                            "type": "argument-type",
                             "generic": "sequence",
                             "nullable": true,
-                            "array": false,
                             "union": false,
                             "idlType": {
-                                "sequence": false,
+                                "type": "argument-type",
                                 "generic": null,
                                 "nullable": true,
-                                "array": 1,
-                                "nullableArray": [false],
                                 "union": false,
-                                "idlType": "DOMString"
-                            }
+                                "idlType": "DOMString",
+                                "extAttrs": []
+                            },
+                            "extAttrs": []
                         },
-                        "name": "foo"
+                        "name": "foo",
+                        "escapedName": "foo"
                     }
                 ],
                 "extAttrs": []

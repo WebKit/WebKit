@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 331: callback not yet supported
-CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
 
 PASS Notification interface: existence and properties of interface object 
 PASS Notification interface object length 
@@ -8,51 +8,28 @@ PASS Notification interface: existence and properties of interface prototype obj
 PASS Notification interface: existence and properties of interface prototype object's "constructor" property 
 PASS Notification interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Notification interface: attribute permission 
-PASS Unscopable handled correctly for permission property on Notification 
 PASS Notification interface: operation requestPermission(NotificationPermissionCallback) 
-PASS Unscopable handled correctly for requestPermission(NotificationPermissionCallback) on Notification 
 FAIL Notification interface: attribute maxActions assert_own_property: The interface object must have a property "maxActions" expected property "maxActions" missing
-PASS Unscopable handled correctly for maxActions property on Notification 
 PASS Notification interface: attribute onclick 
-PASS Unscopable handled correctly for onclick property on Notification 
 PASS Notification interface: attribute onshow 
-PASS Unscopable handled correctly for onshow property on Notification 
 PASS Notification interface: attribute onerror 
-PASS Unscopable handled correctly for onerror property on Notification 
 PASS Notification interface: attribute onclose 
-PASS Unscopable handled correctly for onclose property on Notification 
 PASS Notification interface: attribute title 
-PASS Unscopable handled correctly for title property on Notification 
 PASS Notification interface: attribute dir 
-PASS Unscopable handled correctly for dir property on Notification 
 PASS Notification interface: attribute lang 
-PASS Unscopable handled correctly for lang property on Notification 
 PASS Notification interface: attribute body 
-PASS Unscopable handled correctly for body property on Notification 
 PASS Notification interface: attribute tag 
-PASS Unscopable handled correctly for tag property on Notification 
 FAIL Notification interface: attribute image assert_true: The prototype object must have a property "image" expected true got false
-PASS Unscopable handled correctly for image property on Notification 
 PASS Notification interface: attribute icon 
-PASS Unscopable handled correctly for icon property on Notification 
 FAIL Notification interface: attribute badge assert_true: The prototype object must have a property "badge" expected true got false
-PASS Unscopable handled correctly for badge property on Notification 
 FAIL Notification interface: attribute vibrate assert_true: The prototype object must have a property "vibrate" expected true got false
-PASS Unscopable handled correctly for vibrate property on Notification 
 FAIL Notification interface: attribute timestamp assert_true: The prototype object must have a property "timestamp" expected true got false
-PASS Unscopable handled correctly for timestamp property on Notification 
 FAIL Notification interface: attribute renotify assert_true: The prototype object must have a property "renotify" expected true got false
-PASS Unscopable handled correctly for renotify property on Notification 
 FAIL Notification interface: attribute silent assert_true: The prototype object must have a property "silent" expected true got false
-PASS Unscopable handled correctly for silent property on Notification 
 FAIL Notification interface: attribute requireInteraction assert_true: The prototype object must have a property "requireInteraction" expected true got false
-PASS Unscopable handled correctly for requireInteraction property on Notification 
 FAIL Notification interface: attribute data assert_true: The prototype object must have a property "data" expected true got false
-PASS Unscopable handled correctly for data property on Notification 
 FAIL Notification interface: attribute actions assert_true: The prototype object must have a property "actions" expected true got false
-PASS Unscopable handled correctly for actions property on Notification 
 PASS Notification interface: operation close() 
-PASS Unscopable handled correctly for close() on Notification 
 PASS Notification must be primary interface of new Notification("Running idlharness.") 
 PASS Stringification of new Notification("Running idlharness.") 
 PASS Notification interface: new Notification("Running idlharness.") must inherit property "permission" with the proper type 

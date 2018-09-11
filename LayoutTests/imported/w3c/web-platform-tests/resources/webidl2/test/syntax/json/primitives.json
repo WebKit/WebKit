@@ -11,14 +11,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "boolean"
+                    "idlType": "boolean",
+                    "extAttrs": []
                 },
                 "name": "truth",
+                "escapedName": "truth",
                 "extAttrs": []
             },
             {
@@ -28,14 +29,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "byte"
+                    "idlType": "byte",
+                    "extAttrs": []
                 },
                 "name": "character",
+                "escapedName": "character",
                 "extAttrs": []
             },
             {
@@ -45,14 +47,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "octet"
+                    "idlType": "octet",
+                    "extAttrs": []
                 },
                 "name": "value",
+                "escapedName": "value",
                 "extAttrs": []
             },
             {
@@ -62,14 +65,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "short"
+                    "idlType": "short",
+                    "extAttrs": []
                 },
                 "name": "number",
+                "escapedName": "number",
                 "extAttrs": []
             },
             {
@@ -79,14 +83,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "unsigned short"
+                    "idlType": "unsigned short",
+                    "extAttrs": []
                 },
                 "name": "positive",
+                "escapedName": "positive",
                 "extAttrs": []
             },
             {
@@ -96,14 +101,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "long"
+                    "idlType": "long",
+                    "extAttrs": []
                 },
                 "name": "big",
+                "escapedName": "big",
                 "extAttrs": []
             },
             {
@@ -113,14 +119,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "unsigned long"
+                    "idlType": "unsigned long",
+                    "extAttrs": []
                 },
                 "name": "bigpositive",
+                "escapedName": "bigpositive",
                 "extAttrs": []
             },
             {
@@ -130,14 +137,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "long long"
+                    "idlType": "long long",
+                    "extAttrs": []
                 },
                 "name": "bigbig",
+                "escapedName": "bigbig",
                 "extAttrs": []
             },
             {
@@ -147,14 +155,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "unsigned long long"
+                    "idlType": "unsigned long long",
+                    "extAttrs": []
                 },
                 "name": "bigbigpositive",
+                "escapedName": "bigbigpositive",
                 "extAttrs": []
             },
             {
@@ -164,14 +173,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "float"
+                    "idlType": "float",
+                    "extAttrs": []
                 },
                 "name": "real",
+                "escapedName": "real",
                 "extAttrs": []
             },
             {
@@ -181,14 +191,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "double"
+                    "idlType": "double",
+                    "extAttrs": []
                 },
                 "name": "bigreal",
+                "escapedName": "bigreal",
                 "extAttrs": []
             },
             {
@@ -198,14 +209,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "unrestricted float"
+                    "idlType": "unrestricted float",
+                    "extAttrs": []
                 },
                 "name": "realwithinfinity",
+                "escapedName": "realwithinfinity",
                 "extAttrs": []
             },
             {
@@ -215,14 +227,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "unrestricted double"
+                    "idlType": "unrestricted double",
+                    "extAttrs": []
                 },
                 "name": "bigrealwithinfinity",
+                "escapedName": "bigrealwithinfinity",
                 "extAttrs": []
             },
             {
@@ -232,14 +245,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "DOMString"
+                    "idlType": "DOMString",
+                    "extAttrs": []
                 },
                 "name": "string",
+                "escapedName": "string",
                 "extAttrs": []
             },
             {
@@ -249,14 +263,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "ByteString"
+                    "idlType": "ByteString",
+                    "extAttrs": []
                 },
                 "name": "bytes",
+                "escapedName": "bytes",
                 "extAttrs": []
             },
             {
@@ -266,14 +281,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "Date"
+                    "idlType": "Date",
+                    "extAttrs": []
                 },
                 "name": "date",
+                "escapedName": "date",
                 "extAttrs": []
             },
             {
@@ -283,14 +299,15 @@
                 "inherit": false,
                 "readonly": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "RegExp"
+                    "idlType": "RegExp",
+                    "extAttrs": []
                 },
                 "name": "regexp",
+                "escapedName": "regexp",
                 "extAttrs": []
             }
         ],

@@ -1,26 +1,24 @@
 High Resolution Time IDL tests
 
 
-FAIL Test driver promise_test: Unhandled rejection with value: object "Error: undefined EventTarget not found (inherited by Performance)"
-FAIL Performance interface: existence and properties of interface object undefined is not an object (evaluating 'this.array
-                     .members[this.base]
-                     .has_extended_attribute')
+PASS Test driver 
+PASS Partial interface WindowOrWorkerGlobalScope: original interface defined 
+PASS Performance interface: existence and properties of interface object 
 PASS Performance interface object length 
 PASS Performance interface object name 
-FAIL Performance interface: existence and properties of interface prototype object undefined is not an object (evaluating 'this.array
-                         .members[inherit_interface]
-                         .has_extended_attribute')
+PASS Performance interface: existence and properties of interface prototype object 
 PASS Performance interface: existence and properties of interface prototype object's "constructor" property 
 PASS Performance interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Performance interface: operation now() 
-PASS Unscopable handled correctly for now() on Performance 
 FAIL Performance interface: attribute timeOrigin assert_true: The prototype object must have a property "timeOrigin" expected true got false
-PASS Unscopable handled correctly for timeOrigin property on Performance 
 FAIL Performance interface: operation toJSON() assert_own_property: interface prototype object missing non-static operation expected property "toJSON" missing
-PASS Unscopable handled correctly for toJSON() on Performance 
 PASS Performance must be primary interface of window.performance 
-FAIL Stringification of window.performance undefined is not an object (evaluating 'this.array.members[this.base].has_stringifier')
+PASS Stringification of window.performance 
 PASS Performance interface: window.performance must inherit property "now()" with the proper type 
 FAIL Performance interface: window.performance must inherit property "timeOrigin" with the proper type assert_inherits: property "timeOrigin" not found in prototype chain
 FAIL Performance interface: window.performance must inherit property "toJSON()" with the proper type assert_inherits: property "toJSON" not found in prototype chain
+FAIL Test default toJSON operation of Performance memberHolderObject.toJSON is not a function. (In 'memberHolderObject.toJSON()', 'memberHolderObject.toJSON' is undefined)
+PASS Window interface: attribute performance 
+PASS Window interface: window must inherit property "performance" with the proper type 
+PASS WorkerGlobalScope interface: existence and properties of interface object 
 

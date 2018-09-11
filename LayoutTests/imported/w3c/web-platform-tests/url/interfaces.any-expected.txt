@@ -8,32 +8,19 @@ PASS URL interface: existence and properties of interface prototype object
 PASS URL interface: existence and properties of interface prototype object's "constructor" property 
 PASS URL interface: existence and properties of interface prototype object's @@unscopables property 
 PASS URL interface: attribute href 
-PASS Unscopable handled correctly for href property on URL 
 PASS URL interface: stringifier 
 PASS URL interface: attribute origin 
-PASS Unscopable handled correctly for origin property on URL 
 PASS URL interface: attribute protocol 
-PASS Unscopable handled correctly for protocol property on URL 
 PASS URL interface: attribute username 
-PASS Unscopable handled correctly for username property on URL 
 PASS URL interface: attribute password 
-PASS Unscopable handled correctly for password property on URL 
 PASS URL interface: attribute host 
-PASS Unscopable handled correctly for host property on URL 
 PASS URL interface: attribute hostname 
-PASS Unscopable handled correctly for hostname property on URL 
 PASS URL interface: attribute port 
-PASS Unscopable handled correctly for port property on URL 
 PASS URL interface: attribute pathname 
-PASS Unscopable handled correctly for pathname property on URL 
 PASS URL interface: attribute search 
-PASS Unscopable handled correctly for search property on URL 
 PASS URL interface: attribute searchParams 
-PASS Unscopable handled correctly for searchParams property on URL 
 PASS URL interface: attribute hash 
-PASS Unscopable handled correctly for hash property on URL 
 PASS URL interface: operation toJSON() 
-PASS Unscopable handled correctly for toJSON() on URL 
 PASS URL must be primary interface of new URL("http://foo") 
 PASS Stringification of new URL("http://foo") 
 PASS URL interface: new URL("http://foo") must inherit property "href" with the proper type 
@@ -57,30 +44,19 @@ PASS URLSearchParams interface: existence and properties of interface prototype 
 PASS URLSearchParams interface: existence and properties of interface prototype object's "constructor" property 
 PASS URLSearchParams interface: existence and properties of interface prototype object's @@unscopables property 
 PASS URLSearchParams interface: operation append(USVString, USVString) 
-PASS Unscopable handled correctly for append(USVString, USVString) on URLSearchParams 
 PASS URLSearchParams interface: operation delete(USVString) 
-PASS Unscopable handled correctly for delete(USVString) on URLSearchParams 
 PASS URLSearchParams interface: operation get(USVString) 
-PASS Unscopable handled correctly for get(USVString) on URLSearchParams 
 PASS URLSearchParams interface: operation getAll(USVString) 
-PASS Unscopable handled correctly for getAll(USVString) on URLSearchParams 
 PASS URLSearchParams interface: operation has(USVString) 
-PASS Unscopable handled correctly for has(USVString) on URLSearchParams 
 PASS URLSearchParams interface: operation set(USVString, USVString) 
-PASS Unscopable handled correctly for set(USVString, USVString) on URLSearchParams 
 PASS URLSearchParams interface: operation sort() 
-PASS Unscopable handled correctly for sort() on URLSearchParams 
 PASS Testing Symbol.iterator property of iterable interface URLSearchParams 
 PASS Testing pair iterable interface URLSearchParams 
 PASS URLSearchParams interface: stringifier 
 PASS URLSearchParams interface: operation entries() 
-PASS Unscopable handled correctly for entries() on URLSearchParams 
 PASS URLSearchParams interface: operation keys() 
-PASS Unscopable handled correctly for keys() on URLSearchParams 
 PASS URLSearchParams interface: operation values() 
-PASS Unscopable handled correctly for values() on URLSearchParams 
 PASS URLSearchParams interface: operation forEach(function, any) 
-PASS Unscopable handled correctly for forEach(function, any) on URLSearchParams 
 PASS URLSearchParams must be primary interface of new URLSearchParams("hi=there&thank=you") 
 PASS Stringification of new URLSearchParams("hi=there&thank=you") 
 PASS URLSearchParams interface: new URLSearchParams("hi=there&thank=you") must inherit property "append(USVString, USVString)" with the proper type 

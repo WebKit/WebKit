@@ -150,7 +150,7 @@ interface IDBKeyRange {
                            optional boolean lowerOpen = false,
                            optional boolean upperOpen = false);
 
-  boolean includes(any key);
+  boolean _includes(any key);
 };
 
 [Exposed=(Window,Worker)]

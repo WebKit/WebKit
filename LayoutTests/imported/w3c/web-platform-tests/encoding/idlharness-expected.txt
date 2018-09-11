@@ -11,13 +11,9 @@ PASS TextDecoder interface: existence and properties of interface prototype obje
 PASS TextDecoder interface: existence and properties of interface prototype object's "constructor" property 
 PASS TextDecoder interface: existence and properties of interface prototype object's @@unscopables property 
 PASS TextDecoder interface: attribute encoding 
-PASS Unscopable handled correctly for encoding property on TextDecoder 
 PASS TextDecoder interface: attribute fatal 
-PASS Unscopable handled correctly for fatal property on TextDecoder 
 PASS TextDecoder interface: attribute ignoreBOM 
-PASS Unscopable handled correctly for ignoreBOM property on TextDecoder 
 PASS TextDecoder interface: operation decode(BufferSource, TextDecodeOptions) 
-PASS Unscopable handled correctly for decode(BufferSource, TextDecodeOptions) on TextDecoder 
 PASS TextDecoder must be primary interface of new TextDecoder() 
 PASS Stringification of new TextDecoder() 
 PASS TextDecoder interface: new TextDecoder() must inherit property "encoding" with the proper type 
@@ -32,9 +28,7 @@ PASS TextEncoder interface: existence and properties of interface prototype obje
 PASS TextEncoder interface: existence and properties of interface prototype object's "constructor" property 
 PASS TextEncoder interface: existence and properties of interface prototype object's @@unscopables property 
 PASS TextEncoder interface: attribute encoding 
-PASS Unscopable handled correctly for encoding property on TextEncoder 
 PASS TextEncoder interface: operation encode(USVString) 
-PASS Unscopable handled correctly for encode(USVString) on TextEncoder 
 PASS TextEncoder must be primary interface of new TextEncoder() 
 PASS Stringification of new TextEncoder() 
 PASS TextEncoder interface: new TextEncoder() must inherit property "encoding" with the proper type 

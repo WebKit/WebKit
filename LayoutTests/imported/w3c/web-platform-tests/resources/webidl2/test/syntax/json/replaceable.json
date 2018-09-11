@@ -11,18 +11,21 @@
                 "inherit": false,
                 "readonly": true,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "unsigned long"
+                    "idlType": "unsigned long",
+                    "extAttrs": []
                 },
                 "name": "value",
+                "escapedName": "value",
                 "extAttrs": [
                     {
                         "name": "Replaceable",
-                        "arguments": null
+                        "arguments": null,
+                        "type": "extended-attribute",
+                        "rhs": null
                     }
                 ]
             },
@@ -30,20 +33,19 @@
                 "type": "operation",
                 "getter": false,
                 "setter": false,
-                "creator": false,
                 "deleter": false,
-                "legacycaller": false,
                 "static": false,
                 "stringifier": false,
                 "idlType": {
-                    "sequence": false,
+                    "type": "return-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "void"
+                    "idlType": "void",
+                    "extAttrs": []
                 },
                 "name": "increment",
+                "escapedName": "increment",
                 "arguments": [],
                 "extAttrs": []
             }

@@ -1,3 +1,257 @@
+2018-09-11  Ms2ger  <Ms2ger@igalia.com>
+
+        Update idlharness.js and webidl2.js.
+        https://bugs.webkit.org/show_bug.cgi?id=189303
+
+        Reviewed by Youenn Fablet.
+
+        Update idlharness.js and webidl2.js. Fix tests that are now broken
+        because of increased strictness in the harness. Fix tests that have
+        been broken for a while.
+
+        Update expectations. (The main change is the removal of "Unscopable
+        handled correctly for ..." subtests.)
+
+        * web-platform-tests/FileAPI/idlharness-expected.txt:
+        * web-platform-tests/FileAPI/idlharness.html: Update from upstream.
+        * web-platform-tests/FileAPI/idlharness.worker-expected.txt:
+        * web-platform-tests/FileAPI/idlharness.worker.js: Update from upstream.
+        * web-platform-tests/IndexedDB/interfaces.any-expected.txt:
+        * web-platform-tests/IndexedDB/interfaces.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/idlharness.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/idlharness.https.worker-expected.txt:
+        * web-platform-tests/WebIDL/interfaces-expected.txt:
+        * web-platform-tests/credential-management/idl.https-expected.txt:
+        * web-platform-tests/css/cssom-view/interfaces-expected.txt:
+        * web-platform-tests/css/geometry/interfaces-expected.txt:
+        * web-platform-tests/css/geometry/interfaces.worker-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html: Use the new method for dependency IDLs.
+        * web-platform-tests/encoding/idlharness-expected.txt:
+        * web-platform-tests/eventsource/interfaces-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-idl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-idl-expected.txt:
+        * web-platform-tests/fetch/api/response/response-idl-expected.txt:
+        * web-platform-tests/hr-time/idlharness-expected.txt:
+        * web-platform-tests/hr-time/idlharness.html: Add missing dependency IDL.
+        * web-platform-tests/html/webappapis/animation-frames/idlharness-expected.txt:
+        * web-platform-tests/interfaces/IndexedDB.idl: Fix bug caught by stricter IDL parser.
+        * web-platform-tests/interfaces/intersection-observer.idl: Added from upstream.
+        * web-platform-tests/interfaces/web-audio-api.idl:
+          Added to fix webaudio/the-audio-api/{the-gainnode-interface, the-delaynode-interface}/idl-test.html.
+        * web-platform-tests/intersection-observer/idlharness.window-expected.txt:
+          Update for added intersection-observer.idl.
+        * web-platform-tests/media-source/interfaces-expected.txt: Update from macOS.
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-all-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-all.html: Add missing dependency IDLs.
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-enumerateDevices-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-enumerateDevices.html: Add missing dependency IDLs.
+        * web-platform-tests/notifications/interfaces-expected.txt:
+        * web-platform-tests/payment-request/idlharness.https.window-expected.txt:
+        * web-platform-tests/resource-timing/idlharness-expected.txt:
+        * web-platform-tests/resources/idlharness.js:
+        * web-platform-tests/resources/webidl2/CHANGELOG.md: Added.
+        * web-platform-tests/resources/webidl2/README.md:
+        * web-platform-tests/resources/webidl2/checker/index.html: Added.
+        * web-platform-tests/resources/webidl2/checker/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/lib/w3c-import.log:
+        * web-platform-tests/resources/webidl2/lib/webidl2.js:
+        * web-platform-tests/resources/webidl2/lib/writer.js:
+        * web-platform-tests/resources/webidl2/package-lock.json: Added.
+        * web-platform-tests/resources/webidl2/package.json:
+        * web-platform-tests/resources/webidl2/test/invalid.js:
+        * web-platform-tests/resources/webidl2/test/invalid/idl/array.widl: Renamed from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/array.widl.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/caller.widl: Renamed from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/caller.widl.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/duplicate.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/enum-empty.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/enum-wo-comma.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/exception.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/extattr-empty-ids.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/id-underscored-number.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/implements_and_includes_ws.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/iterator.widl: Renamed from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/iterator.widl.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/maplike-1type.widl:
+        * web-platform-tests/resources/webidl2/test/invalid/idl/namespace-readwrite.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/no-semicolon-callback.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/no-semicolon.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/nonnullableobjects.widl:
+        * web-platform-tests/resources/webidl2/test/invalid/idl/promise-nullable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/promise-with-extended-attribute.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/readonly-iterable.widl:
+        * web-platform-tests/resources/webidl2/test/invalid/idl/record-key-with-extended-attribute.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/record-single.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/setlike-2types.widl:
+        * web-platform-tests/resources/webidl2/test/invalid/idl/setter-creator.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/spaced-negative-infinity.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/spaced-variadic.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/special-omittable.widl:
+        * web-platform-tests/resources/webidl2/test/invalid/idl/stray-slash.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/stringconstants.widl: Renamed from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/stringconstants.idl.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/typedef-nested.widl:
+        * web-platform-tests/resources/webidl2/test/invalid/idl/union-dangling-or.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/union-one.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/union-zero.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/unknown-generic.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/w3c-import.log:
+        * web-platform-tests/resources/webidl2/test/invalid/json/array.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/caller.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/dict-required-default.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/duplicate.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/enum-empty.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/enum-wo-comma.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/enum.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/exception.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/extattr-empty-ids.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/id-underscored-number.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/implements_and_includes_ws.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/iterator.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/maplike-1type.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/module.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/namespace-readwrite.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/no-semicolon-callback.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/no-semicolon.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/nonnullableany.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/nonnullableobjects.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/promise-nullable.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/promise-with-extended-attribute.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/raises.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/readonly-iterable.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/record-key-with-extended-attribute.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/record-key.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/record-single.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/scopedname.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/sequenceAsAttribute.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/setlike-2types.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/setter-creator.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/spaced-negative-infinity.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/spaced-variadic.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/special-omittable.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/stray-slash.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/stringconstants.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/typedef-nested.json:
+        * web-platform-tests/resources/webidl2/test/invalid/json/union-dangling-or.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/union-one.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/union-zero.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/unknown-generic.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/w3c-import.log:
+        * web-platform-tests/resources/webidl2/test/syntax.js:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/attributes.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/constants.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/equivalent-decl.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/exception-inheritance.widl: Removed.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/exception.widl: Removed.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/extended-attributes.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/generic.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/identifier-qualified-names.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/indexed-properties.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/inherits-getter.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/iterable.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/legacyiterable.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/maplike.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/mixin.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/overloading.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/primitives.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/promise-void.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/record.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/reg-operations.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/sequence.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/serializer.widl: Removed.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/setlike.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/stringifier.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/typedef-union.widl: Renamed from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/typedef-union.idl.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/typesuffixes.widl:
+        * web-platform-tests/resources/webidl2/test/syntax/idl/w3c-import.log:
+        * web-platform-tests/resources/webidl2/test/syntax/json/allowany.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/array.json: Removed.
+        * web-platform-tests/resources/webidl2/test/syntax/json/attributes.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/callback.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/caller.json: Removed.
+        * web-platform-tests/resources/webidl2/test/syntax/json/constants.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/constructor.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/dictionary-inherits.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/dictionary.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/documentation-dos.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/documentation.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/enum.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/equivalent-decl.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/exception-inheritance.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/exception.json: Removed.
+        * web-platform-tests/resources/webidl2/test/syntax/json/extended-attributes.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/generic.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/getter-setter.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/identifier-qualified-names.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/implements.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/indexed-properties.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/inherits-getter.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/interface-inherits.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/iterable.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/iterator.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/legacyiterable.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/maplike.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/mixin.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/namedconstructor.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/namespace.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/nointerfaceobject.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/nullable.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/nullableobjects.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/operation-optional-arg.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/overloading.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/overridebuiltins.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/partial-interface.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/primitives.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/promise-void.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/prototyperoot.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/putforwards.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/record.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/reg-operations.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/replaceable.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/sequence.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/serializer.json: Removed.
+        * web-platform-tests/resources/webidl2/test/syntax/json/setlike.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/static.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/stringifier-attribute.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/stringifier-custom.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/stringifier.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/treatasnull.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/treatasundefined.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/typedef-union.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/typedef.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/typesuffixes.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/uniontype.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/variadic-operations.json:
+        * web-platform-tests/resources/webidl2/test/syntax/json/w3c-import.log:
+        * web-platform-tests/resources/webidl2/test/util/acquire.js: Added.
+        * web-platform-tests/resources/webidl2/test/util/collect.js: Added.
+        * web-platform-tests/resources/webidl2/test/util/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/w3c-import.log:
+        * web-platform-tests/resources/webidl2/test/web/w3c-import.log:
+        * web-platform-tests/resources/webidl2/test/writer.js: Added.
+        * web-platform-tests/resources/webidl2/w3c-import.log:
+        * web-platform-tests/service-workers/service-worker/interfaces-sw.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/interfaces-window.https-expected.txt:
+        * web-platform-tests/url/interfaces.any-expected.txt:
+        * web-platform-tests/url/interfaces.any.worker-expected.txt:
+        * web-platform-tests/user-timing/idlharness-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/idlharness-expected.txt:
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/idlharness-expected.txt:
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/idlharness-expected.txt:
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/idlharness-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness-expected.txt:
+        * web-platform-tests/web-share/idlharness.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/idl-test-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/idl-test.html: Escape less-than signs.
+        * web-platform-tests/webaudio/the-audio-api/the-audiodestinationnode-interface/idl-test-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiodestinationnode-interface/idl-test.html: Escape less-than signs.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/idl-test-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/idl-test-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/idl-test.html: Escape less-than signs.
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/idl-test-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/idl-test.html: Escape less-than signs.
+        * web-platform-tests/workers/interfaces.worker-expected.txt:
+        * web-platform-tests/xhr/idlharness.any-expected.txt:
+        * web-platform-tests/xhr/idlharness.any.worker-expected.txt:
+        * web-platform-tests/xhr/interfaces-expected.txt:
+
 2018-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update shadow DOM and custom elements tests

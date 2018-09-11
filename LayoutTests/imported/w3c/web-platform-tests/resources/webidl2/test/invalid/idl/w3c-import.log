@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,18 +14,43 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/array.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/caller.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/dict-required-default.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/duplicate.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/enum-empty.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/enum-wo-comma.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/enum.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/exception.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/extattr-empty-ids.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/id-underscored-number.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/implements_and_includes_ws.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/iterator.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/maplike-1type.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/module.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/namespace-readwrite.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/no-semicolon-callback.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/no-semicolon.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/nonnullableany.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/nonnullableobjects.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/promise-nullable.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/promise-with-extended-attribute.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/raises.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/readonly-iterable.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/record-key-with-extended-attribute.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/record-key.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/record-single.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/scopedname.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/sequenceAsAttribute.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/setlike-2types.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/setter-creator.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/spaced-negative-infinity.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/spaced-variadic.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/special-omittable.widl
-/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/stringconstants.idl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/stray-slash.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/stringconstants.widl
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/typedef-nested.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/union-dangling-or.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/union-one.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/union-zero.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/idl/unknown-generic.widl

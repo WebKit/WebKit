@@ -6,25 +6,15 @@ PASS AudioParam interface: existence and properties of interface prototype objec
 PASS AudioParam interface: existence and properties of interface prototype object's "constructor" property 
 PASS AudioParam interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AudioParam interface: attribute value 
-PASS Unscopable handled correctly for value property on AudioParam 
 PASS AudioParam interface: attribute defaultValue 
-PASS Unscopable handled correctly for defaultValue property on AudioParam 
 PASS AudioParam interface: attribute minValue 
-PASS Unscopable handled correctly for minValue property on AudioParam 
 PASS AudioParam interface: attribute maxValue 
-PASS Unscopable handled correctly for maxValue property on AudioParam 
 PASS AudioParam interface: operation setValueAtTime(float, double) 
-PASS Unscopable handled correctly for setValueAtTime(float, double) on AudioParam 
 PASS AudioParam interface: operation linearRampToValueAtTime(float, double) 
-PASS Unscopable handled correctly for linearRampToValueAtTime(float, double) on AudioParam 
 PASS AudioParam interface: operation exponentialRampToValueAtTime(float, double) 
-PASS Unscopable handled correctly for exponentialRampToValueAtTime(float, double) on AudioParam 
 PASS AudioParam interface: operation setTargetAtTime(float, double, double) 
-PASS Unscopable handled correctly for setTargetAtTime(float, double, double) on AudioParam 
 PASS AudioParam interface: operation setValueCurveAtTime(Float32Array, double, double) 
-PASS Unscopable handled correctly for setValueCurveAtTime(Float32Array, double, double) on AudioParam 
 PASS AudioParam interface: operation cancelScheduledValues(double) 
-PASS Unscopable handled correctly for cancelScheduledValues(double) on AudioParam 
 PASS AudioParam must be primary interface of delay_time 
 PASS Stringification of delay_time 
 PASS AudioParam interface: delay_time must inherit property "value" with the proper type 

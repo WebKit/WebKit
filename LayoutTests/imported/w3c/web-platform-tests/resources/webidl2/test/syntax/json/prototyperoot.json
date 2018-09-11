@@ -11,14 +11,15 @@
                 "inherit": false,
                 "readonly": true,
                 "idlType": {
-                    "sequence": false,
+                    "type": "attribute-type",
                     "generic": null,
                     "nullable": false,
-                    "array": false,
                     "union": false,
-                    "idlType": "unsigned short"
+                    "idlType": "unsigned short",
+                    "extAttrs": []
                 },
                 "name": "nodeType",
+                "escapedName": "nodeType",
                 "extAttrs": []
             }
         ],
@@ -26,7 +27,9 @@
         "extAttrs": [
             {
                 "name": "PrototypeRoot",
-                "arguments": null
+                "arguments": null,
+                "type": "extended-attribute",
+                "rhs": null
             }
         ]
     }

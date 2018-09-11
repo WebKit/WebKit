@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
 Blocked access to external URL http://foo/
 CONSOLE MESSAGE: EventSource cannot load http://foo/ due to access control checks.
 EventSource IDL tests
@@ -11,17 +11,13 @@ PASS EventTarget interface: existence and properties of interface prototype obje
 PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
 PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property 
 PASS EventTarget interface: operation addEventListener(DOMString, EventListener, [object Object],[object Object]) 
-PASS Unscopable handled correctly for addEventListener(DOMString, EventListener, [object Object],[object Object]) on EventTarget 
 PASS EventTarget interface: operation removeEventListener(DOMString, EventListener, [object Object],[object Object]) 
-PASS Unscopable handled correctly for removeEventListener(DOMString, EventListener, [object Object],[object Object]) on EventTarget 
 PASS EventTarget interface: operation dispatchEvent(Event) 
-PASS Unscopable handled correctly for dispatchEvent(Event) on EventTarget 
 PASS EventListener interface: existence and properties of interface object 
 PASS EventListener interface: existence and properties of interface prototype object 
 PASS EventListener interface: existence and properties of interface prototype object's "constructor" property 
 PASS EventListener interface: existence and properties of interface prototype object's @@unscopables property 
 PASS EventListener interface: operation handleEvent(Event) 
-PASS Unscopable handled correctly for handleEvent(Event) on EventListener 
 PASS EventSource interface: existence and properties of interface object 
 PASS EventSource interface object length 
 PASS EventSource interface object name 
@@ -29,9 +25,7 @@ PASS EventSource interface: existence and properties of interface prototype obje
 PASS EventSource interface: existence and properties of interface prototype object's "constructor" property 
 PASS EventSource interface: existence and properties of interface prototype object's @@unscopables property 
 PASS EventSource interface: attribute url 
-PASS Unscopable handled correctly for url property on EventSource 
 PASS EventSource interface: attribute withCredentials 
-PASS Unscopable handled correctly for withCredentials property on EventSource 
 PASS EventSource interface: constant CONNECTING on interface object 
 PASS EventSource interface: constant CONNECTING on interface prototype object 
 PASS EventSource interface: constant OPEN on interface object 
@@ -39,15 +33,10 @@ PASS EventSource interface: constant OPEN on interface prototype object
 PASS EventSource interface: constant CLOSED on interface object 
 PASS EventSource interface: constant CLOSED on interface prototype object 
 PASS EventSource interface: attribute readyState 
-PASS Unscopable handled correctly for readyState property on EventSource 
 PASS EventSource interface: attribute onopen 
-PASS Unscopable handled correctly for onopen property on EventSource 
 PASS EventSource interface: attribute onmessage 
-PASS Unscopable handled correctly for onmessage property on EventSource 
 PASS EventSource interface: attribute onerror 
-PASS Unscopable handled correctly for onerror property on EventSource 
 PASS EventSource interface: operation close() 
-PASS Unscopable handled correctly for close() on EventSource 
 PASS EventSource must be primary interface of new EventSource("http://foo") 
 PASS Stringification of new EventSource("http://foo") 
 PASS EventSource interface: new EventSource("http://foo") must inherit property "url" with the proper type 

@@ -8,20 +8,20 @@
                 "type": "maplike",
                 "idlType": [
                     {
-                        "sequence": false,
+                        "type": null,
                         "generic": null,
                         "nullable": false,
-                        "array": false,
                         "union": false,
-                        "idlType": "long"
+                        "idlType": "long",
+                        "extAttrs": []
                     },
                     {
-                        "sequence": false,
+                        "type": null,
                         "generic": null,
                         "nullable": false,
-                        "array": false,
                         "union": false,
-                        "idlType": "float"
+                        "idlType": "float",
+                        "extAttrs": []
                     }
                 ],
                 "readonly": false,
@@ -40,20 +40,20 @@
                 "type": "maplike",
                 "idlType": [
                     {
-                        "sequence": false,
+                        "type": null,
                         "generic": null,
                         "nullable": false,
-                        "array": false,
                         "union": false,
-                        "idlType": "long"
+                        "idlType": "long",
+                        "extAttrs": []
                     },
                     {
-                        "sequence": false,
+                        "type": null,
                         "generic": null,
                         "nullable": false,
-                        "array": false,
                         "union": false,
-                        "idlType": "float"
+                        "idlType": "float",
+                        "extAttrs": []
                     }
                 ],
                 "readonly": true,
@@ -62,6 +62,51 @@
         ],
         "inheritance": null,
         "extAttrs": []
+    },
+    {
+        "type": "interface",
+        "name": "I",
+        "partial": false,
+        "members": [
+            {
+                "type": "maplike",
+                "idlType": [
+                    {
+                        "type": null,
+                        "generic": null,
+                        "nullable": false,
+                        "union": false,
+                        "idlType": "DOMString",
+                        "extAttrs": [
+                            {
+                                "name": "XAttr2",
+                                "arguments": null,
+                                "type": "extended-attribute",
+                                "rhs": null
+                            }
+                        ]
+                    },
+                    {
+                        "type": null,
+                        "generic": null,
+                        "nullable": false,
+                        "union": false,
+                        "idlType": "long",
+                        "extAttrs": [
+                            {
+                                "name": "XAttr3",
+                                "arguments": null,
+                                "type": "extended-attribute",
+                                "rhs": null
+                            }
+                        ]
+                    }
+                ],
+                "readonly": false,
+                "extAttrs": []
+            }
+        ],
+        "inheritance": null,
+        "extAttrs": []
     }
 ]
-

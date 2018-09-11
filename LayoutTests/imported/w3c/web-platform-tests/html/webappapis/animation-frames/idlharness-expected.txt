@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
 idlharness test
 
 This test validates the WebIDL included in the Timing control for script-based animations specification.
@@ -10,10 +10,9 @@ partial interface Window {
 
 callback FrameRequestCallback = void (DOMHighResTimeStamp time);
 
+PASS Partial interface Window: original interface defined 
 PASS Window interface: operation requestAnimationFrame(FrameRequestCallback) 
-PASS Unscopable handled correctly for requestAnimationFrame(FrameRequestCallback) on Window 
 PASS Window interface: operation cancelAnimationFrame(long) 
-PASS Unscopable handled correctly for cancelAnimationFrame(long) on Window 
 PASS Window interface: window must inherit property "requestAnimationFrame(FrameRequestCallback)" with the proper type 
 PASS Window interface: calling requestAnimationFrame(FrameRequestCallback) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "cancelAnimationFrame(long)" with the proper type 

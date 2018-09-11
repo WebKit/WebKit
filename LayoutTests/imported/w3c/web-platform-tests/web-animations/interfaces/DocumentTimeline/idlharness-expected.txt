@@ -6,7 +6,6 @@ PASS AnimationTimeline interface: existence and properties of interface prototyp
 PASS AnimationTimeline interface: existence and properties of interface prototype object's "constructor" property 
 PASS AnimationTimeline interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AnimationTimeline interface: attribute currentTime 
-PASS Unscopable handled correctly for currentTime property on AnimationTimeline 
 PASS DocumentTimeline interface: existence and properties of interface object 
 PASS DocumentTimeline interface object length 
 PASS DocumentTimeline interface object name 

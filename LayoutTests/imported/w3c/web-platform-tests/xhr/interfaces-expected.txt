@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 331: callback not yet supported
-CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
+CONSOLE MESSAGE: line 482: callback not yet supported
 XMLHttpRequest IDL tests
 
 
@@ -11,19 +11,12 @@ PASS XMLHttpRequestEventTarget interface: existence and properties of interface 
 PASS XMLHttpRequestEventTarget interface: existence and properties of interface prototype object's "constructor" property 
 PASS XMLHttpRequestEventTarget interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XMLHttpRequestEventTarget interface: attribute onloadstart 
-PASS Unscopable handled correctly for onloadstart property on XMLHttpRequestEventTarget 
 PASS XMLHttpRequestEventTarget interface: attribute onprogress 
-PASS Unscopable handled correctly for onprogress property on XMLHttpRequestEventTarget 
 PASS XMLHttpRequestEventTarget interface: attribute onabort 
-PASS Unscopable handled correctly for onabort property on XMLHttpRequestEventTarget 
 PASS XMLHttpRequestEventTarget interface: attribute onerror 
-PASS Unscopable handled correctly for onerror property on XMLHttpRequestEventTarget 
 PASS XMLHttpRequestEventTarget interface: attribute onload 
-PASS Unscopable handled correctly for onload property on XMLHttpRequestEventTarget 
 PASS XMLHttpRequestEventTarget interface: attribute ontimeout 
-PASS Unscopable handled correctly for ontimeout property on XMLHttpRequestEventTarget 
 PASS XMLHttpRequestEventTarget interface: attribute onloadend 
-PASS Unscopable handled correctly for onloadend property on XMLHttpRequestEventTarget 
 PASS XMLHttpRequestUpload interface: existence and properties of interface object 
 PASS XMLHttpRequestUpload interface object length 
 PASS XMLHttpRequestUpload interface object name 
@@ -46,7 +39,6 @@ PASS XMLHttpRequest interface: existence and properties of interface prototype o
 PASS XMLHttpRequest interface: existence and properties of interface prototype object's "constructor" property 
 PASS XMLHttpRequest interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XMLHttpRequest interface: attribute onreadystatechange 
-PASS Unscopable handled correctly for onreadystatechange property on XMLHttpRequest 
 PASS XMLHttpRequest interface: constant UNSENT on interface object 
 PASS XMLHttpRequest interface: constant UNSENT on interface prototype object 
 PASS XMLHttpRequest interface: constant OPENED on interface object 
@@ -58,43 +50,24 @@ PASS XMLHttpRequest interface: constant LOADING on interface prototype object
 PASS XMLHttpRequest interface: constant DONE on interface object 
 PASS XMLHttpRequest interface: constant DONE on interface prototype object 
 PASS XMLHttpRequest interface: attribute readyState 
-PASS Unscopable handled correctly for readyState property on XMLHttpRequest 
 PASS XMLHttpRequest interface: operation open(ByteString, USVString) 
-PASS Unscopable handled correctly for open(ByteString, USVString) on XMLHttpRequest 
 PASS XMLHttpRequest interface: operation open(ByteString, USVString, boolean, USVString, USVString) 
-PASS Unscopable handled correctly for open(ByteString, USVString, boolean, USVString, USVString) on XMLHttpRequest 
 PASS XMLHttpRequest interface: operation setRequestHeader(ByteString, ByteString) 
-PASS Unscopable handled correctly for setRequestHeader(ByteString, ByteString) on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute timeout 
-PASS Unscopable handled correctly for timeout property on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute withCredentials 
-PASS Unscopable handled correctly for withCredentials property on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute upload 
-PASS Unscopable handled correctly for upload property on XMLHttpRequest 
 PASS XMLHttpRequest interface: operation send([object Object],[object Object]) 
-PASS Unscopable handled correctly for send([object Object],[object Object]) on XMLHttpRequest 
 PASS XMLHttpRequest interface: operation abort() 
-PASS Unscopable handled correctly for abort() on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute responseURL 
-PASS Unscopable handled correctly for responseURL property on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute status 
-PASS Unscopable handled correctly for status property on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute statusText 
-PASS Unscopable handled correctly for statusText property on XMLHttpRequest 
 PASS XMLHttpRequest interface: operation getResponseHeader(ByteString) 
-PASS Unscopable handled correctly for getResponseHeader(ByteString) on XMLHttpRequest 
 PASS XMLHttpRequest interface: operation getAllResponseHeaders() 
-PASS Unscopable handled correctly for getAllResponseHeaders() on XMLHttpRequest 
 PASS XMLHttpRequest interface: operation overrideMimeType(DOMString) 
-PASS Unscopable handled correctly for overrideMimeType(DOMString) on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute responseType 
-PASS Unscopable handled correctly for responseType property on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute response 
-PASS Unscopable handled correctly for response property on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute responseText 
-PASS Unscopable handled correctly for responseText property on XMLHttpRequest 
 PASS XMLHttpRequest interface: attribute responseXML 
-PASS Unscopable handled correctly for responseXML property on XMLHttpRequest 
 PASS XMLHttpRequest must be primary interface of new XMLHttpRequest() 
 PASS Stringification of new XMLHttpRequest() 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "onreadystatechange" with the proper type 
@@ -142,21 +115,13 @@ PASS FormData interface: existence and properties of interface prototype object
 PASS FormData interface: existence and properties of interface prototype object's "constructor" property 
 PASS FormData interface: existence and properties of interface prototype object's @@unscopables property 
 PASS FormData interface: operation append(USVString, Blob, USVString) 
-PASS Unscopable handled correctly for append(USVString, Blob, USVString) on FormData 
 PASS FormData interface: operation append(USVString, USVString) 
-PASS Unscopable handled correctly for append(USVString, USVString) on FormData 
 PASS FormData interface: operation delete(USVString) 
-PASS Unscopable handled correctly for delete(USVString) on FormData 
 PASS FormData interface: operation get(USVString) 
-PASS Unscopable handled correctly for get(USVString) on FormData 
 PASS FormData interface: operation getAll(USVString) 
-PASS Unscopable handled correctly for getAll(USVString) on FormData 
 PASS FormData interface: operation has(USVString) 
-PASS Unscopable handled correctly for has(USVString) on FormData 
 PASS FormData interface: operation set(USVString, Blob, USVString) 
-PASS Unscopable handled correctly for set(USVString, Blob, USVString) on FormData 
 PASS FormData interface: operation set(USVString, USVString) 
-PASS Unscopable handled correctly for set(USVString, USVString) on FormData 
 PASS FormData must be primary interface of new FormData() 
 PASS Stringification of new FormData() 
 PASS FormData interface: new FormData() must inherit property "append(USVString, Blob, USVString)" with the proper type 
@@ -200,9 +165,6 @@ PASS ProgressEvent interface: existence and properties of interface prototype ob
 PASS ProgressEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS ProgressEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS ProgressEvent interface: attribute lengthComputable 
-PASS Unscopable handled correctly for lengthComputable property on ProgressEvent 
 PASS ProgressEvent interface: attribute loaded 
-PASS Unscopable handled correctly for loaded property on ProgressEvent 
 PASS ProgressEvent interface: attribute total 
-PASS Unscopable handled correctly for total property on ProgressEvent 
 
