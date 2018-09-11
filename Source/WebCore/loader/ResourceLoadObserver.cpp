@@ -36,6 +36,7 @@
 #include "ResourceLoadStatistics.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -242,6 +243,91 @@ void ResourceLoadObserver::requestStorageAccessUnderOpener(const String& domainI
 }
 #endif
 
+void ResourceLoadObserver::logFontLoad(const Document& document, const String& familyName, bool loadStatus)
+{
+    if (!shouldLog(document.sessionID().isEphemeral()))
+        return;
+    auto registrableDomain = primaryDomain(document.url());
+    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    bool shouldCallNotificationCallback = false;
+    if (!loadStatus) {
+        if (statistics.fontsFailedToLoad.add(familyName).isNewEntry)
+            shouldCallNotificationCallback = true;
+    } else {
+        if (statistics.fontsSuccessfullyLoaded.add(familyName).isNewEntry)
+            shouldCallNotificationCallback = true;
+    }
+    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+        shouldCallNotificationCallback = true;
+    if (shouldCallNotificationCallback)
+        scheduleNotificationIfNeeded();
+}
+    
+void ResourceLoadObserver::logCanvasRead(const Document& document)
+{
+    if (!shouldLog(document.sessionID().isEphemeral()))
+        return;
+    auto registrableDomain = primaryDomain(document.url());
+    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
+    statistics.canvasActivityRecord.wasDataRead = true;
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+        scheduleNotificationIfNeeded();
+}
+
+void ResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, const String& textWritten)
+{
+    if (!shouldLog(document.sessionID().isEphemeral()))
+        return;
+    auto registrableDomain = primaryDomain(document.url());
+    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    bool shouldCallNotificationCallback = false;
+    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
+    if (statistics.canvasActivityRecord.recordWrittenOrMeasuredText(textWritten))
+        shouldCallNotificationCallback = true;
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+        shouldCallNotificationCallback = true;
+    if (shouldCallNotificationCallback)
+        scheduleNotificationIfNeeded();
+}
+    
+void ResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, const ResourceLoadStatistics::NavigatorAPI functionName)
+{
+    if (!shouldLog(document.sessionID().isEphemeral()))
+        return;
+    auto registrableDomain = primaryDomain(document.url());
+    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    bool shouldCallNotificationCallback = false;
+    if (!statistics.navigatorFunctionsAccessed.contains(functionName)) {
+        statistics.navigatorFunctionsAccessed.add(functionName);
+        shouldCallNotificationCallback = true;
+    }
+    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+        shouldCallNotificationCallback = true;
+    if (shouldCallNotificationCallback)
+        scheduleNotificationIfNeeded();
+}
+    
+void ResourceLoadObserver::logScreenAPIAccessed(const Document& document, const ResourceLoadStatistics::ScreenAPI functionName)
+{
+    if (!shouldLog(document.sessionID().isEphemeral()))
+        return;
+    auto registrableDomain = primaryDomain(document.url());
+    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    bool shouldCallNotificationCallback = false;
+    if (!statistics.screenFunctionsAccessed.contains(functionName)) {
+        statistics.screenFunctionsAccessed.add(functionName);
+        shouldCallNotificationCallback = true;
+    }
+    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+        shouldCallNotificationCallback = true;
+    if (shouldCallNotificationCallback)
+        scheduleNotificationIfNeeded();
+}
+    
 ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
 {
     auto addResult = m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {

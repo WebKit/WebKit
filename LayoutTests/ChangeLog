@@ -1,3 +1,25 @@
+2018-09-11  Woodrow Wang  <woodrow_wang@apple.com>
+
+        Add Web API Statistics Collection
+        https://bugs.webkit.org/show_bug.cgi?id=187773
+        <rdar://problem/44155162>
+
+        Reviewed by Brent Fulgham.
+
+        Added new tests and expectations for the web API statistics data collection.
+
+        * TestExpectations:
+        * http/tests/webAPIStatistics/canvas-read-and-write-data-collection-expected.txt: Added.
+        * http/tests/webAPIStatistics/canvas-read-and-write-data-collection.html: Added.
+        * http/tests/webAPIStatistics/font-load-data-collection-expected.txt: Added.
+        * http/tests/webAPIStatistics/font-load-data-collection.html: Added.
+        * http/tests/webAPIStatistics/navigator-functions-accessed-data-collection-expected.txt: Added.
+        * http/tests/webAPIStatistics/navigator-functions-accessed-data-collection.html: Added.
+        * http/tests/webAPIStatistics/screen-functions-accessed-data-collection-expected.txt: Added.
+        * http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-11  Frederic Wang  <fwang@igalia.com>
 
         Modify more tests to use document.scrollingElement to access viewport scroll properties

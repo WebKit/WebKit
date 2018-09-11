@@ -37,13 +37,14 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
+#include "ResourceLoadObserver.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/Language.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakPtr.h>
-
 
 namespace WebCore {
 using namespace WTF;
@@ -74,6 +75,8 @@ String Navigator::appVersion() const
 {
     if (!m_frame)
         return String();
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*m_frame->document(), ResourceLoadStatistics::NavigatorAPI::AppVersion);
     String appVersion = NavigatorBase::appVersion();
     if (shouldHideFourDot(*m_frame))
         appVersion.replace("4.", "4_");
@@ -82,7 +85,11 @@ String Navigator::appVersion() const
 
 const String& Navigator::userAgent() const
 {
-    if (m_userAgent.isNull() && m_frame && m_frame->page())
+    if (!m_frame || !m_frame->page())
+        return m_userAgent;
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*m_frame->document(), ResourceLoadStatistics::NavigatorAPI::UserAgent);
+    if (m_userAgent.isNull())
         m_userAgent = m_frame->loader().userAgent(m_frame->document()->url());
     return m_userAgent;
 }
@@ -136,6 +143,10 @@ void Navigator::share(ScriptExecutionContext& context, ShareData data, Ref<Defer
 
 DOMPluginArray& Navigator::plugins()
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+        if (m_frame)
+            ResourceLoadObserver::shared().logNavigatorAPIAccessed(*m_frame->document(), ResourceLoadStatistics::NavigatorAPI::Plugins);
+    }
     if (!m_plugins)
         m_plugins = DOMPluginArray::create(m_frame);
     return *m_plugins;
@@ -143,6 +154,10 @@ DOMPluginArray& Navigator::plugins()
 
 DOMMimeTypeArray& Navigator::mimeTypes()
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+        if (m_frame)
+            ResourceLoadObserver::shared().logNavigatorAPIAccessed(*m_frame->document(), ResourceLoadStatistics::NavigatorAPI::MimeTypes);
+    }
     if (!m_mimeTypes)
         m_mimeTypes = DOMMimeTypeArray::create(m_frame);
     return *m_mimeTypes;
@@ -152,6 +167,9 @@ bool Navigator::cookieEnabled() const
 {
     if (!m_frame)
         return false;
+
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*m_frame->document(), ResourceLoadStatistics::NavigatorAPI::CookieEnabled);
 
     if (m_frame->page() && !m_frame->page()->settings().cookieEnabled())
         return false;
@@ -167,6 +185,9 @@ bool Navigator::javaEnabled() const
 {
     if (!m_frame)
         return false;
+
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*m_frame->document(), ResourceLoadStatistics::NavigatorAPI::JavaEnabled);
 
     if (!m_frame->settings().isJavaEnabled())
         return false;

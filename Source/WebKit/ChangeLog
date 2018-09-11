@@ -1,1 +1,14 @@
+2018-09-11  Woodrow Wang  <woodrow_wang@apple.com>
+
+        Add Web API Statistics Collection
+        https://bugs.webkit.org/show_bug.cgi?id=187773
+        <rdar://problem/44155162>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+
 == Rolled over to ChangeLog-2018-09-11 ==

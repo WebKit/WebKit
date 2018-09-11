@@ -41,6 +41,8 @@
 #include "InspectorInstrumentation.h"
 #include "Path2D.h"
 #include "RenderTheme.h"
+#include "ResourceLoadObserver.h"
+#include "RuntimeEnabledFeatures.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "TextMetrics.h"
@@ -363,6 +365,12 @@ static void normalizeSpaces(String& text)
 
 Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+        auto& canvas = this->canvas();
+        ResourceLoadObserver::shared().logCanvasWriteOrMeasure(canvas.document(), text);
+        ResourceLoadObserver::shared().logCanvasRead(canvas.document());
+    }
+    
     Ref<TextMetrics> metrics = TextMetrics::create();
 
     String normalizedText = text;
@@ -451,6 +459,9 @@ FloatPoint CanvasRenderingContext2D::textOffset(float width, TextDirection direc
 
 void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth)
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logCanvasWriteOrMeasure(this->canvas().document(), text);
+    
     auto& fontProxy = this->fontProxy();
     const auto& fontMetrics = fontProxy.fontMetrics();
 

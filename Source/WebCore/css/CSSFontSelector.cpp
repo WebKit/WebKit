@@ -46,6 +46,8 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Logging.h"
+#include "ResourceLoadObserver.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -308,13 +310,21 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
 
     AtomicString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document, fontDescription, familyName) : familyName;
     auto* face = m_cssFontFaceSet->fontFace(fontDescription.fontSelectionRequest(), familyForLookup);
-    if (!face) {
-        if (!resolveGenericFamilyFirst)
-            familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);
-        return FontRanges(FontCache::singleton().fontForFamily(fontDescription, familyForLookup));
+    if (face) {
+        if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+            if (m_document)
+                ResourceLoadObserver::shared().logFontLoad(*m_document, familyForLookup.string(), true);
+        }
+        return face->fontRanges(fontDescription);
     }
-
-    return face->fontRanges(fontDescription);
+    if (!resolveGenericFamilyFirst)
+        familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);
+    auto font = FontCache::singleton().fontForFamily(fontDescription, familyForLookup);
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+        if (m_document)
+            ResourceLoadObserver::shared().logFontLoad(*m_document, familyForLookup.string(), !!font);
+    }
+    return FontRanges { WTFMove(font) };
 }
 
 void CSSFontSelector::clearDocument()
@@ -394,8 +404,12 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
 
     if (!m_document->settings().fontFallbackPrefersPictographs())
         return nullptr;
-
-    return FontCache::singleton().fontForFamily(fontDescription, m_document->settings().pictographFontFamily());
+    auto& pictographFontFamily = m_document->settings().pictographFontFamily();
+    auto font = FontCache::singleton().fontForFamily(fontDescription, pictographFontFamily);
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logFontLoad(*m_document, pictographFontFamily.string(), !!font);
+    
+    return font;
 }
 
 }

@@ -1,3 +1,114 @@
+2018-09-11  Woodrow Wang  <woodrow_wang@apple.com>
+
+        Add Web API Statistics Collection
+        https://bugs.webkit.org/show_bug.cgi?id=187773
+        <rdar://problem/44155162>
+
+        Reviewed by Brent Fulgham.
+
+        Added data collection for web API statistics, specifically regarding the canvas, font loads, 
+        screen functions, and navigator functions. The data collection code is placed under a runtime 
+        enabled feature flag. The statistics are stored in a ResourceLoadStatistics object and written 
+        to a plist on disk. Added a new file CanvasActivityRecord.h and CanvasActivityRecord.cpp which
+        includes a struct to keep track of HTML5 canvas element read and writes. 
+
+        Tests: http/tests/webAPIStatistics/canvas-read-and-write-data-collection.html
+               http/tests/webAPIStatistics/font-load-data-collection.html
+               http/tests/webAPIStatistics/navigator-functions-accessed-data-collection.html
+               http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        (WebCore::CSSFontSelector::fallbackFontAt):
+
+        The following are the functions where we'd like to record a canvas read.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toDataURL):
+        (WebCore::HTMLCanvasElement::toBlob):
+        (WebCore::HTMLCanvasElement::getImageData):
+        (WebCore::HTMLCanvasElement::toMediaSample):
+        (WebCore::HTMLCanvasElement::captureStream):
+
+        The following are the functions where we'd like to record a canvas write.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::measureText):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+
+        The following files and functions handle the CanvasActivityRecord struct and
+        its respective functions.
+
+        * loader/CanvasActivityRecord.cpp: Added.
+        (WebCore::CanvasActivityRecord::recordWrittenOrMeasuredText):
+        (WebCore::CanvasActivityRecord::mergeWith):
+        * loader/CanvasActivityRecord.h: Added.
+        (WebCore::CanvasActivityRecord::encode const):
+        (WebCore::CanvasActivityRecord::decode):
+
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logFontLoad):
+        (WebCore::ResourceLoadObserver::logCanvasRead):
+        (WebCore::ResourceLoadObserver::logCanvasWriteOrMeasure):
+        (WebCore::ResourceLoadObserver::logNavigatorAPIAccessed):
+        (WebCore::ResourceLoadObserver::logScreenAPIAccessed):
+
+        Before, entries in the ResourceLoadStatistics involving HashSets used "origin" as the key. 
+        Now the encodeHashSet function has been generalized to take any key to encode the entries 
+        in the HashSet. Also added functionality to encode an OptionSet by converting it to its 
+        raw bitmask state. 
+
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::encodeHashSet):
+        (WebCore::encodeOriginHashSet):
+        (WebCore::encodeOptionSet):
+        (WebCore::encodeFontHashSet):
+        (WebCore::encodeCanvasActivityRecord):
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::decodeHashSet):
+        (WebCore::decodeOriginHashSet):
+        (WebCore::decodeOptionSet):
+        (WebCore::decodeFontHashSet):
+        (WebCore::decodeCanvasActivityRecord):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::navigatorAPIEnumToString):
+        (WebCore::screenAPIEnumToString):
+        (WebCore::appendNavigatorAPIOptionSet):
+        (WebCore::appendScreenAPIOptionSet):
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::ResourceLoadStatistics::merge):
+        * loader/ResourceLoadStatistics.h:
+        * loader/ResourceTiming.cpp:
+
+        The following are the navigator functions recorded for the web API statistics.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::appVersion const):
+        (WebCore::Navigator::userAgent const):
+        (WebCore::Navigator::plugins):
+        (WebCore::Navigator::mimeTypes):
+        (WebCore::Navigator::cookieEnabled const):
+        (WebCore::Navigator::javaEnabled const):
+
+        The following are the screen functions recorded for the web API statistics.
+
+        * page/Screen.cpp:
+        (WebCore::Screen::height const):
+        (WebCore::Screen::width const):
+        (WebCore::Screen::colorDepth const):
+        (WebCore::Screen::pixelDepth const):
+        (WebCore::Screen::availLeft const):
+        (WebCore::Screen::availTop const):
+        (WebCore::Screen::availHeight const):
+        (WebCore::Screen::availWidth const):
+
 2018-09-11  Pablo Saavedra  <psaavedra@igalia.com>
 
         playbackControlsManagerUpdateTimerFired and

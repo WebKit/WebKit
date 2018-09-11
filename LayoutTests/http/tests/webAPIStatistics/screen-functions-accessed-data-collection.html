@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test for screen functions accessed data collection in resource load statistics</title>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Tests for screen functions accessed data collection in ResourceLoadStatistics plist by querying for all the screen properties and dumping the entire resource load statistics map.");
+    const hostUnderTest = "127.0.0.1:8000";
+    const statisticsUrl = "http://" + hostUnderTest + "/temp";
+
+    function completeTest() {
+        testRunner.dumpResourceLoadStatistics();
+            
+        testRunner.statisticsResetToConsistentState(function() {
+            testRunner.notifyDone();
+        });
+    }
+
+    function runTestRunnerTest() {
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+
+        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+    
+        var availTop = screen.availTop;
+        var colorDepth = screen.colorDepth;
+        var pixelDepth = screen.pixelDepth;
+        var height = screen.height;
+        var width = screen.width;
+        var availLeft = screen.availLeft;
+        var availHeight = screen.availHeight;
+        var availWidth = screen.availWidth;
+    }
+
+    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        testRunner.waitUntilDone();
+        internals.setResourceLoadStatisticsEnabled(true);
+        testRunner.setWebAPIStatisticsEnabled(true);
+        runTestRunnerTest();
+    }
+</script>
+</body>
+</html>

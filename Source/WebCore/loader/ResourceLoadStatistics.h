@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "CanvasActivityRecord.h"
 #include "URL.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -96,6 +98,33 @@ struct ResourceLoadStatistics {
 
     // In-memory only
     bool isMarkedForCookieBlocking { false };
+    
+    // This set represents the registrable domain of the top frame where web API
+    // were used in the top frame or one of its subframes.
+    HashCountedSet<String> topFrameRegistrableDomainsWhichAccessedWebAPIs;
+    HashSet<String> fontsFailedToLoad;
+    HashSet<String> fontsSuccessfullyLoaded;
+    CanvasActivityRecord canvasActivityRecord;
+    enum class NavigatorAPI : uint64_t {
+        AppVersion = 1 << 0,
+        UserAgent = 1 << 1,
+        Plugins = 1 << 2,
+        MimeTypes = 1 << 3,
+        CookieEnabled = 1 << 4,
+        JavaEnabled = 1 << 5,
+    };
+    enum class ScreenAPI : uint64_t {
+        Height = 1 << 0,
+        Width = 1 << 1,
+        ColorDepth = 1 << 2,
+        PixelDepth = 1 << 3,
+        AvailLeft = 1 << 4,
+        AvailTop = 1 << 5,
+        AvailHeight = 1 << 6,
+        AvailWidth = 1 << 7,
+    };
+    OptionSet<NavigatorAPI> navigatorFunctionsAccessed;
+    OptionSet<ScreenAPI> screenFunctionsAccessed;
 };
 
 } // namespace WebCore

@@ -34,6 +34,8 @@
 #include "FontCache.h"
 #include "FontCustomPlatformData.h"
 #include "FontDescription.h"
+#include "ResourceLoadObserver.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGToOTFFontConversion.h"
 #include "SharedBuffer.h"
 
@@ -181,6 +183,10 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
             fontDescription.setComputedSize(1);
             fontDescription.setShouldAllowUserInstalledFonts(m_face.allowUserInstalledFonts());
             success = FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, nullptr, nullptr, FontSelectionSpecifiedCapabilities(), true);
+            if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+                if (auto* document = fontSelector->document())
+                    ResourceLoadObserver::shared().logFontLoad(*document, m_familyNameOrURI.string(), success);
+            }
         }
         setStatus(success ? Status::Success : Status::Failure);
     }

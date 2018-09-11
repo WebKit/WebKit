@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test for font loading data collection in resource load statistics</title>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Tests for font loading data collection in ResourceLoadStatistics plist by loading fonts and dumping the entire resource load statistics map. The test tries to load various fonts through a comma separated font-family list to draw a string with many m's since they differ in width more prominently among fonts.");
+    const hostUnderTest = "127.0.0.1:8000";
+    const statisticsUrl = "http://" + hostUnderTest + "/temp";
+
+    function completeTest() {
+        testRunner.dumpResourceLoadStatistics();
+            
+        testRunner.statisticsResetToConsistentState(function() {
+            testRunner.notifyDone();
+        });
+    }
+
+    function runTestRunnerTest() {
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+
+        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+
+        var body = document.getElementsByTagName('body')[0]
+    
+        var span = document.createElement('span');
+        var testFontString = 'mmmmmmmmmmlli';
+        
+        span.innerHTML = testFontString;
+        span.style.fontFamily = 'Andale, Fransiscan, notARealFont, serif';
+        body.appendChild(span);
+    }
+
+    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        testRunner.waitUntilDone();
+        internals.setResourceLoadStatisticsEnabled(true);
+        testRunner.setWebAPIStatisticsEnabled(true);
+        runTestRunnerTest();
+    }
+</script>
+</body>
+</html>

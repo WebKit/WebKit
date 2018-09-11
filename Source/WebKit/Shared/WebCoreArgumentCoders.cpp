@@ -2664,6 +2664,16 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     encoder << statistics.isPrevalentResource;
     encoder << statistics.isVeryPrevalentResource;
     encoder << statistics.dataRecordsRemoved;
+    
+    encoder << statistics.fontsFailedToLoad;
+    encoder << statistics.fontsSuccessfullyLoaded;
+    encoder << statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs;
+    
+    encoder << statistics.canvasActivityRecord;
+    
+    encoder << statistics.navigatorFunctionsAccessed;
+    encoder << statistics.screenFunctionsAccessed;
+    
 }
 
 std::optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder)
@@ -2723,7 +2733,25 @@ std::optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::dec
     
     if (!decoder.decode(statistics.dataRecordsRemoved))
         return std::nullopt;
-
+    
+    if (!decoder.decode(statistics.fontsFailedToLoad))
+        return std::nullopt;
+    
+    if (!decoder.decode(statistics.fontsSuccessfullyLoaded))
+        return std::nullopt;
+    
+    if (!decoder.decode(statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs))
+        return std::nullopt;
+    
+    if (!decoder.decode(statistics.canvasActivityRecord))
+        return std::nullopt;
+    
+    if (!decoder.decode(statistics.navigatorFunctionsAccessed))
+        return std::nullopt;
+    
+    if (!decoder.decode(statistics.screenFunctionsAccessed))
+        return std::nullopt;
+    
     return WTFMove(statistics);
 }
 

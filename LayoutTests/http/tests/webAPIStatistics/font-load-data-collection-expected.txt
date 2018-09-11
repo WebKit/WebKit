@@ -1,0 +1,31 @@
+Tests for font loading data collection in ResourceLoadStatistics plist by loading fonts and dumping the entire resource load statistics map. The test tries to load various fonts through a comma separated font-family list to draw a string with many m's since they differ in width more prominently among fonts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+mmmmmmmmmmlli
+Resource load statistics:
+
+High level domain: 127.0.0.1
+    lastSeen: 0
+    hadUserInteraction: No
+    mostRecentUserInteraction: -1
+    grandfathered: No
+    isPrevalentResource: No
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 0
+    isMarkedForCookieBlocking: No
+    fontsFailedToLoad:
+        Fransiscan
+        Andale
+        notARealFont
+    fontsSuccessfullyLoaded:
+        Times
+        Courier
+    topFrameRegistrableDomainsWhichAccessedWebAPIs:
+        127.0.0.1: 9
+    canvasReadData: No
+

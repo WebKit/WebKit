@@ -1,0 +1,34 @@
+Tests for navigator functions accessed data collection in ResourceLoadStatistics plist by querying for all the navigator properties and dumping the entire resource load statistics map.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Resource load statistics:
+
+High level domain: 127.0.0.1
+    lastSeen: 0
+    hadUserInteraction: No
+    mostRecentUserInteraction: -1
+    grandfathered: No
+    isPrevalentResource: No
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 0
+    isMarkedForCookieBlocking: No
+    fontsSuccessfullyLoaded:
+        Times
+        Courier
+    topFrameRegistrableDomainsWhichAccessedWebAPIs:
+        127.0.0.1: 12
+    navigatorFunctionsAccessed:
+        appVersion
+        userAgent
+        plugins
+        mimeTypes
+        cookieEnabled
+        javaEnabled
+    canvasReadData: No
+

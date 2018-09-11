@@ -48,6 +48,7 @@
 #include "MIMETypeRegistry.h"
 #include "RenderElement.h"
 #include "RenderHTMLCanvas.h"
+#include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -698,6 +699,8 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType,
 
     if (m_size.isEmpty() || !buffer())
         return UncachedString { "data:,"_s };
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logCanvasRead(document());
 
     auto encodingMIMEType = toEncodingMimeType(mimeType);
     auto quality = qualityFromJSValue(qualityValue);
@@ -727,6 +730,8 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref
         callback->scheduleCallback(context, nullptr);
         return { };
     }
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logCanvasRead(document());
 
     auto encodingMIMEType = toEncodingMimeType(mimeType);
     auto quality = qualityFromJSValue(qualityValue);
@@ -755,8 +760,11 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(m_context.get()))
+    if (is<WebGLRenderingContextBase>(m_context.get())) {
+        if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+            ResourceLoadObserver::shared().logCanvasRead(document());
         return downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToImageData();
+    }
 #endif
     return nullptr;
 }
@@ -768,6 +776,8 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
     auto* imageBuffer = buffer();
     if (!imageBuffer)
         return nullptr;
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logCanvasRead(document());
 
 #if PLATFORM(COCOA)
     makeRenderingResultsAvailable();
@@ -781,6 +791,8 @@ ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(ScriptExecutionCo
 {
     if (!originClean())
         return Exception(SecurityError, "Canvas is tainted"_s);
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logCanvasRead(document());
 
     if (frameRequestRate && frameRequestRate.value() < 0)
         return Exception(NotSupportedError, "frameRequestRate is negative"_s);

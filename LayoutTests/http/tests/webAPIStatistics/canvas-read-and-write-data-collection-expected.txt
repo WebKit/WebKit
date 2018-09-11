@@ -1,0 +1,30 @@
+Tests for canvas read and write data collection in ResourceLoadStatistics plist by rendering and reading text on the canvas and dumping the entire resource load statistics map.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Resource load statistics:
+
+High level domain: 127.0.0.1
+    lastSeen: 0
+    hadUserInteraction: No
+    mostRecentUserInteraction: -1
+    grandfathered: No
+    isPrevalentResource: No
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 0
+    isMarkedForCookieBlocking: No
+    fontsSuccessfullyLoaded:
+        Helvetica
+        Times
+        Courier
+    topFrameRegistrableDomainsWhichAccessedWebAPIs:
+        127.0.0.1: 8
+    canvasTextWritten:
+        suspicious invisible text
+    canvasReadData: Yes
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test for canvas read and write data collection in resource load statistics</title>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Tests for canvas read and write data collection in ResourceLoadStatistics plist by rendering and reading text on the canvas and dumping the entire resource load statistics map.");
+    const hostUnderTest = "127.0.0.1:8000";
+    const statisticsUrl = "http://" + hostUnderTest + "/temp";
+
+    function completeTest() {
+        testRunner.dumpResourceLoadStatistics();
+            
+        testRunner.statisticsResetToConsistentState(function() {
+            testRunner.notifyDone();
+        });
+    }
+
+    function runTestRunnerTest() {
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+
+        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+    
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        context.fillText('suspicious invisible text', 2, 15);
+        canvas.toDataURL();
+    }
+
+    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        testRunner.waitUntilDone();
+        internals.setResourceLoadStatisticsEnabled(true);
+        testRunner.setWebAPIStatisticsEnabled(true);
+        runTestRunnerTest();
+    }
+</script>
+</body>
+</html>

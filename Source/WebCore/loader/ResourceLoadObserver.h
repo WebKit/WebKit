@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "CanvasActivityRecord.h"
+#include "ResourceLoadStatistics.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -58,6 +60,12 @@ public:
     void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, bool usesEphemeralSession);
     void logUserInteractionWithReducedTimeResolution(const Document&);
     void logWindowCreation(const URL& popupUrl, uint64_t openerPageID, Document& openerDocument);
+    
+    void logFontLoad(const Document&, const String& familyName, bool loadStatus);
+    void logCanvasRead(const Document&);
+    void logCanvasWriteOrMeasure(const Document&, const String& textWritten);
+    void logNavigatorAPIAccessed(const Document&, const ResourceLoadStatistics::NavigatorAPI);
+    void logScreenAPIAccessed(const Document&, const ResourceLoadStatistics::ScreenAPI);
 
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 

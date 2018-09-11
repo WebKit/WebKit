@@ -28,8 +28,10 @@
 
 #include "CachedResource.h"
 #include "PerformanceServerTiming.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SecurityOrigin.h"
 #include "ServerTimingParser.h"
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
