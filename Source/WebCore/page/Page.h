@@ -691,7 +691,9 @@ private:
 
     std::optional<std::pair<MediaCanStartListener&, Document&>> takeAnyMediaCanStartListener();
 
+#if ENABLE(VIDEO)
     void playbackControlsManagerUpdateTimerFired();
+#endif
 
     Vector<Ref<PluginViewBase>> pluginViews();
 
@@ -870,7 +872,9 @@ private:
 
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
 
+#if ENABLE(VIDEO)
     Timer m_playbackControlsManagerUpdateTimer;
+#endif
 
     bool m_allowsMediaDocumentInlinePlayback { false };
     bool m_allowsPlaybackControlsForAutoplayingAudio { false };

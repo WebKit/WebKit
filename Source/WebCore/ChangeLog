@@ -1,3 +1,22 @@
+2018-09-11  Pablo Saavedra  <psaavedra@igalia.com>
+
+        playbackControlsManagerUpdateTimerFired and
+        m_playbackControlsManagerUpdateTimer must be
+        guarded with ENABLE(VIDEO), otherwise the following
+        error occurs with the VIDEO feature turned off:
+
+          error: 'MediaElementSession' has not been declared
+
+        Add missing #if ENABLE(VIDEO) Page.cpp and Page.h
+        https://bugs.webkit.org/show_bug.cgi?id=189500
+
+        Reviewed by Anders Carlsson.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::schedulePlaybackControlsManagerUpdate):
+        * page/Page.h:
+
 2018-09-11  Frederic Wang  <fwang@igalia.com>
 
         Refactor filter list checking code
