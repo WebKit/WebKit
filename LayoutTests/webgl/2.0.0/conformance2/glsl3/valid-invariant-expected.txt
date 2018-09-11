@@ -1,9 +1,9 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/valid-invariant.html
-[ FAIL: 1 ] [unexpected link status] vertex shader with invariant varying and fragment shader with variant varying must succeed
-[ FAIL: 2 ] [unexpected link status] vertex shader with invariant (global setting) varying and fragment shader with variant varying must succeed
-[ FAIL: 3 ] [unexpected link status] vertex shader with invariant (separately set) varying and fragment shader with variant varying must succeed
-successfullyParsed is true
-FAIL
+[ 1: FAIL ] [unexpected link status] vertex shader with invariant varying and fragment shader with variant varying must succeed
+[ 2: FAIL ] [unexpected link status] vertex shader with invariant (global setting) varying and fragment shader with variant varying must succeed
+[ 3: FAIL ] [unexpected link status] vertex shader with invariant (separately set) varying and fragment shader with variant varying must succeed
+[ 4: PASS ] successfullyParsed is true
+[ FAIL ] 3 failures reported
 

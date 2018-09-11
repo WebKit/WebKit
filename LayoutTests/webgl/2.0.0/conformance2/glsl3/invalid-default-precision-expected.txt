@@ -1,9 +1,9 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/invalid-default-precision.html
-default precision qualifier shouldn't work with vec2
-default precision qualifier shouldn't work with void
-default precision qualifier shouldn't work with uint
-successfullyParsed is true
-PASS
+[ 1: PASS ] default precision qualifier shouldn't work with vec2
+[ 2: PASS ] default precision qualifier shouldn't work with void
+[ 3: PASS ] default precision qualifier shouldn't work with uint
+[ 4: PASS ] successfullyParsed is true
+[ PASS ] All tests passed
 

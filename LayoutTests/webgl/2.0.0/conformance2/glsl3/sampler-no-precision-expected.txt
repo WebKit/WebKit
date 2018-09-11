@@ -1,32 +1,32 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/sampler-no-precision.html
-Vertex shader with a sampler3D uniform with no precision qualifier should not compile
-Fragment shader with a sampler3D uniform with no precision qualifier should not compile
-Vertex shader with a samplerCubeShadow uniform with no precision qualifier should not compile
-Fragment shader with a samplerCubeShadow uniform with no precision qualifier should not compile
-Vertex shader with a sampler2DShadow uniform with no precision qualifier should not compile
-Fragment shader with a sampler2DShadow uniform with no precision qualifier should not compile
-Vertex shader with a sampler2DArray uniform with no precision qualifier should not compile
-Fragment shader with a sampler2DArray uniform with no precision qualifier should not compile
-Vertex shader with a sampler2DArrayShadow uniform with no precision qualifier should not compile
-Fragment shader with a sampler2DArrayShadow uniform with no precision qualifier should not compile
-Vertex shader with a isampler2D uniform with no precision qualifier should not compile
-Fragment shader with a isampler2D uniform with no precision qualifier should not compile
-Vertex shader with a isampler3D uniform with no precision qualifier should not compile
-Fragment shader with a isampler3D uniform with no precision qualifier should not compile
-Vertex shader with a isamplerCube uniform with no precision qualifier should not compile
-Fragment shader with a isamplerCube uniform with no precision qualifier should not compile
-Vertex shader with a isampler2DArray uniform with no precision qualifier should not compile
-Fragment shader with a isampler2DArray uniform with no precision qualifier should not compile
-Vertex shader with a usampler2D uniform with no precision qualifier should not compile
-Fragment shader with a usampler2D uniform with no precision qualifier should not compile
-Vertex shader with a usampler3D uniform with no precision qualifier should not compile
-Fragment shader with a usampler3D uniform with no precision qualifier should not compile
-Vertex shader with a usamplerCube uniform with no precision qualifier should not compile
-Fragment shader with a usamplerCube uniform with no precision qualifier should not compile
-Vertex shader with a usampler2DArray uniform with no precision qualifier should not compile
-Fragment shader with a usampler2DArray uniform with no precision qualifier should not compile
-successfullyParsed is true
-PASS
+[ 1: PASS ] Vertex shader with a sampler3D uniform with no precision qualifier should not compile
+[ 2: PASS ] Fragment shader with a sampler3D uniform with no precision qualifier should not compile
+[ 3: PASS ] Vertex shader with a samplerCubeShadow uniform with no precision qualifier should not compile
+[ 4: PASS ] Fragment shader with a samplerCubeShadow uniform with no precision qualifier should not compile
+[ 5: PASS ] Vertex shader with a sampler2DShadow uniform with no precision qualifier should not compile
+[ 6: PASS ] Fragment shader with a sampler2DShadow uniform with no precision qualifier should not compile
+[ 7: PASS ] Vertex shader with a sampler2DArray uniform with no precision qualifier should not compile
+[ 8: PASS ] Fragment shader with a sampler2DArray uniform with no precision qualifier should not compile
+[ 9: PASS ] Vertex shader with a sampler2DArrayShadow uniform with no precision qualifier should not compile
+[ 10: PASS ] Fragment shader with a sampler2DArrayShadow uniform with no precision qualifier should not compile
+[ 11: PASS ] Vertex shader with a isampler2D uniform with no precision qualifier should not compile
+[ 12: PASS ] Fragment shader with a isampler2D uniform with no precision qualifier should not compile
+[ 13: PASS ] Vertex shader with a isampler3D uniform with no precision qualifier should not compile
+[ 14: PASS ] Fragment shader with a isampler3D uniform with no precision qualifier should not compile
+[ 15: PASS ] Vertex shader with a isamplerCube uniform with no precision qualifier should not compile
+[ 16: PASS ] Fragment shader with a isamplerCube uniform with no precision qualifier should not compile
+[ 17: PASS ] Vertex shader with a isampler2DArray uniform with no precision qualifier should not compile
+[ 18: PASS ] Fragment shader with a isampler2DArray uniform with no precision qualifier should not compile
+[ 19: PASS ] Vertex shader with a usampler2D uniform with no precision qualifier should not compile
+[ 20: PASS ] Fragment shader with a usampler2D uniform with no precision qualifier should not compile
+[ 21: PASS ] Vertex shader with a usampler3D uniform with no precision qualifier should not compile
+[ 22: PASS ] Fragment shader with a usampler3D uniform with no precision qualifier should not compile
+[ 23: PASS ] Vertex shader with a usamplerCube uniform with no precision qualifier should not compile
+[ 24: PASS ] Fragment shader with a usamplerCube uniform with no precision qualifier should not compile
+[ 25: PASS ] Vertex shader with a usampler2DArray uniform with no precision qualifier should not compile
+[ 26: PASS ] Fragment shader with a usampler2DArray uniform with no precision qualifier should not compile
+[ 27: PASS ] successfullyParsed is true
+[ PASS ] All tests passed
 

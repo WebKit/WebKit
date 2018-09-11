@@ -1,11 +1,11 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/texture-offset-out-of-range.html
-Minimum in-range texture offset should compile
-Maximum in-range texture offset should compile
-Texture offset below minimum valid value should not compile
-Texture offset above maximum valid value should not compile
-Dynamic texture offset should not compile
-successfullyParsed is true
-PASS
+[ 1: PASS ] Minimum in-range texture offset should compile
+[ 2: PASS ] Maximum in-range texture offset should compile
+[ 3: PASS ] Texture offset below minimum valid value should not compile
+[ 4: PASS ] Texture offset above maximum valid value should not compile
+[ 5: PASS ] Dynamic texture offset should not compile
+[ 6: PASS ] successfullyParsed is true
+[ PASS ] All tests passed
 

@@ -1,10 +1,10 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/misplaced-version-directive.html
-Vertex shader with a newline before the version directive should fail.
-Vertex shader with a comment before the version directive should fail.
-Fragment shader with a comment before the version directive should fail.
-Fragment shader with a newline before the version directive should fail.
-successfullyParsed is true
-PASS
+[ 1: PASS ] Vertex shader with a newline before the version directive should fail.
+[ 2: PASS ] Vertex shader with a comment before the version directive should fail.
+[ 3: PASS ] Fragment shader with a comment before the version directive should fail.
+[ 4: PASS ] Fragment shader with a newline before the version directive should fail.
+[ 5: PASS ] successfullyParsed is true
+[ PASS ] All tests passed
 

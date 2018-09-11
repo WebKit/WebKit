@@ -25,7 +25,7 @@
 
   var list = function(msg, color) {
     if (!resultsList) {
-      resultsList = document.createElement("ol");
+      resultsList = document.createElement("ul");
       document.getElementById("result").appendChild(resultsList);
     }
 
@@ -50,9 +50,9 @@
   window.webglTestHarness = {
     reportResults: function(url, success, msg) {
       if (success) {
-        list(msg, "green");
+        list(`[ ${resultNum}: PASS ] ${msg}`, "green");
       } else {
-        list("[ FAIL: " + resultNum + " ] " + msg, "red");
+        list(`[ ${resultNum}: FAIL ] ${msg}`, "red");
         ++numFailures;
       }
 
@@ -62,9 +62,9 @@
     notifyFinished: function(url) {
       var iframe = document.getElementById("iframe");
       if (numFailures > 0) {
-        log("FAIL", "red");
+        log(`[ FAIL ] ${numFailures} failures reported`, "red");
       } else {
-        log("PASS", "green");
+        log("[ PASS ] All tests passed", "green");
         iframe.innerHTML = "";
       }
 
