@@ -1,3 +1,11 @@
+2018-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix ProcessSwap API tests after r235867.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::exitAcceleratedCompositingMode):
+        Add null-check for drawing area.
+
 2018-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unable to change the value of select elements while preserving focus state
