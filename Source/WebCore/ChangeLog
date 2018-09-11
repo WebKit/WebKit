@@ -1,3 +1,14 @@
+2018-09-11  Per Arne Vollan  <pvollan@apple.com>
+
+        Addressing post-review feedback on r235619.
+        https://bugs.webkit.org/show_bug.cgi?id=187925
+
+        Unreviewed.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::primaryScreenDisplayID):
+        * testing/Internals.h:
+
 2018-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Support changing foreground colors via color panel

@@ -4715,7 +4715,7 @@ void Internals::notifyResourceLoadObserver()
     ResourceLoadObserver::shared().notifyObserver();
 }
 
-unsigned long Internals::primaryScreenDisplayID()
+unsigned Internals::primaryScreenDisplayID()
 {
 #if PLATFORM(MAC)
     return WebCore::primaryScreenDisplayID();

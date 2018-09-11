@@ -734,7 +734,7 @@ public:
 
     void notifyResourceLoadObserver();
 
-    unsigned long primaryScreenDisplayID();
+    unsigned primaryScreenDisplayID();
         
 private:
     explicit Internals(Document&);
