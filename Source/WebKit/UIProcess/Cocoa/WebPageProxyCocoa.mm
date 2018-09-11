@@ -136,7 +136,7 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
 
 void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Handle& dragImageHandle)
 {
-    m_pageClient.startDrag(dragItem, dragImageHandle);
+    pageClient().startDrag(dragItem, dragImageHandle);
 }
 
 #if PLATFORM(IOS)
@@ -153,7 +153,7 @@ void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 
     auto previousRect = m_currentDragCaretRect;
     m_currentDragCaretRect = dragCaretRect;
-    m_pageClient.didChangeDataInteractionCaretRect(previousRect, dragCaretRect);
+    pageClient().didChangeDataInteractionCaretRect(previousRect, dragCaretRect);
 }
 
 #endif // PLATFORM(IOS)

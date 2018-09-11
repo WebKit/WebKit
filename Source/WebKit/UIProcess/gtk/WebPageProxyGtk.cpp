@@ -47,7 +47,7 @@ void WebPageProxy::platformInitialize()
 
 GtkWidget* WebPageProxy::viewWidget()
 {
-    return static_cast<PageClientImpl&>(m_pageClient).viewWidget();
+    return static_cast<PageClientImpl&>(pageClient()).viewWidget();
 }
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
@@ -84,7 +84,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
         return;
     if (m_editorState.selectionIsRange)
         WebPasteboardProxy::singleton().setPrimarySelectionOwner(focusedFrame());
-    m_pageClient.selectionDidChange();
+    pageClient().selectionDidChange();
 }
 
 #if PLATFORM(X11)
