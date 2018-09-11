@@ -1196,7 +1196,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
 
 void WebPageProxy::recordAutomaticNavigationSnapshot()
 {
-    if (m_suppressAutomaticNavigationSnapshotting)
+    if (m_shouldSuppressNextAutomaticNavigationSnapshot)
         return;
 
     if (WebBackForwardListItem* item = m_backForwardList->currentItem())
@@ -2455,6 +2455,12 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 {
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString());
 
+    // Because we're about to tear down the drawing area and swap to a new process, this is our last opportunity to snapshot what's currently displayed before
+    // we navigate. Do the navigation snapshot now and suppress the next one since the view will be blank then.
+    // FIXME: We should be able to drop this logic if we kept displaying the previous content a while longer when we swap process on navigation.
+    recordAutomaticNavigationSnapshot();
+    suppressNextAutomaticNavigationSnapshot();
+
     Ref<WebProcessProxy> previousProcess = m_process.copyRef();
     std::optional<uint64_t> navigatedFrameIdentifierInPreviousProcess;
     if (m_mainFrame)
@@ -2629,7 +2635,7 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
 
         // The back / forward list was restored from a sessionState so we don't want to snapshot the current
         // page when navigating away. Suppress navigation snapshotting until the next load has committed
-        m_suppressAutomaticNavigationSnapshotting = true;
+        suppressNextAutomaticNavigationSnapshot();
     }
 
     // FIXME: Navigating should be separate from state restoration.
@@ -3625,7 +3631,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     if (frame->isMainFrame()) {
         m_pageLoadState.didCommitLoad(transaction, webCertificateInfo, markPageInsecure);
-        m_suppressAutomaticNavigationSnapshotting = false;
+        m_shouldSuppressNextAutomaticNavigationSnapshot = false;
     } else if (markPageInsecure)
         m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
 

@@ -1,3 +1,33 @@
+2018-09-11  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON): "Swipe back" snapshot is missing when navigating back cross-process
+        https://bugs.webkit.org/show_bug.cgi?id=189482
+        <rdar://problem/44317222>
+
+        Reviewed by Geoffrey Garen.
+
+        The issue was that when we swap process on navigation, we:
+        1. Call processDidTerminate() which calls resetState() and clears the displayed content
+        2. Reattach the WebPageProxy to a new WebProcess
+        3. Trigger the navigation
+        4. Take the navigation snapshot
+
+        When the navigation snapshot occurs at step 4, the view is already blank in the case of
+        process swap. To avoid the issue, we take the navigation snapshot earlier, before calling
+        processDidTerminate() and we suppress the next navigation snapshot as it would be blank.
+
+        At some point, we will likely want to display the previous' WebProcess content longer,
+        until the new WebProcess has something interesting to display. Once this is implemented,
+        we'll likely be able to drop the early snapshotting logic.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::recordAutomaticNavigationSnapshot):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::suppressNextAutomaticNavigationSnapshot):
+
 2018-09-11  Woodrow Wang  <woodrow_wang@apple.com>
 
         Add Web API Statistics Collection
