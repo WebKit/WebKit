@@ -88,7 +88,7 @@ public:
     
     struct ConicData {
         FloatPoint point0;
-        float angle;
+        float angleRadians;
     };
 
     using Data = Variant<LinearData, RadialData, ConicData>;

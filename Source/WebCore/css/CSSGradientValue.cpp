@@ -1434,11 +1434,11 @@ Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, con
     if (!m_firstY)
         centerPoint.setY(size.height() / 2);
 
-    float angle = 0;
+    float angleRadians = 0;
     if (m_angle)
-        angle = m_angle->floatValue(CSSPrimitiveValue::CSS_RAD);
+        angleRadians = m_angle->floatValue(CSSPrimitiveValue::CSS_RAD);
 
-    Gradient::ConicData data { centerPoint, angle };
+    Gradient::ConicData data { centerPoint, angleRadians };
     ConicGradientAdapter adapter;
     auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
 

@@ -134,7 +134,7 @@ void Gradient::paint(CGContextRef platformContext)
             CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
             CGContextRotateCTM(platformContext, (CGFloat)-M_PI_2);
             CGContextTranslateCTM(platformContext, -data.point0.x(), -data.point0.y());
-            CGContextDrawConicGradient(platformContext, platformGradient(), data.point0, data.angle);
+            CGContextDrawConicGradient(platformContext, platformGradient(), data.point0, data.angleRadians);
             CGContextRestoreGState(platformContext);
 #else
             UNUSED_PARAM(data);

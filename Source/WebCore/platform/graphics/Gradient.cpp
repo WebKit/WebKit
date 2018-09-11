@@ -223,7 +223,7 @@ unsigned Gradient::hash() const
         float startRadius;
         float endRadius;
         float aspectRatio;
-        float angle;
+        float angleRadians;
         GradientSpreadMethod spreadMethod;
         AffineTransform gradientSpaceTransformation;
     } parameters;
@@ -243,7 +243,7 @@ unsigned Gradient::hash() const
             parameters.startRadius = 0;
             parameters.endRadius = 0;
             parameters.aspectRatio = 0;
-            parameters.angle = 0;
+            parameters.angleRadians = 0;
             parameters.type = Type::Linear;
         },
         [&parameters] (const RadialData& data) {
@@ -252,7 +252,7 @@ unsigned Gradient::hash() const
             parameters.startRadius = data.startRadius;
             parameters.endRadius = data.endRadius;
             parameters.aspectRatio = data.aspectRatio;
-            parameters.angle = 0;
+            parameters.angleRadians = 0;
             parameters.type = Type::Radial;
         },
         [&parameters] (const ConicData& data) {
@@ -261,7 +261,7 @@ unsigned Gradient::hash() const
             parameters.startRadius = 0;
             parameters.endRadius = 0;
             parameters.aspectRatio = 0;
-            parameters.angle = data.angle;
+            parameters.angleRadians = data.angleRadians;
             parameters.type = Type::Conic;
         }
     );

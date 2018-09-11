@@ -635,7 +635,7 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(con
         [&parameters] (const Gradient::ConicData& data) {
             parameters->addItem(data.point0.x());
             parameters->addItem(data.point0.y());
-            parameters->addItem(data.angle);
+            parameters->addItem(data.angleRadians);
         }
     );
 

@@ -1,3 +1,26 @@
+2018-09-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Correctly interpret from angle for conic gradients
+        https://bugs.webkit.org/show_bug.cgi?id=189445
+
+        Reviewed by Simon Fraser
+
+        No new tests, no functionality is changing.
+
+        Just renaming angle to angleRadians to make the type more clear, 
+        and hopefully avoid bugs in the future. Update patch to original bug
+        fix.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSConicGradientValue::createGradient):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildArrayForCanvasGradient):
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::hash const):
+        * platform/graphics/Gradient.h:
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint):
+
 2018-09-10  Youenn Fablet  <youenn@apple.com>
 
         ontrack events should be fired even if an existing transceiver exists
