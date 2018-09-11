@@ -1,3 +1,18 @@
+2018-09-11  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Add missing #if ENABLE(VIDEO) WebProcess/FullScreen/WebFullScreenManager.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=189506
+
+        Reviewed by Tim Horton.
+
+        m_pipStandbyElement is only defined in
+        WebKit/WebProcess/FullScreen/WebFullScreenManager.h
+        only when ENABLE(VIDEO) (see
+        https://bugs.webkit.org/show_bug.cgi?id=181338)
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::setPIPStandbyElement):
+
 2018-09-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         WebPageProxy should hold a WeakPtr to its PageClient
