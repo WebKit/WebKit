@@ -41,9 +41,14 @@ class LateChecker extends Visitor {
             if (!type.isPrimitive)
                 throw new WTypeError(node.origin.originString, "Shader signature cannot include non-primitive type: " + type);
         }
-        assertPrimitive(node.returnType);
-        if (!(node.returnType.unifyNode instanceof StructType))
-            throw new WTypeError(node.origin.originString, "Vertex shader " + node.name + " must return a struct.");
+        
+        if (node.shaderType == "vertex" || node.shaderType == "fragment") {
+            assertPrimitive(node.returnType);
+            // FIXME: Fragment shaders shouldn't have this restriction: https://bugs.webkit.org/show_bug.cgi?id=189387
+            if (!(node.returnType.unifyNode instanceof StructType))
+                throw new WTypeError(node.origin.originString, "Shader " + node.name + " must return a struct.");
+        }
+            
         switch (node.shaderType) {
         case "vertex":
             for (let parameter of node.parameters) {
@@ -64,6 +69,8 @@ class LateChecker extends Visitor {
                         throw new WTypeError(node.origin.originString, "Fragment entry point's " + parameter.name + " parameter is not an array reference.");
                 }
             }
+            break;
+        case "test":
             break;
         default:
             throw new Error("Bad shader type: " + node.shaderType);

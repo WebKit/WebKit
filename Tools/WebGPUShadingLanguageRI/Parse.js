@@ -1171,7 +1171,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             name = "operator cast";
             isCast = true;
         } else {
-            shaderType = tryConsume("vertex", "fragment");
+            shaderType = tryConsume("vertex", "fragment", "test");
             returnType = parseType();
             if (returnType instanceof WSyntaxError)
                 return returnType;

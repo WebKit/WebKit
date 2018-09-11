@@ -331,22 +331,22 @@ tests = new Proxy({}, {
 
 tests.ternaryExpression = function() {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return x < 3 ? 4 : 5;
         }
-        int bar(int x)
+        test int bar(int x)
         {
             int y = 1;
             int z = 2;
             (x < 3 ? y : z) = 7;
             return y;
         }
-        int baz(int x)
+        test int baz(int x)
         {
             return x < 10 ? 11 : x < 12 ? 14 : 15;
         }
-        int quux(int x)
+        test int quux(int x)
         {
             return 3 < 4 ? x : 5;
         }
@@ -415,65 +415,65 @@ tests.ternaryExpressionIsLValue = function() {
 }
 
 tests.literalBool = function() {
-    let program = doPrep("bool foo() { return true; }");
+    let program = doPrep("test bool foo() { return true; }");
     checkBool(program, callFunction(program, "foo", []), true);
 }
 
 tests.identityBool = function() {
-    let program = doPrep("bool foo(bool x) { return x; }");
+    let program = doPrep("test bool foo(bool x) { return x; }");
     checkBool(program, callFunction(program, "foo", [makeBool(program, true)]), true);
     checkBool(program, callFunction(program, "foo", [makeBool(program, false)]), false);
 }
 
 tests.intSimpleMath = function() {
-    let program = doPrep("int foo(int x, int y) { return x + y; }");
+    let program = doPrep("test int foo(int x, int y) { return x + y; }");
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), 12);
-    program = doPrep("int foo(int x, int y) { return x - y; }");
+    program = doPrep("test int foo(int x, int y) { return x - y; }");
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), 2);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 5), makeInt(program, 7)]), -2);
-    program = doPrep("int foo(int x, int y) { return x * y; }");
+    program = doPrep("test int foo(int x, int y) { return x * y; }");
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), 35);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, -5)]), -35);
-    program = doPrep("int foo(int x, int y) { return x / y; }");
+    program = doPrep("test int foo(int x, int y) { return x / y; }");
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 2)]), 3);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, -2)]), -3);
 }
 
 tests.uintSimpleMath = function() {
-    let program = doPrep("uint foo(uint x, uint y) { return x + y; }");
+    let program = doPrep("test uint foo(uint x, uint y) { return x + y; }");
     checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), 12);
-    program = doPrep("uint foo(uint x, uint y) { return x - y; }");
+    program = doPrep("test uint foo(uint x, uint y) { return x - y; }");
     checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), 2);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 5), makeUint(program, 7)]), 4294967294);
-    program = doPrep("uint foo(uint x, uint y) { return x * y; }");
+    program = doPrep("test uint foo(uint x, uint y) { return x * y; }");
     checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), 35);
-    program = doPrep("uint foo(uint x, uint y) { return x / y; }");
+    program = doPrep("test uint foo(uint x, uint y) { return x / y; }");
     checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 2)]), 3);
 }
 
 tests.ucharSimpleMath = function() {
-    let program = doPrep("uchar foo(uchar x, uchar y) { return x + y; }");
+    let program = doPrep("test uchar foo(uchar x, uchar y) { return x + y; }");
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), 12);
-    program = doPrep("uchar foo(uchar x, uchar y) { return x - y; }");
+    program = doPrep("test uchar foo(uchar x, uchar y) { return x - y; }");
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), 2);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 5), makeUchar(program, 7)]), 254);
-    program = doPrep("uchar foo(uchar x, uchar y) { return x * y; }");
+    program = doPrep("test uchar foo(uchar x, uchar y) { return x * y; }");
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), 35);
-    program = doPrep("uchar foo(uchar x, uchar y) { return x / y; }");
+    program = doPrep("test uchar foo(uchar x, uchar y) { return x / y; }");
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 2)]), 3);
 }
 
 tests.equality = function() {
-    let program = doPrep("bool foo(uint x, uint y) { return x == y; }");
+    let program = doPrep("test bool foo(uint x, uint y) { return x == y; }");
     checkBool(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), false);
     checkBool(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 7)]), true);
-    program = doPrep("bool foo(uchar x, uchar y) { return x == y; }");
+    program = doPrep("test bool foo(uchar x, uchar y) { return x == y; }");
     checkBool(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), false);
     checkBool(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 7)]), true);
-    program = doPrep("bool foo(int x, int y) { return x == y; }");
+    program = doPrep("test bool foo(int x, int y) { return x == y; }");
     checkBool(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), false);
     checkBool(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 7)]), true);
-    program = doPrep("bool foo(bool x, bool y) { return x == y; }");
+    program = doPrep("test bool foo(bool x, bool y) { return x == y; }");
     checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, true)]), false);
     checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, false)]), false);
     checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, false)]), true);
@@ -482,22 +482,22 @@ tests.equality = function() {
 
 tests.logicalNegation = function()
 {
-    let program = doPrep("bool foo(bool x) { return !x; }");
+    let program = doPrep("test bool foo(bool x) { return !x; }");
     checkBool(program, callFunction(program, "foo", [makeBool(program, true)]), false);
     checkBool(program, callFunction(program, "foo", [makeBool(program, false)]), true);
 }
 
 tests.notEquality = function() {
-    let program = doPrep("bool foo(uint x, uint y) { return x != y; }");
+    let program = doPrep("test bool foo(uint x, uint y) { return x != y; }");
     checkBool(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), true);
     checkBool(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 7)]), false);
-    program = doPrep("bool foo(uchar x, uchar y) { return x != y; }");
+    program = doPrep("test bool foo(uchar x, uchar y) { return x != y; }");
     checkBool(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), true);
     checkBool(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 7)]), false);
-    program = doPrep("bool foo(int x, int y) { return x != y; }");
+    program = doPrep("test bool foo(int x, int y) { return x != y; }");
     checkBool(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), true);
     checkBool(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 7)]), false);
-    program = doPrep("bool foo(bool x, bool y) { return x != y; }");
+    program = doPrep("test bool foo(bool x, bool y) { return x != y; }");
     checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, true)]), true);
     checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, false)]), true);
     checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, false)]), false);
@@ -507,19 +507,19 @@ tests.notEquality = function() {
 tests.equalityTypeFailure = function()
 {
     checkFail(
-        () => doPrep("bool foo(int x, uint y) { return x == y; }"),
+        () => doPrep("test bool foo(int x, uint y) { return x == y; }"),
         (e) => e instanceof WTypeError && e.message.indexOf("/internal/test:1") != -1);
 }
 
 tests.generalNegation = function()
 {
-    let program = doPrep("bool foo(int x) { return !x; }");
+    let program = doPrep("test bool foo(int x) { return !x; }");
     checkBool(program, callFunction(program, "foo", [makeInt(program, 7)]), false);
     checkBool(program, callFunction(program, "foo", [makeInt(program, 0)]), true);
 }
 
 tests.add1 = function() {
-    let program = doPrep("int foo(int x) { return x + 1; }");
+    let program = doPrep("test int foo(int x) { return x + 1; }");
     checkInt(program, callFunction(program, "foo", [makeInt(program, 42)]), 43);
 }
 
@@ -533,7 +533,7 @@ tests.nameResolutionFailure = function()
 tests.simpleVariable = function()
 {
     let program = doPrep(`
-        int foo(int p)
+        test int foo(int p)
         {
             int result = p;
             return result;
@@ -545,7 +545,7 @@ tests.simpleVariable = function()
 tests.simpleAssignment = function()
 {
     let program = doPrep(`
-        int foo(int p)
+        test int foo(int p)
         {
             int result;
             result = p;
@@ -558,7 +558,7 @@ tests.simpleAssignment = function()
 tests.simpleDefault = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             int result;
             return result;
@@ -570,7 +570,7 @@ tests.simpleDefault = function()
 tests.simpleDereference = function()
 {
     let program = doPrep(`
-        int foo(device int* p)
+        test int foo(device int* p)
         {
             return *p;
         }
@@ -583,7 +583,7 @@ tests.simpleDereference = function()
 tests.dereferenceStore = function()
 {
     let program = doPrep(`
-        void foo(device int* p)
+        test void foo(device int* p)
         {
             *p = 52;
         }
@@ -598,7 +598,7 @@ tests.dereferenceStore = function()
 tests.simpleMakePtr = function()
 {
     let program = doPrep(`
-        thread int* foo()
+        test thread int* foo()
         {
             int x = 42;
             return &x;
@@ -619,7 +619,7 @@ tests.simpleMakePtr = function()
 tests.threadArrayLoad = function()
 {
     let program = doPrep(`
-        int foo(thread int[] array)
+        test int foo(thread int[] array)
         {
             return array[0u];
         }
@@ -633,7 +633,7 @@ tests.threadArrayLoad = function()
 tests.threadArrayLoadIntLiteral = function()
 {
     let program = doPrep(`
-        int foo(thread int[] array)
+        test int foo(thread int[] array)
         {
             return array[0];
         }
@@ -647,7 +647,7 @@ tests.threadArrayLoadIntLiteral = function()
 tests.deviceArrayLoad = function()
 {
     let program = doPrep(`
-        int foo(device int[] array)
+        test int foo(device int[] array)
         {
             return array[0u];
         }
@@ -661,7 +661,7 @@ tests.deviceArrayLoad = function()
 tests.threadArrayStore = function()
 {
     let program = doPrep(`
-        void foo(thread int[] array, int value)
+        test void foo(thread int[] array, int value)
         {
             array[0u] = value;
         }
@@ -682,7 +682,7 @@ tests.threadArrayStore = function()
 tests.deviceArrayStore = function()
 {
     let program = doPrep(`
-        void foo(device int[] array, int value)
+        test void foo(device int[] array, int value)
         {
             array[0u] = value;
         }
@@ -703,7 +703,7 @@ tests.deviceArrayStore = function()
 tests.deviceArrayStoreIntLiteral = function()
 {
     let program = doPrep(`
-        void foo(device int[] array, int value)
+        test void foo(device int[] array, int value)
         {
             array[0] = value;
         }
@@ -841,7 +841,7 @@ tests.simpleStruct = function()
             int x;
             int y;
         }
-        Foo foo(Foo foo)
+        test Foo foo(Foo foo)
         {
             Foo result;
             result.x = foo.y;
@@ -888,7 +888,7 @@ tests.storeNull = function()
 tests.returnNull = function()
 {
     let program = doPrep(`
-        thread int* foo() { return null; }
+        test thread int* foo() { return null; }
     `);
     let result = callFunction(program, "foo", []);
     if (!result.type.isPtr)
@@ -902,7 +902,7 @@ tests.returnNull = function()
 tests.dereferenceDefaultNull = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             thread int* p;
             return *p;
@@ -916,7 +916,7 @@ tests.dereferenceDefaultNull = function()
 tests.defaultInitializedNull = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             thread int* p = null;;
             return *p;
@@ -934,7 +934,7 @@ tests.passNullToPtrMonomorphic = function()
         {
             return *ptr;
         }
-        int bar()
+        test int bar()
         {
             return foo(null);
         }
@@ -966,7 +966,7 @@ tests.storeNullArrayRef = function()
 tests.returnNullArrayRef = function()
 {
     let program = doPrep(`
-        thread int[] foo() { return null; }
+        test thread int[] foo() { return null; }
     `);
     let result = callFunction(program, "foo", []);
     if (!result.type.isArrayRef)
@@ -980,7 +980,7 @@ tests.returnNullArrayRef = function()
 tests.dereferenceDefaultNullArrayRef = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             thread int[] p;
             return p[0u];
@@ -994,7 +994,7 @@ tests.dereferenceDefaultNullArrayRef = function()
 tests.defaultInitializedNullArrayRef = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             thread int[] p = null;
             return p[0u];
@@ -1008,7 +1008,7 @@ tests.defaultInitializedNullArrayRef = function()
 tests.defaultInitializedNullArrayRefIntLiteral = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             thread int[] p = null;
             return p[0];
@@ -1026,7 +1026,7 @@ tests.passNullToPtrMonomorphicArrayRef = function()
         {
             return ptr[0u];
         }
-        int bar()
+        test int bar()
         {
             return foo(null);
         }
@@ -1038,13 +1038,13 @@ tests.passNullToPtrMonomorphicArrayRef = function()
 
 tests.returnIntLiteralUint = function()
 {
-    let program = doPrep("uint foo() { return 42; }");
+    let program = doPrep("test uint foo() { return 42; }");
     checkNumber(program, callFunction(program, "foo", []), 42);
 }
 
 tests.returnIntLiteralFloat = function()
 {
-    let program = doPrep("float foo() { return 42; }");
+    let program = doPrep("test float foo() { return 42; }");
     checkNumber(program, callFunction(program, "foo", []), 42);
 }
 
@@ -1072,7 +1072,7 @@ tests.badIntLiteralForFloat = function()
 tests.doubleNot = function()
 {
     let program = doPrep(`
-        bool foo(bool x)
+        test bool foo(bool x)
         {
             return !!x;
         }
@@ -1096,7 +1096,7 @@ tests.simpleRecursion = function()
 tests.variableShadowing = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             int y;
             int x = 7;
@@ -1109,7 +1109,7 @@ tests.variableShadowing = function()
     `);
     checkInt(program, callFunction(program, "foo", []), 8);
     program = doPrep(`
-        int foo()
+        test int foo()
         {
             int y;
             int x = 7;
@@ -1126,7 +1126,7 @@ tests.variableShadowing = function()
 tests.ifStatement = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 6;
             if (x == 7) {
@@ -1147,7 +1147,7 @@ tests.ifStatement = function()
 tests.ifElseStatement = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 6;
             if (x == 7) {
@@ -1170,7 +1170,7 @@ tests.ifElseStatement = function()
 tests.ifElseIfStatement = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 6;
             if (x == 7) {
@@ -1193,7 +1193,7 @@ tests.ifElseIfStatement = function()
 tests.ifElseIfElseStatement = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 6;
             if (x == 7) {
@@ -1255,7 +1255,7 @@ tests.returnIf = function()
         `),
         (e) => e instanceof WTypeError);
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 6;
             if (x == 7) {
@@ -1286,7 +1286,7 @@ tests.returnIf = function()
         `),
         (e) => e instanceof WTypeError);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 6;
             if (x == 7) {
@@ -1319,7 +1319,7 @@ tests.returnIf = function()
         `),
         (e) => e instanceof WTypeError);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 6;
             if (x == 7)
@@ -1333,7 +1333,7 @@ tests.returnIf = function()
 tests.simpleWhile = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             while (x < 13)
                 x = x * 2;
@@ -1349,7 +1349,7 @@ tests.intOverloadResolution = function()
         int foo(int) { return 1; }
         int foo(uint) { return 2; }
         int foo(float) { return 3; }
-        int bar() { return foo(42); }
+        test int bar() { return foo(42); }
     `);
     checkInt(program, callFunction(program, "bar", []), 1);
 }
@@ -1360,7 +1360,7 @@ tests.intOverloadResolutionReverseOrder = function()
         int foo(float) { return 3; }
         int foo(uint) { return 2; }
         int foo(int) { return 1; }
-        int bar() { return foo(42); }
+        test int bar() { return foo(42); }
     `);
     checkInt(program, callFunction(program, "bar", []), 1);
 }
@@ -1368,7 +1368,7 @@ tests.intOverloadResolutionReverseOrder = function()
 tests.break = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             while (true) {
                 x = x * 2;
@@ -1381,7 +1381,7 @@ tests.break = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 8);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 10)]), 20);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             while (true) {
                 while (true) {
@@ -1422,7 +1422,7 @@ tests.break = function()
         `),
         (e) => e instanceof WTypeError);
     program = doPrep(`
-            int foo(int x)
+            test int foo(int x)
             {
                 while (true) {
                     if (x == 7) {
@@ -1435,7 +1435,7 @@ tests.break = function()
     `);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 7);
     program = doPrep(`
-            int foo(int x)
+            test int foo(int x)
             {
                 while (true) {
                     break;
@@ -1445,7 +1445,7 @@ tests.break = function()
     `);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 1);
     program = doPrep(`
-            int foo()
+            test int foo()
             {
                 while (true) {
                     return 7;
@@ -1455,7 +1455,7 @@ tests.break = function()
     checkInt(program, callFunction(program, "foo", []), 7);
     checkFail(
         () => doPrep(`
-            int foo(int x)
+            test int foo(int x)
             {
                 while(true) {
                     break;
@@ -1469,7 +1469,7 @@ tests.break = function()
 tests.continue = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             while (x < 10) {
                 if (x == 8) {
@@ -1497,7 +1497,7 @@ tests.continue = function()
 tests.doWhile = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 7;
             do {
@@ -1510,7 +1510,7 @@ tests.doWhile = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 8);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 11)]), 8);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int y = 7;
             do {
@@ -1522,7 +1522,7 @@ tests.doWhile = function()
     `);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 8);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             do {
@@ -1542,7 +1542,7 @@ tests.doWhile = function()
 tests.forLoop = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             int i;
@@ -1556,7 +1556,7 @@ tests.forLoop = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             for (int i = 0; i < x; i = i + 1) {
@@ -1569,7 +1569,7 @@ tests.forLoop = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             int i = 100;
@@ -1583,7 +1583,7 @@ tests.forLoop = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             for (int i = 0; i < x; i = i + 1) {
@@ -1599,7 +1599,7 @@ tests.forLoop = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 6);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 11);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             for (int i = 0; i < x; i = i + 1) {
@@ -1616,7 +1616,7 @@ tests.forLoop = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 10);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 10);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             for (int i = 0; ; i = i + 1) {
@@ -1633,7 +1633,7 @@ tests.forLoop = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 15);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 21);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             int i = 0;
@@ -1651,7 +1651,7 @@ tests.forLoop = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 15);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 21);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int sum = 0;
             int i = 0;
@@ -1681,7 +1681,7 @@ tests.forLoop = function()
         `),
         (e) => e instanceof WTypeError);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             for ( ; ; ) {
                 return 7;
@@ -1704,7 +1704,7 @@ tests.forLoop = function()
         `),
         (e) => e instanceof WTypeError);
     program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             for ( ; true; ) {
                 return 7;
@@ -1721,7 +1721,7 @@ tests.forLoop = function()
 tests.prefixPlusPlus = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             ++x;
             return x;
@@ -1733,7 +1733,7 @@ tests.prefixPlusPlus = function()
 tests.prefixPlusPlusResult = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return ++x;
         }
@@ -1744,7 +1744,7 @@ tests.prefixPlusPlusResult = function()
 tests.postfixPlusPlus = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             x++;
             return x;
@@ -1756,7 +1756,7 @@ tests.postfixPlusPlus = function()
 tests.postfixPlusPlusResult = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return x++;
         }
@@ -1767,7 +1767,7 @@ tests.postfixPlusPlusResult = function()
 tests.prefixMinusMinus = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             --x;
             return x;
@@ -1779,7 +1779,7 @@ tests.prefixMinusMinus = function()
 tests.prefixMinusMinusResult = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return --x;
         }
@@ -1790,7 +1790,7 @@ tests.prefixMinusMinusResult = function()
 tests.postfixMinusMinus = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             x--;
             return x;
@@ -1802,7 +1802,7 @@ tests.postfixMinusMinus = function()
 tests.postfixMinusMinusResult = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return x--;
         }
@@ -1813,7 +1813,7 @@ tests.postfixMinusMinusResult = function()
 tests.plusEquals = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             x += 42;
             return x;
@@ -1825,7 +1825,7 @@ tests.plusEquals = function()
 tests.plusEqualsResult = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return x += 42;
         }
@@ -1836,7 +1836,7 @@ tests.plusEqualsResult = function()
 tests.minusEquals = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             x -= 42;
             return x;
@@ -1848,7 +1848,7 @@ tests.minusEquals = function()
 tests.minusEqualsResult = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return x -= 42;
         }
@@ -1859,7 +1859,7 @@ tests.minusEqualsResult = function()
 tests.timesEquals = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             x *= 42;
             return x;
@@ -1871,7 +1871,7 @@ tests.timesEquals = function()
 tests.timesEqualsResult = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return x *= 42;
         }
@@ -1882,7 +1882,7 @@ tests.timesEqualsResult = function()
 tests.divideEquals = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             x /= 42;
             return x;
@@ -1894,7 +1894,7 @@ tests.divideEquals = function()
 tests.divideEqualsResult = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             return x /= 42;
         }
@@ -1905,7 +1905,7 @@ tests.divideEqualsResult = function()
 tests.twoIntLiterals = function()
 {
     let program = doPrep(`
-        bool foo()
+        test bool foo()
         {
             return 42 == 42;
         }
@@ -1928,7 +1928,7 @@ tests.assignUintToInt = function()
 tests.buildArrayThenSumIt = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             int[42] array;
             for (uint i = 0; i < 42; i = i + 1)
@@ -1954,7 +1954,7 @@ tests.buildArrayThenSumItUsingArrayReference = function()
                 result = result + array[i];
             return result;
         }
-        int foo()
+        test int foo()
         {
             int[42] array;
             return bar(@array);
@@ -1978,7 +1978,7 @@ tests.overrideSubscriptStruct = function()
                 return &foo->y;
             return null;
         }
-        int foo()
+        test int foo()
         {
             Foo foo;
             foo.x = 498;
@@ -2004,7 +2004,7 @@ tests.overrideSubscriptStructAndDoStores = function()
                 return &foo->y;
             return null;
         }
-        int foo()
+        test int foo()
         {
             Foo foo;
             foo[0] = 498;
@@ -2034,7 +2034,7 @@ tests.overrideSubscriptStructAndUsePointers = function()
         {
             return (*foo)[0] + (*foo)[1];
         }
-        int foo()
+        test int foo()
         {
             Foo foo;
             foo.x = 498;
@@ -2083,7 +2083,7 @@ tests.makeArrayRefFromLocal = function()
         {
             return ref[0];
         }
-        int foo()
+        test int foo()
         {
             int x = 48;
             return bar(@x);
@@ -2103,7 +2103,7 @@ tests.makeArrayRefFromPointer = function()
         {
             return bar(@ptr);
         }
-        int foo()
+        test int foo()
         {
             int x = 48;
             return baz(&x);
@@ -2136,7 +2136,7 @@ tests.makeArrayRefFromArrayRef = function()
 tests.simpleLength = function()
 {
     let program = doPrep(`
-        uint foo()
+        test uint foo()
         {
             float[754] array;
             return (@array).length;
@@ -2148,12 +2148,12 @@ tests.simpleLength = function()
 tests.nonArrayRefArrayLengthSucceed = function()
 {
     let program = doPrep(`
-        uint foo()
+        test uint foo()
         {
             float[754] array;
             return array.length;
         }
-        uint bar()
+        test uint bar()
         {
             int[754] array;
             return array.length;
@@ -2216,7 +2216,7 @@ tests.simpleGetter = function()
         {
             return foo.x;
         }
-        int foo()
+        test int foo()
         {
             Foo foo;
             foo.x = 7804;
@@ -2241,7 +2241,7 @@ tests.simpleSetter = function()
             foo.x = value;
             return foo;
         }
-        int foo()
+        test int foo()
         {
             Foo foo;
             foo.y = 7804;
@@ -2332,13 +2332,13 @@ tests.nestedSubscriptLValueEmulationSimple = function()
                 }
             }
         }
-        int testSetValuesAndSum()
+        test int testSetValuesAndSum()
         {
             Baz baz;
             setValues(&baz);
             return sum(baz);
         }
-        int testSetValuesMutateValuesAndSum()
+        test int testSetValuesMutateValuesAndSum()
         {
             Baz baz;
             setValues(&baz);
@@ -2358,17 +2358,17 @@ tests.nestedSubscriptLValueEmulationSimple = function()
 tests.operatorBool = function()
 {
     let program = doPrep(`
-        bool boolFromUcharFalse() { return bool(uchar(0)); }
-        bool boolFromUcharTrue() { return bool(uchar(1)); }
+        test bool boolFromUcharFalse() { return bool(uchar(0)); }
+        test bool boolFromUcharTrue() { return bool(uchar(1)); }
 
-        bool boolFromUintFalse() { return bool(uint(0)); }
-        bool boolFromUintTrue() { return bool(uint(1)); }
+        test bool boolFromUintFalse() { return bool(uint(0)); }
+        test bool boolFromUintTrue() { return bool(uint(1)); }
 
-        bool boolFromIntFalse() { return bool(int(0)); }
-        bool boolFromIntTrue() { return bool(int(1)); }
+        test bool boolFromIntFalse() { return bool(int(0)); }
+        test bool boolFromIntTrue() { return bool(int(1)); }
 
-        bool boolFromFloatFalse() { return bool(float(0)); }
-        bool boolFromFloatTrue() { return bool(float(1)); }
+        test bool boolFromFloatFalse() { return bool(float(0)); }
+        test bool boolFromFloatTrue() { return bool(float(1)); }
     `);
 
     checkBool(program, callFunction(program, "boolFromUcharFalse", []), false);
@@ -2407,7 +2407,7 @@ tests.operatorBool = function()
 tests.boolBitAnd = function()
 {
     let program = doPrep(`
-        bool foo(bool a, bool b)
+        test bool foo(bool a, bool b)
         {
             return a & b;
         }
@@ -2421,7 +2421,7 @@ tests.boolBitAnd = function()
 tests.boolBitOr = function()
 {
     let program = doPrep(`
-        bool foo(bool a, bool b)
+        test bool foo(bool a, bool b)
         {
             return a | b;
         }
@@ -2435,7 +2435,7 @@ tests.boolBitOr = function()
 tests.boolBitXor = function()
 {
     let program = doPrep(`
-        bool foo(bool a, bool b)
+        test bool foo(bool a, bool b)
         {
             return a ^ b;
         }
@@ -2449,7 +2449,7 @@ tests.boolBitXor = function()
 tests.boolBitNot = function()
 {
     let program = doPrep(`
-        bool foo(bool a)
+        test bool foo(bool a)
         {
             return ~a;
         }
@@ -2461,7 +2461,7 @@ tests.boolBitNot = function()
 tests.intBitAnd = function()
 {
     let program = doPrep(`
-        int foo(int a, int b)
+        test int foo(int a, int b)
         {
             return a & b;
         }
@@ -2475,7 +2475,7 @@ tests.intBitAnd = function()
 tests.intBitOr = function()
 {
     let program = doPrep(`
-        int foo(int a, int b)
+        test int foo(int a, int b)
         {
             return a | b;
         }
@@ -2489,7 +2489,7 @@ tests.intBitOr = function()
 tests.intBitXor = function()
 {
     let program = doPrep(`
-        int foo(int a, int b)
+        test int foo(int a, int b)
         {
             return a ^ b;
         }
@@ -2503,7 +2503,7 @@ tests.intBitXor = function()
 tests.intBitNot = function()
 {
     let program = doPrep(`
-        int foo(int a)
+        test int foo(int a)
         {
             return ~a;
         }
@@ -2517,7 +2517,7 @@ tests.intBitNot = function()
 tests.intLShift = function()
 {
     let program = doPrep(`
-        int foo(int a, uint b)
+        test int foo(int a, uint b)
         {
             return a << b;
         }
@@ -2531,7 +2531,7 @@ tests.intLShift = function()
 tests.intRShift = function()
 {
     let program = doPrep(`
-        int foo(int a, uint b)
+        test int foo(int a, uint b)
         {
             return a >> b;
         }
@@ -2545,7 +2545,7 @@ tests.intRShift = function()
 tests.uintBitAnd = function()
 {
     let program = doPrep(`
-        uint foo(uint a, uint b)
+        test uint foo(uint a, uint b)
         {
             return a & b;
         }
@@ -2559,7 +2559,7 @@ tests.uintBitAnd = function()
 tests.uintBitOr = function()
 {
     let program = doPrep(`
-        uint foo(uint a, uint b)
+        test uint foo(uint a, uint b)
         {
             return a | b;
         }
@@ -2573,7 +2573,7 @@ tests.uintBitOr = function()
 tests.uintBitXor = function()
 {
     let program = doPrep(`
-        uint foo(uint a, uint b)
+        test uint foo(uint a, uint b)
         {
             return a ^ b;
         }
@@ -2587,7 +2587,7 @@ tests.uintBitXor = function()
 tests.uintBitNot = function()
 {
     let program = doPrep(`
-        uint foo(uint a)
+        test uint foo(uint a)
         {
             return ~a;
         }
@@ -2601,7 +2601,7 @@ tests.uintBitNot = function()
 tests.uintLShift = function()
 {
     let program = doPrep(`
-        uint foo(uint a, uint b)
+        test uint foo(uint a, uint b)
         {
             return a << b;
         }
@@ -2615,7 +2615,7 @@ tests.uintLShift = function()
 tests.uintRShift = function()
 {
     let program = doPrep(`
-        uint foo(uint a, uint b)
+        test uint foo(uint a, uint b)
         {
             return a >> b;
         }
@@ -2629,7 +2629,7 @@ tests.uintRShift = function()
 tests.ucharBitAnd = function()
 {
     let program = doPrep(`
-        uchar foo(uchar a, uchar b)
+        test uchar foo(uchar a, uchar b)
         {
             return a & b;
         }
@@ -2643,7 +2643,7 @@ tests.ucharBitAnd = function()
 tests.ucharBitOr = function()
 {
     let program = doPrep(`
-        uchar foo(uchar a, uchar b)
+        test uchar foo(uchar a, uchar b)
         {
             return a | b;
         }
@@ -2657,7 +2657,7 @@ tests.ucharBitOr = function()
 tests.ucharBitXor = function()
 {
     let program = doPrep(`
-        uchar foo(uchar a, uchar b)
+        test uchar foo(uchar a, uchar b)
         {
             return a ^ b;
         }
@@ -2671,7 +2671,7 @@ tests.ucharBitXor = function()
 tests.ucharBitNot = function()
 {
     let program = doPrep(`
-        uchar foo(uchar a)
+        test uchar foo(uchar a)
         {
             return ~a;
         }
@@ -2685,7 +2685,7 @@ tests.ucharBitNot = function()
 tests.ucharLShift = function()
 {
     let program = doPrep(`
-        uchar foo(uchar a, uint b)
+        test uchar foo(uchar a, uint b)
         {
             return a << b;
         }
@@ -2699,7 +2699,7 @@ tests.ucharLShift = function()
 tests.ucharRShift = function()
 {
     let program = doPrep(`
-        uchar foo(uchar a, uint b)
+        test uchar foo(uchar a, uint b)
         {
             return a >> b;
         }
@@ -2713,23 +2713,23 @@ tests.ucharRShift = function()
 tests.floatMath = function()
 {
     let program = doPrep(`
-        bool foo()
+        test bool foo()
         {
             return 42.5 == 42.5;
         }
-        bool foo2()
+        test bool foo2()
         {
             return 42.5f == 42.5;
         }
-        bool foo3()
+        test bool foo3()
         {
             return 42.5 == 42.5f;
         }
-        bool foo4()
+        test bool foo4()
         {
             return 42.5f == 42.5f;
         }
-        bool foo5()
+        test bool foo5()
         {
             return 42.5f == 42.5f;
         }
@@ -2737,27 +2737,27 @@ tests.floatMath = function()
         {
             return x;
         }
-        float foo6()
+        test float foo6()
         {
             return bar(7.5);
         }
-        float foo7()
+        test float foo7()
         {
             return bar(7.5f);
         }
-        float foo9()
+        test float foo9()
         {
             return float(7.5);
         }
-        float foo10()
+        test float foo10()
         {
             return float(7.5f);
         }
-        float foo12()
+        test float foo12()
         {
             return float(7);
         }
-        float foo13()
+        test float foo13()
         {
             float x = 7.5f;
             return float(x);
@@ -2851,35 +2851,35 @@ tests.floatMath = function()
 tests.booleanMath = function()
 {
     let program = doPrep(`
-        bool foo()
+        test bool foo()
         {
             return true && true;
         }
-        bool foo2()
+        test bool foo2()
         {
             return true && false;
         }
-        bool foo3()
+        test bool foo3()
         {
             return false && true;
         }
-        bool foo4()
+        test bool foo4()
         {
             return false && false;
         }
-        bool foo5()
+        test bool foo5()
         {
             return true || true;
         }
-        bool foo6()
+        test bool foo6()
         {
             return true || false;
         }
-        bool foo7()
+        test bool foo7()
         {
             return false || true;
         }
-        bool foo8()
+        test bool foo8()
         {
             return false || false;
         }
@@ -2903,28 +2903,28 @@ tests.booleanShortcircuiting = function()
             return retValue; 
         }
 
-        int andTrue()
+        test int andTrue()
         {
             int x;
             bool y = set(&x, 1, true) && set(&x, 2, false);
             return x; 
         }
 
-        int andFalse()
+        test int andFalse()
         {
             int x;
             bool y = set(&x, 1, false) && set(&x, 2, false);
             return x; 
         }
 
-        int orTrue()
+        test int orTrue()
         {
             int x;
             bool y = set(&x, 1, true) || set(&x, 2, false);
             return x; 
         }
 
-        int orFalse()
+        test int orFalse()
         {
             int x;
             bool y = set(&x, 1, false) || set(&x, 2, false);
@@ -2942,7 +2942,7 @@ tests.typedefArray = function()
 {
     let program = doPrep(`
         typedef ArrayTypedef = int[2];
-        int foo()
+        test int foo()
         {
             ArrayTypedef arrayTypedef;
             return arrayTypedef[0];
@@ -3085,7 +3085,7 @@ tests.shaderTypes = function()
 tests.vectorTypeSyntax = function()
 {
     let program = doPrep(`
-        int foo2()
+        test int foo2()
         {
             int2 x;
             vector<int, 2> z = int2(3, 4);
@@ -3093,7 +3093,7 @@ tests.vectorTypeSyntax = function()
             return x.y;
         }
 
-        int foo3()
+        test int foo3()
         {
             int3 x;
             vector<int, 3> z = int3(3, 4, 5);
@@ -3101,7 +3101,7 @@ tests.vectorTypeSyntax = function()
             return x.z;
         }
 
-        int foo4()
+        test int foo4()
         {
             int4 x;
             vector<int,4> z = int4(3, 4, 5, 6);
@@ -3109,7 +3109,7 @@ tests.vectorTypeSyntax = function()
             return x.w;
         }
 
-        bool vec2OperatorCast()
+        test bool vec2OperatorCast()
         {
             int2 x = vector<int,2>(1, 2);
             vector<int, 2> y = int2(1, 2);
@@ -3123,7 +3123,7 @@ tests.vectorTypeSyntax = function()
 
     program = doPrep(`
         typedef i = int;
-        int foo2()
+        test int foo2()
         {
             int2 x;
             vector<i, 2> z = int2(3, 4);
@@ -3131,7 +3131,7 @@ tests.vectorTypeSyntax = function()
             return x.y;
         }
 
-        bool vec2OperatorCast()
+        test bool vec2OperatorCast()
         {
             int2 x = vector<i,2>(1, 2);
             vector<i, 2> y = int2(1, 2);
@@ -3145,114 +3145,114 @@ tests.vectorTypeSyntax = function()
 tests.builtinVectors = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             int2 a = int2(3, 4);
             return a[0];
         }
-        int foo2()
+        test int foo2()
         {
             int2 a = int2(3, 4);
             int3 b = int3(a, 5);
             return b[1];
         }
-        int foo3()
+        test int foo3()
         {
             int3 a = int3(3, 4, 5);
             int4 b = int4(6, a);
             return b[1];
         }
-        int foo4()
+        test int foo4()
         {
             int2 a = int2(3, 4);
             int2 b = int2(5, 6);
             int4 c = int4(a, b);
             return c[2];
         }
-        bool foo5()
+        test bool foo5()
         {
             int4 a = int4(3, 4, 5, 6);
             int2 b = int2(4, 5);
             int4 c = int4(3, b, 6);
             return a == c;
         }
-        bool foo6()
+        test bool foo6()
         {
             int2 a = int2(4, 5);
             int3 b = int3(3, a);
             int3 c = int3(3, 4, 6);
             return b == c;
         }
-        uint foou()
+        test uint foou()
         {
             uint2 a = uint2(3, 4);
             return a[0];
         }
-        uint foou2()
+        test uint foou2()
         {
             uint2 a = uint2(3, 4);
             uint3 b = uint3(a, 5);
             return b[1];
         }
-        uint foou3()
+        test uint foou3()
         {
             uint3 a = uint3(3, 4, 5);
             uint4 b = uint4(6, a);
             return b[1];
         }
-        uint foou4()
+        test uint foou4()
         {
             uint2 a = uint2(3, 4);
             uint2 b = uint2(5, 6);
             uint4 c = uint4(a, b);
             return c[2];
         }
-        bool foou5()
+        test bool foou5()
         {
             uint4 a = uint4(3, 4, 5, 6);
             uint2 b = uint2(4, 5);
             uint4 c = uint4(3, b, 6);
             return a == c;
         }
-        bool foou6()
+        test bool foou6()
         {
             uint2 a = uint2(4, 5);
             uint3 b = uint3(3, a);
             uint3 c = uint3(3, 4, 6);
             return b == c;
         }
-        float foof()
+        test float foof()
         {
             float2 a = float2(3., 4.);
             return a[0];
         }
-        float foof2()
+        test float foof2()
         {
             float2 a = float2(3., 4.);
             float3 b = float3(a, 5.);
             return b[1];
         }
-        float foof3()
+        test float foof3()
         {
             float3 a = float3(3., 4., 5.);
             float4 b = float4(6., a);
             return b[1];
         }
-        float foof4()
+        test float foof4()
         {
             float2 a = float2(3., 4.);
             float2 b = float2(5., 6.);
             float4 c = float4(a, b);
             return c[2];
         }
-        bool foof5()
+        test bool foof5()
         {
             float4 a = float4(3., 4., 5., 6.);
             float2 b = float2(4., 5.);
             float4 c = float4(3., b, 6.);
             return a == c;
         }
-        bool foof6()
+        test bool foof6()
         {
             float2 a = float2(4., 5.);
             float3 b = float3(3., a);
@@ -3293,7 +3293,7 @@ tests.builtinVectorGetters = function()
         for (let size of sizes) {
             for (let i = 0; i < size; i++) {
                 const functionName = `${typeName}${size}${elements[i]}`;
-                src += `${typeName} ${functionName}()
+                src += `test ${typeName} ${functionName}()
                         {
                             ${typeName}${size} x = ${typeName}${size}(${initializerList.slice(0, size).join(", ")});
                             return x.${elements[i]};
@@ -3329,7 +3329,7 @@ tests.builtinVectorSetters = function()
         for (let size of sizes) {
             for (let i = 0; i < size; i++) {
                 const functionName = `${typeName}${size}${elements[i]}`;
-                src += `${typeName} ${functionName}()
+                src += `test ${typeName} ${functionName}()
                         {
                             ${typeName}${size} x = ${typeName}${size}(${initializerList.slice(0, size).join(", ")});
                             x.${elements[i]} = 34;
@@ -3366,7 +3366,7 @@ tests.builtinVectorIndexSetters = function()
         for (let size of sizes) {
             for (let i = 0; i < size; i++) {
                 const functionName = `${typeName}${size}${elements[i]}`;
-                src += `${typeName} ${functionName}()
+                src += `test ${typeName} ${functionName}()
                         {
                             ${typeName}${size} x = ${typeName}${size}(${initializerList.slice(0, size).join(", ")});
                             x[${i}] = 34;
@@ -3399,117 +3399,185 @@ tests.simpleEnum = function()
             Pestilence,
             Death
         }
-        Foo war()
+
+        Foo _war()
         {
             return Foo.War;
         }
-        Foo famine()
+
+        test Foo war()
+        {
+            return _war();
+        }
+
+        Foo _famine()
         {
             return Foo.Famine;
         }
-        Foo pestilence()
+
+        test Foo famine()
+        {
+            return _famine();
+        }
+
+        Foo _pestilence()
         {
             return Foo.Pestilence;
         }
-        Foo death()
+
+        test Foo pestilence()
+        {
+            return _pestilence();
+        }
+
+        Foo _death()
         {
             return Foo.Death;
         }
-        bool equals(Foo a, Foo b)
+
+        test Foo death()
+        {
+            return _death();
+        }
+
+        bool _equals(Foo a, Foo b)
         {
             return a == b;
         }
-        bool notEquals(Foo a, Foo b)
+
+        bool _notEquals(Foo a, Foo b)
         {
             return a != b;
         }
-        bool testSimpleEqual()
+
+        test bool testSimpleEqual()
         {
-            return equals(Foo.War, Foo.War);
+            return _equals(Foo.War, Foo.War);
         }
-        bool testAnotherEqual()
+
+        test bool testAnotherEqual()
         {
-            return equals(Foo.Pestilence, Foo.Pestilence);
+            return _equals(Foo.Pestilence, Foo.Pestilence);
         }
-        bool testNotEqual()
+
+        test bool testNotEqual()
         {
-            return equals(Foo.Famine, Foo.Death);
+            return _equals(Foo.Famine, Foo.Death);
         }
-        bool testSimpleNotEqual()
+
+        test bool testSimpleNotEqual()
         {
-            return notEquals(Foo.War, Foo.War);
+            return _notEquals(Foo.War, Foo.War);
         }
-        bool testAnotherNotEqual()
+
+        test bool testAnotherNotEqual()
         {
-            return notEquals(Foo.Pestilence, Foo.Pestilence);
+            return _notEquals(Foo.Pestilence, Foo.Pestilence);
         }
-        bool testNotNotEqual()
+
+        test bool testNotNotEqual()
         {
-            return notEquals(Foo.Famine, Foo.Death);
+            return _notEquals(Foo.Famine, Foo.Death);
         }
-        int intWar()
+
+        int _intWar()
         {
-            return int(war());
+            return int(_war());
         }
-        int intFamine()
+
+        test int intWar()
         {
-            return int(famine());
+            return _intWar();
         }
-        int intPestilence()
+
+        int _intFamine()
         {
-            return int(pestilence());
+            return int(_famine());
         }
-        int intDeath()
+
+        test int intFamine()
         {
-            return int(death());
+            return _intFamine();
         }
-        int warValue()
+
+        int _intPestilence()
         {
-            return war().value;
+            return int(_pestilence());
         }
-        int famineValue()
+
+        test int intPestilence()
         {
-            return famine().value;
+            return _intPestilence();
         }
-        int pestilenceValue()
+
+        int _intDeath()
         {
-            return pestilence().value;
+            return int(_death());
         }
-        int deathValue()
+
+        test int intDeath()
         {
-            return death().value;
+            return _intDeath();
         }
-        int warValueLiteral()
+
+        test int warValue()
+        {
+            return _war().value;
+        }
+
+        test int famineValue()
+        {
+            return _famine().value;
+        }
+
+        test int pestilenceValue()
+        {
+            return _pestilence().value;
+        }
+
+        test int deathValue()
+        {
+            return _death().value;
+        }
+
+        test int warValueLiteral()
         {
             return Foo.War.value;
         }
-        int famineValueLiteral()
+
+        test int famineValueLiteral()
         {
             return Foo.Famine.value;
         }
-        int pestilenceValueLiteral()
+
+        test int pestilenceValueLiteral()
         {
             return Foo.Pestilence.value;
         }
-        int deathValueLiteral()
+
+        test int deathValueLiteral()
         {
             return Foo.Death.value;
         }
-        Foo intWarBackwards()
+
+        test Foo intWarBackwards()
         {
-            return Foo(intWar());
+            return Foo(_intWar());
         }
-        Foo intFamineBackwards()
+
+        test Foo intFamineBackwards()
         {
-            return Foo(intFamine());
+            return Foo(_intFamine());
         }
-        Foo intPestilenceBackwards()
+
+        test Foo intPestilenceBackwards()
         {
-            return Foo(intPestilence());
+            return Foo(_intPestilence());
         }
-        Foo intDeathBackwards()
+
+        test Foo intDeathBackwards()
         {
-            return Foo(intDeath());
+            return Foo(_intDeath());
         }
     `);
     checkEnum(program, callFunction(program, "war", []), 0);
@@ -3549,19 +3617,19 @@ tests.enumWithManualValues = function()
             Pestilence = 23,
             Death = -42
         }
-        Foo war()
+        test Foo war()
         {
             return Foo.War;
         }
-        Foo famine()
+        test Foo famine()
         {
             return Foo.Famine;
         }
-        Foo pestilence()
+        test Foo pestilence()
         {
             return Foo.Pestilence;
         }
-        Foo death()
+        test Foo death()
         {
             return Foo.Death;
         }
@@ -3609,19 +3677,19 @@ tests.enumWithSomeManualValues = function()
             Pestilence = 0,
             Death
         }
-        Foo war()
+        test Foo war()
         {
             return Foo.War;
         }
-        Foo famine()
+        test Foo famine()
         {
             return Foo.Famine;
         }
-        Foo pestilence()
+        test Foo pestilence()
         {
             return Foo.Pestilence;
         }
-        Foo death()
+        test Foo death()
         {
             return Foo.Death;
         }
@@ -3635,11 +3703,11 @@ tests.enumWithSomeManualValues = function()
 tests.trap = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             trap;
         }
-        int foo2(int x)
+        test int foo2(int x)
         {
             if (x == 3)
                 trap;
@@ -3649,7 +3717,7 @@ tests.trap = function()
             int3 x;
             float y;
         }
-        Bar foo3()
+        test Bar foo3()
         {
             trap;
         }
@@ -3702,117 +3770,185 @@ tests.enumWithExplicitIntBase = function()
             Pestilence,
             Death
         }
-        Foo war()
+
+        Foo _war()
         {
             return Foo.War;
         }
-        Foo famine()
+
+        test Foo war()
+        {
+            return _war();
+        }
+
+        Foo _famine()
         {
             return Foo.Famine;
         }
-        Foo pestilence()
+
+        test Foo famine()
+        {
+            return _famine();
+        }
+
+        Foo _pestilence()
         {
             return Foo.Pestilence;
         }
-        Foo death()
+
+        test Foo pestilence()
+        {
+            return _pestilence();
+        }
+
+        Foo _death()
         {
             return Foo.Death;
         }
-        bool equals(Foo a, Foo b)
+
+        test Foo death()
+        {
+            return _death();
+        }
+
+        bool _equals(Foo a, Foo b)
         {
             return a == b;
         }
-        bool notEquals(Foo a, Foo b)
+
+        bool _notEquals(Foo a, Foo b)
         {
             return a != b;
         }
-        bool testSimpleEqual()
+
+        test bool testSimpleEqual()
         {
-            return equals(Foo.War, Foo.War);
+            return _equals(Foo.War, Foo.War);
         }
-        bool testAnotherEqual()
+
+        test bool testAnotherEqual()
         {
-            return equals(Foo.Pestilence, Foo.Pestilence);
+            return _equals(Foo.Pestilence, Foo.Pestilence);
         }
-        bool testNotEqual()
+
+        test bool testNotEqual()
         {
-            return equals(Foo.Famine, Foo.Death);
+            return _equals(Foo.Famine, Foo.Death);
         }
-        bool testSimpleNotEqual()
+
+        test bool testSimpleNotEqual()
         {
-            return notEquals(Foo.War, Foo.War);
+            return _notEquals(Foo.War, Foo.War);
         }
-        bool testAnotherNotEqual()
+
+        test bool testAnotherNotEqual()
         {
-            return notEquals(Foo.Pestilence, Foo.Pestilence);
+            return _notEquals(Foo.Pestilence, Foo.Pestilence);
         }
-        bool testNotNotEqual()
+
+        test bool testNotNotEqual()
         {
-            return notEquals(Foo.Famine, Foo.Death);
+            return _notEquals(Foo.Famine, Foo.Death);
         }
-        int intWar()
+
+        int _intWar()
         {
-            return int(war());
+            return int(_war());
         }
-        int intFamine()
+
+        test int intWar()
         {
-            return int(famine());
+            return _intWar();
         }
-        int intPestilence()
+
+        int _intFamine()
         {
-            return int(pestilence());
+            return int(_famine());
         }
-        int intDeath()
+
+        test int intFamine()
         {
-            return int(death());
+            return _intFamine();
         }
-        int warValue()
+
+        int _intPestilence()
         {
-            return war().value;
+            return int(_pestilence());
         }
-        int famineValue()
+
+        test int intPestilence()
         {
-            return famine().value;
+            return _intPestilence();
         }
-        int pestilenceValue()
+
+        int _intDeath()
         {
-            return pestilence().value;
+            return int(_death());
         }
-        int deathValue()
+
+        test int intDeath()
         {
-            return death().value;
+            return _intDeath();
         }
-        int warValueLiteral()
+
+        test int warValue()
+        {
+            return _war().value;
+        }
+
+        test int famineValue()
+        {
+            return _famine().value;
+        }
+
+        test int pestilenceValue()
+        {
+            return _pestilence().value;
+        }
+
+        test int deathValue()
+        {
+            return _death().value;
+        }
+
+        test int warValueLiteral()
         {
             return Foo.War.value;
         }
-        int famineValueLiteral()
+
+        test int famineValueLiteral()
         {
             return Foo.Famine.value;
         }
-        int pestilenceValueLiteral()
+
+        test int pestilenceValueLiteral()
         {
             return Foo.Pestilence.value;
         }
-        int deathValueLiteral()
+
+        test int deathValueLiteral()
         {
             return Foo.Death.value;
         }
-        Foo intWarBackwards()
+
+        test Foo intWarBackwards()
         {
-            return Foo(intWar());
+            return Foo(_intWar());
         }
-        Foo intFamineBackwards()
+
+        test Foo intFamineBackwards()
         {
-            return Foo(intFamine());
+            return Foo(_intFamine());
         }
-        Foo intPestilenceBackwards()
+
+        test Foo intPestilenceBackwards()
         {
-            return Foo(intPestilence());
+            return Foo(_intPestilence());
         }
-        Foo intDeathBackwards()
+
+        test Foo intDeathBackwards()
         {
-            return Foo(intDeath());
+            return Foo(_intDeath());
         }
     `);
     checkEnum(program, callFunction(program, "war", []), 0);
@@ -3852,117 +3988,185 @@ tests.enumWithUintBase = function()
             Pestilence,
             Death
         }
-        Foo war()
+
+        Foo _war()
         {
             return Foo.War;
         }
-        Foo famine()
+
+        test Foo war()
+        {
+            return _war();
+        }
+
+        Foo _famine()
         {
             return Foo.Famine;
         }
-        Foo pestilence()
+
+        test Foo famine()
+        {
+            return _famine();
+        }
+
+        Foo _pestilence()
         {
             return Foo.Pestilence;
         }
-        Foo death()
+
+        test Foo pestilence()
+        {
+            return _pestilence();
+        }
+
+        Foo _death()
         {
             return Foo.Death;
         }
-        bool equals(Foo a, Foo b)
+
+        test Foo death()
+        {
+            return _death();
+        }
+
+        bool _equals(Foo a, Foo b)
         {
             return a == b;
         }
-        bool notEquals(Foo a, Foo b)
+
+        bool _notEquals(Foo a, Foo b)
         {
             return a != b;
         }
-        bool testSimpleEqual()
+
+        test bool testSimpleEqual()
         {
-            return equals(Foo.War, Foo.War);
+            return _equals(Foo.War, Foo.War);
         }
-        bool testAnotherEqual()
+
+        test bool testAnotherEqual()
         {
-            return equals(Foo.Pestilence, Foo.Pestilence);
+            return _equals(Foo.Pestilence, Foo.Pestilence);
         }
-        bool testNotEqual()
+
+        test bool testNotEqual()
         {
-            return equals(Foo.Famine, Foo.Death);
+            return _equals(Foo.Famine, Foo.Death);
         }
-        bool testSimpleNotEqual()
+
+        test bool testSimpleNotEqual()
         {
-            return notEquals(Foo.War, Foo.War);
+            return _notEquals(Foo.War, Foo.War);
         }
-        bool testAnotherNotEqual()
+
+        test bool testAnotherNotEqual()
         {
-            return notEquals(Foo.Pestilence, Foo.Pestilence);
+            return _notEquals(Foo.Pestilence, Foo.Pestilence);
         }
-        bool testNotNotEqual()
+
+        test bool testNotNotEqual()
         {
-            return notEquals(Foo.Famine, Foo.Death);
+            return _notEquals(Foo.Famine, Foo.Death);
         }
-        uint uintWar()
+
+        uint _uintWar()
         {
-            return uint(war());
+            return uint(_war());
         }
-        uint uintFamine()
+
+        test uint uintWar()
         {
-            return uint(famine());
+            return _uintWar();
         }
-        uint uintPestilence()
+
+        uint _uintFamine()
         {
-            return uint(pestilence());
+            return uint(_famine());
         }
-        uint uintDeath()
+
+        test uint uintFamine()
         {
-            return uint(death());
+            return _uintFamine();
         }
-        uint warValue()
+
+        uint _uintPestilence()
         {
-            return war().value;
+            return uint(_pestilence());
         }
-        uint famineValue()
+
+        test uint uintPestilence()
         {
-            return famine().value;
+            return _uintPestilence();
         }
-        uint pestilenceValue()
+
+        uint _uintDeath()
         {
-            return pestilence().value;
+            return uint(_death());
         }
-        uint deathValue()
+
+        test uint uintDeath()
         {
-            return death().value;
+            return _uintDeath();
         }
-        uint warValueLiteral()
+
+        test uint warValue()
+        {
+            return _war().value;
+        }
+
+        test uint famineValue()
+        {
+            return _famine().value;
+        }
+
+        test uint pestilenceValue()
+        {
+            return _pestilence().value;
+        }
+
+        test uint deathValue()
+        {
+            return _death().value;
+        }
+
+        test uint warValueLiteral()
         {
             return Foo.War.value;
         }
-        uint famineValueLiteral()
+
+        test uint famineValueLiteral()
         {
             return Foo.Famine.value;
         }
-        uint pestilenceValueLiteral()
+
+        test uint pestilenceValueLiteral()
         {
             return Foo.Pestilence.value;
         }
-        uint deathValueLiteral()
+
+        test uint deathValueLiteral()
         {
             return Foo.Death.value;
         }
-        Foo uintWarBackwards()
+
+        test Foo uintWarBackwards()
         {
-            return Foo(uintWar());
+            return Foo(_uintWar());
         }
-        Foo uintFamineBackwards()
+
+        test Foo uintFamineBackwards()
         {
-            return Foo(uintFamine());
+            return Foo(_uintFamine());
         }
-        Foo uintPestilenceBackwards()
+
+        test Foo uintPestilenceBackwards()
         {
-            return Foo(uintPestilence());
+            return Foo(_uintPestilence());
         }
-        Foo uintDeathBackwards()
+
+        test Foo uintDeathBackwards()
         {
-            return Foo(uintDeath());
+            return Foo(_uintDeath());
         }
     `);
     checkEnum(program, callFunction(program, "war", []), 0);
@@ -4030,7 +4234,7 @@ tests.emptyStruct = function()
 {
     let program = doPrep(`
         struct Thingy { }
-        int foo()
+        test int foo()
         {
             Thingy thingy;
             return 46;
@@ -4063,7 +4267,7 @@ tests.enumNoMembers = function()
 tests.simpleSwitch = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             switch (x) {
             case 767:
@@ -4082,7 +4286,7 @@ tests.simpleSwitch = function()
 
 tests.exhaustiveUcharSwitch = function()
 {
-    let text = "float foo(uchar x) { switch (uchar(x)) {"
+    let text = "test float foo(uchar x) { switch (uchar(x)) {"
     for (let i = 0; i <= 0xff; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "} }";
@@ -4093,7 +4297,7 @@ tests.exhaustiveUcharSwitch = function()
 
 tests.notQuiteExhaustiveUcharSwitch = function()
 {
-    let text = "float foo(uchar x) { switch (uchar(x)) {"
+    let text = "test float foo(uchar x) { switch (uchar(x)) {"
     for (let i = 0; i <= 0xfe; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "} }";
@@ -4102,7 +4306,7 @@ tests.notQuiteExhaustiveUcharSwitch = function()
 
 tests.notQuiteExhaustiveUcharSwitchWithDefault = function()
 {
-    let text = "float foo(uchar x) { switch (uchar(x)) {"
+    let text = "test float foo(uchar x) { switch (uchar(x)) {"
     for (let i = 0; i <= 0xfe; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "default: return " + 0xff * 1.5 + ";";
@@ -4117,7 +4321,7 @@ tests.switchFallThrough = function()
     // FIXME: This might become an error in future versions.
     // https://bugs.webkit.org/show_bug.cgi?id=177172
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int result = 0;
             switch (x) {
@@ -4139,7 +4343,7 @@ tests.switchFallThrough = function()
 tests.switchBreak = function()
 {
     let program = doPrep(`
-        int foo(int x)
+        test int foo(int x)
         {
             int result = 0;
             switch (x) {
@@ -4167,7 +4371,7 @@ tests.enumSwitchBreakExhaustive = function()
         enum Foo {
             A, B, C
         }
-        int foo(Foo x)
+        test int foo(Foo x)
         {
             int result = 0;
             switch (x) {
@@ -4222,7 +4426,7 @@ tests.enumSwitchBreakNotQuiteExhaustiveWithDefault = function()
         enum Foo {
             A, B, C
         }
-        int foo(Foo x)
+        test int foo(Foo x)
         {
             int result = 0;
             switch (x) {
@@ -4280,7 +4484,7 @@ tests.mutuallyRecursiveStructWithPointersBroken = function()
             thread Foo* foo;
             int bar;
         }
-        int foo()
+        test int foo()
         {
             Foo foo;
             Bar bar;
@@ -4305,7 +4509,7 @@ tests.mutuallyRecursiveStructWithPointers = function()
             thread Foo* foo;
             int bar;
         }
-        int foo()
+        test int foo()
         {
             Foo foo;
             Bar bar;
@@ -4326,7 +4530,7 @@ tests.linkedList = function()
             thread Node* next;
             int value;
         }
-        int foo()
+        test int foo()
         {
             Node x, y, z;
             x.next = &y;
@@ -4343,7 +4547,7 @@ tests.linkedList = function()
 tests.pointerToPointer = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             int x;
             thread int* p = &x;
@@ -4366,7 +4570,7 @@ tests.pointerToPointer = function()
 tests.arrayRefToArrayRef = function()
 {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             int x;
             thread int[] p = @x;
@@ -4476,7 +4680,7 @@ tests.operatorWithoutUninferrableTypeVariable = function()
             result.x = a.x + b.x;
             return result;
         }
-        int foo()
+        test int foo()
         {
             Foo a;
             a.x = 645;
@@ -4970,7 +5174,7 @@ tests.anderWithNothingWrong = function()
         {
             return &foo->x;
         }
-        int foo()
+        test int foo()
         {
             Foo x;
             x.x = 13;
@@ -5044,7 +5248,7 @@ tests.anderWithArrayRef = function()
         {
             return &foo[0].x;
         }
-        int foo()
+        test int foo()
         {
             Foo x;
             x.x = 13;
@@ -5249,7 +5453,7 @@ tests.indexAnderWithNothingWrong = function()
         {
             return &foo->x;
         }
-        int foo()
+        test int foo()
         {
             Foo x;
             x.x = 13;
@@ -5334,7 +5538,7 @@ tests.indexAnderWithArrayRef = function()
         {
             return &array[uint(index + 1)].x;
         }
-        int foo()
+        test int foo()
         {
             Foo x;
             x.x = 13;
@@ -5389,7 +5593,7 @@ tests.andReturnedArrayRef = function()
             x[5] = 354;
             return @x;
         }
-        int foo()
+        test int foo()
         {
             thread int* ptr = &getArray()[5];
             return *ptr;
@@ -5412,7 +5616,7 @@ tests.casts = function()
             b.y = foo.x + 7;
             return b;
         }
-        int baz(int z) {
+        test int baz(int z) {
             Foo foo;
             foo.x = z;
             Bar b = Bar(foo);
@@ -5432,7 +5636,7 @@ tests.casts = function()
             b.y = (*foo).x + 8;
             return &b;
         }
-        int baz(int z) {
+        test int baz(int z) {
             Foo foo;
             foo.x = z;
             thread Bar* b = thread Bar*(&foo);
@@ -5468,7 +5672,7 @@ tests.pointerToMember = function()
 tests.builtinMatrices = function()
 {
     let program = doPrep(`
-        float foo()
+        test float foo()
         {
             float2x2 a;
             a[0][0] = 1;
@@ -5477,7 +5681,7 @@ tests.builtinMatrices = function()
             a[1][1] = 4;
             return a[0][0];
         }
-        float foo2()
+        test float foo2()
         {
             float2x3 a;
             a[0][0] = 1;
@@ -5488,12 +5692,12 @@ tests.builtinMatrices = function()
             a[1][2] = 6;
             return a[1][2];
         }
-        float foo3()
+        test float foo3()
         {
             float2x2 a;
             return a[0][0];
         }
-        bool foo4()
+        test bool foo4()
         {
             float2x2 a;
             a[0][0] = 1;
@@ -5512,7 +5716,7 @@ tests.builtinMatrices = function()
             }
             return a == b;
         }
-        bool foo5()
+        test bool foo5()
         {
             float2x2 a;
             a[0] = float2(1, 2);
@@ -5524,7 +5728,7 @@ tests.builtinMatrices = function()
             b[1][1] = 4;
             return a == b;
         }
-        bool foo6()
+        test bool foo6()
         {
             float2x2 a;
             a[0][0] = 1;
@@ -5540,7 +5744,7 @@ tests.builtinMatrices = function()
             a[1] *= 6;
             return a == b;
         }
-        float foo7()
+        test float foo7()
         {
             float2x3 a = float2x3(float3(3, 4, 5), float3(6, 7, 8));
             return a[0][2];
@@ -5556,15 +5760,15 @@ tests.builtinMatrices = function()
 }
 
 tests.halfSimpleMath = function() {
-    let program = doPrep("half foo(half x, half y) { return x + y; }");
+    let program = doPrep("test half foo(half x, half y) { return x + y; }");
     checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, 5)]), 12);
-    program = doPrep("half foo(half x, half y) { return x - y; }");
+    program = doPrep("test half foo(half x, half y) { return x - y; }");
     checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, 5)]), 2);
     checkHalf(program, callFunction(program, "foo", [makeHalf(program, 5), makeHalf(program, 7)]), -2);
-    program = doPrep("half foo(half x, half y) { return x * y; }");
+    program = doPrep("test half foo(half x, half y) { return x * y; }");
     checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, 5)]), 35);
     checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, -5)]), -35);
-    program = doPrep("half foo(half x, half y) { return x / y; }");
+    program = doPrep("test half foo(half x, half y) { return x / y; }");
     checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, 2)]), 3.5);
     checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, -2)]), -3.5);
 }
@@ -5634,28 +5838,28 @@ tests.matrixMultiplication = function() {
             y[2][3] = 61;
             return y;
         }
-        float foo00() {
+        test float foo00() {
             return multiply(matrix1(), matrix2())[0][0];
         }
-        float foo01() {
+        test float foo01() {
             return multiply(matrix1(), matrix2())[0][1];
         }
-        float foo02() {
+        test float foo02() {
             return multiply(matrix1(), matrix2())[0][2];
         }
-        float foo03() {
+        test float foo03() {
             return multiply(matrix1(), matrix2())[0][3];
         }
-        float foo10() {
+        test float foo10() {
             return multiply(matrix1(), matrix2())[1][0];
         }
-        float foo11() {
+        test float foo11() {
             return multiply(matrix1(), matrix2())[1][1];
         }
-        float foo12() {
+        test float foo12() {
             return multiply(matrix1(), matrix2())[1][2];
         }
-        float foo13() {
+        test float foo13() {
             return multiply(matrix1(), matrix2())[1][3];
         }
     `);
@@ -5671,17 +5875,17 @@ tests.matrixMultiplication = function() {
 
 tests.arrayIndex = function() {
     let program = doPrep(`
-        uint innerArrayLength() {
+        test uint innerArrayLength() {
             int[2][3] array;
             return array[0].length;
         }
 
-        uint outerArrayLength() {
+        test uint outerArrayLength() {
             int[2][3] array;
             return array.length;
         }
 
-        int arrayIndexing(uint i, uint j) {
+        test int arrayIndexing(uint i, uint j) {
             int[2][3] array;
             array[0][0] = 1;
             array[0][1] = 2;
@@ -5901,61 +6105,61 @@ function createTexturesForTesting(program)
 
 tests.textureDimensions = function() {
     let program = doPrep(`
-        uint foo1(Texture1D<float> texture) {
+        test uint foo1(Texture1D<float> texture) {
             uint width;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &numberOfLevels);
             return width;
         }
-        uint foo2(Texture1D<float> texture) {
+        test uint foo2(Texture1D<float> texture) {
             uint width;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo3(Texture1DArray<float> texture) {
+        test uint foo3(Texture1DArray<float> texture) {
             uint width;
             uint elements;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &elements, &numberOfLevels);
             return width;
         }
-        uint foo4(Texture1DArray<float> texture) {
+        test uint foo4(Texture1DArray<float> texture) {
             uint width;
             uint elements;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &elements, &numberOfLevels);
             return elements;
         }
-        uint foo5(Texture1DArray<float> texture) {
+        test uint foo5(Texture1DArray<float> texture) {
             uint width;
             uint elements;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &elements, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo6(Texture2D<float> texture) {
+        test uint foo6(Texture2D<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return width;
         }
-        uint foo7(Texture2D<float> texture) {
+        test uint foo7(Texture2D<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return height;
         }
-        uint foo8(Texture2D<float> texture) {
+        test uint foo8(Texture2D<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo9(Texture2DArray<float> texture) {
+        test uint foo9(Texture2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -5963,7 +6167,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
             return width;
         }
-        uint foo10(Texture2DArray<float> texture) {
+        test uint foo10(Texture2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -5971,7 +6175,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
             return height;
         }
-        uint foo11(Texture2DArray<float> texture) {
+        test uint foo11(Texture2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -5979,7 +6183,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
             return elements;
         }
-        uint foo12(Texture2DArray<float> texture) {
+        test uint foo12(Texture2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -5987,7 +6191,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo13(Texture3D<float> texture) {
+        test uint foo13(Texture3D<float> texture) {
             uint width;
             uint height;
             uint depth;
@@ -5995,7 +6199,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &depth, &numberOfLevels);
             return width;
         }
-        uint foo14(Texture3D<float> texture) {
+        test uint foo14(Texture3D<float> texture) {
             uint width;
             uint height;
             uint depth;
@@ -6003,7 +6207,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &depth, &numberOfLevels);
             return height;
         }
-        uint foo15(Texture3D<float> texture) {
+        test uint foo15(Texture3D<float> texture) {
             uint width;
             uint height;
             uint depth;
@@ -6011,7 +6215,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &depth, &numberOfLevels);
             return depth;
         }
-        uint foo16(Texture3D<float> texture) {
+        test uint foo16(Texture3D<float> texture) {
             uint width;
             uint height;
             uint depth;
@@ -6019,120 +6223,120 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &depth, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo17(TextureCube<float> texture) {
+        test uint foo17(TextureCube<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return width;
         }
-        uint foo18(TextureCube<float> texture) {
+        test uint foo18(TextureCube<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return height;
         }
-        uint foo19(TextureCube<float> texture) {
+        test uint foo19(TextureCube<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo20(RWTexture1D<float> texture) {
+        test uint foo20(RWTexture1D<float> texture) {
             uint width;
             GetDimensions(texture, &width);
             return width;
         }
-        uint foo21(RWTexture1DArray<float> texture) {
+        test uint foo21(RWTexture1DArray<float> texture) {
             uint width;
             uint elements;
             GetDimensions(texture, &width, &elements);
             return width;
         }
-        uint foo22(RWTexture1DArray<float> texture) {
+        test uint foo22(RWTexture1DArray<float> texture) {
             uint width;
             uint elements;
             GetDimensions(texture, &width, &elements);
             return elements;
         }
-        uint foo23(RWTexture2D<float> texture) {
+        test uint foo23(RWTexture2D<float> texture) {
             uint width;
             uint height;
             GetDimensions(texture, &width, &height);
             return width;
         }
-        uint foo24(RWTexture2D<float> texture) {
+        test uint foo24(RWTexture2D<float> texture) {
             uint width;
             uint height;
             GetDimensions(texture, &width, &height);
             return height;
         }
-        uint foo25(RWTexture2DArray<float> texture) {
+        test uint foo25(RWTexture2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
             GetDimensions(texture, &width, &height, &elements);
             return width;
         }
-        uint foo26(RWTexture2DArray<float> texture) {
+        test uint foo26(RWTexture2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
             GetDimensions(texture, &width, &height, &elements);
             return height;
         }
-        uint foo27(RWTexture2DArray<float> texture) {
+        test uint foo27(RWTexture2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
             GetDimensions(texture, &width, &height, &elements);
             return elements;
         }
-        uint foo28(RWTexture3D<float> texture) {
+        test uint foo28(RWTexture3D<float> texture) {
             uint width;
             uint height;
             uint depth;
             GetDimensions(texture, &width, &height, &depth);
             return width;
         }
-        uint foo29(RWTexture3D<float> texture) {
+        test uint foo29(RWTexture3D<float> texture) {
             uint width;
             uint height;
             uint depth;
             GetDimensions(texture, &width, &height, &depth);
             return height;
         }
-        uint foo30(RWTexture3D<float> texture) {
+        test uint foo30(RWTexture3D<float> texture) {
             uint width;
             uint height;
             uint depth;
             GetDimensions(texture, &width, &height, &depth);
             return depth;
         }
-        uint foo31(TextureDepth2D<float> texture) {
+        test uint foo31(TextureDepth2D<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return width;
         }
-        uint foo32(TextureDepth2D<float> texture) {
+        test uint foo32(TextureDepth2D<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return height;
         }
-        uint foo33(TextureDepth2D<float> texture) {
+        test uint foo33(TextureDepth2D<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo34(TextureDepth2DArray<float> texture) {
+        test uint foo34(TextureDepth2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -6140,7 +6344,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
             return width;
         }
-        uint foo35(TextureDepth2DArray<float> texture) {
+        test uint foo35(TextureDepth2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -6148,7 +6352,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
             return height;
         }
-        uint foo36(TextureDepth2DArray<float> texture) {
+        test uint foo36(TextureDepth2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -6156,7 +6360,7 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
             return elements;
         }
-        uint foo37(TextureDepth2DArray<float> texture) {
+        test uint foo37(TextureDepth2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -6164,54 +6368,54 @@ tests.textureDimensions = function() {
             GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo38(TextureDepthCube<float> texture) {
+        test uint foo38(TextureDepthCube<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return width;
         }
-        uint foo39(TextureDepthCube<float> texture) {
+        test uint foo39(TextureDepthCube<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return height;
         }
-        uint foo40(TextureDepthCube<float> texture) {
+        test uint foo40(TextureDepthCube<float> texture) {
             uint width;
             uint height;
             uint numberOfLevels;
             GetDimensions(texture, 0, &width, &height, &numberOfLevels);
             return numberOfLevels;
         }
-        uint foo41(RWTextureDepth2D<float> texture) {
+        test uint foo41(RWTextureDepth2D<float> texture) {
             uint width;
             uint height;
             GetDimensions(texture, &width, &height);
             return width;
         }
-        uint foo42(RWTextureDepth2D<float> texture) {
+        test uint foo42(RWTextureDepth2D<float> texture) {
             uint width;
             uint height;
             GetDimensions(texture, &width, &height);
             return height;
         }
-        uint foo43(RWTextureDepth2DArray<float> texture) {
+        test uint foo43(RWTextureDepth2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
             GetDimensions(texture, &width, &height, &elements);
             return width;
         }
-        uint foo44(RWTextureDepth2DArray<float> texture) {
+        test uint foo44(RWTextureDepth2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
             GetDimensions(texture, &width, &height, &elements);
             return height;
         }
-        uint foo45(RWTextureDepth2DArray<float> texture) {
+        test uint foo45(RWTextureDepth2DArray<float> texture) {
             uint width;
             uint height;
             uint elements;
@@ -6269,67 +6473,67 @@ tests.textureDimensions = function() {
 
 tests.textureLoad = function() {
     let program = doPrep(`
-        float foo1(Texture1D<float> texture, int location, int mipmap) {
+        test float foo1(Texture1D<float> texture, int location, int mipmap) {
             return Load(texture, int2(location, mipmap));
         }
-        float foo2(Texture1D<float> texture, int location, int mipmap, int offset) {
+        test float foo2(Texture1D<float> texture, int location, int mipmap, int offset) {
             return Load(texture, int2(location, mipmap), offset);
         }
-        float foo3(Texture1DArray<float> texture, int location, int mipmap, int layer) {
+        test float foo3(Texture1DArray<float> texture, int location, int mipmap, int layer) {
             return Load(texture, int3(location, mipmap, layer));
         }
-        float foo4(Texture1DArray<float> texture, int location, int mipmap, int layer, int offset) {
+        test float foo4(Texture1DArray<float> texture, int location, int mipmap, int layer, int offset) {
             return Load(texture, int3(location, mipmap, layer), offset);
         }
-        float foo5(Texture2D<float> texture, int x, int y, int mipmap) {
+        test float foo5(Texture2D<float> texture, int x, int y, int mipmap) {
             return Load(texture, int3(x, y, mipmap));
         }
-        float foo6(Texture2D<float> texture, int x, int y, int mipmap, int offsetX, int offsetY) {
+        test float foo6(Texture2D<float> texture, int x, int y, int mipmap, int offsetX, int offsetY) {
             return Load(texture, int3(x, y, mipmap), int2(offsetX, offsetY));
         }
-        float foo7(Texture2DArray<float> texture, int x, int y, int mipmap, int layer) {
+        test float foo7(Texture2DArray<float> texture, int x, int y, int mipmap, int layer) {
             return Load(texture, int4(x, y, mipmap, layer));
         }
-        float foo8(Texture2DArray<float> texture, int x, int y, int mipmap, int layer, int offsetX, int offsetY) {
+        test float foo8(Texture2DArray<float> texture, int x, int y, int mipmap, int layer, int offsetX, int offsetY) {
             return Load(texture, int4(x, y, mipmap, layer), int2(offsetX, offsetY));
         }
-        float foo9(Texture3D<float> texture, int x, int y, int z, int mipmap) {
+        test float foo9(Texture3D<float> texture, int x, int y, int z, int mipmap) {
             return Load(texture, int4(x, y, z, mipmap));
         }
-        float foo10(Texture3D<float> texture, int x, int y, int z, int mipmap, int offsetX, int offsetY, int offsetZ) {
+        test float foo10(Texture3D<float> texture, int x, int y, int z, int mipmap, int offsetX, int offsetY, int offsetZ) {
             return Load(texture, int4(x, y, z, mipmap), int3(offsetX, offsetY, offsetZ));
         }
-        float foo11(RWTexture1D<float> texture, int location) {
+        test float foo11(RWTexture1D<float> texture, int location) {
             return Load(texture, location);
         }
-        float foo12(RWTexture1DArray<float> texture, int location, int layer) {
+        test float foo12(RWTexture1DArray<float> texture, int location, int layer) {
             return Load(texture, int2(location, layer));
         }
-        float foo13(RWTexture2D<float> texture, int x, int y) {
+        test float foo13(RWTexture2D<float> texture, int x, int y) {
             return Load(texture, int2(x, y));
         }
-        float foo14(RWTexture2DArray<float> texture, int x, int y, int layer) {
+        test float foo14(RWTexture2DArray<float> texture, int x, int y, int layer) {
             return Load(texture, int3(x, y, layer));
         }
-        float foo15(RWTexture3D<float> texture, int x, int y, int z) {
+        test float foo15(RWTexture3D<float> texture, int x, int y, int z) {
             return Load(texture, int3(x, y, z));
         }
-        float foo16(TextureDepth2D<float> texture, int x, int y, int mipmap) {
+        test float foo16(TextureDepth2D<float> texture, int x, int y, int mipmap) {
             return Load(texture, int3(x, y, mipmap));
         }
-        float foo17(TextureDepth2D<float> texture, int x, int y, int mipmap, int offsetX, int offsetY) {
+        test float foo17(TextureDepth2D<float> texture, int x, int y, int mipmap, int offsetX, int offsetY) {
             return Load(texture, int3(x, y, mipmap), int2(offsetX, offsetY));
         }
-        float foo18(TextureDepth2DArray<float> texture, int x, int y, int mipmap, int layer) {
+        test float foo18(TextureDepth2DArray<float> texture, int x, int y, int mipmap, int layer) {
             return Load(texture, int4(x, y, mipmap, layer));
         }
-        float foo19(TextureDepth2DArray<float> texture, int x, int y, int mipmap, int layer, int offsetX, int offsetY) {
+        test float foo19(TextureDepth2DArray<float> texture, int x, int y, int mipmap, int layer, int offsetX, int offsetY) {
             return Load(texture, int4(x, y, mipmap, layer), int2(offsetX, offsetY));
         }
-        float foo20(RWTextureDepth2D<float> texture, int x, int y) {
+        test float foo20(RWTextureDepth2D<float> texture, int x, int y) {
             return Load(texture, int2(x, y));
         }
-        float foo21(RWTextureDepth2DArray<float> texture, int x, int y, int layer) {
+        test float foo21(RWTextureDepth2DArray<float> texture, int x, int y, int layer) {
             return Load(texture, int3(x, y, layer));
         }
     `);
@@ -6670,31 +6874,31 @@ tests.textureLoad = function() {
 
 tests.textureStore = function() {
     let program = doPrep(`
-        float foo1(RWTexture1D<float> texture, uint location, float value) {
+        test float foo1(RWTexture1D<float> texture, uint location, float value) {
             Store(texture, value, location);
             return Load(texture, int(location));
         }
-        float foo2(RWTexture1DArray<float> texture, uint location, uint layer, float value) {
+        test float foo2(RWTexture1DArray<float> texture, uint location, uint layer, float value) {
             Store(texture, value, uint2(location, layer));
             return Load(texture, int2(int(location), int(layer)));
         }
-        float foo3(RWTexture2D<float> texture, uint x, uint y, float value) {
+        test float foo3(RWTexture2D<float> texture, uint x, uint y, float value) {
             Store(texture, value, uint2(x, y));
             return Load(texture, int2(int(x), int(y)));
         }
-        float foo4(RWTexture2DArray<float> texture, uint x, uint y, uint layer, float value) {
+        test float foo4(RWTexture2DArray<float> texture, uint x, uint y, uint layer, float value) {
             Store(texture, value, uint3(x, y, layer));
             return Load(texture, int3(int(x), int(y), int(layer)));
         }
-        float foo5(RWTexture3D<float> texture, uint x, uint y, uint z, float value) {
+        test float foo5(RWTexture3D<float> texture, uint x, uint y, uint z, float value) {
             Store(texture, value, uint3(x, y, z));
             return Load(texture, int3(int(x), int(y), int(z)));
         }
-        float foo6(RWTextureDepth2D<float> texture, uint x, uint y, float value) {
+        test float foo6(RWTextureDepth2D<float> texture, uint x, uint y, float value) {
             Store(texture, value, uint2(x, y));
             return Load(texture, int2(int(x), int(y)));
         }
-        float foo7(RWTextureDepth2DArray<float> texture, uint x, uint y, uint layer, float value) {
+        test float foo7(RWTextureDepth2DArray<float> texture, uint x, uint y, uint layer, float value) {
             Store(texture, value, uint3(x, y, layer));
             return Load(texture, int3(int(x), int(y), int(layer)));
         }
@@ -6824,184 +7028,184 @@ tests.textureStore = function() {
 
 tests.textureSample = function() {
     let program = doPrep(`
-        float foo1(Texture1D<float> texture, sampler s, float location) {
+        test float foo1(Texture1D<float> texture, sampler s, float location) {
             return Sample(texture, s, location);
         }
-        float foo2(Texture1D<float> texture, sampler s, float location, int offset) {
+        test float foo2(Texture1D<float> texture, sampler s, float location, int offset) {
             return Sample(texture, s, location, offset);
         }
-        float foo3(Texture1DArray<float> texture, sampler s, float x, float layer) {
+        test float foo3(Texture1DArray<float> texture, sampler s, float x, float layer) {
             return Sample(texture, s, float2(x, layer));
         }
-        float foo4(Texture1DArray<float> texture, sampler s, float x, float layer, int offset) {
+        test float foo4(Texture1DArray<float> texture, sampler s, float x, float layer, int offset) {
             return Sample(texture, s, float2(x, layer), offset);
         }
-        float foo5(Texture2D<float> texture, sampler s, float x, float y) {
+        test float foo5(Texture2D<float> texture, sampler s, float x, float y) {
             return Sample(texture, s, float2(x, y));
         }
-        float foo6(Texture2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
+        test float foo6(Texture2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
             return Sample(texture, s, float2(x, y), int2(offsetX, offsetY));
         }
-        float foo7(Texture2DArray<float> texture, sampler s, float x, float y, float layer) {
+        test float foo7(Texture2DArray<float> texture, sampler s, float x, float y, float layer) {
             return Sample(texture, s, float3(x, y, layer));
         }
-        float foo8(Texture2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
+        test float foo8(Texture2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
             return Sample(texture, s, float3(x, y, layer), int2(offsetX, offsetY));
         }
-        float foo9(Texture3D<float> texture, sampler s, float x, float y, float z) {
+        test float foo9(Texture3D<float> texture, sampler s, float x, float y, float z) {
             return Sample(texture, s, float3(x, y, z));
         }
-        float foo10(Texture3D<float> texture, sampler s, float x, float y, float z, int offsetX, int offsetY, int offsetZ) {
+        test float foo10(Texture3D<float> texture, sampler s, float x, float y, float z, int offsetX, int offsetY, int offsetZ) {
             return Sample(texture, s, float3(x, y, z), int3(offsetX, offsetY, offsetZ));
         }
-        float foo11(TextureCube<float> texture, sampler s, float x, float y, float z) {
+        test float foo11(TextureCube<float> texture, sampler s, float x, float y, float z) {
             return Sample(texture, s, float3(x, y, z));
         }
-        float foo12(Texture2D<float> texture, sampler s, float x, float y, float Bias) {
+        test float foo12(Texture2D<float> texture, sampler s, float x, float y, float Bias) {
             return SampleBias(texture, s, float2(x, y), Bias);
         }
-        float foo13(Texture2D<float> texture, sampler s, float x, float y, float Bias, int offsetX, int offsetY) {
+        test float foo13(Texture2D<float> texture, sampler s, float x, float y, float Bias, int offsetX, int offsetY) {
             return SampleBias(texture, s, float2(x, y), Bias, int2(offsetX, offsetY));
         }
-        float foo14(Texture2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1) {
+        test float foo14(Texture2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1) {
             return SampleGrad(texture, s, float2(x, y), float2(ddx0, ddx1), float2(ddy0, ddy1));
         }
-        float foo15(Texture2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
+        test float foo15(Texture2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
             return SampleGrad(texture, s, float2(x, y), float2(ddx0, ddx1), float2(ddy0, ddy1), int2(offsetX, offsetY));
         }
-        float foo16(Texture2D<float> texture, sampler s, float x, float y, float LOD) {
+        test float foo16(Texture2D<float> texture, sampler s, float x, float y, float LOD) {
             return SampleLevel(texture, s, float2(x, y), LOD);
         }
-        float foo17(Texture2D<float> texture, sampler s, float x, float y, float LOD, int offsetX, int offsetY) {
+        test float foo17(Texture2D<float> texture, sampler s, float x, float y, float LOD, int offsetX, int offsetY) {
             return SampleLevel(texture, s, float2(x, y), LOD, int2(offsetX, offsetY));
         }
-        float foo18(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float Bias) {
+        test float foo18(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float Bias) {
             return SampleBias(texture, s, float3(x, y, layer), Bias);
         }
-        float foo19(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float Bias, int offsetX, int offsetY) {
+        test float foo19(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float Bias, int offsetX, int offsetY) {
             return SampleBias(texture, s, float3(x, y, layer), Bias, int2(offsetX, offsetY));
         }
-        float foo20(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1) {
+        test float foo20(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1) {
             return SampleGrad(texture, s, float3(x, y, layer), float2(ddx0, ddx1), float2(ddy0, ddy1));
         }
-        float foo21(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
+        test float foo21(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
             return SampleGrad(texture, s, float3(x, y, layer), float2(ddx0, ddx1), float2(ddy0, ddy1), int2(offsetX, offsetY));
         }
-        float foo22(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float LOD) {
+        test float foo22(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float LOD) {
             return SampleLevel(texture, s, float3(x, y, layer), LOD);
         }
-        float foo23(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float LOD, int offsetX, int offsetY) {
+        test float foo23(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float LOD, int offsetX, int offsetY) {
             return SampleLevel(texture, s, float3(x, y, layer), LOD, int2(offsetX, offsetY));
         }
-        int foo24(Texture1D<int4> texture, sampler s, float location) {
+        test int foo24(Texture1D<int4> texture, sampler s, float location) {
             return Sample(texture, s, location).x;
         }
-        int foo25(Texture1D<int4> texture, sampler s, float location) {
+        test int foo25(Texture1D<int4> texture, sampler s, float location) {
             return Sample(texture, s, location).y;
         }
-        int foo26(Texture1D<int4> texture, sampler s, float location) {
+        test int foo26(Texture1D<int4> texture, sampler s, float location) {
             return Sample(texture, s, location).z;
         }
-        int foo27(Texture1D<int4> texture, sampler s, float location) {
+        test int foo27(Texture1D<int4> texture, sampler s, float location) {
             return Sample(texture, s, location).w;
         }
-        float foo28(TextureDepth2D<float> texture, sampler s, float x, float y) {
+        test float foo28(TextureDepth2D<float> texture, sampler s, float x, float y) {
             return Sample(texture, s, float2(x, y));
         }
-        float foo29(TextureDepth2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
+        test float foo29(TextureDepth2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
             return Sample(texture, s, float2(x, y), int2(offsetX, offsetY));
         }
-        float foo30(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer) {
+        test float foo30(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer) {
             return Sample(texture, s, float3(x, y, layer));
         }
-        float foo31(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
+        test float foo31(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
             return Sample(texture, s, float3(x, y, layer), int2(offsetX, offsetY));
         }
-        float foo32(TextureDepthCube<float> texture, sampler s, float x, float y, float z) {
+        test float foo32(TextureDepthCube<float> texture, sampler s, float x, float y, float z) {
             return Sample(texture, s, float3(x, y, z));
         }
-        float foo33(TextureDepth2D<float> texture, sampler s, float x, float y, float Bias) {
+        test float foo33(TextureDepth2D<float> texture, sampler s, float x, float y, float Bias) {
             return SampleBias(texture, s, float2(x, y), Bias);
         }
-        float foo34(TextureDepth2D<float> texture, sampler s, float x, float y, float Bias, int offsetX, int offsetY) {
+        test float foo34(TextureDepth2D<float> texture, sampler s, float x, float y, float Bias, int offsetX, int offsetY) {
             return SampleBias(texture, s, float2(x, y), Bias, int2(offsetX, offsetY));
         }
-        float foo35(TextureDepth2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1) {
+        test float foo35(TextureDepth2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1) {
             return SampleGrad(texture, s, float2(x, y), float2(ddx0, ddx1), float2(ddy0, ddy1));
         }
-        float foo36(TextureDepth2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
+        test float foo36(TextureDepth2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
             return SampleGrad(texture, s, float2(x, y), float2(ddx0, ddx1), float2(ddy0, ddy1), int2(offsetX, offsetY));
         }
-        float foo37(TextureDepth2D<float> texture, sampler s, float x, float y, float LOD) {
+        test float foo37(TextureDepth2D<float> texture, sampler s, float x, float y, float LOD) {
             return SampleLevel(texture, s, float2(x, y), LOD);
         }
-        float foo38(TextureDepth2D<float> texture, sampler s, float x, float y, float LOD, int offsetX, int offsetY) {
+        test float foo38(TextureDepth2D<float> texture, sampler s, float x, float y, float LOD, int offsetX, int offsetY) {
             return SampleLevel(texture, s, float2(x, y), LOD, int2(offsetX, offsetY));
         }
-        float foo39(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float Bias) {
+        test float foo39(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float Bias) {
             return SampleBias(texture, s, float3(x, y, layer), Bias);
         }
-        float foo40(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float Bias, int offsetX, int offsetY) {
+        test float foo40(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float Bias, int offsetX, int offsetY) {
             return SampleBias(texture, s, float3(x, y, layer), Bias, int2(offsetX, offsetY));
         }
-        float foo41(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1) {
+        test float foo41(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1) {
             return SampleGrad(texture, s, float3(x, y, layer), float2(ddx0, ddx1), float2(ddy0, ddy1));
         }
-        float foo42(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
+        test float foo42(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
             return SampleGrad(texture, s, float3(x, y, layer), float2(ddx0, ddx1), float2(ddy0, ddy1), int2(offsetX, offsetY));
         }
-        float foo43(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float LOD) {
+        test float foo43(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float LOD) {
             return SampleLevel(texture, s, float3(x, y, layer), LOD);
         }
-        float foo44(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float LOD, int offsetX, int offsetY) {
+        test float foo44(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float LOD, int offsetX, int offsetY) {
             return SampleLevel(texture, s, float3(x, y, layer), LOD, int2(offsetX, offsetY));
         }
-        float foo45(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
+        test float foo45(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
             return SampleCmp(texture, s, float2(x, y), compareValue);
         }
-        float foo46(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
+        test float foo46(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
             return SampleCmp(texture, s, float2(x, y), compareValue, int2(offsetX, offsetY));
         }
-        float foo47(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
+        test float foo47(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
             return SampleCmp(texture, s, float3(x, y, layer), compareValue);
         }
-        float foo48(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
+        test float foo48(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
             return SampleCmp(texture, s, float3(x, y, layer), compareValue, int2(offsetX, offsetY));
         }
-        float foo49(TextureCube<float> texture, sampler s, float x, float y, float z, float bias) {
+        test float foo49(TextureCube<float> texture, sampler s, float x, float y, float z, float bias) {
             return SampleBias(texture, s, float3(x, y, z), bias);
         }
-        float foo50(TextureCube<float> texture, sampler s, float x, float y, float z, float ddx0, float ddx1, float ddx2, float ddy0, float ddy1, float ddy2) {
+        test float foo50(TextureCube<float> texture, sampler s, float x, float y, float z, float ddx0, float ddx1, float ddx2, float ddy0, float ddy1, float ddy2) {
             return SampleGrad(texture, s, float3(x, y, z), float3(ddx0, ddx1, ddx2), float3(ddy0, ddy1, ddy2));
         }
-        float foo51(TextureCube<float> texture, sampler s, float x, float y, float z, float lod) {
+        test float foo51(TextureCube<float> texture, sampler s, float x, float y, float z, float lod) {
             return SampleLevel(texture, s, float3(x, y, z), lod);
         }
-        float foo52(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float bias) {
+        test float foo52(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float bias) {
             return SampleBias(texture, s, float3(x, y, z), bias);
         }
-        float foo53(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float ddx0, float ddx1, float ddx2, float ddy0, float ddy1, float ddy2) {
+        test float foo53(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float ddx0, float ddx1, float ddx2, float ddy0, float ddy1, float ddy2) {
             return SampleGrad(texture, s, float3(x, y, z), float3(ddx0, ddx1, ddx2), float3(ddy0, ddy1, ddy2));
         }
-        float foo54(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float lod) {
+        test float foo54(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float lod) {
             return SampleLevel(texture, s, float3(x, y, z), lod);
         }
-        float foo55(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
+        test float foo55(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
             return SampleCmpLevelZero(texture, s, float2(x, y), compareValue);
         }
-        float foo56(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
+        test float foo56(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
             return SampleCmpLevelZero(texture, s, float2(x, y), compareValue, int2(offsetX, offsetY));
         }
-        float foo57(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
+        test float foo57(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
             return SampleCmpLevelZero(texture, s, float3(x, y, layer), compareValue);
         }
-        float foo58(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
+        test float foo58(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
             return SampleCmpLevelZero(texture, s, float3(x, y, layer), compareValue, int2(offsetX, offsetY));
         }
-        float foo59(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float compareValue) {
+        test float foo59(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float compareValue) {
             return SampleCmp(texture, s, float3(x, y, z), compareValue);
         }
-        float foo60(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float compareValue) {
+        test float foo60(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float compareValue) {
             return SampleCmpLevelZero(texture, s, float3(x, y, z), compareValue);
         }
     `);
@@ -7496,46 +7700,46 @@ tests.textureSample = function() {
 
 tests.textureGather = function() {
     let program = doPrep(`
-        float4 foo1(Texture2D<float> texture, sampler s, float x, float y) {
+        test float4 foo1(Texture2D<float> texture, sampler s, float x, float y) {
             return Gather(texture, s, float2(x, y));
         }
-        float4 foo2(Texture2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
+        test float4 foo2(Texture2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
             return Gather(texture, s, float2(x, y), int2(offsetX, offsetY));
         }
-        float4 foo3(Texture2DArray<float> texture, sampler s, float x, float y, float layer) {
+        test float4 foo3(Texture2DArray<float> texture, sampler s, float x, float y, float layer) {
             return Gather(texture, s, float3(x, y, layer));
         }
-        float4 foo4(Texture2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
+        test float4 foo4(Texture2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
             return Gather(texture, s, float3(x, y, layer), int2(offsetX, offsetY));
         }
-        float4 foo5(TextureCube<float> texture, sampler s, float x, float y, float z) {
+        test float4 foo5(TextureCube<float> texture, sampler s, float x, float y, float z) {
             return Gather(texture, s, float3(x, y, z));
         }
-        float4 foo6(TextureDepth2D<float> texture, sampler s, float x, float y) {
+        test float4 foo6(TextureDepth2D<float> texture, sampler s, float x, float y) {
             return Gather(texture, s, float2(x, y));
         }
-        float4 foo7(TextureDepth2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
+        test float4 foo7(TextureDepth2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
             return Gather(texture, s, float2(x, y), int2(offsetX, offsetY));
         }
-        float4 foo8(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer) {
+        test float4 foo8(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer) {
             return Gather(texture, s, float3(x, y, layer));
         }
-        float4 foo9(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
+        test float4 foo9(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
             return Gather(texture, s, float3(x, y, layer), int2(offsetX, offsetY));
         }
-        float4 foo10(TextureDepthCube<float> texture, sampler s, float x, float y, float z) {
+        test float4 foo10(TextureDepthCube<float> texture, sampler s, float x, float y, float z) {
             return Gather(texture, s, float3(x, y, z));
         }
-        float4 foo11(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
+        test float4 foo11(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
             return GatherCmp(texture, s, float2(x, y), compareValue);
         }
-        float4 foo12(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
+        test float4 foo12(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
             return GatherCmp(texture, s, float2(x, y), compareValue, int2(offsetX, offsetY));
         }
-        float4 foo13(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
+        test float4 foo13(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
             return GatherCmp(texture, s, float3(x, y, layer), compareValue);
         }
-        float4 foo14(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
+        test float4 foo14(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
             return GatherCmp(texture, s, float3(x, y, layer), compareValue, int2(offsetX, offsetY));
         }
     `);
@@ -7609,11 +7813,12 @@ tests.textureGather = function() {
     // FIXME: Gather other components
 }
 
+
 tests.commentParsing = function() {
     let program = doPrep(`
         /* this comment
         runs over multiple lines */
-        bool foo() { return true; }
+        test bool foo() { return true; }
     `);
     checkBool(program, callFunction(program, "foo", []), true);
 
@@ -7628,7 +7833,7 @@ tests.commentParsing = function() {
 
 tests.callArgumentsAreCopiedImmediatelyAfterEvaluation = () => {
     let program = doPrep(`
-        int foo()
+        test int foo()
         {
             return *bar(5) + *bar(7);
         }

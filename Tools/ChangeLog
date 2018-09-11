@@ -1,3 +1,20 @@
+2018-09-10  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Add the test shader type
+        https://bugs.webkit.org/show_bug.cgi?id=189484
+
+        Reviewed by Myles C. Maxfield.
+
+        Tests are now precedeed by the 'test' keyword so that they are treated
+        as entry points, in the same way as vertex and fragment shaders.
+
+        * WebGPUShadingLanguageRI/LateChecker.js:
+        (LateChecker.prototype._checkShaderType): Allow tests to return any
+        type, as some currently return void/pointer types.
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseFuncDecl): Add the test keyword.
+        * WebGPUShadingLanguageRI/Test.js: Prepend 'test' to every single test.
+
 2018-09-10  Don Olmstead  <don.olmstead@sony.com>
 
         CBOR coders should only be compiled if WebAuthN is enabled
