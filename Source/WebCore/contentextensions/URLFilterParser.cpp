@@ -129,11 +129,21 @@ public:
         fail(URLFilterParser::BackReference);
     }
 
-    void atomNamedBackReference(String)
+    void atomNamedBackReference(const String&)
     {
         fail(URLFilterParser::BackReference);
     }
 
+    bool isValidNamedForwardReference(const String&)
+    {
+        return false;
+    }
+
+    void atomNamedForwardReference(const String&)
+    {
+        fail(URLFilterParser::ForwardReference);
+    }
+    
     void assertionBOL()
     {
         if (hasError())
@@ -372,6 +382,8 @@ String URLFilterParser::statusString(ParseStatus status)
         return "Character class is not supported.";
     case BackReference:
         return "Patterns cannot contain backreferences.";
+    case ForwardReference:
+        return "Patterns cannot contain forward references.";
     case MisplacedStartOfLine:
         return "Start of line assertion can only appear as the first term in a filter.";
     case WordBoundary:

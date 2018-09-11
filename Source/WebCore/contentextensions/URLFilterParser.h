@@ -43,6 +43,7 @@ public:
         NonASCII,
         UnsupportedCharacterClass,
         BackReference,
+        ForwardReference,
         MisplacedStartOfLine,
         WordBoundary,
         AtomCharacter,

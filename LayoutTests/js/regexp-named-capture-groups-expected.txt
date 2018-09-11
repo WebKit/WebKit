@@ -61,6 +61,12 @@ PASS let r = new RegExp("/(?<𐆐groupName1>abc)/u") threw exception SyntaxError
 PASS let r = new RegExp("/(?<g𐆛oupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
 PASS let r = new RegExp("/(?<‌groupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
 PASS let r = new RegExp("/(?<‍groupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
+PASS "XzzXzz".match(/\k<z>X(?<z>z*)X\k<z>/) is ["XzzXzz", "zz"]
+PASS "XzzXzz".match(/\k<z>X(?<z>z*)X\k<z>/u) is ["XzzXzz", "zz"]
+PASS "1122332211".match(/\k<ones>\k<twos>\k<threes>(?<ones>1*)(?<twos>2*)(?<threes>3*)\k<threes>\k<twos>\k<ones>/) is ["1122332211", "11", "22", "3"]
+PASS "1122332211".match(/\k<ones>\k<twos>\k<threes>(?<ones>1*)(?<twos>2*)(?<threes>3*)\k<threes>\k<twos>\k<ones>/u) is ["1122332211", "11", "22", "3"]
+PASS "\k<z>XzzX".match(/\k<z>X(z*)X/) is ["k<z>XzzX", "zz"]
+PASS "\k<z>XzzX".match(/\k<z>X(z*)X/u) threw exception SyntaxError: Invalid regular expression: invalid backreference for unicode pattern.
 PASS successfullyParsed is true
 
 TEST COMPLETE

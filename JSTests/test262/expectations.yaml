@@ -1122,9 +1122,6 @@ test/built-ins/RegExp/named-groups/groups-object.js:
 test/built-ins/RegExp/named-groups/non-unicode-malformed.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/named-groups/non-unicode-references.js:
-  default: "TypeError: null is not an object (evaluating 'b.length')"
-  strict mode: "TypeError: null is not an object (evaluating 'b.length')"
 test/built-ins/RegExp/named-groups/string-replace-nocaptures.js:
   default: 'Test262Error: Expected SameValue(Â«$<snd>$<fst>cdÂ», Â«$<$<fst>cdÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«$<snd>$<fst>cdÂ», Â«$<$<fst>cdÂ») to be true'
@@ -1134,9 +1131,6 @@ test/built-ins/RegExp/named-groups/unicode-malformed.js:
 test/built-ins/RegExp/named-groups/unicode-property-names.js:
   default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
   strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/named-groups/unicode-references.js:
-  default: 'SyntaxError: Invalid regular expression: invalid backreference for unicode pattern'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid backreference for unicode pattern'
 test/built-ins/RegExp/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«/(?:)/Â», Â«/(?:)/Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«/(?:)/Â», Â«/(?:)/Â») to be true'

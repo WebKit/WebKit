@@ -1,3 +1,44 @@
+2018-09-10  Michael Saboff  <msaboff@apple.com>
+
+        Test262 failure with Named Capture Groups - using a reference before the group is defined
+        https://bugs.webkit.org/show_bug.cgi?id=189407
+
+        Reviewed by Alex Christensen.
+
+        Added code to save the named forward references we see during parsing and validating that
+        they are all present when parsing the RegExp is complete.  If there are unnamed references,
+        we reparse with some variation of behavior.  Just like for numeric references, the
+        behavior is different depending on whether or not the unicode (u flag) is present.  
+        For non-unicode patterns, we treat the \k<...> as a literal pattern.  For a unicode 
+        pattern we throw an exception.
+
+        Did some refactoring, renaming YarrPattern::reset() and YarrPatternConstructor::reset()
+        resetForReparsing() as that is the only use for those methods.  Also changed
+        all the delegate methods that take a String to take a const String& to eliminate
+        copy churn.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomNamedBackReference):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::isValidNamedForwardReference):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomNamedForwardReference):
+        (JSC::Yarr::Parser::parseEscape):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::resetForReparsing):
+        (JSC::Yarr::YarrPatternConstructor::saveUnmatchedNamedForwardReferences):
+        (JSC::Yarr::YarrPatternConstructor::atomNamedBackReference):
+        (JSC::Yarr::YarrPatternConstructor::isValidNamedForwardReference):
+        (JSC::Yarr::YarrPatternConstructor::atomNamedForwardReference):
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPatternConstructor::reset): Deleted.
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::resetForReparsing):
+        (JSC::Yarr::YarrPattern::containsIllegalNamedForwardReferences):
+        (JSC::Yarr::YarrPattern::reset): Deleted.
+        * yarr/YarrSyntaxChecker.cpp:
+        (JSC::Yarr::SyntaxChecker::atomNamedBackReference):
+        (JSC::Yarr::SyntaxChecker::isValidNamedForwardReference):
+        (JSC::Yarr::SyntaxChecker::atomNamedForwardReference):
+
 2018-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove loadModule function in jsc.cpp

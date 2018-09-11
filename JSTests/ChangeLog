@@ -1,3 +1,15 @@
+2018-09-10  Michael Saboff  <msaboff@apple.com>
+
+        Test262 failure with Named Capture Groups - using a reference before the group is defined
+        https://bugs.webkit.org/show_bug.cgi?id=189407
+
+        Reviewed by Alex Christensen.
+
+        Re-enabled previously failing test.
+
+        * test262.yaml:
+        * test262/expectations.yaml:
+
 2018-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove loadModule function in jsc.cpp

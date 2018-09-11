@@ -1,3 +1,23 @@
+2018-09-10  Michael Saboff  <msaboff@apple.com>
+
+        Test262 failure with Named Capture Groups - using a reference before the group is defined
+        https://bugs.webkit.org/show_bug.cgi?id=189407
+
+        Reviewed by Alex Christensen.
+
+        Created new delegate stubs for RegExp parsing.  These are not needed for the URL filtering
+        use cases.  Also changed all the delegate methods that take a String to take 
+        const String& to eliminate copy churn.
+
+        Updated TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp.
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::PatternParser::atomNamedBackReference):
+        (WebCore::ContentExtensions::PatternParser::isValidNamedForwardReference):
+        (WebCore::ContentExtensions::PatternParser::atomNamedForwardReference):
+        (WebCore::ContentExtensions::URLFilterParser::statusString):
+        * contentextensions/URLFilterParser.h:
+
 2018-09-10  Megan Gardner  <megan_gardner@apple.com>
 
         Correctly interpret from angle for conic gradients

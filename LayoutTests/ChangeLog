@@ -1,3 +1,15 @@
+2018-09-10  Michael Saboff  <msaboff@apple.com>
+
+        Test262 failure with Named Capture Groups - using a reference before the group is defined
+        https://bugs.webkit.org/show_bug.cgi?id=189407
+
+        Reviewed by Alex Christensen.
+
+        Updated tests.
+
+        * js/regexp-named-capture-groups-expected.txt:
+        * js/script-tests/regexp-named-capture-groups.js:
+
 2018-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update shadow DOM and custom elements tests

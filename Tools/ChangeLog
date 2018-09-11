@@ -1,3 +1,15 @@
+2018-09-10  Michael Saboff  <msaboff@apple.com>
+
+        Test262 failure with Named Capture Groups - using a reference before the group is defined
+        https://bugs.webkit.org/show_bug.cgi?id=189407
+
+        Reviewed by Alex Christensen.
+
+        Updated test.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2018-09-10  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Inlining should be optional
