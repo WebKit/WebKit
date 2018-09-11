@@ -1165,6 +1165,10 @@ void WebPage::close()
 
     m_page->inspectorController().disconnectAllFrontends();
 
+#if ENABLE(MEDIA_STREAM)
+    m_userMediaPermissionRequestManager = nullptr;
+#endif
+
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = nullptr;
 #endif

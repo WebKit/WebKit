@@ -1,3 +1,14 @@
+2018-09-11  Eric Carlson  <eric.carlson@apple.com>
+
+        WebPage::close should clear UserMediaPermissionRequestManager
+        https://bugs.webkit.org/show_bug.cgi?id=189369
+        <rdar://problem/44196724>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close): Clear m_userMediaPermissionRequestManager.
+
 2018-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Support changing foreground colors via color panel
