@@ -1,5 +1,15 @@
 2018-09-11  Mark Lam  <mark.lam@apple.com>
 
+        Test for array initialization in arrayProtoFuncSplice.
+        https://bugs.webkit.org/show_bug.cgi?id=170253
+        <rdar://problem/31328773>
+
+        Rubber-stamped by Saam Barati.
+
+        * stress/regress-170253.js: Added.
+
+2018-09-11  Mark Lam  <mark.lam@apple.com>
+
         Test for IntlObject initialization.
         https://bugs.webkit.org/show_bug.cgi?id=170251
         <rdar://problem/31328419>
