@@ -1,7 +1,7 @@
 
 PASS getElementsById() should not leak nodes in shadow tree 
-FAIL getElementsByClassName() should not leak nodes in shadow tree assert_array_equals: value is 0, expected array
-FAIL getElementsByName() should not leak nodes in shadow tree assert_array_equals: value is 0, expected array
-FAIL getElementsByTagName() should not leak nodes in shadow tree assert_array_equals: value is 0, expected array
+PASS getElementsByClassName() should not leak nodes in shadow tree 
+PASS getElementsByName() should not leak nodes in shadow tree 
+PASS getElementsByTagName() should not leak nodes in shadow tree 
 PASS getElementsByTagNameNS() should not leak nodes in shadow tree 
 

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -17,16 +17,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Document-prototype-adoptNode.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Document-prototype-currentScript.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Document-prototype-importNode.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/DocumentOrShadowRoot-prototype-elementFromPoint.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Element-interface-attachShadow-custom-element.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Element-interface-attachShadow.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Element-interface-shadowRoot-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Extensions-to-Event-Interface.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/HTMLSlotElement-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/MouseEvent-prototype-offsetX-offsetY.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Node-prototype-cloneNode.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Range-prototype-insertNode.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/ShadowRoot-interface.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Slotable-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path-after-dom-mutation.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path-with-related-target.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed.html
@@ -34,7 +39,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-inside-slotted-node.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-post-dispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-with-related-target.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/form-control-form-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/getElementById-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-element-list.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-customelements.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-event.html

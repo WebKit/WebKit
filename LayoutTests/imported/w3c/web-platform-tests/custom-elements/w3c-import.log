@@ -30,5 +30,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/microtasks-and-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/range-and-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reaction-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading.html

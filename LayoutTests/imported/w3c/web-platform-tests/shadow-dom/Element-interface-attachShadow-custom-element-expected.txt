@@ -1,0 +1,4 @@
+
+PASS Element.attachShadow must create an instance of ShadowRoot for autonomous custom elements 
+PASS Element.attachShadow must throw a NotSupportedError for customized built-in elements 
+

@@ -1,0 +1,4 @@
+
+FAIL Event.composedPath() should return the same result even if DOM is mutated (1/2) assert_array_equals: lengths differ, expected 3 got 2
+FAIL Event.composedPath() should return the same result even if DOM is mutated (2/2) assert_array_equals: lengths differ, expected 5 got 2
+

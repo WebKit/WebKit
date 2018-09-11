@@ -1,5 +1,7 @@
 {
     "css/geometry": "import", 
+    "custom-elements": "import", 
+    "shadow-dom": "import", 
     "tools": "import", 
     "web-platform-tests/2dcontext": "skip", 
     "web-platform-tests/2dcontext/imagebitmap": "import", 

@@ -4,5 +4,5 @@ PASS Nodes other than Element should not have attachShadow
 PASS Element.attachShadow must throw a TypeError if mode is not "open" or "closed" 
 PASS Element.attachShadow must create an instance of ShadowRoot 
 PASS Element.attachShadow must throw a InvalidStateError if the context object already hosts a shadow tree 
-PASS Element.attachShadow must throw a NotSupportedError for button, details, input, marquee, meter, progress, select, textarea, and keygen elements 
+PASS Element.attachShadow must throw a NotSupportedError for non-safelisted elements 
 

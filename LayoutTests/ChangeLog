@@ -1,3 +1,14 @@
+2018-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update shadow DOM and custom elements tests
+        https://bugs.webkit.org/show_bug.cgi?id=189494
+
+        Reviewed by Youenn Fablet.
+
+        Skip the test hitting a debug assertion until the bug 189493 is fixed.
+
+        * TestExpectations:
+
 2018-09-10  Truitt Savell  <tsavell@apple.com>
 
         Rebaseline test after https://trac.webkit.org/changeset/235866/webkit.
