@@ -277,6 +277,7 @@ struct WKAutoCorrectionData {
     RetainPtr<UINavigationController> _inputNavigationViewControllerForFullScreenInputs;
 
     BOOL _shouldRestoreFirstResponderStatusAfterLosingFocus;
+    BlockPtr<void()> _activeFocusedStateRetainBlock;
 #endif
 }
 

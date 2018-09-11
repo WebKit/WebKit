@@ -1,3 +1,75 @@
+2018-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to change the value of select elements while preserving focus state
+        https://bugs.webkit.org/show_bug.cgi?id=189475
+        <rdar://problem/41125764>
+
+        Reviewed by Tim Horton.
+
+        With UITextInputMultiDocument support in WebKit (r226911), WKContentView may enter a state where the user is
+        able to interact with web content, but focus state is being preserved on WKWebView. This prevents keyboard and
+        input view dismissal from blurring the focused element (which, in turn, means that the value of certain form
+        controls, such as select elements, cannot be changed). This can happen in the following scenario:
+
+        1. Suppose we have a web view embedded inside of a view controller (let's call it `A`).
+        2. Another view controller (let's call this one `B`) is modally presented over `A`.
+        3. The web view is removed from `A`'s view hierarchy and reparented under `B`'s view.
+        4. The user taps a form control in the web view, interacts with the keyboard, and taps the Done button.
+
+        After step 2, WKContentView gets a call to `-_preserveFocusWithToken:destructively:`, which increments its focus
+        retain count to 1. Thus, in step 3, resigning first responder using the Done button fails to blur the element.
+        To fix this, we split the existing `_activeFocusedStateRetainCount` into two values: `_focusPreservationCount`,
+        which is safe to reset and resets to 0 when changing the focused element, and `_activeFocusedStateRetainCount`,
+        which always increments and decrements, and only does so when using `-_retainActiveFocusedState`.
+
+        This also fixes a bug wherein `-_restoreFocusWithToken:` is implemented as returning `void` in WebKit, even
+        though its declaration in UIKit returns a `BOOL`. UIKit currently calls this selector on WKContentView and
+        stores the result within a `BOOL`; this results in the return value of `-_restoreFocusWithToken:` effectively
+        becoming the last byte of the most recent value stored in `$rax` when exiting `-_restoreFocusWithToken:`. From
+        debugging a release build of WebKit, this turns out to just be 0x0, becoming NO, which is correct given that
+        WKContentView does not attempt to become first responder within `_restoreFocusWithToken:`.
+
+        Tests:  FocusPreservationTests.PreserveAndRestoreFocus
+                FocusPreservationTests.ChangingFocusedNodeResetsFocusPreservationState
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _incrementFocusPreservationCount]):
+        (-[WKWebView _decrementFocusPreservationCount]):
+        (-[WKWebView _resetFocusPreservationCount]):
+        (-[WKWebView _isRetainingActiveFocusedState]):
+
+        Active focus state is retained if either the focus preservation count or active focus state count is non-zero.
+        Splitting this into two variables ensures that SPI clients of `-_retainActiveFocusedState` won't have active
+        focus state reset from underneath them, and additionally prevents WKContentView from retaining active focus due
+        to UITextInputMultiDocument protocol methods while the user is still interacting with it.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+
+        Move _activeFocusedStateRetainCount to the implementation of WKContentView; instead of directly manipulating the
+        variable, add helper methods to increment, decrement, or reset the focus preservation count.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
+        Reset the focus preservation count.
+
+        (-[WKContentView addFocusedFormControlOverlay]):
+        (-[WKContentView removeFocusedFormControlOverlay]):
+
+        Use `-_retainActiveFocusedState` instead of incrementing and decrementing the counter directly.
+
+        (-[WKContentView _restoreFocusWithToken:]):
+        (-[WKContentView _preserveFocusWithToken:destructively:]):
+
+        Use `_incrementFocusPreservationCount` and `_decrementFocusPreservationCount` instead of manipulating counter
+        variables directly.
+
 2018-09-10  James Savage  <james.savage@apple.com>
 
         Long press on picture/link show menu obscured by keyboard.

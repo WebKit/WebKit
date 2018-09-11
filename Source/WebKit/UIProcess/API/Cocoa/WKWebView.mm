@@ -359,6 +359,9 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     // For release-logging for <rdar://problem/39281269>.
     MonotonicTime _timeOfRequestForVisibleContentRectUpdate;
     MonotonicTime _timeOfLastVisibleContentRectUpdate;
+
+    NSUInteger _focusPreservationCount;
+    NSUInteger _activeFocusedStateRetainCount;
 #endif
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
@@ -431,6 +434,31 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 {
     static bool shouldAllowSettingAnyXHRHeaderFromFileURLs = (WebCore::IOSApplication::isCardiogram() || WebCore::IOSApplication::isNike()) && !linkedOnOrAfter(WebKit::SDKVersion::FirstThatDisallowsSettingAnyXHRHeaderFromFileURLs);
     return shouldAllowSettingAnyXHRHeaderFromFileURLs;
+}
+
+- (void)_incrementFocusPreservationCount
+{
+    ++_focusPreservationCount;
+}
+
+- (void)_decrementFocusPreservationCount
+{
+    if (_focusPreservationCount)
+        --_focusPreservationCount;
+}
+
+- (void)_resetFocusPreservationCount
+{
+    _focusPreservationCount = 0;
+}
+
+- (BOOL)_isRetainingActiveFocusedState
+{
+    // Focus preservation count fulfills the same role as active focus state count.
+    // However, unlike active focus state, it may be reset to 0 without impacting the
+    // behavior of -_retainActiveFocusedState, and it's harmless to invoke
+    // -_decrementFocusPreservationCount after resetting the count to 0.
+    return _focusPreservationCount || _activeFocusedStateRetainCount;
 }
 
 #endif

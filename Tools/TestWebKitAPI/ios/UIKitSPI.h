@@ -31,6 +31,7 @@
 
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIResponder_Private.h>
+#import <UIKit/UITextInputMultiDocument.h>
 #import <UIKit/UITextInputTraits_Private.h>
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIViewController_Private.h>
@@ -77,6 +78,12 @@ WTF_EXTERN_C_END
 - (UITextInputTraits *)textInputTraits;
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
 - (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
+@end
+
+@protocol UITextInputMultiDocument <NSObject>
+@optional
+- (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively;
+- (BOOL)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token;
 @end
 
 #if ENABLE(DRAG_SUPPORT)

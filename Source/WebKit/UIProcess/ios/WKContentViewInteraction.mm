@@ -1011,7 +1011,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     // and do nothing if the return value is NO.
 
     _resigningFirstResponder = YES;
-    if (!_webView->_activeFocusedStateRetainCount) {
+    if (!_webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
         [_inputPeripheral endEditing];
         [_formInputSession endEditing];
@@ -4210,6 +4210,8 @@ static bool isAssistableInputType(InputType type)
     if (_assistedNodeInformation.elementType == information.elementType && _assistedNodeInformation.elementRect == information.elementRect)
         return;
 
+    [_webView _resetFocusPreservationCount];
+
     _focusRequiresStrongPasswordAssistance = NO;
     if ([inputDelegate respondsToSelector:@selector(_webView:focusRequiresStrongPasswordAssistance:)])
         _focusRequiresStrongPasswordAssistance = [inputDelegate _webView:_webView focusRequiresStrongPasswordAssistance:focusedElementInfo.get()];
@@ -4340,7 +4342,7 @@ static bool isAssistableInputType(InputType type)
     if (_focusedFormControlView)
         return;
 
-    ++_webView->_activeFocusedStateRetainCount;
+    _activeFocusedStateRetainBlock = makeBlockPtr(_webView._retainActiveFocusedState);
 
     _focusedFormControlView = adoptNS([[WKFocusedFormControlView alloc] initWithFrame:_webView.bounds delegate:self]);
     [_focusedFormControlView hide:NO];
@@ -4353,7 +4355,8 @@ static bool isAssistableInputType(InputType type)
     if (!_focusedFormControlView)
         return;
 
-    --_webView->_activeFocusedStateRetainCount;
+    if (auto releaseActiveFocusState = WTFMove(_activeFocusedStateRetainBlock))
+        releaseActiveFocusState();
 
     [_focusedFormControlView removeFromSuperview];
     _focusedFormControlView = nil;
@@ -4760,20 +4763,26 @@ static bool isAssistableInputType(InputType type)
 
 #pragma mark - UITextInputMultiDocument
 
-- (void)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token
+- (BOOL)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token
 {
-    ASSERT(!_focusStateStack.isEmpty());
-    
-    if (_focusStateStack.takeLast()) {
-        ASSERT(_webView->_activeFocusedStateRetainCount);
-        --_webView->_activeFocusedStateRetainCount;
+    if (_focusStateStack.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return NO;
     }
+
+    if (_focusStateStack.takeLast())
+        [_webView _decrementFocusPreservationCount];
+
+    // FIXME: Our current behavior in -_restoreFocusWithToken: does not force the web view to become first responder
+    // by refocusing the currently focused element. As such, we return NO here so that UIKit will tell WKContentView
+    // to become first responder in the future.
+    return NO;
 }
 
 - (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively
 {
     if (!_inputPeripheral) {
-        ++_webView->_activeFocusedStateRetainCount;
+        [_webView _incrementFocusPreservationCount];
         _focusStateStack.append(true);
     } else
         _focusStateStack.append(false);

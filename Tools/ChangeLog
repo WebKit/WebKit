@@ -1,3 +1,24 @@
+2018-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to change the value of select elements while preserving focus state
+        https://bugs.webkit.org/show_bug.cgi?id=189475
+        <rdar://problem/41125764>
+
+        Reviewed by Tim Horton.
+
+        Adds a pair of new API tests to verify that (1) resigning first responder while preserving focus does not blur
+        the focused element, and (2) if another element is focused and presents an input view while preserving focus,
+        then we reset preservation state and allow first responder resignation to blur the focused element.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/FocusPreservationTests.mm: Added.
+        (webViewForTestingFocusPreservation):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView textInputContentView]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2018-09-10  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Add the test shader type

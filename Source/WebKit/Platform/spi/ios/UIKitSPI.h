@@ -1028,7 +1028,7 @@ typedef NSInteger UICompositingMode;
 #else
 @protocol UITextInputMultiDocument <NSObject>
 @optional
-- (void)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token completion:(void (^)(BOOL didRestore))completion;
+- (BOOL)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token;
 - (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively;
 @end
 #endif

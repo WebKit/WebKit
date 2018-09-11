@@ -73,10 +73,6 @@ struct PrintInfo;
     RetainPtr<WKWebViewConfiguration> _configuration;
 
     RefPtr<WebKit::WebPageProxy> _page;
-
-#if PLATFORM(IOS)
-    NSUInteger _activeFocusedStateRetainCount;
-#endif
 }
 
 #if PLATFORM(IOS)
@@ -142,6 +138,10 @@ struct PrintInfo;
 - (void)_transliterateChinese:(id)sender;
 - (void)replace:(id)sender;
 
+- (void)_incrementFocusPreservationCount;
+- (void)_decrementFocusPreservationCount;
+- (void)_resetFocusPreservationCount;
+
 @property (nonatomic, readonly) WKPasswordView *_passwordView;
 
 @property (nonatomic, readonly) BOOL _isBackground;
@@ -154,6 +154,7 @@ struct PrintInfo;
 @property (nonatomic, readonly) BOOL _haveSetObscuredInsets;
 @property (nonatomic, readonly) UIEdgeInsets _computedObscuredInset;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
+@property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)

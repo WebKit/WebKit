@@ -161,13 +161,13 @@ IntSize PageClientImpl::viewSize()
 bool PageClientImpl::isViewWindowActive()
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
-    return isViewVisible() || (m_webView && m_webView->_activeFocusedStateRetainCount);
+    return isViewVisible() || (m_webView && [m_webView _isRetainingActiveFocusedState]);
 }
 
 bool PageClientImpl::isViewFocused()
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
-    return isViewWindowActive() || (m_webView && m_webView->_activeFocusedStateRetainCount);
+    return isViewWindowActive() || (m_webView && [m_webView _isRetainingActiveFocusedState]);
 }
 
 bool PageClientImpl::isViewVisible()
