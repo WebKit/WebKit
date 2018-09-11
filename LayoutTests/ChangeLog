@@ -1,3 +1,13 @@
+2018-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Crash under PlatformPopupMenuData::encode when interacting with a select menu that has variable fonts
+        https://bugs.webkit.org/show_bug.cgi?id=188008
+
+        Reviewed by Alex Christensen.
+
+        * fast/text/variations/ipc2-expected.txt: Added.
+        * fast/text/variations/ipc2.html: Added.
+
 2018-09-11  Woodrow Wang  <woodrow_wang@apple.com>
 
         Add Web API Statistics Collection
