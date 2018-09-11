@@ -1,3 +1,12 @@
+2018-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove unused needsDestruction class variables from HashTraits
+        https://bugs.webkit.org/show_bug.cgi?id=189490
+
+        Reviewed by Daniel Bates.
+
+        * History/BinaryPropertyList.cpp: Removed needsDestruction.
+
 2018-09-07  Frederic Wang  <fwang@igalia.com>
 
         [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)

@@ -1,3 +1,21 @@
+2018-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove unused needsDestruction class variables from HashTraits
+        https://bugs.webkit.org/show_bug.cgi?id=189490
+
+        Reviewed by Daniel Bates.
+
+        needsDestruction has been obsoleted in Bug 121983.
+
+        No new tests (No behavior change).
+
+        * css/makeprop.pl: Removed needsDestruction.
+        * platform/graphics/FloatSizeHash.h: Ditto.
+        * platform/graphics/IntPointHash.h: Ditto.
+        * platform/graphics/IntRectHash.h: Ditto.
+        * platform/graphics/IntSizeHash.h: Ditto.
+        * platform/graphics/WidthCache.h: Ditto.
+
 2018-09-10  Michael Saboff  <msaboff@apple.com>
 
         Test262 failure with Named Capture Groups - using a reference before the group is defined

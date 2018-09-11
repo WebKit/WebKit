@@ -34,7 +34,6 @@ namespace WTF {
     
     template<> struct HashTraits<WebCore::IntSize> : GenericHashTraits<WebCore::IntSize> {
         static const bool emptyValueIsZero = true;
-        static const bool needsDestruction = false;
         static void constructDeletedValue(WebCore::IntSize& slot) { new (NotNull, &slot) WebCore::IntSize(-1, -1); }
         static bool isDeletedValue(const WebCore::IntSize& value) { return value.width() == -1 && value.height() == -1; }
     };

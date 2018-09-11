@@ -76,7 +76,6 @@ inline bool operator==(const IntegerArray& a, const IntegerArray& b)
 }
 
 struct IntegerArrayHashTraits : WTF::GenericHashTraits<IntegerArray> {
-    static const bool needsDestruction = false;
     static void constructDeletedValue(IntegerArray& slot) { slot.markDeleted(); }
     static bool isDeletedValue(const IntegerArray& array) { return array.isDeletedValue(); }
 };
