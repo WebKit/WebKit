@@ -1,1 +1,12 @@
+2018-09-11  Frederic Wang  <fwang@igalia.com>
+
+        Refactor filter list checking code
+        https://bugs.webkit.org/show_bug.cgi?id=185087
+
+        Reviewed by Antonio Gomes.
+
+        No new tests, behavior unchanged.
+
+        * page/animation/KeyframeAnimation.h: Add missing forward-declaration FilterOperations.
+
 == Rolled over to ChangeLog-2018-09-11 ==

@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class FilterOperations;
 class RenderStyle;
 
 // A KeyframeAnimation tracks the state of an explicit animation for a single RenderElement.
