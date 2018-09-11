@@ -1,1 +1,17 @@
+2018-09-11  Mark Lam  <mark.lam@apple.com>
+
+        Test for incorrect check in emitPutDerivedConstructorToArrowFunctionContextScope.
+        https://bugs.webkit.org/show_bug.cgi?id=169445
+        <rdar://problem/30957435>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-169445.js: Added.
+        (let.gun.eval.A):
+        (let.gun.eval.B.C):
+        (let.gun.eval.B.C.prototype.trigger):
+        (let.gun.eval.B.C.prototype.triggerWithRestParameters):
+        (let.gun.eval.B):
+        (let.gun.eval):
+
 == Rolled over to ChangeLog-2018-09-11 ==
