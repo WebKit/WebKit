@@ -102,6 +102,7 @@ load("Inliner.js");
 load("IntLiteral.js");
 load("IntLiteralType.js");
 load("Intrinsics.js");
+load("LateCheckAndLayoutBuffers.js");
 load("LateChecker.js");
 load("Lexer.js");
 load("LexerToken.js");

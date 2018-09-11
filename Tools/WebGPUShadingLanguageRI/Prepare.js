@@ -26,7 +26,7 @@
 
 let prepare = (() => {
     let standardProgram;
-    return function(origin, lineNumberOffset, text) {
+    return function(origin, lineNumberOffset, text, shouldInline = false) {
         if (!standardProgram) {
             standardProgram = new Program();
             let firstLineOfStandardLibrary = 28; // See StandardLibrary.js.
@@ -68,8 +68,9 @@ let prepare = (() => {
         checkTypesWithArguments(program);
         findHighZombies(program);
         program.visit(new StructLayoutBuilder());
-        inline(program);
-        
+        lateCheckAndLayoutBuffers(program);
+        if (shouldInline)
+            inline(program);
         return program;
     };
 })();

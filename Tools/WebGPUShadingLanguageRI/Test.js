@@ -7848,6 +7848,82 @@ tests.callArgumentsAreCopiedImmediatelyAfterEvaluation = () => {
     checkInt(program, callFunction(program, "foo", []), 12);
 };
 
+tests.evaluationOrderForArguments = () => {
+    const program = doPrep(`
+        test int foo() { return *bar(10) + *bar(20); }
+
+        thread int* bar(int value)
+        {
+            int x = value;
+            return &x;
+        }
+
+        test int baz() { return plus(bar(10), bar(20)); }
+
+        int plus(thread int* x, thread int* y)
+        {
+            return *x + *y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", []), 30);
+    checkInt(program, callFunction(program, "baz", []), 20);
+}
+
+tests.cannotCallAnotherEntryPoint = () => {
+    checkFail(() => doPrep(`
+        struct Foo { int x; }
+        vertex Foo foo() { return bar(); }
+        vertex Foo bar() { return Foo(); }
+    `), e => e instanceof WTypeError && e.message.indexOf("it cannot be called from within an existing shader") !== -1);
+}
+
+tests.inliningDoesNotAffectNestedCalls = () => {
+    const program = prepare("/internal/test", 0, `
+        test int foo()
+        {
+            return plus(bar(), baz());
+        }
+
+        int plus(int a, int b)
+        {
+            return a + b;
+        }
+
+        int bar()
+        {
+            return 17;
+        }
+
+        int baz()
+        {
+            return 3;
+        }
+    `, true);
+    checkInt(program, callFunction(program, "foo", []), 20)
+}
+
+tests.inliningDoesntProduceAliasingIssues = () => {
+    const program = prepare("/internal/test", 0, `
+        test int foo()
+        {
+            return bar(2);
+        }
+
+        int bar(int x)
+        {
+            int y = x * x;
+            return baz(y);
+        }
+
+        int baz(int x)
+        {
+            int y = 4 * x;
+            return x + y;
+        }
+    `, true);
+    checkInt(program, callFunction(program, "foo", []), 20);
+}
+
 okToTest = true;
 
 let testFilter = /.*/; // run everything by default

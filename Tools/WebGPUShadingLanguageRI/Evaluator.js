@@ -37,6 +37,8 @@ class Evaluator extends Visitor {
     // possible for a pointer returned from a visit method in rvalue context to live across any effects.
     _snapshot(type, dstPtr, srcPtr)
     {
+        if (!srcPtr)
+            return null;
         let size = type.size;
         if (size == null)
             throw new Error("Cannot get size of type: " + type + " (size = " + size + ", constructor = " + type.constructor.name + ")");
@@ -71,16 +73,34 @@ class Evaluator extends Visitor {
             throw e;
         }
     }
-    
+
+    _evaluateArguments(argumentList, parameterList)
+    {
+        const callArguments = [];
+        for (let i = argumentList.length; i--;) {
+            const argument = argumentList[i];
+            const type = parameterList[i].type;
+            if (!type || !argument)
+                throw new Error("Cannot get type or argument; i = " + i + ", argument = " + argument + ", type = " + type);
+            let argumentValue = argument.visit(this);
+            if (!argumentValue)
+                throw new Error("Null argument value, i = " + i + ", node = " + node);
+            callArguments.unshift(EBuffer.allowAllocation(() => this._snapshot(type, null, argumentValue)));
+        }
+        return callArguments;
+    }
+
+    _evaluateFunction(node, argumentList, parameterList, funcBody, returnType, returnEPtr)
+    {
+        const argumentValues = this._evaluateArguments(argumentList, parameterList);
+        for (let i = 0; i < node.argumentList.length; ++i)
+            parameterList[i].ePtr.copyFrom(argumentValues[i], parameterList[i].type.size);
+        return EBuffer.allowAllocation(() => this._runBody(returnType, returnEPtr, funcBody));
+    }
+
     visitFunctionLikeBlock(node)
     {
-        for (let i = 0; i < node.argumentList.length; ++i) {
-            node.parameters[i].ePtr.copyFrom(
-                node.argumentList[i].visit(this),
-                node.parameters[i].type.size);
-        }
-        let result = this._runBody(node.returnType, node.returnEPtr, node.body);
-        return result;
+        return this._evaluateFunction(node, node.argumentList, node.parameters, node.body, node.returnType, node.returnEPtr);
     }
     
     visitReturn(node)
@@ -310,21 +330,11 @@ class Evaluator extends Visitor {
     
     visitCallExpression(node)
     {
-        // We evaluate inlined ASTs, so this can only be a native call.
-        let callArguments = [];
-        for (let i = 0; i < node.argumentList.length; ++i) {
-            let argument = node.argumentList[i];
-            let type = node.func.parameterTypes[i];
-            if (!type || !argument)
-                throw new Error("Cannot get type or argument; i = " + i + ", argument = " + argument + ", type = " + type + "; in " + node);
-            let argumentValue = argument.visit(this);
-            if (!argumentValue)
-                throw new Error("Null argument value, i = " + i + ", node = " + node);
-            callArguments.push(EBuffer.allowAllocation(() => this._snapshot(type, null, argumentValue)));
-        }
-        let result = EBuffer.allowAllocation(() => node.func.implementation(callArguments, node));
-        result = this._snapshot(node.func.returnType, node.resultEPtr, result);
-        return result;
+        if (node.func instanceof NativeFunc) {
+            const callArguments = this._evaluateArguments(node.argumentList, node.func.parameters);
+            return EBuffer.allowAllocation(() => this._snapshot(node.func.returnType, node.resultEPtr, node.func.implementation(callArguments, node)));
+        } else
+            return this._evaluateFunction(node, node.argumentList, node.func.parameters, node.func.body, node.func.returnType, node.resultEPtr);
     }
 }
 

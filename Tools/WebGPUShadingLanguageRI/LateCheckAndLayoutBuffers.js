@@ -20,25 +20,18 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-// This allows you to pass structs and arrays in-place, but it's a more annoying API.
-function callFunction(program, name, argumentList)
+function lateCheckAndLayoutBuffers(program)
 {
-    let argumentTypes = argumentList.map(argument => argument.type);
-    let overload = program.globalNameContext.resolveFuncOverload(name, argumentTypes, null, true);
-    if (!overload.func)
-        throw new WTypeError("<callFunction>", "Cannot resolve function call " + name + "(" + argumentList + ")" + (overload.failures.length ? "; tried:\n" + overload.failures.join("\n") : ""));
-
-    const func = overload.func;
-    for (let i = 0; i < func.parameters.length; ++i) {
-        let type = argumentTypes[i];
-        type.visit(new StructLayoutBuilder());
-        func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, type.size);
+    for (let funcList of program.functions.values()) {
+        for (let func of funcList) {
+            if (func.isNative)
+                continue;
+            func.visit(new LateChecker());
+            func.visit(new EBufferBuilder());
+        }
     }
-    let result = new Evaluator(program).runFunc(func);
-    return new TypedValue(func.returnType, result);
 }
-
