@@ -1,3 +1,9 @@
+2018-09-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Updated the test expectation as this test also causes a crash in release builds.
+
+        * TestExpectations:
+
 2018-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Support changing foreground colors via color panel
