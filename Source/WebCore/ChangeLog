@@ -1,3 +1,30 @@
+2018-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] Support changing foreground colors via color panel
+        https://bugs.webkit.org/show_bug.cgi?id=189382
+        <rdar://problem/44227311>
+
+        Reviewed by Ryosuke Niwa.
+
+        Small adjustments to support changing foreground text color using NSColorPanel in WebKit2. See comments below.
+        Tested by FontManagerTests.ChangeFontColorWithColorPanel.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::StyleChange::extractTextStyles):
+
+        Support setting foreground text color with alpha by using a styled span element rather than a font element with
+        attributes. To do this, only populate `StyleChange::m_applyFontColor` if the color is opaque. This is because
+        the font element does not support `rgba()` syntax, so any font colors here with alpha that are serialized to
+        `rgba()` result in a garbage value for the computed color style.
+
+        * editing/FontAttributeChanges.cpp:
+        (WebCore::FontAttributeChanges::editAction const):
+
+        Add a helper to return the relevant EditAction describing this set of FontAttributeChanges.
+
+        * editing/FontAttributeChanges.h:
+        (WebCore::FontChanges::isEmpty const):
+
 2018-09-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Shrink size of ResourseResponseBase

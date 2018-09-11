@@ -39,6 +39,7 @@
 #if PLATFORM(MAC)
 - (void)paste:(id)sender;
 - (void)changeAttributes:(id)sender;
+- (void)changeColor:(id)sender;
 #endif
 @end
 

@@ -1,3 +1,22 @@
+2018-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] Support changing foreground colors via color panel
+        https://bugs.webkit.org/show_bug.cgi?id=189382
+        <rdar://problem/44227311>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adjust an existing layout test that applies a text color with alpha. Currently, this results in a font element
+        being emitted with the `color` attribute, but this is incorrect, since the `color` attribute of a font element
+        does not support "rgba(…)" values.
+
+        Instead, split this into two cases: verify that setting the color to an opaque color (with alpha = 1) emits a
+        font element with the correct `color` attribute, and fall back to using an inline style when the color is
+        partially transparent.
+
+        * editing/style/inline-style-container-expected.txt:
+        * editing/style/inline-style-container.html:
+
 2018-09-11  Justin Fan  <justin_fan@apple.com>
 
         Update webkit-webgl-test-harness.js for more details on WebGL 2 conformance tests part 3

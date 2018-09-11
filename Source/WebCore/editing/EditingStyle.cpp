@@ -1720,8 +1720,11 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
     }
 
     if (style.getPropertyCSSValue(CSSPropertyColor)) {
-        m_applyFontColor = Color(textColorFromStyle(style)).serialized();
-        style.removeProperty(CSSPropertyColor);
+        auto color = textColorFromStyle(style);
+        if (color.isOpaque()) {
+            m_applyFontColor = color.serialized();
+            style.removeProperty(CSSPropertyColor);
+        }
     }
 
     m_applyFontFace = style.getPropertyValue(CSSPropertyFontFamily);

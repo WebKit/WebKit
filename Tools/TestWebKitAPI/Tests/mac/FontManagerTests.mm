@@ -40,6 +40,7 @@
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;
 - (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName;
 - (void)selectNextWord;
+- (void)collapseToEnd;
 
 @end
 
@@ -55,6 +56,11 @@
     [self moveRight:nil];
     [self moveRight:nil];
     [self selectWord:nil];
+}
+
+- (void)collapseToEnd
+{
+    [self evaluateJavaScript:@"getSelection().collapseToEnd()" completionHandler:nil];
 }
 
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName
@@ -74,7 +80,9 @@
 static RetainPtr<TestWKWebView> webViewForFontManagerTesting(NSFontManager *fontManager)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
-    [webView synchronouslyLoadHTMLString:@"<body contenteditable><span id='foo'>foo</span> <span id='bar'>bar</span> <span id='baz'>baz</span></body>"];
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable>"
+        "<span id='foo'>foo</span> <span id='bar'>bar</span> <span id='baz'>baz</span>"
+        "</body><script>document.body.addEventListener('input', event => lastInputEvent = event)</script>"];
     [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
     fontManager.target = webView.get();
     return webView;
@@ -93,7 +101,7 @@ namespace TestWebKitAPI {
 
 TEST(FontManagerTests, ChangeFontSizeWithMenuItems)
 {
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
     auto webView = webViewForFontManagerTesting(fontManager);
 
     auto sizeIncreaseMenuItemCell = menuItemCellForFontAction(NSSizeUpFontAction);
@@ -133,7 +141,7 @@ TEST(FontManagerTests, ChangeFontSizeWithMenuItems)
 
 TEST(FontManagerTests, ChangeFontWithPanel)
 {
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
     auto webView = webViewForFontManagerTesting(fontManager);
 
     NSFontPanel *fontPanel = [fontManager fontPanel:YES];
@@ -182,7 +190,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
 
 TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
 {
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
     auto webView = webViewForFontManagerTesting(fontManager);
 
     NSFontPanel *fontPanel = [fontManager fontPanel:YES];
@@ -246,6 +254,60 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"none"];
     EXPECT_WK_STREQ("none", textShadowAroundSelection());
     EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
+}
+
+TEST(FontManagerTests, ChangeFontColorWithColorPanel)
+{
+    NSColorPanel *colorPanel = NSColorPanel.sharedColorPanel;
+    colorPanel.showsAlpha = YES;
+
+    auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager);
+    auto checkFontColorAtStartAndEndWithInputEvents = [webView] (const char* colorAsString) {
+        EXPECT_WK_STREQ(colorAsString, [webView stylePropertyAtSelectionStart:@"color"]);
+        EXPECT_WK_STREQ(colorAsString, [webView stylePropertyAtSelectionEnd:@"color"]);
+        EXPECT_WK_STREQ("formatFontColor", [webView stringByEvaluatingJavaScript:@"lastInputEvent.inputType"]);
+        EXPECT_WK_STREQ(colorAsString, [webView stringByEvaluatingJavaScript:@"lastInputEvent.data"]);
+    };
+
+    // 1. Select "foo" and turn it red; verify that the font element is used for fully opaque colors.
+    colorPanel.color = NSColor.redColor;
+    [webView selectWord:nil];
+    [webView changeColor:colorPanel];
+    checkFontColorAtStartAndEndWithInputEvents("rgb(255, 0, 0)");
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"!!foo.querySelector('font')"] boolValue]);
+
+    // 2. Now select "bar" and try a few different colors, starting with a color with alpha.
+    colorPanel.color = [NSColor colorWithWhite:1 alpha:0.2];
+    [webView selectNextWord];
+    [webView changeColor:colorPanel];
+    checkFontColorAtStartAndEndWithInputEvents("rgba(255, 255, 255, 0.2)");
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!bar.querySelector('font')"] boolValue]);
+
+    // 3a. Switch back to a solid color.
+    colorPanel.color = [NSColor colorWithRed:0.8 green:0.7 blue:0.2 alpha:1];
+    [webView changeColor:colorPanel];
+    checkFontColorAtStartAndEndWithInputEvents("rgb(204, 179, 51)");
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"!!bar.querySelector('font')"] boolValue]);
+
+    // 3b. Switch back again to a color with alpha.
+    colorPanel.color = [NSColor colorWithRed:0.8 green:0.7 blue:0.2 alpha:0.2];
+    [webView changeColor:colorPanel];
+    checkFontColorAtStartAndEndWithInputEvents("rgba(204, 179, 51, 0.2)");
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!bar.querySelector('font')"] boolValue]);
+
+    // 4a. Now collapse the selection to the end and set the typing style color to green.
+    colorPanel.color = NSColor.greenColor;
+    [webView collapseToEnd];
+    [webView changeColor:colorPanel];
+    EXPECT_WK_STREQ("formatFontColor", [webView stringByEvaluatingJavaScript:@"lastInputEvent.inputType"]);
+    EXPECT_WK_STREQ("rgb(0, 255, 0)", [webView stringByEvaluatingJavaScript:@"lastInputEvent.data"]);
+
+    // 4b. This should result in inserting green text.
+    [webView insertText:@"green"];
+    [webView moveWordBackward:nil];
+    [webView selectWord:nil];
+    EXPECT_WK_STREQ("rgba(204, 179, 51, 0.2)", [webView stylePropertyAtSelectionStart:@"color"]);
+    EXPECT_WK_STREQ("rgb(0, 255, 0)", [webView stylePropertyAtSelectionEnd:@"color"]);
 }
 
 } // namespace TestWebKitAPI

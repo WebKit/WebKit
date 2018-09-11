@@ -3387,6 +3387,11 @@ WEBCORE_COMMAND(yankAndSelect)
     _impl->changeFontFromFontManager();
 }
 
+- (void)changeColor:(id)sender
+{
+    _impl->changeFontColorFromSender(sender);
+}
+
 - (void)changeAttributes:(id)sender
 {
     _impl->changeFontAttributesFromSender(sender);

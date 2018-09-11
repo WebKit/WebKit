@@ -35,6 +35,7 @@ namespace WebCore {
 class EditingStyle;
 class MutableStyleProperties;
 
+enum class EditAction : uint8_t;
 enum class VerticalAlignChange : uint8_t { Superscript, Baseline, Subscript };
 
 class FontChanges {
@@ -48,6 +49,11 @@ public:
     void setFontSizeDelta(double fontSizeDelta) { m_fontSizeDelta = fontSizeDelta; }
     void setBold(bool bold) { m_bold = bold; }
     void setItalic(bool italic) { m_italic = italic; }
+
+    bool isEmpty() const
+    {
+        return !m_fontName && !m_fontFamily && !m_fontSize && !m_fontSizeDelta && !m_bold && !m_italic;
+    }
 
     WEBCORE_EXPORT Ref<EditingStyle> createEditingStyle() const;
     Ref<MutableStyleProperties> createStyleProperties() const;
@@ -87,6 +93,7 @@ public:
     void setFontChanges(const FontChanges& fontChanges) { m_fontChanges = fontChanges; }
 
     WEBCORE_EXPORT Ref<EditingStyle> createEditingStyle() const;
+    WEBCORE_EXPORT EditAction editAction() const;
 
 private:
     std::optional<VerticalAlignChange> m_verticalAlign;

@@ -2749,6 +2749,24 @@ void WebViewImpl::updateFontPanelIfNeeded()
     }
 }
 
+void WebViewImpl::changeFontColorFromSender(id sender)
+{
+    if (![sender respondsToSelector:@selector(color)])
+        return;
+
+    id color = [sender color];
+    if (![color isKindOfClass:NSColor.class])
+        return;
+
+    auto& editorState = m_page->editorState();
+    if (!editorState.isContentEditable || editorState.selectionIsNone)
+        return;
+
+    WebCore::FontAttributeChanges changes;
+    changes.setForegroundColor(WebCore::colorFromNSColor((NSColor *)color));
+    m_page->changeFontAttributes(WTFMove(changes));
+}
+
 void WebViewImpl::changeFontAttributesFromSender(id sender)
 {
     auto& editorState = m_page->editorState();

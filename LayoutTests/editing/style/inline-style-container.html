@@ -37,7 +37,8 @@ testSingleToggle("fontName", "Arial", '<b><font face="Arial">hello</font></b> wo
 testSingleToggle("fontName", "Arial", '<font color="blue">hello</font> world', '<font face="Arial"><font color="blue">hello</font> world</font>');
 testSingleToggle("fontName", "Arial", '<b><u>hello</u> world</b>', '<b><font face="Arial"><u>hello</u> world</font></b>');
 testSingleToggle("foreColor", 'blue', '<font><u style="color:red;">hello</u></font>', '<font color="#0000ff"><u>hello</u></font>');
-testSingleToggle("foreColor", 'rgba(0, 50, 100, 0.4)', '<font><u style="color:red;">hello</u></font>', '<font color="rgba(0, 50, 100, 0.4)"><u>hello</u></font>');
+testSingleToggle("foreColor", 'rgb(0, 50, 100)', '<font><u style="color:red;">hello</u></font>', '<font color="#003264"><u>hello</u></font>');
+testSingleToggle("foreColor", 'rgba(0, 50, 100, 0.4)', '<font color="#00ff00"><u>hello</u></font>', '<u style="color: rgba(0, 50, 100, 0.4);">hello</u>');
 testSingleToggle("bold", null, '<u><strike>hello</strike> <strike>world</strike></u>', '<u><b><strike>hello</strike> <strike>world</strike></b></u>');
 testSingleToggle("bold", null, '<i>hello</i> <b>world</b>', '<b><i>hello</i> world</b>');
 testSingleToggle("bold", null, '<strike><i><u>hello <b>world</b></u></i> webkit</strike>', '<strike><b><i><u>hello world</u></i> webkit</b></strike>');
