@@ -1,3 +1,12 @@
+2018-09-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix build after r235903
+        https://bugs.webkit.org/show_bug.cgi?id=188872
+
+        This broke all ports except GTK. Need to add a missing header.
+
+        * UIProcess/PageClient.h:
+
 2018-09-11  Pablo Saavedra  <psaavedra@igalia.com>
 
         Add missing #if ENABLE(VIDEO) WebProcess/FullScreen/WebFullScreenManager.cpp
