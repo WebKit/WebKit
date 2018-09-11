@@ -1,3 +1,31 @@
+2018-09-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Shrink size of ResourseResponseBase
+        https://bugs.webkit.org/show_bug.cgi?id=189501
+
+        Reviewed by Simon Fraser.
+
+        We reduce the size of ResourceResponseBase by the following two optimizations.
+
+        1. Use bitfields for bool flags and reorder them.
+
+        2. Use Markable<> in CacheControlDirectives, which is held by ResourceResponseBase.
+
+        This patch reduces the size of ResourceResponseBase from 416 to 392 bytes.
+
+        No behavior change.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::responseReceived):
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource):
+        * platform/network/CacheValidation.h:
+        (WebCore::CacheControlDirectives::CacheControlDirectives):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::contentRange const):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::decode):
+
 2018-09-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix some -Wreturn-type warnings

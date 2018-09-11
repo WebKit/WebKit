@@ -26,6 +26,7 @@
 #pragma once
 
 #include <pal/SessionID.h>
+#include <wtf/Markable.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
@@ -60,12 +61,19 @@ enum ReuseExpiredRedirectionOrNot { DoNotReuseExpiredRedirection, ReuseExpiredRe
 WEBCORE_EXPORT bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpiredRedirectionOrNot);
 
 struct CacheControlDirectives {
-    std::optional<Seconds> maxAge;
-    std::optional<Seconds> maxStale;
-    bool noCache { false };
-    bool noStore { false };
-    bool mustRevalidate { false };
-    bool immutable { false };
+    constexpr CacheControlDirectives()
+        : noCache(false)
+        , noStore(false)
+        , mustRevalidate(false)
+        , immutable(false)
+        { }
+
+    Markable<Seconds, Seconds::MarkableTraits> maxAge;
+    Markable<Seconds, Seconds::MarkableTraits> maxStale;
+    bool noCache : 1;
+    bool noStore : 1;
+    bool mustRevalidate : 1;
+    bool immutable : 1;
 };
 WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap&);
 

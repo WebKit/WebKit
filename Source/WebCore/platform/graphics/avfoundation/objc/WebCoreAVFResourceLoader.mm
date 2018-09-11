@@ -136,7 +136,7 @@ void WebCoreAVFResourceLoader::responseReceived(CachedResource& resource, const 
 
         [contentInfo setContentType:uti];
 
-        ParsedContentRange& contentRange = m_resource->response().contentRange();
+        const ParsedContentRange& contentRange = m_resource->response().contentRange();
         [contentInfo setContentLength:contentRange.isValid() ? contentRange.instanceLength() : response.expectedContentLength()];
         [contentInfo setByteRangeAccessSupported:YES];
 
@@ -181,7 +181,7 @@ void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource& resour
         return;
 
     NSUInteger responseOffset = 0;
-    ParsedContentRange contentRange = m_resource->response().contentRange();
+    const ParsedContentRange& contentRange = m_resource->response().contentRange();
     if (contentRange.isValid())
         responseOffset = static_cast<NSUInteger>(contentRange.firstBytePosition());
 

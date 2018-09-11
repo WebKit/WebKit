@@ -47,7 +47,17 @@ bool isScriptAllowedByNosniff(const ResourceResponse& response)
     return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType);
 }
 
-ResourceResponseBase::ResourceResponseBase() = default;
+ResourceResponseBase::ResourceResponseBase()
+    : m_haveParsedCacheControlHeader(false)
+    , m_haveParsedAgeHeader(false)
+    , m_haveParsedDateHeader(false)
+    , m_haveParsedExpiresHeader(false)
+    , m_haveParsedLastModifiedHeader(false)
+    , m_haveParsedContentRangeHeader(false)
+    , m_isRedirected(false)
+    , m_isNull(true)
+{
+}
 
 ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
     : m_url(url)
@@ -55,6 +65,13 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
     , m_expectedContentLength(expectedLength)
     , m_textEncodingName(textEncodingName)
     , m_certificateInfo(CertificateInfo()) // Empty but valid for synthetic responses.
+    , m_haveParsedCacheControlHeader(false)
+    , m_haveParsedAgeHeader(false)
+    , m_haveParsedDateHeader(false)
+    , m_haveParsedExpiresHeader(false)
+    , m_haveParsedLastModifiedHeader(false)
+    , m_haveParsedContentRangeHeader(false)
+    , m_isRedirected(false)
     , m_isNull(false)
 {
 }
@@ -702,7 +719,7 @@ static ParsedContentRange parseContentRangeInHeader(const HTTPHeaderMap& headers
     return ParsedContentRange(contentRangeValue);
 }
 
-ParsedContentRange& ResourceResponseBase::contentRange() const
+const ParsedContentRange& ResourceResponseBase::contentRange() const
 {
     lazyInit(CommonFieldsOnly);
 
