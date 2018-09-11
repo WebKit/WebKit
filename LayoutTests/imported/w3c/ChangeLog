@@ -1,1 +1,7 @@
+2018-09-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/css/cssom/interfaces.html after r235889.
+
+        * web-platform-tests/css/cssom/interfaces-expected.txt:
+
 == Rolled over to ChangeLog-2018-09-11 ==
