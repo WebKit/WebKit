@@ -505,7 +505,7 @@ WebPageProxy::~WebPageProxy()
 // FIXME: Should return a const PageClient& and add a separate non-const
 // version of this function, but several PageClient methods will need to become
 // const for this to be possible.
-inline PageClient& WebPageProxy::pageClient() const
+PageClient& WebPageProxy::pageClient() const
 {
     ASSERT(m_pageClient);
     return *m_pageClient;

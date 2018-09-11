@@ -1,5 +1,15 @@
 2018-09-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, attempt to fix Apple builds after r235903
+        https://bugs.webkit.org/show_bug.cgi?id=188872
+
+        If it really needs to be inlined, it will need to move to the header....
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageClient const):
+
+2018-09-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, fix build after r235903
         https://bugs.webkit.org/show_bug.cgi?id=188872
 
