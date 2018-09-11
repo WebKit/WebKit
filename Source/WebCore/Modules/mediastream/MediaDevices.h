@@ -46,6 +46,7 @@
 
 namespace WebCore {
 
+class Document;
 class MediaDeviceInfo;
 class MediaStream;
 

@@ -1,3 +1,10 @@
+2018-09-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a speculative build fix for r235888.
+
+        * Modules/mediastream/MediaDevices.h:
+        Add class Document forward declaration.
+
 2018-09-11  Woodrow Wang  <woodrow_wang@apple.com>
 
         Add Web API Statistics Collection
