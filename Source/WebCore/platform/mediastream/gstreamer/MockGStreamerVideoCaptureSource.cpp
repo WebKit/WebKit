@@ -40,28 +40,24 @@ public:
 
     void updateSampleBuffer()
     {
-        int fpsNumerator, fpsDenominator;
         auto imageBuffer = this->imageBuffer();
-
         if (!imageBuffer)
             return;
 
+        int fpsNumerator, fpsDenominator;
         gst_util_double_to_fraction(frameRate(), &fpsNumerator, &fpsDenominator);
+        auto imageSize = imageBuffer->internalSize();
+        auto caps = adoptGRef(gst_caps_new_simple("video/x-raw",
+            "format", G_TYPE_STRING, "BGRA",
+            "width", G_TYPE_INT, imageSize.width(),
+            "height", G_TYPE_INT, imageSize.height(),
+            "framerate", GST_TYPE_FRACTION, fpsNumerator, fpsDenominator, nullptr));
         auto data = imageBuffer->toBGRAData();
         auto size = data.size();
-        auto image_size = imageBuffer->internalSize();
-        auto gstsample = gst_sample_new(gst_buffer_new_wrapped(static_cast<guint8*>(data.releaseBuffer().get()), size),
-            adoptGRef(gst_caps_new_simple("video/x-raw",
-                "format", G_TYPE_STRING, "BGRA",
-                "width", G_TYPE_INT, image_size.width(),
-                "height", G_TYPE_INT, image_size.height(),
-                "framerate", GST_TYPE_FRACTION, fpsNumerator, fpsDenominator,
-                nullptr)).get(),
-            nullptr, nullptr);
+        auto buffer = adoptGRef(gst_buffer_new_wrapped(g_memdup(data.releaseBuffer().get(), size), size));
+        auto gstSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
 
-        auto sample = MediaSampleGStreamer::create(WTFMove(gstsample),
-            WebCore::FloatSize(), String());
-        videoSampleAvailable(sample);
+        videoSampleAvailable(MediaSampleGStreamer::create(WTFMove(gstSample), FloatSize(), String()));
     }
 };
 

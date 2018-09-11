@@ -1,3 +1,15 @@
+2018-09-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] use-after-free in MockVideoCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=189462
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.cpp:
+        (WebCore::WrappedMockRealtimeVideoSource::updateSampleBuffer):
+        Copy the BGRA data before passing ownership to GStreamer. Also
+        include a few code style cosmetic changes.
+
 2018-09-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Polish AuthenticatorManager and rename it to AuthenticatorCoordinator
