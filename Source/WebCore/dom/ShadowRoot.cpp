@@ -106,6 +106,30 @@ void ShadowRoot::removedFromAncestor(RemovalType removalType, ContainerNode& old
         document().didRemoveInDocumentShadowRoot(*this);
 }
 
+void ShadowRoot::childrenChanged(const ChildChange& childChange)
+{
+    DocumentFragment::childrenChanged(childChange);
+
+    if (!m_host || m_type == ShadowRootMode::UserAgent)
+        return; // Don't support first-child, nth-of-type, etc... in UA shadow roots as an optimization.
+
+    // FIXME: Avoid always invalidating style just for first-child, etc... as done in Element::childrenChanged.
+    switch (childChange.type) {
+    case ElementInserted:
+    case ElementRemoved:
+        m_host->invalidateStyleForSubtreeInternal();
+        break;
+    case TextInserted:
+    case TextRemoved:
+    case TextChanged:
+    case AllChildrenRemoved:
+    case NonContentsChildRemoved:
+    case NonContentsChildInserted:
+    case AllChildrenReplaced:
+        break;
+    }
+}
+
 void ShadowRoot::moveShadowRootToNewParentScope(TreeScope& newScope, Document& newDocument)
 {
     setParentTreeScope(newScope);

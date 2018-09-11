@@ -736,69 +736,92 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 
                 return result;
             }
-        case CSSSelector::PseudoClassFirstChild:
+        case CSSSelector::PseudoClassFirstChild: {
             // first-child matches the first child that is an element
-            if (const Element* parentElement = element.parentElement()) {
-                bool isFirstChild = isFirstChildElement(element);
-                if (isFirstChild)
-                    addStyleRelation(checkingContext, element, Style::Relation::FirstChild);
-                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByFirstChildRules);
-                return isFirstChild;
-            }
-            break;
-        case CSSSelector::PseudoClassFirstOfType:
+            bool isFirstChild = isFirstChildElement(element);
+            auto* parent = element.parentNode();
+            if (is<Element>(parent))
+                addStyleRelation(checkingContext, downcast<Element>(*parent), Style::Relation::ChildrenAffectedByFirstChildRules);
+            else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
+            if (!isFirstChild)
+                break;
+            addStyleRelation(checkingContext, element, Style::Relation::FirstChild);
+            return true;
+        }
+        case CSSSelector::PseudoClassFirstOfType: {
             // first-of-type matches the first element of its type
-            if (auto* parentElement = element.parentElement()) {
+            auto* parent = element.parentNode();
+            if (is<Element>(parent)) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
-                return isFirstOfType(element, element.tagQName());
-            }
-            break;
-        case CSSSelector::PseudoClassLastChild:
+                addStyleRelation(checkingContext, downcast<Element>(*parent), relation);
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
+            return isFirstOfType(element, element.tagQName());
+        }
+        case CSSSelector::PseudoClassLastChild: {
             // last-child matches the last child that is an element
-            if (const Element* parentElement = element.parentElement()) {
-                bool isLastChild = parentElement->isFinishedParsingChildren() && isLastChildElement(element);
-                if (isLastChild)
-                    addStyleRelation(checkingContext, element, Style::Relation::LastChild);
-                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
-                return isLastChild;
-            }
-            break;
-        case CSSSelector::PseudoClassLastOfType:
+            auto* parent = element.parentNode();
+            bool isLastChild = isLastChildElement(element);
+            if (is<Element>(parent)) {
+                auto& parentElement = downcast<Element>(*parent);
+                if (!parentElement.isFinishedParsingChildren())
+                    isLastChild = false;
+                addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
+            if (!isLastChild)
+                break;
+            addStyleRelation(checkingContext, element, Style::Relation::LastChild);
+            return true;
+        }
+        case CSSSelector::PseudoClassLastOfType: {
             // last-of-type matches the last element of its type
-            if (Element* parentElement = element.parentElement()) {
+            auto* parent = element.parentNode();
+            if (is<Element>(parent)) {
+                auto& parentElement = downcast<Element>(*parent);
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
-                if (!parentElement->isFinishedParsingChildren())
+                addStyleRelation(checkingContext, parentElement, relation);
+                if (!parentElement.isFinishedParsingChildren())
                     return false;
-                return isLastOfType(element, element.tagQName());
-            }
-            break;
-        case CSSSelector::PseudoClassOnlyChild:
-            if (Element* parentElement = element.parentElement()) {
-                bool firstChild = isFirstChildElement(element);
-                bool onlyChild = firstChild && parentElement->isFinishedParsingChildren() && isLastChildElement(element);
-                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByFirstChildRules);
-                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
-                if (firstChild)
-                    addStyleRelation(checkingContext, element, Style::Relation::FirstChild);
-                if (onlyChild)
-                    addStyleRelation(checkingContext, element, Style::Relation::LastChild);
-                return onlyChild;
-            }
-            break;
-        case CSSSelector::PseudoClassOnlyOfType:
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
+            return isLastOfType(element, element.tagQName());
+        }
+        case CSSSelector::PseudoClassOnlyChild: {
+            auto* parent = element.parentNode();
+            bool firstChild = isFirstChildElement(element);
+            bool onlyChild = firstChild && isLastChildElement(element);
+            if (is<Element>(parent)) {
+                auto& parentElement = downcast<Element>(*parent);
+                addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByFirstChildRules);
+                addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
+                if (!parentElement.isFinishedParsingChildren())
+                    onlyChild = false;
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
+            if (firstChild)
+                addStyleRelation(checkingContext, element, Style::Relation::FirstChild);
+            if (onlyChild)
+                addStyleRelation(checkingContext, element, Style::Relation::LastChild);
+            return onlyChild;
+        }
+        case CSSSelector::PseudoClassOnlyOfType: {
             // FIXME: This selector is very slow.
-            if (Element* parentElement = element.parentElement()) {
+            auto* parent = element.parentNode();
+            if (is<Element>(parent)) {
+                auto& parentElement = downcast<Element>(*parent);
                 auto forwardRelation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, forwardRelation);
+                addStyleRelation(checkingContext, parentElement, forwardRelation);
                 auto backwardRelation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, backwardRelation);
-                if (!parentElement->isFinishedParsingChildren())
+                addStyleRelation(checkingContext, parentElement, backwardRelation);
+
+                if (!parentElement.isFinishedParsingChildren())
                     return false;
-                return isFirstOfType(element, element.tagQName()) && isLastOfType(element, element.tagQName());
-            }
-            break;
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
+            return isFirstOfType(element, element.tagQName()) && isLastOfType(element, element.tagQName());
+        }
         case CSSSelector::PseudoClassMatches:
             {
                 bool hasMatchedAnything = false;
@@ -836,88 +859,96 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 return downcast<HTMLTextFormControlElement>(element).isPlaceholderVisible();
             }
             return false;
-        case CSSSelector::PseudoClassNthChild:
-            if (auto* parentElement = element.parentElement()) {
+        case CSSSelector::PseudoClassNthChild: {
+            auto* parent = element.parentNode();
+            if (is<Element>(parent)) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
+                addStyleRelation(checkingContext, downcast<Element>(*parent), relation);
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
 
+            if (const CSSSelectorList* selectorList = selector.selectorList()) {
+                unsigned selectorListSpecificity;
+                if (!matchSelectorList(checkingContext, context, element, *selectorList, selectorListSpecificity))
+                    return false;
+                specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
+            }
+
+            int count = 1;
+            if (const CSSSelectorList* selectorList = selector.selectorList()) {
+                for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
+                    unsigned ignoredSpecificity;
+                    if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
+                        ++count;
+                }
+            } else {
+                count += countElementsBefore(element);
+                addStyleRelation(checkingContext, element, Style::Relation::NthChildIndex, count);
+            }
+
+            if (selector.matchNth(count))
+                return true;
+            break;
+        }
+        case CSSSelector::PseudoClassNthOfType: {
+            auto* parent = element.parentNode();
+            if (is<Element>(parent)) {
+                auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
+                addStyleRelation(checkingContext, downcast<Element>(*parent), relation);
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
+
+            int count = 1 + countElementsOfTypeBefore(element, element.tagQName());
+            if (selector.matchNth(count))
+                return true;
+            break;
+        }
+        case CSSSelector::PseudoClassNthLastChild: {
+            auto* parent = element.parentNode();
+            if (is<Element>(parent)) {
+                auto& parentElement = downcast<Element>(*parent);
                 if (const CSSSelectorList* selectorList = selector.selectorList()) {
                     unsigned selectorListSpecificity;
                     if (!matchSelectorList(checkingContext, context, element, *selectorList, selectorListSpecificity))
                         return false;
                     specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
-                }
 
-                int count = 1;
-                if (const CSSSelectorList* selectorList = selector.selectorList()) {
-                    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-                        unsigned ignoredSpecificity;
-                        if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
-                            ++count;
-                    }
-                } else {
-                    count += countElementsBefore(element);
-                    addStyleRelation(checkingContext, element, Style::Relation::NthChildIndex, count);
-                }
-
-                if (selector.matchNth(count))
-                    return true;
-            }
-            break;
-        case CSSSelector::PseudoClassNthOfType:
-            if (auto* parentElement = element.parentElement()) {
-                auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
-
-                int count = 1 + countElementsOfTypeBefore(element, element.tagQName());
-                if (selector.matchNth(count))
-                    return true;
-            }
-            break;
-        case CSSSelector::PseudoClassNthLastChild:
-            if (Element* parentElement = element.parentElement()) {
-                if (const CSSSelectorList* selectorList = selector.selectorList()) {
-                    unsigned selectorListSpecificity;
-                    if (!matchSelectorList(checkingContext, context, element, *selectorList, selectorListSpecificity))
-                        return false;
-                    specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
-
-                    addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByPropertyBasedBackwardPositionalRules);
+                    addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByPropertyBasedBackwardPositionalRules);
                 } else {
                     auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                    addStyleRelation(checkingContext, *parentElement, relation);
+                    addStyleRelation(checkingContext, parentElement, relation);
                 }
-
-                if (!parentElement->isFinishedParsingChildren())
+                if (!parentElement.isFinishedParsingChildren())
                     return false;
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
 
-                int count = 1;
-                if (const CSSSelectorList* selectorList = selector.selectorList()) {
-                    for (Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
-                        unsigned ignoredSpecificity;
-                        if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
-                            ++count;
-                    }
-                } else
-                    count += countElementsAfter(element);
+            int count = 1;
+            if (const CSSSelectorList* selectorList = selector.selectorList()) {
+                for (Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
+                    unsigned ignoredSpecificity;
+                    if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
+                        ++count;
+                }
+            } else
+                count += countElementsAfter(element);
 
-                if (selector.matchNth(count))
-                    return true;
-            }
-            break;
-        case CSSSelector::PseudoClassNthLastOfType:
-            if (Element* parentElement = element.parentElement()) {
+            return selector.matchNth(count);
+        }
+        case CSSSelector::PseudoClassNthLastOfType: {
+            auto* parent = element.parentNode();
+            if (is<Element>(parent)) {
+                auto& parentElement = downcast<Element>(*parent);
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
+                addStyleRelation(checkingContext, parentElement, relation);
 
-                if (!parentElement->isFinishedParsingChildren())
+                if (!parentElement.isFinishedParsingChildren())
                     return false;
-
-                int count = 1 + countElementsOfTypeAfter(element, element.tagQName());
-                if (selector.matchNth(count))
-                    return true;
-            }
-            break;
+            } else if (!is<ShadowRoot>(parent))
+                break; // FIXME: Add the support for specifying relations on ShadowRoot.
+            int count = 1 + countElementsOfTypeAfter(element, element.tagQName());
+            return selector.matchNth(count);
+        }
         case CSSSelector::PseudoClassTarget:
             if (&element == element.document().cssTarget())
                 return true;

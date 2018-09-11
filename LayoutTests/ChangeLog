@@ -1,3 +1,23 @@
+2018-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        :first-child, :last-child, :nth-child, and :nth-of-type don't work on shadow root's children
+        https://bugs.webkit.org/show_bug.cgi?id=166748
+        <rdar://problem/29649177>
+
+        Reviewed by Yusuke Suzuki.
+
+        Added ref tests for matching positional pseudo classes on direct child of shadow roots
+        during style resolutions and DOM API matching with C++ selector checker and selector compilers.
+
+        Also added a test for invalidating these selectors.
+
+        * fast/shadow-dom/nth-node-on-shadow-child-expected.html: Added.
+        * fast/shadow-dom/nth-node-on-shadow-child-invalidation-expected.html: Added.
+        * fast/shadow-dom/nth-node-on-shadow-child-invalidation.html: Added.
+        * fast/shadow-dom/nth-node-on-shadow-child-no-jit-expected.html: Added.
+        * fast/shadow-dom/nth-node-on-shadow-child-no-jit.html: Added.
+        * fast/shadow-dom/nth-node-on-shadow-child.html: Added.
+
 2018-09-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Updated the test expectation as this test also causes a crash in release builds.

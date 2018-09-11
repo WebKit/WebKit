@@ -1,3 +1,38 @@
+2018-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        :first-child, :last-child, :nth-child, and :nth-of-type don't work on shadow root's children
+        https://bugs.webkit.org/show_bug.cgi?id=166748
+        <rdar://problem/29649177>
+
+        Reviewed by Yusuke Suzuki.
+
+        Added the support for matching positional pseudo classes. For now, we invalidate whenever a child node
+        of a non-UA ShadowRoot is mutated instead of a fine-grained style invalidation as done for regular elements.
+
+        Tests: fast/shadow-dom/nth-node-on-shadow-child-invalidation.html
+               fast/shadow-dom/nth-node-on-shadow-child-no-jit.html
+               fast/shadow-dom/nth-node-on-shadow-child.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToParentElementOrShadowRoot):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsOnlyChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateNthChildParentCheckAndRelationUpdate):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChildOf):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateNthLastChildParentCheckAndRelationUpdate):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChildOf):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::childrenChanged): Invalidate the subtree whenever a child node is mutated.
+        * dom/ShadowRoot.h:
+        * domjit/DOMJITHelpers.h:
+        (WebCore::DOMJIT::branchTestIsShadowRootFlagOnNode): Added.
+        (WebCore::DOMJIT::branchTestIsElementOrShadowRootFlagOnNode): Added.
+
 2018-09-11  Per Arne Vollan  <pvollan@apple.com>
 
         Addressing post-review feedback on r235619.

@@ -103,6 +103,8 @@ private:
     Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode& insertionPoint) override;
 
+    void childrenChanged(const ChildChange&) override;
+
     bool m_resetStyleInheritance { false };
     bool m_hasBegunDeletingDetachedChildren { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
