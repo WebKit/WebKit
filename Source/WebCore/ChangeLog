@@ -1,3 +1,14 @@
+2018-09-11  Youenn Fablet  <youenn@apple.com>
+
+        Remove MediaDevices NoInterfaceObject
+        https://bugs.webkit.org/show_bug.cgi?id=189512
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased WPT tests.
+
+        * Modules/mediastream/MediaDevices.idl:
+
 2018-09-11  Jer Noble  <jer.noble@apple.com>
 
         [MediaCapabilities] Implement MediaEngineConfigurationFactory registration

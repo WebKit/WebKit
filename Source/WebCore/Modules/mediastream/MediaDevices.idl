@@ -31,8 +31,7 @@
 // FIXME 169871: should be subclass of EventTarget
 [
     ActiveDOMObject,
-    Conditional=MEDIA_STREAM,
-    NoInterfaceObject,
+    Conditional=MEDIA_STREAM
 ] interface MediaDevices : EventTarget {
     attribute EventHandler ondevicechange;
     Promise<sequence<MediaDeviceInfo>> enumerateDevices();

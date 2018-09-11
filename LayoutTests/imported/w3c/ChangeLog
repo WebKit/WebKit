@@ -1,3 +1,13 @@
+2018-09-11  Youenn Fablet  <youenn@apple.com>
+
+        Remove MediaDevices NoInterfaceObject
+        https://bugs.webkit.org/show_bug.cgi?id=189512
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-all-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-enumerateDevices-expected.txt:
+
 2018-09-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline imported/w3c/web-platform-tests/css/cssom/interfaces.html after r235889.

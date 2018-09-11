@@ -61,17 +61,17 @@ PASS OverconstrainedErrorEvent interface: existence and properties of interface 
 PASS OverconstrainedErrorEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS OverconstrainedErrorEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS OverconstrainedErrorEvent interface: attribute error 
-FAIL MediaDevices interface: existence and properties of interface object assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface object length assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface object name assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface: attribute ondevicechange assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface: operation enumerateDevices() assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface: operation getSupportedConstraints() assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices interface: operation getUserMedia(MediaStreamConstraints) assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
-FAIL MediaDevices must be primary interface of navigator.mediaDevices assert_own_property: self does not have own property "MediaDevices" expected property "MediaDevices" missing
+PASS MediaDevices interface: existence and properties of interface object 
+PASS MediaDevices interface object length 
+PASS MediaDevices interface object name 
+PASS MediaDevices interface: existence and properties of interface prototype object 
+PASS MediaDevices interface: existence and properties of interface prototype object's "constructor" property 
+PASS MediaDevices interface: existence and properties of interface prototype object's @@unscopables property 
+PASS MediaDevices interface: attribute ondevicechange 
+PASS MediaDevices interface: operation enumerateDevices() 
+PASS MediaDevices interface: operation getSupportedConstraints() 
+PASS MediaDevices interface: operation getUserMedia(MediaStreamConstraints) 
+PASS MediaDevices must be primary interface of navigator.mediaDevices 
 PASS Stringification of navigator.mediaDevices 
 PASS MediaDevices interface: navigator.mediaDevices must inherit property "ondevicechange" with the proper type 
 PASS MediaDevices interface: navigator.mediaDevices must inherit property "enumerateDevices()" with the proper type 
