@@ -1,3 +1,15 @@
+2018-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix typo "vritualized"
+        https://bugs.webkit.org/show_bug.cgi?id=189511
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.registerScrollVirtualizer):
+        (WI.TreeOutline.prototype.updateVirtualizedElements):
+
 2018-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Address some ESLint warnings

@@ -55,7 +55,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._customIndent = false;
         this._selectable = selectable;
 
-        this._vritualizedCurrentMiddleItem = NaN;
+        this._virtualizedCurrentMiddleItem = NaN;
         this._virtualizedScrollContainer = null;
         this._virtualizedTreeItemHeight = NaN;
         this._virtualizedTopSpacer = null;
@@ -662,7 +662,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._virtualizedScrollContainer.addEventListener("scroll", (event) => {
             let {numberVisible, extraRows, firstItem} = this._calculateVirtualizedValues();
 
-            if (Math.abs(firstItem + (numberVisible / 2) - this._vritualizedCurrentMiddleItem) >= extraRows)
+            if (Math.abs(firstItem + (numberVisible / 2) - this._virtualizedCurrentMiddleItem) >= extraRows)
                 this.updateVirtualizedElements();
         });
     }
@@ -735,7 +735,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (shouldScroll)
             this._virtualizedScrollContainer.scrollTop = (firstItem + extraRows) * this._virtualizedTreeItemHeight;
 
-        this._vritualizedCurrentMiddleItem = firstItem + (numberVisible / 2);
+        this._virtualizedCurrentMiddleItem = firstItem + (numberVisible / 2);
     }
 
     // Protected
