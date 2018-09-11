@@ -34,6 +34,9 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
+typedef struct __CVBuffer *CVPixelBufferRef;
+typedef struct __IOSurface *IOSurfaceRef;
+
 namespace WTF {
 class MediaTime;
 }

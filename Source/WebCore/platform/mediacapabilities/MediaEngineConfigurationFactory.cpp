@@ -28,11 +28,12 @@
 #include "config.h"
 #include "MediaEngineConfigurationFactory.h"
 
-#include "DeprecatedGlobalSettings.h"
-#include "MediaEngineDecodingConfiguration.h"
-#include "MediaEngineDecodingConfigurationMock.h"
-#include "MediaEngineEncodingConfiguration.h"
-#include "MediaEngineEncodingConfigurationMock.h"
+#include "MediaCapabilitiesInfo.h"
+#include "MediaDecodingConfiguration.h"
+#include "MediaEncodingConfiguration.h"
+#include "MediaEngineConfigurationFactoryMock.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -42,22 +43,68 @@ static bool& mockEnabled()
     return enabled;
 }
 
-void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration& config, MediaEngineConfigurationFactory::DecodingConfigurationCallback& callback)
+struct MediaEngineFactory {
+    void(*createDecodingConfiguration)(MediaDecodingConfiguration&, MediaEngineConfigurationFactory::DecodingConfigurationCallback&&);
+    void(*createEncodingConfiguration)(MediaEncodingConfiguration&, MediaEngineConfigurationFactory::EncodingConfigurationCallback&&);
+};
+
+using FactoryVector = Vector<MediaEngineFactory>;
+static const FactoryVector& factories()
 {
-    if (mockEnabled()) {
-        MediaEngineDecodingConfigurationMock::create(config, callback);
-        return;
-    }
-    callback(nullptr);
+    static NeverDestroyed<FactoryVector> factories = makeNeverDestroyed(FactoryVector({ }));
+    return factories;
 }
 
-void MediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingConfiguration& config, MediaEngineConfigurationFactory::EncodingConfigurationCallback& callback)
+void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& config, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)
 {
     if (mockEnabled()) {
-        MediaEngineEncodingConfigurationMock::create(config, callback);
+        MediaEngineConfigurationFactoryMock::createDecodingConfiguration(config, WTFMove(callback));
         return;
     }
-    callback(nullptr);
+
+    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto config, auto&& callback) mutable {
+        if (nextFactory == factories().end()) {
+            callback({ });
+            return;
+        }
+
+        auto& factory = *nextFactory;
+        factory.createDecodingConfiguration(config, [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (auto&& info) mutable {
+            if (info.supported) {
+                callback(WTFMove(info));
+                return;
+            }
+
+            factoryCallback(factoryCallback, ++nextFactory, config, WTFMove(callback));
+        });
+    };
+    factoryCallback(factoryCallback, factories().begin(), config, WTFMove(callback));
+}
+
+void MediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingConfiguration&& config, MediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback)
+{
+    if (mockEnabled()) {
+        MediaEngineConfigurationFactoryMock::createEncodingConfiguration(config, WTFMove(callback));
+        return;
+    }
+
+    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto config, auto&& callback) mutable {
+        if (nextFactory == factories().end()) {
+            callback({ });
+            return;
+        }
+
+        auto& factory = *nextFactory;
+        factory.createEncodingConfiguration(config, [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (auto&& info) mutable {
+            if (info.supported) {
+                callback(WTFMove(info));
+                return;
+            }
+
+            factoryCallback(factoryCallback, ++nextFactory, config, WTFMove(callback));
+        });
+    };
+    factoryCallback(factoryCallback, factories().begin(), config, WTFMove(callback));
 }
 
 void MediaEngineConfigurationFactory::enableMock()

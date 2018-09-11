@@ -27,31 +27,20 @@
 
 #pragma once
 
-#include "MediaEncodingConfiguration.h"
-#include "MediaEngineConfiguration.h"
-
-#include <wtf/Forward.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
-class MediaEngineEncodingConfiguration : public MediaEngineConfiguration {
-public:
-    MediaEngineEncodingConfiguration(MediaEncodingConfiguration&& config)
-        : MediaEngineConfiguration(reinterpret_cast<MediaConfiguration&&>(config))
-        , m_encodingType(config.type)
-    {
-    }
+struct MediaCapabilitiesInfo;
+struct MediaDecodingConfiguration;
+struct MediaEncodingConfiguration;
 
-    virtual ~MediaEngineEncodingConfiguration() = default;
+struct MediaEngineConfigurationFactoryMock {
+    using DecodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesInfo&&)>;
+    using EncodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesInfo&&)>;
 
-    virtual bool canEncodeMedia() { return false; };
-    virtual bool canSmoothlyEncodeMedia() { return false; };
-    virtual bool canPowerEfficientlyEncodeMedia() { return false; };
-
-    MediaEncodingType encodingType() const { return m_encodingType; };
-
-private:
-    MediaEncodingType m_encodingType;
+    static void createDecodingConfiguration(MediaDecodingConfiguration&, DecodingConfigurationCallback&&);
+    static void createEncodingConfiguration(MediaEncodingConfiguration&, EncodingConfigurationCallback&&);
 };
 
-} // namespace WebCore
+}

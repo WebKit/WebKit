@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,12 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
-
-struct AudioConfiguration {
-    String contentType;
-    String channels;
-    std::optional<uint64_t> bitrate;
-    std::optional<uint32_t> samplerate;
+    
+struct MediaCapabilitiesInfo {
+    bool supported { false };
+    bool smooth { false };
+    bool powerEfficient { false };
 };
-
-} // namespace WebCore
+    
+}

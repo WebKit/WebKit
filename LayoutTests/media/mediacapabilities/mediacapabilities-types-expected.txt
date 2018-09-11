@@ -35,10 +35,10 @@ PASS () => {
     } rejected promise  with TypeError: Type error.
 PASS () => {
         return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: "24/a" } });
-    } rejected promise  with TypeError: Type error.
+    } rejected promise  with TypeError: The provided value is non-finite.
 PASS () => {
         return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: "24/0" } });
-    } rejected promise  with TypeError: Type error.
+    } rejected promise  with TypeError: The provided value is non-finite.
 PASS () => {
         return navigator.mediaCapabilities.decodingInfo({ type: 'invalid', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: 24 } });
     } rejected promise  with TypeError: Type error.
@@ -74,10 +74,10 @@ PASS () => {
     } rejected promise  with TypeError: Type error.
 PASS () => {
         return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: "24/a" } });
-    } rejected promise  with TypeError: Type error.
+    } rejected promise  with TypeError: The provided value is non-finite.
 PASS () => {
         return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: "24/-1" } });
-    } rejected promise  with TypeError: Type error.
+    } rejected promise  with TypeError: The provided value is non-finite.
 PASS () => {
         return navigator.mediaCapabilities.decodingInfo({ type: 'invalid', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: 24 } });
     } rejected promise  with TypeError: Type error.

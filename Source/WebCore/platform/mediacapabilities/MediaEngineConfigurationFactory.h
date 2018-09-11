@@ -27,21 +27,21 @@
 
 #pragma once
 
-#include "MediaCapabilities.h"
-#include "MediaDecodingConfiguration.h"
-#include "MediaEngineDecodingConfiguration.h"
-#include "MediaEngineEncodingConfiguration.h"
-#include <wtf/Forward.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
+struct MediaCapabilitiesInfo;
+struct MediaDecodingConfiguration;
+struct MediaEncodingConfiguration;
+
 class MediaEngineConfigurationFactory {
 public:
-    using DecodingConfigurationCallback = WTF::Function<void(RefPtr<MediaEngineDecodingConfiguration>)>;
-    using EncodingConfigurationCallback = WTF::Function<void(RefPtr<MediaEngineEncodingConfiguration>)>;
+    using DecodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesInfo&&)>;
+    using EncodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesInfo&&)>;
 
-    static void createDecodingConfiguration(MediaDecodingConfiguration&, DecodingConfigurationCallback&);
-    static void createEncodingConfiguration(MediaEncodingConfiguration&, EncodingConfigurationCallback&);
+    static void createDecodingConfiguration(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
+    static void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
 
     WEBCORE_EXPORT static void enableMock();
     WEBCORE_EXPORT static void disableMock();

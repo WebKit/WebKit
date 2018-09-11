@@ -1,3 +1,65 @@
+2018-09-11  Jer Noble  <jer.noble@apple.com>
+
+        [MediaCapabilities] Implement MediaEngineConfigurationFactory registration
+        https://bugs.webkit.org/show_bug.cgi?id=189438
+
+        Reviewed by Eric Carlson.
+
+        Implement a mechanism to register platform-specific MediaEngineConfigurationFactory methods, and a mechanism to iterate
+        over those registered factories when createDecodingConfiguration() and createEncodingConfiguration() are called.
+
+        The Factory has been radically simplified; the concept of MediaEngineDecodingConfiguration
+        and MediaEngineEncodingConfiguration and its subclasess have been removed. Since the primary
+        objects representing video and audio configurations are IDLDictionaries, the native objects
+        are just structs full of POD types (and Strings). Since these have no dependencies on
+        higher-level HTML concepts, they can be moved into platform/ and accessed from there. This
+        patch also converts MediaCapabilitiesInfo to an Interface, so its implementation also can
+        become a struct and live in platform/. The MediaEngineDecodingConfigurationMock and
+        MediaEngineEncodingConfigurationMock have been consolidated in a single class which simply
+        parses MediaDecodingConfiguration and MediaEncodingConifguration objects (now that they live
+        in Platform) and return a MediaCapabilitiesInfo object (now that it does too).
+
+        * Modules/mediacapabilities/MediaCapabilities.cpp:
+        (WebCore::isValidVideoConfiguration):
+        (WebCore::MediaCapabilities::decodingInfo):
+        (WebCore::MediaCapabilities::encodingInfo):
+        * Modules/mediacapabilities/MediaCapabilitiesInfo.h: Removed.
+        * Modules/mediacapabilities/MediaCapabilitiesInfo.idl:
+        * Modules/mediacapabilities/VideoConfiguration.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MediaCapabilitiesInfo.h: Copied from Source/WebCore/Modules/mediacapabilities/MediaDecodingType.h.
+        * platform/mediacapabilities/AudioConfiguration.h: Renamed from Source/WebCore/Modules/mediacapabilities/AudioConfiguration.h.
+        * platform/mediacapabilities/MediaConfiguration.h: Renamed from Source/WebCore/Modules/mediacapabilities/MediaConfiguration.h.
+        * platform/mediacapabilities/MediaDecodingConfiguration.h: Renamed from Source/WebCore/Modules/mediacapabilities/MediaDecodingConfiguration.h.
+        * platform/mediacapabilities/MediaDecodingType.h: Renamed from Source/WebCore/Modules/mediacapabilities/MediaDecodingType.h.
+        * platform/mediacapabilities/MediaEncodingConfiguration.h: Renamed from Source/WebCore/Modules/mediacapabilities/MediaEncodingConfiguration.h.
+        * platform/mediacapabilities/MediaEncodingType.h: Renamed from Source/WebCore/Modules/mediacapabilities/MediaEncodingType.h.
+        * platform/mediacapabilities/MediaEngineConfiguration.cpp: Removed.
+        * platform/mediacapabilities/MediaEngineConfiguration.h: Removed.
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.cpp:
+        (WebCore::factories):
+        (WebCore::MediaEngineConfigurationFactory::createDecodingConfiguration):
+        (WebCore::MediaEngineConfigurationFactory::createEncodingConfiguration):
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.h:
+        * platform/mediacapabilities/MediaEngineEncodingConfiguration.h: Removed.
+        * platform/mediacapabilities/VideoConfiguration.h: Renamed from Source/WebCore/Modules/mediacapabilities/VideoConfiguration.h.
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.h:
+        * platform/mock/MediaEngineConfigurationFactoryMock.cpp: Added.
+        (WebCore::canDecodeMedia):
+        (WebCore::canSmoothlyDecodeMedia):
+        (WebCore::canPowerEfficientlyDecodeMedia):
+        (WebCore::canEncodeMedia):
+        (WebCore::canSmoothlyEncodeMedia):
+        (WebCore::canPowerEfficientlyEncodeMedia):
+        (WebCore::MediaEngineConfigurationFactoryMock::createDecodingConfiguration):
+        (WebCore::MediaEngineConfigurationFactoryMock::createEncodingConfiguration):
+        * platform/mock/MediaEngineConfigurationFactoryMock.h: Renamed from Source/WebCore/platform/mediacapabilities/MediaEngineDecodingConfiguration.h.
+        * platform/mock/MediaEngineDecodingConfigurationMock.cpp: Removed.
+        * platform/mock/MediaEngineDecodingConfigurationMock.h: Removed.
+        * platform/mock/MediaEngineEncodingConfigurationMock.cpp: Removed.
+        * platform/mock/MediaEngineEncodingConfigurationMock.h: Removed.
+
 2018-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         :first-child, :last-child, :nth-child, and :nth-of-type don't work on shadow root's children

@@ -10778,16 +10778,10 @@
 		9A528E8217D7F52F00AA9518 /* FloatingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingObjects.h; sourceTree = "<group>"; };
 		9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSToLengthConversionData.h; sourceTree = "<group>"; };
 		9AB1F37F18E2489A00534743 /* CSSToLengthConversionData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSToLengthConversionData.cpp; sourceTree = "<group>"; };
-		9AC6F02121148F5000CBDA06 /* MediaEngineConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaEngineConfiguration.cpp; path = mediacapabilities/MediaEngineConfiguration.cpp; sourceTree = "<group>"; };
 		9AC6F02221148F5100CBDA06 /* MediaEngineConfigurationFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaEngineConfigurationFactory.cpp; path = mediacapabilities/MediaEngineConfigurationFactory.cpp; sourceTree = "<group>"; };
-		9AC6F02321148F5200CBDA06 /* MediaEngineConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaEngineConfiguration.h; path = mediacapabilities/MediaEngineConfiguration.h; sourceTree = "<group>"; };
-		9AC6F02421148F5300CBDA06 /* MediaEngineDecodingConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaEngineDecodingConfiguration.h; path = mediacapabilities/MediaEngineDecodingConfiguration.h; sourceTree = "<group>"; };
 		9AC6F02521148F5400CBDA06 /* MediaEngineConfigurationFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaEngineConfigurationFactory.h; path = mediacapabilities/MediaEngineConfigurationFactory.h; sourceTree = "<group>"; };
-		9AC6F02621148F5500CBDA06 /* MediaEngineEncodingConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaEngineEncodingConfiguration.h; path = mediacapabilities/MediaEngineEncodingConfiguration.h; sourceTree = "<group>"; };
-		9AC6F02D21148F9F00CBDA06 /* MediaEngineDecodingConfigurationMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEngineDecodingConfigurationMock.cpp; sourceTree = "<group>"; };
-		9AC6F02E21148FA100CBDA06 /* MediaEngineEncodingConfigurationMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEngineEncodingConfigurationMock.cpp; sourceTree = "<group>"; };
-		9AC6F02F21148FA200CBDA06 /* MediaEngineDecodingConfigurationMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEngineDecodingConfigurationMock.h; sourceTree = "<group>"; };
-		9AC6F03021148FA400CBDA06 /* MediaEngineEncodingConfigurationMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEngineEncodingConfigurationMock.h; sourceTree = "<group>"; };
+		9AC6F02D21148F9F00CBDA06 /* MediaEngineConfigurationFactoryMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEngineConfigurationFactoryMock.cpp; sourceTree = "<group>"; };
+		9AC6F02F21148FA200CBDA06 /* MediaEngineConfigurationFactoryMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEngineConfigurationFactoryMock.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B73F64 /* ReadableByteStreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableByteStreamInternalsBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764C9 /* StreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamInternalsBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764D8 /* ReadableStreamBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamBuiltins.h; sourceTree = "<group>"; };
@@ -13166,6 +13160,7 @@
 		CCC2B51215F613060048CDD6 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
 		CD063F801E23FA8900812BE3 /* InitDataRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InitDataRegistry.cpp; sourceTree = "<group>"; };
 		CD063F811E23FA8900812BE3 /* InitDataRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitDataRegistry.h; sourceTree = "<group>"; };
+		CD0C8B582141C8CA0062F59D /* MediaCapabilitiesInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaCapabilitiesInfo.h; sourceTree = "<group>"; };
 		CD0EEE0A14743E34003EAFA2 /* AudioDestinationIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDestinationIOS.h; sourceTree = "<group>"; };
 		CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDestinationIOS.cpp; sourceTree = "<group>"; };
 		CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFullScreenWindow.h; sourceTree = "<group>"; };
@@ -13343,7 +13338,7 @@
 		CDBD3D281FE85CB80012C545 /* VideoConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoConfiguration.idl; sourceTree = "<group>"; };
 		CDBD3D291FE85CB90012C545 /* MediaConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaConfiguration.idl; sourceTree = "<group>"; };
 		CDBD3D2A1FE85CBA0012C545 /* MediaEncodingConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaEncodingConfiguration.idl; sourceTree = "<group>"; };
-		CDBD3D2B1FE85CBB0012C545 /* AudioConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioConfiguration.h; sourceTree = "<group>"; };
+		CDBD3D2B1FE85CBB0012C545 /* AudioConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioConfiguration.h; path = mediacapabilities/AudioConfiguration.h; sourceTree = "<group>"; };
 		CDBD3D2C1FE85CBB0012C545 /* ScreenLuminance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenLuminance.h; sourceTree = "<group>"; };
 		CDBD3D2D1FE85CBC0012C545 /* MediaEncodingType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaEncodingType.idl; sourceTree = "<group>"; };
 		CDBD3D2E1FE85CBC0012C545 /* MediaDecodingType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaDecodingType.idl; sourceTree = "<group>"; };
@@ -13352,17 +13347,16 @@
 		CDBD3D311FE85CBE0012C545 /* NavigatorMediaCapabilities.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorMediaCapabilities.idl; sourceTree = "<group>"; };
 		CDBD3D321FE85CBE0012C545 /* MediaCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCapabilities.h; sourceTree = "<group>"; };
 		CDBD3D331FE85CBE0012C545 /* MediaCapabilitiesInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaCapabilitiesInfo.idl; sourceTree = "<group>"; };
-		CDBD3D341FE85CBF0012C545 /* VideoConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoConfiguration.h; sourceTree = "<group>"; };
-		CDBD3D351FE85CBF0012C545 /* MediaConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConfiguration.h; sourceTree = "<group>"; };
-		CDBD3D361FE85CC00012C545 /* MediaDecodingConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDecodingConfiguration.h; sourceTree = "<group>"; };
-		CDBD3D371FE85CC00012C545 /* MediaEncodingConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEncodingConfiguration.h; sourceTree = "<group>"; };
-		CDBD3D381FE85CC00012C545 /* MediaDecodingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDecodingType.h; sourceTree = "<group>"; };
+		CDBD3D341FE85CBF0012C545 /* VideoConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoConfiguration.h; path = mediacapabilities/VideoConfiguration.h; sourceTree = "<group>"; };
+		CDBD3D351FE85CBF0012C545 /* MediaConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaConfiguration.h; path = mediacapabilities/MediaConfiguration.h; sourceTree = "<group>"; };
+		CDBD3D361FE85CC00012C545 /* MediaDecodingConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaDecodingConfiguration.h; path = mediacapabilities/MediaDecodingConfiguration.h; sourceTree = "<group>"; };
+		CDBD3D371FE85CC00012C545 /* MediaEncodingConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaEncodingConfiguration.h; path = mediacapabilities/MediaEncodingConfiguration.h; sourceTree = "<group>"; };
+		CDBD3D381FE85CC00012C545 /* MediaDecodingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaDecodingType.h; path = mediacapabilities/MediaDecodingType.h; sourceTree = "<group>"; };
 		CDBD3D391FE85CC10012C545 /* NavigatorMediaCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorMediaCapabilities.h; sourceTree = "<group>"; };
 		CDBD3D3A1FE85CC10012C545 /* ScreenColorGamut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenColorGamut.h; sourceTree = "<group>"; };
 		CDBD3D3B1FE85CC20012C545 /* MediaDecodingConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaDecodingConfiguration.idl; sourceTree = "<group>"; };
 		CDBD3D3C1FE85CC20012C545 /* AudioConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioConfiguration.idl; sourceTree = "<group>"; };
-		CDBD3D3D1FE85CC30012C545 /* MediaCapabilitiesInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCapabilitiesInfo.h; sourceTree = "<group>"; };
-		CDBD3D3E1FE85CC30012C545 /* MediaEncodingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEncodingType.h; sourceTree = "<group>"; };
+		CDBD3D3E1FE85CC30012C545 /* MediaEncodingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaEncodingType.h; path = mediacapabilities/MediaEncodingType.h; sourceTree = "<group>"; };
 		CDBD3D3F1FE85CC30012C545 /* ScreenColorGamut.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScreenColorGamut.idl; sourceTree = "<group>"; };
 		CDBEAEAA19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSelectionGroupAVFObjC.mm; sourceTree = "<group>"; };
 		CDBEAEAB19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSelectionGroupAVFObjC.h; sourceTree = "<group>"; };
@@ -18808,10 +18802,8 @@
 				CDF2B005182053DF00F2B424 /* mediasource */,
 				59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */,
 				59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */,
-				9AC6F02D21148F9F00CBDA06 /* MediaEngineDecodingConfigurationMock.cpp */,
-				9AC6F02F21148FA200CBDA06 /* MediaEngineDecodingConfigurationMock.h */,
-				9AC6F02E21148FA100CBDA06 /* MediaEngineEncodingConfigurationMock.cpp */,
-				9AC6F03021148FA400CBDA06 /* MediaEngineEncodingConfigurationMock.h */,
+				9AC6F02D21148F9F00CBDA06 /* MediaEngineConfigurationFactoryMock.cpp */,
+				9AC6F02F21148FA200CBDA06 /* MediaEngineConfigurationFactoryMock.h */,
 				077B64141B95F703003E9AD5 /* MediaPlaybackTargetMock.cpp */,
 				077B64151B95F703003E9AD5 /* MediaPlaybackTargetMock.h */,
 				077B64101B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.cpp */,
@@ -21237,12 +21229,16 @@
 		9AC6F02021148F1E00CBDA06 /* mediacapabilities */ = {
 			isa = PBXGroup;
 			children = (
-				9AC6F02121148F5000CBDA06 /* MediaEngineConfiguration.cpp */,
-				9AC6F02321148F5200CBDA06 /* MediaEngineConfiguration.h */,
+				CDBD3D2B1FE85CBB0012C545 /* AudioConfiguration.h */,
+				CDBD3D351FE85CBF0012C545 /* MediaConfiguration.h */,
+				CDBD3D381FE85CC00012C545 /* MediaDecodingType.h */,
+				CDBD3D341FE85CBF0012C545 /* VideoConfiguration.h */,
+				CDBD3D361FE85CC00012C545 /* MediaDecodingConfiguration.h */,
+				CDBD3D371FE85CC00012C545 /* MediaEncodingConfiguration.h */,
+				CDBD3D3E1FE85CC30012C545 /* MediaEncodingType.h */,
 				9AC6F02221148F5100CBDA06 /* MediaEngineConfigurationFactory.cpp */,
 				9AC6F02521148F5400CBDA06 /* MediaEngineConfigurationFactory.h */,
-				9AC6F02421148F5300CBDA06 /* MediaEngineDecodingConfiguration.h */,
-				9AC6F02621148F5500CBDA06 /* MediaEngineEncodingConfiguration.h */,
+				CD0C8B582141C8CA0062F59D /* MediaCapabilitiesInfo.h */,
 			);
 			name = mediacapabilities;
 			sourceTree = "<group>";
@@ -24837,22 +24833,15 @@
 		CDBD3D271FE85C920012C545 /* mediacapabilities */ = {
 			isa = PBXGroup;
 			children = (
-				CDBD3D2B1FE85CBB0012C545 /* AudioConfiguration.h */,
 				CDBD3D3C1FE85CC20012C545 /* AudioConfiguration.idl */,
 				CDA130BD1FEB332D00F53254 /* MediaCapabilities.cpp */,
 				CDBD3D321FE85CBE0012C545 /* MediaCapabilities.h */,
 				CDBD3D2F1FE85CBC0012C545 /* MediaCapabilities.idl */,
-				CDBD3D3D1FE85CC30012C545 /* MediaCapabilitiesInfo.h */,
 				CDBD3D331FE85CBE0012C545 /* MediaCapabilitiesInfo.idl */,
-				CDBD3D351FE85CBF0012C545 /* MediaConfiguration.h */,
 				CDBD3D291FE85CB90012C545 /* MediaConfiguration.idl */,
-				CDBD3D361FE85CC00012C545 /* MediaDecodingConfiguration.h */,
 				CDBD3D3B1FE85CC20012C545 /* MediaDecodingConfiguration.idl */,
-				CDBD3D381FE85CC00012C545 /* MediaDecodingType.h */,
 				CDBD3D2E1FE85CBC0012C545 /* MediaDecodingType.idl */,
-				CDBD3D371FE85CC00012C545 /* MediaEncodingConfiguration.h */,
 				CDBD3D2A1FE85CBA0012C545 /* MediaEncodingConfiguration.idl */,
-				CDBD3D3E1FE85CC30012C545 /* MediaEncodingType.h */,
 				CDBD3D2D1FE85CBC0012C545 /* MediaEncodingType.idl */,
 				CDA130BB1FEB332C00F53254 /* NavigatorMediaCapabilities.cpp */,
 				CDBD3D391FE85CC10012C545 /* NavigatorMediaCapabilities.h */,
@@ -24861,7 +24850,6 @@
 				CDBD3D3F1FE85CC30012C545 /* ScreenColorGamut.idl */,
 				CDBD3D2C1FE85CBB0012C545 /* ScreenLuminance.h */,
 				CDBD3D301FE85CBD0012C545 /* ScreenLuminance.idl */,
-				CDBD3D341FE85CBF0012C545 /* VideoConfiguration.h */,
 				CDBD3D281FE85CB80012C545 /* VideoConfiguration.idl */,
 			);
 			path = mediacapabilities;

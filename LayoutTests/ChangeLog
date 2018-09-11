@@ -1,3 +1,12 @@
+2018-09-11  Jer Noble  <jer.noble@apple.com>
+
+        [MediaCapabilities] Implement MediaEngineConfigurationFactory registration
+        https://bugs.webkit.org/show_bug.cgi?id=189438
+
+        Reviewed by Eric Carlson.
+
+        * media/mediacapabilities/mediacapabilities-types-expected.txt:
+
 2018-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         :first-child, :last-child, :nth-child, and :nth-of-type don't work on shadow root's children

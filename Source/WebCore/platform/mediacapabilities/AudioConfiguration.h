@@ -25,16 +25,16 @@
 
 #pragma once
 
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct VideoConfiguration {
+struct AudioConfiguration {
     String contentType;
-    uint32_t width;
-    uint32_t height;
+    String channels;
     uint64_t bitrate;
-    String framerate;
+    uint32_t samplerate;
 };
 
-}
+} // namespace WebCore
