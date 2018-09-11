@@ -1,5 +1,17 @@
 2018-09-11  Mark Lam  <mark.lam@apple.com>
 
+        Test for array memcpy'ing when JSGlobalObject::haveABadTime.
+        https://bugs.webkit.org/show_bug.cgi?id=169889
+        <rdar://problem/31155607>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-169889-array-concat.js: Added.
+        * stress/regress-169889-array-concat1.js: Added.
+        * stress/regress-169889-array-slice.js: Added.
+
+2018-09-11  Mark Lam  <mark.lam@apple.com>
+
         Test for incorrect check in emitPutDerivedConstructorToArrowFunctionContextScope.
         https://bugs.webkit.org/show_bug.cgi?id=169445
         <rdar://problem/30957435>
