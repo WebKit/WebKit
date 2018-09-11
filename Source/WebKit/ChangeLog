@@ -1,3 +1,74 @@
+2018-09-07  Dean Jackson  <dino@apple.com>
+
+        Add and expose Internal features from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=189442
+        <rdar://problem/44243404>
+
+        Reviewed by Simon Fraser.
+
+        Experimental features have become a mess. People are using them for
+        anything that they want to be easily toggled from a host app (e.g.
+        Safari), which means the user-facing menu has become large and
+        confusing.
+
+        Introduce the idea of Internal features, that will be exposed in a way
+        that end-users are not expected to ever see (unless they really want
+        to).
+
+        * CMakeLists.txt: Add new files.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * DerivedSources.make: Add new generated files.
+        * Scripts/GeneratePreferences.rb: Generate the preferences stuff for Internal Debug features.
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb: Added.
+
+        * Shared/API/APIObject.h: New API object for InternalDebugFeature.
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
+        * Shared/WebPreferences.yaml: Change some of the existing experimental features to "internal".
+
+        * UIProcess/API/APIInternalDebugFeature.cpp: New API type - just like APIExperimentalFeature.
+        (API::InternalDebugFeature::create):
+        (API::InternalDebugFeature::InternalDebugFeature):
+        (API::InternalDebugFeature::~InternalDebugFeature):
+        * UIProcess/API/APIInternalDebugFeature.h:
+        * UIProcess/API/C/WKAPICast.h:
+
+        * UIProcess/API/Cocoa/WKPreferences.mm: Change the naming of the experimental feature API so that it
+        won't clash with internal debug features. We can remove the old API once Safari has adopted.
+        (+[WKPreferences _internalDebugFeatures]):
+        (-[WKPreferences _isEnabledForInternalDebugFeature:]):
+        (-[WKPreferences _setEnabled:forInternalDebugFeature:]):
+        (-[WKPreferences _isEnabledForFeature:]):
+        (-[WKPreferences _setEnabled:forFeature:]):
+        (-[WKPreferences _isEnabledForExperimentalFeature:]):
+        (-[WKPreferences _setEnabled:forExperimentalFeature:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
+        * UIProcess/API/Cocoa/_WKInternalDebugFeature.h: New object - same as _WKExperimentalFeature.
+        * UIProcess/API/Cocoa/_WKInternalDebugFeature.mm:
+        (-[_WKInternalDebugFeature dealloc]):
+        (-[_WKInternalDebugFeature description]):
+        (-[_WKInternalDebugFeature name]):
+        (-[_WKInternalDebugFeature key]):
+        (-[_WKInternalDebugFeature details]):
+        (-[_WKInternalDebugFeature defaultValue]):
+        (-[_WKInternalDebugFeature isHidden]):
+        (-[_WKInternalDebugFeature _apiObject]):
+        * UIProcess/API/Cocoa/_WKInternalDebugFeatureInternal.h:
+
+        * UIProcess/WebPreferences.cpp: Add support for Internal Debug features.
+        (WebKit::WebPreferences::updateBoolValueForInternalDebugFeatureKey):
+        (WebKit::WebPreferences::updateBoolValueForExperimentalFeatureKey):
+        * UIProcess/WebPreferences.h:
+
+        * UIProcess/WebProcessPool.cpp: Change a comment now that it is an internal feature.
+        (WebKit::WebProcessPool::createWebPage):
+
 2018-09-11  Eric Carlson  <eric.carlson@apple.com>
 
         WebPage::close should clear UserMediaPermissionRequestManager

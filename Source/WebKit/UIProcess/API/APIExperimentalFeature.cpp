@@ -42,8 +42,4 @@ ExperimentalFeature::ExperimentalFeature(const WTF::String& name, const WTF::Str
 {
 }
 
-ExperimentalFeature::~ExperimentalFeature()
-{
-}
-
 }

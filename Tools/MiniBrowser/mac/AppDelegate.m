@@ -40,6 +40,7 @@
 
 #if WK_API_ENABLED
 #import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 #endif
 
 enum {
@@ -106,10 +107,16 @@ static WKWebViewConfiguration *defaultConfiguration()
         configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:processConfiguration] autorelease];
 
 #if WK_API_ENABLED
-        NSArray<_WKExperimentalFeature *> *features = [WKPreferences _experimentalFeatures];
-        for (_WKExperimentalFeature *feature in features) {
+        NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
+        for (_WKExperimentalFeature *feature in experimentalFeatures) {
             BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
-            [configuration.preferences _setEnabled:enabled forFeature:feature];
+            [configuration.preferences _setEnabled:enabled forExperimentalFeature:feature];
+        }
+
+        NSArray<_WKInternalDebugFeature *> *internalDebugFeatures = [WKPreferences _internalDebugFeatures];
+        for (_WKInternalDebugFeature *feature in internalDebugFeatures) {
+            BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+            [configuration.preferences _setEnabled:enabled forInternalDebugFeature:feature];
         }
 #endif
     }

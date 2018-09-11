@@ -32,6 +32,7 @@
 
 #if WK_API_ENABLED
 #import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 #endif
 
 static NSString * const defaultURL = @"http://www.webkit.org/";
@@ -81,6 +82,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     WheelEventHandlerRegionOverlayTag,
 #if WK_API_ENABLED
     ExperimentalFeatureTag,
+    InternalDebugFeatureTag,
 #endif
 };
 
@@ -212,9 +214,9 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NSMenu *experimentalFeaturesMenu = [[NSMenu alloc] initWithTitle:@"Experimental Features"];
     [experimentalFeaturesSubmenuItem setSubmenu:experimentalFeaturesMenu];
 
-    NSArray<_WKExperimentalFeature *> *features = [WKPreferences _experimentalFeatures];
+    NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
 
-    for (_WKExperimentalFeature *feature in features) {
+    for (_WKExperimentalFeature *feature in experimentalFeatures) {
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:feature.name action:@selector(toggleExperimentalFeature:) keyEquivalent:@""];
         item.toolTip = feature.details;
         item.representedObject = feature;
@@ -227,6 +229,26 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [_menu addItem:experimentalFeaturesSubmenuItem];
     [experimentalFeaturesSubmenuItem release];
     [experimentalFeaturesMenu release];
+
+    NSMenuItem *internalDebugFeaturesSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Internal Features" action:nil keyEquivalent:@""];
+    NSMenu *internalDebugFeaturesMenu = [[NSMenu alloc] initWithTitle:@"Internal Features"];
+    [internalDebugFeaturesSubmenuItem setSubmenu:internalDebugFeaturesMenu];
+
+    NSArray<_WKInternalDebugFeature *> *internalDebugFeatures = [WKPreferences _internalDebugFeatures];
+
+    for (_WKInternalDebugFeature *feature in internalDebugFeatures) {
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:feature.name action:@selector(toggleInternalDebugFeature:) keyEquivalent:@""];
+        item.toolTip = feature.details;
+        item.representedObject = feature;
+
+        [item setTag:InternalDebugFeatureTag];
+        [item setTarget:self];
+        [internalDebugFeaturesMenu addItem:[item autorelease]];
+    }
+
+    [_menu addItem:internalDebugFeaturesSubmenuItem];
+    [internalDebugFeaturesSubmenuItem release];
+    [internalDebugFeaturesMenu release];
 #endif // WK_API_ENABLED
 
     [self _addHeaderWithTitle:@"WebKit1-only Settings"];
@@ -301,7 +323,11 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 #if WK_API_ENABLED
     if (menuItem.tag == ExperimentalFeatureTag) {
         _WKExperimentalFeature *feature = menuItem.representedObject;
-        [menuItem setState:[defaultPreferences() _isEnabledForFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
+        [menuItem setState:[defaultPreferences() _isEnabledForExperimentalFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
+    }
+    if (menuItem.tag == InternalDebugFeatureTag) {
+        _WKInternalDebugFeature *feature = menuItem.representedObject;
+        [menuItem setState:[defaultPreferences() _isEnabledForInternalDebugFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
     }
 #endif
 
@@ -654,8 +680,19 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     _WKExperimentalFeature *feature = ((NSMenuItem *)sender).representedObject;
     WKPreferences *preferences = defaultPreferences();
 
-    BOOL currentlyEnabled = [preferences _isEnabledForFeature:feature];
-    [preferences _setEnabled:!currentlyEnabled forFeature:feature];
+    BOOL currentlyEnabled = [preferences _isEnabledForExperimentalFeature:feature];
+    [preferences _setEnabled:!currentlyEnabled forExperimentalFeature:feature];
+
+    [[NSUserDefaults standardUserDefaults] setBool:!currentlyEnabled forKey:feature.key];
+}
+
+- (void)toggleInternalDebugFeature:(id)sender
+{
+    _WKInternalDebugFeature *feature = ((NSMenuItem *)sender).representedObject;
+    WKPreferences *preferences = defaultPreferences();
+
+    BOOL currentlyEnabled = [preferences _isEnabledForInternalDebugFeature:feature];
+    [preferences _setEnabled:!currentlyEnabled forInternalDebugFeature:feature];
 
     [[NSUserDefaults standardUserDefaults] setBool:!currentlyEnabled forKey:feature.key];
 }

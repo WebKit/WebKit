@@ -46,6 +46,13 @@
 <%- end -%>
     \
 
+// Internal Debug Features
+
+#define FOR_EACH_WEBKIT_INTERNAL_DEBUG_FEATURE_PREFERENCE(macro) \
+<%- for @pref in @internalDebugFeatures do -%>
+    macro(<%= @pref.name %>, <%= @pref.nameLower %>, Bool, bool, <%= @pref.defaultValue %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
+<%- end -%>
+   \
 
 // Experimental Features
 

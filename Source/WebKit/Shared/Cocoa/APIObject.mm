@@ -76,6 +76,7 @@
 #import "_WKGeolocationPositionInternal.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKInspectorInternal.h"
+#import "_WKInternalDebugFeatureInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserInitiatedActionInternal.h"
@@ -192,6 +193,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::Data:
         wrapper = [WKNSData alloc];
+        break;
+
+    case Type::InternalDebugFeature:
+        wrapper = [_WKInternalDebugFeature alloc];
         break;
 
     case Type::Dictionary:

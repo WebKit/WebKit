@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIExperimentalFeature_h
-#define APIExperimentalFeature_h
+#import <WebKit/WKFoundation.h>
 
-#include "APIObject.h"
-#include <wtf/text/WTFString.h>
+#if WK_API_ENABLED
 
-namespace API {
+#import <Foundation/Foundation.h>
 
-class ExperimentalFeature final : public ObjectImpl<Object::Type::ExperimentalFeature> {
-public:
-    static Ref<ExperimentalFeature> create(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden);
-    virtual ~ExperimentalFeature() = default;
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKInternalDebugFeature : NSObject
 
-    WTF::String name() const { return m_name; }
-    WTF::String key() const { return m_key; }
-    WTF::String details() const { return m_details; }
-    bool defaultValue() const { return m_defaultValue; }
-    bool isHidden() const { return m_hidden; }
+@property (nonatomic, readonly, copy) NSString *key;
+@property (nonatomic, readonly, copy) NSString *name;
+@property (nonatomic, readonly, copy) NSString *details;
+@property (nonatomic, readonly) BOOL defaultValue;
+@property (nonatomic, readonly, getter=isHidden) BOOL hidden;
 
-private:
-    explicit ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden);
+@end
 
-    WTF::String m_name;
-    WTF::String m_key;
-    WTF::String m_details;
-    bool m_defaultValue;
-    bool m_hidden;
-};
-
-}
-
-#endif // APIExperimentalFeature_h
+#endif

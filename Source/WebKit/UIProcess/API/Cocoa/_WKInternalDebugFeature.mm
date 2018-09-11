@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,57 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIExperimentalFeature_h
-#define APIExperimentalFeature_h
+#import "config.h"
+#import "_WKInternalDebugFeatureInternal.h"
 
-#include "APIObject.h"
-#include <wtf/text/WTFString.h>
+#if WK_API_ENABLED
 
-namespace API {
+@implementation _WKInternalDebugFeature
 
-class ExperimentalFeature final : public ObjectImpl<Object::Type::ExperimentalFeature> {
-public:
-    static Ref<ExperimentalFeature> create(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden);
-    virtual ~ExperimentalFeature() = default;
+- (void)dealloc
+{
+    _internalDebugFeature->API::InternalDebugFeature::~InternalDebugFeature();
 
-    WTF::String name() const { return m_name; }
-    WTF::String key() const { return m_key; }
-    WTF::String details() const { return m_details; }
-    bool defaultValue() const { return m_defaultValue; }
-    bool isHidden() const { return m_hidden; }
-
-private:
-    explicit ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden);
-
-    WTF::String m_name;
-    WTF::String m_key;
-    WTF::String m_details;
-    bool m_defaultValue;
-    bool m_hidden;
-};
-
+    [super dealloc];
 }
 
-#endif // APIExperimentalFeature_h
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; name = %@; key = %@; defaultValue = %s >", NSStringFromClass(self.class), self, self.name, self.key, self.defaultValue ? "on" : "off"];
+}
+
+- (NSString *)name
+{
+    return _internalDebugFeature->name();
+}
+
+- (NSString *)key
+{
+    return _internalDebugFeature->key();
+}
+
+- (NSString *)details
+{
+    return _internalDebugFeature->details();
+}
+
+- (BOOL)defaultValue
+{
+    return _internalDebugFeature->defaultValue();
+}
+
+- (BOOL)isHidden
+{
+    return _internalDebugFeature->isHidden();
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_internalDebugFeature;
+}
+
+@end
+
+#endif

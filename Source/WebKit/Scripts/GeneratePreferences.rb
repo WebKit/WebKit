@@ -28,7 +28,7 @@ require 'erb'
 require 'optparse'
 require 'yaml'
 
-options = { 
+options = {
   :input => nil,
   :outputDirectory => nil
 }
@@ -128,17 +128,18 @@ end
 
 class Preferences
   attr_accessor :preferences
-  
+
   def initialize(hash)
     @preferences = []
     hash.each do |name, options|
       @preferences << Preference.new(name, options)
     end
     @preferences.sort! { |x, y| x.name <=> y.name }
-    
+
     @preferencesNotDebug = @preferences.select { |p| !p.category }
     @preferencesDebug = @preferences.select { |p| p.category == "debug" }
     @experimentalFeatures = @preferences.select { |p| p.category == "experimental" }
+    @internalDebugFeatures = @preferences.select { |p| p.category == "internal" }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }
@@ -161,4 +162,5 @@ preferences.renderToFile("PreferencesTemplates/WebPageUpdatePreferences.cpp.erb"
 preferences.renderToFile("PreferencesTemplates/WebPreferencesKeys.h.erb", File.join(options[:outputDirectory], "WebPreferencesKeys.h"))
 preferences.renderToFile("PreferencesTemplates/WebPreferencesKeys.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesKeys.cpp"))
 preferences.renderToFile("PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesStoreDefaultsMap.cpp"))
+preferences.renderToFile("PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesInternalDebugFeatures.cpp"))
 preferences.renderToFile("PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesExperimentalFeatures.cpp"))

@@ -110,6 +110,7 @@ public:
         ContentRuleListStore,
         ContextMenuListener,
         CookieManager,
+        InternalDebugFeature,
         Download,
         ExperimentalFeature,
         FormSubmissionListener,

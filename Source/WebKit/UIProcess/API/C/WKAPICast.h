@@ -54,6 +54,7 @@
 namespace API {
 class ContentRuleList;
 class ContentRuleListStore;
+class InternalDebugFeature;
 class ExperimentalFeature;
 class FrameHandle;
 class FrameInfo;

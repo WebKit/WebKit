@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIExperimentalFeature_h
-#define APIExperimentalFeature_h
-
-#include "APIObject.h"
-#include <wtf/text/WTFString.h>
+#include "config.h"
+#include "APIInternalDebugFeature.h"
 
 namespace API {
 
-class ExperimentalFeature final : public ObjectImpl<Object::Type::ExperimentalFeature> {
-public:
-    static Ref<ExperimentalFeature> create(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden);
-    virtual ~ExperimentalFeature() = default;
-
-    WTF::String name() const { return m_name; }
-    WTF::String key() const { return m_key; }
-    WTF::String details() const { return m_details; }
-    bool defaultValue() const { return m_defaultValue; }
-    bool isHidden() const { return m_hidden; }
-
-private:
-    explicit ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden);
-
-    WTF::String m_name;
-    WTF::String m_key;
-    WTF::String m_details;
-    bool m_defaultValue;
-    bool m_hidden;
-};
-
+Ref<InternalDebugFeature> InternalDebugFeature::create(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden)
+{
+    return adoptRef(*new InternalDebugFeature(name, key, details, defaultValue, hidden));
 }
 
-#endif // APIExperimentalFeature_h
+InternalDebugFeature::InternalDebugFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden)
+    : m_name(name)
+    , m_key(key)
+    , m_details(details)
+    , m_defaultValue(defaultValue)
+    , m_hidden(hidden)
+{
+}
+
+}

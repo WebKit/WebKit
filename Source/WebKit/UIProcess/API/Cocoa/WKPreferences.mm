@@ -32,8 +32,8 @@
 #import "PluginProcessManager.h"
 #import "WKNSArray.h"
 #import "WebPreferences.h"
-#import "_WKExperimentalFeature.h"
 #import "_WKExperimentalFeatureInternal.h"
+#import "_WKInternalDebugFeatureInternal.h"
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/Settings.h>
 #import <wtf/RetainPtr.h>
@@ -527,20 +527,48 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setFixedFontFamily(fixedPitchFontFamily);
 }
 
++ (NSArray<_WKInternalDebugFeature *> *)_internalDebugFeatures
+{
+    auto features = WebKit::WebPreferences::internalDebugFeatures();
+    return wrapper(API::Array::create(WTFMove(features)));
+}
+
+- (BOOL)_isEnabledForInternalDebugFeature:(_WKInternalDebugFeature *)feature
+{
+    return _preferences->isFeatureEnabled(*feature->_internalDebugFeature);
+}
+
+- (void)_setEnabled:(BOOL)value forInternalDebugFeature:(_WKInternalDebugFeature *)feature
+{
+    _preferences->setFeatureEnabled(*feature->_internalDebugFeature, value);
+}
+
 + (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures
 {
     auto features = WebKit::WebPreferences::experimentalFeatures();
     return wrapper(API::Array::create(WTFMove(features)));
 }
 
+// FIXME: Remove this once Safari has adopted the new API.
 - (BOOL)_isEnabledForFeature:(_WKExperimentalFeature *)feature
 {
-    return _preferences->isEnabledForFeature(*feature->_experimentalFeature);
+    return [self _isEnabledForExperimentalFeature:feature];
 }
 
+// FIXME: Remove this once Safari has adopted the new API.
 - (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature
 {
-    _preferences->setEnabledForFeature(value, *feature->_experimentalFeature);
+    [self _setEnabled:value forExperimentalFeature:feature];
+}
+
+- (BOOL)_isEnabledForExperimentalFeature:(_WKExperimentalFeature *)feature
+{
+    return _preferences->isFeatureEnabled(*feature->_experimentalFeature);
+}
+
+- (void)_setEnabled:(BOOL)value forExperimentalFeature:(_WKExperimentalFeature *)feature
+{
+    _preferences->setFeatureEnabled(*feature->_experimentalFeature, value);
 }
 
 - (BOOL)_applePayCapabilityDisclosureAllowed

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIExperimentalFeature.h"
+#include "APIInternalDebugFeature.h"
 #include "APIObject.h"
 #include "FontSmoothingLevel.h"
 #include "WebPreferencesDefinitions.h"
@@ -60,12 +61,17 @@ public:
 
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
     FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
+    FOR_EACH_WEBKIT_INTERNAL_DEBUG_FEATURE_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
     FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
 
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
-    bool isEnabledForFeature(const API::ExperimentalFeature&) const;
-    void setEnabledForFeature(bool, const API::ExperimentalFeature&);
+    bool isFeatureEnabled(const API::ExperimentalFeature&) const;
+    void setFeatureEnabled(const API::ExperimentalFeature&, bool);
     void enableAllExperimentalFeatures();
+
+    static const Vector<RefPtr<API::Object>>& internalDebugFeatures();
+    bool isFeatureEnabled(const API::InternalDebugFeature&) const;
+    void setFeatureEnabled(const API::InternalDebugFeature&, bool);
 
     // Exposed for WebKitTestRunner use only.
     void forceUpdate() { update(); }
@@ -79,6 +85,7 @@ private:
 
     void updateStringValueForKey(const String& key, const String& value);
     void updateBoolValueForKey(const String& key, bool value);
+    void updateBoolValueForInternalDebugFeatureKey(const String& key, bool value);
     void updateBoolValueForExperimentalFeatureKey(const String& key, bool value);
     void updateUInt32ValueForKey(const String& key, uint32_t value);
     void updateDoubleValueForKey(const String& key, double value);

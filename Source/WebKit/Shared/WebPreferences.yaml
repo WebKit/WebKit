@@ -1127,19 +1127,12 @@ IsSecureContextAttributeEnabled:
 
 # For experimental features:
 # The type should be boolean.
-# You must provide a humanReadableName and humanReadableName for all experimental features. They
+# You must provide a humanReadableName and humanReadableDescription for all experimental features. They
 #   are the text exposed to the user from the WebKit client.
 # The default value may be either false (for unstable features) or
 #   DEFAULT_EXPERIMENTAL_FEATURES_ENABLED (for features that are ready for
 #   wider testing).
 
-
-AsyncFrameScrollingEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Async Frame Scrolling"
-  humanReadableDescription: "Perform frame scrolling in a dedicated thread or process"
-  category: experimental
 
 SpringTimingFunctionEnabled:
   type: bool
@@ -1172,38 +1165,10 @@ IntersectionObserverEnabled:
   category: experimental
   condition: ENABLE(INTERSECTION_OBSERVER)
 
-MDNSICECandidatesEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Enable MDNS ICE candidates"
-  humanReadableDescription: "Enable MDNS ICE candidates"
-  webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
-  condition: ENABLE(WEB_RTC)
-
-FetchAPIKeepAliveEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Fetch API Request KeepAlive"
-  humanReadableDescription: "Enable Fetch API Request KeepAlive"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-  webcoreName: fetchAPIKeepAliveEnabled
-
-ServiceWorkersEnabled:
-  type: bool
-  defaultValue: DEFAULT_SERVICE_WORKERS_ENABLED
-  humanReadableName: "ServiceWorkers"
-  humanReadableDescription: "Enable ServiceWorkers"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-  webcoreName: serviceWorkerEnabled
-  condition: ENABLE(SERVICE_WORKER)
-
 VisualViewportAPIEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "VisualViewportAPI"
+  humanReadableName: "Visual Viewport API"
   humanReadableDescription: "Enable Visual Viewport API"
   category: experimental
 
@@ -1225,7 +1190,7 @@ WebAnimationsEnabled:
 WebAnimationsCSSIntegrationEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "Web Animations and CSS Integration"
+  humanReadableName: "CSS Animations via Web Animations"
   humanReadableDescription: "Expose CSS Animations and CSS Transitions through getAnimations()"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
@@ -1256,14 +1221,6 @@ AccessibilityObjectModelEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
-AriaReflectionEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "ARIA Reflection"
-  humanReadableDescription: "ARIA Reflection support"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-
 WebVREnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
@@ -1272,22 +1229,6 @@ WebVREnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
   condition: PLATFORM(GTK) || PLATFORM(WPE)
-
-ResourceLoadStatisticsDebugMode:
-  type: bool
-  defaultValue: false
-  humanReadableName: "ITP Debug Mode"
-  humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-
-WebGLCompressedTextureASTCSupportEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "ASTC Texture Support"
-  humanReadableDescription: "Support for ASTC compressed texture formats in WebGL"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
 
 ServerTimingEnabled:
   type: bool
@@ -1298,14 +1239,95 @@ ServerTimingEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: serverTimingEnabled
 
+EncryptedMediaAPIEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Modern Encrypted Media API"
+  humanReadableDescription: "Enable Modern Encrypted Media API"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(ENCRYPTED_MEDIA)
+
+# For internal features:
+# The type should be boolean.
+# You must provide a humanReadableName and humanReadableDescription for all debug features. They
+#   are the text exposed to the user from the WebKit client.
+
 ExperimentalPlugInSandboxProfilesEnabled:
   type: bool
   defaultValue: false
   humanReadableName: "Sandbox Plug-Ins"
   humanReadableDescription: "Enable Plug-In sandboxing"
-  category: debug
+  category: internal
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: experimentalPlugInSandboxProfilesEnabled
+
+ProcessSwapOnCrossSiteNavigationEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Swap Processes on Cross-Site Navigation"
+  humanReadableDescription: "Swap WebContent processes on cross-site navigations"
+  category: internal
+  webcoreBinding: none
+
+SourceBufferChangeTypeEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Media Source Codec Switching Support"
+  humanReadableDescription: "Media Source Codec Switching through changeType()"
+  category: internal
+  condition: ENABLE(MEDIA_SOURCE)
+
+ResourceLoadStatisticsDebugMode:
+  type: bool
+  defaultValue: false
+  humanReadableName: "ITP Debug Mode"
+  humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
+
+ServiceWorkersEnabled:
+  type: bool
+  defaultValue: DEFAULT_SERVICE_WORKERS_ENABLED
+  humanReadableName: "Service Workers"
+  humanReadableDescription: "Enable Service Workers"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
+  webcoreName: serviceWorkerEnabled
+  condition: ENABLE(SERVICE_WORKER)
+
+AsyncFrameScrollingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Async Frame Scrolling"
+  humanReadableDescription: "Perform frame scrolling in a dedicated thread or process"
+  category: internal
+
+MDNSICECandidatesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "MDNS ICE candidates"
+  humanReadableDescription: "Enable MDNS ICE candidates"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal
+  condition: ENABLE(WEB_RTC)
+
+FetchAPIKeepAliveEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Fetch API Request KeepAlive"
+  humanReadableDescription: "Enable Fetch API Request KeepAlive"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
+  webcoreName: fetchAPIKeepAliveEnabled
+
+WebGLCompressedTextureASTCSupportEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "ASTC Texture Support"
+  humanReadableDescription: "Support for ASTC compressed texture formats in WebGL"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
 
 FullScreenEnabled:
   type: bool
@@ -1314,32 +1336,15 @@ FullScreenEnabled:
   hidden: EXPERIMENTAL_FULLSCREEN_API_HIDDEN
   humanReadableName: "Fullscreen API"
   humanReadableDescription: "Fullscreen API"
-  category: experimental
+  category: internal
 
-EncryptedMediaAPIEnabled:
+AriaReflectionEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "Modern Encrypted Media API"
-  humanReadableDescription: "Modern Encrypted Media API"
+  defaultValue: true
+  humanReadableName: "ARIA Reflection"
+  humanReadableDescription: "ARIA Reflection support"
+  category: internal
   webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
-  condition: ENABLE(ENCRYPTED_MEDIA)
-
-ProcessSwapOnCrossSiteNavigationEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Swap Processes on Cross-Site Navigation"
-  humanReadableDescription: "Swap WebContent processes on cross-site navigations"
-  category: experimental
-  webcoreBinding: none
-
-SourceBufferChangeTypeEnabled:
-  type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "Media Source Codec Switching Support"
-  humanReadableDescription: "Enable Media Source Codec Switching through changeType()"
-  category: experimental
-  condition: ENABLE(MEDIA_SOURCE)
 
 WebAPIStatisticsEnabled:
   type: bool
@@ -1347,4 +1352,4 @@ WebAPIStatisticsEnabled:
   humanReadableName: "Web API Statistics"
   humanReadableDescription: "Enable Web API Statistics"
   webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
+  category: internal

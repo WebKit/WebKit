@@ -1,3 +1,17 @@
+2018-09-07  Dean Jackson  <dino@apple.com>
+
+        Add and expose Internal features from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=189442
+        <rdar://problem/44243404>
+
+        Reviewed by Simon Fraser.
+
+        Skip some tests that rely on an experimental feature that has
+        moved to internal. A follow-up patch will allow WKTR to enable
+        them on demand.
+
+        * platform/mac/TestExpectations:
+
 2018-09-11  Jer Noble  <jer.noble@apple.com>
 
         [MediaCapabilities] Implement MediaEngineConfigurationFactory registration

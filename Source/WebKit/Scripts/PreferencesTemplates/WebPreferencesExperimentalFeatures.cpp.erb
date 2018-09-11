@@ -63,7 +63,7 @@ const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
     return features;
 }
 
-bool WebPreferences::isEnabledForFeature(const API::ExperimentalFeature& feature) const
+bool WebPreferences::isFeatureEnabled(const API::ExperimentalFeature& feature) const
 {
     struct FeatureGetterMapping {
         const char* name;
@@ -92,7 +92,7 @@ bool WebPreferences::isEnabledForFeature(const API::ExperimentalFeature& feature
     return false;
 }
 
-void WebPreferences::setEnabledForFeature(bool value, const API::ExperimentalFeature& feature)
+void WebPreferences::setFeatureEnabled(const API::ExperimentalFeature& feature, bool value)
 {
     struct FeatureSetterMapping {
         const char* name;

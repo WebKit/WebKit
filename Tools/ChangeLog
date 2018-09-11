@@ -1,3 +1,21 @@
+2018-09-07  Dean Jackson  <dino@apple.com>
+
+        Add and expose Internal features from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=189442
+        <rdar://problem/44243404>
+
+        Reviewed by Simon Fraser.
+
+        Update MiniBrowser to expose an Internal feature menu.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleExperimentalFeature:]):
+        (-[SettingsController toggleInternalDebugFeature:]):
+
 2018-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Support changing foreground colors via color panel
