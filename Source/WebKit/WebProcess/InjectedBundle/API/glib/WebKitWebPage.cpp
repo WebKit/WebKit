@@ -479,6 +479,10 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      * @redirected_response parameter containing the response
      * received by the server for the initial request.
      *
+     * Modifications to the #WebKitURIRequest and its associated
+     * #SoupMessageHeaders will be taken into account when the request
+     * is sent over the network.
+     *
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to continue emission of the event.
      */

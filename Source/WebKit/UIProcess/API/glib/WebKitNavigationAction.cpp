@@ -124,7 +124,12 @@ unsigned webkit_navigation_action_get_modifiers(WebKitNavigationAction* navigati
  * webkit_navigation_action_get_request:
  * @navigation: a #WebKitNavigationAction
  *
- * Return the navigation #WebKitURIRequest
+ * Return the #WebKitURIRequest associated with the navigation action.
+ * Modifications to the returned object are <emphasis>not</emphasis> taken
+ * into account when the request is sent over the network, and is intended
+ * only to aid in evaluating whether a navigation action should be taken or
+ * not. To modify requests before they are sent over the network the
+ * #WebKitPage::send-request signal can be used instead.
  *
  * Returns: (transfer none): a #WebKitURIRequest
  *

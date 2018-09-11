@@ -114,7 +114,12 @@ static void webkit_response_policy_decision_class_init(WebKitResponsePolicyDecis
  * webkit_response_policy_decision_get_request:
  * @decision: a #WebKitResponsePolicyDecision
  *
- * Gets the value of the #WebKitResponsePolicyDecision:request property.
+ * Return the #WebKitURIRequest associated with the response decision.
+ * Modifications to the returned object are <emphasis>not</emphasis> taken
+ * into account when the request is sent over the network, and is intended
+ * only to aid in evaluating whether a response decision should be taken or
+ * not. To modify requests before they are sent over the network the
+ * #WebKitPage::send-request signal can be used instead.
  *
  * Returns: (transfer none): The URI request that is associated with this policy decision.
  */

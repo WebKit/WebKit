@@ -1,3 +1,25 @@
+2018-09-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] API documentation is unclear about how to modify requests before sending them
+        https://bugs.webkit.org/show_bug.cgi?id=189505
+
+        Reviewed by Michael Catanzaro.
+
+        Add notes to the API documentation to make explicit where modification
+        of WebKitURIRequest instances affects the request data sent over the
+        network.
+
+        * UIProcess/API/glib/WebKitNavigationAction.cpp: Clarify that
+        modifications to the associated WebKitURIRequest do not affect the
+        actual request. Point to WebKitPage::send-request instead.
+        * UIProcess/API/glib/WebKitResponsePolicyDecision.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_class_init): Ditto for the description of the
+        WebKitWebView::decide-policy signal. Also fix the syntax of example.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkit_web_page_class_init): Indicate that modifications to the
+        WebKitURIRequest will change the actual network request data.
+
 2018-09-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, attempt to fix Apple builds after r235903

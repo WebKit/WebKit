@@ -1387,14 +1387,16 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *                   WebKitPolicyDecisionType type)
      * {
      *     switch (type) {
-     *     case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION:
+     *     case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION: {
      *         WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
      *         /<!-- -->* Make a policy decision here. *<!-- -->/
      *         break;
-     *     case WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION:
+     *     }
+     *     case WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION: {
      *         WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
      *         /<!-- -->* Make a policy decision here. *<!-- -->/
      *         break;
+     *     }
      *     case WEBKIT_POLICY_DECISION_TYPE_RESPONSE:
      *         WebKitResponsePolicyDecision *response = WEBKIT_RESPONSE_POLICY_DECISION (decision);
      *         /<!-- -->* Make a policy decision here. *<!-- -->/
