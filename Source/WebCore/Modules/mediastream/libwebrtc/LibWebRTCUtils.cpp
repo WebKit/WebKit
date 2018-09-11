@@ -197,6 +197,8 @@ RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDi
     case webrtc::RtpTransceiverDirection::kInactive:
         return RTCRtpTransceiverDirection::Inactive;
     };
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiverDirection direction)
@@ -211,6 +213,8 @@ webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiver
     case RTCRtpTransceiverDirection::Inactive:
         return webrtc::RtpTransceiverDirection::kInactive;
     };
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& init)

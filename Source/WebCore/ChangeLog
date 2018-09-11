@@ -1,3 +1,13 @@
+2018-09-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix some -Wreturn-type warnings
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::sourceFromNewReceiver):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCRtpTransceiverDirection):
+        (WebCore::fromRTCRtpTransceiverDirection):
+
 2018-09-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a speculative build fix for r235888.

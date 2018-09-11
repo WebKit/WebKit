@@ -419,6 +419,8 @@ static inline RefPtr<RealtimeMediaSource> sourceFromNewReceiver(webrtc::RtpRecei
         return RealtimeIncomingVideoSource::create(WTFMove(videoTrack), fromStdString(rtcTrack->id()));
     }
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&& rtcTransceiver)
