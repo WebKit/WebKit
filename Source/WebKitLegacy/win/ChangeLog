@@ -1,3 +1,16 @@
+2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang][WebKitLegacy] error: 'static' is invalid in friend declarations
+        https://bugs.webkit.org/show_bug.cgi?id=189539
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebInspectorClient.h: Removed 'static' of WebInspectorWndProc friend declaration.
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorWndProc): Ditto.
+        * WebNodeHighlight.cpp: Added OverlayWndProc declaration to be called before the definition.
+        * WebNodeHighlight.h: Removed 'static` of OverlayWndProc friend declaration.
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor WebCore::EditAction to be an 8-bit enum class

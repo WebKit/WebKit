@@ -491,7 +491,7 @@ void WebInspectorFrontendClient::onWebViewWindowPosChanging(WPARAM, LPARAM lPara
     SetWindowPos(m_frontendWebViewHwnd, 0, windowPos->x, windowPos->y + windowPos->cy, windowPos->cx, inspectorHeight, SWP_NOZORDER);
 }
 
-static LRESULT CALLBACK WebInspectorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WebInspectorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     WebInspectorFrontendClient* client = reinterpret_cast<WebInspectorFrontendClient*>(::GetProp(hwnd, kWebInspectorPointerProp));
     if (!client)

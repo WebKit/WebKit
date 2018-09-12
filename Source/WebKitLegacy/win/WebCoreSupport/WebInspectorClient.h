@@ -141,7 +141,7 @@ private:
     WTF::String m_inspectedURL;
     bool m_destroyingInspectorView;
 
-    static friend LRESULT CALLBACK WebInspectorWndProc(HWND, UINT, WPARAM, LPARAM);
+    friend LRESULT CALLBACK WebInspectorWndProc(HWND, UINT, WPARAM, LPARAM);
 };
 
 #endif // !defined(WebInspectorClient_h)

@@ -41,6 +41,7 @@
 
 using namespace WebCore;
 
+LRESULT CALLBACK OverlayWndProc(HWND, UINT, WPARAM, LPARAM);
 static LPCTSTR kOverlayWindowClassName = TEXT("WebNodeHighlightWindowClass");
 static ATOM registerOverlayClass();
 static LPCTSTR kWebNodeHighlightPointerProp = TEXT("WebNodeHighlightPointer");
