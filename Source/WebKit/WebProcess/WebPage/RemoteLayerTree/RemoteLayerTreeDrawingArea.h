@@ -137,7 +137,7 @@ private:
     };
 
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
-    std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
+    Ref<WebCore::GraphicsLayer> m_rootLayer;
 
     WebCore::IntSize m_viewSize;
 

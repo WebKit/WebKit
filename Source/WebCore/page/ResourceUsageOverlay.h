@@ -83,7 +83,7 @@ private:
 #endif
 
 #if OS(LINUX)
-    std::unique_ptr<GraphicsLayer> m_paintLayer;
+    RefPtr<GraphicsLayer> m_paintLayer;
     std::unique_ptr<GraphicsLayerClient> m_overlayPainter;
 #endif
 };

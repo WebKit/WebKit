@@ -63,7 +63,7 @@ private:
 
         DDHighlightRef ddHighlight() const { return m_ddHighlight.get(); }
         Range& range() const { return m_range.get(); }
-        GraphicsLayer* layer() const { return m_graphicsLayer.get(); }
+        GraphicsLayer& layer() const { return m_graphicsLayer.get(); }
 
         enum {
             TelephoneNumberType = 1 << 0,
@@ -87,11 +87,11 @@ private:
 
         void didFinishFadeOutAnimation();
 
+        ServicesOverlayController* m_controller;
         RetainPtr<DDHighlightRef> m_ddHighlight;
         Ref<Range> m_range;
-        std::unique_ptr<GraphicsLayer> m_graphicsLayer;
+        Ref<GraphicsLayer> m_graphicsLayer;
         Type m_type;
-        ServicesOverlayController* m_controller;
     };
 
     // PageOverlay::Client

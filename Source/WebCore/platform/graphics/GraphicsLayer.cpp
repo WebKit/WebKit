@@ -113,6 +113,7 @@ bool GraphicsLayer::supportsContentsTiling()
 GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& client)
     : m_client(client)
     , m_type(type)
+    , m_beingDestroyed(false)
     , m_contentsOpaque(false)
     , m_supportsSubpixelAntialiasedText(false)
     , m_preserves3D(false)
@@ -143,6 +144,7 @@ GraphicsLayer::~GraphicsLayer()
 
 void GraphicsLayer::willBeDestroyed()
 {
+    m_beingDestroyed = true;
 #ifndef NDEBUG
     m_client.verifyNotPainting();
 #endif
@@ -177,99 +179,96 @@ bool GraphicsLayer::hasAncestor(GraphicsLayer* ancestor) const
     return false;
 }
 
-bool GraphicsLayer::setChildren(const Vector<GraphicsLayer*>& newChildren)
+bool GraphicsLayer::setChildren(Vector<Ref<GraphicsLayer>>&& newChildren)
 {
     // If the contents of the arrays are the same, nothing to do.
     if (newChildren == m_children)
         return false;
 
     removeAllChildren();
-    
+
     size_t listSize = newChildren.size();
     for (size_t i = 0; i < listSize; ++i)
-        addChild(newChildren[i]);
+        addChild(WTFMove(newChildren[i]));
     
     return true;
 }
 
-void GraphicsLayer::addChild(GraphicsLayer* childLayer)
+void GraphicsLayer::addChild(Ref<GraphicsLayer>&& childLayer)
 {
-    ASSERT(childLayer != this);
+    ASSERT(childLayer.ptr() != this);
     
     if (childLayer->parent())
         childLayer->removeFromParent();
 
     childLayer->setParent(this);
-    m_children.append(childLayer);
+    m_children.append(WTFMove(childLayer));
 }
 
-void GraphicsLayer::addChildAtIndex(GraphicsLayer* childLayer, int index)
+void GraphicsLayer::addChildAtIndex(Ref<GraphicsLayer>&& childLayer, int index)
 {
-    ASSERT(childLayer != this);
+    ASSERT(childLayer.ptr() != this);
 
     if (childLayer->parent())
         childLayer->removeFromParent();
 
     childLayer->setParent(this);
-    m_children.insert(index, childLayer);
+    m_children.insert(index, WTFMove(childLayer));
 }
 
-void GraphicsLayer::addChildBelow(GraphicsLayer* childLayer, GraphicsLayer* sibling)
+void GraphicsLayer::addChildBelow(Ref<GraphicsLayer>&& childLayer, GraphicsLayer* sibling)
 {
-    ASSERT(childLayer != this);
+    ASSERT(childLayer.ptr() != this);
     childLayer->removeFromParent();
-
-    bool found = false;
-    for (unsigned i = 0; i < m_children.size(); i++) {
-        if (sibling == m_children[i]) {
-            m_children.insert(i, childLayer);
-            found = true;
-            break;
-        }
-    }
 
     childLayer->setParent(this);
 
-    if (!found)
-        m_children.append(childLayer);
-}
-
-void GraphicsLayer::addChildAbove(GraphicsLayer* childLayer, GraphicsLayer* sibling)
-{
-    childLayer->removeFromParent();
-    ASSERT(childLayer != this);
-
-    bool found = false;
     for (unsigned i = 0; i < m_children.size(); i++) {
-        if (sibling == m_children[i]) {
-            m_children.insert(i+1, childLayer);
-            found = true;
-            break;
+        if (sibling == m_children[i].ptr()) {
+            m_children.insert(i, WTFMove(childLayer));
+            return;
         }
     }
 
-    childLayer->setParent(this);
-
-    if (!found)
-        m_children.append(childLayer);
+    m_children.append(WTFMove(childLayer));
 }
 
-bool GraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
+void GraphicsLayer::addChildAbove(Ref<GraphicsLayer>&& childLayer, GraphicsLayer* sibling)
+{
+    childLayer->removeFromParent();
+    ASSERT(childLayer.ptr() != this);
+
+    childLayer->setParent(this);
+
+    for (unsigned i = 0; i < m_children.size(); i++) {
+        if (sibling == m_children[i].ptr()) {
+            m_children.insert(i + 1, WTFMove(childLayer));
+            return;
+        }
+    }
+
+    m_children.append(WTFMove(childLayer));
+}
+
+bool GraphicsLayer::replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild)
 {
     ASSERT(!newChild->parent());
+    
+    GraphicsLayer* rawNewChild = newChild.ptr();
+
     bool found = false;
     for (unsigned i = 0; i < m_children.size(); i++) {
-        if (oldChild == m_children[i]) {
-            m_children[i] = newChild;
+        if (oldChild == m_children[i].ptr()) {
+            m_children[i] = WTFMove(newChild);
             found = true;
             break;
         }
     }
     if (found) {
-        oldChild->setParent(0);
+        oldChild->setParent(nullptr);
 
-        newChild->removeFromParent();
-        newChild->setParent(this);
+        rawNewChild->removeFromParent();
+        rawNewChild->setParent(this);
         return true;
     }
     return false;
@@ -278,17 +277,22 @@ bool GraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChil
 void GraphicsLayer::removeAllChildren()
 {
     while (m_children.size()) {
-        GraphicsLayer* curLayer = m_children[0];
+        GraphicsLayer* curLayer = m_children[0].ptr();
         ASSERT(curLayer->parent());
         curLayer->removeFromParent();
+        // curLayer may be destroyed here.
     }
 }
 
 void GraphicsLayer::removeFromParent()
 {
     if (m_parent) {
-        m_parent->m_children.removeFirst(this);
+        GraphicsLayer* parent = m_parent;
         setParent(nullptr);
+        parent->m_children.removeFirstMatching([this](auto& layer) {
+            return layer.ptr() == this;
+        });
+        // |this| may be destroyed here.
     }
 }
 
@@ -318,7 +322,7 @@ void GraphicsLayer::setChildrenTransform(const TransformationMatrix& matrix)
         m_childrenTransform = std::make_unique<TransformationMatrix>(matrix);
 }
 
-void GraphicsLayer::setMaskLayer(GraphicsLayer* layer)
+void GraphicsLayer::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
 {
     if (layer == m_maskLayer)
         return;
@@ -332,7 +336,7 @@ void GraphicsLayer::setMaskLayer(GraphicsLayer* layer)
         m_maskLayer->setIsMaskLayer(false);
     }
     
-    m_maskLayer = layer;
+    m_maskLayer = WTFMove(layer);
 }
 
 Path GraphicsLayer::shapeLayerPath() const
@@ -381,10 +385,8 @@ void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
     if (m_replicaLayer)
         m_replicaLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
-    const Vector<GraphicsLayer*>& childLayers = children();
-    size_t numChildren = childLayers.size();
-    for (size_t i = 0; i < numChildren; ++i)
-        childLayers[i]->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+    for (auto& layer : children())
+        layer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
 void GraphicsLayer::setIsInWindow(bool inWindow)
@@ -534,9 +536,8 @@ void GraphicsLayer::distributeOpacity(float accumulatedOpacity)
     setOpacityInternal(accumulatedOpacity);
     
     if (preserves3D()) {
-        size_t numChildren = children().size();
-        for (size_t i = 0; i < numChildren; ++i)
-            children()[i]->distributeOpacity(accumulatedOpacity);
+        for (auto& layer : children())
+            layer->distributeOpacity(accumulatedOpacity);
     }
 }
 
@@ -693,8 +694,8 @@ void GraphicsLayer::traverse(GraphicsLayer& layer, const WTF::Function<void (Gra
 {
     traversalFunc(layer);
 
-    for (auto* childLayer : layer.children())
-        traverse(*childLayer, traversalFunc);
+    for (auto& childLayer : layer.children())
+        traverse(childLayer.get(), traversalFunc);
 
     if (auto* replicaLayer = layer.replicaLayer())
         traverse(*replicaLayer, traversalFunc);
@@ -717,11 +718,11 @@ void GraphicsLayer::dumpLayer(TextStream& ts, LayerTreeAsTextBehavior behavior) 
     ts << indent << ")\n";
 }
 
-static void dumpChildren(TextStream& ts, const Vector<GraphicsLayer*>& children, unsigned& totalChildCount, LayerTreeAsTextBehavior behavior)
+static void dumpChildren(TextStream& ts, const Vector<Ref<GraphicsLayer>>& children, unsigned& totalChildCount, LayerTreeAsTextBehavior behavior)
 {
     totalChildCount += children.size();
-    for (auto* child : children) {
-        if ((behavior & LayerTreeAsTextDebug) || !child->client().shouldSkipLayerInDump(child, behavior)) {
+    for (auto& child : children) {
+        if ((behavior & LayerTreeAsTextDebug) || !child->client().shouldSkipLayerInDump(child.ptr(), behavior)) {
             TextStream::IndentScope indentScope(ts);
             child->dumpLayer(ts, behavior);
             continue;

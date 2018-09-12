@@ -71,8 +71,8 @@ private:
     WebView& m_webView;
     std::unique_ptr<WebCore::GLContext> m_context;
     HWND m_window;
-    std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
-    std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
+    RefPtr<WebCore::GraphicsLayer> m_rootLayer;
+    RefPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     WebCore::TextureMapperFPSCounter m_fpsCounter;
 

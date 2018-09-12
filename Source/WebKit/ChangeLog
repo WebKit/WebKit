@@ -1,3 +1,31 @@
+2018-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Make GraphicsLayers ref-counted, so their tree can persist when disconnected from RenderLayerBackings
+        https://bugs.webkit.org/show_bug.cgi?id=189521
+
+        Reviewed by Tim Horton.
+
+        Make GraphicsLayer be RefCounted<GraphicsLayer>. GraphicsLayers own their children, via a Vector<Ref<GraphicsLayer>>.
+        
+        RenderLayerBacking and other holders of GraphicsLayers use RefPtr<GraphicsLayer>.
+        
+        All the other changes are just to adapt to the new ownership patterns.
+        
+        I verified that no GraphicsLayers were leaked or abandoned after this change.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::~WebInspectorClient):
+        (WebKit::WebInspectorClient::showPaintRect):
+        (WebKit::WebInspectorClient::animationEndedForLayer):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::createGraphicsLayer):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateRootLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
 2018-09-12  Chris Dumez  <cdumez@apple.com>
 
         PSON: No process swap on back navigation after URL bar navigation

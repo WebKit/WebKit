@@ -109,9 +109,9 @@ bool RemoteLayerTreeContext::backingStoreWillBeDisplayed(RemoteLayerBackingStore
     return m_backingStoreCollection.backingStoreWillBeDisplayed(backingStore);
 }
 
-std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCore::GraphicsLayer::Type layerType, GraphicsLayerClient& client)
+Ref<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCore::GraphicsLayer::Type layerType, GraphicsLayerClient& client)
 {
-    return std::make_unique<GraphicsLayerCARemote>(layerType, client, *this);
+    return adoptRef(*new GraphicsLayerCARemote(layerType, client, *this));
 }
 
 void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer)
