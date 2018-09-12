@@ -1,3 +1,15 @@
+2018-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        FontManagerTests.ChangeFontColorWithColorPanel fails on macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=189382
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix the test by specifying colors in RGB colorspace.
+
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-09-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang][ImageDiff] Fix compilation error and warning of PlatformImageCairo.cpp

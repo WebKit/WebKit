@@ -270,7 +270,7 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     };
 
     // 1. Select "foo" and turn it red; verify that the font element is used for fully opaque colors.
-    colorPanel.color = NSColor.redColor;
+    colorPanel.color = [NSColor colorWithRed:1 green:0 blue:0 alpha:1];
     [webView selectWord:nil];
     [webView changeColor:colorPanel];
     checkFontColorAtStartAndEndWithInputEvents("rgb(255, 0, 0)");
@@ -296,7 +296,7 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!bar.querySelector('font')"] boolValue]);
 
     // 4a. Now collapse the selection to the end and set the typing style color to green.
-    colorPanel.color = NSColor.greenColor;
+    colorPanel.color = [NSColor colorWithRed:0 green:1 blue:0 alpha:1];
     [webView collapseToEnd];
     [webView changeColor:colorPanel];
     EXPECT_WK_STREQ("formatFontColor", [webView stringByEvaluatingJavaScript:@"lastInputEvent.inputType"]);
