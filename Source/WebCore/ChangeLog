@@ -1,3 +1,21 @@
+2018-09-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] WebInspector doesn't display request headers added during processing.
+        https://bugs.webkit.org/show_bug.cgi?id=189531
+
+        Reviewed by Alex Christensen.
+
+        While processing the request, Curl port network layer adds some headers to the request
+        such as cookies. Those headers should be displayed in the WebInspector.
+
+        Tested on MiniBrowser.
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::didReceiveHeader):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::updateNetworkLoadMetrics):
+        * platform/network/curl/CurlRequest.h:
+
 2018-09-11  James Savage  <james.savage@apple.com>
 
         Follow up to:

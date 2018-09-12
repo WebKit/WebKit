@@ -301,8 +301,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (auto version = m_curlHandle->getHttpVersion())
         m_response.httpVersion = *version;
 
-    if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
-        m_networkLoadMetrics = *metrics;
+    updateNetworkLoadMetrics();
 
     if (m_response.availableProxyAuth)
         CurlContext::singleton().setProxyAuthMethod(m_response.availableProxyAuth);
@@ -402,8 +401,7 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
         if (m_multipartHandle)
             m_multipartHandle->didComplete();
 
-        if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
-            m_networkLoadMetrics = *metrics;
+        updateNetworkLoadMetrics();
 
         finalizeTransfer();
         callClient([](CurlRequest& request, CurlRequestClient& client) {
@@ -635,6 +633,14 @@ bool CurlRequest::isHandlePaused() const
 {
     ASSERT(!isMainThread());
     return m_isHandlePaused;
+}
+
+void CurlRequest::updateNetworkLoadMetrics()
+{
+    if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
+        m_networkLoadMetrics = *metrics;
+
+    m_networkLoadMetrics.requestHeaders = m_request.httpHeaderFields();
 }
 
 void CurlRequest::enableDownloadToFile()

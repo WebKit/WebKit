@@ -143,6 +143,8 @@ private:
     void updateHandlePauseState(bool);
     bool isHandlePaused() const;
 
+    void updateNetworkLoadMetrics();
+
     // Download
     void writeDataToDownloadFileIfEnabled(const SharedBuffer&);
     void closeDownloadFile();
