@@ -325,7 +325,6 @@ static void Draw(HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext)
         GetPort(&port);
         GetPortBounds(port, &portRect);
         CreateCGContextForPort(port, &inContext);
-        ALLOW_DEPRECATED_DECLARATIONS_END
         SyncCGContextOriginWithPort(inContext, port);
         CGContextTranslateCTM(inContext, 0, (portRect.bottom - portRect.top));
         CGContextScaleCTM(inContext, 1, -1);

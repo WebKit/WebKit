@@ -1,3 +1,12 @@
+2018-09-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix an internal build after r235935
+        https://bugs.webkit.org/show_bug.cgi?id=188996
+
+        * Carbon/HIWebView.mm:
+        (Draw):
+        r235935 fixed a mismatched macro with deprecated functions below it.  To quickly fix the build, I'm just going to restore the imbalance.
+
 2018-09-12  Guillaume Emont  <guijemont@igalia.com>
 
         Add IGNORE_WARNING_.* macros
