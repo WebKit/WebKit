@@ -1,3 +1,10 @@
+2018-09-12  Dan Bernstein  <mitz@apple.com>
+
+        Removed a couple of empty directories left behind after r235892.
+
+        * WPEWebCore: Removed.
+        * downstream-WebCore: Removed.
+
 2018-09-10  Tim Horton  <timothy_horton@apple.com>
 
         Make it easier to build for SDK_VARIANT=iosmac
