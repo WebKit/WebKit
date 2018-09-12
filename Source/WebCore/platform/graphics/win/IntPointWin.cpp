@@ -53,7 +53,7 @@ IntPoint::IntPoint(const POINTS& p)
 
 IntPoint::operator POINTS() const
 {
-    POINTS p = {m_x, m_y};
+    POINTS p = { static_cast<SHORT>(m_x), static_cast<SHORT>(m_y) };
     return p;
 }
 

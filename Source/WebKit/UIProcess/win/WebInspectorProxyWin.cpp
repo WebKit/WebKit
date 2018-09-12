@@ -231,7 +231,7 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
         nullptr, // didRemoveNavigationGestureSnapshot
     };
 
-    RECT r = { 0, 0, initialWindowWidth, initialWindowHeight };
+    RECT r = { 0, 0, static_cast<LONG>(initialWindowWidth), static_cast<LONG>(initialWindowHeight) };
     auto page = inspectedPage();
     m_inspectedViewWindow = page->viewWidget();
     m_inspectedViewParentWindow = ::GetParent(m_inspectedViewWindow);

@@ -1,3 +1,15 @@
+2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] error: non-constant-expression cannot be narrowed from type 'int' to 'SHORT'
+        https://bugs.webkit.org/show_bug.cgi?id=189542
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change).
+
+        * platform/graphics/win/IntPointWin.cpp:
+        (WebCore::IntPoint::operator POINTS const): Narrowed m_x and m_y by using static_cast.
+
 2018-09-12  Guillaume Emont  <guijemont@igalia.com>
 
         Add IGNORE_WARNING_.* macros

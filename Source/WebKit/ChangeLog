@@ -1,3 +1,13 @@
+2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] error: non-constant-expression cannot be narrowed from type 'int' to 'SHORT'
+        https://bugs.webkit.org/show_bug.cgi?id=189542
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage): Narrowed initialWindowWidth and initialWindowHeight by using static_cast.
+
 2018-09-12  Chris Dumez  <cdumez@apple.com>
 
         Clean up SuspendedPageProxy
