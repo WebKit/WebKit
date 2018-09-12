@@ -4176,3 +4176,5 @@ webkit.org/b/189194 http/tests/referrer-policy/same-origin/cross-origin-http.htt
 webkit.org/b/189194 http/tests/referrer-policy/strict-origin-when-cross-origin/cross-origin-http.https.html [ Failure ]
 webkit.org/b/189194 http/tests/referrer-policy/strict-origin/cross-origin-http.https.html [ Failure ]
 webkit.org/b/189194 http/tests/security/basic-auth-subresource.html [ Failure ]
+
+webkit.org/b/189550 fast/text/variations/ipc2.html [ Skip ]
