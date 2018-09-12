@@ -1,3 +1,19 @@
+2018-09-12  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Implement correct total received bytes.
+        https://bugs.webkit.org/show_bug.cgi?id=189555
+
+        Reviewed by Alex Christensen.
+
+        Curl port only reported total network received bytes before decoding.
+
+        No new test. InspectorTest is only available for WebKitTestRunner.
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::didReceiveData):
+        (WebCore::CurlRequest::updateNetworkLoadMetrics):
+        * platform/network/curl/CurlRequest.h:
+
 2018-09-12  Youenn Fablet  <youenn@apple.com>
 
         Split RTCRtpParameters idl and header file

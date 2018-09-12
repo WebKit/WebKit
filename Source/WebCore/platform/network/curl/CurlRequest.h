@@ -197,6 +197,7 @@ private:
 
     CertificateInfo m_certificateInfo;
     NetworkLoadMetrics m_networkLoadMetrics;
+    size_t m_totalReceivedSize { 0 };
 };
 
 } // namespace WebCore

@@ -336,6 +336,7 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
     }
 
     auto receiveBytes = buffer->size();
+    m_totalReceivedSize += receiveBytes;
 
     writeDataToDownloadFileIfEnabled(buffer);
 
@@ -641,6 +642,7 @@ void CurlRequest::updateNetworkLoadMetrics()
         m_networkLoadMetrics = *metrics;
 
     m_networkLoadMetrics.requestHeaders = m_request.httpHeaderFields();
+    m_networkLoadMetrics.responseBodyDecodedSize = m_totalReceivedSize;
 }
 
 void CurlRequest::enableDownloadToFile()
