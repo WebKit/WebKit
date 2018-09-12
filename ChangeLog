@@ -1,5 +1,11 @@
 2018-09-12  Dan Bernstein  <mitz@apple.com>
 
+        Updated svn:ignore after r235381.
+
+        * .: Added LocalOverrides.xcconfig to svn:ignore.
+
+2018-09-12  Dan Bernstein  <mitz@apple.com>
+
         Removed a couple of empty directories left behind after r235892.
 
         * WPEWebCore: Removed.
