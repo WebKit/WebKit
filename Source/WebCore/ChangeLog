@@ -1,3 +1,26 @@
+2018-09-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        imported/w3c/web-platform-tests/shadow-dom/form-control-form-attribute.html hits assertion
+        https://bugs.webkit.org/show_bug.cgi?id=189493
+
+        Reviewed by Alex Christensen.
+
+        The debug assertion was caused by RefPtr in FormAssociatedElement::formOwnerRemovedFromTree introduced
+        by r224390 and r223644 ref'ing ShadowRoot while calling removeDetachedChildren inside ~ShadowRoot.
+        When a form (or any other) element has more than one ref inside removeDetachedChildren,
+        addChildNodesToDeletionQueue calls notifyChildNodeRemoved in the tree oreder.
+
+        However, when a form associated element of this form element appears later in the tree order,
+        FormAssociatedElement::formOwnerRemovedFromTree can traverse up ancestors including the ShadowRoot.
+
+        Fixed the bug by using raw pointers instead. Luckily, there is no DOM mutations or other non-trivial
+        operations happening in this function so this should be safe.
+
+        Test: imported/w3c/web-platform-tests/shadow-dom/form-control-form-attribute.html
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::formOwnerRemovedFromTree): Fixed the bug.
+
 2018-09-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Complete support for Paste as Quotation

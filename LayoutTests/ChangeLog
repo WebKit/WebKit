@@ -1,3 +1,14 @@
+2018-09-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        imported/w3c/web-platform-tests/shadow-dom/form-control-form-attribute.html hits assertion
+        https://bugs.webkit.org/show_bug.cgi?id=189493
+
+        Reviewed by Alex Christensen.
+
+        Unskip the test now that it doesn't hit a debug assertion.
+
+        * TestExpectations:
+
 2018-09-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Complete support for Paste as Quotation

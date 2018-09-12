@@ -2237,8 +2237,6 @@ webkit.org/b/187269 [ Debug ] imported/w3c/web-platform-tests/FileAPI/reading-da
 
 webkit.org/b/185308 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
 
-webkit.org/b/189493 imported/w3c/web-platform-tests/shadow-dom/form-control-form-attribute.html [ Skip ]
-
 fast/gradients/conic-repeating.html [ Skip ]
 fast/gradients/conic.html [ Skip ]
 fast/gradients/conic-off-center.html [ Skip ]
