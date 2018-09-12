@@ -1,3 +1,39 @@
+2018-09-11  Olivia Barnett  <obarnett@apple.com>
+
+        Implement the Web Share API for mac
+        https://bugs.webkit.org/show_bug.cgi?id=189443
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView shareSheetDidDismiss:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView shareSheetDidDismiss:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showShareSheet):
+        (WebKit::WebViewImpl::shareSheetDidDismiss):
+        Implemented function for WKShareSheetDelegate.
+
+        * UIProcess/Cocoa/WKShareSheet.h:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet initWithView:initWithView:]):
+        (-[WKShareSheet presentWithParameters:completionHandler:]):
+        (-[WKShareSheet sharingServicePicker:didChooseSharingService:]):
+        (-[WKShareSheet _cancel]):
+        (-[WKShareSheet dismiss]):
+        (-[WKShareSheet _dismissDisplayAnimated:]):
+        (-[WKShareSheet invokeShareSheetWithResolution:]):
+        (-[WKShareSheet initWithView:]): Deleted.
+        Added mac platform checks and share sheet functionality.
+
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::showShareSheet):
+        Allows macos to invoke the system share sheet.
+
 2018-09-07  Dean Jackson  <dino@apple.com>
 
         Add and expose Internal features from WebKit

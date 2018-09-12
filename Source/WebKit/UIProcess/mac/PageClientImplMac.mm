@@ -540,6 +540,13 @@ void PageClientImpl::selectionDidChange()
 {
     m_impl->selectionDidChange();
 }
+#if WK_API_ENABLED
+bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_impl->showShareSheet(shareData, WTFMove(completionHandler), m_webView);
+    return true;
+}
+#endif
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
 {

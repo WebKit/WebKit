@@ -5680,6 +5680,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _impl->setWindowOcclusionDetectionEnabled(enabled);
 }
 
+- (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
+{
+    _impl->shareSheetDidDismiss(shareSheet);
+}
+
 - (void)_setOverrideDeviceScaleFactor:(CGFloat)deviceScaleFactor
 {
     _impl->setOverrideDeviceScaleFactor(deviceScaleFactor);

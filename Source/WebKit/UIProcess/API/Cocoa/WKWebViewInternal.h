@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import "SameDocumentNavigationType.h"
+#import "WKShareSheet.h"
 #import "WKWebViewConfiguration.h"
 #import "_WKAttachmentInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
@@ -45,6 +46,10 @@
 
 #if PLATFORM(IOS)
 #define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate>
+#endif
+
+#if PLATFORM(MAC)
+#define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate>
 #endif
 
 #if !defined(WK_WEB_VIEW_PROTOCOLS)

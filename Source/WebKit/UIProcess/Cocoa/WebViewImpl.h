@@ -59,6 +59,10 @@ OBJC_CLASS WKWindowVisibilityObserver;
 OBJC_CLASS _WKRemoteObjectRegistry;
 OBJC_CLASS _WKThumbnailView;
 
+#if WK_API_ENABLED
+OBJC_CLASS WKShareSheet;
+#endif
+
 #if HAVE(TOUCH_BAR)
 OBJC_CLASS NSCandidateListTouchBarItem;
 OBJC_CLASS NSCustomTouchBarItem;
@@ -73,6 +77,10 @@ namespace API {
 class HitTestResult;
 class Object;
 class PageConfiguration;
+}
+
+namespace WebCore {
+struct ShareDataWithParsedURL;
 }
 
 @protocol WebViewImplDelegate
@@ -313,6 +321,7 @@ public:
     id validRequestorForSendAndReturnTypes(NSString *sendType, NSString *returnType);
     void centerSelectionInVisibleArea();
     void selectionDidChange();
+    
     void didBecomeEditable();
     void updateFontPanelIfNeeded();
     void changeFontFromFontManager();
@@ -412,6 +421,9 @@ public:
 
     void setInspectorAttachmentView(NSView *);
     NSView *inspectorAttachmentView();
+    
+    void showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&, WKWebView *);
+    void shareSheetDidDismiss(WKShareSheet *);
 
     _WKRemoteObjectRegistry *remoteObjectRegistry();
 
@@ -686,6 +698,10 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
+#endif
+    
+#if WK_API_ENABLED
+    RetainPtr<WKShareSheet> _shareSheet;
 #endif
 
     RetainPtr<WKWindowVisibilityObserver> m_windowVisibilityObserver;

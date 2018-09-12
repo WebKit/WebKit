@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#import "WKAPICast.h"
 
-#import <UIKit/UIKit.h>
+#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && WK_API_ENABLED
+
 #import <WebCore/ShareData.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Forward.h>
@@ -33,11 +34,22 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS)
+#import <UIKit/UIKit.h>
+#else
+#import "WKWebView.h"
+#endif
+
 @class WKContentView;
 @protocol WKShareSheetDelegate;
 
-@interface WKShareSheet : UIViewController
+#if PLATFORM(MAC)
+@interface WKShareSheet : NSObject <NSSharingServicePickerDelegate>
+- (instancetype)initWithView:(WKWebView *)view;
+#else
+@interface WKShareSheet : NSObject
 - (instancetype)initWithView:(WKContentView *)view;
+#endif
 
 - (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL&)data completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
 - (void)dismiss;
@@ -51,4 +63,4 @@
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet;
 @end
 
-#endif // PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

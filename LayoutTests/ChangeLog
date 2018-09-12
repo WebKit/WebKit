@@ -1,3 +1,18 @@
+2018-09-11  Olivia Barnett  <obarnett@apple.com>
+
+        Implement the Web Share API for mac
+        https://bugs.webkit.org/show_bug.cgi?id=189443
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/web-share/idlharness.https-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/web-share/share-empty.https-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/web-share/share-securecontext.http-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/web-share/share-url-invalid.https-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/web-share/share-without-user-gesture.https-expected.txt: Added.
+        Updated test expectations.
+
 2018-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed test fix after r235910

@@ -26,30 +26,50 @@
 #import "config.h"
 #import "WKShareSheet.h"
 
-#if PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-#import "UIKitSPI.h"
+#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && WK_API_ENABLED
+
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
 #import <WebCore/ShareData.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
+#if PLATFORM(IOS)
+#import "UIKitSPI.h"
+#else
+#import "WKWebView.h"
+#endif
+
 using namespace WebKit;
 
 @implementation WKShareSheet {
-    WeakObjCPtr<WKContentView> _view;
+#if PLATFORM(MAC)
+    WeakObjCPtr<WKWebView> _view;
 
+    BOOL _isShowingSharingServicePicker;
+    RetainPtr<NSSharingServicePicker> _sharingServicePickerForMenu;
+    WTF::CompletionHandler<void(bool)> _completionHandler;
+#else
+    WeakObjCPtr<WKContentView> _view;
+    
     RetainPtr<UIActivityViewController> _shareSheetViewController;
     RetainPtr<UIViewController> _presentationViewController;
     BOOL _shouldDismissWithAnimation;
+#endif
 }
 
+#if PLATFORM(MAC)
+- (instancetype)initWithView:(WKWebView *)view
+#else
 - (instancetype)initWithView:(WKContentView *)view
+#endif
 {
     if (!(self = [super init]))
         return nil;
     _view = view;
+#if PLATFORM(IOS)
     _shouldDismissWithAnimation = YES;
+#endif
     return self;
 }
 
@@ -62,14 +82,27 @@ using namespace WebKit;
     
     if (!data.url.isNull()) {
         NSURL *url = (NSURL *)data.url;
+#if PLATFORM(IOS)
         if (!data.shareData.title.isEmpty())
             url._title = data.shareData.title;
+#endif
         [shareDataArray addObject:url];
     }
     
     if (!data.shareData.title.isEmpty() && ![shareDataArray count])
         [shareDataArray addObject:(NSString *)data.shareData.title];
     
+#if PLATFORM(MAC)
+    _sharingServicePickerForMenu = adoptNS([[NSSharingServicePicker alloc] initWithItems:shareDataArray.get()]);
+    _sharingServicePickerForMenu.get().delegate = self;
+    _completionHandler = WTFMove(completionHandler);
+    
+    NSPoint location = [NSEvent mouseLocation];
+    NSRect mouseLocationRect = NSMakeRect(location.x, location.y, 1.0, 1.0);
+    NSRect mouseLocationInWindow = [[_view window] convertRectFromScreen:mouseLocationRect];
+    NSRect mouseLocationInView = [_view convertRect:mouseLocationInWindow fromView:nil];
+    [_sharingServicePickerForMenu showRelativeToRect:mouseLocationInView ofView:_view.getAutoreleased() preferredEdge:NSMinYEdge];
+#else
     auto shareSheetController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:shareDataArray.get() applicationActivities:nil]);
 
     auto completionHandlerBlock = BlockPtr<void((NSString *, BOOL completed, NSArray *, NSError *))>::fromCallable([completionHandler = WTFMove(completionHandler), shareSheet = self](NSString *, BOOL completed, NSArray *, NSError *) mutable {
@@ -80,8 +113,17 @@ using namespace WebKit;
     shareSheetController.get().completionWithItemsHandler = completionHandlerBlock.get();
     _shareSheetViewController = WTFMove(shareSheetController);
     [self _presentFullscreenViewController:_shareSheetViewController.get() animated:YES];
+#endif
 }
 
+#if PLATFORM(MAC)
+- (void)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker didChooseSharingService:(nullable NSSharingService *)service
+{
+    self->_completionHandler(!service);
+    [self _dispatchDidDismiss];
+}
+
+#endif
 - (void)_dispatchDidDismiss
 {
     if ([_delegate respondsToSelector:@selector(shareSheetDidDismiss:)])
@@ -90,22 +132,28 @@ using namespace WebKit;
 
 - (void)_cancel
 {
+#if PLATFORM(IOS)
     [self _dispatchDidDismiss];
+#endif
 }
 
 - (void)dismiss
 {
+#if PLATFORM(IOS)
     [[UIViewController _viewControllerForFullScreenPresentationFromView:_view.getAutoreleased()] dismissViewControllerAnimated:_shouldDismissWithAnimation completion:nil];
     _presentationViewController = nil;
     
     [self _cancel];
+#endif
 }
+
+#if PLATFORM(IOS)
 
 - (void)_dismissDisplayAnimated:(BOOL)animated
 {
     if (_presentationViewController) {
         UIViewController *currentPresentedViewController = [_presentationViewController presentedViewController];
-        if (currentPresentedViewController == self) {
+        if (currentPresentedViewController == _shareSheetViewController) {
             [currentPresentedViewController dismissViewControllerAnimated:animated completion:^{
                 _presentationViewController = nil;
             }];
@@ -118,12 +166,17 @@ using namespace WebKit;
     _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_view.getAutoreleased()];
     [_presentationViewController presentViewController:viewController animated:animated completion:nil];
 }
+#endif
 
 - (void)invokeShareSheetWithResolution:(BOOL)resolved
 {
+#if PLATFORM(IOS)
     _shouldDismissWithAnimation = NO;
     _shareSheetViewController.get().completionWithItemsHandler(nil, resolved, nil, nil);
+#else
+    _completionHandler(resolved);
+#endif
 }
 
 @end
-#endif // PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
