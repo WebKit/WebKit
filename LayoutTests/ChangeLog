@@ -1,3 +1,10 @@
+2018-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed test fix after r235910
+        https://bugs.webkit.org/show_bug.cgi?id=188008
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-09-11  James Savage  <james.savage@apple.com>
 
         Follow up to:
