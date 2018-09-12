@@ -76,10 +76,9 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
 SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, WebProcessProxy& process, WebBackForwardListItem& item)
     : m_page(page)
     , m_process(&process)
-    , m_backForwardListItem(item)
     , m_origin(SecurityOriginData::fromURL({ ParsedURLString, item.url() }))
 {
-    m_backForwardListItem->setSuspendedPage(this);
+    item.setSuspendedPage(*this);
     m_process->processPool().registerSuspendedPageProxy(*this);
     m_process->send(Messages::WebPage::SetIsSuspended(true), m_page.pageID());
 }
@@ -91,20 +90,17 @@ SuspendedPageProxy::~SuspendedPageProxy()
         process->suspendedPageWasDestroyed(*this);
         process->processPool().unregisterSuspendedPageProxy(*this);
     }
-
-    m_backForwardListItem->setSuspendedPage(nullptr);
 }
 
 void SuspendedPageProxy::webProcessDidClose(WebProcessProxy& process)
 {
     ASSERT_UNUSED(process, &process == m_process);
 
-    auto protectedThis = makeRef(*this);
     m_process->processPool().unregisterSuspendedPageProxy(*this);
     m_process = nullptr;
 
+    // This will destroy |this|.
     m_page.suspendedPageClosed(*this);
-    m_backForwardListItem->setSuspendedPage(nullptr);
 }
 
 void SuspendedPageProxy::destroyWebPageInWebProcess()
@@ -118,7 +114,9 @@ void SuspendedPageProxy::didFinishLoad()
     ASSERT(m_process);
     LOG(ProcessSwapping, "SuspendedPageProxy %s from process %i finished transition to suspended", loggingString(), m_process->processIdentifier());
 
+#if !LOG_DISABLED
     m_finishedSuspending = true;
+#endif
 
     m_process->send(Messages::WebProcess::UpdateActivePages(), 0);
 }

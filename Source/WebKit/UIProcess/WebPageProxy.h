@@ -2234,7 +2234,7 @@ private:
     // FIXME: Support more than one suspended page per WebPageProxy,
     // and have a global collection of them per process pool
     // (e.g. for that process pool's page cache)
-    RefPtr<SuspendedPageProxy> m_suspendedPage;
+    std::unique_ptr<SuspendedPageProxy> m_suspendedPage;
 
     RunLoop::Timer<WebPageProxy> m_resetRecentCrashCountTimer;
     unsigned m_recentCrashCount { 0 };

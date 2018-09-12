@@ -718,7 +718,7 @@ SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& proc
         return nullptr;
     }
 
-    m_suspendedPage = SuspendedPageProxy::create(*this, process, *currentItem);
+    m_suspendedPage = std::make_unique<SuspendedPageProxy>(*this, process, *currentItem);
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), m_suspendedPage->loggingString(), process.processIdentifier(), currentItem->itemID().logString());
 
@@ -740,12 +740,12 @@ void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Nav
 
     // If the process we're attaching to is kept alive solely by our current suspended page,
     // we need to maintain that by temporarily keeping the suspended page alive.
-    RefPtr<SuspendedPageProxy> currentSuspendedPage;
+    std::unique_ptr<SuspendedPageProxy> currentSuspendedPage;
     if (!navigation) {
         m_process->removeWebPage(*this, m_pageID);
         m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     } else {
-        currentSuspendedPage = m_suspendedPage;
+        currentSuspendedPage = WTFMove(m_suspendedPage);
         m_process->suspendWebPageProxy(*this, *navigation);
     }
 

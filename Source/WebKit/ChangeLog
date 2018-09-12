@@ -1,3 +1,35 @@
+2018-09-12  Chris Dumez  <cdumez@apple.com>
+
+        Clean up SuspendedPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=189517
+
+        Reviewed by Alex Christensen.
+
+        Clean up SuspendedPageProxy:
+        1. SuspendedPageProxy does not need to be RefCounted. It is even dangerous given that WebPageProxy
+           owns the SuspendedPageProxy and SuspendedPageProxy has a WebPageProxy& data member. We definitely
+           do not want it to outlive its WebPageProxy.
+        2. The SuspendedPageProxy destructor does not need to be virtual.
+        3. Have WebBackForwardListItem keep a WeakPtr<SuspendedPageProxy> instead of a SuspendedPageProxy*.
+           This is safer and avoid having to explicitly clear the pointer.
+        4. m_finishedSuspending data member does not need a getter and is only needed if !LOG_DISABLED.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::setSuspendedPage):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::suspendedPage const):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::webProcessDidClose):
+        (WebKit::SuspendedPageProxy::didFinishLoad):
+        * UIProcess/SuspendedPageProxy.h:
+        (WebKit::SuspendedPageProxy::process const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeCreateSuspendedPage):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        * UIProcess/WebPageProxy.h:
+
 2018-09-12  Guillaume Emont  <guijemont@igalia.com>
 
         Add IGNORE_WARNING_.* macros

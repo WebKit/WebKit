@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebBackForwardListItem.h"
 
+#include "SuspendedPageProxy.h"
 #include <WebCore/URL.h>
 #include <wtf/DebugUtilities.h>
 
@@ -112,10 +113,10 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
     return documentTreesAreEqual(mainFrameState, otherMainFrameState);
 }
 
-void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy* page)
+void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy& page)
 {
-    ASSERT(!m_suspendedPage || page == nullptr);
-    m_suspendedPage = page;
+    ASSERT(!m_suspendedPage);
+    m_suspendedPage = makeWeakPtr(page);
 }
 
 #if !LOG_DISABLED

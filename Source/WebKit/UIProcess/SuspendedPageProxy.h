@@ -29,29 +29,23 @@
 #include "WebBackForwardListItem.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class WebPageProxy;
 class WebProcessProxy;
 
-class SuspendedPageProxy : public RefCounted<SuspendedPageProxy> {
+class SuspendedPageProxy : public CanMakeWeakPtr<SuspendedPageProxy> {
 public:
-    static Ref<SuspendedPageProxy> create(WebPageProxy& page, WebProcessProxy& process, WebBackForwardListItem& item)
-    {
-        return adoptRef(*new SuspendedPageProxy(page, process, item));
-    }
-
-    virtual ~SuspendedPageProxy();
+    SuspendedPageProxy(WebPageProxy&, WebProcessProxy&, WebBackForwardListItem&);
+    ~SuspendedPageProxy();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     WebPageProxy& page() const { return m_page; }
     WebProcessProxy* process() const { return m_process; }
-    WebBackForwardListItem& item() const { return m_backForwardListItem; }
     const WebCore::SecurityOriginData& origin() const { return m_origin; }
-
-    bool finishedSuspending() const { return m_finishedSuspending; }
 
     void webProcessDidClose(WebProcessProxy&);
     void destroyWebPageInWebProcess();
@@ -61,16 +55,15 @@ public:
 #endif
 
 private:
-    SuspendedPageProxy(WebPageProxy&, WebProcessProxy&, WebBackForwardListItem&);
-
     void didFinishLoad();
 
     WebPageProxy& m_page;
     WebProcessProxy* m_process;
-    Ref<WebBackForwardListItem> m_backForwardListItem;
     WebCore::SecurityOriginData m_origin;
 
+#if !LOG_DISABLED
     bool m_finishedSuspending { false };
+#endif
 };
 
 } // namespace WebKit

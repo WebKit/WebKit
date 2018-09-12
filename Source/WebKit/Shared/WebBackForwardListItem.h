@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "SessionState.h"
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {
@@ -68,8 +69,8 @@ public:
     ViewSnapshot* snapshot() const { return m_itemState.snapshot.get(); }
     void setSnapshot(RefPtr<ViewSnapshot>&& snapshot) { m_itemState.snapshot = WTFMove(snapshot); }
 #endif
-    void setSuspendedPage(SuspendedPageProxy*);
-    SuspendedPageProxy* suspendedPage() const { return m_suspendedPage; }
+    void setSuspendedPage(SuspendedPageProxy&);
+    SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
 
 #if !LOG_DISABLED
     const char* loggingString();
@@ -80,7 +81,7 @@ private:
 
     BackForwardListItemState m_itemState;
     uint64_t m_pageID;
-    SuspendedPageProxy* m_suspendedPage { nullptr };
+    WeakPtr<SuspendedPageProxy> m_suspendedPage;
 };
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;
