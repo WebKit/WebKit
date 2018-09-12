@@ -167,7 +167,7 @@ messages -> WebPageProxy {
 
     # Callback messages
     VoidCallback(WebKit::CallbackID callbackID)
-    DataCallback(IPC::DataReference resultData, WebKit::CallbackID callbackID)
+    DataCallback(IPC::SharedBufferDataReference resultData, WebKit::CallbackID callbackID)
     ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, WebKit::CallbackID callbackID)
     StringCallback(String resultString, WebKit::CallbackID callbackID)
     InvalidateStringCallback(WebKit::CallbackID callbackID)
@@ -530,7 +530,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::DataReference data)
+    RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferDataReference data)
     RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
     CloneAttachmentData(String fromIdentifier, String toIdentifier)
     DidInsertAttachmentWithIdentifier(String identifier, String source)

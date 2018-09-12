@@ -24,7 +24,7 @@ messages -> WebResourceLoader LegacyReceiver {
     WillSendRequest(WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
     DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
-    DidReceiveData(IPC::DataReference data, int64_t encodedDataLength)
+    DidReceiveData(IPC::SharedBufferDataReference data, int64_t encodedDataLength)
     DidFinishResourceLoad(WebCore::NetworkLoadMetrics networkLoadMetrics)
     DidRetrieveDerivedData(String type, IPC::DataReference data)
     DidFailResourceLoad(WebCore::ResourceError error)

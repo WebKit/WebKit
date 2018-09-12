@@ -27,6 +27,7 @@
 #include <WebCore/Image.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
+#include <WebCore/SharedBuffer.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>

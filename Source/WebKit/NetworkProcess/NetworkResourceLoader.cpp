@@ -37,6 +37,7 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
 #include "SessionTracker.h"
+#include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebPageMessages.h"
@@ -739,21 +740,17 @@ void NetworkResourceLoader::bufferingTimerFired()
     if (m_bufferedData->isEmpty())
         return;
 
-    IPC::SharedBufferDataReference dataReference(m_bufferedData.get());
-    size_t encodedLength = m_bufferedDataEncodedDataLength;
+    send(Messages::WebResourceLoader::DidReceiveData({ *m_bufferedData }, m_bufferedDataEncodedDataLength));
 
     m_bufferedData = SharedBuffer::create();
     m_bufferedDataEncodedDataLength = 0;
-
-    send(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedLength));
 }
 
 void NetworkResourceLoader::sendBuffer(SharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(!isSynchronous());
 
-    IPC::SharedBufferDataReference dataReference(&buffer);
-    send(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
+    send(Messages::WebResourceLoader::DidReceiveData({ buffer }, encodedDataLength));
 }
 
 void NetworkResourceLoader::tryStoreAsCacheEntry()

@@ -23,12 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIData_h
-#define APIData_h
+#pragma once
 
 #include "APIObject.h"
 #include "DataReference.h"
 #include <wtf/Forward.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+#endif
 
 namespace IPC {
 class Decoder;
@@ -105,5 +108,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APIData_h

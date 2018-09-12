@@ -1,3 +1,46 @@
+2018-09-12  Alex Christensen  <achristensen@webkit.org>
+
+        Make IPC::SharedBufferDataReference a type that decodes into but does not inherit from IPC::DataReference
+        https://bugs.webkit.org/show_bug.cgi?id=189519
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        (WebKit::NetworkResourceLoader::sendBuffer):
+        * Platform/IPC/DataReference.cpp:
+        (IPC::SharedBufferDataReference::encode const): Deleted.
+        * Platform/IPC/DataReference.h:
+        (IPC::SharedBufferDataReference::SharedBufferDataReference): Deleted.
+        * Platform/IPC/HandleMessage.h:
+        * Platform/IPC/SharedBufferDataReference.h: Added.
+        (IPC::SharedBufferDataReference::SharedBufferDataReference):
+        (IPC::SharedBufferDataReference::encode const):
+        * Scripts/webkit/messages.py:
+        * Shared/API/APIData.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::storeDerivedDataToCache):
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveBlobChunk):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerAttachmentIdentifier):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getContentsAsMHTMLData):
+        (WebKit::WebPage::getSelectionAsWebArchiveData):
+        (WebKit::WebPage::getMainResourceDataOfFrame):
+        (WebKit::WebPage::getResourceDataFromFrame):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit::WebPage::drawPagesToPDF):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-09-11  Dean Jackson  <dino@apple.com>
 
         Header parsing for experimental and internal debug features

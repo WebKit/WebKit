@@ -41,14 +41,4 @@ bool DataReference::decode(Decoder& decoder, DataReference& dataReference)
     return decoder.decodeVariableLengthByteArray(dataReference);
 }
 
-void SharedBufferDataReference::encode(Encoder& encoder) const
-{
-    uint64_t bufferSize = static_cast<uint64_t>(m_buffer->size());
-    encoder.reserve(bufferSize + sizeof(uint64_t));
-    encoder << bufferSize;
-
-    for (const auto& element : *m_buffer)
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(element.segment->data()), element.segment->size(), 1);
-}
-
 } // namespace IPC

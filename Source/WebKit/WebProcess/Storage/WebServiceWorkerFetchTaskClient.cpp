@@ -30,6 +30,7 @@
 
 #include "DataReference.h"
 #include "FormDataReference.h"
+#include "SharedBufferDataReference.h"
 #include "StorageProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -66,8 +67,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
 {
     if (!m_connection)
         return;
-    IPC::SharedBufferDataReference dataReference { buffer.ptr() };
-    m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, dataReference, static_cast<int64_t>(buffer->size()) }, 0);
+    m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, { buffer }, static_cast<int64_t>(buffer->size()) }, 0);
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&& formData)
@@ -107,8 +107,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveBlobChunk(const char* data, size
     if (!m_connection)
         return;
 
-    IPC::DataReference dataReference { reinterpret_cast<const uint8_t*>(data), size };
-    m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, dataReference, static_cast<int64_t>(size) }, 0);
+    m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, { reinterpret_cast<const uint8_t*>(data), size }, static_cast<int64_t>(size) }, 0);
 }
 
 void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()

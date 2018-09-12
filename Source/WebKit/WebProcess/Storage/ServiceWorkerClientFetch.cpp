@@ -37,6 +37,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
