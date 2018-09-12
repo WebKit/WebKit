@@ -74,6 +74,7 @@ WEBCORE_EXPORT
 @property BOOL allowsPictureInPicturePlayback;
 @property (getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property BOOL canTogglePictureInPicture;
+- (void)togglePictureInPicture;
 
 - (AVTouchBarMediaSelectionOption *)currentAudioTouchBarMediaSelectionOption;
 - (void)setCurrentAudioTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;

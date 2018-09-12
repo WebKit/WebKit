@@ -337,13 +337,11 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelecti
     return NO;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 - (void)togglePictureInPicture
 {
     if (_playbackSessionInterfaceMac && _playbackSessionInterfaceMac->playbackSessionModel())
         _playbackSessionInterfaceMac->playbackSessionModel()->togglePictureInPicture();
 }
-#endif
 
 IGNORE_CLANG_WARNINGS_END
 

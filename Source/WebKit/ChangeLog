@@ -1,3 +1,33 @@
+2018-09-10  Matt Rajca  <mrajca@apple.com>
+
+        Expose a few WebPlaybackControlsManager-driven PIP APIs to clients
+        https://bugs.webkit.org/show_bug.cgi?id=189478
+        <rdar://problem/44312650>
+
+        Reviewed by Eric Carlson.
+
+        This patch exposes APIs necessary to toggle PIP and query its status from clients of WKWebView.
+        The existing PIP test has been updated to use the new APIs instead of simulating mouse clicks.
+        I also increased the size of the video element in the test page so it gets picked up by the
+        main content heuristics.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateMediaPlaybackControlsManager]): Create a media playback controls manager if necessary.
+        (-[WKWebView _isPictureInPictureActive]): Return true if the "active" media element is in PIP.
+        (-[WKWebView _togglePictureInPicture]): Toggle PIP on the "active" media element.
+        (-[WKWebView _canTogglePictureInPicture]): Renamed from...
+        (-[WKWebView _canTogglePictureInPictureForTesting]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::isPictureInPictureActive): Return true if the "active" media element is in PIP.
+        (WebKit::WebViewImpl::togglePictureInPicture): Toggle PIP on the "active" media element.
+        (WebKit::WebViewImpl::updateMediaPlaybackControlsManager): Let clients create a playback
+         controls manager even when there is no Touch Bar present.
+        (WebKit::WebViewImpl::updateMediaTouchBar): Extract some code into a helper method.
+        (WebKit::WebViewImpl::canTogglePictureInPicture): Renamed from...
+        (WebKit::WebViewImpl::canTogglePictureInPictureForTesting):
+
 2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] error: non-constant-expression cannot be narrowed from type 'int' to 'SHORT'

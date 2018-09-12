@@ -114,7 +114,7 @@ namespace TestWebKitAPI {
 TEST(PictureInPicture, WKUIDelegate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 640, 480) configuration:configuration.get()]);
     [configuration preferences]._fullScreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
@@ -139,20 +139,36 @@ TEST(PictureInPicture, WKUIDelegate)
     hasVideoInPictureInPictureValue = false;
     hasVideoInPictureInPictureCalled = false;
 
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    while (![webView _canTogglePictureInPicture])
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+
+    ASSERT_FALSE([webView _isPictureInPictureActive]);
+    [webView _togglePictureInPicture];
+#else
     NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
     [webView mouseDown:event];
+#endif
+
     TestWebKitAPI::Util::run(&hasVideoInPictureInPictureCalled);
     ASSERT_TRUE(hasVideoInPictureInPictureValue);
 
     // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
 
-#if HAVE(TOUCH_BAR)
-    ASSERT_TRUE([webView _canTogglePictureInPictureForTesting]);
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    ASSERT_TRUE([webView _isPictureInPictureActive]);
+    ASSERT_TRUE([webView _canTogglePictureInPicture]);
 #endif
 
     hasVideoInPictureInPictureCalled = false;
+
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    [webView _togglePictureInPicture];
+#else
     [webView mouseDown:event];
+#endif
+
     TestWebKitAPI::Util::run(&hasVideoInPictureInPictureCalled);
     ASSERT_FALSE(hasVideoInPictureInPictureValue);
 }
@@ -178,7 +194,7 @@ TEST(PictureInPicture, AudioCannotTogglePictureInPicture)
     [webView evaluateJavaScript:@"play()" completionHandler:nil];
 
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    ASSERT_FALSE([webView _canTogglePictureInPictureForTesting]);
+    ASSERT_FALSE([webView _canTogglePictureInPicture]);
 }
 
 #endif // HAVE(TOUCH_BAR)

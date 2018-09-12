@@ -558,6 +558,10 @@ public:
     NSTouchBar *currentTouchBar() const { return m_currentTouchBar.get(); }
     NSCandidateListTouchBarItem *candidateListTouchBarItem() const;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    bool isPictureInPictureActive();
+    void togglePictureInPicture();
+    void updateMediaPlaybackControlsManager();
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     AVTouchBarScrubber *mediaPlaybackControlsView() const;
 #else
@@ -573,7 +577,7 @@ public:
     void updateTouchBarAndRefreshTextBarIdentifiers();
     void setIsCustomizingTouchBar(bool isCustomizingTouchBar) { m_isCustomizingTouchBar = isCustomizingTouchBar; };
 
-    bool canTogglePictureInPictureForTesting();
+    bool canTogglePictureInPicture();
 #endif // HAVE(TOUCH_BAR)
 
     bool beginBackSwipeForTesting();
