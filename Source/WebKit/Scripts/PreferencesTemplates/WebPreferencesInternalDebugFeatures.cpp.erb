@@ -94,6 +94,11 @@ bool WebPreferences::isFeatureEnabled(const API::InternalDebugFeature& feature) 
 
 void WebPreferences::setFeatureEnabled(const API::InternalDebugFeature& feature, bool value)
 {
+    setInternalDebugFeatureEnabledForKey(feature.key(), value);
+}
+
+void WebPreferences::setInternalDebugFeatureEnabledForKey(const String& key, bool value)
+{
     struct FeatureSetterMapping {
         const char* name;
         void (WebPreferences::*function) (const bool&);
@@ -111,14 +116,25 @@ void WebPreferences::setFeatureEnabled(const API::InternalDebugFeature& feature,
 <%- end -%>
     };
 
-    const String& key = feature.key();
-
     for (auto& setter : setters) {
         if (key == setter.name) {
             (this->*setter.function)(value);
             return;
         }
     }
+}
+
+void WebPreferences::resetAllInternalDebugFeatures()
+{
+<%- for @pref in @internalDebugFeatures do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+    set<%= @pref.name %>(<%= @pref.defaultValue %>);
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
 }
 
 }

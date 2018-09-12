@@ -697,7 +697,15 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     // Reset preferences
     WKPreferencesRef preferences = platformPreferences();
     WKPreferencesResetTestRunnerOverrides(preferences);
+
     WKPreferencesEnableAllExperimentalFeatures(preferences);
+    for (const auto& experimentalFeature : options.experimentalFeatures)
+        WKPreferencesSetExperimentalFeatureForKey(preferences, experimentalFeature.value, toWK(experimentalFeature.key).get());
+
+    WKPreferencesResetAllInternalDebugFeatures(preferences);
+    for (const auto& internalDebugFeature : options.internalDebugFeatures)
+        WKPreferencesSetInternalDebugFeatureForKey(preferences, internalDebugFeature.value, toWK(internalDebugFeature.key).get());
+
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
     WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, false);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
@@ -734,7 +742,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication);
     WKPreferencesSetIsSecureContextAttributeEnabled(preferences, options.enableIsSecureContextAttribute);
     WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(preferences, options.allowCrossOriginSubresourcesToAskForCredentials);
-    WKPreferencesSetWebAnimationsCSSIntegrationEnabled(preferences, options.enableWebAnimationsCSSIntegration);
     WKPreferencesSetColorFilterEnabled(preferences, options.enableColorFilter);
     WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(preferences, options.punchOutWhiteBackgroundsInDarkMode);
 
@@ -1177,6 +1184,17 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
         }
         auto key = pairString.substr(pairStart, equalsLocation - pairStart);
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
+
+        if (!key.rfind("experimental:")) {
+            key = key.substr(13);
+            testOptions.experimentalFeatures.add(String(key.c_str()), parseBooleanTestHeaderValue(value));
+        }
+
+        if (!key.rfind("internal:")) {
+            key = key.substr(9);
+            testOptions.internalDebugFeatures.add(String(key.c_str()), parseBooleanTestHeaderValue(value));
+        }
+
         if (key == "language")
             testOptions.overrideLanguages = String(value.c_str()).split(',');
         else if (key == "useThreadedScrolling")
@@ -1217,8 +1235,6 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.applicationManifest = parseStringTestHeaderValueAsRelativePath(value, pathOrURL);
         else if (key == "allowCrossOriginSubresourcesToAskForCredentials")
             testOptions.allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
-        else if (key == "enableWebAnimationsCSSIntegration")
-            testOptions.enableWebAnimationsCSSIntegration = parseBooleanTestHeaderValue(value);
         else if (key == "enableProcessSwapOnNavigation")
             testOptions.enableProcessSwapOnNavigation = parseBooleanTestHeaderValue(value);
         else if (key == "enableProcessSwapOnWindowOpen")

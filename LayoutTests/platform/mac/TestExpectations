@@ -1764,7 +1764,3 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 [ Mojave+ ] fast/gradients/conic-center-outside-box.html [ Pass ]
 [ Mojave+ ] fast/gradients/conic-extended-stops.html [ Pass ]
 [ Mojave+ ] fast/gradients/conic-from-angle.html [ Pass ]
-
-# Mark these as failing while Internal Debug Features default to off in WKTR
-imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Pass Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Pass Failure ]

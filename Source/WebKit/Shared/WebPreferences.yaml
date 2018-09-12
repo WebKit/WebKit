@@ -1142,11 +1142,11 @@ SpringTimingFunctionEnabled:
   category: experimental
 
 ConicGradientsEnabled:
-    type: bool
-    defaultValue: DEFAULT_CONIC_GRADIENT_ENABLED
-    humanReadableName: "CSS Conic Gradient"
-    humanReadableDescription: "Support for CSS Conic Gradients"
-    category: experimental
+  type: bool
+  defaultValue: DEFAULT_CONIC_GRADIENT_ENABLED
+  humanReadableName: "CSS Conic Gradient"
+  humanReadableDescription: "Support for CSS Conic Gradients"
+  category: experimental
 
 ImageBitmapOffscreenCanvasEnabled:
   type: bool

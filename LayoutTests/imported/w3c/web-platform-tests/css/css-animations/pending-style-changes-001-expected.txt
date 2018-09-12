@@ -1,4 +1,4 @@
 
-FAIL Animatable::getAnimations() should be able to see a style-created CSS animation immediately assert_equals: target.getAnimations() should include the CSS animation after animate class added. expected 1 but got 0
-FAIL Document::getAnimations() should be able to see a style-created CSS animation immediately assert_equals: document.getAnimations() should include the CSS animation after animate class added. expected 1 but got 0
+PASS Animatable::getAnimations() should be able to see a style-created CSS animation immediately 
+PASS Document::getAnimations() should be able to see a style-created CSS animation immediately 
 

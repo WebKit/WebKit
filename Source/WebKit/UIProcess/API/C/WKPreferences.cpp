@@ -63,6 +63,21 @@ void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef preferencesRef)
     toImpl(preferencesRef)->enableAllExperimentalFeatures();
 }
 
+void WKPreferencesSetExperimentalFeatureForKey(WKPreferencesRef preferencesRef, bool value, WKStringRef experimentalFeatureKey)
+{
+    toImpl(preferencesRef)->setExperimentalFeatureEnabledForKey(toWTFString(experimentalFeatureKey), value);
+}
+
+void WKPreferencesResetAllInternalDebugFeatures(WKPreferencesRef preferencesRef)
+{
+    toImpl(preferencesRef)->resetAllInternalDebugFeatures();
+}
+
+void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef preferencesRef, bool value, WKStringRef internalDebugFeatureKey)
+{
+    toImpl(preferencesRef)->setInternalDebugFeatureEnabledForKey(toWTFString(internalDebugFeatureKey), value);
+}
+
 void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferencesRef, bool javaScriptEnabled)
 {
     toImpl(preferencesRef)->setJavaScriptEnabled(javaScriptEnabled);

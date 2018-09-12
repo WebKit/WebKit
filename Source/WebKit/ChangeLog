@@ -1,3 +1,22 @@
+2018-09-11  Dean Jackson  <dino@apple.com>
+
+        Header parsing for experimental and internal debug features
+        https://bugs.webkit.org/show_bug.cgi?id=189486
+        <rdar://problem/44320618>
+
+        Reviewed by Tim Horton.
+
+        Provide key-based (string) access to experimental and internal features.
+
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetExperimentalFeatureForKey):
+        (WKPreferencesResetAllInternalDebugFeatures):
+        (WKPreferencesSetInternalDebugFeatureForKey):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/WebPreferences.h:
+
 2018-09-10  Matt Rajca  <mrajca@apple.com>
 
         Expose a few WebPlaybackControlsManager-driven PIP APIs to clients

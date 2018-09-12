@@ -94,6 +94,11 @@ bool WebPreferences::isFeatureEnabled(const API::ExperimentalFeature& feature) c
 
 void WebPreferences::setFeatureEnabled(const API::ExperimentalFeature& feature, bool value)
 {
+    setExperimentalFeatureEnabledForKey(feature.key(), value);
+}
+
+void WebPreferences::setExperimentalFeatureEnabledForKey(const String& key, bool value)
+{
     struct FeatureSetterMapping {
         const char* name;
         void (WebPreferences::*function) (const bool&);
@@ -111,8 +116,6 @@ void WebPreferences::setFeatureEnabled(const API::ExperimentalFeature& feature, 
 <%- end -%>
     };
 
-    const String& key = feature.key();
-    
     for (auto& setter : setters) {
         if (key == setter.name) {
             (this->*setter.function)(value);

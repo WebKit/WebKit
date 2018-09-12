@@ -58,6 +58,9 @@ typedef unsigned WKJavaScriptRuntimeFlagSet;
 WK_EXPORT WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef);
 
 WK_EXPORT void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef);
+WK_EXPORT void WKPreferencesSetExperimentalFeatureForKey(WKPreferencesRef, bool, WKStringRef);
+WK_EXPORT void WKPreferencesResetAllInternalDebugFeatures(WKPreferencesRef);
+WK_EXPORT void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef, bool, WKStringRef);
 
 // Defaults to kWKFontSmoothingLevelMedium.
 WK_EXPORT void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef, WKFontSmoothingLevel);

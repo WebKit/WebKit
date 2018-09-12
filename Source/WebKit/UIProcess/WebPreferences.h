@@ -67,11 +67,14 @@ public:
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
     bool isFeatureEnabled(const API::ExperimentalFeature&) const;
     void setFeatureEnabled(const API::ExperimentalFeature&, bool);
+    void setExperimentalFeatureEnabledForKey(const String&, bool);
     void enableAllExperimentalFeatures();
 
     static const Vector<RefPtr<API::Object>>& internalDebugFeatures();
     bool isFeatureEnabled(const API::InternalDebugFeature&) const;
     void setFeatureEnabled(const API::InternalDebugFeature&, bool);
+    void setInternalDebugFeatureEnabledForKey(const String&, bool);
+    void resetAllInternalDebugFeatures();
 
     // Exposed for WebKitTestRunner use only.
     void forceUpdate() { update(); }

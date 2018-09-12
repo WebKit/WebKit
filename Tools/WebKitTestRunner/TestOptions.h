@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
@@ -54,7 +56,6 @@ struct TestOptions {
     bool shouldShowTouches { false };
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
-    bool enableWebAnimationsCSSIntegration { false };
     bool enableProcessSwapOnNavigation { true };
     bool enableProcessSwapOnWindowOpen { false };
     bool enableColorFilter { false };
@@ -66,6 +67,8 @@ struct TestOptions {
     Vector<String> overrideLanguages;
     std::string applicationManifest;
     std::string jscOptions;
+    HashMap<String, bool> experimentalFeatures;
+    HashMap<String, bool> internalDebugFeatures;
 
     TestOptions(const std::string& pathOrURL);
 
@@ -92,7 +95,6 @@ struct TestOptions {
             || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr
             || applicationManifest != options.applicationManifest
             || allowCrossOriginSubresourcesToAskForCredentials != options.allowCrossOriginSubresourcesToAskForCredentials
-            || enableWebAnimationsCSSIntegration != options.enableWebAnimationsCSSIntegration
             || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
             || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
             || enableColorFilter != options.enableColorFilter
@@ -100,6 +102,12 @@ struct TestOptions {
             || jscOptions != options.jscOptions
             || runSingly != options.runSingly
             || checkForWorldLeaks != options.checkForWorldLeaks)
+            return false;
+
+        if (experimentalFeatures != options.experimentalFeatures)
+            return false;
+
+        if (internalDebugFeatures != options.internalDebugFeatures)
             return false;
 
         return true;
