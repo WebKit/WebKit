@@ -41,7 +41,11 @@ UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
 
 bool LibWebRTCProvider::webRTCAvailable()
 {
+#if USE(LIBWEBRTC) && USE(GSTREAMER)
     return true;
+#else
+    return false;
+#endif
 }
 
 #if USE(LIBWEBRTC) && USE(GSTREAMER)

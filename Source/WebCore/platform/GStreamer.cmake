@@ -36,7 +36,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp
         platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp
         platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
-        platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp
 
         platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp
         platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp
