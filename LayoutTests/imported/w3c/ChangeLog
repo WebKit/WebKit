@@ -1,3 +1,14 @@
+2018-09-12  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Implement rootMargin expansion
+        https://bugs.webkit.org/show_bug.cgi?id=189525
+
+        Reviewed by Simon Fraser.
+
+        Rebasline expectation for test that now passes.
+
+        * web-platform-tests/intersection-observer/root-margin-expected.txt:
+
 2018-09-11  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Update WPTs to the latest upstream version

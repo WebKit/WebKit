@@ -1,3 +1,23 @@
+2018-09-12  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Implement rootMargin expansion
+        https://bugs.webkit.org/show_bug.cgi?id=189525
+
+        Reviewed by Simon Fraser.
+
+        Expand the root intersection rectangle by the observer's rootMargin when computing
+        intersections.
+
+        Test: imported/w3c/web-platform-tests/intersection-observer/root-margin.html
+
+        * dom/Document.cpp:
+        (WebCore::expandRootBoundsWithRootMargin):
+        (WebCore::computeIntersectionRects):
+        * page/IntersectionObserver.h:
+        (WebCore::IntersectionObserver::rootMarginBox const):
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::expand):
+
 2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] error: non-constant-expression cannot be narrowed from type 'int' to 'SHORT'

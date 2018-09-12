@@ -72,6 +72,7 @@ public:
 
     Element* root() const { return m_root; }
     String rootMargin() const;
+    const LengthBox& rootMarginBox() const { return m_rootMargin; }
     const Vector<double>& thresholds() const { return m_thresholds; }
     const Vector<Element*> observationTargets() const { return m_observationTargets; }
 

@@ -7485,6 +7485,18 @@ void Document::removeIntersectionObserver(IntersectionObserver& observer)
     m_intersectionObservers.removeFirst(&observer);
 }
 
+static void expandRootBoundsWithRootMargin(FloatRect& localRootBounds, const LengthBox& rootMargin)
+{
+    FloatBoxExtent rootMarginFloatBox(
+        floatValueForLength(rootMargin.top(), localRootBounds.height()),
+        floatValueForLength(rootMargin.right(), localRootBounds.width()),
+        floatValueForLength(rootMargin.bottom(), localRootBounds.height()),
+        floatValueForLength(rootMargin.left(), localRootBounds.width())
+    );
+
+    localRootBounds.expand(rootMarginFloatBox);
+}
+
 static void computeIntersectionRects(FrameView& frameView, IntersectionObserver& observer, Element& target, FloatRect& absTargetRect, FloatRect& absIntersectionRect, FloatRect& absRootBounds)
 {
     // FIXME: Implement intersection computation for the cross-document case.
@@ -7495,7 +7507,6 @@ static void computeIntersectionRects(FrameView& frameView, IntersectionObserver&
     if (!targetRenderer)
         return;
 
-    // FIXME: Expand localRootBounds using the observer's rootMargin.
     FloatRect localRootBounds;
     RenderBlock* rootRenderer;
     if (observer.root()) {
@@ -7515,6 +7526,8 @@ static void computeIntersectionRects(FrameView& frameView, IntersectionObserver&
         rootRenderer = frameView.renderView();
         localRootBounds = frameView.layoutViewportRect();
     }
+
+    expandRootBoundsWithRootMargin(localRootBounds, observer.rootMarginBox());
 
     LayoutRect localTargetBounds;
     if (is<RenderBox>(*targetRenderer))
