@@ -1,3 +1,21 @@
+2018-09-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Complete support for Paste as Quotation
+        https://bugs.webkit.org/show_bug.cgi?id=189504
+
+        Reviewed by Wenson Hsieh.
+
+        Took a few existing tests of the Paste as Quotation behavior and modified them to use the
+        new PasteAsQuotation command. The only difference in the results is that the blockquote has
+        the "type" attribute set to "cite".
+
+        * editing/pasteboard/4930986-1-paste-as-quotation-expected.txt: Added.
+        * editing/pasteboard/4930986-1-paste-as-quotation.html: Added.
+        * editing/pasteboard/4930986-2-paste-as-quotation-expected.txt: Added.
+        * editing/pasteboard/4930986-2-paste-as-quotation.html: Added.
+        * editing/pasteboard/4930986-3-paste-as-quotation-expected.txt: Added.
+        * editing/pasteboard/4930986-3-paste-as-quotation.html: Added.
+
 2018-09-12  Sihui Liu  <sihui_liu@apple.com>
 
         Move IndexedDB to Network Process

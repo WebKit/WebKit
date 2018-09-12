@@ -291,4 +291,14 @@ RefPtr<SharedBuffer> Editor::dataInRTFFormat(NSAttributedString *string)
     return nullptr;
 }
 
+// FIXME: Should give this function a name that makes it clear it adds resources to the document loader as a side effect.
+// Or refactor so it does not do that.
+RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range& context, bool allowPlainText, bool& chosePlainText)
+{
+    WebContentReader reader(m_frame, context, allowPlainText);
+    pasteboard.read(reader);
+    chosePlainText = reader.madeFragmentFromPlainText;
+    return WTFMove(reader.fragment);
+}
+
 }

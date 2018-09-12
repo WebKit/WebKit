@@ -2624,7 +2624,10 @@ static const SelectorNameMap& selectorExceptionMap()
         { @selector(pageUp:), "MovePageUp"_s },
         { @selector(pageUpAndModifySelection:), "MovePageUpAndModifySelection"_s },
         { @selector(scrollPageDown:), "ScrollPageForward"_s },
-        { @selector(scrollPageUp:), "ScrollPageBackward"_s }
+        { @selector(scrollPageUp:), "ScrollPageBackward"_s },
+#if WK_API_ENABLED
+        { @selector(_pasteAsQuotation:), "PasteAsQuotation"_s },
+#endif
     };
 
     for (auto& name : names)

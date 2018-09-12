@@ -1387,6 +1387,8 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
     FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW)
 
+    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(_pasteAsQuotation)
+
     #undef FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW
 
     return [super canPerformAction:action withSender:sender];
@@ -1399,6 +1401,8 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
             return [_contentView targetForActionForWebView:action withSender:sender];
 
     FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW)
+
+    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_pasteAsQuotation)
 
     #undef FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW
 
@@ -4544,6 +4548,16 @@ WEBCORE_COMMAND(yankAndSelect)
     return wrapper(attachment);
 #else
     return nil;
+#endif
+}
+
+- (void)_pasteAsQuotation:(id)sender
+{
+#if PLATFORM(MAC)
+    _impl->executeEditCommandForSelector(_cmd);
+#else
+    if (self.usesStandardContentView)
+        [_contentView _pasteAsQuotationForWebView:sender];
 #endif
 }
 

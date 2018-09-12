@@ -197,6 +197,11 @@
                                     <action selector="paste:" target="-1" id="226"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Paste as Quotation" keyEquivalent="V" id="8Ng-DB-z0Y">
+                                <connections>
+                                    <action selector="_pasteAsQuotation:" target="-1" id="6Mn-XC-2qO"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Paste and Match Style" keyEquivalent="V" id="485">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>

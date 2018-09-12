@@ -1,3 +1,29 @@
+2018-09-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Complete support for Paste as Quotation
+        https://bugs.webkit.org/show_bug.cgi?id=189504
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView canPerformAction:withSender:]): Handle _pasteAsQuotation:. It’s not included
+          in FOR_EACH_WKCONTENTVIEW_ACTION, because it’s declared and implemented in the WKPrivate
+          category. If we add more actions in the category, it could make sense to fold them into
+          a new FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION.
+        (-[WKWebView targetForAction:withSender:]): Handle _pasteAsQuotation:.
+        (-[WKWebView _pasteAsQuotation:]): Send to the WebViewImpl or the WKContentView.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Declared a new _pasteAsQuotation: action.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::selectorExceptionMap): Added a custom mapping from the new selector to the
+          PasteAsQuotation command.
+
+        * UIProcess/ios/WKContentViewInteraction.h: Declare methods for the new action.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+          Forward _pasteAsQuotation: to the WKWebView so that clients get a chance to override its
+          behavior.
+        (-[WKContentView _pasteAsQuotationForWebView:]): Send the command to the page.
+
 2018-09-12  Sihui Liu  <sihui_liu@apple.com>
 
         Move IndexedDB to Network Process

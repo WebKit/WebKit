@@ -129,6 +129,12 @@ public:
     explicit Editor(Frame&);
     ~Editor();
 
+    enum class PasteOption : uint8_t {
+        AllowPlainText = 1 << 0,
+        IgnoreMailBlockquote = 1 << 1,
+        AsQuotation = 1 << 2,
+    };
+
     WEBCORE_EXPORT EditorClient* client() const;
     WEBCORE_EXPORT TextCheckerClient* textChecker() const;
 
@@ -158,6 +164,7 @@ public:
     WEBCORE_EXPORT void paste();
     void paste(Pasteboard&);
     WEBCORE_EXPORT void pasteAsPlainText();
+    void pasteAsQuotation();
     WEBCORE_EXPORT void performDelete();
 
     WEBCORE_EXPORT void copyURL(const URL&, const String& title);
@@ -519,8 +526,10 @@ private:
     bool canDeleteRange(Range*) const;
     bool canSmartReplaceWithPasteboard(Pasteboard&);
     void pasteAsPlainTextWithPasteboard(Pasteboard&);
-    void pasteWithPasteboard(Pasteboard*, bool allowPlainText, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
+    void pasteWithPasteboard(Pasteboard*, OptionSet<PasteOption>);
     String plainTextFromPasteboard(const PasteboardPlainText&);
+
+    void quoteFragmentForPasting(DocumentFragment&);
 
     void revealSelectionAfterEditingOperation(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);

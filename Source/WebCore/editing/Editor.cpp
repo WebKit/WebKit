@@ -54,12 +54,14 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLAttachmentElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLCollection.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLQuoteElement.h"
 #include "HTMLSpanElement.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
@@ -327,6 +329,7 @@ enum class ClipboardEventKind {
     Cut,
     Paste,
     PasteAsPlainText,
+    PasteAsQuotation,
     BeforeCopy,
     BeforeCut,
     BeforePaste,
@@ -341,6 +344,7 @@ static AtomicString eventNameForClipboardEvent(ClipboardEventKind kind)
         return eventNames().cutEvent;
     case ClipboardEventKind::Paste:
     case ClipboardEventKind::PasteAsPlainText:
+    case ClipboardEventKind::PasteAsQuotation:
         return eventNames().pasteEvent;
     case ClipboardEventKind::BeforeCopy:
         return eventNames().beforecopyEvent;
@@ -369,6 +373,7 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
         }
         FALLTHROUGH;
     case ClipboardEventKind::Paste:
+    case ClipboardEventKind::PasteAsQuotation:
         return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::Readonly, Pasteboard::createForCopyAndPaste());
     case ClipboardEventKind::BeforeCopy:
     case ClipboardEventKind::BeforeCut:
@@ -1404,7 +1409,7 @@ void Editor::paste(Pasteboard& pasteboard)
     updateMarkersForWordsAffectedByEditing(false);
     ResourceCacheValidationSuppressor validationSuppressor(document().cachedResourceLoader());
     if (m_frame.selection().selection().isContentRichlyEditable())
-        pasteWithPasteboard(&pasteboard, true);
+        pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
     else
         pasteAsPlainTextWithPasteboard(pasteboard);
 }
@@ -1417,6 +1422,40 @@ void Editor::pasteAsPlainText()
         return;
     updateMarkersForWordsAffectedByEditing(false);
     pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste());
+}
+
+void Editor::pasteAsQuotation()
+{
+    if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::PasteAsQuotation))
+        return;
+    if (!canPaste())
+        return;
+    updateMarkersForWordsAffectedByEditing(false);
+    ResourceCacheValidationSuppressor validationSuppressor(document().cachedResourceLoader());
+    auto pasteboard = Pasteboard::createForCopyAndPaste();
+    if (m_frame.selection().selection().isContentRichlyEditable())
+        pasteWithPasteboard(pasteboard.get(), { PasteOption::AllowPlainText, PasteOption::AsQuotation });
+    else
+        pasteAsPlainTextWithPasteboard(*pasteboard);
+}
+
+void Editor::quoteFragmentForPasting(DocumentFragment& fragment)
+{
+    auto blockQuote = HTMLQuoteElement::create(blockquoteTag, document());
+    blockQuote->setAttributeWithoutSynchronization(typeAttr, AtomicString("cite"));
+    blockQuote->setAttributeWithoutSynchronization(classAttr, AtomicString(ApplePasteAsQuotation));
+
+    auto childNode = fragment.firstChild();
+
+    if (childNode) {
+        while (childNode) {
+            blockQuote->appendChild(*childNode);
+            childNode = fragment.firstChild();
+        }
+    } else
+        blockQuote->appendChild(HTMLBRElement::create(document()));
+
+    fragment.appendChild(blockQuote);
 }
 
 void Editor::performDelete()

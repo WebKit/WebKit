@@ -1,3 +1,12 @@
+2018-09-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Complete support for Paste as Quotation
+        https://bugs.webkit.org/show_bug.cgi?id=189504
+
+        Reviewed by Wenson Hsieh.
+
+        * MiniBrowser/mac/MainMenu.xib: Added a Paste as Quotation command in the Edit menu.
+
 2018-09-12  Sihui Liu  <sihui_liu@apple.com>
 
         Move IndexedDB to Network Process

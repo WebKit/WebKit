@@ -2161,6 +2161,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
+FORWARD_ACTION_TO_WKWEBVIEW(_pasteAsQuotation)
+
 #undef FORWARD_ACTION_TO_WKWEBVIEW
 
 - (void)_lookupForWebView:(id)sender
@@ -2460,6 +2462,11 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 - (void)pasteForWebView:(id)sender
 {
     _page->executeEditCommand("paste"_s);
+}
+
+- (void)_pasteAsQuotationForWebView:(id)sender
+{
+    _page->executeEditCommand("PasteAsQuotation"_s);
 }
 
 - (void)selectForWebView:(id)sender
