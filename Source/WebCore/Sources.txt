@@ -2863,6 +2863,8 @@ JSRTCDTMFSender.cpp
 JSRTCDTMFToneChangeEvent.cpp
 JSRTCDataChannel.cpp
 JSRTCDataChannelEvent.cpp
+JSRTCDegradationPreference.cpp
+JSRTCDtxStatus.cpp
 JSRTCIceCandidate.cpp
 JSRTCIceConnectionState.cpp
 JSRTCIceGatheringState.cpp
@@ -2874,7 +2876,13 @@ JSRTCOfferOptions.cpp
 JSRTCPeerConnection.cpp
 JSRTCPeerConnectionIceEvent.cpp
 JSRTCPeerConnectionState.cpp
+JSRTCPriorityType.cpp
+JSRTCRtpCodecParameters.cpp
+JSRTCRtpEncodingParameters.cpp
+JSRTCRtpFecParameters.cpp
+JSRTCRtpHeaderExtensionParameters.cpp
 JSRTCRtpParameters.cpp
+JSRTCRtpRtxParameters.cpp
 JSRTCRtpReceiver.cpp
 JSRTCRtpSender.cpp
 JSRTCRtpTransceiver.cpp

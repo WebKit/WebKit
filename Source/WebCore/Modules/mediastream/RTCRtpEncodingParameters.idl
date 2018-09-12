@@ -27,11 +27,15 @@
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
     JSGenerateToJSObject,
-] dictionary RTCRtpParameters {
-    DOMString transactionId;
-    sequence<RTCRtpEncodingParameters> encodings;
-    sequence<RTCRtpHeaderExtensionParameters> headerExtensions;
-    // FIXME: Add RTCRtcpParameters rtcp;
-    sequence<RTCRtpCodecParameters> codecs;
-    RTCDegradationPreference degradationPreference = "balanced";
+] dictionary RTCRtpEncodingParameters {
+    unsigned long ssrc;
+    RTCRtpRtxParameters rtx;
+    RTCRtpFecParameters fec;
+    RTCDtxStatus dtx;
+    boolean active;
+    RTCPriorityType priority;
+    unsigned long maxBitrate;
+    unsigned long maxFramerate;
+    DOMString rid;
+    double scaleResolutionDownBy = 1;
 };

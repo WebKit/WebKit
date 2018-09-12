@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,23 +27,25 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCDegradationPreference.h"
-#include "RTCRtpCodecParameters.h"
-#include "RTCRtpEncodingParameters.h"
-#include "RTCRtpHeaderExtensionParameters.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "RTCDtxStatus.h"
+#include "RTCPriorityType.h"
+#include "RTCRtpFecParameters.h"
+#include "RTCRtpRtxParameters.h"
 
 namespace WebCore {
 
-struct RTCRtpParameters {
-    String transactionId;
-    Vector<RTCRtpEncodingParameters> encodings;
-    Vector<RTCRtpHeaderExtensionParameters> headerExtensions;
-    Vector<RTCRtpCodecParameters> codecs;
-    RTCDegradationPreference degradationPreference { RTCDegradationPreference::Balanced };
+struct RTCRtpEncodingParameters {
+    unsigned long ssrc { 0 };
+    RTCRtpRtxParameters rtx;
+    RTCRtpFecParameters fec;
+    std::optional<RTCDtxStatus> dtx;
+    bool active { false};
+    RTCPriorityType priority { RTCPriorityType::Medium };
+    unsigned long maxBitrate { 0 };
+    unsigned long maxFramerate { 0 };
+    String rid;
+    double scaleResolutionDownBy { 1 };
 };
-
 
 } // namespace WebCore
 

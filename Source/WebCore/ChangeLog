@@ -1,3 +1,44 @@
+2018-09-12  Youenn Fablet  <youenn@apple.com>
+
+        Split RTCRtpParameters idl and header file
+        https://bugs.webkit.org/show_bug.cgi?id=189524
+
+        Reviewed by Eric Carlson.
+
+        This will be easier to manage and will allow to more easily introduce sender/receiver parameters.
+        No change of behavior.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/RTCDegradationPreference.h: Copied from Source/WebCore/Modules/mediastream/RTCRtpParameters.h.
+        * Modules/mediastream/RTCDegradationPreference.idl: Added.
+        * Modules/mediastream/RTCDtxStatus.h: Copied from Source/WebCore/Modules/mediastream/RTCRtpParameters.h.
+        * Modules/mediastream/RTCDtxStatus.idl: Added.
+        * Modules/mediastream/RTCPriorityType.h: Copied from Source/WebCore/Modules/mediastream/RTCRtpParameters.h.
+        * Modules/mediastream/RTCPriorityType.idl: Added.
+        * Modules/mediastream/RTCRtpCodecParameters.h: Copied from Source/WebCore/Modules/mediastream/RTCRtpParameters.h.
+        * Modules/mediastream/RTCRtpCodecParameters.idl: Added.
+        * Modules/mediastream/RTCRtpEncodingParameters.h: Copied from Source/WebCore/Modules/mediastream/RTCRtpParameters.h.
+        * Modules/mediastream/RTCRtpEncodingParameters.idl: Added.
+        * Modules/mediastream/RTCRtpFecParameters.h: Copied from Source/WebCore/Modules/mediastream/RTCRtpParameters.h.
+        * Modules/mediastream/RTCRtpFecParameters.idl: Added.
+        * Modules/mediastream/RTCRtpHeaderExtensionParameters.h: Copied from Source/WebCore/Modules/mediastream/RTCRtpParameters.h.
+        * Modules/mediastream/RTCRtpHeaderExtensionParameters.idl: Added.
+        * Modules/mediastream/RTCRtpParameters.h:
+        * Modules/mediastream/RTCRtpParameters.idl:
+        * Modules/mediastream/RTCRtpRtxParameters.h: Copied from Source/WebCore/Modules/mediastream/RTCRtpParameters.h.
+        * Modules/mediastream/RTCRtpRtxParameters.idl: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCEncodingParameters):
+        (WebCore::fromRTCEncodingParameters):
+        (WebCore::toRTCHeaderExtensionParameters):
+        (WebCore::fromRTCHeaderExtensionParameters):
+        (WebCore::toRTCCodecParameters):
+        (WebCore::toRTCRtpParameters):
+        (WebCore::fromRTCRtpParameters):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-09-12  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Implement rootMargin expansion

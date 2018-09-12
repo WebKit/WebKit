@@ -25,13 +25,8 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
-    JSGenerateToJSObject,
-] dictionary RTCRtpParameters {
-    DOMString transactionId;
-    sequence<RTCRtpEncodingParameters> encodings;
-    sequence<RTCRtpHeaderExtensionParameters> headerExtensions;
-    // FIXME: Add RTCRtcpParameters rtcp;
-    sequence<RTCRtpCodecParameters> codecs;
-    RTCDegradationPreference degradationPreference = "balanced";
+] enum RTCDegradationPreference {
+    "maintain-framerate",
+    "maintain-resolution",
+    "balanced"
 };

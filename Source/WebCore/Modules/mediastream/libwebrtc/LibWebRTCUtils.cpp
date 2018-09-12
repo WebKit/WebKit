@@ -41,9 +41,9 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-static inline RTCRtpParameters::EncodingParameters toRTCEncodingParameters(const webrtc::RtpEncodingParameters& rtcParameters)
+static inline RTCRtpEncodingParameters toRTCEncodingParameters(const webrtc::RtpEncodingParameters& rtcParameters)
 {
-    RTCRtpParameters::EncodingParameters parameters;
+    RTCRtpEncodingParameters parameters;
 
     if (rtcParameters.ssrc)
         parameters.ssrc = *rtcParameters.ssrc;
@@ -54,10 +54,10 @@ static inline RTCRtpParameters::EncodingParameters toRTCEncodingParameters(const
     if (rtcParameters.dtx) {
         switch (*rtcParameters.dtx) {
         case webrtc::DtxStatus::DISABLED:
-            parameters.dtx = RTCRtpParameters::DtxStatus::Disabled;
+            parameters.dtx = RTCDtxStatus::Disabled;
             break;
         case webrtc::DtxStatus::ENABLED:
-            parameters.dtx = RTCRtpParameters::DtxStatus::Enabled;
+            parameters.dtx = RTCDtxStatus::Enabled;
         }
     }
     parameters.active = rtcParameters.active;
@@ -72,16 +72,16 @@ static inline RTCRtpParameters::EncodingParameters toRTCEncodingParameters(const
     return parameters;
 }
 
-static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCRtpParameters::EncodingParameters& parameters)
+static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCRtpEncodingParameters& parameters)
 {
     webrtc::RtpEncodingParameters rtcParameters;
 
     if (parameters.dtx) {
         switch (*parameters.dtx) {
-        case RTCRtpParameters::DtxStatus::Disabled:
+        case RTCDtxStatus::Disabled:
             rtcParameters.dtx = webrtc::DtxStatus::DISABLED;
             break;
-        case RTCRtpParameters::DtxStatus::Enabled:
+        case RTCDtxStatus::Enabled:
             rtcParameters.dtx = webrtc::DtxStatus::ENABLED;
         }
     }
@@ -97,9 +97,9 @@ static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCR
     return rtcParameters;
 }
 
-static inline RTCRtpParameters::HeaderExtensionParameters toRTCHeaderExtensionParameters(const webrtc::RtpHeaderExtensionParameters& rtcParameters)
+static inline RTCRtpHeaderExtensionParameters toRTCHeaderExtensionParameters(const webrtc::RtpHeaderExtensionParameters& rtcParameters)
 {
-    RTCRtpParameters::HeaderExtensionParameters parameters;
+    RTCRtpHeaderExtensionParameters parameters;
 
     parameters.uri = fromStdString(rtcParameters.uri);
     parameters.id = rtcParameters.id;
@@ -107,7 +107,7 @@ static inline RTCRtpParameters::HeaderExtensionParameters toRTCHeaderExtensionPa
     return parameters;
 }
 
-static inline webrtc::RtpHeaderExtensionParameters fromRTCHeaderExtensionParameters(const RTCRtpParameters::HeaderExtensionParameters& parameters)
+static inline webrtc::RtpHeaderExtensionParameters fromRTCHeaderExtensionParameters(const RTCRtpHeaderExtensionParameters& parameters)
 {
     webrtc::RtpHeaderExtensionParameters rtcParameters;
 
@@ -117,9 +117,9 @@ static inline webrtc::RtpHeaderExtensionParameters fromRTCHeaderExtensionParamet
     return rtcParameters;
 }
 
-static inline RTCRtpParameters::CodecParameters toRTCCodecParameters(const webrtc::RtpCodecParameters& rtcParameters)
+static inline RTCRtpCodecParameters toRTCCodecParameters(const webrtc::RtpCodecParameters& rtcParameters)
 {
-    RTCRtpParameters::CodecParameters parameters;
+    RTCRtpCodecParameters parameters;
 
     parameters.payloadType = rtcParameters.payload_type;
     parameters.mimeType = fromStdString(rtcParameters.mime_type());
@@ -147,13 +147,13 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
     // FIXME: Support DegradationPreference::DISABLED.
     case webrtc::DegradationPreference::DISABLED:
     case webrtc::DegradationPreference::MAINTAIN_FRAMERATE:
-        parameters.degradationPreference = RTCRtpParameters::DegradationPreference::MaintainFramerate;
+        parameters.degradationPreference = RTCDegradationPreference::MaintainFramerate;
         break;
     case webrtc::DegradationPreference::MAINTAIN_RESOLUTION:
-        parameters.degradationPreference = RTCRtpParameters::DegradationPreference::MaintainResolution;
+        parameters.degradationPreference = RTCDegradationPreference::MaintainResolution;
         break;
     case webrtc::DegradationPreference::BALANCED:
-        parameters.degradationPreference = RTCRtpParameters::DegradationPreference::Balanced;
+        parameters.degradationPreference = RTCDegradationPreference::Balanced;
         break;
     };
     return parameters;
@@ -171,13 +171,13 @@ webrtc::RtpParameters fromRTCRtpParameters(const RTCRtpParameters& parameters)
     // Codecs parameters are readonly
 
     switch (parameters.degradationPreference) {
-    case RTCRtpParameters::DegradationPreference::MaintainFramerate:
+    case RTCDegradationPreference::MaintainFramerate:
         rtcParameters.degradation_preference = webrtc::DegradationPreference::MAINTAIN_FRAMERATE;
         break;
-    case RTCRtpParameters::DegradationPreference::MaintainResolution:
+    case RTCDegradationPreference::MaintainResolution:
         rtcParameters.degradation_preference = webrtc::DegradationPreference::MAINTAIN_RESOLUTION;
         break;
-    case RTCRtpParameters::DegradationPreference::Balanced:
+    case RTCDegradationPreference::Balanced:
         rtcParameters.degradation_preference = webrtc::DegradationPreference::BALANCED;
         break;
     }

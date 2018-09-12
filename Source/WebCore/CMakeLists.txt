@@ -306,6 +306,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCDTMFToneChangeEvent.idl
     Modules/mediastream/RTCDataChannel.idl
     Modules/mediastream/RTCDataChannelEvent.idl
+    Modules/mediastream/RTCDegradationPreference.idl
+    Modules/mediastream/RTCDtxStatus.idl
     Modules/mediastream/RTCIceCandidate.idl
     Modules/mediastream/RTCIceConnectionState.idl
     Modules/mediastream/RTCIceGatheringState.idl
@@ -317,8 +319,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCPeerConnection.idl
     Modules/mediastream/RTCPeerConnectionIceEvent.idl
     Modules/mediastream/RTCPeerConnectionState.idl
+    Modules/mediastream/RTCPriorityType.idl
+    Modules/mediastream/RTCRtpCodecParameters.idl
+    Modules/mediastream/RTCRtpEncodingParameters.idl
+    Modules/mediastream/RTCRtpFecParameters.idl
+    Modules/mediastream/RTCRtpHeaderExtensionParameters.idl
     Modules/mediastream/RTCRtpParameters.idl
     Modules/mediastream/RTCRtpReceiver.idl
+    Modules/mediastream/RTCRtpRtxParameters.idl
     Modules/mediastream/RTCRtpSender.idl
     Modules/mediastream/RTCRtpTransceiver.idl
     Modules/mediastream/RTCRtpTransceiverDirection.idl
