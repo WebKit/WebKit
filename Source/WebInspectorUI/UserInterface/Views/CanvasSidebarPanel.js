@@ -159,12 +159,49 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         this._selectedRecordingActionIndex = this._recording.actions.indexOf(action);
     }
 
+    updateRepresentedObjects()
+    {
+        let objects = this.contentBrowser.currentRepresentedObjects;
+
+        let canvas = objects.find((object) => object instanceof WI.Canvas);
+        if (canvas) {
+            this.canvas = canvas;
+            return;
+        }
+
+        let shaderProgram = objects.find((object) => object instanceof WI.ShaderProgram);
+        if (shaderProgram) {
+            this.canvas = shaderProgram.canvas;
+            let treeElement = this._canvasTreeOutline.findTreeElement(shaderProgram);
+            const omitFocus = false;
+            const selectedByUser = false;
+            treeElement.revealAndSelect(omitFocus, selectedByUser);
+            return;
+        }
+
+        let recording = objects.find((object) => object instanceof WI.Recording);
+        if (recording) {
+            this.canvas = recording.source;
+
+            this.recording = recording;
+
+            let recordingAction = objects.find((object) => object instanceof WI.RecordingAction);
+            if (recordingAction !== recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
+                this.action = recordingAction;
+
+            return;
+        }
+
+        this.canvas = null;
+        this.recording = null;
+    }
+
     shown()
     {
         super.shown();
 
-        this.contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this._currentRepresentedObjectsDidChange, this);
-        this._currentRepresentedObjectsDidChange();
+        this.contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this.updateRepresentedObjects, this);
+        this.updateRepresentedObjects();
     }
 
     hidden()
@@ -252,41 +289,6 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             let singleFrame = event.data.nativeEvent.shiftKey;
             WI.canvasManager.startRecording(this._canvas, singleFrame);
         }
-    }
-
-    _currentRepresentedObjectsDidChange(event)
-    {
-        let objects = this.contentBrowser.currentRepresentedObjects;
-
-        let canvas = objects.find((object) => object instanceof WI.Canvas);
-        if (canvas) {
-            this.canvas = canvas;
-            return;
-        }
-
-        let shaderProgram = objects.find((object) => object instanceof WI.ShaderProgram);
-        if (shaderProgram) {
-            this.canvas = shaderProgram.canvas;
-            let treeElement = this._canvasTreeOutline.findTreeElement(shaderProgram);
-            const omitFocus = false;
-            const selectedByUser = false;
-            treeElement.revealAndSelect(omitFocus, selectedByUser);
-            return;
-        }
-
-        let recording = objects.find((object) => object instanceof WI.Recording);
-        if (recording) {
-            this.recording = recording;
-
-            let recordingAction = objects.find((object) => object instanceof WI.RecordingAction);
-            if (recordingAction !== recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
-                this.action = recordingAction;
-
-            return;
-        }
-
-        this.canvas = null;
-        this.recording = null;
     }
 
     _treeOutlineSelectionDidChange(event)

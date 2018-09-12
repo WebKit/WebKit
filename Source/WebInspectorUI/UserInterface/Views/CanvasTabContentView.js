@@ -44,9 +44,9 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this._overviewTreeElement = new WI.GeneralTreeElement("canvas-overview", WI.UIString("Overview"), null, this._canvasCollection);
         this._canvasTreeOutline.appendChild(this._overviewTreeElement);
 
-        this._importedRecordingsTreeElement = new WI.FolderTreeElement(WI.UIString("Imported Recordings"));
+        this._importedRecordingsTreeElement = new WI.FolderTreeElement(WI.UIString("Imported Recordings"), WI.RecordingCollection);
         this._importedRecordingsTreeElement.hidden = true;
-        this._overviewTreeElement.appendChild(this._importedRecordingsTreeElement);
+        this._canvasTreeOutline.appendChild(this._importedRecordingsTreeElement);
 
         this._recordShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
         this._recordShortcut.implicitlyPreventsDefault = false;
@@ -161,16 +161,25 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
     _removeCanvas(canvas)
     {
-        // FIXME: Create tree elements/cards for recordings belonging to the removed canvas.
-
         let treeElement = this._canvasTreeOutline.findTreeElement(canvas);
         console.assert(treeElement, "Missing tree element for canvas.", canvas);
         this._overviewTreeElement.removeChild(treeElement);
         this._canvasCollection.remove(canvas);
 
+        const options = {
+            suppressShowRecording: true,
+        };
+
+        for (let recording of canvas.recordingCollection)
+            this._recordingAdded(recording, options);
+
         let currentContentView = this.contentBrowser.currentContentView;
         if (currentContentView instanceof WI.RecordingContentView && canvas.recordingCollection.has(currentContentView.representedObject))
             this.contentBrowser.updateHierarchicalPathForCurrentContentView();
+
+        let navigationSidebarPanel = this.navigationSidebarPanel;
+        if (navigationSidebarPanel instanceof WI.CanvasSidebarPanel && navigationSidebarPanel.visible)
+            navigationSidebarPanel.updateRepresentedObjects();
     }
 
     _handleCanvasAdded(event)

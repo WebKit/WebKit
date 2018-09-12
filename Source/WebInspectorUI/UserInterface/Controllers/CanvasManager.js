@@ -273,6 +273,11 @@ WI.CanvasManager = class CanvasManager extends WI.Object
             this._dispatchShaderProgramRemoved(program);
         }
 
+        for (let recording of canvas.recordingCollection) {
+            recording.source = null;
+            recording.createDisplayName(recording.displayName);
+        }
+
         this.dispatchEventToListeners(WI.CanvasManager.Event.CanvasRemoved, {canvas});
     }
 

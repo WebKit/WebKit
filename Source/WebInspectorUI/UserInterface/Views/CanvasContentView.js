@@ -81,14 +81,11 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this.representedObject.requestContent().then((content) => {
             this._pendingContent = content;
             if (!this._pendingContent) {
-                console.error("Canvas content not available.", this.representedObject);
+                this._showError();
                 return;
             }
 
             this.needsLayout();
-        })
-        .catch(() => {
-            this._showError();
         });
     }
 
@@ -149,6 +146,9 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._pixelSizeElement.className = "pixel-size";
         this._memoryCostElement = metrics.appendChild(document.createElement("span"));
         this._memoryCostElement.className = "memory-cost";
+
+        if (this._errorElement)
+            this._showError();
     }
 
     layout()
@@ -234,14 +234,16 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     _showError()
     {
-        console.assert(!this._errorElement, "Error element already exists.");
-
         if (this._previewImageElement)
             this._previewImageElement.remove();
 
-        const isError = true;
-        this._errorElement = WI.createMessageTextView(WI.UIString("No Preview Available"), isError);
-        this._previewContainerElement.appendChild(this._errorElement);
+        if (!this._errorElement) {
+            const isError = true;
+            this._errorElement = WI.createMessageTextView(WI.UIString("No Preview Available"), isError);
+        }
+
+        if (this._previewContainerElement)
+            this._previewContainerElement.appendChild(this._errorElement);
     }
 
     _toggleRecording(event)

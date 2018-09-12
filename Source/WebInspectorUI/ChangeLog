@@ -1,3 +1,33 @@
+2018-09-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: imported recordings are unable to be viewed after navigation
+        https://bugs.webkit.org/show_bug.cgi?id=189208
+
+        Reviewed by Joseph Pecoraro.
+
+        Move the "Imported Recordings" folder to the top level (instead of under "Overview") so that
+        it is selectable when there are no canvases but there is an imported recording.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype._removeCanvas):
+        Null out the `source` of each `WI.Recording` for the removed `WI.Canvas`.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype._removeCanvas):
+        Add each `WI.Recording`for the removed `WI.Canvas` to the "Imported Recordings" folder.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.refresh):
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype._showError):
+        Drive-by: don't recreate the error preview element if it already exists.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.updateRepresentedObjects): Added.
+        (WI.CanvasSidebarPanel.prototype.shown):
+        (WI.CanvasSidebarPanel.prototype._currentRepresentedObjectsDidChange): Deleted.
+
 2018-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix typo "vritualized"
