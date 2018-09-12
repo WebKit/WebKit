@@ -1,3 +1,26 @@
+2018-09-12  Chris Dumez  <cdumez@apple.com>
+
+        PSON: No process swap on back navigation after URL bar navigation
+        https://bugs.webkit.org/show_bug.cgi?id=189557
+        <rdar://problem/44353108>
+
+        Reviewed by Alex Christensen.
+
+        Our logic in WebProcessPool::processForNavigationInternal() was wrongly using
+        WebBackForwardList::currentItem() as source item of the navigation, instead of
+        using Navigation::fromItem(). In case of back navigation, by the time
+        processForNavigation() is called, the WebBackForwardList's currentItem has already
+        been updated to be the target item, via a Sync IPC from the WebProcess. As a result,
+        the source and target items would be the same in the following check:
+        ` if (currentItem->itemID().processIdentifier == backForwardListItem->itemID().processIdentifier)`
+
+        This would cause us to reuse the same process incorrectly. Our existing API test coverage
+        did not catch this because our target HistoryItem usually has a SuspendedPage and we decide
+        to use the SuspendedPage's process a few lines above in WebProcessPool::processForNavigationInternal().
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
 2018-09-12  Alex Christensen  <achristensen@webkit.org>
 
         Make IPC::SharedBufferDataReference a type that decodes into but does not inherit from IPC::DataReference

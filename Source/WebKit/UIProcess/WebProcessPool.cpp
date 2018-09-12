@@ -2159,8 +2159,8 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
 
         // If the target back/forward item and the current back/forward item originated
         // in the same WebProcess then we should reuse the current WebProcess.
-        if (auto* currentItem = page.backForwardList().currentItem()) {
-            if (currentItem->itemID().processIdentifier == backForwardListItem->itemID().processIdentifier)
+        if (auto* fromItem = navigation.fromItem()) {
+            if (fromItem->itemID().processIdentifier == backForwardListItem->itemID().processIdentifier)
                 return page.process();
         }
     }
