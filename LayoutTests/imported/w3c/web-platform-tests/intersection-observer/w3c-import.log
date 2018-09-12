@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/edge-inclusive-intersection.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/initial-observation-with-threshold.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/inline-client-rect.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/isIntersecting-change-events.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/multiple-targets.html

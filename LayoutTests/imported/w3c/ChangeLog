@@ -1,3 +1,16 @@
+2018-09-11  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Update WPTs to the latest upstream version
+        https://bugs.webkit.org/show_bug.cgi?id=189515
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/intersection-observer/initial-observation-with-threshold-expected.txt: Added.
+        * web-platform-tests/intersection-observer/initial-observation-with-threshold.html: Added.
+        * web-platform-tests/intersection-observer/resources/intersection-observer-test-utils.js:
+        (waitForNotification):
+        * web-platform-tests/intersection-observer/w3c-import.log:
+
 2018-09-11  Youenn Fablet  <youenn@apple.com>
 
         Remove MediaDevices NoInterfaceObject
