@@ -1,3 +1,18 @@
+2018-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: fix test case failures in js-isLikelyStackTrace.html
+        https://bugs.webkit.org/show_bug.cgi?id=180664
+
+        Reviewed by Devin Rousso.
+
+        * inspector/console/js-isLikelyStackTrace-expected.txt:
+        * inspector/console/js-isLikelyStackTrace.html:
+        Avoid Inspector Internal InjectedScript code in backtraces by producing
+        the exception stacks in the page itself without going through inspector
+        test evaluation code. This produces exception stacks more like a page.
+        Also add some explicit tests for strings that we'd expect to be classified
+        as exception stacks.
+
 2018-09-12  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/text/variations/ipc2.html is failing

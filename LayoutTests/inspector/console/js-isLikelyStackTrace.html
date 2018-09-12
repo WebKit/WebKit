@@ -2,42 +2,32 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
-function typeErrorWrap()
+function generateTypeError()
 {
-    return typeError();
-}
-
-function typeError()
-{
-    var object = {};
     try {
-        object.propertyDoesnt.exist;
+        ({}).propertyDoesnt.exist;
     } catch(e) {
         console.trace();
         return e.stack;
     }
 }
 
-function testWithNativeCallInBetween()
+function generateErrorNativeCallInBetween()
 {
-    return [42].map(typeError)[0];
+    return [42].map(generateTypeError)[0];
 }
 
-var _anonymousFunctionError = null;
-
+var _globalTypeError = generateTypeError();
+var _globalErrorWithNativeCalls = generateErrorNativeCallInBetween();
+var _globalAnonymousFunctionError = null;
 (function() {
     var object = {};
     try {
         object.methodDoesntExist();
     } catch(e) {
-        _anonymousFunctionError = e.stack;
+        _globalAnonymousFunctionError = e.stack;
     }
 })();
-
-function getAnonymousFunctionError()
-{
-    return _anonymousFunctionError;
-}
 
 function test()
 {
@@ -53,51 +43,46 @@ function test()
     });
 
     suite.addTestCase({
-        name: "typeErrorWrap",
-        test(resolve, reject) {
-            InspectorTest.evaluateInPage("typeErrorWrap()", function(error, result) {
-                if (error)
-                    reject(error);
-
-                InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
-
-                resolve();
-            });
+        name: "WI.StackTrace.isLikelyStackTrace.TypeError",
+        async test() {
+            let result = await InspectorTest.evaluateInPage(`_globalTypeError`);
+            InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
         }
     });
 
     suite.addTestCase({
-        name: "getAnonymousFunctionError",
-        test(resolve, reject) {
-            InspectorTest.evaluateInPage("getAnonymousFunctionError()", function(error, result) {
-                if (error)
-                    reject(error);
-
-                // FIXME: this test case fails. <https://bugs.webkit.org/show_bug.cgi?id=180664>
-                InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
-
-                resolve();
-            });
+        name: "WI.StackTrace.isLikelyStackTrace.AnonymousFunctionError",
+        async test() {
+            let result = await InspectorTest.evaluateInPage(`_globalAnonymousFunctionError`);
+            InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
         }
     });
 
     suite.addTestCase({
-        name: "testWithNativeCallInBetween",
-        test(resolve, reject) {
-            InspectorTest.evaluateInPage("testWithNativeCallInBetween()", function(error, result) {
-                if (error)
-                    reject(error);
-
-                InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
-
-                resolve();
-            });
+        name: "WI.StackTrace.isLikelyStackTrace.NativeFunctionCallsError",
+        async test() {
+            let result = await InspectorTest.evaluateInPage(`_globalErrorWithNativeCalls`);
+            InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
         }
     });
 
     suite.addTestCase({
-        name: "testFormattedStrings",
-        test(resolve, reject) {
+        name: "WI.StackTrace.isLikelyStackTrace.ValidStackStrings",
+        async test() {
+            const strings = [
+                "a@file:///ex.html:10:6\nb@file:///ex.html:7:6\nglobal code@file:///ex.html:12:2",
+                "global code@file:///ex.html:12:2\na@file:///ex.html:10:6\nb@file:///ex.html:7:6",
+                "global code@file:///ex.html:1:1\nmap@[native code]",
+            ];
+
+            for (let string of strings)
+                InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(string), `${JSON.stringify(string)} should be a stacktrace.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.StackTrace.isLikelyStackTrace.InvalidStackStrings",
+        async test() {
             const strings = [
                 "video:1:2",
                 "video/mp4:1:2",
@@ -106,11 +91,9 @@ function test()
                 "http://video/mp4:1:2",
                 "http://video/mp4 : 11:22:33-44:55:66",
             ];
-            
-            for (let string of strings)
-                InspectorTest.expectThat(!WI.StackTrace.isLikelyStackTrace(string), `"${string}" should not be a stacktrace.`);
 
-            resolve();
+            for (let string of strings)
+                InspectorTest.expectThat(!WI.StackTrace.isLikelyStackTrace(string), `${JSON.stringify(string)} should not be a stacktrace.`);
         }
     });
 
@@ -119,8 +102,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>
-Test stack trace detection heuristic.<br>
-</p>
+<p>Test stack trace detection heuristic.</p>
 </body>
 </html>

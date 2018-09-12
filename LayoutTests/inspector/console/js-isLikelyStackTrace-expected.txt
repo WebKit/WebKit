@@ -5,20 +5,21 @@ Test stack trace detection heuristic.
 -- Running test case: notStacktrace
 PASS: Should NOT be a stacktrace.
 
--- Running test case: typeErrorWrap
-FAIL: Should be a stacktrace.
-    Expected: truthy
-    Actual: false
-
--- Running test case: getAnonymousFunctionError
+-- Running test case: WI.StackTrace.isLikelyStackTrace.TypeError
 PASS: Should be a stacktrace.
 
--- Running test case: testWithNativeCallInBetween
-FAIL: Should be a stacktrace.
-    Expected: truthy
-    Actual: false
+-- Running test case: WI.StackTrace.isLikelyStackTrace.AnonymousFunctionError
+PASS: Should be a stacktrace.
 
--- Running test case: testFormattedStrings
+-- Running test case: WI.StackTrace.isLikelyStackTrace.NativeFunctionCallsError
+PASS: Should be a stacktrace.
+
+-- Running test case: WI.StackTrace.isLikelyStackTrace.ValidStackStrings
+PASS: "a@file:///ex.html:10:6\nb@file:///ex.html:7:6\nglobal code@file:///ex.html:12:2" should be a stacktrace.
+PASS: "global code@file:///ex.html:12:2\na@file:///ex.html:10:6\nb@file:///ex.html:7:6" should be a stacktrace.
+PASS: "global code@file:///ex.html:1:1\nmap@[native code]" should be a stacktrace.
+
+-- Running test case: WI.StackTrace.isLikelyStackTrace.InvalidStackStrings
 PASS: "video:1:2" should not be a stacktrace.
 PASS: "video/mp4:1:2" should not be a stacktrace.
 PASS: "video/mp4 : 11:22:33-44:55:66" should not be a stacktrace.
