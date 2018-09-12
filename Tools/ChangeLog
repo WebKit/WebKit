@@ -1,3 +1,43 @@
+2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang][DumpRenderTree] 0 and nullptr can't be implicitly converted to AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=189492
+
+        Reviewed by Alex Christensen.
+
+        0 and nullptr can't be implicitly converted to
+        AccessibilityUIElement because only Windows port typedefs
+        PlatformUIElement as COMPtr<IAccessible> not a pointer.
+
+        Replaced "return 0" and "return nullptr" with "return { nullptr }".
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::horizontalScrollbar const):
+        (AccessibilityUIElement::verticalScrollbar const):
+        (AccessibilityUIElement::uiElementAttributeValue const):
+        (AccessibilityUIElement::accessibilityElementForTextMarker):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::elementAtPoint):
+        (AccessibilityController::accessibleElementById):
+        (AccessibilityController::focusedElement):
+        (AccessibilityController::rootElement):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::elementAtPoint):
+        (AccessibilityUIElement::linkedUIElementAtIndex):
+        (AccessibilityUIElement::getChildAtIndex):
+        (AccessibilityUIElement::titleUIElement):
+        (AccessibilityUIElement::parentElement):
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        (AccessibilityUIElement::cellForColumnAndRow):
+        (AccessibilityUIElement::disclosedRowAtIndex):
+        (AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (AccessibilityUIElement::ariaControlsElementAtIndex):
+        (AccessibilityUIElement::selectedRowAtIndex):
+        (AccessibilityUIElement::rowAtIndex):
+        (AccessibilityUIElement::disclosedByRow):
+        (AccessibilityUIElement::selectedChildAtIndex const):
+
 2018-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         FontManagerTests.ChangeFontColorWithColorPanel fails on macOS Sierra

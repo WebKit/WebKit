@@ -1561,9 +1561,9 @@ JSStringRef AccessibilityUIElement::rangeForPosition(int, int) { return 0; }
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement*) const { }
 void AccessibilityUIElement::setSelectedChildAtIndex(unsigned) const { }
 void AccessibilityUIElement::removeSelectionAtIndex(unsigned) const { }
-AccessibilityUIElement AccessibilityUIElement::horizontalScrollbar() const { return 0; }
-AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const { return 0; }
-AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringRef) const { return 0; }
+AccessibilityUIElement AccessibilityUIElement::horizontalScrollbar() const { return { nullptr }; }
+AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const { return { nullptr }; }
+AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringRef) const { return { nullptr }; }
 #endif
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
@@ -1632,7 +1632,7 @@ AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForTextMarkerRange(
 
 AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker*)
 {
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)

@@ -133,19 +133,19 @@ int AccessibilityUIElement::columnCount()
 
 AccessibilityUIElement AccessibilityUIElement::elementAtPoint(int x, int y)
 {
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityUIElement AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
 {
     // FIXME: implement
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     if (!m_element)
-        return nullptr;
+        return { nullptr };
 
     COMPtr<IDispatch> child;
     _variant_t vChild;
@@ -153,7 +153,7 @@ AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
     // In MSAA, index 0 is the object itself.
     V_I4(&vChild) = index + 1;
     if (FAILED(m_element->get_accChild(vChild.GetVARIANT(), &child)))
-        return nullptr;
+        return { nullptr };
     return COMPtr<IAccessible>(Query, child);
 }
 
@@ -184,20 +184,20 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 
     COMPtr<IAccessibleComparable> comparable = comparableObject(platformElement.get());
     if (!comparable)
-        return 0;
+        return { nullptr };
 
     _variant_t value;
     _bstr_t titleUIElementAttributeKey(L"AXTitleUIElementAttribute");
     if (FAILED(comparable->get_attribute(titleUIElementAttributeKey, &value.GetVARIANT())))
-        return nullptr;
+        return { nullptr };
 
     if (V_VT(&value) == VT_EMPTY)
-        return nullptr;
+        return { nullptr };
 
     ASSERT(V_VT(&value) == VT_UNKNOWN);
 
     if (V_VT(&value) != VT_UNKNOWN)
-        return nullptr;
+        return { nullptr };
 
     COMPtr<IAccessible> titleElement(Query, value.punkVal);
 
@@ -207,7 +207,7 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 AccessibilityUIElement AccessibilityUIElement::parentElement()
 {
     if (!m_element)
-        return nullptr;
+        return { nullptr };
 
     COMPtr<IDispatch> parent;
     m_element->get_accParent(&parent);
@@ -669,7 +669,7 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
 
 AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
-    return 0;
+    return { nullptr };
 }
 
 JSStringRef AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)
@@ -679,7 +679,7 @@ JSStringRef AccessibilityUIElement::selectTextWithCriteria(JSContextRef context,
 
 AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned column, unsigned row)
 {
-    return 0;
+    return { nullptr };
 }
 
 JSStringRef AccessibilityUIElement::selectedTextRange()
@@ -755,37 +755,37 @@ void AccessibilityUIElement::press()
 
 AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityUIElement AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
 {
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityUIElement AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
 {
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityUIElement AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index)
 {
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityUIElement AccessibilityUIElement::rowAtIndex(unsigned index)
 {
-    return 0;
+    return { nullptr };
 }
 
 AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
 {
-    return 0;
+    return { nullptr };
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const
@@ -964,7 +964,7 @@ unsigned AccessibilityUIElement::selectedChildrenCount() const
 AccessibilityUIElement AccessibilityUIElement::selectedChildAtIndex(unsigned) const
 {
     // FIXME: implement
-    return 0;
+    return { nullptr };
 }
 
 void AccessibilityUIElement::columnHeaders(Vector<AccessibilityUIElement>&) const
