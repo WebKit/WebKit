@@ -1,3 +1,10 @@
+2018-09-12  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GTK test gardening.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2018-09-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         imported/w3c/web-platform-tests/shadow-dom/form-control-form-attribute.html hits assertion

@@ -3536,6 +3536,10 @@ webkit.org/b/189345 http/tests/media/clearkey/collect-webkit-media-session.html 
 
 webkit.org/b/189350 fast/forms/color/input-appearance-color.html [ Failure ]
 
+webkit.org/b/189567 webrtc/video-addLegacyTransceiver.html [ Failure ]
+
+webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3599,8 +3603,6 @@ legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Pass ]
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
-
-webkit.org/b/172337 imported/w3c/web-platform-tests/url/failure.html [ Pass ]
 
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 
