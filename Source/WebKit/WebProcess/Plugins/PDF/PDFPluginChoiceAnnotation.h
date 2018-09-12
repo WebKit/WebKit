@@ -53,10 +53,9 @@ private:
 
     Ref<WebCore::Element> createAnnotationElement() override;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     PDFAnnotationChoiceWidget *choiceAnnotation() { return static_cast<PDFAnnotationChoiceWidget *>(annotation()); }
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 } // namespace WebKit

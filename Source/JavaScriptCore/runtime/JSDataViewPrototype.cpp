@@ -208,10 +208,7 @@ EncodedJSValue setData(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-prototypes"
-#endif
+IGNORE_CLANG_WARNINGS_BEGIN("missing-prototypes")
 
 EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(ExecState* exec)
 {
@@ -328,8 +325,6 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState* exec)
 {
     return setData<Float64Adaptor>(exec);
 }
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+IGNORE_CLANG_WARNINGS_END
 
 } // namespace JSC

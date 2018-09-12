@@ -288,11 +288,10 @@ static UInt32 GetBehaviors()
 
 static CGContextRef overrideCGContext(NSWindow *window, CGContextRef context)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSWindowGraphicsContext *graphicsContext = (NSWindowGraphicsContext *)window.graphicsContext;
     CGContextRef savedContext = (CGContextRef)graphicsContext.graphicsPort;
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     CGContextRetain(savedContext);
     [graphicsContext _web_setGraphicsPort:context];
     return savedContext;
@@ -300,10 +299,9 @@ static CGContextRef overrideCGContext(NSWindow *window, CGContextRef context)
 
 static void restoreCGContext(NSWindow *window, CGContextRef savedContext)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSWindowGraphicsContext *graphicsContext = (NSWindowGraphicsContext *)window.graphicsContext;
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [graphicsContext _web_setGraphicsPort:savedContext];
     CGContextRelease(savedContext);
 }
@@ -323,12 +321,11 @@ static void Draw(HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext)
         GrafPtr port;
         Rect portRect;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         GetPort(&port);
         GetPortBounds(port, &portRect);
         CreateCGContextForPort(port, &inContext);
-#pragma clang diagnostic push
+        ALLOW_DEPRECATED_DECLARATIONS_END
         SyncCGContextOriginWithPort(inContext, port);
         CGContextTranslateCTM(inContext, 0, (portRect.bottom - portRect.top));
         CGContextScaleCTM(inContext, 1, -1);
@@ -1475,7 +1472,9 @@ UpdateObserver(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *
     // printf("Update observer called\n");
 
     if (region) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         GetWindowRegion(GetControlOwner(view->fViewRef), kWindowUpdateRgn, region);
+        ALLOW_DEPRECATED_DECLARATIONS_END
         
         if (!EmptyRgn(region)) {
             RgnHandle ourRgn = NewRgn();

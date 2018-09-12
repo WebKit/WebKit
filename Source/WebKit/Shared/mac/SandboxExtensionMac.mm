@@ -85,12 +85,11 @@ private:
     {
         switch (type) {
         case SandboxExtension::Type::ReadOnly:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return sandbox_extension_issue_file(APP_SANDBOX_READ, path, 0);
         case SandboxExtension::Type::ReadWrite:
             return sandbox_extension_issue_file(APP_SANDBOX_READ_WRITE, path, 0);
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
         case SandboxExtension::Type::Generic:
             return sandbox_extension_issue_generic(path, 0);
         }

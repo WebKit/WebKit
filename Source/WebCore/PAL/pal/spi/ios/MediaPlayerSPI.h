@@ -75,21 +75,19 @@ enum {
 };
 typedef NSUInteger MPAVItemType;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @interface MPAudioVideoRoutingPopoverController : UIPopoverController
 @end
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @interface MPAudioVideoRoutingPopoverController ()
 - (id)initWithType:(MPAVItemType)avItemType;
 @end
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @interface MPAVRoutingSheet : UIView
 @end
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @interface MPAVRoutingSheet ()
 @property (nonatomic, assign, setter=setAVItemType:) MPAVItemType avItemType;

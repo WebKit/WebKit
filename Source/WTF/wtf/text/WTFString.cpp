@@ -453,10 +453,7 @@ WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char
     va_list argsCopy;
     va_copy(argsCopy, args);
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
-#endif
+    ALLOW_NONLITERAL_FORMAT_BEGIN
 
 #if USE(CF) && !OS(WINDOWS)
     if (strstr(format, "%@")) {
@@ -492,9 +489,7 @@ WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char
     vsnprintf(buffer.data(), buffer.size(), format, argsCopy);
     va_end(argsCopy);
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+    ALLOW_NONLITERAL_FORMAT_END
 
     return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), len);
 }

@@ -29,12 +29,11 @@
 #include "LibWebRTCMacros.h"
 #include "RTCDataChannelHandler.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/datachannelinterface.h>
 
-#pragma GCC diagnostic pop
+ALLOW_UNUSED_PARAMETERS_END
 
 namespace webrtc {
 struct DataChannelInit;

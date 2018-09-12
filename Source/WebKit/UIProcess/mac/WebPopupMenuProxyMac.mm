@@ -188,10 +188,9 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     [NSApp postEvent:fakeEvent atStart:YES];
     fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
                                    location:[[m_webView window]
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                         convertScreenToBase:[NSEvent mouseLocation]]
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
                               modifierFlags:[initiatingNSEvent modifierFlags]
                                   timestamp:[initiatingNSEvent timestamp]
                                windowNumber:[initiatingNSEvent windowNumber]

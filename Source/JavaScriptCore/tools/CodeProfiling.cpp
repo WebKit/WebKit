@@ -44,10 +44,7 @@ volatile CodeProfile* CodeProfiling::s_profileStack = 0;
 CodeProfiling::Mode CodeProfiling::s_mode = CodeProfiling::Disabled;
 WTF::MetaAllocatorTracker* CodeProfiling::s_tracker = 0;
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-#endif
+IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
 
 #if HAVE(MACHINE_CONTEXT)
 // Helper function to start & stop the timer.
@@ -63,9 +60,7 @@ static void setProfileTimer(unsigned usec)
 }
 #endif
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+IGNORE_CLANG_WARNINGS_END
 
 #if HAVE(MACHINE_CONTEXT)
 static void profilingTimer(int, siginfo_t*, void* uap)

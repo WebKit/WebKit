@@ -373,10 +373,9 @@ static NSView *createMediaUIBackgroundView()
     const CGFloat quickTimePlayerHUDHeight = 59;
     const CGFloat quickTimePlayerHUDContentBorderPosition = 38;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [view setContentBorderPosition:quickTimePlayerHUDContentBorderPosition / quickTimePlayerHUDHeight];
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     return view;
 }

@@ -103,10 +103,9 @@ HIDGamepadProvider::HIDGamepadProvider()
 
 void HIDGamepadProvider::stopMonitoringInput()
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
+    IGNORE_NULL_CHECK_WARNINGS_BEGIN
     IOHIDManagerRegisterInputValueCallback(m_manager.get(), nullptr, nullptr);
-#pragma clang diagnostic pop
+    IGNORE_NULL_CHECK_WARNINGS_END
 }
 
 void HIDGamepadProvider::startMonitoringInput()

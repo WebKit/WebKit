@@ -385,4 +385,83 @@
 #define __has_include(path) 0
 #endif
 
+/* IGNORE_WARNINGS.* */
+
+// Can't use WTF_CONCAT() and STRINGIZE() because they are defined in
+// StdLibExtras.h which includes us
+#define _COMPILER_CONCAT_I(a, b) a ## b
+#define _COMPILER_CONCAT(a, b) _COMPILER_CONCAT_I(a, b)
+
+#define _COMPILER_STRINGIZE(exp) #exp
+
+#define _COMPILER_WARNING_NAME(warning) "-W" warning
+
+#if COMPILER(GCC_OR_CLANG)
+#define IGNORE_WARNINGS_BEGIN_COND(cond, compiler, warning) \
+    _Pragma(_COMPILER_STRINGIZE(compiler diagnostic push)) \
+    _COMPILER_CONCAT(IGNORE_WARNINGS_BEGIN_IMPL_, cond)(compiler, warning)
+
+#define IGNORE_WARNINGS_BEGIN_IMPL_1(compiler, warning) \
+    _Pragma(_COMPILER_STRINGIZE(compiler diagnostic ignored warning))
+#define IGNORE_WARNINGS_BEGIN_IMPL_0(compiler, warning)
+#define IGNORE_WARNINGS_BEGIN_IMPL_(compiler, warning)
+
+
+#define IGNORE_WARNINGS_END_IMPL(compiler) _Pragma(_COMPILER_STRINGIZE(compiler diagnostic pop))
+
+#if defined(__has_warning)
+#define _IGNORE_WARNINGS_BEGIN_IMPL(compiler, warning) \
+    IGNORE_WARNINGS_BEGIN_COND(__has_warning(warning), compiler, warning)
+#else
+#define _IGNORE_WARNINGS_BEGIN_IMPL(compiler, warning) IGNORE_WARNINGS_BEGIN_COND(1, compiler, warning)
+#endif
+
+#define IGNORE_WARNINGS_BEGIN_IMPL(compiler, warning) \
+    _IGNORE_WARNINGS_BEGIN_IMPL(compiler, _COMPILER_WARNING_NAME(warning))
+
+#endif // COMPILER(GCC_OR_CLANG)
+
+
+#if COMPILER(GCC)
+#define IGNORE_GCC_WARNINGS_BEGIN(warning) IGNORE_WARNINGS_BEGIN_IMPL(GCC, warning)
+#define IGNORE_GCC_WARNINGS_END IGNORE_WARNINGS_END_IMPL(GCC)
+#else
+#define IGNORE_GCC_WARNINGS_BEGIN(warning)
+#define IGNORE_GCC_WARNINGS_END
+#endif
+
+#if COMPILER(CLANG)
+#define IGNORE_CLANG_WARNINGS_BEGIN(warning) IGNORE_WARNINGS_BEGIN_IMPL(clang, warning)
+#define IGNORE_CLANG_WARNINGS_END IGNORE_WARNINGS_END_IMPL(clang)
+#else
+#define IGNORE_CLANG_WARNINGS_BEGIN(warning)
+#define IGNORE_CLANG_WARNINGS_END
+#endif
+
+#if COMPILER(GCC_OR_CLANG)
+#define IGNORE_WARNINGS_BEGIN(warning) IGNORE_WARNINGS_BEGIN_IMPL(GCC, warning)
+#define IGNORE_WARNINGS_END IGNORE_WARNINGS_END_IMPL(GCC)
+#else
+#define IGNORE_WARNINGS_BEGIN(warning)
+#define IGNORE_WARNINGS_END
+#endif
+
+#define ALLOW_DEPRECATED_DECLARATIONS_BEGIN IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+#define ALLOW_DEPRECATED_DECLARATIONS_END IGNORE_WARNINGS_END
+
+#define ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN IGNORE_CLANG_WARNINGS_BEGIN("unguarded-availability-new")
+#define ALLOW_NEW_API_WITHOUT_GUARDS_END IGNORE_CLANG_WARNINGS_END
+
+#define ALLOW_UNUSED_PARAMETERS_BEGIN IGNORE_WARNINGS_BEGIN("unused-parameter")
+#define ALLOW_UNUSED_PARAMETERS_END IGNORE_WARNINGS_END
+
+#define ALLOW_NONLITERAL_FORMAT_BEGIN IGNORE_WARNINGS_BEGIN("format-nonliteral")
+#define ALLOW_NONLITERAL_FORMAT_END IGNORE_WARNINGS_END
+
+#define IGNORE_RETURN_TYPE_WARNINGS_BEGIN IGNORE_WARNINGS_BEGIN("return-type")
+#define IGNORE_RETURN_TYPE_WARNINGS_END IGNORE_WARNINGS_END
+
+#define IGNORE_NULL_CHECK_WARNINGS_BEGIN IGNORE_WARNINGS_BEGIN("nonnull")
+#define IGNORE_NULL_CHECK_WARNINGS_END IGNORE_WARNINGS_END
+
 #endif /* WTF_Compiler_h */

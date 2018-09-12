@@ -2154,15 +2154,10 @@ yyerrorlab:
   /* Pacify compilers like GCC when the user code never invokes
      YYERROR and the label yyerrorlab therefore never appears in user
      code.  */
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunreachable-code"
-#endif
+  IGNORE_CLANG_WARNINGS_BEGIN("unreachable-code")
   if (/*CONSTCOND*/ 0)
      goto yyerrorlab;
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+  IGNORE_CLANG_WARNINGS_END
 
   /* Do not reclaim the symbols of the rule which action triggered
      this YYERROR.  */

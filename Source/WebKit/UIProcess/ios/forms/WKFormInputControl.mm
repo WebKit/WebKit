@@ -330,16 +330,14 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     RetainPtr<UINavigationController> navigationController = adoptNS([[UINavigationController alloc] initWithRootViewController:_viewController.get()]);
     UINavigationItem *navigationItem = navigationController.get().navigationBar.topItem;
     NSString *clearString = WEB_UI_STRING_KEY("Clear", "Clear Button Date Popover", "Clear button in date input popover");
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UIBarButtonItem *clearButton = [[[UIBarButtonItem alloc] initWithTitle:clearString style:UIBarButtonItemStyleBordered target:self action:@selector(clear:)] autorelease];
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [navigationItem setRightBarButtonItem:clearButton];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<UIPopoverController> controller = adoptNS([[UIPopoverController alloc] initWithContentViewController:navigationController.get()]);
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [self setPopoverController:controller.get()];
 
     return self;

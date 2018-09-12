@@ -158,18 +158,9 @@ public:
     void* getPrivate();
 
     // FIXME: We should fix the warnings for extern-template in JSObject template classes: https://bugs.webkit.org/show_bug.cgi?id=161979
-#if COMPILER(CLANG)
-#if __has_warning("-Wundefined-var-template")
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundefined-var-template"
-#endif
-#endif
+    IGNORE_CLANG_WARNINGS_BEGIN("undefined-var-template")
     DECLARE_INFO;
-#if COMPILER(CLANG)
-#if __has_warning("-Wundefined-var-template")
-#pragma clang diagnostic pop
-#endif
-#endif
+    IGNORE_CLANG_WARNINGS_END
 
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;

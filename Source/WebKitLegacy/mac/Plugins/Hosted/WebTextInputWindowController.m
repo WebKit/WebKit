@@ -106,19 +106,17 @@
 
 - (BOOL)_interpretKeyEvent:(NSEvent *)event string:(NSString **)string
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     BOOL hadMarkedText = [_inputTextView hasMarkedText];
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     *string = nil;
 
     // Let TSM know that a bottom input window would be created for marked text.
     // FIXME: Can be removed once we can rely on __NSUsesFloatingInputWindow (or a better API) being available everywhere.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcast-qual"
+    IGNORE_WARNINGS_BEGIN("cast-qual")
     EventRef carbonEvent = (EventRef)[event eventRef];
-#pragma clang diagnostic pop
+    IGNORE_WARNINGS_END
     if (carbonEvent) {
         Boolean ignorePAH = true;
         SetEventParameter(carbonEvent, 'iPAH', typeBoolean, sizeof(ignorePAH), &ignorePAH);
@@ -127,10 +125,9 @@
     if (![[_inputTextView inputContext] handleEvent:event])
         return NO;
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([_inputTextView hasMarkedText]) {
-#pragma clang diagnostic pop
+        ALLOW_DEPRECATED_DECLARATIONS_END
         // Don't show the input method window for dead keys
         if ([[event characters] length] > 0)
             [self orderFront:nil];

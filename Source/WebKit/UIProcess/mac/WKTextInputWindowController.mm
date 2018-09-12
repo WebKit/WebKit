@@ -106,10 +106,9 @@
 
 - (BOOL)_interpretKeyEvent:(NSEvent *)event usingLegacyCocoaTextInput:(BOOL)usingLegacyCocoaTextInput string:(NSString **)string
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     BOOL hadMarkedText = [_inputTextView hasMarkedText];
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
  
     *string = nil;
 
@@ -124,10 +123,9 @@
     if (![[_inputTextView inputContext] handleEvent:event])
         return NO;
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([_inputTextView hasMarkedText]) {
-#pragma clang diagnostic pop
+        ALLOW_DEPRECATED_DECLARATIONS_END
         // Don't show the input method window for dead keys
         if ([[event characters] length] > 0)
             [self orderFront:nil];
@@ -161,10 +159,9 @@
 
 - (BOOL)_hasMarkedText
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [_inputTextView hasMarkedText];
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end

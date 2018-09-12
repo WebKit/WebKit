@@ -183,10 +183,9 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
     CGContextSaveGState(context);
     CGContextAddRect(context, cornerImageBounds);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UIBezierPath *cornerPath = [UIBezierPath bezierPathWithRoundedRect:cornerImageBounds byRoundingCorners:(UIRectCorner)UIAllCorners cornerRadii:CGSizeMake(indicatorCornerRadius, indicatorCornerRadius)];
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     CGContextAddPath(context, [cornerPath CGPath]);
     CGContextEOClip(context);
     CGContextFillRect(context, cornerImageBounds);

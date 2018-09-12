@@ -38,8 +38,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
@@ -509,6 +508,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 
 @end
 
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif

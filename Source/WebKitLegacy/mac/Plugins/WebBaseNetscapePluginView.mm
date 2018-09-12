@@ -729,25 +729,22 @@ using namespace WebCore;
     switch (sourceSpace) {
         case NPCoordinateSpacePlugin:
             sourcePointInScreenSpace = [self convertPoint:sourcePoint toView:nil];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePointInScreenSpace];
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
             break;
             
         case NPCoordinateSpaceWindow:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePoint];
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
             break;
             
         case NPCoordinateSpaceFlippedWindow:
             sourcePoint.y = [[self currentWindow] frame].size.height - sourcePoint.y;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePoint];
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
             break;
             
         case NPCoordinateSpaceScreen:
@@ -767,25 +764,22 @@ using namespace WebCore;
     // Then convert back to the destination space
     switch (destSpace) {
         case NPCoordinateSpacePlugin:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
             destPoint = [self convertPoint:destPoint fromView:nil];
             break;
             
         case NPCoordinateSpaceWindow:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
             break;
             
         case NPCoordinateSpaceFlippedWindow:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
             destPoint.y = [[self currentWindow] frame].size.height - destPoint.y;
             break;
             

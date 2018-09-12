@@ -263,15 +263,11 @@ public:
     template<PtrTag tag, typename... Args>
     CodeRef<tag> finalizeCodeWithDisassembly(const char* format, Args... args)
     {
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
-#pragma GCC diagnostic ignored "-Wformat-security"
-#endif
+        ALLOW_NONLITERAL_FORMAT_BEGIN
+        IGNORE_WARNINGS_BEGIN("format-security")
         return finalizeCodeWithDisassemblyImpl(format, args...).template retagged<tag>();
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic pop
-#endif
+        IGNORE_WARNINGS_END
+        ALLOW_NONLITERAL_FORMAT_END
     }
 
     template<PtrTag tag>

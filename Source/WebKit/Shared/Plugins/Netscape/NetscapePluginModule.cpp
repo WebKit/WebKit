@@ -242,8 +242,7 @@ bool NetscapePluginModule::tryLoad()
 #if PLUGIN_ARCHITECTURE(MAC)
 #ifndef NP_NO_CARBON
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
     ResFileRefNum currentResourceFile = CurResFile();
@@ -258,7 +257,7 @@ bool NetscapePluginModule::tryLoad()
     // Restore the resource file.
     UseResFile(currentResourceFile);
 
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif
 

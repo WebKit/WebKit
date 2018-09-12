@@ -44,10 +44,9 @@ namespace PAL {
 void popUpMenu(NSMenu *menu, NSPoint location, float width, NSView *view, int selectedItem, NSFont *font, NSControlSize controlSize, bool usesCustomAppearance)
 {
     NSRect adjustedPopupBounds = [view.window convertRectToScreen:[view convertRect:view.bounds toView:nil]];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (controlSize != NSMiniControlSize) {
-#pragma clang diagnostic pop
+        ALLOW_DEPRECATED_DECLARATIONS_END
         adjustedPopupBounds.origin.x -= 3;
         adjustedPopupBounds.origin.y -= 1;
         adjustedPopupBounds.size.width += 6;

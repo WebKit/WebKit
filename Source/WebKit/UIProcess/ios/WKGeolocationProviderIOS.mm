@@ -53,8 +53,7 @@
 #import <WebKit/WebGeolocationCoreLocationProvider.h>
 #import <WebKit/WebAllowDenyPolicyListener.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 @interface WKGeolocationProviderIOS (_WKGeolocationCoreLocationListener) <_WKGeolocationCoreLocationListener>
 @end
@@ -354,6 +353,6 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 }
 @end
 
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // PLATFORM(IOS)

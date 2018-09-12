@@ -50,11 +50,8 @@
 #include <wtf/StringPrintStream.h>
 
 // FIXME: remove this once everything can be generated through B3.
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-noreturn"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif // COMPILER(GCC_OR_CLANG)
+IGNORE_WARNINGS_BEGIN("missing-noreturn")
+ALLOW_UNUSED_PARAMETERS_BEGIN
 
 namespace JSC {
 
@@ -500,9 +497,8 @@ inline void Output::addIncomingToPhi(LValue phi, ValueFromBlock value, Params...
     addIncomingToPhi(phi, theRest...);
 }
 
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic pop
-#endif // COMPILER(GCC_OR_CLANG)
+ALLOW_UNUSED_PARAMETERS_END
+IGNORE_WARNINGS_END
 
 } } // namespace JSC::FTL
 

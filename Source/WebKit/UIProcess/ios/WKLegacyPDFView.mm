@@ -51,8 +51,7 @@
 
 // All of UIPDFPage* are deprecated, so just ignore deprecated declarations
 // in this file until we switch off them.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 const CGFloat pdfPageMargin = 8;
 const CGFloat pdfMinimumZoomScale = 1;
@@ -857,6 +856,6 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
 #endif // !PLATFORM(IOSMAC)
 
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // ENABLE(WKLEGACYPDFVIEW)

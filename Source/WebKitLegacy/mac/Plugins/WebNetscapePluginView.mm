@@ -377,10 +377,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             RgnHandle clipRegion = NewRgn();
             qdPortState->clipRegion = clipRegion;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             CGContextRef currentContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
             if (currentContext && CGContextGetType(currentContext) == kCGContextTypeBitmap) {
                 // We check for kCGContextTypeBitmap here, because if we just called CGBitmapContextGetData
                 // on any context, we'd log to the console every time. But even if currentContext is a
@@ -503,10 +502,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             
             ASSERT([NSView focusView] == self);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
 
             PortState_CG *cgPortState = (PortState_CG *)malloc(sizeof(PortState_CG));
             portState = (PortState)cgPortState;
@@ -695,10 +693,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     ASSERT(_eventHandler);
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     _eventHandler->drawRect(context, rect);
 }
 
@@ -1338,10 +1335,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if (printedPluginBitmap) {
             // Flip the bitmap before drawing because the QuickDraw port is flipped relative
             // to this view.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-#pragma clang diagnostic pop
+            ALLOW_DEPRECATED_DECLARATIONS_END
             CGContextSaveGState(cgContext);
             NSRect bounds = [self bounds];
             CGContextTranslateCTM(cgContext, 0.0f, NSHeight(bounds));

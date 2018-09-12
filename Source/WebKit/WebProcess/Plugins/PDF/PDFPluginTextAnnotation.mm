@@ -80,10 +80,9 @@ PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
 Ref<Element> PDFPluginTextAnnotation::createAnnotationElement()
 {
     Document& document = parent()->document();
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     PDFAnnotationTextWidget *textAnnotation = this->textAnnotation();
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     bool isMultiline = textAnnotation.isMultiline;
 
     auto element = document.createElement(isMultiline ? textareaTag : inputTag, false);

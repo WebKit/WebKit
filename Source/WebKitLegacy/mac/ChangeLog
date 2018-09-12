@@ -1,3 +1,133 @@
+2018-09-12  Guillaume Emont  <guijemont@igalia.com>
+
+        Add IGNORE_WARNING_.* macros
+        https://bugs.webkit.org/show_bug.cgi?id=188996
+
+        Reviewed by Michael Catanzaro.
+
+        * Carbon/CarbonUtils.m:
+        (PoolCleaner):
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        (-[CarbonWindowAdapter setViewsNeedDisplay:]):
+        (-[CarbonWindowAdapter reconcileToCarbonWindowBounds]):
+        (-[CarbonWindowAdapter _termWindowIfOwner]):
+        (-[CarbonWindowAdapter _windowMovedToRect:]):
+        (-[CarbonWindowAdapter setContentView:]):
+        (-[CarbonWindowAdapter _handleRootBoundsChanged]):
+        (-[CarbonWindowAdapter _handleContentBoundsChanged]):
+        * Carbon/CarbonWindowFrame.m:
+        (-[CarbonWindowFrame title]):
+        * Carbon/HIViewAdapter.m:
+        (+[HIViewAdapter getHIViewForNSView:]):
+        * Carbon/HIWebView.mm:
+        (overrideCGContext):
+        (restoreCGContext):
+        (Draw):
+        * DOM/DOM.mm:
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate loadHistoryGutsFromURL:savedItemsCount:collectDiscardedItemsInto:error:]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem icon]):
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]):
+        * Misc/WebNSImageExtras.m:
+        (-[NSImage _web_scaleToMaxSize:]):
+        (-[NSImage _web_dissolveToFraction:]):
+        * Misc/WebNSPasteboardExtras.mm:
+        (+[NSPasteboard _web_setFindPasteboardString:withOwner:]):
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel loadNib]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::didCreateWindow):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::makeCurrentProcessFrontProcess):
+        (WebKit::NetscapePluginHostProxy::makePluginHostProcessFrontProcess const):
+        (WebKit::NetscapePluginHostProxy::isPluginHostProcessFrontProcess const):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::mouseEvent):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView drawRect:]):
+        * Plugins/Hosted/WebTextInputWindowController.m:
+        (-[WebTextInputPanel _interpretKeyEvent:string:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView convertFromX:andY:space:toX:andY:space:]):
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebNetscapePluginView sendDrawRectEvent:]):
+        (-[WebNetscapePluginView drawRect:]):
+        * Plugins/WebPluginController.mm:
+        (WebKit_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_):
+        (WebKit_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_):
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::populate):
+        * WebCoreSupport/WebAlternativeTextClient.h:
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::startDrag):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        (webGetNSImage):
+        * WebInspector/WebNodeHighlight.mm:
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView drawRect:]):
+        * WebView/WebClipView.mm:
+        (-[WebClipView initWithFrame:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]):
+        (-[WebFrame _drawRect:contentsOnly:]):
+        (-[WebFrame accessibilityRoot]):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController enterFullScreen:]):
+        (-[WebFullScreenController finishedEnterFullScreenAnimation:]):
+        (-[WebFullScreenController exitFullScreen]):
+        (-[WebFullScreenController finishedExitFullScreenAnimation:]):
+        (-[WebFullScreenController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WebFullScreenController _startExitFullScreenAnimationWithDuration:]):
+        * WebView/WebHTMLView.mm:
+        (-[NSWindow _web_borderView]):
+        (-[WebHTMLView _updateMouseoverWithFakeEvent]):
+        (-[WebHTMLView _setAsideSubviews]):
+        (-[WebHTMLView _autoscroll]):
+        (-[WebHTMLView drawRect:]):
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView mouseDragged:]):
+        (-[WebHTMLView mouseUp:]):
+        (-[WebHTMLView _endPrintModeAndRestoreWindowAutodisplay]):
+        (-[WebHTMLView knowsPageRange:]):
+        (-[WebHTMLView accessibilityHitTest:]):
+        (-[WebHTMLView _fontAttributesFromFontPasteboard]):
+        (-[WebHTMLView _colorAsString:]):
+        (-[WebHTMLView copyFont:]):
+        (-[WebHTMLView _executeSavedKeypressCommands]):
+        (-[WebHTMLView attachRootLayer:]):
+        (-[WebHTMLView textStorage]):
+        (-[WebHTMLView _updateSelectionForInputManager]):
+        * WebView/WebPDFView.mm:
+        (_applicationInfoForMIMEType):
+        (-[WebPDFView centerSelectionInVisibleArea:]):
+        (-[WebPDFView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        (-[WebPDFView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+        (-[WebPDFView _recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        (-[WebPDFView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _buildUI]):
+        (-[WebTextCompletionController _placePopupWindow:]):
+        * WebView/WebVideoFullscreenController.mm:
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (createMediaUIBackgroundView):
+        * WebView/WebView.mm:
+        (-[WebTextListTouchBarViewController initWithWebView:]):
+        (-[WebView _dispatchTileDidDraw:]):
+        (-[WebView encodeWithCoder:]):
+        (-[WebView mainFrameIcon]):
+        (LayerFlushController::flushLayers):
+        * WebView/WebWindowAnimation.mm:
+        (setScaledFrameForWindow):
+
 2018-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove unused needsDestruction class variables from HashTraits

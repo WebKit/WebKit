@@ -1,3 +1,119 @@
+2018-09-12  Guillaume Emont  <guijemont@igalia.com>
+
+        Add IGNORE_WARNING_.* macros
+        https://bugs.webkit.org/show_bug.cgi?id=188996
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::statelessCookieStorage):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformSyncAllCookies):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::beginModal):
+        * PluginProcess/mac/PluginProcessShim.mm:
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * Shared/ios/ChildProcessIOS.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::compileAndApplySandboxSlowCase):
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::decode):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _web_superAccessibilityAttributeValue:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRunAsModal):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _web_superAccessibilityAttributeValue:]):
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::decideDestinationWithSuggestedFilename):
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm:
+        (-[WKCustomProtocolLoader initWithLegacyCustomProtocolManagerProxy:customProtocolID:request:]):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::ContextMenuClient::menuFromProposedMenu):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextListTouchBarViewController initWithWebViewImpl:]):
+        (WebKit::WebViewImpl::updateWindowAndViewFrames):
+        (WebKit::WebViewImpl::sendDragEndToPage):
+        (WebKit::WebViewImpl::startDrag):
+        (WebKit::WebViewImpl::characterIndexForPoint):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::getPluginProcessSerialNumber):
+        (WebKit::PluginProcessProxy::makePluginProcessTheFrontProcess):
+        (WebKit::PluginProcessProxy::makeUIProcessTheFrontProcess):
+        (WebKit::PluginProcessProxy::exitFullscreen):
+        * UIProcess/ios/SmartMagnificationController.mm:
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        * UIProcess/ios/WKLegacyPDFView.mm:
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm:
+        (-[WKPDFPageNumberIndicator _makeRoundedCorners]):
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _presentPopoverWithContentViewController:animated:]):
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKColorPopover initWithView:]):
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKDateTimePopover initWithView:datePickerMode:]):
+        * UIProcess/ios/forms/WKFormPopover.h:
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover initWithView:hasGroups:]):
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::screenToRootView):
+        (WebKit::PageClientImpl::rootViewToScreen):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _setAutodisplay:]):
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]):
+        (-[WKPrintingView _drawPreview:]):
+        (-[WKPrintingView drawRect:]):
+        * UIProcess/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputPanel _interpretKeyEvent:usingLegacyCocoaTextInput:string:]):
+        (-[WKTextInputPanel _hasMarkedText]):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::initializeEventRecord):
+        (WebKit::NetscapePlugin::sendComplexTextInput):
+        (WebKit::makeCGLPresentLayerOpaque):
+        (WebKit::NetscapePlugin::nullEventTimerFired):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFPluginAccessibilityObject accessibilityFocusedUIElement]):
+        (-[WKPDFLayerControllerDelegate writeItemsToPasteboard:withTypes:]):
+        (WebKit::PDFPlugin::handleEditingCommand):
+        (WebKit::PDFPlugin::setActiveAnnotation):
+        (WebKit:: const):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement):
+        * WebProcess/WebCoreSupport/WebAlternativeTextClient.h:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::drawPDFPage):
+
 2018-09-11  Olivia Barnett  <obarnett@apple.com>
 
         Implement the Web Share API for mac

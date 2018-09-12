@@ -423,10 +423,9 @@ void NetscapePluginInstanceProxy::startTimers(bool throttleTimers)
     
 void NetscapePluginInstanceProxy::mouseEvent(NSView *pluginView, NSEvent *event, NPCocoaEventType type)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSPoint screenPoint = [[event window] convertBaseToScreen:[event locationInWindow]];
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     NSPoint pluginPoint = [pluginView convertPoint:[event locationInWindow] fromView:nil];
     
     int clickCount;

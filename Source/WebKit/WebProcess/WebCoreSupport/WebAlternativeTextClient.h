@@ -51,14 +51,11 @@ public:
 #endif
 private:
 #if PLATFORM(IOS)
-#pragma clang diagnostic push
-#if defined(__has_warning) && __has_warning("-Wunused-private-field")
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
+    IGNORE_CLANG_WARNINGS_BEGIN("unused-private-field")
 #endif
     WebPage *m_page;
 #if PLATFORM(IOS)
-#pragma clang diagnostic pop
+    IGNORE_CLANG_WARNINGS_END
 #endif
 };
 

@@ -67,10 +67,7 @@ void initialize()
 #endif // ENABLE(JIT)
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-#endif
+IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
 void Data::performAssertions(VM& vm)
 {
     UNUSED_PARAM(vm);
@@ -199,8 +196,6 @@ void Data::performAssertions(VM& vm)
         ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyNumber());
     }
 }
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+IGNORE_CLANG_WARNINGS_END
 
 } } // namespace JSC::LLInt

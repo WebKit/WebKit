@@ -46,22 +46,14 @@ void PrintStream::printf(const char* format, ...)
 
 void PrintStream::printfVariableFormat(const char* format, ...)
 {
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
-#elif COMPILER(GCC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
-#endif
+    ALLOW_NONLITERAL_FORMAT_BEGIN
+    IGNORE_GCC_WARNINGS_BEGIN("suggest-attribute=format")
     va_list argList;
     va_start(argList, format);
     vprintf(format, argList);
     va_end(argList);
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#elif COMPILER(GCC)
-#pragma GCC diagnostic pop
-#endif
+    IGNORE_GCC_WARNINGS_END
+    ALLOW_NONLITERAL_FORMAT_END
 }
 
 void PrintStream::flush()

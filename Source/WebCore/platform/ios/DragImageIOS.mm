@@ -52,8 +52,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnullability-completeness"
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIFont)
@@ -63,7 +62,7 @@ SOFT_LINK(UIKit, UIGraphicsGetCurrentContext, CGContextRef, (void), ())
 SOFT_LINK(UIKit, UIGraphicsGetImageFromCurrentImageContext, UIImage *, (void), ())
 SOFT_LINK(UIKit, UIGraphicsEndImageContext, void, (void), ())
 
-#pragma clang diagnostic pop
+IGNORE_CLANG_WARNINGS_END
 
 namespace WebCore {
 

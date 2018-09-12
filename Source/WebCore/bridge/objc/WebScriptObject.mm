@@ -702,13 +702,12 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     return self;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-missing-super-calls"
+IGNORE_CLANG_WARNINGS_BEGIN("objc-missing-super-calls")
 - (void)dealloc
 {
     return;
 }
-#pragma clang diagnostic pop
+IGNORE_CLANG_WARNINGS_END
 
 + (WebUndefined *)undefined
 {

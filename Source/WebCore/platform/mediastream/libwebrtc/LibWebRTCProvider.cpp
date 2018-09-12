@@ -31,8 +31,7 @@
 #include "Logging.h"
 #include <dlfcn.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
@@ -43,7 +42,7 @@
 #include <webrtc/pc/peerconnectionfactory.h>
 #include <webrtc/rtc_base/physicalsocketserver.h>
 
-#pragma GCC diagnostic pop
+ALLOW_UNUSED_PARAMETERS_END
 
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>

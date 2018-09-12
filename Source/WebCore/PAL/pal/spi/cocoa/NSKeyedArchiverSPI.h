@@ -86,10 +86,9 @@ inline NSData *_Nullable insecurelyArchivedDataWithRootObject(id _Nonnull object
 
 inline id _Nullable insecurelyUnarchiveObjectFromData(NSData * _Nonnull data)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [NSKeyedUnarchiver unarchiveObjectWithData:data];
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 inline id _Nullable unarchivedObjectOfClassesFromData(NSSet<Class> * _Nonnull classes, NSData * _Nonnull data)

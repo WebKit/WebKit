@@ -199,10 +199,9 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 #if !PLATFORM(IOS)
 - (NSImage *)icon
 {
-#pragma GCC diagnostic push 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [[WebIconDatabase sharedIconDatabase] iconForURL:[self URLString] withSize:WebIconSmallSize];
-#pragma GCC diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
 

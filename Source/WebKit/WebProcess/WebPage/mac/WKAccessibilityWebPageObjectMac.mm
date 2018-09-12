@@ -192,8 +192,7 @@ using namespace WebKit;
     return YES;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (id)accessibilityHitTest:(NSPoint)point
 {
     if (!m_page)
@@ -215,7 +214,7 @@ using namespace WebKit;
 
     return [[self accessibilityRootObjectWrapper] accessibilityHitTest:convertedPoint];
 }
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 

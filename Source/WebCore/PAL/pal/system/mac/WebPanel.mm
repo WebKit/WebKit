@@ -34,10 +34,9 @@
 
 - (instancetype)init
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     static NSUInteger styleMask = NSMiniaturizableWindowMask | NSClosableWindowMask | NSResizableWindowMask  | NSTitledWindowMask | NSSmallWindowMask | NSSideUtilityWindowMask | NSUtilityWindowMask;
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     
     return [super initWithContentRect:NSZeroRect styleMask:styleMask backing:NSBackingStoreBuffered defer:YES];
 }

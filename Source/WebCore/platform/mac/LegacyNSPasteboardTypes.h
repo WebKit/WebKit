@@ -27,8 +27,7 @@
 
 #if PLATFORM(MAC)
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 namespace WebCore {
 
@@ -89,6 +88,6 @@ inline NSString *legacyFilesPromisePasteboardType()
 
 } // namespace WebCore
 
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // PLATFORM(MAC)

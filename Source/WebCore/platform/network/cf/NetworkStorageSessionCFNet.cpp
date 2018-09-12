@@ -64,12 +64,11 @@ static inline CFTypeID typeID() { return ClassName##GetTypeID(); } \
 };
 
 #if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #endif
 DECLARE_CF_TYPE_TRAIT(CFHTTPCookie);
 #if COMPILER(CLANG)
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #undef DECLARE_CF_TYPE_TRAIT

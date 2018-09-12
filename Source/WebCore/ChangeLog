@@ -1,3 +1,131 @@
+2018-09-12  Guillaume Emont  <guijemont@igalia.com>
+
+        Add IGNORE_WARNING_.* macros
+        https://bugs.webkit.org/show_bug.cgi?id=188996
+
+        Reviewed by Michael Catanzaro.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::overrideAttachmentParent):
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment const):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper renderWidgetChildren]):
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        (-[WebAccessibilityObjectWrapper role]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        * bridge/objc/WebScriptObject.mm:
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::fieldNamed const):
+        * crypto/CommonCryptoUtilities.cpp:
+        (WebCore::getCommonCryptoDigestAlgorithm):
+        * crypto/mac/CryptoAlgorithmAES_GCMMac.cpp:
+        (WebCore::encryptAES_GCM):
+        (WebCore::decyptAES_GCM):
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::wrapSerializedCryptoKey):
+        (WebCore::unwrapSerializedCryptoKey):
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py:
+        * css/makeSelectorPseudoElementsMap.py:
+        * editing/TextIterator.cpp:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::takeFindStringFromSelection):
+        (WebCore::Editor::replaceNodeFromPasteboard):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::paintContents):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::formatLocalizedString):
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenData::decode):
+        * platform/gamepad/mac/HIDGamepadProvider.cpp:
+        (WebCore::HIDGamepadProvider::stopMonitoringInput):
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::sharedDisplay):
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::update):
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::IGNORE_CLANG_WARNING_END):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVSampleBufferErrorListener beginObservingRenderer:]):
+        (-[WebAVSampleBufferErrorListener stopObservingRenderer:]):
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::IGNORE_CLANG_WARNING_END):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayer::drawLayerContents):
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::createFrameImageAtIndex):
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        * platform/graphics/cocoa/WebGLLayer.h:
+        (IGNORE_CLANG_WARNING):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::Icon):
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        * platform/graphics/mac/WebKitNSImageExtras.mm:
+        (-[NSImage _web_lockFocusWithDeviceScaleFactor:]):
+        * platform/ios/DragImageIOS.mm:
+        * platform/mac/DragImageMac.mm:
+        (WebCore::scaleDragImage):
+        (WebCore::createDragImageForLink):
+        * platform/mac/LegacyNSPasteboardTypes.h:
+        * platform/mac/LocalCurrentGraphicsContext.mm:
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::createForCopyAndPaste):
+        (WebCore::Pasteboard::createForDragAndDrop):
+        (WebCore::setDragImageImpl):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::globalPoint):
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformContentsToScreen const):
+        (WebCore::ScrollView::platformScreenToContents const):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::drawCellFocusRingWithFrameAtTime):
+        * platform/mac/WebPlaybackControlsManager.mm:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+        * platform/mediastream/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/RealtimeIncomingVideoSource.h:
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::reportErrorToClient):
+        * platform/network/create-http-header-name-table:
+        * platform/text/TextEncoding.cpp:
+        * testing/MockLibWebRTCPeerConnection.h:
+        * xml/XPathGrammar.cpp:
+
 2018-09-12  Pablo Saavedra  <psaavedra@igalia.com>
 
         Linking against libWPEWebKit-0.1.so is not posible when WPE is build with ENABLE_VIDEO=OFF and ENABLE_WEB_AUDIO=OFF

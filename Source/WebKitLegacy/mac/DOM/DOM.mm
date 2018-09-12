@@ -244,8 +244,7 @@ static inline WKQuad zeroQuad()
 
 @implementation DOMNode (WebCoreInternal)
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
+IGNORE_CLANG_WARNINGS_BEGIN("objc-protocol-method-implementation")
 
 - (NSString *)description
 {
@@ -259,7 +258,7 @@ static inline WKQuad zeroQuad()
     return [NSString stringWithFormat:@"<%@ [%@]: %p>", [[self class] description], [self nodeName], _internal];
 }
 
-#pragma clang diagnostic pop
+IGNORE_CLANG_WARNINGS_END
 
 - (Bindings::RootObject*)_rootObject
 {

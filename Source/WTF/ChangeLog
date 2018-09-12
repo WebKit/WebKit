@@ -1,1 +1,27 @@
+2018-09-12  Guillaume Emont  <guijemont@igalia.com>
+
+        Add IGNORE_WARNING_.* macros
+        https://bugs.webkit.org/show_bug.cgi?id=188996
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/Compiler.h:
+        * wtf/MD5.cpp:
+        (WTF::MD5::MD5):
+        (WTF::MD5::addBytes):
+        (WTF::MD5::checksum):
+        * wtf/PrintStream.cpp:
+        (WTF::PrintStream::printfVariableFormat):
+        * wtf/SHA1.cpp:
+        (WTF::SHA1::SHA1):
+        (WTF::SHA1::addBytes):
+        (WTF::SHA1::computeHash):
+        * wtf/ThreadingPthreads.cpp:
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::endOfBuffer):
+        * wtf/text/WTFString.cpp:
+        (WTF::createWithFormatAndArguments):
+
 == Rolled over to ChangeLog-2018-09-11 ==

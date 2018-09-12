@@ -118,12 +118,11 @@ NSHTTPCookieStorage *NetworkDataTaskCocoa::statelessCookieStorage()
     static NeverDestroyed<RetainPtr<NSHTTPCookieStorage>> statelessCookieStorage;
     if (!statelessCookieStorage.get()) {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
+        IGNORE_NULL_CHECK_WARNINGS_BEGIN
 #endif
         statelessCookieStorage.get() = adoptNS([[NSHTTPCookieStorage alloc] _initWithIdentifier:nil private:YES]);
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
-#pragma clang diagnostic pop
+        IGNORE_NULL_CHECK_WARNINGS_END
 #endif
         statelessCookieStorage.get().get().cookieAcceptPolicy = NSHTTPCookieAcceptPolicyNever;
     }

@@ -33,13 +33,12 @@
 #include "RealtimeOutgoingVideoSource.h"
 #include <wtf/WeakPtr.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/rtpsenderinterface.h>
 #include <webrtc/rtc_base/scoped_ref_ptr.h>
 
-#pragma GCC diagnostic pop
+ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 

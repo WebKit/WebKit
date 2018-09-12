@@ -66,10 +66,9 @@ static const CGFloat colorPopoverCornerRadius = 9;
     [popoverViewController setView:controlContainerView.get()];
     [popoverViewController setPreferredContentSize:[controlContainerView size]];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<UIPopoverController> controller = adoptNS([[UIPopoverController alloc] initWithContentViewController:popoverViewController.get()]);
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [self setPopoverController:controller.get()];
 
     return self;

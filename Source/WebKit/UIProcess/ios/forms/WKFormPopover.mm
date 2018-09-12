@@ -36,8 +36,7 @@
 
 using namespace WebKit;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 @implementation WKFormRotatingAccessoryPopover
 
@@ -178,6 +177,6 @@ using namespace WebKit;
 
 @end
 
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // PLATFORM(IOS)

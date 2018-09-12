@@ -1,1 +1,43 @@
+2018-09-12  Guillaume Emont  <guijemont@igalia.com>
+
+        Add IGNORE_WARNING_.* macros
+        https://bugs.webkit.org/show_bug.cgi?id=188996
+
+        Reviewed by Michael Catanzaro.
+
+        * API/JSCallbackObject.h:
+        * API/tests/testapi.c:
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3Opcode.cpp:
+        * b3/B3Type.h:
+        * b3/B3TypeMap.h:
+        * b3/B3Width.h:
+        * b3/air/AirArg.cpp:
+        * b3/air/AirArg.h:
+        * b3/air/AirCode.h:
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+        (JSC::DFG::SpeculativeJIT::speculateMisc):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * ftl/FTLOutput.h:
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::calculatePokeOffset):
+        * llint/LLIntData.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::slowPathLogF):
+        * runtime/ConfigFile.cpp:
+        (JSC::ConfigFile::canonicalizePaths):
+        * runtime/JSDataViewPrototype.cpp:
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewPrototype.h:
+        * runtime/Options.cpp:
+        (JSC::Options::setAliasedOption):
+        * tools/CodeProfiling.cpp:
+        * wasm/WasmSections.h:
+        * wasm/generateWasmValidateInlinesHeader.py:
+
 == Rolled over to ChangeLog-2018-09-11 ==

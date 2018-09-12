@@ -744,12 +744,7 @@ bool Options::setAliasedOption(const char* arg)
     if (!equalStr)
         return false;
 
-#if COMPILER(CLANG)
-#if __has_warning("-Wtautological-compare")
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wtautological-compare"
-#endif
-#endif
+    IGNORE_WARNINGS_BEGIN("tautological-compare")
 
     // For each option, check if the specify arg is a match. If so, set the arg
     // if the value makes sense. Otherwise, move on to checking the next option.
@@ -772,11 +767,7 @@ bool Options::setAliasedOption(const char* arg)
     JSC_ALIASED_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
 
-#if COMPILER(CLANG)
-#if __has_warning("-Wtautological-compare")
-#pragma clang diagnostic pop
-#endif
-#endif
+    IGNORE_WARNINGS_END
 
     return false; // No option matched.
 }

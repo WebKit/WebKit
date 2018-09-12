@@ -666,10 +666,7 @@ void SocketStreamHandleImpl::reportErrorToClient(CFErrorRef error)
 
 #if PLATFORM(MAC)
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
     if (CFEqual(CFErrorGetDomain(error), kCFErrorDomainOSStatus)) {
         const char* descriptionOSStatus = GetMacOSStatusCommentString(static_cast<OSStatus>(errorCode));
@@ -677,9 +674,7 @@ void SocketStreamHandleImpl::reportErrorToClient(CFErrorRef error)
             description = "OSStatus Error " + String::number(errorCode) + ": " + descriptionOSStatus;
     }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif
 

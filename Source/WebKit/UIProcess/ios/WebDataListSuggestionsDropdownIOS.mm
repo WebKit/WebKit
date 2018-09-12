@@ -319,10 +319,9 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     [_suggestionsViewController reloadData];
     [[self.view _formInputSession] setSuggestions:[self textSuggestions]];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_popover setPopoverController:[[[UIPopoverController alloc] initWithContentViewController:_suggestionsViewController.get()] autorelease]];
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [_popover presentPopoverAnimated:NO];
 }

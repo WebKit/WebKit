@@ -32,13 +32,12 @@
 #include "RTCRtpParameters.h"
 #include <wtf/text/WTFString.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/rtpparameters.h>
 #include <webrtc/api/rtptransceiverinterface.h>
 
-#pragma GCC diagnostic pop
+ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 

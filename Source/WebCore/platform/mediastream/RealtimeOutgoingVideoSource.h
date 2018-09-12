@@ -34,13 +34,12 @@
 #include "MediaStreamTrackPrivate.h"
 #include <Timer.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/mediastreaminterface.h>
 #include <webrtc/common_video/include/i420_buffer_pool.h>
 
-#pragma GCC diagnostic pop
+ALLOW_UNUSED_PARAMETERS_END
 
 #include <wtf/Optional.h>
 #include <wtf/ThreadSafeRefCounted.h>

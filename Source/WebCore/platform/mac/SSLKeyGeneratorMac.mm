@@ -44,8 +44,7 @@ WTF_DECLARE_CF_TYPE_TRAIT(SecACL);
 
 namespace WebCore {
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 struct PublicKeyAndChallenge {
     CSSM_X509_SUBJECT_PUBLIC_KEY_INFO subjectPublicKeyInfo;
@@ -223,7 +222,7 @@ static String signedPublicKeyAndChallengeString(unsigned keySize, const CString&
     return base64Encode(encodedSignedPublicKeyAndChallenge.Data, encodedSignedPublicKeyAndChallenge.Length);
 }
 
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 void getSupportedKeySizes(Vector<String>& supportedKeySizes)
 {

@@ -195,10 +195,9 @@ std::optional<ScreenData> ScreenData::decode(Decoder& decoder)
 
         auto colorSpaceData = adoptCF(CFDataCreate(kCFAllocatorDefault, iccData->data(), iccData->size()));
         // FIXME: <http://webkit.org/b/184358> We should switch to CGColorSpaceCreateICCBased.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         cgColorSpace = adoptCF(CGColorSpaceCreateWithICCProfile(colorSpaceData.get()));
-#pragma clang diagnostic pop
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
     }
     }

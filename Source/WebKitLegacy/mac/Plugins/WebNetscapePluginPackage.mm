@@ -167,14 +167,13 @@ using namespace WebCore;
     if (!NP_Initialize || !NP_GetEntryPoints || !NP_Shutdown)
         return NO;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
     resourceRef = [self openResourceFile];
     if (resourceRef != -1) {
         UseResFile(resourceRef);
     }
-#pragma clang diagnostic pop
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     browserFuncs.version = NP_VERSION_MINOR;
     browserFuncs.size = sizeof(NPNetscapeFuncs);
