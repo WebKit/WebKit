@@ -124,6 +124,12 @@ struct NetworkProcessCreationParameters {
 #if ENABLE(PROXIMITY_NETWORKING)
     unsigned wirelessContextIdentifier { 0 };
 #endif
+
+#if ENABLE(INDEXED_DATABASE)
+    String indexedDatabaseDirectory;
+    SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
+#endif
+
 };
 
 } // namespace WebKit

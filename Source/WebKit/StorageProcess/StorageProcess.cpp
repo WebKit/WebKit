@@ -38,7 +38,6 @@
 #include "WebSWServerToContextConnection.h"
 #include "WebsiteData.h"
 #include <WebCore/FileSystem.h>
-#include <WebCore/IDBKeyData.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SWServerWorker.h>
 #include <WebCore/SecurityOrigin.h>
@@ -152,46 +151,13 @@ void StorageProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
 #endif
 }
 
-#if ENABLE(INDEXED_DATABASE)
-IDBServer::IDBServer& StorageProcess::idbServer(PAL::SessionID sessionID)
-{
-    auto addResult = m_idbServers.add(sessionID, nullptr);
-    if (!addResult.isNewEntry) {
-        ASSERT(addResult.iterator->value);
-        return *addResult.iterator->value;
-    }
-
-    auto path = m_idbDatabasePaths.get(sessionID);
-    // There should already be a registered path for this PAL::SessionID.
-    // If there's not, then where did this PAL::SessionID come from?
-    ASSERT(!path.isEmpty());
-
-    addResult.iterator->value = IDBServer::IDBServer::create(path, StorageProcess::singleton());
-    return *addResult.iterator->value;
-}
-#endif
-
 void StorageProcess::initializeWebsiteDataStore(const StorageProcessCreationParameters& parameters)
 {
-#if ENABLE(INDEXED_DATABASE)
-    // *********
-    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
-    // *********
-
-    auto addResult = m_idbDatabasePaths.ensure(parameters.sessionID, [path = parameters.indexedDatabaseDirectory] {
-        return path;
-    });
-    if (addResult.isNewEntry) {
-        SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
-        if (!parameters.indexedDatabaseDirectory.isEmpty())
-            postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.indexedDatabaseDirectory));
-    }
-#endif
 #if ENABLE(SERVICE_WORKER)
     if (!parentProcessHasServiceWorkerEntitlement())
         return;
 
-    addResult = m_swDatabasePaths.ensure(parameters.sessionID, [path = parameters.serviceWorkerRegistrationDirectory] {
+    auto addResult = m_swDatabasePaths.ensure(parameters.sessionID, [path = parameters.serviceWorkerRegistrationDirectory] {
         return path;
     });
     if (addResult.isNewEntry) {
@@ -324,19 +290,6 @@ void StorageProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         });
     }
 #endif
-
-#if ENABLE(INDEXED_DATABASE)
-    path = m_idbDatabasePaths.get(sessionID);
-    if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        // FIXME: Pick the right database store based on the session ID.
-        postStorageTask(CrossThreadTask([this, callbackAggregator = callbackAggregator.copyRef(), path = WTFMove(path), rawWebsiteData]() mutable {
-            RunLoop::main().dispatch([callbackAggregator = WTFMove(callbackAggregator), rawWebsiteData, securityOrigins = indexedDatabaseOrigins(path)] {
-                for (const auto& securityOrigin : securityOrigins)
-                    rawWebsiteData->entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
-            });
-        }));
-    }
-#endif
 }
 
 void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID)
@@ -348,11 +301,6 @@ void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 #if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
         swServerForSession(sessionID).clearAll([callbackAggregator = callbackAggregator.copyRef()] { });
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, [callbackAggregator = WTFMove(callbackAggregator)] { });
 #endif
 }
 
@@ -369,82 +317,7 @@ void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             server.clear(securityOrigin, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 #endif
-
-#if ENABLE(INDEXED_DATABASE)
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer(sessionID).closeAndDeleteDatabasesForOrigins(securityOrigins, [callbackAggregator = WTFMove(callbackAggregator)] { });
-#endif
 }
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-void StorageProcess::grantSandboxExtensionsForBlobs(const Vector<String>& paths, SandboxExtension::HandleArray&& handles)
-{
-    ASSERT(paths.size() == handles.size());
-
-    for (size_t i = 0; i < paths.size(); ++i) {
-        auto result = m_blobTemporaryFileSandboxExtensions.add(paths[i], SandboxExtension::create(WTFMove(handles[i])));
-        ASSERT_UNUSED(result, result.isNewEntry);
-    }
-}
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-void StorageProcess::prepareForAccessToTemporaryFile(const String& path)
-{
-    if (auto extension = m_blobTemporaryFileSandboxExtensions.get(path))
-        extension->consume();
-}
-
-void StorageProcess::accessToTemporaryFileComplete(const String& path)
-{
-    // We've either hard linked the temporary blob file to the database directory, copied it there,
-    // or the transaction is being aborted.
-    // In any of those cases, we can delete the temporary blob file now.
-    FileSystem::deleteFile(path);
-
-    if (auto extension = m_blobTemporaryFileSandboxExtensions.take(path))
-        extension->revoke();
-}
-
-HashSet<WebCore::SecurityOriginData> StorageProcess::indexedDatabaseOrigins(const String& path)
-{
-    if (path.isEmpty())
-        return { };
-
-    HashSet<WebCore::SecurityOriginData> securityOrigins;
-    for (auto& topOriginPath : FileSystem::listDirectory(path, "*")) {
-        auto databaseIdentifier = FileSystem::pathGetFileName(topOriginPath);
-        if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-            securityOrigins.add(WTFMove(*securityOrigin));
-        
-        for (auto& originPath : FileSystem::listDirectory(topOriginPath, "*")) {
-            databaseIdentifier = FileSystem::pathGetFileName(originPath);
-            if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-                securityOrigins.add(WTFMove(*securityOrigin));
-        }
-    }
-
-    return securityOrigins;
-}
-
-#endif
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-void StorageProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void (SandboxExtension::HandleArray&&)>&& completionHandler)
-{
-    static uint64_t lastRequestID;
-
-    uint64_t requestID = ++lastRequestID;
-    m_sandboxExtensionForBlobsCompletionHandlers.set(requestID, WTFMove(completionHandler));
-    parentProcessConnection()->send(Messages::StorageProcessProxy::GetSandboxExtensionsForBlobFiles(requestID, filenames), 0);
-}
-
-void StorageProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&& handles)
-{
-    if (auto handler = m_sandboxExtensionForBlobsCompletionHandlers.take(requestID))
-        handler(WTFMove(handles));
-}
-#endif
 
 #if ENABLE(SERVICE_WORKER)
 SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)

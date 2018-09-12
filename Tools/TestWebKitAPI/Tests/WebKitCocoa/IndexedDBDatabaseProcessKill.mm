@@ -94,7 +94,7 @@ TEST(IndexedDB, DatabaseProcessKill)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         if (!killedDBProcess && openRequestUpgradeNeeded) {
             killedDBProcess = true;
-            [configuration.get().processPool _terminateStorageProcess];
+            [configuration.get().processPool _terminateNetworkProcess];
         }
     }
 

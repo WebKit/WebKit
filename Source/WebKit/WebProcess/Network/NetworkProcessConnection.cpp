@@ -33,6 +33,7 @@
 #include "WebCacheStorageConnectionMessages.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebIDBConnectionToServerMessages.h"
 #include "WebLoaderStrategy.h"
 #include "WebMDNSRegisterMessages.h"
 #include "WebPage.h"
@@ -107,6 +108,15 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
 
+#if ENABLE(INDEXED_DATABASE)
+    if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {
+        auto idbConnection = m_webIDBConnectionsByIdentifier.get(decoder.destinationID());
+        if (idbConnection)
+            idbConnection->didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
+
     didReceiveNetworkProcessConnectionMessage(connection, decoder);
 }
 
@@ -126,6 +136,16 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
         handler(dummyFilenames);
 
     m_writeBlobToFileCompletionHandlers.clear();
+
+
+#if ENABLE(INDEXED_DATABASE)
+    for (auto& connection : m_webIDBConnectionsByIdentifier.values())
+        connection->connectionToServerLost();
+    
+    m_webIDBConnectionsByIdentifier.clear();
+    m_webIDBConnectionsBySession.clear();
+#endif
+
 }
 
 void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
@@ -181,4 +201,17 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 }
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServerForSession(PAL::SessionID sessionID)
+{
+    return *m_webIDBConnectionsBySession.ensure(sessionID, [&] {
+        auto connection = WebIDBConnectionToServer::create(sessionID);
+        
+        auto result = m_webIDBConnectionsByIdentifier.add(connection->identifier(), connection.copyRef());
+        ASSERT_UNUSED(result, result.isNewEntry);
+        
+        return connection;
+    }).iterator->value;
+}
+#endif
 } // namespace WebKit

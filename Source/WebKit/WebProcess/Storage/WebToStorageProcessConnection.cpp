@@ -29,7 +29,6 @@
 
 #include "ServiceWorkerClientFetchMessages.h"
 #include "StorageToWebProcessConnectionMessages.h"
-#include "WebIDBConnectionToServerMessages.h"
 #include "WebProcess.h"
 #include "WebSWClientConnection.h"
 #include "WebSWClientConnectionMessages.h"
@@ -55,15 +54,6 @@ WebToStorageProcessConnection::~WebToStorageProcessConnection()
 
 void WebToStorageProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-#if ENABLE(INDEXED_DATABASE)
-    if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {
-        auto idbConnection = m_webIDBConnectionsByIdentifier.get(decoder.destinationID());
-        if (idbConnection)
-            idbConnection->didReceiveMessage(connection, decoder);
-        return;
-    }
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
         auto serviceWorkerConnection = m_swConnectionsByIdentifier.get(makeObjectIdentifier<SWServerConnectionIdentifierType>(decoder.destinationID()));
@@ -102,10 +92,6 @@ void WebToStorageProcessConnection::didClose(IPC::Connection& connection)
 {
     auto protectedThis = makeRef(*this);
 
-#if ENABLE(INDEXED_DATABASE)
-    for (auto& connection : m_webIDBConnectionsByIdentifier.values())
-        connection->connectionToServerLost();
-#endif
 #if ENABLE(SERVICE_WORKER)
     for (auto& connection : m_swConnectionsBySession.values())
         connection->connectionToServerLost();
@@ -115,30 +101,11 @@ void WebToStorageProcessConnection::didClose(IPC::Connection& connection)
 #endif
 
     WebProcess::singleton().webToStorageProcessConnectionClosed(this);
-
-#if ENABLE(INDEXED_DATABASE)
-    m_webIDBConnectionsByIdentifier.clear();
-    m_webIDBConnectionsBySession.clear();
-#endif
 }
 
 void WebToStorageProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 }
-
-#if ENABLE(INDEXED_DATABASE)
-WebIDBConnectionToServer& WebToStorageProcessConnection::idbConnectionToServerForSession(SessionID sessionID)
-{
-    return *m_webIDBConnectionsBySession.ensure(sessionID, [&] {
-        auto connection = WebIDBConnectionToServer::create(sessionID);
-
-        auto result = m_webIDBConnectionsByIdentifier.add(connection->identifier(), connection.copyRef());
-        ASSERT_UNUSED(result, result.isNewEntry);
-
-        return connection;
-    }).iterator->value;
-}
-#endif
 
 #if ENABLE(SERVICE_WORKER)
 WebSWClientConnection& WebToStorageProcessConnection::serviceWorkerConnectionForSession(SessionID sessionID)

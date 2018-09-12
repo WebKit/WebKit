@@ -28,7 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "MessageSender.h"
-#include "StorageToWebProcessConnection.h"
+#include "NetworkConnectionToWebProcess.h"
 #include <WebCore/IDBConnectionToClient.h>
 #include <pal/SessionID.h>
 
@@ -52,7 +52,7 @@ namespace WebKit {
 
 class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender, public RefCounted<WebIDBConnectionToClient> {
 public:
-    static Ref<WebIDBConnectionToClient> create(StorageToWebProcessConnection&, uint64_t serverConnectionIdentifier, PAL::SessionID);
+    static Ref<WebIDBConnectionToClient> create(NetworkConnectionToWebProcess&, uint64_t serverConnectionIdentifier, PAL::SessionID);
 
     virtual ~WebIDBConnectionToClient();
 
@@ -126,13 +126,13 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    WebIDBConnectionToClient(StorageToWebProcessConnection&, uint64_t serverConnectionIdentifier, PAL::SessionID);
+    WebIDBConnectionToClient(NetworkConnectionToWebProcess&, uint64_t serverConnectionIdentifier, PAL::SessionID);
 
     IPC::Connection* messageSenderConnection() final;
 
     template<class MessageType> void handleGetResult(const WebCore::IDBResultData&);
 
-    Ref<StorageToWebProcessConnection> m_connection;
+    Ref<NetworkConnectionToWebProcess> m_connection;
 
     uint64_t m_identifier;
     PAL::SessionID m_sessionID;

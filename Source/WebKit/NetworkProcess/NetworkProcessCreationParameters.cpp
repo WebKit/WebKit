@@ -108,6 +108,11 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(PROXIMITY_NETWORKING)
     encoder << wirelessContextIdentifier;
 #endif
+
+#if ENABLE(INDEXED_DATABASE)
+    encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
+#endif
+
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -244,6 +249,17 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 #if ENABLE(PROXIMITY_NETWORKING)
     if (!decoder.decode(result.wirelessContextIdentifier))
         return false;
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+    if (!decoder.decode(result.indexedDatabaseDirectory))
+        return false;
+    
+    std::optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
+    decoder >> indexedDatabaseDirectoryExtensionHandle;
+    if (!indexedDatabaseDirectoryExtensionHandle)
+        return false;
+    result.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
 #endif
 
     return true;

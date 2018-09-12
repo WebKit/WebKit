@@ -79,9 +79,6 @@ private:
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths);
-#endif
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToStorageProcess(WebCore::SecurityOriginData&&);
     void establishWorkerContextConnectionToStorageProcessForExplicitSession(WebCore::SecurityOriginData&&, PAL::SessionID);

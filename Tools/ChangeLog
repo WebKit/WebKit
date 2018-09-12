@@ -1,3 +1,21 @@
+2018-09-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Move IndexedDB to Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=189415
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBDeleteRecovery.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBDatabaseProcessKill.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBMultiProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+        (TEST):
+
 2018-09-12  Chris Dumez  <cdumez@apple.com>
 
         PSON: No process swap on back navigation after URL bar navigation

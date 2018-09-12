@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "ShareableResource.h"
+#include "WebIDBConnectionToServer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,6 +64,11 @@ public:
 
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>& filePaths)>&& completionHandler);
 
+#if ENABLE(INDEXED_DATABASE)
+    WebIDBConnectionToServer* existingIDBConnectionToServerForIdentifier(uint64_t identifier) { return m_webIDBConnectionsByIdentifier.get(identifier); };
+    WebIDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID);
+#endif
+
 private:
     NetworkProcessConnection(IPC::Connection::Identifier);
 
@@ -86,6 +92,12 @@ private:
     Ref<IPC::Connection> m_connection;
 
     HashMap<uint64_t, Function<void (const Vector<String>&)>> m_writeBlobToFileCompletionHandlers;
+
+#if ENABLE(INDEXED_DATABASE)
+    HashMap<PAL::SessionID, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsBySession;
+    HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsByIdentifier;
+#endif
+
 };
 
 } // namespace WebKit

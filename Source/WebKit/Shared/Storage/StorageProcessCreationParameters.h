@@ -44,11 +44,6 @@ struct StorageProcessCreationParameters {
     static bool decode(IPC::Decoder&, StorageProcessCreationParameters&);
 
     PAL::SessionID sessionID;
-    
-#if ENABLE(INDEXED_DATABASE)
-    String indexedDatabaseDirectory;
-    SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;

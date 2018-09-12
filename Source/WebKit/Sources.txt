@@ -47,6 +47,8 @@ NetworkProcess/Downloads/PendingDownload.cpp
 
 NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 
+NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp
+
 NetworkProcess/cache/CacheStorageEngine.cpp
 NetworkProcess/cache/CacheStorageEngineCache.cpp
 NetworkProcess/cache/CacheStorageEngineCaches.cpp
@@ -219,8 +221,6 @@ Shared/WebsiteData/WebsiteData.cpp
 
 StorageProcess/StorageProcess.cpp @no-unify
 StorageProcess/StorageToWebProcessConnection.cpp @no-unify
-
-StorageProcess/IndexedDB/WebIDBConnectionToClient.cpp @no-unify
 
 StorageProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
 StorageProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify

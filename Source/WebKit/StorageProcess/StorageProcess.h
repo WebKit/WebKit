@@ -26,14 +26,10 @@
 #pragma once
 
 #include "ChildProcess.h"
-#include "SandboxExtension.h"
 #include <WebCore/FetchIdentifier.h>
-#include <WebCore/IDBBackingStore.h>
-#include <WebCore/IDBServer.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
-#include <WebCore/UniqueIDBDatabase.h>
 #include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
@@ -63,9 +59,6 @@ class WebSWOriginStore;
 #endif
 
 class StorageProcess : public ChildProcess
-#if ENABLE(INDEXED_DATABASE)
-    , public WebCore::IDBServer::IDBBackingStoreTemporaryFileHandler
-#endif
 {
     WTF_MAKE_NONCOPYABLE(StorageProcess);
     friend NeverDestroyed<StorageProcess>;
@@ -75,20 +68,7 @@ public:
 
     ~StorageProcess();
 
-    WorkQueue& queue() { return m_queue.get(); }
     void postStorageTask(CrossThreadTask&&);
-
-#if ENABLE(INDEXED_DATABASE)
-    WebCore::IDBServer::IDBServer& idbServer(PAL::SessionID);
-
-    // WebCore::IDBServer::IDBBackingStoreFileHandler
-    void prepareForAccessToTemporaryFile(const String& path) final;
-    void accessToTemporaryFileComplete(const String& path) final;
-#endif
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void (SandboxExtension::HandleArray&&)>&& completionHandler);
-#endif
 
 #if PLATFORM(IOS)
     bool parentProcessHasServiceWorkerEntitlement() const;
@@ -135,10 +115,7 @@ private:
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void grantSandboxExtensionsForBlobs(const Vector<String>& paths, SandboxExtension::HandleArray&&);
-    void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&&);
-#endif
+
 #if ENABLE(SERVICE_WORKER)
     void didReceiveFetchResponse(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceResponse&);
     void didReceiveFetchData(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
@@ -156,9 +133,6 @@ private:
     WebSWOriginStore* existingSWOriginStoreForSession(PAL::SessionID) const;
     bool needsServerToContextConnectionForOrigin(const WebCore::SecurityOriginData&) const;
 #endif
-#if ENABLE(INDEXED_DATABASE)
-    HashSet<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
-#endif
 
     // For execution on work queue thread only
     void performNextStorageTask();
@@ -167,13 +141,6 @@ private:
     Vector<Ref<StorageToWebProcessConnection>> m_storageToWebProcessConnections;
 
     Ref<WorkQueue> m_queue;
-
-#if ENABLE(INDEXED_DATABASE)
-    HashMap<PAL::SessionID, String> m_idbDatabasePaths;
-    HashMap<PAL::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
-#endif
-    HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
-    HashMap<uint64_t, WTF::Function<void (SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlers;
 
     Deque<CrossThreadTask> m_storageTasks;
     Lock m_storageTaskMutex;

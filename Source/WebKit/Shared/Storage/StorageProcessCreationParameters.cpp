@@ -37,9 +37,6 @@ StorageProcessCreationParameters::StorageProcessCreationParameters()
 void StorageProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << sessionID;
-#if ENABLE(INDEXED_DATABASE)
-    encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
-#endif
 #if ENABLE(SERVICE_WORKER)
     encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << urlSchemesServiceWorkersCanHandle << shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
@@ -49,16 +46,7 @@ bool StorageProcessCreationParameters::decode(IPC::Decoder& decoder, StorageProc
 {
     if (!decoder.decode(result.sessionID))
         return false;
-#if ENABLE(INDEXED_DATABASE)
-    if (!decoder.decode(result.indexedDatabaseDirectory))
-        return false;
 
-    std::optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
-    decoder >> indexedDatabaseDirectoryExtensionHandle;
-    if (!indexedDatabaseDirectoryExtensionHandle)
-        return false;
-    result.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
-#endif
 #if ENABLE(SERVICE_WORKER)
     if (!decoder.decode(result.serviceWorkerRegistrationDirectory))
         return false;

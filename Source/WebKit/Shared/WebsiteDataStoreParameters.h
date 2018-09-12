@@ -55,6 +55,11 @@ struct WebsiteDataStoreParameters {
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     Vector<WebCore::Cookie> pendingCookies;
     NetworkSessionCreationParameters networkSessionParameters;
+
+#if ENABLE(INDEXED_DATABASE)
+    String indexedDatabaseDirectory;
+    SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
+#endif
 };
 
 } // namespace WebKit

@@ -325,21 +325,6 @@ void NetworkProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
     callback();
 }
 
-void NetworkProcessProxy::grantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID, const Vector<String>& paths)
-{
-#if ENABLE(SANDBOX_EXTENSIONS)
-    SandboxExtension::HandleArray extensions;
-    extensions.allocate(paths.size());
-    for (size_t i = 0; i < paths.size(); ++i) {
-        // ReadWrite is required for creating hard links as well as deleting the temporary file, which the StorageProcess will do.
-        SandboxExtension::createHandle(paths[i], SandboxExtension::Type::ReadWrite, extensions[i]);
-    }
-
-    m_processPool.sendToStorageProcessRelaunchingIfNecessary(Messages::StorageProcess::GrantSandboxExtensionsForBlobs(paths, extensions));
-#endif
-    connection()->send(Messages::NetworkProcess::DidGrantSandboxExtensionsToStorageProcessForBlobs(requestID), 0);
-}
-
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
@@ -644,6 +629,20 @@ void NetworkProcessProxy::sendProcessDidTransitionToBackground()
 {
     send(Messages::NetworkProcess::ProcessDidTransitionToBackground(), 0);
 }
+
+#if ENABLE(SANDBOX_EXTENSIONS)
+void NetworkProcessProxy::getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths)
+{
+    SandboxExtension::HandleArray extensions;
+    extensions.allocate(paths.size());
+    for (size_t i = 0; i < paths.size(); ++i) {
+        // ReadWrite is required for creating hard links, which is something that might be done with these extensions.
+        SandboxExtension::createHandle(paths[i], SandboxExtension::Type::ReadWrite, extensions[i]);
+    }
+    
+    send(Messages::NetworkProcess::DidGetSandboxExtensionsForBlobFiles(requestID, extensions), 0);
+}
+#endif
 
 } // namespace WebKit
 
