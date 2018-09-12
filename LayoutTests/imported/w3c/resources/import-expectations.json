@@ -257,7 +257,7 @@
     "web-platform-tests/media-capabilities": "skip", 
     "web-platform-tests/media-source": "import", 
     "web-platform-tests/mediacapture-image": "skip", 
-    "web-platform-tests/mediacapture-record": "skip", 
+    "web-platform-tests/mediacapture-record": "import", 
     "web-platform-tests/mediacapture-streams": "import", 
     "web-platform-tests/mediasession": "skip", 
     "web-platform-tests/microdata": "skip", 

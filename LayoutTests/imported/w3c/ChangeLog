@@ -1,3 +1,20 @@
+2018-09-12  YUHAN WU  <yuhan_wu@apple.com>
+
+        Import media recorder api WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=189526
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/mediacapture-record/BlobEvent-constructor-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/BlobEvent-constructor.html: Added.
+        * web-platform-tests/mediacapture-record/META.yml: Added.
+        * web-platform-tests/mediacapture-record/idlharness.window-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/idlharness.window.html: Added.
+        * web-platform-tests/mediacapture-record/idlharness.window.js: Added.
+        (idl_array.catch):
+        * web-platform-tests/mediacapture-record/w3c-import.log: Added.
+
 2018-09-12  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Implement rootMargin expansion
