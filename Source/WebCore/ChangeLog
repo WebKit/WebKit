@@ -1,3 +1,11 @@
+2018-09-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix.
+
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        Add extra header inclusions to get this code building after the unified
+        sources system shifted it into a different translation unit.
+
 2018-09-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] WebInspector doesn't display request headers added during processing.
