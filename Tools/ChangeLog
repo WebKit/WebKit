@@ -1,3 +1,14 @@
+2018-09-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang][ImageDiff] Fix compilation error and warning of PlatformImageCairo.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=189496
+
+        Reviewed by Alex Christensen.
+
+        * ImageDiff/cairo/PlatformImageCairo.cpp:
+        (ImageDiff::PlatformImage::createFromStdin): Removed unnecessary ReadContext struct.
+        (ImageDiff::PlatformImage::writeAsPNGToStdout): Use '%lu' format type specifier for unsigned long.
+
 2018-09-07  Dean Jackson  <dino@apple.com>
 
         Add and expose Internal features from WebKit

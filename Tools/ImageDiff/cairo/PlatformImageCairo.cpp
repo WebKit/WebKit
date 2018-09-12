@@ -29,30 +29,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
-#define FORMAT_SIZE_T "Iu"
-#else
-#define FORMAT_SIZE_T "zu"
-#endif
-
 namespace ImageDiff {
 
 std::unique_ptr<PlatformImage> PlatformImage::createFromStdin(size_t imageSize)
 {
-    struct ReadContext {
-        char buffer[2048];
-        unsigned long incomingBytes;
-        unsigned long readBytes;
-    } context { { }, imageSize, 0 };
-
     cairo_surface_t* surface = cairo_image_surface_create_from_png_stream(
-        [](void* closure, unsigned char* data, unsigned length) -> cairo_status_t {
-            auto& context = *static_cast<ReadContext*>(closure);
-            context.readBytes += length;
-
+        [](void*, unsigned char* data, unsigned length) -> cairo_status_t {
             size_t readBytes = fread(data, 1, length, stdin);
             return readBytes == length ? CAIRO_STATUS_SUCCESS : CAIRO_STATUS_READ_ERROR;
-        }, &context);
+        }, nullptr);
 
     if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
         cairo_surface_destroy(surface);
@@ -122,7 +107,7 @@ void PlatformImage::writeAsPNGToStdout()
             context.writtenBytes += length;
             return CAIRO_STATUS_SUCCESS;
         }, &context);
-    fprintf(stdout, "Content-Length: %" FORMAT_SIZE_T "\n", context.writtenBytes);
+    fprintf(stdout, "Content-Length: %lu\n", context.writtenBytes);
     cairo_surface_write_to_png_stream(m_image,
         [](void*, const unsigned char* data, unsigned length) -> cairo_status_t {
             size_t writtenBytes = fwrite(data, 1, length, stdout);
