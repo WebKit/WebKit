@@ -427,7 +427,12 @@ static bool appendEncodedHostname(UCharBuffer& buffer, StringView string)
     }
     return false;
 }
-    
+
+unsigned URL::hostStart() const
+{
+    return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1;
+}
+
 void URL::setHost(const String& s)
 {
     if (!m_isValid)
@@ -742,9 +747,9 @@ bool protocolHostAndPortAreEqual(const URL& a, const URL& b)
         return false;
 
     unsigned hostStartA = a.hostStart();
-    unsigned hostLengthA = a.hostEnd() - hostStartA;
+    unsigned hostLengthA = a.m_hostEnd - hostStartA;
     unsigned hostStartB = b.hostStart();
-    unsigned hostLengthB = b.hostEnd() - b.hostStart();
+    unsigned hostLengthB = b.m_hostEnd - b.hostStart();
     if (hostLengthA != hostLengthB)
         return false;
 
@@ -769,9 +774,9 @@ bool protocolHostAndPortAreEqual(const URL& a, const URL& b)
 bool hostsAreEqual(const URL& a, const URL& b)
 {
     unsigned hostStartA = a.hostStart();
-    unsigned hostLengthA = a.hostEnd() - hostStartA;
+    unsigned hostLengthA = a.m_hostEnd - hostStartA;
     unsigned hostStartB = b.hostStart();
-    unsigned hostLengthB = b.hostEnd() - hostStartB;
+    unsigned hostLengthB = b.m_hostEnd - hostStartB;
     if (hostLengthA != hostLengthB)
         return false;
 

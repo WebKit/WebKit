@@ -170,13 +170,6 @@ public:
 
     WEBCORE_EXPORT void removeQueryAndFragmentIdentifier();
 
-    WEBCORE_EXPORT friend bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
-
-    WEBCORE_EXPORT friend bool protocolHostAndPortAreEqual(const URL&, const URL&);
-
-    unsigned hostStart() const;
-    unsigned hostEnd() const;
-
     WEBCORE_EXPORT static bool hostIsIPAddress(StringView);
 
     unsigned pathStart() const;
@@ -217,6 +210,11 @@ private:
     static bool protocolIs(const String&, const char*);
     void init(const URL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
+    unsigned hostStart() const;
+
+    WEBCORE_EXPORT friend bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
+    WEBCORE_EXPORT friend bool protocolHostAndPortAreEqual(const URL&, const URL&);
+    WEBCORE_EXPORT friend bool hostsAreEqual(const URL&, const URL&);
 
     String m_string;
 
@@ -392,16 +390,6 @@ inline bool URL::hasFragment() const
 inline bool URL::protocolIsInHTTPFamily() const
 {
     return m_protocolIsInHTTPFamily;
-}
-
-inline unsigned URL::hostStart() const
-{
-    return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1;
-}
-
-inline unsigned URL::hostEnd() const
-{
-    return m_hostEnd;
 }
 
 inline unsigned URL::pathStart() const

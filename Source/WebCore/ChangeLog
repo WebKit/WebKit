@@ -1,3 +1,20 @@
+2018-09-12  Alex Christensen  <achristensen@webkit.org>
+
+        Expose fewer of URL's internal members
+        https://bugs.webkit.org/show_bug.cgi?id=189528
+
+        Reviewed by Chris Dumez.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::urlHostHash):
+        * platform/URL.cpp:
+        (WebCore::URL::hostStart const):
+        (WebCore::protocolHostAndPortAreEqual):
+        (WebCore::hostsAreEqual):
+        * platform/URL.h:
+        (WebCore::URL::hostStart const): Deleted.
+        (WebCore::URL::hostEnd const): Deleted.
+
 2018-09-12  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Implement correct total received bytes.

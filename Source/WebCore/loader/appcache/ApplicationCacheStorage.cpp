@@ -84,15 +84,10 @@ private:
 
 static unsigned urlHostHash(const URL& url)
 {
-    unsigned hostStart = url.hostStart();
-    unsigned hostEnd = url.hostEnd();
-
-    const String& urlString = url.string();
-
-    if (urlString.is8Bit())
-        return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(urlString.characters8() + hostStart, hostEnd - hostStart));
-    
-    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(urlString.characters16() + hostStart, hostEnd - hostStart));
+    StringView host = url.host();
+    if (host.is8Bit())
+        return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(host.characters8(), host.length()));
+    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(host.characters16(), host.length()));
 }
 
 ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manifestURL)
