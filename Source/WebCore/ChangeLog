@@ -1,3 +1,42 @@
+2018-09-13  Jer Noble  <jer.noble@apple.com>
+
+        Enable USE_MEDIAREMOTE on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=189096
+
+        Reviewed by Eric Carlson.
+
+        Migrate to using MediaRemote.framework on iOS from MediaPlayer.framework. This unifies the
+        Now Playing implementation on iOS and Mac.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp: Removed.
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm: Renamed from Source/WebCore/platform/audio/mac/MediaSessionManagerMac.mm.
+        (PlatformMediaSessionManager::sharedManager):
+        (PlatformMediaSessionManager::sharedManagerIfExists):
+        (MediaSessionManagerCocoa::updateSessionState):
+        (MediaSessionManagerCocoa::beginInterruption):
+        (MediaSessionManagerCocoa::scheduleUpdateNowPlayingInfo):
+        (MediaSessionManagerCocoa::sessionWillBeginPlayback):
+        (MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing):
+        (MediaSessionManagerCocoa::removeSession):
+        (MediaSessionManagerCocoa::sessionWillEndPlayback):
+        (MediaSessionManagerCocoa::clientCharacteristicsChanged):
+        (MediaSessionManagerCocoa::sessionCanProduceAudioChanged):
+        (MediaSessionManagerCocoa::nowPlayingEligibleSession):
+        (MediaSessionManagerCocoa::updateNowPlayingInfo):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        (): Deleted.
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::nowPlayingEligibleSession): Deleted.
+        (WebCore::MediaSessionManageriOS::updateNowPlayingInfo): Deleted.
+        (WebCore::MediaSessionManageriOS::sessionWillBeginPlayback): Deleted.
+        (WebCore::MediaSessionManageriOS::removeSession): Deleted.
+        (WebCore::MediaSessionManageriOS::sessionWillEndPlayback): Deleted.
+        (WebCore::MediaSessionManageriOS::clientCharacteristicsChanged): Deleted.
+        * platform/audio/mac/MediaSessionManagerMac.h: Removed.
+
 2018-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove the workaround for friend class LazyNeverDestroyed<X> statements for MSVC

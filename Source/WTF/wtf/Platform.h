@@ -1303,7 +1303,7 @@
 #endif
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
 #define USE_MEDIAREMOTE 1
 #endif
 
