@@ -66,20 +66,21 @@ Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::
 }
 
 ServicesOverlayController::Highlight::Highlight(ServicesOverlayController& controller, Type type, RetainPtr<DDHighlightRef> ddHighlight, Ref<WebCore::Range>&& range)
-    : m_controller(&controller)
-    , m_range(WTFMove(range))
-    , m_graphicsLayer(GraphicsLayer::create(controller.page().chrome().client().graphicsLayerFactory(), *this))
+    : m_range(WTFMove(range))
     , m_type(type)
+    , m_controller(&controller)
 {
     ASSERT(ddHighlight);
 
+    auto& page = controller.page();
+    m_graphicsLayer = GraphicsLayer::create(page.chrome().client().graphicsLayerFactory(), *this);
     m_graphicsLayer->setDrawsContent(true);
 
     setDDHighlight(ddHighlight.get());
 
     // Set directly on the PlatformCALayer so that when we leave the 'from' value implicit
     // in our animations, we get the right initial value regardless of flush timing.
-    downcast<GraphicsLayerCA>(layer()).platformCALayer()->setOpacity(0);
+    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->setOpacity(0);
 
     controller.didCreateHighlight(this);
 }
@@ -112,7 +113,7 @@ void ServicesOverlayController::Highlight::setDDHighlight(DDHighlightRef highlig
 
 void ServicesOverlayController::Highlight::invalidate()
 {
-    layer().removeFromParent();
+    layer()->removeFromParent();
     m_controller = nullptr;
 }
 
@@ -157,7 +158,7 @@ void ServicesOverlayController::Highlight::fadeIn()
     [animation setToValue:@1];
 
     RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationCocoa::create(animation.get());
-    downcast<GraphicsLayerCA>(layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn", *platformAnimation);
+    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn", *platformAnimation);
 }
 
 void ServicesOverlayController::Highlight::fadeOut()
@@ -175,7 +176,7 @@ void ServicesOverlayController::Highlight::fadeOut()
     }];
 
     RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationCocoa::create(animation.get());
-    downcast<GraphicsLayerCA>(layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut", *platformAnimation);
+    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut", *platformAnimation);
     [CATransaction commit];
 }
 
@@ -187,7 +188,7 @@ void ServicesOverlayController::Highlight::didFinishFadeOutAnimation()
     if (m_controller->activeHighlight() == this)
         return;
 
-    layer().removeFromParent();
+    layer()->removeFromParent();
 }
 
 static IntRect textQuadsToBoundingRectForRange(Range& range)
@@ -713,8 +714,7 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
         m_activeHighlight = WTFMove(m_nextActiveHighlight);
 
         if (m_activeHighlight) {
-            Ref<GraphicsLayer> highlightLayer = m_activeHighlight->layer();
-            m_servicesOverlay->layer().addChild(WTFMove(highlightLayer));
+            m_servicesOverlay->layer().addChild(m_activeHighlight->layer());
             m_activeHighlight->fadeIn();
         }
     }

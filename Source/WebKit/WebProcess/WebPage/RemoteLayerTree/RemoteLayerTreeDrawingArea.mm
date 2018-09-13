@@ -115,14 +115,14 @@ void RemoteLayerTreeDrawingArea::willDestroyDisplayRefreshMonitor(DisplayRefresh
 
 void RemoteLayerTreeDrawingArea::updateRootLayers()
 {
-    Vector<Ref<GraphicsLayer>> children;
+    Vector<GraphicsLayer*> children;
     if (m_contentLayer) {
-        children.append(*m_contentLayer);
+        children.append(m_contentLayer);
         if (m_viewOverlayRootLayer)
-            children.append(*m_viewOverlayRootLayer);
+            children.append(m_viewOverlayRootLayer);
     }
 
-    m_rootLayer->setChildren(WTFMove(children));
+    m_rootLayer->setChildren(children);
 }
 
 void RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer(Frame* frame, GraphicsLayer* viewOverlayRootLayer)
@@ -318,6 +318,9 @@ bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushT
 
 void RemoteLayerTreeDrawingArea::flushLayers()
 {
+    if (!m_rootLayer)
+        return;
+
     if (m_isFlushingSuspended) {
         m_hasDeferredFlush = true;
         return;
@@ -363,7 +366,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     layerTransaction.setTransactionID(takeNextTransactionID());
     layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
     m_remoteLayerTreeContext->setNextFlushIsForImmediatePaint(m_nextFlushIsForImmediatePaint);
-    m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(m_rootLayer.get()).platformCALayer());
+    m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(*m_rootLayer).platformCALayer());
     m_remoteLayerTreeContext->setNextFlushIsForImmediatePaint(false);
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage.willCommitLayerTree(layerTransaction);

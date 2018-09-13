@@ -49,6 +49,7 @@ class TransformState;
 
 class GraphicsLayerCA : public GraphicsLayer, public PlatformCALayerClient {
 public:
+
     WEBCORE_EXPORT explicit GraphicsLayerCA(Type, GraphicsLayerClient&);
     WEBCORE_EXPORT virtual ~GraphicsLayerCA();
 
@@ -61,16 +62,16 @@ public:
     WEBCORE_EXPORT PlatformLayer* platformLayer() const override;
     PlatformCALayer* platformCALayer() const { return primaryLayer(); }
 
-    WEBCORE_EXPORT bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;
-    WEBCORE_EXPORT void addChild(Ref<GraphicsLayer>&&) override;
-    WEBCORE_EXPORT void addChildAtIndex(Ref<GraphicsLayer>&&, int index) override;
-    WEBCORE_EXPORT void addChildAbove(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
-    WEBCORE_EXPORT void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
-    WEBCORE_EXPORT bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild) override;
+    WEBCORE_EXPORT bool setChildren(const Vector<GraphicsLayer*>&) override;
+    WEBCORE_EXPORT void addChild(GraphicsLayer*) override;
+    WEBCORE_EXPORT void addChildAtIndex(GraphicsLayer*, int index) override;
+    WEBCORE_EXPORT void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling) override;
+    WEBCORE_EXPORT void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling) override;
+    WEBCORE_EXPORT bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild) override;
 
     WEBCORE_EXPORT void removeFromParent() override;
 
-    WEBCORE_EXPORT void setMaskLayer(RefPtr<GraphicsLayer>&&) override;
+    WEBCORE_EXPORT void setMaskLayer(GraphicsLayer*) override;
     WEBCORE_EXPORT void setReplicatedLayer(GraphicsLayer*) override;
 
     WEBCORE_EXPORT void setPosition(const FloatPoint&) override;

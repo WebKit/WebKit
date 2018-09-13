@@ -46,17 +46,18 @@
 
 namespace WebCore {
 
-Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
+
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
-    if (factory) {
-        auto layer = factory->createGraphicsLayer(layerType, client);
-        layer->initialize(layerType);
-        return layer;
-    }
-    
-    auto layer = adoptRef(*new GraphicsLayerCA(layerType, client);
-    layer->initialize(layerType);
-    return layer;
+    std::unique_ptr<GraphicsLayer> graphicsLayer;
+    if (!factory)
+        graphicsLayer = std::make_unique<GraphicsLayerDirect2D>(layerType, client);
+    else
+        graphicsLayer = factory->createGraphicsLayer(layerType, client);
+
+    graphicsLayer->initialize(layerType);
+
+    return graphicsLayer;
 }
 
 GraphicsLayerDirect2D::GraphicsLayerDirect2D(Type layerType, GraphicsLayerClient& client)

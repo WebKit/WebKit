@@ -7145,12 +7145,7 @@ void WebView::setRootChildLayer(GraphicsLayer* layer)
 #if USE(CA)
     if (!m_backingLayer)
         return;
-
-    if (layer)
-        m_backingLayer->addChild(*layer);
-    else
-        m_backingLayer->removeAllChildren();
-
+    m_backingLayer->addChild(layer);
 #elif USE(TEXTURE_MAPPER_GL)
     if (!m_acceleratedCompositingContext)
         return;

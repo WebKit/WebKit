@@ -254,11 +254,11 @@ void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
         compositor().layerTiledBackingUsageChanged(layer, false);
 }
 
-Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
+std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
     auto* graphicsLayerFactory = renderer().page().chrome().client().graphicsLayerFactory();
 
-    auto graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
+    std::unique_ptr<GraphicsLayer> graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
 
     graphicsLayer->setName(name);
 
@@ -401,7 +401,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 
     if (m_isFrameLayerWithTiledBacking) {
         m_childContainmentLayer = createGraphicsLayer("Page TiledBacking containment");
-        m_graphicsLayer->addChild(*m_childContainmentLayer);
+        m_graphicsLayer->addChild(m_childContainmentLayer.get());
     }
 
 #if !PLATFORM(IOS)
@@ -709,7 +709,7 @@ bool RenderLayerBacking::updateConfiguration()
 
     if (auto* flatteningLayer = tileCacheFlatteningLayer()) {
         if (layerConfigChanged || flatteningLayer->parent() != m_graphicsLayer.get())
-            m_graphicsLayer->addChild(*flatteningLayer);
+            m_graphicsLayer->addChild(flatteningLayer);
     }
 
     updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath());
@@ -1302,26 +1302,26 @@ void RenderLayerBacking::updateInternalHierarchy()
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->removeAllChildren();
         if (m_ancestorClippingLayer)
-            m_ancestorClippingLayer->addChild(*m_contentsContainmentLayer);
+            m_ancestorClippingLayer->addChild(m_contentsContainmentLayer.get());
     }
     
     if (m_backgroundLayer)
-        m_contentsContainmentLayer->addChild(*m_backgroundLayer);
+        m_contentsContainmentLayer->addChild(m_backgroundLayer.get());
 
     if (m_contentsContainmentLayer)
-        m_contentsContainmentLayer->addChild(*m_graphicsLayer);
+        m_contentsContainmentLayer->addChild(m_graphicsLayer.get());
     else if (m_ancestorClippingLayer)
-        m_ancestorClippingLayer->addChild(*m_graphicsLayer);
+        m_ancestorClippingLayer->addChild(m_graphicsLayer.get());
 
     if (m_childContainmentLayer) {
         m_childContainmentLayer->removeFromParent();
-        m_graphicsLayer->addChild(*m_childContainmentLayer);
+        m_graphicsLayer->addChild(m_childContainmentLayer.get());
     }
 
     if (m_scrollingLayer) {
         auto* superlayer = m_childContainmentLayer ? m_childContainmentLayer.get() : m_graphicsLayer.get();
         m_scrollingLayer->removeFromParent();
-        superlayer->addChild(*m_scrollingLayer);
+        superlayer->addChild(m_scrollingLayer.get());
     }
 
     // The clip for child layers does not include space for overflow controls, so they exist as
@@ -1329,15 +1329,15 @@ void RenderLayerBacking::updateInternalHierarchy()
     // children of the clipping layer.
     if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();
-        m_graphicsLayer->addChild(*m_layerForHorizontalScrollbar);
+        m_graphicsLayer->addChild(m_layerForHorizontalScrollbar.get());
     }
     if (m_layerForVerticalScrollbar) {
         m_layerForVerticalScrollbar->removeFromParent();
-        m_graphicsLayer->addChild(*m_layerForVerticalScrollbar);
+        m_graphicsLayer->addChild(m_layerForVerticalScrollbar.get());
     }
     if (m_layerForScrollCorner) {
         m_layerForScrollCorner->removeFromParent();
-        m_graphicsLayer->addChild(*m_layerForScrollCorner);
+        m_graphicsLayer->addChild(m_layerForScrollCorner.get());
     }
 }
 
@@ -1690,7 +1690,7 @@ void RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
             m_maskLayer->setDrawsContent(paintsContent);
             m_maskLayer->setPaintingPhase(maskPhases);
             layerChanged = true;
-            m_graphicsLayer->setMaskLayer(m_maskLayer.copyRef());
+            m_graphicsLayer->setMaskLayer(m_maskLayer.get());
         }
     } else if (m_maskLayer) {
         m_graphicsLayer->setMaskLayer(nullptr);
@@ -1721,7 +1721,7 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
                 m_childClippingMaskLayer = createGraphicsLayer("child clipping mask");
                 m_childClippingMaskLayer->setDrawsContent(true);
                 m_childClippingMaskLayer->setPaintingPhase(GraphicsLayerPaintChildClippingMask);
-                clippingLayer()->setMaskLayer(m_childClippingMaskLayer.copyRef());
+                clippingLayer()->setMaskLayer(m_childClippingMaskLayer.get());
             }
         }
     } else {
@@ -1754,7 +1754,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         if (!m_foregroundLayer)
             paintPhase |= GraphicsLayerPaintForeground;
         m_scrollingContentsLayer->setPaintingPhase(paintPhase);
-        m_scrollingLayer->addChild(*m_scrollingContentsLayer);
+        m_scrollingLayer->addChild(m_scrollingContentsLayer.get());
     } else {
         compositor().willRemoveScrollingLayerWithBacking(m_owningLayer, *this);
 

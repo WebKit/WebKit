@@ -84,7 +84,7 @@ private:
     
     RefPtr<WebCore::PageOverlay> m_paintRectOverlay;
     std::unique_ptr<RepaintIndicatorLayerClient> m_paintIndicatorLayerClient;
-    HashSet<Ref<WebCore::GraphicsLayer>> m_paintRectLayers;
+    HashSet<WebCore::GraphicsLayer*> m_paintRectLayers; // Ideally this would be HashSet<std::unique_ptr<GraphicsLayer>> but that doesn't work yet. webkit.org/b/136166
 };
 
 } // namespace WebKit

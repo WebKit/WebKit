@@ -92,13 +92,13 @@ private:
     bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;
     void tiledBackingUsageChanged(const GraphicsLayer*, bool) override;
 
-    Page& m_page;
-    RefPtr<GraphicsLayer> m_documentOverlayRootLayer;
-    RefPtr<GraphicsLayer> m_viewOverlayRootLayer;
+    std::unique_ptr<GraphicsLayer> m_documentOverlayRootLayer;
+    std::unique_ptr<GraphicsLayer> m_viewOverlayRootLayer;
+    bool m_initialized;
 
-    HashMap<PageOverlay*, Ref<GraphicsLayer>> m_overlayGraphicsLayers;
+    HashMap<PageOverlay*, std::unique_ptr<GraphicsLayer>> m_overlayGraphicsLayers;
     Vector<RefPtr<PageOverlay>> m_pageOverlays;
-    bool m_initialized { false };
+    Page& m_page;
 };
 
 } // namespace WebKit

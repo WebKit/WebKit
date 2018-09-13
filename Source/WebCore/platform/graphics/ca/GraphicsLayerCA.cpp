@@ -339,17 +339,17 @@ bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
 #endif
 }
 
-Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
-    if (factory) {
-        auto layer = factory->createGraphicsLayer(layerType, client);
-        layer->initialize(layerType);
-        return layer;
-    }
-    
-    auto layer = adoptRef(*new GraphicsLayerCA(layerType, client));
-    layer->initialize(layerType);
-    return WTFMove(layer);
+    std::unique_ptr<GraphicsLayer> graphicsLayer;
+    if (!factory)
+        graphicsLayer = std::make_unique<GraphicsLayerCA>(layerType, client);
+    else
+        graphicsLayer = factory->createGraphicsLayer(layerType, client);
+
+    graphicsLayer->initialize(layerType);
+
+    return graphicsLayer;
 }
 
 bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
@@ -505,42 +505,42 @@ PlatformLayer* GraphicsLayerCA::platformLayer() const
     return primaryLayer()->platformLayer();
 }
 
-bool GraphicsLayerCA::setChildren(Vector<Ref<GraphicsLayer>>&& children)
+bool GraphicsLayerCA::setChildren(const Vector<GraphicsLayer*>& children)
 {
-    bool childrenChanged = GraphicsLayer::setChildren(WTFMove(children));
+    bool childrenChanged = GraphicsLayer::setChildren(children);
     if (childrenChanged)
         noteSublayersChanged();
     
     return childrenChanged;
 }
 
-void GraphicsLayerCA::addChild(Ref<GraphicsLayer>&& childLayer)
+void GraphicsLayerCA::addChild(GraphicsLayer* childLayer)
 {
-    GraphicsLayer::addChild(WTFMove(childLayer));
+    GraphicsLayer::addChild(childLayer);
     noteSublayersChanged();
 }
 
-void GraphicsLayerCA::addChildAtIndex(Ref<GraphicsLayer>&& childLayer, int index)
+void GraphicsLayerCA::addChildAtIndex(GraphicsLayer* childLayer, int index)
 {
-    GraphicsLayer::addChildAtIndex(WTFMove(childLayer), index);
+    GraphicsLayer::addChildAtIndex(childLayer, index);
     noteSublayersChanged();
 }
 
-void GraphicsLayerCA::addChildBelow(Ref<GraphicsLayer>&& childLayer, GraphicsLayer* sibling)
+void GraphicsLayerCA::addChildBelow(GraphicsLayer* childLayer, GraphicsLayer* sibling)
 {
-    GraphicsLayer::addChildBelow(WTFMove(childLayer), sibling);
+    GraphicsLayer::addChildBelow(childLayer, sibling);
     noteSublayersChanged();
 }
 
-void GraphicsLayerCA::addChildAbove(Ref<GraphicsLayer>&& childLayer, GraphicsLayer* sibling)
+void GraphicsLayerCA::addChildAbove(GraphicsLayer* childLayer, GraphicsLayer* sibling)
 {
-    GraphicsLayer::addChildAbove(WTFMove(childLayer), sibling);
+    GraphicsLayer::addChildAbove(childLayer, sibling);
     noteSublayersChanged();
 }
 
-bool GraphicsLayerCA::replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild)
+bool GraphicsLayerCA::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
 {
-    if (GraphicsLayer::replaceChild(oldChild, WTFMove(newChild))) {
+    if (GraphicsLayer::replaceChild(oldChild, newChild)) {
         noteSublayersChanged();
         return true;
     }
@@ -554,12 +554,12 @@ void GraphicsLayerCA::removeFromParent()
     GraphicsLayer::removeFromParent();
 }
 
-void GraphicsLayerCA::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
+void GraphicsLayerCA::setMaskLayer(GraphicsLayer* layer)
 {
     if (layer == m_maskLayer)
         return;
 
-    GraphicsLayer::setMaskLayer(WTFMove(layer));
+    GraphicsLayer::setMaskLayer(layer);
     noteLayerPropertyChanged(MaskLayerChanged);
 
     propagateLayerChangeToReplicas();
@@ -1300,13 +1300,16 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const CommitState&
     childCommitState.ancestorIsViewportConstrained |= m_isViewportConstrained;
 
     if (m_maskLayer) {
-        auto& maskLayerCA = downcast<GraphicsLayerCA>(*m_maskLayer);
+        GraphicsLayerCA& maskLayerCA = downcast<GraphicsLayerCA>(*m_maskLayer);
         if (maskLayerCA.recursiveVisibleRectChangeRequiresFlush(childCommitState, localState))
             return true;
     }
 
-    for (const auto& layer : children()) {
-        const auto& currentChild = downcast<GraphicsLayerCA>(layer.get());
+    const Vector<GraphicsLayer*>& childLayers = children();
+    size_t numChildren = childLayers.size();
+    
+    for (size_t i = 0; i < numChildren; ++i) {
+        GraphicsLayerCA& currentChild = downcast<GraphicsLayerCA>(*childLayers[i]);
         if (currentChild.recursiveVisibleRectChangeRequiresFlush(childCommitState, localState))
             return true;
     }
@@ -1569,25 +1572,28 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     
     childCommitState.ancestorIsViewportConstrained |= m_isViewportConstrained;
 
-    if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get())) {
+    if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
         maskLayer->setVisibleAndCoverageRects(rects, m_isViewportConstrained || commitState.ancestorIsViewportConstrained);
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition);
     }
 
+    const Vector<GraphicsLayer*>& childLayers = children();
+    size_t numChildren = childLayers.size();
+
     bool hasDescendantsWithRunningTransformAnimations = false;
     
-    for (auto& layer : children()) {
-        auto& currentChild = downcast<GraphicsLayerCA>(layer.get());
+    for (size_t i = 0; i < numChildren; ++i) {
+        GraphicsLayerCA& currentChild = downcast<GraphicsLayerCA>(*childLayers[i]);
         currentChild.recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
         if (currentChild.isRunningTransformAnimation() || currentChild.hasDescendantsWithRunningTransformAnimations())
             hasDescendantsWithRunningTransformAnimations = true;
     }
 
-    if (GraphicsLayerCA* replicaLayer = downcast<GraphicsLayerCA>(m_replicaLayer.get()))
+    if (GraphicsLayerCA* replicaLayer = downcast<GraphicsLayerCA>(m_replicaLayer))
         replicaLayer->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
-    if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get()))
+    if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
         maskLayer->commitLayerChangesAfterSublayers(childCommitState);
 
     setHasDescendantsWithUncommittedChanges(false);
@@ -1922,8 +1928,10 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
         primaryLayerChildren.append(m_contentsClippingLayer ? m_contentsClippingLayer : m_contentsLayer);
     }
     
-    for (const auto& layer : children()) {
-        const auto& currentChild = downcast<GraphicsLayerCA>(layer.get());
+    const Vector<GraphicsLayer*>& childLayers = children();
+    size_t numChildren = childLayers.size();
+    for (size_t i = 0; i < numChildren; ++i) {
+        GraphicsLayerCA& currentChild = downcast<GraphicsLayerCA>(*childLayers[i]);
         PlatformCALayer* childLayer = currentChild.layerForSuperlayer();
         childListForSublayers.append(childLayer);
     }
@@ -3969,7 +3977,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replica
         return primaryLayer;
     }
 
-    auto& childLayers = children();
+    const Vector<GraphicsLayer*>& childLayers = children();
     Vector<RefPtr<PlatformCALayer>> clonalSublayers;
 
     RefPtr<PlatformCALayer> replicaLayer;
@@ -4019,8 +4027,8 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replica
         
         replicaState.push(ReplicaState::ChildBranch);
 
-        for (auto& childLayer : childLayers) {
-            GraphicsLayerCA& childLayerCA = downcast<GraphicsLayerCA>(childLayer.get());
+        for (auto* childLayer : childLayers) {
+            GraphicsLayerCA& childLayerCA = downcast<GraphicsLayerCA>(*childLayer);
             if (auto platformLayer = childLayerCA.fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel))
                 clonalSublayers.append(WTFMove(platformLayer));
         }
@@ -4184,9 +4192,6 @@ void GraphicsLayerCA::setHasDescendantsWithUncommittedChanges(bool value)
 
 void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags, ScheduleFlushOrNot scheduleFlush)
 {
-    if (beingDestroyed())
-        return;
-
     bool hadUncommittedChanges = !!m_uncommittedChanges;
     bool oldCanThrottleLayerFlush = canThrottleLayerFlush();
 

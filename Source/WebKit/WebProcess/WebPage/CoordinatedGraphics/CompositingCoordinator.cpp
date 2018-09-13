@@ -85,7 +85,7 @@ void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* graphicsLaye
 
     m_rootCompositingLayer = graphicsLayer;
     if (m_rootCompositingLayer)
-        m_rootLayer->addChildAtIndex(*m_rootCompositingLayer, 0);
+        m_rootLayer->addChildAtIndex(m_rootCompositingLayer, 0);
 }
 
 void CompositingCoordinator::setViewOverlayRootLayer(GraphicsLayer* graphicsLayer)
@@ -98,7 +98,7 @@ void CompositingCoordinator::setViewOverlayRootLayer(GraphicsLayer* graphicsLaye
 
     m_overlayCompositingLayer = graphicsLayer;
     if (m_overlayCompositingLayer)
-        m_rootLayer->addChild(*m_overlayCompositingLayer);
+        m_rootLayer->addChild(m_overlayCompositingLayer);
 }
 
 void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
@@ -231,15 +231,15 @@ float CompositingCoordinator::pageScaleFactor() const
     return m_page->pageScaleFactor();
 }
 
-Ref<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
+std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
 {
-    auto layer = adoptRef(*new CoordinatedGraphicsLayer(layerType, client));
+    CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(layerType, client);
     layer->setCoordinator(this);
     m_nicosia.state.layers.add(layer->compositionLayer());
-    m_registeredLayers.add(layer->id(), layer.ptr());
+    m_registeredLayers.add(layer->id(), layer);
     layer->setNeedsVisibleRectAdjustment();
-    notifyFlushRequired(layer.ptr());
-    return WTFMove(layer);
+    notifyFlushRequired(layer);
+    return std::unique_ptr<GraphicsLayer>(layer);
 }
 
 FloatRect CompositingCoordinator::visibleContentsRect() const

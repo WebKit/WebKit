@@ -74,7 +74,7 @@ public:
 
 private:
     // WebCore::GraphicsLayerFactory
-    Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
+    std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
     WebPage& m_webPage;
 

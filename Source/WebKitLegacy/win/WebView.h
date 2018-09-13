@@ -705,7 +705,7 @@ protected:
     void setAcceleratedCompositing(bool);
 #if USE(CA)
     RefPtr<WebCore::CACFLayerTreeHost> m_layerTreeHost;
-    RefPtr<WebCore::GraphicsLayer> m_backingLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_backingLayer;
 #elif USE(TEXTURE_MAPPER_GL)
     std::unique_ptr<AcceleratedCompositingContext> m_acceleratedCompositingContext;
 #endif

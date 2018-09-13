@@ -63,12 +63,12 @@ public:
     PlatformLayerID primaryLayerID() const override;
 
     // Reimplementations from GraphicsLayer.h.
-    bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;
-    void addChild(Ref<GraphicsLayer>&&) override;
-    void addChildAtIndex(Ref<GraphicsLayer>&&, int) override;
-    void addChildAbove(Ref<GraphicsLayer>&&, GraphicsLayer*) override;
-    void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer*) override;
-    bool replaceChild(GraphicsLayer*, Ref<GraphicsLayer>&&) override;
+    bool setChildren(const Vector<GraphicsLayer*>&) override;
+    void addChild(GraphicsLayer*) override;
+    void addChildAtIndex(GraphicsLayer*, int) override;
+    void addChildAbove(GraphicsLayer*, GraphicsLayer*) override;
+    void addChildBelow(GraphicsLayer*, GraphicsLayer*) override;
+    bool replaceChild(GraphicsLayer*, GraphicsLayer*) override;
     void removeFromParent() override;
     void setPosition(const FloatPoint&) override;
     void setAnchorPoint(const FloatPoint3D&) override;
@@ -91,7 +91,7 @@ public:
     void setShowRepaintCounter(bool) override;
     bool shouldDirectlyCompositeImage(Image*) const override;
     void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
-    void setMaskLayer(RefPtr<GraphicsLayer>&&) override;
+    void setMaskLayer(GraphicsLayer*) override;
     void setReplicatedByLayer(GraphicsLayer*) override;
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;

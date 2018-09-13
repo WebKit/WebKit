@@ -46,10 +46,10 @@
 
 namespace WebCore {
 
-Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     if (!factory)
-        return adoptRef(*new CoordinatedGraphicsLayer(layerType, client));
+        return std::make_unique<CoordinatedGraphicsLayer>(layerType, client);
 
     return factory->createGraphicsLayer(layerType, client);
 }
@@ -97,7 +97,7 @@ void CoordinatedGraphicsLayer::setShouldUpdateVisibleRect()
 {
     m_shouldUpdateVisibleRect = true;
     for (auto& child : children())
-        downcast<CoordinatedGraphicsLayer>(child.get()).setShouldUpdateVisibleRect();
+        downcast<CoordinatedGraphicsLayer>(*child).setShouldUpdateVisibleRect();
     if (replicaLayer())
         downcast<CoordinatedGraphicsLayer>(*replicaLayer()).setShouldUpdateVisibleRect();
 }
@@ -158,54 +158,49 @@ auto CoordinatedGraphicsLayer::primaryLayerID() const -> PlatformLayerID
     return id();
 }
 
-bool CoordinatedGraphicsLayer::setChildren(Vector<Ref<GraphicsLayer>>&& children)
+bool CoordinatedGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
 {
-    bool ok = GraphicsLayer::setChildren(WTFMove(children));
+    bool ok = GraphicsLayer::setChildren(children);
     if (!ok)
         return false;
     didChangeChildren();
     return true;
 }
 
-void CoordinatedGraphicsLayer::addChild(Ref<GraphicsLayer>&& layer)
+void CoordinatedGraphicsLayer::addChild(GraphicsLayer* layer)
 {
-    GraphicsLayer* rawLayer = layer.ptr();
-    GraphicsLayer::addChild(WTFMove(layer));
-    downcast<CoordinatedGraphicsLayer>(*rawLayer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
+    GraphicsLayer::addChild(layer);
+    downcast<CoordinatedGraphicsLayer>(*layer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
 }
 
-void CoordinatedGraphicsLayer::addChildAtIndex(Ref<GraphicsLayer>&& layer, int index)
+void CoordinatedGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 {
-    GraphicsLayer* rawLayer = layer.ptr();
-    GraphicsLayer::addChildAtIndex(WTFMove(layer), index);
-    downcast<CoordinatedGraphicsLayer>(*rawLayer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
+    GraphicsLayer::addChildAtIndex(layer, index);
+    downcast<CoordinatedGraphicsLayer>(*layer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
 }
 
-void CoordinatedGraphicsLayer::addChildAbove(Ref<GraphicsLayer>&& layer, GraphicsLayer* sibling)
+void CoordinatedGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
-    GraphicsLayer* rawLayer = layer.ptr();
-    GraphicsLayer::addChildAbove(WTFMove(layer), sibling);
-    downcast<CoordinatedGraphicsLayer>(*rawLayer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
+    GraphicsLayer::addChildAbove(layer, sibling);
+    downcast<CoordinatedGraphicsLayer>(*layer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
 }
 
-void CoordinatedGraphicsLayer::addChildBelow(Ref<GraphicsLayer>&& layer, GraphicsLayer* sibling)
+void CoordinatedGraphicsLayer::addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
-    GraphicsLayer* rawLayer = layer.ptr();
-    GraphicsLayer::addChildBelow(WTFMove(layer), sibling);
-    downcast<CoordinatedGraphicsLayer>(*rawLayer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
+    GraphicsLayer::addChildBelow(layer, sibling);
+    downcast<CoordinatedGraphicsLayer>(*layer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
 }
 
-bool CoordinatedGraphicsLayer::replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild)
+bool CoordinatedGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
 {
-    GraphicsLayer* rawLayer = newChild.ptr();
-    bool ok = GraphicsLayer::replaceChild(oldChild, WTFMove(newChild));
+    bool ok = GraphicsLayer::replaceChild(oldChild, newChild);
     if (!ok)
         return false;
-    downcast<CoordinatedGraphicsLayer>(*rawLayer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
+    downcast<CoordinatedGraphicsLayer>(*newChild).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
     return true;
 }
@@ -500,19 +495,18 @@ void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
     notifyFlushRequired();
 }
 
-void CoordinatedGraphicsLayer::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
+void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
 {
     if (layer == maskLayer())
         return;
 
-    GraphicsLayer* rawLayer = layer.get();
-    GraphicsLayer::setMaskLayer(WTFMove(layer));
+    GraphicsLayer::setMaskLayer(layer);
 
-    if (!rawLayer)
+    if (!layer)
         return;
 
-    rawLayer->setSize(size());
-    rawLayer->setContentsVisible(contentsAreVisible());
+    layer->setSize(size());
+    layer->setContentsVisible(contentsAreVisible());
 
     m_nicosia.delta.maskChanged = true;
 
@@ -738,9 +732,9 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 
                 if (localDelta.childrenChanged) {
                     state.children = WTF::map(children(),
-                        [](auto& child)
+                        [](auto* child)
                         {
-                            return downcast<CoordinatedGraphicsLayer>(child.get()).m_nicosia.layer;
+                            return downcast<CoordinatedGraphicsLayer>(child)->m_nicosia.layer;
                         });
                 }
 
@@ -790,7 +784,7 @@ void CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers()
         downcast<CoordinatedGraphicsLayer>(*maskLayer()).syncPendingStateChangesIncludingSubLayers();
 
     for (auto& child : children())
-        downcast<CoordinatedGraphicsLayer>(child.get()).syncPendingStateChangesIncludingSubLayers();
+        downcast<CoordinatedGraphicsLayer>(*child).syncPendingStateChangesIncludingSubLayers();
 }
 
 void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
@@ -843,7 +837,7 @@ void CoordinatedGraphicsLayer::updateContentBuffersIncludingSubLayers()
     updateContentBuffers();
 
     for (auto& child : children())
-        downcast<CoordinatedGraphicsLayer>(child.get()).updateContentBuffersIncludingSubLayers();
+        downcast<CoordinatedGraphicsLayer>(*child).updateContentBuffersIncludingSubLayers();
 }
 
 void CoordinatedGraphicsLayer::updateContentBuffers()
@@ -1013,7 +1007,7 @@ void CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded(Coordina
 
     coordinator->attachLayer(this);
     for (auto& child : children())
-        downcast<CoordinatedGraphicsLayer>(child.get()).setCoordinatorIncludingSubLayersIfNeeded(coordinator);
+        downcast<CoordinatedGraphicsLayer>(*child).setCoordinatorIncludingSubLayersIfNeeded(coordinator);
 }
 
 const RefPtr<Nicosia::CompositionLayer>& CoordinatedGraphicsLayer::compositionLayer() const
