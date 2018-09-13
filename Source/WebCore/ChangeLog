@@ -1,3 +1,19 @@
+2018-09-13  Ms2ger  <Ms2ger@igalia.com>
+
+        [GLib] Fix format string in KeyedEncoderGlib::beginObject().
+        https://bugs.webkit.org/show_bug.cgi?id=189585
+
+        Reviewed by Michael Catanzaro.
+
+        This appears to fix the following assertion locally:
+
+        GLib-CRITICAL **: g_variant_builder_add_value: assertion '!GVSB(builder)->expected_type || g_variant_is_of_type (value, GVSB(builder)->expected_type)' failed
+
+        Covered by existing tests.
+
+        * platform/glib/KeyedEncoderGlib.cpp:
+        (WebCore::KeyedEncoderGlib::beginObject):
+
 2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r235953.
