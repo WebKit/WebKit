@@ -1,3 +1,15 @@
+2018-09-13  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Enable media-source/interfaces.html.
+        https://bugs.webkit.org/show_bug.cgi?id=183613
+
+        Unreviewed test gardening.
+
+        The platform-neutral expectation applies to the GTK port as well.
+
+        * platform/gtk/TestExpectations: Remove expectation.
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/interfaces-expected.txt: Removed.
+
 2018-09-13  Youenn Fablet  <youenn@apple.com>
 
         Introduce RTCRtpSendParameters

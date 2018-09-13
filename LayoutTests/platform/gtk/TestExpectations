@@ -3420,8 +3420,6 @@ webkit.org/b/183033 http/tests/plugins/supported-plugin-origin-specific-visibili
 
 webkit.org/b/183611 media/context-menu-actions.html [ Failure ]
 
-webkit.org/b/183613 imported/w3c/web-platform-tests/media-source/interfaces.html [ Failure ]
-
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
 webkit.org/b/184080 animations/animation-direction-normal.html [ Failure ]
