@@ -1,3 +1,13 @@
+2018-09-13  Alex Christensen  <achristensen@webkit.org>
+
+        Use a Variant instead of a union in CSSSelector
+        https://bugs.webkit.org/show_bug.cgi?id=188559
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/Variant.h:
+        Add packing macros to make it so Variant-containing structures don't always have 7 bytes of padding per Variant.
+
 2018-09-12  Guillaume Emont  <guijemont@igalia.com>
 
         Add IGNORE_WARNING_.* macros

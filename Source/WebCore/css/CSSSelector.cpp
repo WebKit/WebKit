@@ -40,25 +40,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-struct SameSizeAsCSSSelector {
-    unsigned flags;
-    void* unionPointer;
-};
-
 static_assert(CSSSelector::RelationType::Subselector == 0, "Subselector must be 0 for consumeCombinator.");
-static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector should remain small.");
+static_assert(sizeof(CSSSelector) == sizeof(void*) + sizeof(unsigned), "CSSSelector should remain small.");
 
 CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
     : m_relation(DescendantSpace)
     , m_match(Tag)
-    , m_pseudoType(0)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)
-    , m_hasRareData(false)
-    , m_hasNameWithCase(false)
-    , m_isForPage(false)
+    , m_pseudoType(0)
     , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
-    , m_caseInsensitiveAttributeValueMatching(false)
+#if !ASSERT_DISABLED
+    , m_isForPage(false)
+#endif
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     , m_destructorHasBeenCalled(false)
 #endif
@@ -66,25 +60,21 @@ CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRu
     const AtomicString& tagLocalName = tagQName.localName();
     const AtomicString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
 
-    if (tagLocalName == tagLocalNameASCIILowercase) {
-        m_data.m_tagQName = tagQName.impl();
-        m_data.m_tagQName->ref();
-    } else {
-        m_data.m_nameWithCase = adoptRef(new NameWithCase(tagQName, tagLocalNameASCIILowercase)).leakRef();
-        m_hasNameWithCase = true;
-    }
+    if (tagLocalName == tagLocalNameASCIILowercase)
+        m_data = tagQName;
+    else
+        m_data = adoptRef(new NameWithCase(tagQName, tagLocalNameASCIILowercase));
 }
 
 void CSSSelector::createRareData()
 {
     ASSERT(match() != Tag);
-    ASSERT(!m_hasNameWithCase);
-    if (m_hasRareData)
+    ASSERT(!WTF::holds_alternative<RefPtr<NameWithCase>>(m_data));
+    if (WTF::holds_alternative<RefPtr<RareData>>(m_data))
         return;
     // Move the value to the rare data stucture.
-    AtomicString value { adoptRef(m_data.m_value) };
-    m_data.m_rareData = &RareData::create(WTFMove(value)).leakRef();
-    m_hasRareData = true;
+    AtomicString value = WTF::get<AtomicString>(m_data);
+    m_data = adoptRef(new RareData(WTFMove(value)));
 }
 
 static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelector, bool isComputingMaximumSpecificity);
@@ -749,61 +739,54 @@ String CSSSelector::selectorText(const String& rightSide) const
 void CSSSelector::setAttribute(const QualifiedName& value, bool convertToLowercase, AttributeMatchType matchType)
 {
     createRareData();
-    m_data.m_rareData->m_attribute = value;
-    m_data.m_rareData->m_attributeCanonicalLocalName = convertToLowercase ? value.localName().convertToASCIILowercase() : value.localName();
-    m_caseInsensitiveAttributeValueMatching = matchType == CaseInsensitive;
+    WTF::get<RefPtr<RareData>>(m_data)->m_attribute = value;
+    WTF::get<RefPtr<RareData>>(m_data)->m_attributeCanonicalLocalName = convertToLowercase ? value.localName().convertToASCIILowercase() : value.localName();
+    WTF::get<RefPtr<RareData>>(m_data)->m_caseInsensitiveAttributeValueMatching = matchType == CaseInsensitive;
 }
     
 void CSSSelector::setArgument(const AtomicString& value)
 {
     createRareData();
-    m_data.m_rareData->m_argument = value;
+    WTF::get<RefPtr<RareData>>(m_data)->m_argument = value;
 }
 
 void CSSSelector::setLangArgumentList(std::unique_ptr<Vector<AtomicString>> argumentList)
 {
     createRareData();
-    m_data.m_rareData->m_langArgumentList = WTFMove(argumentList);
+    WTF::get<RefPtr<RareData>>(m_data)->m_langArgumentList = WTFMove(argumentList);
 }
 
 void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
     createRareData();
-    m_data.m_rareData->m_selectorList = WTFMove(selectorList);
+    WTF::get<RefPtr<RareData>>(m_data)->m_selectorList = WTFMove(selectorList);
 }
 
 void CSSSelector::setNth(int a, int b)
 {
     createRareData();
-    m_data.m_rareData->m_a = a;
-    m_data.m_rareData->m_b = b;
+    WTF::get<RefPtr<RareData>>(m_data)->m_a = a;
+    WTF::get<RefPtr<RareData>>(m_data)->m_b = b;
 }
 
 bool CSSSelector::matchNth(int count) const
 {
-    ASSERT(m_hasRareData);
-    return m_data.m_rareData->matchNth(count);
+    return WTF::get<RefPtr<RareData>>(m_data)->matchNth(count);
 }
 
 int CSSSelector::nthA() const
 {
-    ASSERT(m_hasRareData);
-    return m_data.m_rareData->m_a;
+    return WTF::get<RefPtr<RareData>>(m_data)->m_a;
 }
 
 int CSSSelector::nthB() const
 {
-    ASSERT(m_hasRareData);
-    return m_data.m_rareData->m_b;
+    return WTF::get<RefPtr<RareData>>(m_data)->m_b;
 }
 
 CSSSelector::RareData::RareData(AtomicString&& value)
     : m_matchingValue(value)
     , m_serializingValue(value)
-    , m_a(0)
-    , m_b(0)
-    , m_attribute(anyQName())
-    , m_argument(nullAtom())
 {
 }
 
