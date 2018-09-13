@@ -348,6 +348,9 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     layout()
     {
         this._domTreeOutline.updateSelection();
+
+        if (this.layoutReason === WI.View.LayoutReason.Resize)
+            this._domTreeOutline.selectDOMNode(this._domTreeOutline.selectedDOMNode());
     }
 
     // Private

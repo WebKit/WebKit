@@ -1,3 +1,18 @@
+2018-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Opening inspector with a selected element might immediately scroll that element off screen in the DOM Tree outline
+        https://bugs.webkit.org/show_bug.cgi?id=189569
+        <rdar://problem/44397098>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype.layout):
+        Re-select the selected DOM node in the DOM Tree when the view resizes.
+        Typically this can happen if the sidebar opens/closes/resizes, in which
+        case we will want the selected DOM node to stay in view even if the DOM
+        tree starts wrapping earlier content.
+
 2018-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: fix test case failures in js-isLikelyStackTrace.html
