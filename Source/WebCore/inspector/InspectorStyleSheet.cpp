@@ -634,13 +634,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
         const CSSPropertySourceData& propertyEntry = it->sourceData;
         const String& name = propertyEntry.name;
 
-        // Visual Studio disagrees with other compilers as to whether 'class' is needed here.
-#if COMPILER(MSVC)
-        enum class Protocol::CSS::CSSPropertyStatus status;
-#else
-        enum Inspector::Protocol::CSS::CSSPropertyStatus status;
-#endif
-        status = it->disabled ? Inspector::Protocol::CSS::CSSPropertyStatus::Disabled : Inspector::Protocol::CSS::CSSPropertyStatus::Active;
+        auto status = it->disabled ? Inspector::Protocol::CSS::CSSPropertyStatus::Disabled : Inspector::Protocol::CSS::CSSPropertyStatus::Active;
 
         RefPtr<Inspector::Protocol::CSS::CSSProperty> property = Inspector::Protocol::CSS::CSSProperty::create()
             .setName(name.convertToASCIILowercase())

@@ -1,3 +1,15 @@
+2018-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove a MSVC workaround in InspectorStyle::styleWithProperties
+        https://bugs.webkit.org/show_bug.cgi?id=189577
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change).
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::styleWithProperties const): Use 'auto' for the type of 'status'.
+
 2018-09-13  Alex Christensen  <achristensen@webkit.org>
 
         Use a Variant instead of a union in CSSSelector
