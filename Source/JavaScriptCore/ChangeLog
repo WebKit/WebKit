@@ -1,5 +1,30 @@
 2018-09-12  David Kilzer  <ddkilzer@apple.com>
 
+        Move JavaScriptCore files to match Xcode project hierarchy
+        <https://webkit.org/b/189574>
+
+        Reviewed by Filip Pizlo.
+
+        * API/JSAPIValueWrapper.cpp: Rename from Source/JavaScriptCore/runtime/JSAPIValueWrapper.cpp.
+        * API/JSAPIValueWrapper.h: Rename from Source/JavaScriptCore/runtime/JSAPIValueWrapper.h.
+        * CMakeLists.txt: Update for new path to
+        generateYarrUnicodePropertyTables.py, hasher.py and
+        JSAPIValueWrapper.h.
+        * DerivedSources.make: Ditto. Add missing dependency on
+        hasher.py captured by CMakeLists.txt.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Update for new file
+        reference paths. Add hasher.py library to project.
+        * Sources.txt: Update for new path to
+        JSAPIValueWrapper.cpp.
+        * runtime/JSImmutableButterfly.h: Add missing includes
+        after changes to Sources.txt and regenerating unified
+        sources.
+        * runtime/RuntimeType.h: Ditto.
+        * yarr/generateYarrUnicodePropertyTables.py: Rename from Source/JavaScriptCore/Scripts/generateYarrUnicodePropertyTables.py.
+        * yarr/hasher.py: Rename from Source/JavaScriptCore/Scripts/hasher.py.
+
+2018-09-12  David Kilzer  <ddkilzer@apple.com>
+
         Let Xcode have its way with the JavaScriptCore project
 
         * JavaScriptCore.xcodeproj/project.pbxproj:

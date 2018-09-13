@@ -21,6 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+API/JSAPIValueWrapper.cpp
 API/JSBase.cpp
 API/JSCTestRunnerUtils.cpp
 API/JSCallbackConstructor.cpp
@@ -786,7 +787,6 @@ runtime/IntlPluralRulesConstructor.cpp
 runtime/IntlPluralRulesPrototype.cpp
 runtime/IteratorOperations.cpp
 runtime/IteratorPrototype.cpp
-runtime/JSAPIValueWrapper.cpp
 runtime/JSArray.cpp
 runtime/JSArrayBuffer.cpp
 runtime/JSArrayBufferConstructor.cpp

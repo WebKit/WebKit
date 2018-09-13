@@ -3266,6 +3266,7 @@
 		43AB26C51C1A52F700D82AE6 /* B3MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3MathExtras.h; path = b3/B3MathExtras.h; sourceTree = "<group>"; };
 		43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerCommon.h; sourceTree = "<group>"; };
 		43CBA1601CAB67BA00328A5C /* udis86_udint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_udint.h; path = disassembler/udis86/udis86_udint.h; sourceTree = "<group>"; };
+		442FBD852149D1E00073519C /* hasher.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = hasher.py; path = yarr/hasher.py; sourceTree = "<group>"; };
 		449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
@@ -3595,7 +3596,7 @@
 		65C6BEE021128C3B006849C3 /* YarrDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrDisassembler.h; path = yarr/YarrDisassembler.h; sourceTree = "<group>"; };
 		65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapperObject.cpp; sourceTree = "<group>"; };
 		65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWrapperObject.h; sourceTree = "<group>"; };
-		65DA90461F87052A009BC546 /* generateYarrUnicodePropertyTables.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generateYarrUnicodePropertyTables.py; path = Scripts/generateYarrUnicodePropertyTables.py; sourceTree = "<group>"; };
+		65DA90461F87052A009BC546 /* generateYarrUnicodePropertyTables.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generateYarrUnicodePropertyTables.py; path = yarr/generateYarrUnicodePropertyTables.py; sourceTree = "<group>"; };
 		65E866ED0DD59AFA00A2B2A1 /* SourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProvider.h; sourceTree = "<group>"; };
 		65EA4C99092AF9E20093D800 /* JSLock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLock.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		65EA4C9A092AF9E20093D800 /* JSLock.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSLock.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -4403,8 +4404,8 @@
 		BC02E98B0E183E38000F9297 /* ErrorInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorInstance.h; sourceTree = "<group>"; };
 		BC02E9B60E1842FA000F9297 /* JSString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSString.cpp; sourceTree = "<group>"; };
 		BC02E9B80E184545000F9297 /* GetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetterSetter.cpp; sourceTree = "<group>"; };
-		BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAPIValueWrapper.cpp; path = ../runtime/JSAPIValueWrapper.cpp; sourceTree = "<group>"; };
-		BC0894D60FAFBA2D00001865 /* JSAPIValueWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAPIValueWrapper.h; path = ../runtime/JSAPIValueWrapper.h; sourceTree = "<group>"; };
+		BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAPIValueWrapper.cpp; sourceTree = "<group>"; };
+		BC0894D60FAFBA2D00001865 /* JSAPIValueWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAPIValueWrapper.h; sourceTree = "<group>"; };
 		BC1166000E1997B1008066DD /* DateInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateInstance.cpp; sourceTree = "<group>"; };
 		BC1166010E1997B1008066DD /* DateInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInstance.h; sourceTree = "<group>"; };
 		BC11667A0E199C05008066DD /* InternalFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalFunction.h; sourceTree = "<group>"; };
@@ -7131,6 +7132,7 @@
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				65A946131C8E9F2000A7209A /* generateYarrCanonicalizeUnicode */,
 				65DA90461F87052A009BC546 /* generateYarrUnicodePropertyTables.py */,
+				442FBD852149D1E00073519C /* hasher.py */,
 				A57D23EB1891B5540031C7FA /* RegularExpression.cpp */,
 				A57D23EC1891B5540031C7FA /* RegularExpression.h */,
 				451539B812DC994500EF7AC4 /* Yarr.h */,
