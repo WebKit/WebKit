@@ -1,3 +1,28 @@
+2018-09-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WebAssembly] Inline WasmContext accessor functions
+        https://bugs.webkit.org/show_bug.cgi?id=189416
+
+        Reviewed by Saam Barati.
+
+        WasmContext accessor functions are very small while it resides in the critical path of
+        JS to Wasm function call. This patch makes them inline to improve performance.
+        This change improves a small benchmark (calling JS to Wasm function 1e7 times) from 320ms to 270ms.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * interpreter/CallFrame.cpp:
+        * jit/AssemblyHelpers.cpp:
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmContextInlines.h: Renamed from Source/JavaScriptCore/wasm/WasmContext.cpp.
+        (JSC::Wasm::Context::useFastTLS):
+        (JSC::Wasm::Context::load const):
+        (JSC::Wasm::Context::store):
+        * wasm/WasmMemoryInformation.cpp:
+        * wasm/WasmModuleParser.cpp: Include <wtf/SHA1.h> due to changes of unified source combinations.
+        * wasm/js/JSToWasm.cpp:
+        * wasm/js/WebAssemblyFunction.cpp:
+
 2018-09-12  David Kilzer  <ddkilzer@apple.com>
 
         Move JavaScriptCore files to match Xcode project hierarchy

@@ -23,20 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WasmContext.h"
+#pragma once
 
 #if ENABLE(WEBASSEMBLY)
 
 #include "Options.h"
+#include "WasmContext.h"
 #include "WasmInstance.h"
-
 #include <mutex>
 #include <wtf/FastTLS.h>
 
 namespace JSC { namespace Wasm {
 
-bool Context::useFastTLS()
+inline bool Context::useFastTLS()
 {
 #if ENABLE(FAST_TLS_JIT)
     return Options::useFastTLSForWasmContext();
@@ -45,7 +44,7 @@ bool Context::useFastTLS()
 #endif
 }
 
-Instance* Context::load() const
+inline Instance* Context::load() const
 {
 #if ENABLE(FAST_TLS_JIT)
     if (useFastTLS())
@@ -54,7 +53,7 @@ Instance* Context::load() const
     return instance;
 }
 
-void Context::store(Instance* inst, void* softStackLimit)
+inline void Context::store(Instance* inst, void* softStackLimit)
 {
 #if ENABLE(FAST_TLS_JIT)
     if (useFastTLS())

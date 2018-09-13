@@ -971,7 +971,6 @@ wasm/WasmBinding.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCallingConvention.cpp
 wasm/WasmCodeBlock.cpp
-wasm/WasmContext.cpp
 wasm/WasmEmbedder.h
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp

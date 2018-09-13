@@ -1523,6 +1523,7 @@
 		AD2FCC211DB59CB200B3E736 /* WebAssemblyTablePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCC151DB59C5900B3E736 /* WebAssemblyTablePrototype.lut.h */; };
 		AD2FCC2D1DB838FD00B3E736 /* WebAssemblyPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCC271DB838C400B3E736 /* WebAssemblyPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */ = {isa = PBXBuildFile; fileRef = AD412B321E7B2E8A008AF157 /* WasmContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7593C898BE714A64BE93A6E7 /* WasmContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4252511E5D0E14009D2A97 /* FullCodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */; };
 		AD4937C41DDBE6140077C807 /* AbstractModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C21DDBE60A0077C807 /* AbstractModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4937C81DDD0AAE0077C807 /* WebAssemblyModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C61DDCDCF00077C807 /* WebAssemblyModuleRecord.h */; };
@@ -4344,8 +4345,8 @@
 		AD2FCC261DB838C400B3E736 /* WebAssemblyPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyPrototype.cpp; path = js/WebAssemblyPrototype.cpp; sourceTree = "<group>"; };
 		AD2FCC271DB838C400B3E736 /* WebAssemblyPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyPrototype.h; path = js/WebAssemblyPrototype.h; sourceTree = "<group>"; };
 		AD2FCC321DC4045300B3E736 /* WasmFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFormat.cpp; sourceTree = "<group>"; };
-		AD412B311E7B2E8A008AF157 /* WasmContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmContext.cpp; sourceTree = "<group>"; };
 		AD412B321E7B2E8A008AF157 /* WasmContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContext.h; sourceTree = "<group>"; };
+		A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContextInlines.h; sourceTree = "<group>"; };
 		AD412B351E7B57C0008AF157 /* AllowMacroScratchRegisterUsageIf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllowMacroScratchRegisterUsageIf.h; sourceTree = "<group>"; };
 		AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullCodeOrigin.h; sourceTree = "<group>"; };
 		AD4252521E5D0F22009D2A97 /* FullCodeOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullCodeOrigin.cpp; sourceTree = "<group>"; };
@@ -6318,8 +6319,8 @@
 				53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */,
 				526AC4B41E977C5D003500E1 /* WasmCodeBlock.cpp */,
 				526AC4B51E977C5D003500E1 /* WasmCodeBlock.h */,
-				AD412B311E7B2E8A008AF157 /* WasmContext.cpp */,
 				AD412B321E7B2E8A008AF157 /* WasmContext.h */,
+				A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */,
 				E36CC9462086314F0051FFD6 /* WasmCreationMode.h */,
 				AD5C36DC1F688B5F000BCAAF /* WasmEmbedder.h */,
 				79DAE2791E03C82200B526AA /* WasmExceptionType.h */,
@@ -9601,6 +9602,7 @@
 				53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCodeBlock.h in Headers */,
 				AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */,
+				7593C898BE714A64BE93A6E7 /* WasmContextInlines.h in Headers */,
 				E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */,
 				AD5C36DD1F688B65000BCAAF /* WasmEmbedder.h in Headers */,
 				79DAE27A1E03C82200B526AA /* WasmExceptionType.h in Headers */,

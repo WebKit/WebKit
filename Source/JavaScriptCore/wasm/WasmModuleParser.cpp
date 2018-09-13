@@ -34,6 +34,7 @@
 #include "WasmOps.h"
 #include "WasmSectionParser.h"
 #include "WasmSections.h"
+#include <wtf/SHA1.h>
 
 namespace JSC { namespace Wasm {
 

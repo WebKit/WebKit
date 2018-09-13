@@ -29,7 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmCallingConvention.h"
-#include "WasmContext.h"
+#include "WasmContextInlines.h"
 #include "WasmMemory.h"
 #include <wtf/NeverDestroyed.h>
 

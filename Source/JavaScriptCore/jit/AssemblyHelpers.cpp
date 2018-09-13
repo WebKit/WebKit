@@ -36,7 +36,7 @@
 #include "ThunkGenerators.h"
 
 #if ENABLE(WEBASSEMBLY)
-#include "WasmContext.h"
+#include "WasmContextInlines.h"
 #include "WasmMemoryInformation.h"
 #endif
 

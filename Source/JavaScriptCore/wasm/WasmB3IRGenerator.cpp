@@ -52,7 +52,7 @@
 #include "ScratchRegisterAllocator.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
-#include "WasmContext.h"
+#include "WasmContextInlines.h"
 #include "WasmExceptionType.h"
 #include "WasmFunctionParser.h"
 #include "WasmInstance.h"

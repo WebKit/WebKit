@@ -39,7 +39,7 @@
 #include "ProtoCallFrame.h"
 #include "VM.h"
 #include "WasmCallee.h"
-#include "WasmContext.h"
+#include "WasmContextInlines.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
 #include "WasmSignatureInlines.h"
