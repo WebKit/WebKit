@@ -4,6 +4,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=189486
         <rdar://problem/44320618>
 
+        Another test fix.
+
+        * legacy-animation-engine/animations/duplicate-keys.html:
+
+2018-09-12  Dean Jackson  <dino@grorg.org>
+
+        Header parsing for experimental and internal debug features
+        https://bugs.webkit.org/show_bug.cgi?id=189486
+        <rdar://problem/44320618>
+
         And even more test fixes!
 
         * animations/stop-animation-on-suspend.html:
