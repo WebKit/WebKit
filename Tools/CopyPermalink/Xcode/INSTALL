@@ -1,6 +1,6 @@
 Copy WebKit Permalink is an Xcode service that copies to the Clipboard a permanent hyperlink to the currently selected line in the active Xcode document.
 
-To install:
+== How to install and use ==
 
 1. Double-click "Copy WebKit Permalink.workflow".
 2. In the dialog that appears, click Install, then click Done.
@@ -13,6 +13,6 @@ For example, press Command, Shift, Control, and C keys at the same time.
 
 The Copy WebKit Permalink service will now appear under Xcode menu > Services.
 
-== Permalink to blame history ==
+== How to use ==
 
-Hold down the Option key when running the Copy WebKit Permalink service to generate a permalink to the selected line in the blame history for the file.
+In Xcode, use the key binding you setup above or choose Xcode > Services > Copy WebKit Permalink to copy to the Clipboard a permanent hyperlink to the selected line. Hold down the Option key when running the service to copy to the Clipboard a permanent hyperlink to the selected line with blame annotations.

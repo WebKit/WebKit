@@ -1,0 +1,4 @@
+[
+    { "command": "copy_web_kit_permalink" },
+    { "command": "copy_web_kit_permalink", "args": { "annotate_blame": true }, "caption": "Copy WebKit Permalink to Blame" },
+]
