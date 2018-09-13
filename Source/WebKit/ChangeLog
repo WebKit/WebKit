@@ -1,3 +1,36 @@
+2018-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON): setting window.opener to null allows process swapping in cases that are not web-compatible
+        https://bugs.webkit.org/show_bug.cgi?id=189590
+        <rdar://problem/44422725>
+
+        Reviewed by Geoffrey Garen.
+
+        If script calls window.open() without 'noopener' and the newly navigated window gets navigated cross-site,
+        we are currently unable to process-swap because the opener has a WindowProxy handle to this new Window and
+        may interact with it (which we currently do not support cross-process). We were dealing with this by not
+        process-swapping if window.opener is not null. This works most of the time but is not sufficient because the
+        opener may get nulled out, while the opener still has a valid WindowProxy handle to its openee.
+
+        Therefore, we now also check for a flag indicating if the frame was opened via window.open() without
+        'nooopener'. We still need to check if the browsing context has an opener for browsing context created
+        via <a target="_blank"> for example (the opener does not have a handle to the new window but the openee
+        has access to its opener).
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::openedViaWindowOpenWithOpener const):
+        (API::Navigation::setOpenedViaWindowOpenWithOpener):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-09-13  Dean Jackson  <dino@grorg.org>
 
         Generate warnings for Preferences files

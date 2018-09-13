@@ -1,3 +1,17 @@
+2018-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON): setting window.opener to null allows process swapping in cases that are not web-compatible
+        https://bugs.webkit.org/show_bug.cgi?id=189590
+        <rdar://problem/44422725>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/navigation/resources/navigate-helper.html: Added.
+        * http/tests/navigation/window-open-cross-origin-then-navigated-back-same-origin-expected.txt: Added.
+        * http/tests/navigation/window-open-cross-origin-then-navigated-back-same-origin.html: Added.
+
 2018-09-13  Dean Jackson  <dino@grorg.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=189594

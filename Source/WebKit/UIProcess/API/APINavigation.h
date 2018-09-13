@@ -94,6 +94,9 @@ public:
     void setHasOpenedFrames(bool value) { m_hasOpenedFrames = value; }
     bool hasOpenedFrames() const { return m_hasOpenedFrames; }
 
+    bool openedViaWindowOpenWithOpener() const { return m_openedViaWindowOpenWithOpener; }
+    void setOpenedViaWindowOpenWithOpener() { m_openedViaWindowOpenWithOpener = true; }
+
     void setOpener(const std::optional<std::pair<uint64_t, uint64_t>>& opener) { m_opener = opener; }
     const std::optional<std::pair<uint64_t, uint64_t>>& opener() const { return m_opener; }
 
@@ -121,6 +124,7 @@ private:
     bool m_treatAsSameOriginNavigation { false };
     bool m_isCrossOriginWindowOpenNavigation { false };
     bool m_hasOpenedFrames { false };
+    bool m_openedViaWindowOpenWithOpener { false };
     std::optional<std::pair<uint64_t, uint64_t>> m_opener;
 };
 

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that process swap on navigation does not break navigating back cross-origin a cross-origin window.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+function wasNavigatedSameOrigin()
+{
+    shouldBeEqualToString("w.location.href", "http://127.0.0.1:8000/navigation/resources/otherpage.html");
+    finishJSTest();
+}
+
+function wasNavigatedCrossOrigin()
+{
+    // Navigate back same origin.
+    w.postMessage({ navigate: "http://127.0.0.1:8000/navigation/resources/otherpage.html" }, "*");
+    handle = setInterval(() => {
+        try {
+            w.name;
+            clearInterval(handle);
+            wasNavigatedSameOrigin();
+        } catch(e) {
+        }
+    }, 10);
+}
+
+onload = function() {
+    w = window.open();
+    w.opener = null;
+    w.location = "http://localhost:8000/navigation/resources/navigate-helper.html";
+    handle = setInterval(() => {
+        try {
+            w.name;
+        } catch(e) {
+            clearInterval(handle);
+            wasNavigatedCrossOrigin();
+        }
+    }, 10);
+}
+</script>
+</body>
+</html>

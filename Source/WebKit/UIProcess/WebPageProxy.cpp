@@ -4022,6 +4022,8 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const WebCo
     navigation->setTreatAsSameOriginNavigation(navigationActionData.treatAsSameOriginNavigation);
     navigation->setIsCrossOriginWindowOpenNavigation(navigationActionData.isCrossOriginWindowOpenNavigation);
     navigation->setHasOpenedFrames(navigationActionData.hasOpenedFrames);
+    if (navigationActionData.openedViaWindowOpenWithOpener)
+        navigation->setOpenedViaWindowOpenWithOpener();
     navigation->setOpener(navigationActionData.opener);
 
 #if ENABLE(CONTENT_FILTERING)

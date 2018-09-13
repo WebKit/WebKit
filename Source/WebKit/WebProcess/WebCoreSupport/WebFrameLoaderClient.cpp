@@ -868,6 +868,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.treatAsSameOriginNavigation = navigationAction.treatAsSameOriginNavigation();
     navigationActionData.isCrossOriginWindowOpenNavigation = navigationAction.isCrossOriginWindowOpenNavigation();
     navigationActionData.hasOpenedFrames = navigationAction.hasOpenedFrames();
+    navigationActionData.openedViaWindowOpenWithOpener = navigationAction.openedViaWindowOpenWithOpener();
     navigationActionData.opener = navigationAction.opener();
     navigationActionData.targetBackForwardItemIdentifier = navigationAction.targetBackForwardItemIdentifier();
 

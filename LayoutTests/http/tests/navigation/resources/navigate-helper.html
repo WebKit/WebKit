@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+onmessage = (msg) => {
+    setTimeout(() => {
+        window.location = msg.data.navigate;
+    }, 0);
+};
+</script>
+</body>
+</html>
