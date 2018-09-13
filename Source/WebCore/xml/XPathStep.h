@@ -58,27 +58,6 @@ public:
         NodeTest(Kind kind, const AtomicString& data) : m_kind(kind), m_data(data) { }
         NodeTest(Kind kind, const AtomicString& data, const AtomicString& namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) { }
 
-#if COMPILER(MSVC)
-        NodeTest(const NodeTest&);
-        void operator=(const NodeTest&);
-
-        NodeTest(NodeTest&& other)
-            : m_kind(other.m_kind)
-            , m_data(WTFMove(other.m_data))
-            , m_namespaceURI(WTFMove(other.m_namespaceURI))
-            , m_mergedPredicates(WTFMove(other.m_mergedPredicates))
-        {
-        }
-        NodeTest& operator=(NodeTest&& other)
-        {
-            m_kind = other.m_kind;
-            m_data = WTFMove(other.m_data);
-            m_namespaceURI = WTFMove(other.m_namespaceURI);
-            m_mergedPredicates = WTFMove(other.m_mergedPredicates);
-            return *this;
-        }
-#endif
-
     private:
         friend class Step;
         friend void optimizeStepPair(Step&, Step&, bool&);

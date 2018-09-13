@@ -1,5 +1,21 @@
 2018-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Remove a MSVC workaround in XPath::Step::NodeTest
+        https://bugs.webkit.org/show_bug.cgi?id=189578
+
+        Reviewed by Alex Christensen.
+
+        XPath::Step::NodeTest has a special code for MSVC bug workaround.
+        It has been introduced in 5 years ago in Bug 121082 Comment 19.
+
+        I think it is safe just to remove the workaround.
+
+        No new tests (No behavior change).
+
+        * xml/XPathStep.h: Removed the MSVC workaround.
+
+2018-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Remove a MSVC workaround in InspectorStyle::styleWithProperties
         https://bugs.webkit.org/show_bug.cgi?id=189577
 
