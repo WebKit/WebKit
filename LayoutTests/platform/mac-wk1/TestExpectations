@@ -615,3 +615,4 @@ webkit.org/b/188357 legacy-animation-engine/compositing/layer-creation/animation
 webkit.org/b/189087 svg/animations/animate-end-attribute-numeric-precision.html [ Pass Failure ]
 
 webkit.org/b/188008 fast/text/variations/ipc2.html [ Skip ]
+webkit.org/b/189594 imported/w3c/web-platform-tests/css/css-animations/pending-style-changes-001.html [ Pass Failure ]
