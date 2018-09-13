@@ -705,7 +705,7 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 void WebPageProxy::reattachToWebProcess()
 {
     auto process = makeRef(m_process->processPool().createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get()));
-    reattachToWebProcess(WTFMove(process), nullptr, ReattachForBackForward::No);
+    reattachToWebProcess(WTFMove(process), nullptr);
 }
 
 SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& process, API::Navigation& navigation)
@@ -731,7 +731,7 @@ void WebPageProxy::suspendedPageClosed(SuspendedPageProxy& page)
     m_suspendedPage = nullptr;
 }
 
-void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation* navigation, ReattachForBackForward reattachForBackForward)
+void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation* navigation)
 {
     ASSERT(!m_isClosed);
     ASSERT(!isValid());
@@ -753,7 +753,11 @@ void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Nav
     if (m_process->state() == WebProcessProxy::State::Running)
         m_webProcessLifetimeTracker.webPageEnteringWebProcess();
 
-    if (reattachForBackForward == ReattachForBackForward::Yes) {
+    // If we are reattaching to a SuspendedPage, then the WebProcess' WebPage already exists and
+    // WebPageProxy::didCreateMainFrame() will not be called to initialize m_mainFrame. In such
+    // case, we need to initialize m_mainFrame to reflect the fact the the WebProcess' WebPage
+    // already exists and already has a main frame.
+    if (currentSuspendedPage && currentSuspendedPage->process() == m_process.ptr()) {
         ASSERT(!m_mainFrame);
         ASSERT(m_mainFrameID);
         m_mainFrame = WebFrameProxy::create(this, *m_mainFrameID);
@@ -2482,7 +2486,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 
     // FIXME: this is to fix the ASSERT(isValid()) inside reattachToWebProcess, some other way to fix this is needed.
     m_isValid = false;
-    reattachToWebProcess(WTFMove(process), &navigation, navigation.targetItem() ? ReattachForBackForward::Yes : ReattachForBackForward::No);
+    reattachToWebProcess(WTFMove(process), &navigation);
 
     if (auto* item = navigation.targetItem()) {
         LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());

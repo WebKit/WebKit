@@ -1,5 +1,36 @@
 2018-09-13  Chris Dumez  <cdumez@apple.com>
 
+        ProcessSwap.BackWithoutSuspendedPage API test hits assertion under WebPageProxy::didCreateMainFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=189599
+
+        Reviewed by Geoffrey Garen.
+
+        The code in WebPageProxy::reattachToWebProcess() was re-initializing m_mainFrame unconditionally in case
+        of a HistoryNavigation. The reason we need to initialize m_mainFrame in reattachToWebProcess() is if the
+        process we're reattaching to already has a WebPage (with a main frame), in which case
+        WebPageProxy::didCreateMainFrame() would not get called to initialize WebPageProxy::m_mainFrame.
+
+        The process we're reattaching to can be in such a state only if it comes from a SuspendedPageProxy (we
+        detached the WebProcessProxy from the WebPageProxy but kept the WebPage in the "suspended" WebProcess).
+        It is true that we're only reattaching to a SuspendedPageProxy's process in the event of history
+        navigations. However, it is not true that all history navigations will use a SuspendedPageProxy's process.
+        For example, no SuspendedPageProxy may be available for the history navigation because the history
+        was restored to a new view from disk, or because the WebBackForwardListItem no longer has a
+        SuspendedPageProxy (we currently only keep a single SuspendedPageProxy for the last HistoryItem).
+
+        Therefore, unconditionally initializating m_mainFrame in reattachToWebProcess() for history navigations
+        is incorrect and we should instead check if we're reattaching to a SuspendedPage's process.
+
+        Change is covered by ProcessSwap.BackWithoutSuspendedPage API test which is no longer crashes and
+        existing Back/Forward PSON API tests which are still passing.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        * UIProcess/WebPageProxy.h:
+
+2018-09-13  Chris Dumez  <cdumez@apple.com>
+
         Add release logging to help debug PSON issues
         https://bugs.webkit.org/show_bug.cgi?id=189562
 
