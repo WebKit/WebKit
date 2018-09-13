@@ -2884,6 +2884,7 @@ JSRTCRtpHeaderExtensionParameters.cpp
 JSRTCRtpParameters.cpp
 JSRTCRtpRtxParameters.cpp
 JSRTCRtpReceiver.cpp
+JSRTCRtpSendParameters.cpp
 JSRTCRtpSender.cpp
 JSRTCRtpTransceiver.cpp
 JSRTCRtpTransceiverDirection.cpp

@@ -27,7 +27,7 @@
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
     JSGenerateToJSObject,
-] dictionary RTCRtpEncodingParameters {
+] dictionary RTCRtpEncodingParameters : RTCRtpCodingParameters {
     unsigned long ssrc;
     RTCRtpRtxParameters rtx;
     RTCRtpFecParameters fec;
@@ -36,6 +36,5 @@
     RTCPriorityType priority;
     unsigned long maxBitrate;
     unsigned long maxFramerate;
-    DOMString rid;
     double scaleResolutionDownBy = 1;
 };

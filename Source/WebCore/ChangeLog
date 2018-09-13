@@ -1,3 +1,48 @@
+2018-09-13  Youenn Fablet  <youenn@apple.com>
+
+        Introduce RTCRtpSendParameters
+        https://bugs.webkit.org/show_bug.cgi?id=189563
+
+        Reviewed by Eric Carlson.
+
+        Introduce RTCRtpSendParameters to match the WebRTC specification.
+        Split RTCRtpPrameters fields accordingly and update call sites.
+
+        Covered by updated test.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCRtpCodingParameters.h: Added
+        * Modules/mediastream/RTCRtpCodingParameters.idl: Added
+        * Modules/mediastream/RTCRtpDecodingParameters.h: Added
+        * Modules/mediastream/RTCRtpDecodingParameters.idl: Added
+        * Modules/mediastream/RTCRtpEncodingParameters.h:
+        * Modules/mediastream/RTCRtpEncodingParameters.idl:
+        * Modules/mediastream/RTCRtpParameters.h:
+        * Modules/mediastream/RTCRtpParameters.idl:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        * Modules/mediastream/RTCRtpSendParameters.h: Added.
+        (WebCore::RTCRtpSendParameters::RTCRtpSendParameters):
+        * Modules/mediastream/RTCRtpSendParameters.idl: Added.
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::getParameters):
+        (WebCore::RTCRtpSender::setParameters):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::getParameters const):
+        (WebCore::LibWebRTCRtpSenderBackend::setParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCRtpParameters):
+        (WebCore::toRTCRtpSendParameters):
+        (WebCore::fromRTCRtpSendParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-09-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] decrypt-key-needed message renamed to drm-cdm-instance-needed

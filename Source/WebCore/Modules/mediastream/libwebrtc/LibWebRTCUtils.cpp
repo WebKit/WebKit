@@ -29,7 +29,7 @@
 
 #include "LibWebRTCMacros.h"
 #include "RTCPeerConnection.h"
-#include "RTCRtpParameters.h"
+#include "RTCRtpSendParameters.h"
 #include <wtf/text/WTFString.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -135,13 +135,21 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
 {
     RTCRtpParameters parameters;
 
-    parameters.transactionId = fromStdString(rtcParameters.transaction_id);
-    for (auto& rtcEncoding : rtcParameters.encodings)
-        parameters.encodings.append(toRTCEncodingParameters(rtcEncoding));
     for (auto& extension : rtcParameters.header_extensions)
         parameters.headerExtensions.append(toRTCHeaderExtensionParameters(extension));
     for (auto& codec : rtcParameters.codecs)
         parameters.codecs.append(toRTCCodecParameters(codec));
+
+    return parameters;
+}
+
+RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcParameters)
+{
+    RTCRtpSendParameters parameters { toRTCRtpParameters(rtcParameters) };
+
+    parameters.transactionId = fromStdString(rtcParameters.transaction_id);
+    for (auto& rtcEncoding : rtcParameters.encodings)
+        parameters.encodings.append(toRTCEncodingParameters(rtcEncoding));
 
     switch (rtcParameters.degradation_preference) {
     // FIXME: Support DegradationPreference::DISABLED.
@@ -159,7 +167,7 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
     return parameters;
 }
 
-webrtc::RtpParameters fromRTCRtpParameters(const RTCRtpParameters& parameters)
+webrtc::RtpParameters fromRTCRtpSendParameters(const RTCRtpSendParameters& parameters)
 {
     webrtc::RtpParameters rtcParameters;
     rtcParameters.transaction_id = parameters.transactionId.utf8().data();

@@ -27,25 +27,25 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCDtxStatus.h"
-#include "RTCPriorityType.h"
-#include "RTCRtpCodingParameters.h"
-#include "RTCRtpFecParameters.h"
-#include "RTCRtpRtxParameters.h"
+#include "RTCDegradationPreference.h"
+#include "RTCRtpEncodingParameters.h"
+#include "RTCRtpParameters.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct RTCRtpEncodingParameters : RTCRtpCodingParameters {
-    unsigned long ssrc { 0 };
-    RTCRtpRtxParameters rtx;
-    RTCRtpFecParameters fec;
-    std::optional<RTCDtxStatus> dtx;
-    bool active { false};
-    RTCPriorityType priority { RTCPriorityType::Medium };
-    unsigned long maxBitrate { 0 };
-    unsigned long maxFramerate { 0 };
-    double scaleResolutionDownBy { 1 };
+struct RTCRtpSendParameters : RTCRtpParameters {
+    RTCRtpSendParameters() = default;
+    explicit RTCRtpSendParameters(RTCRtpParameters&& parameters)
+        : RTCRtpParameters(WTFMove(parameters))
+    {
+    }
+
+    String transactionId;
+    Vector<RTCRtpEncodingParameters> encodings;
+    RTCDegradationPreference degradationPreference { RTCDegradationPreference::Balanced };
 };
+
 
 } // namespace WebCore
 

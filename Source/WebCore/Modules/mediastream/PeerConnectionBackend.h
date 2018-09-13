@@ -35,7 +35,7 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "LibWebRTCProvider.h"
-#include "RTCRtpParameters.h"
+#include "RTCRtpSendParameters.h"
 #include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"
 #include <wtf/LoggerHelper.h>

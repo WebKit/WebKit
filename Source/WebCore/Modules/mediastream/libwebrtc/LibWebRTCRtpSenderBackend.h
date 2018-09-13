@@ -96,8 +96,8 @@ public:
 
 private:
     void replaceTrack(ScriptExecutionContext&, RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) final;
-    RTCRtpParameters getParameters() const final;
-    void setParameters(const RTCRtpParameters&, DOMPromiseDeferred<void>&&) final;
+    RTCRtpSendParameters getParameters() const final;
+    void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) final;
 
     WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_rtcSender;

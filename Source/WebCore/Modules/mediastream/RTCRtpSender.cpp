@@ -94,14 +94,14 @@ void RTCRtpSender::replaceTrack(ScriptExecutionContext& context, RefPtr<MediaStr
     m_backend->replaceTrack(context, *this, WTFMove(withTrack), WTFMove(promise));
 }
 
-RTCRtpParameters RTCRtpSender::getParameters()
+RTCRtpSendParameters RTCRtpSender::getParameters()
 {
     if (isStopped())
         return { };
     return m_backend->getParameters();
 }
 
-void RTCRtpSender::setParameters(const RTCRtpParameters& parameters, DOMPromiseDeferred<void>&& promise)
+void RTCRtpSender::setParameters(const RTCRtpSendParameters& parameters, DOMPromiseDeferred<void>&& promise)
 {
     if (isStopped()) {
         promise.reject(InvalidStateError);

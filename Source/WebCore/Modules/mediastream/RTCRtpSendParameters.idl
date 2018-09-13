@@ -27,8 +27,8 @@
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
     JSGenerateToJSObject,
-] dictionary RTCRtpParameters {
-    sequence<RTCRtpHeaderExtensionParameters> headerExtensions;
-    // FIXME: Add RTCRtcpParameters rtcp;
-    sequence<RTCRtpCodecParameters> codecs;
+] dictionary RTCRtpSendParameters : RTCRtpParameters {
+    required DOMString transactionId;
+    required sequence<RTCRtpEncodingParameters> encodings;
+    RTCDegradationPreference degradationPreference = "balanced";
 };

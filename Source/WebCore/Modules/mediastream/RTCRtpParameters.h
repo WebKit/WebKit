@@ -27,21 +27,15 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCDegradationPreference.h"
 #include "RTCRtpCodecParameters.h"
-#include "RTCRtpEncodingParameters.h"
 #include "RTCRtpHeaderExtensionParameters.h"
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct RTCRtpParameters {
-    String transactionId;
-    Vector<RTCRtpEncodingParameters> encodings;
     Vector<RTCRtpHeaderExtensionParameters> headerExtensions;
     Vector<RTCRtpCodecParameters> codecs;
-    RTCDegradationPreference degradationPreference { RTCDegradationPreference::Balanced };
 };
 
 

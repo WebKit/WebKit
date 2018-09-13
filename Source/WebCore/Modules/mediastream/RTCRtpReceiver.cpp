@@ -33,8 +33,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCRtpParameters.h"
-
 namespace WebCore {
 
 RTCRtpReceiver::RTCRtpReceiver(Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)

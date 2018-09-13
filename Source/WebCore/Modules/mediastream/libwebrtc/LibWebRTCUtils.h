@@ -38,12 +38,15 @@ enum class RtpTransceiverDirection;
 namespace WebCore {
 
 struct RTCRtpParameters;
+struct RTCRtpSendParameters;
 struct RTCRtpTransceiverInit;
 
 enum class RTCRtpTransceiverDirection;
 
 RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters&);
 webrtc::RtpParameters fromRTCRtpParameters(const RTCRtpParameters&);
+RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters&);
+webrtc::RtpParameters fromRTCRtpSendParameters(const RTCRtpSendParameters&);
 
 RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection);
 webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiverDirection);

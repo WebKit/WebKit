@@ -100,21 +100,21 @@ void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RT
     });
 }
 
-RTCRtpParameters LibWebRTCRtpSenderBackend::getParameters() const
+RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const
 {
     if (!m_rtcSender)
         return { };
 
-    return toRTCRtpParameters(m_rtcSender->GetParameters());
+    return toRTCRtpSendParameters(m_rtcSender->GetParameters());
 }
 
-void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpParameters& parameters, DOMPromiseDeferred<void>&& promise)
+void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parameters, DOMPromiseDeferred<void>&& promise)
 {
     if (!m_rtcSender) {
         promise.reject(NotSupportedError);
         return;
     }
-    auto error = m_rtcSender->SetParameters(fromRTCRtpParameters(parameters));
+    auto error = m_rtcSender->SetParameters(fromRTCRtpSendParameters(parameters));
     if (!error.ok()) {
         promise.reject(Exception { InvalidStateError, error.message() });
         return;

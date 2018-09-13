@@ -7232,6 +7232,12 @@
 		4147E2B41C89912600A7E715 /* FetchLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchLoader.cpp; sourceTree = "<group>"; };
 		4147E2B51C89912600A7E715 /* FetchLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchLoader.h; sourceTree = "<group>"; };
 		4147E2B61C89912600A7E715 /* FetchLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchLoaderClient.h; sourceTree = "<group>"; };
+		414AD3FC2149842000521676 /* RTCRtpSendParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCRtpSendParameters.h; sourceTree = "<group>"; };
+		414AD3FE2149842000521676 /* RTCRtpSendParameters.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpSendParameters.idl; sourceTree = "<group>"; };
+		414AD3FF21498D3000521676 /* RTCRtpCodingParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCRtpCodingParameters.h; sourceTree = "<group>"; };
+		414AD40021498D3100521676 /* RTCRtpDecodingParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCRtpDecodingParameters.h; sourceTree = "<group>"; };
+		414AD40121498D3100521676 /* RTCRtpDecodingParameters.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpDecodingParameters.idl; sourceTree = "<group>"; };
+		414AD40221498D3200521676 /* RTCRtpCodingParameters.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpCodingParameters.idl; sourceTree = "<group>"; };
 		414B82021D6DF0D90077EBE3 /* StructuredClone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructuredClone.cpp; sourceTree = "<group>"; };
 		414B82031D6DF0D90077EBE3 /* StructuredClone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructuredClone.h; sourceTree = "<group>"; };
 		414DEDE51F9FE9150047C40D /* EmptyFrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyFrameLoaderClient.h; sourceTree = "<group>"; };
@@ -15184,6 +15190,10 @@
 				41E593FD214865A900D3CB61 /* RTCPriorityType.idl */,
 				41FCB75F214866FF0038ADC6 /* RTCRtpCodecParameters.h */,
 				41FCB759214865D30038ADC6 /* RTCRtpCodecParameters.idl */,
+				414AD3FF21498D3000521676 /* RTCRtpCodingParameters.h */,
+				414AD40221498D3200521676 /* RTCRtpCodingParameters.idl */,
+				414AD40021498D3100521676 /* RTCRtpDecodingParameters.h */,
+				414AD40121498D3100521676 /* RTCRtpDecodingParameters.idl */,
 				41FCB761214867000038ADC6 /* RTCRtpEncodingParameters.h */,
 				41E593FF214865AA00D3CB61 /* RTCRtpEncodingParameters.idl */,
 				41FCB75B214866FD0038ADC6 /* RTCRtpFecParameters.h */,
@@ -15202,6 +15212,8 @@
 				5E2C435A1BCEE30D0001E2BC /* RTCRtpSender.h */,
 				5E2C435B1BCEE30D0001E2BC /* RTCRtpSender.idl */,
 				41D1A046213EDDEB0063FB6B /* RTCRtpSenderBackend.h */,
+				414AD3FC2149842000521676 /* RTCRtpSendParameters.h */,
+				414AD3FE2149842000521676 /* RTCRtpSendParameters.idl */,
 				5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */,
 				5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */,
 				5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */,

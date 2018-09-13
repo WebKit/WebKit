@@ -27,19 +27,19 @@
 #if ENABLE(WEB_RTC)
 
 #include "JSDOMPromiseDeferred.h"
-#include "RTCRtpParameters.h"
 
 namespace WebCore {
 
 class MediaStreamTrack;
 class RTCRtpSender;
+struct RTCRtpSendParameters;
 class ScriptExecutionContext;
 
 class RTCRtpSenderBackend {
 public:
     virtual void replaceTrack(ScriptExecutionContext&, RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
-    virtual RTCRtpParameters getParameters() const = 0;
-    virtual void setParameters(const RTCRtpParameters&, DOMPromiseDeferred<void>&&) = 0;
+    virtual RTCRtpSendParameters getParameters() const = 0;
+    virtual void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) = 0;
     virtual ~RTCRtpSenderBackend() = default;
 };
 

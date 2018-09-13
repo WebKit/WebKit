@@ -40,17 +40,19 @@ promise_test((test) => {
         assert_true(!!senderParameters, "sender parameters should not be undefined or null");
         assert_true(!!receiverParameters, "receiver parameters should not be undefined or null");
 
+        assert_array_equals(receiverParameters.codecs, [], "receiver codecs");
+        assert_array_equals(receiverParameters.headerExtensions, [], "receiver header extensions");
+
+        senderParameters.encodings[0].ssrc = 1;
         senderParameters.encodings[0].fec.ssrc = 1;
         senderParameters.encodings[0].rtx.ssrc = 1;
 
-        senderParameters.transactionId = "";
-        receiverParameters.transactionId = "";
-
-        senderParameters.encodings[0].ssrc = 1;
-        assert_equals(JSON.stringify(senderParameters), '{"codecs":[],"degradationPreference":"balanced","encodings":[{"active":true,"fec":{"ssrc":1},"maxBitrate":0,"maxFramerate":0,"priority":"medium","rid":"","rtx":{"ssrc":1},"scaleResolutionDownBy":1,"ssrc":1}],"headerExtensions":[],"transactionId":""}', "Testing sanitized sender parameters");
-        assert_equals(JSON.stringify(receiverParameters), '{"codecs":[],"degradationPreference":"balanced","encodings":[],"headerExtensions":[],"transactionId":""}', "Testing sanitized receiver parameters");
+        assert_true(!!senderParameters.transactionId, "sender transaction");
+        assert_array_equals(senderParameters.codecs, [], "sender codecs");
+        assert_array_equals(senderParameters.headerExtensions, [], "sender header extensions");
+        assert_equals(senderParameters.degradationPreference, "balanced", "sender degradation");
     });
-}, "Basic video stats");
+}, "Sender and receiver parameters");
         </script>
     </body>
 </html>
