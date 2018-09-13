@@ -1,3 +1,17 @@
+2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang][ImageDiff] Fix compilation error and warning of PlatformImageCairo.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=189496
+        <rdar://problem/44370981>
+
+        Unreviewed warning fix.
+
+        r235929 has introduced a new compilation warning:
+        > Tools/ImageDiff/cairo/PlatformImageCairo.cpp:34:70: warning: unused parameter ‘imageSize’ [-Wunused-parameter]
+
+        * ImageDiff/cairo/PlatformImageCairo.cpp:
+        (ImageDiff::PlatformImage::createFromStdin): Removed the variable name.
+
 2018-09-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Complete support for Paste as Quotation
