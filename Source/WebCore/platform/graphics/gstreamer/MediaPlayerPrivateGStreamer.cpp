@@ -1308,9 +1308,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             GRefPtr<GstEvent> event;
             gst_structure_get(structure, "event", GST_TYPE_EVENT, &event.outPtr(), nullptr);
             handleProtectionEvent(event.get());
-        } else if (gst_structure_has_name(structure, "decrypt-key-needed")) {
-            GST_DEBUG("decrypt-key-needed message from %s", GST_MESSAGE_SRC_NAME(message));
-            MediaPlayerPrivateGStreamerBase::dispatchCDMInstance();
+        } else if (gst_structure_has_name(structure, "drm-cdm-instance-needed")) {
+            GST_DEBUG("drm-cdm-instance-needed message from %s", GST_MESSAGE_SRC_NAME(message));
+            dispatchCDMInstance();
         }
 #endif
         else if (gst_structure_has_name(structure, "http-headers")) {
