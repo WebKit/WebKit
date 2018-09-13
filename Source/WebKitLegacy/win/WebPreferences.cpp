@@ -61,10 +61,10 @@ static const String& oldPreferencesPath()
     return path;
 }
 
-template<typename NumberType> struct CFNumberTraits { static const unsigned Type; };
-template<> struct CFNumberTraits<int> { static const unsigned Type = kCFNumberSInt32Type; };
-template<> struct CFNumberTraits<LONGLONG> { static const unsigned Type = kCFNumberLongLongType; };
-template<> struct CFNumberTraits<float> { static const unsigned Type = kCFNumberFloat32Type; };
+template<typename NumberType> struct CFNumberTraits { static const CFNumberType Type; };
+template<> struct CFNumberTraits<int> { static const CFNumberType Type = kCFNumberSInt32Type; };
+template<> struct CFNumberTraits<LONGLONG> { static const CFNumberType Type = kCFNumberLongLongType; };
+template<> struct CFNumberTraits<float> { static const CFNumberType Type = kCFNumberFloat32Type; };
 
 template<typename NumberType>
 static NumberType numberValueForPreferencesValue(CFPropertyListRef value)
@@ -515,7 +515,7 @@ void WebPreferences::migrateWebKitPreferencesToCFPreferences()
     if (!CFReadStreamOpen(stream.get()))
         return;
 
-    CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0 | kCFPropertyListXMLFormat_v1_0;
+    auto format = static_cast<CFPropertyListFormat>(kCFPropertyListBinaryFormat_v1_0 | kCFPropertyListXMLFormat_v1_0);
     RetainPtr<CFPropertyListRef> plist = adoptCF(CFPropertyListCreateFromStream(0, stream.get(), 0, kCFPropertyListMutableContainersAndLeaves, &format, 0));
     CFReadStreamClose(stream.get());
 
@@ -1352,7 +1352,7 @@ HRESULT WebPreferences::screenFontSubstitutionEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    enabled = false;
+    *enabled = false;
     return S_OK;
 }
 

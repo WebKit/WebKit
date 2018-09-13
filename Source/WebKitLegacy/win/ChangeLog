@@ -1,5 +1,19 @@
 2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win][Clang][WebKitLegacy] Fix compilation errors and warnings of WebPreferences.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=189538
+
+        Reviewed by Per Arne Vollan.
+
+        * WebPreferences.cpp:
+        Changed the type of CFNumberTraits::Type from unsigned int to CFNumberType.
+        (WebPreferences::migrateWebKitPreferencesToCFPreferences):
+        Apply static_cast to the result of OR-ed CFPropertyListFormat.
+        (WebPreferences::screenFontSubstitutionEnabled):
+        Assign false to the content of the out variable 'enabled', not assigning 0 to the variable.
+
+2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win][Clang][WebKitLegacy] error: 'static' is invalid in friend declarations
         https://bugs.webkit.org/show_bug.cgi?id=189539
 
