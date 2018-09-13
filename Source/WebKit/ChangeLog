@@ -1,3 +1,25 @@
+2018-09-13  Dean Jackson  <dino@grorg.org>
+
+        Generate warnings for Preferences files
+        https://bugs.webkit.org/show_bug.cgi?id=189573
+
+        Reviewed by Sam Weinig.
+
+        Generate the "DO NOT EDIT" warnings, rather than have
+        them in the template (which was confusing).
+
+        While here, simplify some of the templating generation code
+        to avoid duplication.
+
+        * Scripts/GeneratePreferences.rb:
+        * Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesKeys.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb:
+
 2018-09-13  Keith Rollin  <krollin@apple.com>
 
         WebPageProxy::reportPageLoadResult can crash on some code paths

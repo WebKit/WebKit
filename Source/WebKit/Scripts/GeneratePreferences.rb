@@ -129,7 +129,9 @@ end
 class Preferences
   attr_accessor :preferences
 
-  def initialize(hash)
+  def initialize(hash, outputDirectory)
+    @outputDirectory = outputDirectory
+
     @preferences = []
     hash.each do |name, options|
       @preferences << Preference.new(name, options)
@@ -144,23 +146,25 @@ class Preferences
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }
     @preferencesBoundToRuntimeEnabledFeatures = @preferences.select { |p| p.webcoreBinding == "RuntimeEnabledFeatures" }
+
+    @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
   end
 
-  def renderToFile(template, file)
-    template = File.join(File.dirname(__FILE__), template)
+  def renderTemplate(template)
+    templateFile = File.join(File.dirname(__FILE__), "PreferencesTemplates", template + ".erb")
 
-    output = ERB.new(File.read(template), 0, "-").result(binding)
-    File.open(file, "w+") do |f|
+    output = ERB.new(File.read(templateFile), 0, "-").result(binding)
+    File.open(File.join(@outputDirectory, template), "w+") do |f|
       f.write(output)
     end
   end
 end
 
-preferences = Preferences.new(parsedPreferences)
-preferences.renderToFile("PreferencesTemplates/WebPreferencesDefinitions.h.erb", File.join(options[:outputDirectory], "WebPreferencesDefinitions.h"))
-preferences.renderToFile("PreferencesTemplates/WebPageUpdatePreferences.cpp.erb", File.join(options[:outputDirectory], "WebPageUpdatePreferences.cpp"))
-preferences.renderToFile("PreferencesTemplates/WebPreferencesKeys.h.erb", File.join(options[:outputDirectory], "WebPreferencesKeys.h"))
-preferences.renderToFile("PreferencesTemplates/WebPreferencesKeys.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesKeys.cpp"))
-preferences.renderToFile("PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesStoreDefaultsMap.cpp"))
-preferences.renderToFile("PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesInternalDebugFeatures.cpp"))
-preferences.renderToFile("PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesExperimentalFeatures.cpp"))
+preferences = Preferences.new(parsedPreferences, options[:outputDirectory])
+preferences.renderTemplate("WebPreferencesDefinitions.h")
+preferences.renderTemplate("WebPageUpdatePreferences.cpp")
+preferences.renderTemplate("WebPreferencesKeys.h")
+preferences.renderTemplate("WebPreferencesKeys.cpp")
+preferences.renderTemplate("WebPreferencesStoreDefaultsMap.cpp")
+preferences.renderTemplate("WebPreferencesInternalDebugFeatures.cpp")
+preferences.renderTemplate("WebPreferencesExperimentalFeatures.cpp")
