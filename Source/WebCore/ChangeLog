@@ -1,3 +1,23 @@
+2018-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove the workaround for friend class LazyNeverDestroyed<X> statements for MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=189576
+
+        Reviewed by Alex Christensen.
+
+        Old MSVC can't compile "friend class LazyNeverDestroyed<X>"
+        statements, but "friend LazyNeverDestroyed<X>".
+
+        No new tests (No behavior change).
+
+        * css/CSSInheritedValue.h: Removed the code for COMPILER(MSVC).
+        Removed 'class' keyword in "friend class LazyNeverDestroyed<X>"
+        statement.
+        * css/CSSInitialValue.h: Ditto.
+        * css/CSSPrimitiveValue.h: Ditto.
+        * css/CSSRevertValue.h: Ditto.
+        * css/CSSUnsetValue.h: Ditto.
+
 2018-09-13  Ms2ger  <Ms2ger@igalia.com>
 
         [GLib] Fix format string in KeyedEncoderGlib::beginObject().

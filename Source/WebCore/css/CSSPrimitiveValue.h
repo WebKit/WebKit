@@ -288,14 +288,9 @@ public:
 
     Ref<DeprecatedCSSOMPrimitiveValue> createDeprecatedCSSOMPrimitiveWrapper(CSSStyleDeclaration&) const;
 
-#if COMPILER(MSVC)
-    // FIXME: This should be private, but for some reason MSVC then fails to invoke it from LazyNeverDestroyed::construct.
-public:
-#else
 private:
     friend class CSSValuePool;
-    friend class LazyNeverDestroyed<CSSPrimitiveValue>;
-#endif
+    friend LazyNeverDestroyed<CSSPrimitiveValue>;
 
     CSSPrimitiveValue(CSSValueID);
     CSSPrimitiveValue(CSSPropertyID);
