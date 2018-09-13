@@ -1,3 +1,9 @@
+2018-09-12  David Kilzer  <ddkilzer@apple.com>
+
+        Let Xcode have its way with the JavaScriptCore project
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-09-12  Guillaume Emont  <guijemont@igalia.com>
 
         Add IGNORE_WARNING_.* macros
