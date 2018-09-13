@@ -2102,9 +2102,9 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
         m_swappedProcessesPerRegistrableDomain.remove(registrableDomain);
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, PolicyAction& action)
+Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, PolicyAction& action, String& reason)
 {
-    auto process = processForNavigationInternal(page, navigation, processSwapRequestedByClient, action);
+    auto process = processForNavigationInternal(page, navigation, processSwapRequestedByClient, action, reason);
 
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != &page.process()) {
         static std::once_flag onceFlag;
@@ -2120,60 +2120,84 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
     return process;
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, PolicyAction& action)
+Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, PolicyAction& action, String& reason)
 {
-    if (!m_configuration->processSwapsOnNavigation() && processSwapRequestedByClient == ProcessSwapRequestedByClient::No)
+    if (!m_configuration->processSwapsOnNavigation() && processSwapRequestedByClient == ProcessSwapRequestedByClient::No) {
+        reason = "Feature is disabled"_s;
         return page.process();
+    }
 
-    if (page.inspectorFrontendCount() > 0)
+    if (page.inspectorFrontendCount() > 0) {
+        reason = "A Web Inspector frontend is connected"_s;
         return page.process();
+    }
 
-    if (m_automationSession)
+    if (m_automationSession) {
+        reason = "An automation session is active"_s;
         return page.process();
+    }
 
-    if (!page.process().hasCommittedAnyProvisionalLoads())
+    if (!page.process().hasCommittedAnyProvisionalLoads()) {
+        reason = "Process has not yet committed any provisional loads"_s;
         return page.process();
+    }
 
     if (navigation.isCrossOriginWindowOpenNavigation()) {
-        if (navigation.opener() && !m_configuration->processSwapsOnWindowOpenWithOpener())
+        if (navigation.opener() && !m_configuration->processSwapsOnWindowOpenWithOpener()) {
+            reason = "Browsing context has an opener"_s;
             return page.process();
+        }
 
+        reason = "Initial navigation is cross-site in a newly opened window"_s;
         action = PolicyAction::Ignore;
         return createNewWebProcess(page.websiteDataStore());
     }
 
     // FIXME: We should support process swap when a window has an opener.
-    if (navigation.opener())
+    if (navigation.opener()) {
+        reason = "Browsing context has an opener"_s;
         return page.process();
+    }
 
     // FIXME: We should support process swap when a window has opened other windows via window.open.
-    if (navigation.hasOpenedFrames())
+    if (navigation.hasOpenedFrames()) {
+        reason = "Browsing context has opened other windows"_s;
         return page.process();
+    }
 
     if (auto* backForwardListItem = navigation.targetItem()) {
         if (auto* suspendedPage = backForwardListItem->suspendedPage()) {
             ASSERT(suspendedPage->process());
             action = PolicyAction::Suspend;
+            reason = "Using target back/forward item's process"_s;
             return *suspendedPage->process();
         }
 
         // If the target back/forward item and the current back/forward item originated
         // in the same WebProcess then we should reuse the current WebProcess.
         if (auto* fromItem = navigation.fromItem()) {
-            if (fromItem->itemID().processIdentifier == backForwardListItem->itemID().processIdentifier)
+            if (fromItem->itemID().processIdentifier == backForwardListItem->itemID().processIdentifier) {
+                reason = "Source and target back/forward item originated in the same process"_s;
                 return page.process();
+            }
         }
     }
 
     auto targetURL = navigation.currentRequest().url();
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::No) {
-        if (navigation.treatAsSameOriginNavigation())
+        if (navigation.treatAsSameOriginNavigation()) {
+            reason = "The treatAsSameOriginNavigation flag is set"_s;
             return page.process();
+        }
 
         auto url = URL { ParsedURLString, page.pageLoadState().url() };
-        if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || registrableDomainsAreEqual(url, targetURL))
+        if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || registrableDomainsAreEqual(url, targetURL)) {
+            reason = "Navigation is same-site"_s;
             return page.process();
-    }
+        }
+        reason = "Navigation is cross-site"_s;
+    } else
+        reason = "Process swap was requested by the client"_s;
     
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
         auto registrableDomain = toRegistrableDomain(targetURL);

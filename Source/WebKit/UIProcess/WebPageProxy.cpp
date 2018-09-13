@@ -4040,15 +4040,19 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const WebCo
         }
 
         if (policyAction == PolicyAction::Use && frame->isMainFrame()) {
-            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, processSwapRequestedByClient, policyAction);
+            String reason;
+            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, processSwapRequestedByClient, policyAction, reason);
+            ASSERT(!reason.isNull());
             
             if (proposedProcess.ptr() != &process()) {
+                RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "%p - WebPageProxy::decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %{public}s", this, processIdentifier(), proposedProcess->processIdentifier(), reason.utf8().data());
                 LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), proposedProcess->processIdentifier(), navigation->navigationID(), navigation->loggingString());
                 
                 RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
                     continueNavigationInNewProcess(navigation.get(), WTFMove(proposedProcess));
                 });
-            }
+            } else
+                RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "%p - WebPageProxy::decidePolicyForNavigationAction, keep using process %i for navigation, reason: %{public}s", this, processIdentifier(), reason.utf8().data());
         }
 
         receivedPolicyDecision(policyAction, navigation.get(), WTFMove(data), WTFMove(sender));
