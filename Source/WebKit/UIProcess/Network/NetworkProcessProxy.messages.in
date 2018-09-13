@@ -33,6 +33,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     DidWriteBlobToFilePath(bool success, uint64_t callbackID)
 
+    GrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID, Vector<String> paths)
+
     ProcessReadyToSuspend()
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
@@ -52,8 +54,4 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #endif
 
     RetrieveCacheStorageParameters(PAL::SessionID sessionID)
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-    GetSandboxExtensionsForBlobFiles(uint64_t requestID, Vector<String> paths)
-#endif
 }

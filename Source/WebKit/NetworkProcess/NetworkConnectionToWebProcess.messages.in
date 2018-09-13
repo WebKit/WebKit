@@ -70,10 +70,4 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     GetNetworkLoadInformationResponse(uint64_t resourceLoadIdentifier) -> (WebCore::ResourceResponse response);
     GetNetworkLoadIntermediateInformation(uint64_t resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions);
     TakeNetworkLoadInformationMetrics(uint64_t resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics);
-
-#if ENABLE(INDEXED_DATABASE)
-    EstablishIDBConnectionToServer(PAL::SessionID sessionID) -> (uint64_t serverConnectionIdentifier)
-    RemoveIDBConnectionToServer(uint64_t serverConnectionIdentifier)
-#endif
-
 }

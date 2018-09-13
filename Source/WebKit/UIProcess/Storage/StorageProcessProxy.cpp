@@ -221,6 +221,20 @@ void StorageProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
     callback();
 }
 
+#if ENABLE(SANDBOX_EXTENSIONS)
+void StorageProcessProxy::getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths)
+{
+    SandboxExtension::HandleArray extensions;
+    extensions.allocate(paths.size());
+    for (size_t i = 0; i < paths.size(); ++i) {
+        // ReadWrite is required for creating hard links, which is something that might be done with these extensions.
+        SandboxExtension::createHandle(paths[i], SandboxExtension::Type::ReadWrite, extensions[i]);
+    }
+
+    send(Messages::StorageProcess::DidGetSandboxExtensionsForBlobFiles(requestID, extensions), 0);
+}
+#endif
+
 void StorageProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);

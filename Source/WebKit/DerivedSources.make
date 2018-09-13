@@ -28,7 +28,6 @@ VPATH = \
     $(WebKit2)/NetworkProcess/CustomProtocols \
     $(WebKit2)/NetworkProcess/mac \
     $(WebKit2)/NetworkProcess/webrtc \
-    $(WebKit2)/NetworkProcess/IndexedDB \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/PluginProcess/mac \
     $(WebKit2)/Shared/Plugins \
@@ -37,6 +36,7 @@ VPATH = \
     $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/mac \
     $(WebKit2)/StorageProcess \
+    $(WebKit2)/StorageProcess/IndexedDB \
     $(WebKit2)/StorageProcess/ServiceWorker \
     $(WebKit2)/StorageProcess/mac \
     $(WebKit2)/WebProcess/ApplePay \

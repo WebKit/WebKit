@@ -27,6 +27,10 @@ messages -> StorageProcessProxy LegacyReceiver {
     DidDeleteWebsiteData(uint64_t callbackID)
     DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
 
+#if ENABLE(SANDBOX_EXTENSIONS)
+    GetSandboxExtensionsForBlobFiles(uint64_t requestID, Vector<String> paths)
+#endif
+
 #if ENABLE(SERVICE_WORKER)
     EstablishWorkerContextConnectionToStorageProcess(struct WebCore::SecurityOriginData origin)
     EstablishWorkerContextConnectionToStorageProcessForExplicitSession(struct WebCore::SecurityOriginData origin, PAL::SessionID explicitSession)

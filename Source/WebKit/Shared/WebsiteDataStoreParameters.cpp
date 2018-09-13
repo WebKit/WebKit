@@ -41,55 +41,30 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << uiProcessCookieStorageIdentifier;
     encoder << cookieStoragePathExtensionHandle;
     encoder << pendingCookies;
-
-#if ENABLE(INDEXED_DATABASE)
-    encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
-#endif
 }
 
 std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Decoder& decoder)
 {
-    WebsiteDataStoreParameters parameters;
-
     std::optional<NetworkSessionCreationParameters> networkSessionParameters;
     decoder >> networkSessionParameters;
     if (!networkSessionParameters)
         return std::nullopt;
-    parameters.networkSessionParameters = WTFMove(*networkSessionParameters);
 
     std::optional<Vector<uint8_t>> uiProcessCookieStorageIdentifier;
     decoder >> uiProcessCookieStorageIdentifier;
     if (!uiProcessCookieStorageIdentifier)
         return std::nullopt;
-    parameters.uiProcessCookieStorageIdentifier = WTFMove(*uiProcessCookieStorageIdentifier);
 
     std::optional<SandboxExtension::Handle> cookieStoragePathExtensionHandle;
     decoder >> cookieStoragePathExtensionHandle;
     if (!cookieStoragePathExtensionHandle)
         return std::nullopt;
-    parameters.cookieStoragePathExtensionHandle = WTFMove(*cookieStoragePathExtensionHandle);
 
     std::optional<Vector<WebCore::Cookie>> pendingCookies;
     decoder >> pendingCookies;
     if (!pendingCookies)
         return std::nullopt;
-    parameters.pendingCookies = WTFMove(*pendingCookies);
-
-#if ENABLE(INDEXED_DATABASE)
-    std::optional<String> indexedDatabaseDirectory;
-    decoder >> indexedDatabaseDirectory;
-    if (!indexedDatabaseDirectory)
-        return std::nullopt;
-    parameters.indexedDatabaseDirectory = WTFMove(*indexedDatabaseDirectory);
-    
-    std::optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
-    decoder >> indexedDatabaseDirectoryExtensionHandle;
-    if (!indexedDatabaseDirectoryExtensionHandle)
-        return std::nullopt;
-    parameters.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
-#endif
-
-    return WTFMove(parameters);
+    return {{ WTFMove(*uiProcessCookieStorageIdentifier), WTFMove(*cookieStoragePathExtensionHandle), WTFMove(*pendingCookies), WTFMove(*networkSessionParameters)}};
 }
 
 WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(PAL::SessionID sessionID)
@@ -99,11 +74,7 @@ WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(
 #if PLATFORM(COCOA)
         , nullptr , { } , { }
 #endif
-        }
-#if ENABLE(INDEXED_DATABASE)
-        , { }, { }
-#endif
-    };
+    }};
 }
 
 } // namespace WebKit

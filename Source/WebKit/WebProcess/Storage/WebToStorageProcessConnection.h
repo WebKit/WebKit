@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "MessageSender.h"
+#include "WebIDBConnectionToServer.h"
 #include "WebSWClientConnection.h"
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
@@ -49,6 +50,10 @@ public:
     
     IPC::Connection& connection() { return m_connection.get(); }
 
+#if ENABLE(INDEXED_DATABASE)
+    WebIDBConnectionToServer* existingIDBConnectionToServerForIdentifier(uint64_t identifier) { return m_webIDBConnectionsByIdentifier.get(identifier); };
+    WebIDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID);
+#endif
 #if ENABLE(SERVICE_WORKER)
     WebSWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID sessionID) { return m_swConnectionsBySession.get(sessionID); }
     WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
@@ -68,6 +73,11 @@ private:
     uint64_t messageSenderDestinationID() override { return 0; }
 
     Ref<IPC::Connection> m_connection;
+
+#if ENABLE(INDEXED_DATABASE)
+    HashMap<PAL::SessionID, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsBySession;
+    HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsByIdentifier;
+#endif
 
 #if ENABLE(SERVICE_WORKER)
     HashMap<PAL::SessionID, RefPtr<WebSWClientConnection>> m_swConnectionsBySession;

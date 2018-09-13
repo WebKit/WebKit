@@ -1180,19 +1180,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     ASSERT(m_networkProcessConnection);
     ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
 
-#if ENABLE(INDEXED_DATABASE)
-    for (auto& page : m_pageMap.values()) {
-        auto idbConnection = page->corePage()->optionalIDBConnection();
-        if (!idbConnection)
-            continue;
-        
-        if (connection->existingIDBConnectionToServerForIdentifier(idbConnection->identifier())) {
-            ASSERT(idbConnection == &connection->existingIDBConnectionToServerForIdentifier(idbConnection->identifier())->coreConnectionToServer());
-            page->corePage()->clearIDBConnection();
-        }
-    }
-#endif
-
     m_networkProcessConnection = nullptr;
 
     logDiagnosticMessageForNetworkProcessCrash();
@@ -1214,6 +1201,18 @@ void WebProcess::webToStorageProcessConnectionClosed(WebToStorageProcessConnecti
     ASSERT(m_webToStorageProcessConnection);
     ASSERT(m_webToStorageProcessConnection == connection);
 
+#if ENABLE(INDEXED_DATABASE)
+    for (auto& page : m_pageMap.values()) {
+        auto idbConnection = page->corePage()->optionalIDBConnection();
+        if (!idbConnection)
+            continue;
+
+        if (connection->existingIDBConnectionToServerForIdentifier(idbConnection->identifier())) {
+            ASSERT(idbConnection == &connection->existingIDBConnectionToServerForIdentifier(idbConnection->identifier())->coreConnectionToServer());
+            page->corePage()->clearIDBConnection();
+        }
+    }
+#endif
 #if ENABLE(SERVICE_WORKER)
     if (SWContextManager::singleton().connection()) {
         RELEASE_LOG(ServiceWorker, "Service worker process is exiting because its storage process is gone");

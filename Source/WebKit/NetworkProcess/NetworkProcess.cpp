@@ -114,7 +114,6 @@ NetworkProcess::NetworkProcess()
 #if PLATFORM(COCOA)
     , m_clearCacheDispatchGroup(0)
 #endif
-    , m_storageTaskQueue(WorkQueue::create("com.apple.WebKit.StorageTask"))
 {
     NetworkProcessPlatformStrategies::initialize();
 
@@ -290,10 +289,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(NetworkSessionCreationParameters()));
 
-#if ENABLE(INDEXED_DATABASE)
-    addIndexedDatabaseSession(PAL::SessionID::defaultSessionID(), parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
-#endif
-
     auto* defaultSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID());
     for (const auto& cookie : parameters.defaultSessionPendingCookies)
         defaultSession->networkStorageSession().setCookie(cookie);
@@ -393,10 +388,6 @@ void NetworkProcess::clearCachedCredentials()
 
 void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
 {
-#if ENABLE(INDEXED_DATABASE)
-    addIndexedDatabaseSession(parameters.networkSessionParameters.sessionID, parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
-#endif
-
     RemoteNetworkingContext::ensureWebsiteDataStoreSession(WTFMove(parameters));
 }
 
@@ -405,6 +396,21 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
     SessionTracker::destroySession(sessionID);
     m_sessionsControlledByAutomation.remove(sessionID);
     CacheStorage::Engine::destroyEngine(sessionID);
+}
+
+void NetworkProcess::grantSandboxExtensionsToStorageProcessForBlobs(const Vector<String>& filenames, Function<void ()>&& completionHandler)
+{
+    static uint64_t lastRequestID;
+
+    uint64_t requestID = ++lastRequestID;
+    m_sandboxExtensionForBlobsCompletionHandlers.set(requestID, WTFMove(completionHandler));
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::GrantSandboxExtensionsToStorageProcessForBlobs(requestID, filenames), 0);
+}
+
+void NetworkProcess::didGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID)
+{
+    if (auto handler = m_sandboxExtensionForBlobsCompletionHandlers.take(requestID))
+        handler();
 }
 
 void NetworkProcess::writeBlobToFilePath(const WebCore::URL& url, const String& path, SandboxExtension::Handle&& handleForWriting, uint64_t requestID)
@@ -569,19 +575,6 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
     }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
-    auto path = m_idbDatabasePaths.get(sessionID);
-    if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        // FIXME: Pick the right database store based on the session ID.
-        postStorageTask(CrossThreadTask([this, callbackAggregator = callbackAggregator.copyRef(), path = WTFMove(path)]() mutable {
-            RunLoop::main().dispatch([callbackAggregator = WTFMove(callbackAggregator), securityOrigins = indexedDatabaseOrigins(path)] {
-                for (const auto& securityOrigin : securityOrigins)
-                    callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
-            });
-        }));
-    }
-#endif
-
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
         fetchDiskCacheEntries(sessionID, fetchOptions, [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
             callbackAggregator->m_websiteData.entries.appendVector(entries);
@@ -614,11 +607,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache))
         CacheStorage::Engine::clearAllCaches(sessionID, [clearTasksHandler = clearTasksHandler.copyRef()] { });
-
-#if ENABLE(INDEXED_DATABASE)
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, [clearTasksHandler = clearTasksHandler.copyRef()] { });
-#endif
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
@@ -671,11 +659,6 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         for (auto& originData : originDatas)
             CacheStorage::Engine::clearCachesForOrigin(sessionID, SecurityOriginData { originData }, [clearTasksHandler = clearTasksHandler.copyRef()] { });
     }
-
-#if ENABLE(INDEXED_DATABASE)
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer(sessionID).closeAndDeleteDatabasesForOrigins(originDatas, [clearTasksHandler = clearTasksHandler.copyRef()] { });
-#endif
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCacheEntries(originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
@@ -964,140 +947,6 @@ void NetworkProcess::didSyncAllCookies()
 {
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSyncAllCookies(), 0);
 }
-
-#if ENABLE(INDEXED_DATABASE)
-IDBServer::IDBServer& NetworkProcess::idbServer(PAL::SessionID sessionID)
-{
-    auto addResult = m_idbServers.add(sessionID, nullptr);
-    if (!addResult.isNewEntry) {
-        ASSERT(addResult.iterator->value);
-        return *addResult.iterator->value;
-    }
-    
-    auto path = m_idbDatabasePaths.get(sessionID);
-    // There should already be a registered path for this PAL::SessionID.
-    // If there's not, then where did this PAL::SessionID come from?
-    ASSERT(!path.isEmpty());
-    
-    addResult.iterator->value = IDBServer::IDBServer::create(path, NetworkProcess::singleton());
-    return *addResult.iterator->value;
-}
-
-void NetworkProcess::ensurePathExists(const String& path)
-{
-    ASSERT(!RunLoop::isMain());
-    
-    if (!FileSystem::makeAllDirectories(path))
-        LOG_ERROR("Failed to make all directories for path '%s'", path.utf8().data());
-}
-
-void NetworkProcess::postStorageTask(CrossThreadTask&& task)
-{
-    ASSERT(RunLoop::isMain());
-    
-    LockHolder locker(m_storageTaskMutex);
-    
-    m_storageTasks.append(WTFMove(task));
-    
-    m_storageTaskQueue->dispatch([this] {
-        performNextStorageTask();
-    });
-}
-
-void NetworkProcess::performNextStorageTask()
-{
-    ASSERT(!RunLoop::isMain());
-    
-    CrossThreadTask task;
-    {
-        LockHolder locker(m_storageTaskMutex);
-        ASSERT(!m_storageTasks.isEmpty());
-        task = m_storageTasks.takeFirst();
-    }
-    
-    task.performTask();
-}
-
-void NetworkProcess::prepareForAccessToTemporaryFile(const String& path)
-{
-    if (auto extension = m_blobTemporaryFileSandboxExtensions.get(path))
-        extension->consume();
-}
-
-void NetworkProcess::accessToTemporaryFileComplete(const String& path)
-{
-    // We've either hard linked the temporary blob file to the database directory, copied it there,
-    // or the transaction is being aborted.
-    // In any of those cases, we can delete the temporary blob file now.
-    FileSystem::deleteFile(path);
-    
-    if (auto extension = m_blobTemporaryFileSandboxExtensions.take(path))
-        extension->revoke();
-}
-
-HashSet<WebCore::SecurityOriginData> NetworkProcess::indexedDatabaseOrigins(const String& path)
-{
-    if (path.isEmpty())
-        return { };
-    
-    HashSet<WebCore::SecurityOriginData> securityOrigins;
-    for (auto& topOriginPath : FileSystem::listDirectory(path, "*")) {
-        auto databaseIdentifier = FileSystem::pathGetFileName(topOriginPath);
-        if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-            securityOrigins.add(WTFMove(*securityOrigin));
-        
-        for (auto& originPath : FileSystem::listDirectory(topOriginPath, "*")) {
-            databaseIdentifier = FileSystem::pathGetFileName(originPath);
-            if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-                securityOrigins.add(WTFMove(*securityOrigin));
-        }
-    }
-
-    return securityOrigins;
-}
-
-void NetworkProcess::addIndexedDatabaseSession(PAL::SessionID sessionID, String& indexedDatabaseDirectory, SandboxExtension::Handle& handle)
-{
-    // *********
-    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
-    // *********
-    auto addResult = m_idbDatabasePaths.ensure(sessionID, [path = indexedDatabaseDirectory] {
-        return path;
-    });
-    if (addResult.isNewEntry) {
-        SandboxExtension::consumePermanently(handle);
-        if (!indexedDatabaseDirectory.isEmpty())
-            postStorageTask(createCrossThreadTask(*this, &NetworkProcess::ensurePathExists, indexedDatabaseDirectory));
-    }
-}
-
-#endif // ENABLE(INDEXED_DATABASE)
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-void NetworkProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void(SandboxExtension::HandleArray&&)>&& completionHandler)
-{
-
-    static uint64_t lastRequestID;
-    
-    uint64_t requestID = ++lastRequestID;
-    m_sandboxExtensionForBlobsCompletionHandlersStorageForNetworkProcess.set(requestID, WTFMove(completionHandler));
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFiles(requestID, filenames), 0);
-}
-
-void NetworkProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&& handles)
-{
-    if (auto handler = m_sandboxExtensionForBlobsCompletionHandlersStorageForNetworkProcess.take(requestID))
-        handler(WTFMove(handles));
-}
-    
-void NetworkProcess::updateTemporaryFileSandboxExtensions(const Vector<String>& paths, SandboxExtension::HandleArray& handles)
-{
-    for (size_t i = 0; i < handles.size(); ++i) {
-        auto result = m_blobTemporaryFileSandboxExtensions.add(paths[i], SandboxExtension::create(WTFMove(handles[i])));
-        ASSERT_UNUSED(result, result.isNewEntry);
-    }
-}
-#endif // ENABLE(SANDBOX_EXTENSIONS)
 
 #if !PLATFORM(COCOA)
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)

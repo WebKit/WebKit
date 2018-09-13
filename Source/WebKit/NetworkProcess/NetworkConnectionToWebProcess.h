@@ -35,7 +35,6 @@
 #include "NetworkRTCProvider.h"
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/ResourceLoadPriority.h>
-#include <pal/SessionID.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -55,7 +54,6 @@ class NetworkLoadParameters;
 class NetworkResourceLoader;
 class NetworkSocketStream;
 class SyncNetworkResourceLoader;
-class WebIDBConnectionToClient;
 typedef uint64_t ResourceLoadIdentifier;
 
 namespace NetworkCache {
@@ -240,15 +238,6 @@ private:
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
 
     RefPtr<CacheStorageEngineConnection> m_cacheStorageConnection;
-
-#if ENABLE(INDEXED_DATABASE)
-    // Messages handlers (Modern IDB)
-    void establishIDBConnectionToServer(PAL::SessionID, uint64_t& serverConnectionIdentifier);
-    void removeIDBConnectionToServer(uint64_t serverConnectionIdentifier);
-    
-    HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;
-#endif
-
 };
 
 } // namespace WebKit

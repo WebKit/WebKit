@@ -31,10 +31,12 @@
 #include "DataReference.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
+#include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBConnectionToClientMessages.h"
 #include "WebIDBResult.h"
 #include "WebProcess.h"
+#include "WebToStorageProcessConnection.h"
 #include <WebCore/IDBConnectionToServer.h>
 #include <WebCore/IDBCursorInfo.h>
 #include <WebCore/IDBError.h>
@@ -62,7 +64,7 @@ WebIDBConnectionToServer::WebIDBConnectionToServer(PAL::SessionID sessionID)
 {
     relaxAdoptionRequirement();
 
-    m_isOpenInServer = sendSync(Messages::NetworkConnectionToWebProcess::EstablishIDBConnectionToServer(sessionID), Messages::NetworkConnectionToWebProcess::EstablishIDBConnectionToServer::Reply(m_identifier));
+    m_isOpenInServer = sendSync(Messages::StorageToWebProcessConnection::EstablishIDBConnectionToServer(sessionID), Messages::StorageToWebProcessConnection::EstablishIDBConnectionToServer::Reply(m_identifier));
 
     // FIXME: This creates a reference cycle, so neither this object nor the IDBConnectionToServer will ever be deallocated.
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
@@ -71,12 +73,12 @@ WebIDBConnectionToServer::WebIDBConnectionToServer(PAL::SessionID sessionID)
 WebIDBConnectionToServer::~WebIDBConnectionToServer()
 {
     if (m_isOpenInServer)
-        send(Messages::NetworkConnectionToWebProcess::RemoveIDBConnectionToServer(m_identifier));
+        send(Messages::StorageToWebProcessConnection::RemoveIDBConnectionToServer(m_identifier));
 }
 
 IPC::Connection* WebIDBConnectionToServer::messageSenderConnection()
 {
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return &WebProcess::singleton().ensureWebToStorageProcessConnection(m_sessionID).connection();
 }
 
 IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServer()

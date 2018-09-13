@@ -30,15 +30,10 @@
 #include "DownloadManager.h"
 #include "MessageReceiverMap.h"
 #include "NetworkContentRuleListManager.h"
-#include "SandboxExtension.h"
 #include <WebCore/DiagnosticLoggingClient.h>
-#include <WebCore/IDBBackingStore.h>
-#include <WebCore/IDBKeyData.h>
-#include <WebCore/IDBServer.h>
-#include <WebCore/UniqueIDBDatabase.h>
 #include <memory>
 #include <pal/SessionID.h>
-#include <wtf/CrossThreadTask.h>
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -79,11 +74,7 @@ namespace NetworkCache {
 class Cache;
 }
 
-class NetworkProcess : public ChildProcess, private DownloadManager::Client
-#if ENABLE(INDEXED_DATABASE)
-    , public WebCore::IDBServer::IDBBackingStoreTemporaryFileHandler
-#endif
-{
+class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
     friend NeverDestroyed<NetworkProcess>;
     friend NeverDestroyed<DownloadManager>;
@@ -139,6 +130,8 @@ public:
 
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
 
+    void grantSandboxExtensionsToStorageProcessForBlobs(const Vector<String>& filenames, Function<void ()>&& completionHandler);
+
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<String>& domainsToBlock, bool shouldClearFirst, uint64_t contextId);
     void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId);
@@ -164,22 +157,6 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_NetworkContentRuleListManager; }
-#endif
-
-    WorkQueue& queue() { return m_storageTaskQueue.get(); }
-    void postStorageTask(CrossThreadTask&&);
-#if ENABLE(INDEXED_DATABASE)
-
-    WebCore::IDBServer::IDBServer& idbServer(PAL::SessionID);
-    
-    // WebCore::IDBServer::IDBBackingStoreFileHandler
-    void prepareForAccessToTemporaryFile(const String& path) final;
-    void accessToTemporaryFileComplete(const String& path) final;
-#endif
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void(SandboxExtension::HandleArray&&)>&& completionHandler);
-    void updateTemporaryFileSandboxExtensions(const Vector<String>& paths, SandboxExtension::HandleArray&);
 #endif
 
 private:
@@ -234,10 +211,6 @@ private:
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostnames, uint64_t callbackID);
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&&);
-#endif
-
     void clearCachedCredentials();
 
     void setCacheStorageParameters(PAL::SessionID, uint64_t quota, String&& cacheStorageDirectory, SandboxExtension::Handle&&);
@@ -261,6 +234,8 @@ private:
     void syncAllCookies();
     void didSyncAllCookies();
 
+    void didGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID);
+
     void writeBlobToFilePath(const WebCore::URL&, const String& path, SandboxExtension::Handle&&, uint64_t requestID);
 
 #if USE(SOUP)
@@ -283,15 +258,6 @@ private:
     void registerURLSchemeAsCORSEnabled(const String&) const;
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;
 
-    // For execution on work queue thread only
-    void performNextStorageTask();
-    void ensurePathExists(const String& path);
-
-#if ENABLE(INDEXED_DATABASE)
-    void addIndexedDatabaseSession(PAL::SessionID, String&, SandboxExtension::Handle&);
-    HashSet<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
-#endif
-
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
@@ -312,6 +278,7 @@ private:
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
 
+    HashMap<uint64_t, Function<void()>> m_sandboxExtensionForBlobsCompletionHandlers;
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
 
     HashMap<PAL::SessionID, Vector<CacheStorageParametersCallback>> m_cacheStorageParametersCallbacks;
@@ -331,20 +298,6 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     NetworkContentRuleListManager m_NetworkContentRuleListManager;
 #endif
-
-    Ref<WorkQueue> m_storageTaskQueue;
-
-#if ENABLE(INDEXED_DATABASE)
-    HashMap<PAL::SessionID, String> m_idbDatabasePaths;
-    HashMap<PAL::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
-#endif
-
-    HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
-    HashMap<uint64_t, WTF::Function<void(SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlersStorageForNetworkProcess;
-    
-    Deque<CrossThreadTask> m_storageTasks;
-    Lock m_storageTaskMutex;
-
 };
 
 } // namespace WebKit

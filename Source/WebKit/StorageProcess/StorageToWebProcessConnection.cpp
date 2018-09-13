@@ -30,6 +30,8 @@
 #include "StorageProcess.h"
 #include "StorageProcessMessages.h"
 #include "StorageToWebProcessConnectionMessages.h"
+#include "WebIDBConnectionToClient.h"
+#include "WebIDBConnectionToClientMessages.h"
 #include "WebSWServerConnection.h"
 #include "WebSWServerConnectionMessages.h"
 #include <wtf/RunLoop.h>
@@ -67,10 +69,24 @@ StorageToWebProcessConnection::~StorageToWebProcessConnection()
 
 void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    if (decoder.messageReceiverName() == Messages::StorageToWebProcessConnection::messageReceiverName()) {
+        didReceiveStorageToWebProcessConnectionMessage(connection, decoder);
+        return;
+    }
+
     if (decoder.messageReceiverName() == Messages::StorageProcess::messageReceiverName()) {
         StorageProcess::singleton().didReceiveStorageProcessMessage(connection, decoder);
         return;
     }
+
+#if ENABLE(INDEXED_DATABASE)
+    if (decoder.messageReceiverName() == Messages::WebIDBConnectionToClient::messageReceiverName()) {
+        auto iterator = m_webIDBConnections.find(decoder.destinationID());
+        if (iterator != m_webIDBConnections.end())
+            iterator->value->didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
 
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
@@ -120,6 +136,14 @@ void StorageToWebProcessConnection::didClose(IPC::Connection& connection)
     }
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+    auto idbConnections = m_webIDBConnections;
+    for (auto& connection : idbConnections.values())
+        connection->disconnectedFromWebProcess();
+
+    m_webIDBConnections.clear();
+#endif
+
 #if ENABLE(SERVICE_WORKER)
     unregisterSWConnections();
 #endif
@@ -154,6 +178,32 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
     server.addConnection(WTFMove(connection));
 }
 
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+static uint64_t generateIDBConnectionToServerIdentifier()
+{
+    ASSERT(RunLoop::isMain());
+    static uint64_t identifier = 0;
+    return ++identifier;
+}
+
+void StorageToWebProcessConnection::establishIDBConnectionToServer(SessionID sessionID, uint64_t& serverConnectionIdentifier)
+{
+    serverConnectionIdentifier = generateIDBConnectionToServerIdentifier();
+    LOG(IndexedDB, "StorageToWebProcessConnection::establishIDBConnectionToServer - %" PRIu64, serverConnectionIdentifier);
+    ASSERT(!m_webIDBConnections.contains(serverConnectionIdentifier));
+
+    m_webIDBConnections.set(serverConnectionIdentifier, WebIDBConnectionToClient::create(*this, serverConnectionIdentifier, sessionID));
+}
+
+void StorageToWebProcessConnection::removeIDBConnectionToServer(uint64_t serverConnectionIdentifier)
+{
+    ASSERT(m_webIDBConnections.contains(serverConnectionIdentifier));
+
+    auto connection = m_webIDBConnections.take(serverConnectionIdentifier);
+    connection->disconnectedFromWebProcess();
+}
 #endif
 
 } // namespace WebKit

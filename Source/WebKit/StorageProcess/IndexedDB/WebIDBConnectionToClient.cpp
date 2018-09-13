@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DataReference.h"
-#include "NetworkProcess.h"
+#include "StorageProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebIDBResult.h"
@@ -45,19 +45,19 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(NetworkConnectionToWebProcess& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
+Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(StorageToWebProcessConnection& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
 {
     return adoptRef(*new WebIDBConnectionToClient(connection, serverConnectionIdentifier, sessionID));
 }
 
-WebIDBConnectionToClient::WebIDBConnectionToClient(NetworkConnectionToWebProcess& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
+WebIDBConnectionToClient::WebIDBConnectionToClient(StorageToWebProcessConnection& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
     : m_connection(connection)
     , m_identifier(serverConnectionIdentifier)
     , m_sessionID(sessionID)
 {
     relaxAdoptionRequirement();
     m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
-    NetworkProcess::singleton().idbServer(m_sessionID).registerConnection(*m_connectionToClient);
+    StorageProcess::singleton().idbServer(m_sessionID).registerConnection(*m_connectionToClient);
 }
 
 WebIDBConnectionToClient::~WebIDBConnectionToClient()
@@ -66,7 +66,7 @@ WebIDBConnectionToClient::~WebIDBConnectionToClient()
 
 void WebIDBConnectionToClient::disconnectedFromWebProcess()
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).unregisterConnection(*m_connectionToClient);
+    StorageProcess::singleton().idbServer(m_sessionID).unregisterConnection(*m_connectionToClient);
 }
 
 IPC::Connection* WebIDBConnectionToClient::messageSenderConnection()
@@ -158,7 +158,7 @@ template<class MessageType> void WebIDBConnectionToClient::handleGetResult(const
     }
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    NetworkProcess::singleton().getSandboxExtensionsForBlobFiles(blobFilePaths, [protectedThis = makeRef(*this), this, resultData](SandboxExtension::HandleArray&& handles) {
+    StorageProcess::singleton().getSandboxExtensionsForBlobFiles(blobFilePaths, [protectedThis = makeRef(*this), this, resultData](SandboxExtension::HandleArray&& handles) {
         send(MessageType({ resultData, WTFMove(handles) }));
     });
 #else
@@ -223,62 +223,62 @@ void WebIDBConnectionToClient::didGetAllDatabaseNames(uint64_t callbackID, const
 
 void WebIDBConnectionToClient::deleteDatabase(const IDBRequestData& request)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).deleteDatabase(request);
+    StorageProcess::singleton().idbServer(m_sessionID).deleteDatabase(request);
 }
 
 void WebIDBConnectionToClient::openDatabase(const IDBRequestData& request)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).openDatabase(request);
+    StorageProcess::singleton().idbServer(m_sessionID).openDatabase(request);
 }
 
 void WebIDBConnectionToClient::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).abortTransaction(transactionIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).abortTransaction(transactionIdentifier);
 }
 
 void WebIDBConnectionToClient::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).commitTransaction(transactionIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).commitTransaction(transactionIdentifier);
 }
 
 void WebIDBConnectionToClient::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
 }
 
 void WebIDBConnectionToClient::createObjectStore(const IDBRequestData& request, const IDBObjectStoreInfo& info)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).createObjectStore(request, info);
+    StorageProcess::singleton().idbServer(m_sessionID).createObjectStore(request, info);
 }
 
 void WebIDBConnectionToClient::deleteObjectStore(const IDBRequestData& request, const String& name)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).deleteObjectStore(request, name);
+    StorageProcess::singleton().idbServer(m_sessionID).deleteObjectStore(request, name);
 }
 
 void WebIDBConnectionToClient::renameObjectStore(const IDBRequestData& request, uint64_t objectStoreIdentifier, const String& newName)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).renameObjectStore(request, objectStoreIdentifier, newName);
+    StorageProcess::singleton().idbServer(m_sessionID).renameObjectStore(request, objectStoreIdentifier, newName);
 }
 
 void WebIDBConnectionToClient::clearObjectStore(const IDBRequestData& request, uint64_t objectStoreIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).clearObjectStore(request, objectStoreIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).clearObjectStore(request, objectStoreIdentifier);
 }
 
 void WebIDBConnectionToClient::createIndex(const IDBRequestData& request, const IDBIndexInfo& info)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).createIndex(request, info);
+    StorageProcess::singleton().idbServer(m_sessionID).createIndex(request, info);
 }
 
 void WebIDBConnectionToClient::deleteIndex(const IDBRequestData& request, uint64_t objectStoreIdentifier, const String& name)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).deleteIndex(request, objectStoreIdentifier, name);
+    StorageProcess::singleton().idbServer(m_sessionID).deleteIndex(request, objectStoreIdentifier, name);
 }
 
 void WebIDBConnectionToClient::renameIndex(const IDBRequestData& request, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).renameIndex(request, objectStoreIdentifier, indexIdentifier, newName);
+    StorageProcess::singleton().idbServer(m_sessionID).renameIndex(request, objectStoreIdentifier, indexIdentifier, newName);
 }
 
 void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDBKeyData& key, const IDBValue& value, unsigned overwriteMode)
@@ -293,77 +293,77 @@ void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDB
 
     IndexedDB::ObjectStoreOverwriteMode mode = static_cast<IndexedDB::ObjectStoreOverwriteMode>(overwriteMode);
 
-    NetworkProcess::singleton().idbServer(m_sessionID).putOrAdd(request, key, value, mode);
+    StorageProcess::singleton().idbServer(m_sessionID).putOrAdd(request, key, value, mode);
 }
 
 void WebIDBConnectionToClient::getRecord(const IDBRequestData& request, const IDBGetRecordData& getRecordData)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).getRecord(request, getRecordData);
+    StorageProcess::singleton().idbServer(m_sessionID).getRecord(request, getRecordData);
 }
 
 void WebIDBConnectionToClient::getAllRecords(const IDBRequestData& request, const IDBGetAllRecordsData& getAllRecordsData)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).getAllRecords(request, getAllRecordsData);
+    StorageProcess::singleton().idbServer(m_sessionID).getAllRecords(request, getAllRecordsData);
 }
 
 void WebIDBConnectionToClient::getCount(const IDBRequestData& request, const IDBKeyRangeData& range)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).getCount(request, range);
+    StorageProcess::singleton().idbServer(m_sessionID).getCount(request, range);
 }
 
 void WebIDBConnectionToClient::deleteRecord(const IDBRequestData& request, const IDBKeyRangeData& range)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).deleteRecord(request, range);
+    StorageProcess::singleton().idbServer(m_sessionID).deleteRecord(request, range);
 }
 
 void WebIDBConnectionToClient::openCursor(const IDBRequestData& request, const IDBCursorInfo& info)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).openCursor(request, info);
+    StorageProcess::singleton().idbServer(m_sessionID).openCursor(request, info);
 }
 
 void WebIDBConnectionToClient::iterateCursor(const IDBRequestData& request, const IDBIterateCursorData& data)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).iterateCursor(request, data);
+    StorageProcess::singleton().idbServer(m_sessionID).iterateCursor(request, data);
 }
 
 void WebIDBConnectionToClient::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).establishTransaction(databaseConnectionIdentifier, info);
+    StorageProcess::singleton().idbServer(m_sessionID).establishTransaction(databaseConnectionIdentifier, info);
 }
 
 void WebIDBConnectionToClient::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).databaseConnectionPendingClose(databaseConnectionIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).databaseConnectionPendingClose(databaseConnectionIdentifier);
 }
 
 void WebIDBConnectionToClient::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).databaseConnectionClosed(databaseConnectionIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).databaseConnectionClosed(databaseConnectionIdentifier);
 }
 
 void WebIDBConnectionToClient::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
 }
 
 void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).didFireVersionChangeEvent(databaseConnectionIdentifier, transactionIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).didFireVersionChangeEvent(databaseConnectionIdentifier, transactionIdentifier);
 }
 
 void WebIDBConnectionToClient::openDBRequestCancelled(const IDBRequestData& requestData)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).openDBRequestCancelled(requestData);
+    StorageProcess::singleton().idbServer(m_sessionID).openDBRequestCancelled(requestData);
 }
 
 void WebIDBConnectionToClient::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).confirmDidCloseFromServer(databaseConnectionIdentifier);
+    StorageProcess::singleton().idbServer(m_sessionID).confirmDidCloseFromServer(databaseConnectionIdentifier);
 }
 
 void WebIDBConnectionToClient::getAllDatabaseNames(uint64_t serverConnectionIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
-    NetworkProcess::singleton().idbServer(m_sessionID).getAllDatabaseNames(serverConnectionIdentifier, topOrigin, openingOrigin, callbackID);
+    StorageProcess::singleton().idbServer(m_sessionID).getAllDatabaseNames(serverConnectionIdentifier, topOrigin, openingOrigin, callbackID);
 }
 
 } // namespace WebKit

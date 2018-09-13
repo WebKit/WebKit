@@ -34,6 +34,7 @@
 
 namespace WebKit {
 
+class WebIDBConnectionToClient;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 
@@ -58,6 +59,14 @@ private:
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override { return m_connection.ptr(); }
     uint64_t messageSenderDestinationID() override { return 0; }
+
+#if ENABLE(INDEXED_DATABASE)
+    // Messages handlers (Modern IDB)
+    void establishIDBConnectionToServer(PAL::SessionID, uint64_t& serverConnectionIdentifier);
+    void removeIDBConnectionToServer(uint64_t serverConnectionIdentifier);
+
+    HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;
+#endif // ENABLE(INDEXED_DATABASE)
 
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection(PAL::SessionID, WebCore::SWServerConnectionIdentifier&);

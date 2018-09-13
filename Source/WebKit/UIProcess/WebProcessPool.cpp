@@ -524,17 +524,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.urlSchemesRegisteredAsCORSEnabled = copyToVector(m_schemesToRegisterAsCORSEnabled);
     parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest = copyToVector(m_schemesToRegisterAsCanDisplayOnlyIfCanRequest);
 
-#if ENABLE(INDEXED_DATABASE)
-    // *********
-    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
-    // *********
-    parameters.indexedDatabaseDirectory = m_configuration->indexedDBDatabaseDirectory();
-    if (parameters.indexedDatabaseDirectory.isEmpty())
-        parameters.indexedDatabaseDirectory = API::WebsiteDataStore::defaultDataStore()->websiteDataStore().parameters().indexedDatabaseDirectory;
-    
-    SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
-#endif
-
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
 
@@ -595,11 +584,21 @@ void WebProcessPool::getNetworkProcessConnection(Messages::WebProcessProxy::GetN
 
 void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore)
 {
+    // *********
+    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
+    // *********
+
     if (!m_storageProcess) {
         auto parameters = m_websiteDataStore ? m_websiteDataStore->websiteDataStore().storageProcessParameters() : (relevantDataStore ? relevantDataStore->storageProcessParameters() : API::WebsiteDataStore::defaultDataStore()->websiteDataStore().storageProcessParameters());
 
         ASSERT(parameters.sessionID.isValid());
 
+#if ENABLE(INDEXED_DATABASE)
+        if (parameters.indexedDatabaseDirectory.isEmpty()) {
+            parameters.indexedDatabaseDirectory = m_configuration->indexedDBDatabaseDirectory();
+            SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+        }
+#endif
 #if ENABLE(SERVICE_WORKER)
         if (parameters.serviceWorkerRegistrationDirectory.isEmpty()) {
             parameters.serviceWorkerRegistrationDirectory = API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
@@ -1212,8 +1211,9 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page)
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
         page.websiteDataStore().clearPendingCookies();
 
-#if ENABLE(SERVICE_WORKER)
-        ensureStorageProcessAndWebsiteDataStore(&page.websiteDataStore());
+#if ENABLE(INDEXED_DATABASE)
+        if (!page.websiteDataStore().resolvedIndexedDatabaseDirectory().isEmpty())
+            ensureStorageProcessAndWebsiteDataStore(&page.websiteDataStore());
 #endif
     }
 

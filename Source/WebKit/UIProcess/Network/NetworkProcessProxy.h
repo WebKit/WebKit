@@ -139,6 +139,7 @@ private:
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
     void didWriteBlobToFilePath(bool success, uint64_t callbackID);
+    void grantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID, const Vector<String>& paths);
     void logDiagnosticMessage(uint64_t pageID, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
@@ -152,10 +153,6 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void contentExtensionRules(UserContentControllerIdentifier);
-#endif
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths);
 #endif
 
     // ProcessLauncher::Client

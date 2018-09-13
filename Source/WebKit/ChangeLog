@@ -1,3 +1,15 @@
+2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r235954.
+
+        Breaks the watchOS build.
+
+        Reverted changeset:
+
+        "Move IndexedDB to Network Process"
+        https://bugs.webkit.org/show_bug.cgi?id=189415
+        https://trac.webkit.org/changeset/235954
+
 2018-09-13  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON): setting window.opener to null allows process swapping in cases that are not web-compatible

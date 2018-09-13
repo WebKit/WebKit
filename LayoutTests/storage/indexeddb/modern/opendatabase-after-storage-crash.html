@@ -61,7 +61,7 @@ request.onupgradeneeded = function(e) {
 
 	if (window.testRunner) {
 		testRunner.waitUntilDone();
-		testRunner.terminateNetworkProcess();
+		testRunner.terminateStorageProcess();
 	}
 }
 

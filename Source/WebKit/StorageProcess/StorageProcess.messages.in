@@ -30,6 +30,10 @@ messages -> StorageProcess LegacyReceiver {
     FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, uint64_t callbackID)
     DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID)
     DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins, uint64_t callbackID)
+#if ENABLE(SANDBOX_EXTENSIONS)
+    GrantSandboxExtensionsForBlobs(Vector<String> paths, WebKit::SandboxExtension::HandleArray extensions)
+    DidGetSandboxExtensionsForBlobFiles(uint64_t requestID, WebKit::SandboxExtension::HandleArray extensions)
+#endif
 
     DestroySession(PAL::SessionID sessionID)
 
