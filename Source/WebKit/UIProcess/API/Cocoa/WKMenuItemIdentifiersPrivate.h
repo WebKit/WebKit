@@ -33,10 +33,10 @@
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierCopy WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierCopyImage WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierCopyLink WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-WK_EXPORT extern NSString * const _WKMenuItemIdentifierCopyMediaLink WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierCopyMediaLink WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierDownloadImage WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierDownloadLinkedFile WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-WK_EXPORT extern NSString * const _WKMenuItemIdentifierDownloadMedia WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierDownloadMedia WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierGoBack WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierGoForward WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierInspectElement WK_API_AVAILABLE(macosx(10.12), ios(10.0));
@@ -45,12 +45,12 @@ WK_EXPORT extern NSString * const _WKMenuItemIdentifierOpenFrameInNewWindow WK_A
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierOpenImageInNewWindow WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierOpenLink WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierOpenLinkInNewWindow WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-WK_EXPORT extern NSString * const _WKMenuItemIdentifierOpenMediaInNewWindow WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierOpenMediaInNewWindow WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierPaste WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierReload WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierSearchWeb WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierShowHideMediaControls WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-WK_EXPORT extern NSString * const _WKMenuItemIdentifierToggleEnhancedFullScreen WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierToggleEnhancedFullScreen WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierToggleFullScreen WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierShareMenu WK_API_AVAILABLE(macosx(10.12), ios(10.0));

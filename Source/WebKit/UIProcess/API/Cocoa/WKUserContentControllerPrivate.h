@@ -37,7 +37,7 @@
 - (void)_removeUserScript:(WKUserScript *)userScript WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 - (void)_removeAllUserScriptsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
-- (void)_addUserScriptImmediately:(WKUserScript *)userScript WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_addUserScriptImmediately:(WKUserScript *)userScript WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
 - (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_API_AVAILABLE(macosx(10.11), ios(9.0));

@@ -44,7 +44,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsitePopUpPolicy) {
     _WKWebsitePopUpPolicyDefault,
     _WKWebsitePopUpPolicyAllow,
     _WKWebsitePopUpPolicyBlock,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
 @class WKWebsiteDataStore;
 
@@ -55,7 +55,7 @@ WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
 @property (nonatomic) _WKWebsiteAutoplayQuirk allowedAutoplayQuirks WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 @property (nonatomic) _WKWebsiteAutoplayPolicy autoplayPolicy WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 @property (nonatomic, copy) NSDictionary<NSString *, NSString *> *customHeaderFields WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-@property (nonatomic) _WKWebsitePopUpPolicy popUpPolicy WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) _WKWebsitePopUpPolicy popUpPolicy WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 @property (nonatomic, strong) WKWebsiteDataStore *websiteDataStore WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
 @end

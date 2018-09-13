@@ -46,7 +46,7 @@ WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_API_AVAILABLE(macosx(
 
 @property (nullable, nonatomic, readonly) _WKWebsiteDataSize *_dataSize;
 
-- (NSArray<NSString *> *)_originsStrings WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (NSArray<NSString *> *)_originsStrings WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
 @end
 

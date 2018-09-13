@@ -1,5 +1,41 @@
 2018-09-12  Dan Bernstein  <mitz@apple.com>
 
+        Update availability annotations to match the macOS and iOS SDKs in the Xcode 10 GM seed
+        https://bugs.webkit.org/show_bug.cgi?id=189561
+
+        Reviewed by Tim Horton.
+
+        Changed WK_MAC_TBA and WK_IOS_TBA to 10.14 and 12.0, respectively, in all declarations that
+        appear in the GM seed SDKs.
+
+        * Shared/API/Cocoa/_WKRenderingProgressEvents.h:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKAutomationDelegate.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        * UIProcess/API/Cocoa/_WKFormInputSession.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        * UIProcess/API/Cocoa/_WKLinkIconParameters.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+
+2018-09-12  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Complete support for Paste as Quotation
         https://bugs.webkit.org/show_bug.cgi?id=189504
 
