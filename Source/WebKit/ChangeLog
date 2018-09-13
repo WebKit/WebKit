@@ -1,3 +1,16 @@
+2018-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Add null check for drawing area in WebPage::didCompletePageTransition() after r235867
+        https://bugs.webkit.org/show_bug.cgi?id=189587
+
+        Reviewed by Geoffrey Garen.
+
+        Add null check for drawing area in WebPage::didCompletePageTransition() after r235867
+        as this is causing crashes on the bots.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+
 2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r235953.

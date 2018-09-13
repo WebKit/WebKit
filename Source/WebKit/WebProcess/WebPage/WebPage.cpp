@@ -2870,7 +2870,8 @@ void WebPage::didStartPageTransition()
 
 void WebPage::didCompletePageTransition()
 {
-    m_drawingArea->setLayerTreeStateIsFrozen(false);
+    if (m_drawingArea)
+        m_drawingArea->setLayerTreeStateIsFrozen(false);
 }
 
 void WebPage::show()
