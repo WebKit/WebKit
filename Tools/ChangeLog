@@ -1,5 +1,16 @@
 2018-09-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix WebDriver tests after r235225.
+
+        Use wpt serve command to run the http server.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_web_server.py:
+        (WebDriverW3CWebServer.__init__):
+        (WebDriverW3CWebServer.start):
+        (WebDriverW3CWebServer.stop):
+
+2018-09-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Allow to run script dialogs asynchronously in the UI process
         https://bugs.webkit.org/show_bug.cgi?id=189544
 

@@ -52,7 +52,6 @@ class WebDriverW3CWebServer(object):
         self._port.host.filesystem.maybe_make_directory(self._runtime_path)
 
         self._pid_file = os.path.join(self._runtime_path, '%s.pid' % self._name)
-        self._servers_file = os.path.join(self._runtime_path, '%s_servers.json' % (self._name))
 
         # FIXME: We use the runtime path for now for log output, since we don't have a results directory yet.
         self._output_log_path = os.path.join(self._runtime_path, '%s_process_log.out.txt' % (self._name))
@@ -100,8 +99,8 @@ class WebDriverW3CWebServer(object):
         self._server_port = config['ports']['http'][0]
 
         self._wsout = self._port.host.filesystem.open_text_file_for_writing(self._output_log_path)
-        launcher = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'layout_tests', 'servers', 'web_platform_test_launcher.py'))
-        cmd = ['python', launcher, self._servers_file]
+        wpt_file = os.path.join(self._layout_doc_root, "wpt.py")
+        cmd = ["python", wpt_file, "serve", "--config", os.path.join(self._layout_doc_root, 'config.json')]
         self._process = self._port._executive.popen(cmd, cwd=self._layout_doc_root, shell=False, stdin=self._port._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
         self._pid = self._process.pid
         self._port.host.filesystem.write_text_file(self._pid_file, str(self._pid))
@@ -118,15 +117,12 @@ class WebDriverW3CWebServer(object):
         temporary_config_file = os.path.join(self._layout_doc_root, 'config.json')
         if self._port.host.filesystem.exists(temporary_config_file):
             self._port.host.filesystem.remove(temporary_config_file)
-        if self._process:
-            self._process.communicate(input='\n')
         if self._wsout:
             self._wsout.close()
             self._wsout = None
-        if self._pid and self._port._executive.check_running_pid(self._pid):
-            _log.warning('Cannot stop %s server normally.' % (self._name))
-            _log.warning('Killing server launcher process (pid: %d).' % (self._pid))
-            self._port._executive.kill_process(self._pid)
+        if self._pid:
+            # kill_process will not kill the subprocesses, interrupt does the job.
+            self._port._executive.interrupt(self._pid)
         self._port.host.filesystem.remove(self._pid_file)
         self._pid = None
 
