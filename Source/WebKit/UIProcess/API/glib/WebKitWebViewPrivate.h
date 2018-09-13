@@ -52,10 +52,10 @@ WebKit::WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView*, const WebCore::
 void webkitWebViewReadyToShowPage(WebKitWebView*);
 void webkitWebViewRunAsModal(WebKitWebView*);
 void webkitWebViewClosePage(WebKitWebView*);
-void webkitWebViewRunJavaScriptAlert(WebKitWebView*, const CString& message);
-bool webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const CString& message);
-CString webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& message, const CString& defaultText);
-bool webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView*, const CString& message);
+void webkitWebViewRunJavaScriptAlert(WebKitWebView*, const CString& message, Function<void()>&& completionHandler);
+void webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const CString& message, Function<void(bool)>&& completionHandler);
+void webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& message, const CString& defaultText, Function<void(const String&)>&& completionHandler);
+void webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView*, const CString& message, Function<void(bool)>&& completionHandler);
 bool webkitWebViewIsShowingScriptDialog(WebKitWebView*);
 bool webkitWebViewIsScriptDialogRunning(WebKitWebView*, WebKitScriptDialog*);
 String webkitWebViewGetCurrentScriptDialogMessage(WebKitWebView*);

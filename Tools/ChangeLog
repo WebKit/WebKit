@@ -1,3 +1,15 @@
+2018-09-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Allow to run script dialogs asynchronously in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=189544
+
+        Reviewed by Michael Catanzaro.
+
+        Add test cases for the new API.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewJavaScriptDialogs):
+
 2018-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang][ImageDiff] Fix compilation error and warning of PlatformImageCairo.cpp

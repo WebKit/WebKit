@@ -26,11 +26,6 @@ void webkitScriptDialogRun(WebKitScriptDialog*, WebKitWebView*)
 {
 }
 
-bool webkitScriptDialogIsRunning(WebKitScriptDialog*)
-{
-    return false;
-}
-
 void webkitScriptDialogAccept(WebKitScriptDialog*)
 {
 }

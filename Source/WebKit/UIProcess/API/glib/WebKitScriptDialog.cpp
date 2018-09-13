@@ -22,20 +22,56 @@
 
 #include "WebKitScriptDialogPrivate.h"
 
-static WebKitScriptDialog* webkitScriptDialogCopy(WebKitScriptDialog* dialog)
+G_DEFINE_BOXED_TYPE(WebKitScriptDialog, webkit_script_dialog, webkit_script_dialog_ref, webkit_script_dialog_unref)
+
+WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const CString& message, const CString& defaultText, Function<void(bool, const String&)>&& completionHandler)
 {
-    WebKitScriptDialog* copy = static_cast<WebKitScriptDialog*>(fastZeroedMalloc(sizeof(WebKitScriptDialog)));
-    new (copy) WebKitScriptDialog(dialog);
-    return copy;
+    auto* dialog = static_cast<WebKitScriptDialog*>(fastMalloc(sizeof(WebKitScriptDialog)));
+    new (dialog) WebKitScriptDialog(type, message, defaultText, WTFMove(completionHandler));
+    return dialog;
 }
 
-static void webkitScriptDialogFree(WebKitScriptDialog* dialog)
+bool webkitScriptDialogIsRunning(WebKitScriptDialog* scriptDialog)
 {
-    dialog->~WebKitScriptDialog();
-    fastFree(dialog);
+    return !!scriptDialog->completionHandler;
 }
 
-G_DEFINE_BOXED_TYPE(WebKitScriptDialog, webkit_script_dialog, webkitScriptDialogCopy, webkitScriptDialogFree)
+/**
+ * webkit_script_dialog_ref:
+ * @dialog: a #WebKitScriptDialog
+ *
+ * Atomically increments the reference count of @dialog by one. This
+ * function is MT-safe and may be called from any thread.
+ *
+ * Returns: The passed in #WebKitScriptDialog
+ *
+ * Since: 2.24
+ */
+WebKitScriptDialog* webkit_script_dialog_ref(WebKitScriptDialog* dialog)
+{
+    g_atomic_int_inc(&dialog->referenceCount);
+    return dialog;
+}
+
+/**
+ * webkit_script_dialog_unref:
+ * @dialog: a #WebKitScriptDialog
+ *
+ * Atomically decrements the reference count of @dialog by one. If the
+ * reference count drops to 0, all memory allocated by the #WebKitScriptdialog is
+ * released. This function is MT-safe and may be called from any
+ * thread.
+ *
+ * Since: 2.24
+ */
+void webkit_script_dialog_unref(WebKitScriptDialog* dialog)
+{
+    if (g_atomic_int_dec_and_test(&dialog->referenceCount)) {
+        webkit_script_dialog_close(dialog);
+        dialog->~WebKitScriptDialog();
+        fastFree(dialog);
+    }
+}
 
 /**
  * webkit_script_dialog_get_dialog_type:
@@ -123,4 +159,38 @@ void webkit_script_dialog_prompt_set_text(WebKitScriptDialog* dialog, const char
     g_return_if_fail(dialog->type == WEBKIT_SCRIPT_DIALOG_PROMPT);
 
     dialog->text = text;
+}
+
+/**
+ * webkit_script_dialog_close:
+ * @dialog: a #WebKitScriptDialog
+ *
+ * Close @dialog. When handling a #WebKitScriptDialog asynchronously (webkit_script_dialog_ref()
+ * was called in #WebKitWebView::script-dialog callback), this function needs to be called to notify
+ * that we are done with the script dialog. The dialog will be closed on destruction if this function
+ * hasn't been called before.
+ *
+ * Since: 2.24
+ */
+void webkit_script_dialog_close(WebKitScriptDialog* dialog)
+{
+    g_return_if_fail(dialog);
+
+    if (!dialog->completionHandler)
+        return;
+
+    auto completionHandler = std::exchange(dialog->completionHandler, nullptr);
+
+    switch (dialog->type) {
+    case WEBKIT_SCRIPT_DIALOG_ALERT:
+        completionHandler(false, emptyString());
+        break;
+    case WEBKIT_SCRIPT_DIALOG_CONFIRM:
+    case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
+        completionHandler(dialog->confirmed, emptyString());
+        break;
+    case WEBKIT_SCRIPT_DIALOG_PROMPT:
+        completionHandler(false, String::fromUTF8(dialog->text.data()));
+        break;
+    }
 }

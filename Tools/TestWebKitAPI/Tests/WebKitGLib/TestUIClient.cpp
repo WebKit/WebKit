@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebViewTest.h"
 #include <wtf/HashSet.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 
@@ -158,7 +159,15 @@ public:
             break;
         }
 
-        g_main_loop_quit(m_mainLoop);
+        if (m_delayedScriptDialogs) {
+            webkit_script_dialog_ref(dialog);
+            RunLoop::main().dispatch([this, dialog] {
+                webkit_script_dialog_close(dialog);
+                webkit_script_dialog_unref(dialog);
+                g_main_loop_quit(m_mainLoop);
+            });
+        } else
+            g_main_loop_quit(m_mainLoop);
     }
 
     void scriptConfirm(WebKitScriptDialog* dialog)
@@ -365,6 +374,7 @@ public:
     Vector<WebViewEvents> m_webViewEvents;
     WebKitScriptDialogType m_scriptDialogType;
     bool m_scriptDialogConfirmed;
+    bool m_delayedScriptDialogs { false };
     bool m_allowPermissionRequests;
     gboolean m_verifyMediaTypes;
     gboolean m_expectedAudioMedia;
@@ -558,29 +568,35 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
         "<html><body onbeforeunload=\"return beforeUnloadHandler();\"><input id=\"testInput\" type=\"text\"></input><script>function beforeUnloadHandler() { return \"%s\"; }</script></body></html>";
 #endif
 
-    test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_ALERT;
-    GUniquePtr<char> alertDialogMessage(g_strdup_printf(jsAlertFormat, kAlertDialogMessage));
-    GUniquePtr<char> alertHTML(g_strdup_printf(htmlOnLoadFormat, alertDialogMessage.get()));
-    test->loadHtml(alertHTML.get(), 0);
-    test->waitUntilMainLoopFinishes();
-    webkit_web_view_stop_loading(test->m_webView);
-    test->waitUntilLoadFinished();
+    for (unsigned i = 0; i <= 1; ++i) {
+        test->m_delayedScriptDialogs = !!i;
 
-    test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_CONFIRM;
-    GUniquePtr<char> confirmDialogMessage(g_strdup_printf(jsConfirmFormat, kConfirmDialogMessage));
-    GUniquePtr<char> confirmHTML(g_strdup_printf(htmlOnLoadFormat, confirmDialogMessage.get()));
-    test->loadHtml(confirmHTML.get(), 0);
-    test->waitUntilMainLoopFinishes();
-    webkit_web_view_stop_loading(test->m_webView);
-    test->waitUntilLoadFinished();
+        test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_ALERT;
+        GUniquePtr<char> alertDialogMessage(g_strdup_printf(jsAlertFormat, kAlertDialogMessage));
+        GUniquePtr<char> alertHTML(g_strdup_printf(htmlOnLoadFormat, alertDialogMessage.get()));
+        test->loadHtml(alertHTML.get(), nullptr);
+        test->waitUntilMainLoopFinishes();
+        webkit_web_view_stop_loading(test->m_webView);
+        test->waitUntilLoadFinished();
 
-    test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_PROMPT;
-    GUniquePtr<char> promptDialogMessage(g_strdup_printf(jsPromptFormat, kPromptDialogMessage));
-    GUniquePtr<char> promptHTML(g_strdup_printf(htmlOnLoadFormat, promptDialogMessage.get()));
-    test->loadHtml(promptHTML.get(), 0);
-    test->waitUntilMainLoopFinishes();
-    webkit_web_view_stop_loading(test->m_webView);
-    test->waitUntilLoadFinished();
+        test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_CONFIRM;
+        GUniquePtr<char> confirmDialogMessage(g_strdup_printf(jsConfirmFormat, kConfirmDialogMessage));
+        GUniquePtr<char> confirmHTML(g_strdup_printf(htmlOnLoadFormat, confirmDialogMessage.get()));
+        test->loadHtml(confirmHTML.get(), nullptr);
+        test->waitUntilMainLoopFinishes();
+        webkit_web_view_stop_loading(test->m_webView);
+        test->waitUntilLoadFinished();
+
+        test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_PROMPT;
+        GUniquePtr<char> promptDialogMessage(g_strdup_printf(jsPromptFormat, kPromptDialogMessage));
+        GUniquePtr<char> promptHTML(g_strdup_printf(htmlOnLoadFormat, promptDialogMessage.get()));
+        test->loadHtml(promptHTML.get(), nullptr);
+        test->waitUntilMainLoopFinishes();
+        webkit_web_view_stop_loading(test->m_webView);
+        test->waitUntilLoadFinished();
+    }
+
+    test->m_delayedScriptDialogs = false;
 
     // FIXME: implement simulateUserInteraction in WPE.
 #if PLATFORM(GTK)

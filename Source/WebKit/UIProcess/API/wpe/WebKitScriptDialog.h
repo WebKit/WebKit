@@ -56,6 +56,12 @@ typedef enum {
 WEBKIT_API GType
 webkit_script_dialog_get_type                (void);
 
+WEBKIT_API WebKitScriptDialog *
+webkit_script_dialog_ref                     (WebKitScriptDialog *dialog);
+
+WEBKIT_API void
+webkit_script_dialog_unref                   (WebKitScriptDialog *dialog);
+
 WEBKIT_API WebKitScriptDialogType
 webkit_script_dialog_get_dialog_type         (WebKitScriptDialog *dialog);
 
@@ -72,6 +78,9 @@ webkit_script_dialog_prompt_get_default_text (WebKitScriptDialog *dialog);
 WEBKIT_API void
 webkit_script_dialog_prompt_set_text         (WebKitScriptDialog *dialog,
                                               const gchar        *text);
+
+WEBKIT_API void
+webkit_script_dialog_close                   (WebKitScriptDialog *dialog);
 
 G_END_DECLS
 

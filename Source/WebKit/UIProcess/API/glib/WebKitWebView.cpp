@@ -71,7 +71,6 @@
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/URL.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/SetForScope.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -807,6 +806,11 @@ static void webkitWebViewDispose(GObject* object)
         webView->priv->websiteDataManager = nullptr;
     }
 
+    if (webView->priv->currentScriptDialog) {
+        webkit_script_dialog_close(webView->priv->currentScriptDialog);
+        ASSERT(!webView->priv->currentScriptDialog);
+    }
+
 #if PLATFORM(WPE)
     webView->priv->view->close();
 #endif
@@ -1355,6 +1359,12 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * </para></listitem>
      * </itemizedlist>
      *
+     * It is possible to handle the script dialog request asynchronously, by simply
+     * caling webkit_script_dialog_ref() on the @dialog argument and calling
+     * webkit_script_dialog_close() when done.
+     * If the last reference is removed on a #WebKitScriptDialog and the dialog has not been
+     * closed, webkit_script_dialog_close() will be called.
+     *
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
@@ -1366,7 +1376,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_signal_accumulator_true_handled, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 1,
-        WEBKIT_TYPE_SCRIPT_DIALOG | G_SIGNAL_TYPE_STATIC_SCOPE);
+        WEBKIT_TYPE_SCRIPT_DIALOG);
 
     /**
      * WebKitWebView::decide-policy:
@@ -2101,39 +2111,52 @@ void webkitWebViewClosePage(WebKitWebView* webView)
     g_signal_emit(webView, signals[CLOSE], 0, NULL);
 }
 
-void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& message)
+void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& message, Function<void()>&& completionHandler)
 {
-    WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_ALERT, message);
-    SetForScope<WebKitScriptDialog*> change(webView->priv->currentScriptDialog, &dialog);
+    ASSERT(!webView->priv->currentScriptDialog);
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_ALERT, message, { }, [webView, completionHandler = WTFMove(completionHandler)](bool, const String&) {
+        completionHandler();
+        webView->priv->currentScriptDialog = nullptr;
+    });
     gboolean returnValue;
-    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
+    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, webView->priv->currentScriptDialog, &returnValue);
+    webkit_script_dialog_unref(webView->priv->currentScriptDialog);
 }
 
-bool webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& message)
+void webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& message, Function<void(bool)>&& completionHandler)
 {
-    WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_CONFIRM, message);
-    SetForScope<WebKitScriptDialog*> change(webView->priv->currentScriptDialog, &dialog);
+    ASSERT(!webView->priv->currentScriptDialog);
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_CONFIRM, message, { }, [webView, completionHandler = WTFMove(completionHandler)](bool result, const String&) {
+        completionHandler(result);
+        webView->priv->currentScriptDialog = nullptr;
+    });
     gboolean returnValue;
-    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
-    return dialog.confirmed;
+    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, webView->priv->currentScriptDialog, &returnValue);
+    webkit_script_dialog_unref(webView->priv->currentScriptDialog);
 }
 
-CString webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& message, const CString& defaultText)
+void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& message, const CString& defaultText, Function<void(const String&)>&& completionHandler)
 {
-    WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_PROMPT, message, defaultText);
-    SetForScope<WebKitScriptDialog*> change(webView->priv->currentScriptDialog, &dialog);
+    ASSERT(!webView->priv->currentScriptDialog);
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_PROMPT, message, defaultText, [webView, completionHandler = WTFMove(completionHandler)](bool, const String& result) {
+        completionHandler(result);
+        webView->priv->currentScriptDialog = nullptr;
+    });
     gboolean returnValue;
-    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
-    return dialog.text;
+    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, webView->priv->currentScriptDialog, &returnValue);
+    webkit_script_dialog_unref(webView->priv->currentScriptDialog);
 }
 
-bool webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView* webView, const CString& message)
+void webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView* webView, const CString& message, Function<void(bool)>&& completionHandler)
 {
-    WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message);
-    SetForScope<WebKitScriptDialog*> change(webView->priv->currentScriptDialog, &dialog);
+    ASSERT(!webView->priv->currentScriptDialog);
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message, { }, [webView, completionHandler = WTFMove(completionHandler)](bool result, const String&) {
+        completionHandler(result);
+        webView->priv->currentScriptDialog = nullptr;
+    });
     gboolean returnValue;
-    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
-    return dialog.confirmed;
+    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, webView->priv->currentScriptDialog, &returnValue);
+    webkit_script_dialog_unref(webView->priv->currentScriptDialog);
 }
 
 bool webkitWebViewIsShowingScriptDialog(WebKitWebView* webView)

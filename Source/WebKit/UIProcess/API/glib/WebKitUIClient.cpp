@@ -67,31 +67,24 @@ private:
 
     void runJavaScriptAlert(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void()>&& completionHandler) final
     {
-        webkitWebViewRunJavaScriptAlert(m_webView, message.utf8());
-        completionHandler();
+        webkitWebViewRunJavaScriptAlert(m_webView, message.utf8(), WTFMove(completionHandler));
     }
 
     void runJavaScriptConfirm(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void(bool)>&& completionHandler) final
     {
-        completionHandler(webkitWebViewRunJavaScriptConfirm(m_webView, message.utf8()));
+        webkitWebViewRunJavaScriptConfirm(m_webView, message.utf8(), WTFMove(completionHandler));
     }
 
     void runJavaScriptPrompt(WebPageProxy*, const String& message, const String& defaultValue, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void(const String&)>&& completionHandler) final
     {
-        CString result = webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8());
-        if (result.isNull()) {
-            completionHandler(String());
-            return;
-        }
-
-        completionHandler(String::fromUTF8(result.data()));
+        webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8(), WTFMove(completionHandler));
     }
 
     bool canRunBeforeUnloadConfirmPanel() const final { return true; }
 
     void runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void(bool)>&& completionHandler) final
     {
-        completionHandler(webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8()));
+        webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8(), WTFMove(completionHandler));
     }
 
     void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object*) final

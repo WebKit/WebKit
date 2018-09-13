@@ -1,3 +1,41 @@
+2018-09-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Allow to run script dialogs asynchronously in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=189544
+
+        Reviewed by Michael Catanzaro.
+
+        Script dialogs are sync in the WebProcess, but we don't need to block the UI process while they are running. Our
+        current API doesn't allow it, because it always expects the dialog to be closed in the signal handler. API
+        changes are backwards compatible.
+
+        * UIProcess/API/glib/WebKitScriptDialog.cpp:
+        (webkitScriptDialogCreate): Added to heap allocate a WebKitScriptDialog.
+        (webkitScriptDialogIsRunning): Common implementation here, a script dialog is considered to be running if it has
+        a competion handler pending.
+        (webkit_script_dialog_ref): WebKitScriptDialog is now refcounted.
+        (webkit_script_dialog_unref): Ditto.
+        (webkit_script_dialog_close): New method to notify that we are done with the dialog.
+        * UIProcess/API/glib/WebKitScriptDialogPrivate.h:
+        (_WebKitScriptDialog::_WebKitScriptDialog): Use a single constructor and keep the completion handler.
+        * UIProcess/API/glib/WebKitUIClient.cpp: Do not call the completion handler, pass it to the web view.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewDispose): Close the current script dialog if there's any.
+        (webkit_web_view_class_init): Document how to handle dialogs asynchronously.
+        (webkitWebViewRunJavaScriptAlert): Do not stack allocate the WebKitScriptDialog, create it with
+        webkitScriptDialogCreate() passing the completion handler.
+        (webkitWebViewRunJavaScriptConfirm): Ditto.
+        (webkitWebViewRunJavaScriptPrompt): Ditto.
+        (webkitWebViewRunJavaScriptBeforeUnloadConfirm): Ditto.
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitScriptDialog.h:
+        * UIProcess/API/gtk/WebKitScriptDialogGtk.cpp:
+        (scriptDialogResponseCallback): Hnadle the response callback.
+        (webkitScriptDialogRun): Do not use gtk_dialog_run(), connect to response signal and show the dialogs instead.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/wpe/WebKitScriptDialogWPE.cpp:
+
 2018-09-12  Dan Bernstein  <mitz@apple.com>
 
         Update availability annotations to match the macOS and iOS SDKs in the Xcode 10 GM seed

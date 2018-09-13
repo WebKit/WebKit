@@ -231,6 +231,7 @@ webkit_web_view_is_editable
 webkit_web_view_get_editor_state
 webkit_web_view_get_session_state
 webkit_web_view_restore_session_state
+webkit_web_view_get_main_resource
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
@@ -243,12 +244,14 @@ webkit_javascript_result_get_js_value
 <SUBSECTION WebKitScriptDialog>
 WebKitScriptDialog
 WebKitScriptDialogType
+webkit_script_dialog_ref
+webkit_script_dialog_unref
 webkit_script_dialog_get_dialog_type
 webkit_script_dialog_get_message
 webkit_script_dialog_confirm_set_confirmed
 webkit_script_dialog_prompt_get_default_text
 webkit_script_dialog_prompt_set_text
-webkit_web_view_get_main_resource
+webkit_script_dialog_close
 
 <SUBSECTION WebKitWebViewSessionState>
 WebKitWebViewSessionState
