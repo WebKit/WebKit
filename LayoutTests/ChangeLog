@@ -1,3 +1,11 @@
+2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/web-share/idlharness.https.html after r235925.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/imported/w3c/web-platform-tests/web-share/idlharness.https-expected.txt:
+
 2018-09-13  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Enable media-source/interfaces.html.
