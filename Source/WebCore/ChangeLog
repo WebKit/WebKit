@@ -1,3 +1,15 @@
+2018-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] error: type 'float' cannot be narrowed to 'LONG' (aka 'long') in initializer list in WheelEventWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=189575
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change).
+
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Use flooredIntPoint to convert FloatPoint to POINT.
+
 2018-09-13  Youenn Fablet  <youenn@apple.com>
 
         Introduce RTCRtpSendParameters

@@ -83,12 +83,12 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, const FloatSize& delta, const 
     m_wheelTicksY = m_deltaY;
 
     // Global Position is just x, y location of event
-    POINT point = {location.x(), location.y()};
     float inverseScaleFactor = 1.0f / deviceScaleFactorForWindow(hWnd);
-    m_globalPosition = point;
+    m_globalPosition = flooredIntPoint(location);
     m_globalPosition.scale(inverseScaleFactor, inverseScaleFactor);
 
     // Position needs to be translated to our client
+    POINT point;
     ScreenToClient(hWnd, &point);
     m_position = point;
     m_position.scale(inverseScaleFactor, inverseScaleFactor);
