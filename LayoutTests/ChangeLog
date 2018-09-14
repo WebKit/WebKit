@@ -1,3 +1,10 @@
+2018-09-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed test gardening.
+
+        * TestExpectations: Remove duplicative line introduced in r235959.
+        * platform/wincairo/TestExpectations:
+
 2018-09-14  Woodrow Wang  <woodrow_wang@apple.com>
 
         Add stability to tests for web API statistics

@@ -2244,5 +2244,3 @@ fast/gradients/conic-from-angle.html [ Skip ]
 fast/gradients/conic-repeating-last-stop.html [ Skip ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
-
-webkit.org/b/46008 imported/w3c/web-platform-tests/url/failure.html [ Failure ]

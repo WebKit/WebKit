@@ -119,7 +119,6 @@ media/media-source [ Skip ]
 
 # MEDIA_STREAM is disabled
 fast/mediastream [ Skip ]
-fast/events/constructors/media-stream-event-constructor.html [ Skip ]
 fast/events/constructors/overconstrained-error-event-constructor.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-clone-track.html [ Skip ]
@@ -625,6 +624,7 @@ fast/css-generated-content/quotes-lang-case-insensitive.html [ ImageOnlyFailure 
 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure Pass ]
 fast/css-grid-layout/float-not-protruding-into-next-grid-item.html [ ImageOnlyFailure ]
 fast/css-grid-layout/min-width-height-auto-overflow.html [ ImageOnlyFailure ]
+fast/custom-elements/defined-update-style.html [ ImageOnlyFailure ]
 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
@@ -791,7 +791,6 @@ fast/picture/viewport-resize.html [ Timeout ]
 
 [ Debug ] animations/CSSKeyframesRule-name-null.html [ Pass Timeout ]
 
-[ Debug ] css3/filters/blur-various-radii.html [ Pass Timeout ]
 [ Debug ] css3/filters/filter-property-computed-style.html [ Pass Timeout ]
 [ Debug ] css3/filters/unprefixed.html [ Pass Timeout ]
 [ Debug ] css3/selectors3/html/css3-modsel-170b.html [ Pass Timeout ]
@@ -853,12 +852,18 @@ http/tests/contentdispositionattachmentsandbox [ Skip ]
 http/tests/contentfiltering [ Skip ]
 
 http/tests/cookies/same-site [ Skip ]
-
 http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure ]
 http/tests/cookies/multiple-cookies.html [ Pass Failure ]
-http/tests/cookies/private-cookie-storage.html [ Crash ]
+http/tests/cookies/multiple-redirect-and-set-cookie.php [ Pass Failure ]
+http/tests/cookies/private-cookie-storage.html [ Skip ]
+http/tests/cookies/set-cookie-on-redirect.html [ Pass Failure ]
+http/tests/cookies/simple-cookies-expired.html [ Pass Failure ]
+http/tests/cookies/simple-cookies-max-age.html [ Pass Failure ]
+http/tests/cookies/single-quoted-value.html [ Pass Failure ]
 http/tests/cookies/sync-xhr-set-cookie-invalidates-cache.html [ Pass Failure ]
 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
+
+[ Debug ] http/tests/cookies/js-get-and-set-http-only-cookie.html [ Skip ]
 
 http/tests/css/cross-fade-reload.html [ Timeout Pass ]
 
@@ -871,6 +876,7 @@ http/tests/fileapi [ Skip ]
 http/tests/frame-throttling [ Skip ]
 
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
+http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
 
 http/tests/history [ Skip ]
 http/tests/images [ Skip ]
@@ -915,13 +921,13 @@ http/tests/websocket/tests/hybi/contentextensions [ Failure ]
 http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Pass Failure ]
 http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php [ Pass Failure ]
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
-http/tests/websocket/tests/hybi/httponly-cookie.pl [ Failure ]
+http/tests/websocket/tests/hybi/httponly-cookie.pl [ Pass Failure ]
 http/tests/websocket/tests/hybi/inspector [ Skip ]
-http/tests/websocket/tests/hybi/secure-cookie-insecure-connection.pl [ Failure ]
-http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Failure ]
+http/tests/websocket/tests/hybi/secure-cookie-insecure-connection.pl [ Pass Failure ]
+http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Pass Failure ]
 http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Pass Failure ]
-http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Failure ]
+http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/workers/worker-reload.html [ Timeout Pass ]
@@ -932,30 +938,38 @@ http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
 http/tests/workers/service [ Skip ]
 http/tests/workers/worker-redirect.html [ Failure ]
 
+[ Debug ] http/tests/workers/worker-messageport-2.html [ Pass Timeout ]
+
 http/tests/xmlhttprequest/access-control-and-redirects.html [ Failure ]
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html [ Failure ]
-http/tests/xmlhttprequest/access-control-preflight-credential-async.html [ Failure ]
-http/tests/xmlhttprequest/access-control-preflight-credential-sync.html [ Failure ]
+http/tests/xmlhttprequest/access-control-preflight-credential-async.html [ Pass Failure ]
+http/tests/xmlhttprequest/access-control-preflight-credential-sync.html [ Pass Failure ]
 http/tests/xmlhttprequest/access-control-preflight-not-successful.html [ Failure ]
 http/tests/xmlhttprequest/auth-reject-protection-space.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-default.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
+http/tests/xmlhttprequest/cache-override.html [ Pass Failure ]
+http/tests/xmlhttprequest/cookies.html [ Pass Failure ]
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
-http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure ]
+http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Pass Failure ]
 http/tests/xmlhttprequest/logout.html [ Failure ]
-http/tests/xmlhttprequest/null-auth.php [ Failure ]
+http/tests/xmlhttprequest/null-auth.php [ Pass Failure ]
+http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-content-type-header.html [ Pass Failure ]
 http/tests/xmlhttprequest/re-login-async.html [ Failure ]
 http/tests/xmlhttprequest/re-login.html [ Failure ]
+http/tests/xmlhttprequest/range-test.html [ Pass Failure ]
 http/tests/xmlhttprequest/redirect-credentials-responseURL.html [ Failure ]
 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html [ Failure ]
 http/tests/xmlhttprequest/redirect-cross-origin-sync.html [ Failure ]
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Failure ]
 http/tests/xmlhttprequest/redirections-and-user-headers.html [ Failure ]
+http/tests/xmlhttprequest/referer.html [ Pass Failure ]
 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
+http/tests/xmlhttprequest/response-empty-arraybuffer.html [ Pass Failure ]
 http/tests/xmlhttprequest/upload-onload-event.html [ Failure ]
 http/tests/xmlhttprequest/upload-onloadend-event-after-load.html [ Failure ]
 http/tests/xmlhttprequest/upload-onprogress-event.html [ Failure ]
@@ -967,6 +981,8 @@ http/tests/xmlhttprequest/upload-onabort-progressevent-attributes.html [ Timeout
 http/tests/xmlhttprequest/upload-onload-progressevent-attributes.html [ Timeout ]
 http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html [ Timeout ]
 
+[ Debug ] http/tests/xmlhttprequest/authorization-header.html [ Skip ]
+[ Debug ] http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Skip ]
 [ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Skip ]
 
 http/tests/xmlviewer [ Skip ]
@@ -1278,9 +1294,9 @@ legacy-animation-engine/animations/font-variations/font-variation-settings.html 
 
 # Unexpected timeouts tracked in webkit.org/b/172437.
 animations/font-variations/font-stretch.html [ Skip ]
-legacy-animation-engine/animations/font-variations/font-stretch.html [ Timeout ]
-animations/font-variations/font-style.html [ Timeout ]
-legacy-animation-engine/animations/font-variations/font-style.html [ Timeout ]
+legacy-animation-engine/animations/font-variations/font-stretch.html [ Skip ]
+animations/font-variations/font-style.html [ Skip ]
+legacy-animation-engine/animations/font-variations/font-style.html [ Skip ]
 
 # TODO Uses showModalDialog
 webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Skip ]
@@ -1292,6 +1308,16 @@ webkit.org/b/185678 animations/missing-from-to-transforms.html [ Failure ]
 webkit.org/b/185678 animations/missing-from-to.html [ Failure ]
 
 webkit.org/b/186807 animations/transition-and-animation-3.html [ Skip ]
+
+animations/needs-layout.html [ Pass ImageOnlyFailure ]
+legacy-animation-engine/animations/needs-layout.html [ Pass ImageOnlyFailure ]
+
+animations/resume-after-page-cache.html [ Pass Failure ]
+legacy-animation-engine/animations/resume-after-page-cache.html [ Pass Failure ]
+
+fast/animation/request-animation-frame-within-callback.html [ Pass Failure ]
+
+[ Debug ] legacy-animation-engine/animations/animation-welcome-safari.html [ Pass Failure ]
 
 ################################################################################
 ##################       End Animation Issues             ######################
@@ -1443,6 +1469,10 @@ webkit.org/b/188613 intersection-observer [ Skip ]
 
 [ Debug ] css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 
+css3/filters/blur-various-radii.html [ ImageOnlyFailure ]
+
+fast/css/sticky/sticky-top.html [ Pass ImageOnlyFailure ]
+
 ################################################################################
 #################            End CSS Issues              #######################
 ################################################################################
@@ -1512,6 +1542,8 @@ webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
 
 ###### Pasteboard
 editing/pasteboard/ [ Pass Failure ImageOnlyFailure ]
+editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
+editing/pasteboard/paste-image-as-blob-url.html [ Skip ]
 # TODO eventSender.contextClick() needs to return a JS array of the context menu items.
 webkit.org/b/62597 editing/pasteboard/copy-standalone-image-crash.html [ Skip ]
 # TODO DataTransferItems is not yet implemented.
@@ -1523,6 +1555,7 @@ editing/pasteboard/data-transfer-items-drag-drop-file.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-file-promise.html [ Skip ]
 editing/pasteboard/data-transfer-items-drop-file-promise.html [ Skip ]
 editing/pasteboard/data-transfer-set-data-sanitize-html-when-dragging-in-null-origin.html [ Skip ]
+editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Skip ]
 editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin.html [ Skip ]
 editing/pasteboard/datatransfer-items-drop-plaintext-file.html [ Skip ]
 editing/pasteboard/datatransfer-items-drop-plaintext-file-promise.html [ Skip ]
@@ -1544,6 +1577,8 @@ editing/pasteboard/entries-api/datatransfer-items-drop-hidden-file.html [ Skip ]
 
 ###### Selection
 editing/selection/5354455-1.html [ Failure ]
+editing/selection/caret-ltr-right.html [ Pass Failure ]
+editing/selection/caret-rtl-right.html [ Pass Failure ]
 editing/selection/context-menu-on-text.html [ Failure ]
 editing/selection/context-menu-text-selection-lookup.html [ Failure ]
 editing/selection/drag-start-event-client-x-y.html [ Failure ]
@@ -1556,13 +1591,21 @@ editing/selection/user-select-all-image-with-single-click.html [ Failure ]
 editing/selection/user-select-all-selection.html [ Failure ]
 editing/selection/user-select-all-with-shift.html [ Failure ]
 editing/selection/user-select-all-with-single-click.html [ Failure ]
-[ Debug ] editing/selection/5057506.html [ Failure ]
+[ Debug ] editing/selection/5057506.html [ Pass Failure ]
+[ Debug ] editing/selection/directionality-after-undo-replace.html [ Pass Failure ]
 
 # Assertion failure in replaySavedEvents
 webkit.org/b/21796 [ Debug ] editing/pasteboard/drop-text-events.html [ Skip ]
 webkit.org/b/21796 [ Debug ] editing/selection/drag-in-iframe.html [ Skip ]
 
+editing/selection/caret-after-tap-in-editable-selection.html [ Skip ]
 editing/selection/caret-at-bidi-boundary.html [ Skip ]
+editing/selection/character-granularity-rect.html [ Skip ]
+editing/selection/character-granularity-select-text-with-click-handler.html [ Skip ]
+editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
+editing/selection/click-left-of-rtl-wrapping-text.html [ Skip ]
+editing/selection/extend-by-character-007.html [ Skip ]
+editing/selection/regional-indicators.html [ Skip ]
 [ Debug ] editing/selection/doubleclick-beside-cr-span.html [ Skip ]
 [ Debug ] editing/selection/move-by-character-brute-force.html [ Skip ]
 [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Skip ]
@@ -1618,18 +1661,6 @@ webkit.org/b/179613 editing/execCommand/underline-selection-containing-image.htm
 
 webkit.org/b/182129 editing/input/reveal-edit-on-paste-vertically.html [ Failure ]
 
-editing/selection/regional-indicators.html [ Skip ]
-
-editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Skip ]
-editing/selection/extend-by-character-007.html [ Skip ]
-
-editing/pasteboard/paste-image-as-blob-url.html [ Skip ]
-editing/selection/caret-after-tap-in-editable-selection.html [ Skip ]
-editing/selection/character-granularity-rect.html [ Skip ]
-editing/selection/character-granularity-select-text-with-click-handler.html [ Skip ]
-editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
-editing/selection/click-left-of-rtl-wrapping-text.html [ Skip ]
-
 [ Debug ] editing/caret/emoji.html [ Skip ]
 editing/deleting/delete-emoji-9.html [ Pass Failure ]
 editing/input/caret-at-the-edge-of-input.html [ Pass Failure ]
@@ -1640,6 +1671,8 @@ webkit.org/b/173281 editing/style/set-backColor-with-color-filter.html [ Skip ]
 webkit.org/b/173281 editing/style/inverse-color-filter.html [ Skip ]
 
 editing/input/press-tab-during-ime-composition.html [ Failure ]
+
+editing/undo/undo-deleteWord.html [ Pass Failure ]
 
 ################################################################################
 ###########################   End Editing Failures   ###########################
