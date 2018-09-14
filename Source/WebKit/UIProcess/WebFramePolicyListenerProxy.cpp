@@ -45,7 +45,7 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldEx
 
 WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy() = default;
 
-void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(Vector<SafeBrowsingResult>&& safeBrowsingResults)
+void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(Vector<Ref<SafeBrowsingResult>>&& safeBrowsingResults)
 {
     ASSERT(!m_safeBrowsingResults);
     if (m_policyResult) {
