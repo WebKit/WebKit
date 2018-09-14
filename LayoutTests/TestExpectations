@@ -1942,8 +1942,6 @@ webkit.org/b/170699 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure Pass ]
 
-webkit.org/b/171031 imported/w3c/web-platform-tests/xhr/getallresponseheaders-cl.htm [ Failure ]
-
 webkit.org/b/172961 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Pass Timeout ]
 
 webkit.org/b/172378 fast/loader/recursive-before-unload-crash.html [ Skip ]

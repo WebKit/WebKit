@@ -1,5 +1,0 @@
-
-PASS Casing of known headers 
-FAIL Casing of known headers 1 assert_regexp_match: expected object "/content-TYPE/" but got "Host: localhost:8800\r\nContent-Type: x/x\r\nConnection: keep-alive\r\nTHIS-IS-A-TEST: 1, 2\r\nAccept: */*\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/605.1.7+ (KHTML, like Gecko)\r\nReferer: http://localhost:8800/XMLHttpRequest/getallresponseheaders-cl.htm\r\nAccept-Language: en-us\r\nAccept-Encoding: gzip, deflate\r\n"
-PASS Casing of known headers 2 
-

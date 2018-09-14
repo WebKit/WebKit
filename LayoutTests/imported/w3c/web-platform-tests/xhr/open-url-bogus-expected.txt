@@ -1,7 +1,0 @@
-
-PASS XMLHttpRequest: open() - bogus URLs (//[) 
-FAIL XMLHttpRequest: open() - bogus URLs (ftp:) assert_throws: function "function () { client.open("GET", url) }" did not throw
-PASS XMLHttpRequest: open() - bogus URLs (http://a a/) 
-PASS XMLHttpRequest: open() - bogus URLs (http:////////////) 
-PASS XMLHttpRequest: open() - bogus URLs (http://u:p@/) 
-

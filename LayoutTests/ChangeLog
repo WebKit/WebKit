@@ -1,3 +1,12 @@
+2018-09-14  Ms2ger  <Ms2ger@igalia.com>
+
+        Remove some obsolete XHR tests
+        https://bugs.webkit.org/show_bug.cgi?id=189581
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Drop reference to removed test.
+
 2018-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Capturing event listeners are called during bubbling phase for shadow hosts
