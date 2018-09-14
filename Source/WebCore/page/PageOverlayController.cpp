@@ -43,8 +43,7 @@
 namespace WebCore {
 
 PageOverlayController::PageOverlayController(Page& page)
-    : m_initialized(false)
-    , m_page(page)
+    :  m_page(page)
 {
 }
 
@@ -98,14 +97,14 @@ GraphicsLayer& PageOverlayController::layerWithDocumentOverlays()
         if (overlay.overlayType() != PageOverlay::OverlayType::Document)
             continue;
 
-        GraphicsLayer& layer = *overlayAndLayer.value;
-        GraphicsLayer::traverse(layer, [inWindow](GraphicsLayer& layer) {
+        auto& layer = overlayAndLayer.value;
+        GraphicsLayer::traverse(layer.get(), [inWindow](GraphicsLayer& layer) {
             layer.setIsInWindow(inWindow);
         });
-        updateOverlayGeometry(overlay, layer);
+        updateOverlayGeometry(overlay, layer.get());
         
-        if (!layer.parent())
-            m_documentOverlayRootLayer->addChild(&layer);
+        if (!layer->parent())
+            m_documentOverlayRootLayer->addChild(layer.copyRef());
     }
 
     return *m_documentOverlayRootLayer;
@@ -122,14 +121,14 @@ GraphicsLayer& PageOverlayController::layerWithViewOverlays()
         if (overlay.overlayType() != PageOverlay::OverlayType::View)
             continue;
 
-        GraphicsLayer& layer = *overlayAndLayer.value;
-        GraphicsLayer::traverse(layer, [inWindow](GraphicsLayer& layer) {
+        auto& layer = overlayAndLayer.value;
+        GraphicsLayer::traverse(layer.get(), [inWindow](GraphicsLayer& layer) {
             layer.setIsInWindow(inWindow);
         });
-        updateOverlayGeometry(overlay, layer);
+        updateOverlayGeometry(overlay, layer.get());
         
-        if (!layer.parent())
-            m_viewOverlayRootLayer->addChild(&layer);
+        if (!layer->parent())
+            m_viewOverlayRootLayer->addChild(layer.copyRef());
     }
 
     return *m_viewOverlayRootLayer;
@@ -144,12 +143,12 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
 
     m_pageOverlays.append(&overlay);
 
-    std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(m_page.chrome().client().graphicsLayerFactory(), *this);
+    auto layer = GraphicsLayer::create(m_page.chrome().client().graphicsLayerFactory(), *this);
     layer->setAnchorPoint(FloatPoint3D());
     layer->setBackgroundColor(overlay.backgroundColor());
     layer->setName("Overlay content");
 
-    updateSettingsForLayer(*layer);
+    updateSettingsForLayer(layer.get());
 
     switch (overlay.overlayType()) {
     case PageOverlay::OverlayType::View:
@@ -160,7 +159,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
         break;
     }
 
-    GraphicsLayer& rawLayer = *layer;
+    auto& rawLayer = layer.get();
     m_overlayGraphicsLayers.set(&overlay, WTFMove(layer));
 
     updateForceSynchronousScrollLayerPositionUpdates();
@@ -185,7 +184,8 @@ void PageOverlayController::uninstallPageOverlay(PageOverlay& overlay, PageOverl
 
     overlay.setPage(nullptr);
 
-    m_overlayGraphicsLayers.take(&overlay)->removeFromParent();
+    if (auto optionalLayer = m_overlayGraphicsLayers.take(&overlay))
+        optionalLayer.value()->removeFromParent();
 
     bool removed = m_pageOverlays.removeFirst(&overlay);
     ASSERT_UNUSED(removed, removed);
@@ -211,14 +211,14 @@ void PageOverlayController::updateForceSynchronousScrollLayerPositionUpdates()
 void PageOverlayController::setPageOverlayNeedsDisplay(PageOverlay& overlay, const WebCore::IntRect& dirtyRect)
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    GraphicsLayer& graphicsLayer = *m_overlayGraphicsLayers.get(&overlay);
+    auto* graphicsLayer = m_overlayGraphicsLayers.get(&overlay);
 
-    if (!graphicsLayer.drawsContent()) {
-        graphicsLayer.setDrawsContent(true);
-        updateOverlayGeometry(overlay, graphicsLayer);
+    if (!graphicsLayer->drawsContent()) {
+        graphicsLayer->setDrawsContent(true);
+        updateOverlayGeometry(overlay, *graphicsLayer);
     }
 
-    graphicsLayer.setNeedsDisplayInRect(dirtyRect);
+    graphicsLayer->setNeedsDisplayInRect(dirtyRect);
 }
 
 void PageOverlayController::setPageOverlayOpacity(PageOverlay& overlay, float opacity)
@@ -241,8 +241,9 @@ GraphicsLayer& PageOverlayController::layerForOverlay(PageOverlay& overlay) cons
 
 void PageOverlayController::willDetachRootLayer()
 {
-    m_documentOverlayRootLayer = nullptr;
-    m_viewOverlayRootLayer = nullptr;
+    GraphicsLayer::unparentAndClear(m_documentOverlayRootLayer);
+    GraphicsLayer::unparentAndClear(m_viewOverlayRootLayer);
+
     m_initialized = false;
 }
 
@@ -250,7 +251,7 @@ void PageOverlayController::didChangeViewSize()
 {
     for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
         if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::View)
-            updateOverlayGeometry(*overlayAndLayer.key, *overlayAndLayer.value);
+            updateOverlayGeometry(*overlayAndLayer.key, overlayAndLayer.value.get());
     }
 }
 
@@ -258,7 +259,7 @@ void PageOverlayController::didChangeDocumentSize()
 {
     for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
         if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::Document)
-            updateOverlayGeometry(*overlayAndLayer.key, *overlayAndLayer.value);
+            updateOverlayGeometry(*overlayAndLayer.key, overlayAndLayer.value.get());
     }
 }
 
@@ -266,7 +267,7 @@ void PageOverlayController::didChangeSettings()
 {
     // FIXME: We should apply these settings to all overlay sublayers recursively.
     for (auto& graphicsLayer : m_overlayGraphicsLayers.values())
-        updateSettingsForLayer(*graphicsLayer);
+        updateSettingsForLayer(graphicsLayer.get());
 }
 
 void PageOverlayController::didChangeDeviceScaleFactor()
@@ -359,7 +360,7 @@ Vector<String> PageOverlayController::copyAccessibilityAttributesNames(bool para
 void PageOverlayController::paintContents(const WebCore::GraphicsLayer* graphicsLayer, WebCore::GraphicsContext& graphicsContext, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect, GraphicsLayerPaintBehavior)
 {
     for (auto& overlayAndGraphicsLayer : m_overlayGraphicsLayers) {
-        if (overlayAndGraphicsLayer.value.get() != graphicsLayer)
+        if (overlayAndGraphicsLayer.value.ptr() != graphicsLayer)
             continue;
 
         GraphicsContextStateSaver stateSaver(graphicsContext);
@@ -383,13 +384,15 @@ void PageOverlayController::notifyFlushRequired(const WebCore::GraphicsLayer*)
 void PageOverlayController::didChangeOverlayFrame(PageOverlay& overlay)
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    updateOverlayGeometry(overlay, *m_overlayGraphicsLayers.get(&overlay));
+    if (auto* layer = m_overlayGraphicsLayers.get(&overlay))
+        updateOverlayGeometry(overlay, *layer);
 }
 
 void PageOverlayController::didChangeOverlayBackgroundColor(PageOverlay& overlay)
 {
     ASSERT(m_pageOverlays.contains(&overlay));
-    m_overlayGraphicsLayers.get(&overlay)->setBackgroundColor(overlay.backgroundColor());
+    if (auto* layer = m_overlayGraphicsLayers.get(&overlay))
+        layer->setBackgroundColor(overlay.backgroundColor());
 }
 
 bool PageOverlayController::shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior behavior) const

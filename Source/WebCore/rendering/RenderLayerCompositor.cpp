@@ -524,10 +524,11 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush()
     updateCustomLayersAfterFlush();
 #endif
 
-    for (auto* layer : m_scrollCoordinatedLayersNeedingUpdate)
+    HashSet<RenderLayer*> layersNeedingUpdate;
+    std::swap(m_scrollCoordinatedLayersNeedingUpdate, layersNeedingUpdate);
+    
+    for (auto* layer : layersNeedingUpdate)
         updateScrollCoordinatedStatus(*layer, ScrollingNodeChangeFlags::Layer);
-
-    m_scrollCoordinatedLayersNeedingUpdate.clear();
 }
 
 #if PLATFORM(IOS)
@@ -758,7 +759,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     if (needHierarchyUpdate) {
         // Update the hierarchy of the compositing layers.
-        Vector<GraphicsLayer*> childList;
+        Vector<Ref<GraphicsLayer>> childList;
         rebuildCompositingLayerTree(*updateRoot, childList, 0);
 
         // Host the document layer in the RenderView's root layer.
@@ -769,7 +770,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
             if (childList.isEmpty() && !hasAnyAdditionalCompositedLayers(*updateRoot))
                 destroyRootLayer();
             else if (m_rootContentLayer)
-                m_rootContentLayer->setChildren(childList);
+                m_rootContentLayer->setChildren(WTFMove(childList));
         }
         
         reattachSubframeScrollLayers();
@@ -802,12 +803,13 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     return true;
 }
 
-void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<GraphicsLayer*>& childList)
+void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer>>& childList)
 {
     if (!isMainFrameCompositor() || !m_compositing)
         return;
 
-    childList.append(&page().pageOverlayController().layerWithDocumentOverlays());
+    Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();
+    childList.append(WTFMove(overlayHost));
 }
 
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
@@ -1523,7 +1525,7 @@ void RenderLayerCompositor::setCompositingParent(RenderLayer& childLayer, Render
         auto* hostingLayer = parentLayer->backing()->parentForSublayers();
         auto* hostedLayer = childLayer.backing()->childForSuperlayers();
         
-        hostingLayer->addChild(hostedLayer);
+        hostingLayer->addChild(*hostedLayer);
     } else
         childLayer.backing()->childForSuperlayers()->removeFromParent();
 }
@@ -1545,7 +1547,7 @@ bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo& video) cons
 }
 #endif
 
-void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vector<GraphicsLayer*>& childLayersOfEnclosingLayer, int depth)
+void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vector<Ref<GraphicsLayer>>& childLayersOfEnclosingLayer, int depth)
 {
     // Make the layer compositing if necessary, and set up clipping and content layers.
     // Note that we can only do work here that is independent of whether the descendant layers
@@ -1581,8 +1583,8 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
 
     // If this layer has backing, then we are collecting its children, otherwise appending
     // to the compositing child list of an enclosing layer.
-    Vector<GraphicsLayer*> layerChildren;
-    Vector<GraphicsLayer*>& childList = layerBacking ? layerChildren : childLayersOfEnclosingLayer;
+    Vector<Ref<GraphicsLayer>> layerChildren;
+    auto& childList = layerBacking ? layerChildren : childLayersOfEnclosingLayer;
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(&layer);
@@ -1594,7 +1596,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
 
         // If a negative z-order child is compositing, we get a foreground layer which needs to get parented.
         if (layerBacking && layerBacking->foregroundLayer())
-            childList.append(layerBacking->foregroundLayer());
+            childList.append(*layerBacking->foregroundLayer());
     }
 
     if (auto* normalFlowList = layer.normalFlowList()) {
@@ -1613,28 +1615,22 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
             parented = parentFrameContentLayers(&downcast<RenderWidget>(layer.renderer()));
 
         if (!parented)
-            layerBacking->parentForSublayers()->setChildren(layerChildren);
+            layerBacking->parentForSublayers()->setChildren(WTFMove(layerChildren));
 
         // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
         // Otherwise, the overflow control layers are normal children.
         if (!layerBacking->hasClippingLayer() && !layerBacking->hasScrollingLayer()) {
-            if (auto* overflowControlLayer = layerBacking->layerForHorizontalScrollbar()) {
-                overflowControlLayer->removeFromParent();
-                layerBacking->parentForSublayers()->addChild(overflowControlLayer);
-            }
+            if (auto* overflowControlLayer = layerBacking->layerForHorizontalScrollbar())
+                layerBacking->parentForSublayers()->addChild(*overflowControlLayer);
 
-            if (auto* overflowControlLayer = layerBacking->layerForVerticalScrollbar()) {
-                overflowControlLayer->removeFromParent();
-                layerBacking->parentForSublayers()->addChild(overflowControlLayer);
-            }
+            if (auto* overflowControlLayer = layerBacking->layerForVerticalScrollbar())
+                layerBacking->parentForSublayers()->addChild(*overflowControlLayer);
 
-            if (auto* overflowControlLayer = layerBacking->layerForScrollCorner()) {
-                overflowControlLayer->removeFromParent();
-                layerBacking->parentForSublayers()->addChild(overflowControlLayer);
-            }
+            if (auto* overflowControlLayer = layerBacking->layerForScrollCorner())
+                layerBacking->parentForSublayers()->addChild(*overflowControlLayer);
         }
 
-        childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
+        childLayersOfEnclosingLayer.append(*layerBacking->childForSuperlayers());
     }
     
     if (auto* layerBacking = layer.backing())
@@ -1809,9 +1805,9 @@ bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget* renderer)
     auto* backing = layer->backing();
     auto* hostingLayer = backing->parentForSublayers();
     auto* rootLayer = innerCompositor->rootGraphicsLayer();
-    if (hostingLayer->children().size() != 1 || hostingLayer->children()[0] != rootLayer) {
+    if (hostingLayer->children().size() != 1 || hostingLayer->children()[0].ptr() != rootLayer) {
         hostingLayer->removeAllChildren();
-        hostingLayer->addChild(rootLayer);
+        hostingLayer->addChild(*rootLayer);
     }
     return true;
 }
@@ -3036,17 +3032,14 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLa
         return nullptr;
 
     if (!wantsLayer) {
-        if (m_layerForTopOverhangArea) {
-            m_layerForTopOverhangArea->removeFromParent();
-            m_layerForTopOverhangArea = nullptr;
-        }
+        GraphicsLayer::unparentAndClear(m_layerForTopOverhangArea);
         return nullptr;
     }
 
     if (!m_layerForTopOverhangArea) {
         m_layerForTopOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
         m_layerForTopOverhangArea->setName("top overhang");
-        m_scrollLayer->addChildBelow(m_layerForTopOverhangArea.get(), m_rootContentLayer.get());
+        m_scrollLayer->addChildBelow(*m_layerForTopOverhangArea, m_rootContentLayer.get());
     }
 
     return m_layerForTopOverhangArea.get();
@@ -3058,17 +3051,14 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
         return nullptr;
 
     if (!wantsLayer) {
-        if (m_layerForBottomOverhangArea) {
-            m_layerForBottomOverhangArea->removeFromParent();
-            m_layerForBottomOverhangArea = nullptr;
-        }
+        GraphicsLayer::unparentAndClear(m_layerForBottomOverhangArea);
         return nullptr;
     }
 
     if (!m_layerForBottomOverhangArea) {
         m_layerForBottomOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
         m_layerForBottomOverhangArea->setName("bottom overhang");
-        m_scrollLayer->addChildBelow(m_layerForBottomOverhangArea.get(), m_rootContentLayer.get());
+        m_scrollLayer->addChildBelow(*m_layerForBottomOverhangArea, m_rootContentLayer.get());
     }
 
     m_layerForBottomOverhangArea->setPosition(FloatPoint(0, m_rootContentLayer->size().height() + m_renderView.frameView().headerHeight()
@@ -3083,8 +3073,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 
     if (!wantsLayer) {
         if (m_layerForHeader) {
-            m_layerForHeader->removeFromParent();
-            m_layerForHeader = nullptr;
+            GraphicsLayer::unparentAndClear(m_layerForHeader);
 
             // The ScrollingTree knows about the header layer, and the position of the root layer is affected
             // by the header layer, so if we remove the header, we need to tell the scrolling tree.
@@ -3097,7 +3086,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
     if (!m_layerForHeader) {
         m_layerForHeader = GraphicsLayer::create(graphicsLayerFactory(), *this);
         m_layerForHeader->setName("header");
-        m_scrollLayer->addChildAbove(m_layerForHeader.get(), m_rootContentLayer.get());
+        m_scrollLayer->addChildAbove(*m_layerForHeader, m_rootContentLayer.get());
         m_renderView.frameView().addPaintPendingMilestones(DidFirstFlushForHeaderLayer);
     }
 
@@ -3121,8 +3110,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 
     if (!wantsLayer) {
         if (m_layerForFooter) {
-            m_layerForFooter->removeFromParent();
-            m_layerForFooter = nullptr;
+            GraphicsLayer::unparentAndClear(m_layerForFooter);
 
             // The ScrollingTree knows about the footer layer, and the total scrollable size is affected
             // by the footer layer, so if we remove the footer, we need to tell the scrolling tree.
@@ -3135,7 +3123,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
     if (!m_layerForFooter) {
         m_layerForFooter = GraphicsLayer::create(graphicsLayerFactory(), *this);
         m_layerForFooter->setName("footer");
-        m_scrollLayer->addChildAbove(m_layerForFooter.get(), m_rootContentLayer.get());
+        m_scrollLayer->addChildAbove(*m_layerForFooter, m_rootContentLayer.get());
     }
 
     float totalContentHeight = m_rootContentLayer->size().height() + m_renderView.frameView().headerHeight() + m_renderView.frameView().footerHeight();
@@ -3258,12 +3246,10 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 
             // We want the overhang areas layer to be positioned below the frame contents,
             // so insert it below the clip layer.
-            m_overflowControlsHostLayer->addChildBelow(m_layerForOverhangAreas.get(), m_clipLayer.get());
+            m_overflowControlsHostLayer->addChildBelow(*m_layerForOverhangAreas, m_clipLayer.get());
         }
-    } else if (m_layerForOverhangAreas) {
-        m_layerForOverhangAreas->removeFromParent();
-        m_layerForOverhangAreas = nullptr;
-    }
+    } else
+        GraphicsLayer::unparentAndClear(m_layerForOverhangAreas);
 
     if (requiresContentShadowLayer()) {
         if (!m_contentShadowLayer) {
@@ -3274,12 +3260,10 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_contentShadowLayer->setAnchorPoint(FloatPoint3D());
             m_contentShadowLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingShadow);
 
-            m_scrollLayer->addChildBelow(m_contentShadowLayer.get(), m_rootContentLayer.get());
+            m_scrollLayer->addChildBelow(*m_contentShadowLayer, m_rootContentLayer.get());
         }
-    } else if (m_contentShadowLayer) {
-        m_contentShadowLayer->removeFromParent();
-        m_contentShadowLayer = nullptr;
-    }
+    } else
+        GraphicsLayer::unparentAndClear(m_contentShadowLayer);
 #endif
 
     if (requiresHorizontalScrollbarLayer()) {
@@ -3291,14 +3275,13 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #if PLATFORM(COCOA) && USE(CA)
             m_layerForHorizontalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
-            m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
+            m_overflowControlsHostLayer->addChild(*m_layerForHorizontalScrollbar);
 
             if (auto* scrollingCoordinator = this->scrollingCoordinator())
                 scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), HorizontalScrollbar);
         }
     } else if (m_layerForHorizontalScrollbar) {
-        m_layerForHorizontalScrollbar->removeFromParent();
-        m_layerForHorizontalScrollbar = nullptr;
+        GraphicsLayer::unparentAndClear(m_layerForHorizontalScrollbar);
 
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), HorizontalScrollbar);
@@ -3313,14 +3296,13 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #if PLATFORM(COCOA) && USE(CA)
             m_layerForVerticalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
-            m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
+            m_overflowControlsHostLayer->addChild(*m_layerForVerticalScrollbar);
 
             if (auto* scrollingCoordinator = this->scrollingCoordinator())
                 scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), VerticalScrollbar);
         }
     } else if (m_layerForVerticalScrollbar) {
-        m_layerForVerticalScrollbar->removeFromParent();
-        m_layerForVerticalScrollbar = nullptr;
+        GraphicsLayer::unparentAndClear(m_layerForVerticalScrollbar);
 
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), VerticalScrollbar);
@@ -3335,12 +3317,10 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #if PLATFORM(COCOA) && USE(CA)
             m_layerForScrollCorner->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
-            m_overflowControlsHostLayer->addChild(m_layerForScrollCorner.get());
+            m_overflowControlsHostLayer->addChild(*m_layerForScrollCorner);
         }
-    } else if (m_layerForScrollCorner) {
-        m_layerForScrollCorner->removeFromParent();
-        m_layerForScrollCorner = nullptr;
-    }
+    } else
+        GraphicsLayer::unparentAndClear(m_layerForScrollCorner);
 
     m_renderView.frameView().positionScrollbarLayers();
 }
@@ -3387,9 +3367,9 @@ void RenderLayerCompositor::ensureRootLayer()
             m_scrollLayer->setName("frame scrolling");
 
             // Hook them up
-            m_overflowControlsHostLayer->addChild(m_clipLayer.get());
-            m_clipLayer->addChild(m_scrollLayer.get());
-            m_scrollLayer->addChild(m_rootContentLayer.get());
+            m_overflowControlsHostLayer->addChild(*m_clipLayer);
+            m_clipLayer->addChild(*m_scrollLayer);
+            m_scrollLayer->addChild(*m_rootContentLayer);
 
             m_clipLayer->setSize(m_renderView.frameView().sizeForVisibleContent());
             m_clipLayer->setPosition(positionForClipLayer());
@@ -3404,9 +3384,9 @@ void RenderLayerCompositor::ensureRootLayer()
         }
     } else {
         if (m_overflowControlsHostLayer) {
-            m_overflowControlsHostLayer = nullptr;
-            m_clipLayer = nullptr;
-            m_scrollLayer = nullptr;
+            GraphicsLayer::unparentAndClear(m_overflowControlsHostLayer);
+            GraphicsLayer::unparentAndClear(m_clipLayer);
+            GraphicsLayer::unparentAndClear(m_scrollLayer);
         }
     }
 
@@ -3425,15 +3405,11 @@ void RenderLayerCompositor::destroyRootLayer()
     detachRootLayer();
 
 #if ENABLE(RUBBER_BANDING)
-    if (m_layerForOverhangAreas) {
-        m_layerForOverhangAreas->removeFromParent();
-        m_layerForOverhangAreas = nullptr;
-    }
+    GraphicsLayer::unparentAndClear(m_layerForOverhangAreas);
 #endif
 
     if (m_layerForHorizontalScrollbar) {
-        m_layerForHorizontalScrollbar->removeFromParent();
-        m_layerForHorizontalScrollbar = nullptr;
+        GraphicsLayer::unparentAndClear(m_layerForHorizontalScrollbar);
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), HorizontalScrollbar);
         if (auto* horizontalScrollbar = m_renderView.frameView().verticalScrollbar())
@@ -3441,8 +3417,7 @@ void RenderLayerCompositor::destroyRootLayer()
     }
 
     if (m_layerForVerticalScrollbar) {
-        m_layerForVerticalScrollbar->removeFromParent();
-        m_layerForVerticalScrollbar = nullptr;
+        GraphicsLayer::unparentAndClear(m_layerForVerticalScrollbar);
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), VerticalScrollbar);
         if (auto* verticalScrollbar = m_renderView.frameView().verticalScrollbar())
@@ -3450,17 +3425,17 @@ void RenderLayerCompositor::destroyRootLayer()
     }
 
     if (m_layerForScrollCorner) {
-        m_layerForScrollCorner = nullptr;
+        GraphicsLayer::unparentAndClear(m_layerForScrollCorner);
         m_renderView.frameView().invalidateScrollCorner(m_renderView.frameView().scrollCornerRect());
     }
 
     if (m_overflowControlsHostLayer) {
-        m_overflowControlsHostLayer = nullptr;
-        m_clipLayer = nullptr;
-        m_scrollLayer = nullptr;
+        GraphicsLayer::unparentAndClear(m_overflowControlsHostLayer);
+        GraphicsLayer::unparentAndClear(m_clipLayer);
+        GraphicsLayer::unparentAndClear(m_scrollLayer);
     }
     ASSERT(!m_scrollLayer);
-    m_rootContentLayer = nullptr;
+    GraphicsLayer::unparentAndClear(m_rootContentLayer);
 
     m_layerUpdater = nullptr;
 }
@@ -3560,7 +3535,8 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     if (!frame.isMainFrame())
         return;
 
-    m_rootContentLayer->addChild(&page().pageOverlayController().layerWithDocumentOverlays());
+    Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();
+    m_rootContentLayer->addChild(WTFMove(overlayHost));
 }
 
 void RenderLayerCompositor::notifyIFramesOfCompositingChange()

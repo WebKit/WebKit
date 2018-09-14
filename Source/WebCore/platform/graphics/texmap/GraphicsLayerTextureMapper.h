@@ -39,15 +39,15 @@ public:
     void setID(uint32_t id) { m_layer.setID(id); }
 
     // GraphicsLayer
-    bool setChildren(const Vector<GraphicsLayer*>&) override;
-    void addChild(GraphicsLayer*) override;
-    void addChildAtIndex(GraphicsLayer*, int index) override;
-    void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling) override;
-    void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling) override;
-    bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild) override;
+    bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;
+    void addChild(Ref<GraphicsLayer>&&) override;
+    void addChildAtIndex(Ref<GraphicsLayer>&&, int index) override;
+    void addChildAbove(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
+    void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
+    bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild) override;
 
-    void setMaskLayer(GraphicsLayer*) override;
-    void setReplicatedByLayer(GraphicsLayer*) override;
+    void setMaskLayer(RefPtr<GraphicsLayer>&&) override;
+    void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;
     void setPosition(const FloatPoint&) override;
     void setAnchorPoint(const FloatPoint3D&) override;
     void setSize(const FloatSize&) override;

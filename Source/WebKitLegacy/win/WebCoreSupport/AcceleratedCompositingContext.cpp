@@ -97,7 +97,7 @@ void AcceleratedCompositingContext::initialize()
     m_nonCompositedContentLayer->setName("Non-composited content");
 #endif
 
-    m_rootLayer->addChild(m_nonCompositedContentLayer.get());
+    m_rootLayer->addChild(*m_nonCompositedContentLayer);
     m_nonCompositedContentLayer->setNeedsDisplay();
 
     // The creation of the TextureMapper needs an active OpenGL context.
@@ -211,7 +211,7 @@ void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graph
         return;
 
     m_nonCompositedContentLayer->removeAllChildren();
-    m_nonCompositedContentLayer->addChild(graphicsLayer);
+    m_nonCompositedContentLayer->addChild(*graphicsLayer);
 
     stopAnyPendingLayerFlush();
 

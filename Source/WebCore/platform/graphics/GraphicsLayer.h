@@ -230,8 +230,8 @@ protected:
 // GraphicsLayer is an abstraction for a rendering surface with backing store,
 // which may have associated transformation and animations.
 
-class GraphicsLayer {
-    WTF_MAKE_NONCOPYABLE(GraphicsLayer); WTF_MAKE_FAST_ALLOCATED;
+class GraphicsLayer : public RefCounted<GraphicsLayer> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type : uint8_t {
         Normal,
@@ -239,11 +239,19 @@ public:
         Scrolling,
         Shape
     };
-    
-    WEBCORE_EXPORT static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&, Type = Type::Normal);
+
+    WEBCORE_EXPORT static Ref<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&, Type = Type::Normal);
     
     WEBCORE_EXPORT virtual ~GraphicsLayer();
     
+    // Unparent, clear the client, and clear the RefPtr.
+    WEBCORE_EXPORT static void unparentAndClear(RefPtr<GraphicsLayer>&);
+    // Clear the client, and clear the RefPtr, but leave parented.
+    WEBCORE_EXPORT static void clear(RefPtr<GraphicsLayer>&);
+
+    WEBCORE_EXPORT void clearClient();
+    WEBCORE_EXPORT void setClient(GraphicsLayerClient&);
+
     Type type() const { return m_type; }
 
     virtual void initialize(Type) { }
@@ -251,7 +259,7 @@ public:
     using PlatformLayerID = uint64_t;
     virtual PlatformLayerID primaryLayerID() const { return 0; }
 
-    GraphicsLayerClient& client() const { return m_client; }
+    GraphicsLayerClient& client() const { return *m_client; }
 
     // Layer name. Only used to identify layers in debug output
     const String& name() const { return m_name; }
@@ -263,42 +271,35 @@ public:
     // Returns true if the layer has the given layer as an ancestor (excluding self).
     bool hasAncestor(GraphicsLayer*) const;
     
-    const Vector<GraphicsLayer*>& children() const { return m_children; }
-    // Returns true if the child list changed.
-    WEBCORE_EXPORT virtual bool setChildren(const Vector<GraphicsLayer*>&);
+    const Vector<Ref<GraphicsLayer>>& children() const { return m_children; }
+    Vector<Ref<GraphicsLayer>>& children() { return m_children; }
 
-    enum class ContentsLayerPurpose : uint8_t {
-        None = 0,
-        Image,
-        Media,
-        Canvas,
-        BackgroundColor,
-        Plugin
-    };
+    // Returns true if the child list changed.
+    WEBCORE_EXPORT virtual bool setChildren(Vector<Ref<GraphicsLayer>>&&);
 
     // Add child layers. If the child is already parented, it will be removed from its old parent.
-    WEBCORE_EXPORT virtual void addChild(GraphicsLayer*);
-    WEBCORE_EXPORT virtual void addChildAtIndex(GraphicsLayer*, int index);
-    WEBCORE_EXPORT virtual void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling);
-    WEBCORE_EXPORT virtual void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling);
-    WEBCORE_EXPORT virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild);
+    WEBCORE_EXPORT virtual void addChild(Ref<GraphicsLayer>&&);
+    WEBCORE_EXPORT virtual void addChildAtIndex(Ref<GraphicsLayer>&&, int index);
+    WEBCORE_EXPORT virtual void addChildAbove(Ref<GraphicsLayer>&&, GraphicsLayer* sibling);
+    WEBCORE_EXPORT virtual void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer* sibling);
+    WEBCORE_EXPORT virtual bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild);
 
     WEBCORE_EXPORT void removeAllChildren();
     WEBCORE_EXPORT virtual void removeFromParent();
 
     // The parent() of a maskLayer is set to the layer being masked.
-    GraphicsLayer* maskLayer() const { return m_maskLayer; }
-    virtual void setMaskLayer(GraphicsLayer*);
+    GraphicsLayer* maskLayer() const { return m_maskLayer.get(); }
+    virtual void setMaskLayer(RefPtr<GraphicsLayer>&&);
 
     void setIsMaskLayer(bool isMask) { m_isMaskLayer = isMask; }
     bool isMaskLayer() const { return m_isMaskLayer; }
     
     // The given layer will replicate this layer and its children; the replica renders behind this layer.
-    WEBCORE_EXPORT virtual void setReplicatedByLayer(GraphicsLayer*);
+    WEBCORE_EXPORT virtual void setReplicatedByLayer(RefPtr<GraphicsLayer>&&);
     // Whether this layer is being replicated by another layer.
     bool isReplicated() const { return m_replicaLayer; }
     // The layer that replicates this layer (if any).
-    GraphicsLayer* replicaLayer() const { return m_replicaLayer; }
+    GraphicsLayer* replicaLayer() const { return m_replicaLayer.get(); }
 
     const FloatPoint& replicatedLayerPosition() const { return m_replicatedLayerPosition; }
     void setReplicatedLayerPosition(const FloatPoint& p) { m_replicatedLayerPosition = p; }
@@ -466,6 +467,16 @@ public:
 #if PLATFORM(IOS)
     virtual PlatformLayer* contentsLayerForMedia() const { return 0; }
 #endif
+
+    enum class ContentsLayerPurpose : uint8_t {
+        None = 0,
+        Image,
+        Media,
+        Canvas,
+        BackgroundColor,
+        Plugin
+    };
+
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
@@ -520,8 +531,8 @@ public:
     virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
     virtual bool appliesPageScale() const { return m_appliesPageScale; }
 
-    float pageScaleFactor() const { return m_client.pageScaleFactor(); }
-    float deviceScaleFactor() const { return m_client.deviceScaleFactor(); }
+    float pageScaleFactor() const { return client().pageScaleFactor(); }
+    float deviceScaleFactor() const { return client().deviceScaleFactor(); }
     
     // Whether this layer is viewport constrained, implying that it's moved around externally from GraphicsLayer (e.g. by the scrolling tree).
     virtual void setIsViewportConstrained(bool) { }
@@ -591,6 +602,7 @@ protected:
 
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
     WEBCORE_EXPORT virtual void willBeDestroyed();
+    bool beingDestroyed() const { return m_beingDestroyed; }
 
     // This method is used by platform GraphicsLayer classes to clear the filters
     // when compositing is not done in hardware. It is not virtual, so the caller
@@ -621,7 +633,7 @@ protected:
 
     WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const;
 
-    GraphicsLayerClient& m_client;
+    GraphicsLayerClient* m_client; // Always non-null.
     String m_name;
     
     // Offset from the owning renderer
@@ -656,6 +668,7 @@ protected:
     GraphicsLayerPaintingPhase m_paintingPhase { GraphicsLayerPaintAllWithOverflowClip };
     CompositingCoordinatesOrientation m_contentsOrientation { CompositingCoordinatesOrientation::TopDown }; // affects orientation of layer contents
 
+    bool m_beingDestroyed : 1;
     bool m_contentsOpaque : 1;
     bool m_supportsSubpixelAntialiasedText : 1;
     bool m_preserves3D: 1;
@@ -675,12 +688,12 @@ protected:
 
     int m_repaintCount { 0 };
 
-    Vector<GraphicsLayer*> m_children;
+    Vector<Ref<GraphicsLayer>> m_children;
     GraphicsLayer* m_parent { nullptr };
 
-    GraphicsLayer* m_maskLayer { nullptr }; // Reference to mask layer. We don't own this.
+    RefPtr<GraphicsLayer> m_maskLayer { nullptr }; // Reference to mask layer.
 
-    GraphicsLayer* m_replicaLayer { nullptr }; // A layer that replicates this layer. We only allow one, for now.
+    RefPtr<GraphicsLayer> m_replicaLayer { nullptr }; // A layer that replicates this layer. We only allow one, for now.
                                    // The replica is not parented; this is the primary reference to it.
     GraphicsLayer* m_replicatedLayer { nullptr }; // For a replica layer, a reference to the original layer.
     FloatPoint m_replicatedLayerPosition; // For a replica layer, the position of the replica.

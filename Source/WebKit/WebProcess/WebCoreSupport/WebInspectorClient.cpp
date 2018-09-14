@@ -66,10 +66,10 @@ WebInspectorClient::WebInspectorClient(WebPage* page)
 
 WebInspectorClient::~WebInspectorClient()
 {
-    for (auto layer : m_paintRectLayers) {
+    for (auto& layer : m_paintRectLayers)
         layer->removeFromParent();
-        delete layer;
-    }
+    
+    m_paintRectLayers.clear();
 
     if (m_paintRectOverlay && m_page->corePage())
         m_page->corePage()->pageOverlayController().uninstallPageOverlay(*m_paintRectOverlay, PageOverlay::FadeMode::Fade);
@@ -152,7 +152,7 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
     if (!m_paintIndicatorLayerClient)
         m_paintIndicatorLayerClient = std::make_unique<RepaintIndicatorLayerClient>(*this);
 
-    std::unique_ptr<GraphicsLayer> paintLayer = GraphicsLayer::create(m_page->drawingArea()->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
+    auto paintLayer = GraphicsLayer::create(m_page->drawingArea()->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
     
     paintLayer->setName("paint rect");
     paintLayer->setAnchorPoint(FloatPoint3D());
@@ -165,22 +165,23 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
 
     fadeKeyframes.insert(std::make_unique<FloatAnimationValue>(0.25, 0));
     
-    RefPtr<Animation> opacityAnimation = Animation::create();
+    auto opacityAnimation = Animation::create();
     opacityAnimation->setDuration(0.25);
 
-    paintLayer->addAnimation(fadeKeyframes, FloatSize(), opacityAnimation.get(), "opacity"_s, 0);
+    paintLayer->addAnimation(fadeKeyframes, FloatSize(), opacityAnimation.ptr(), "opacity"_s, 0);
     
-    m_paintRectLayers.add(paintLayer.get());
+    GraphicsLayer& rawLayer = paintLayer.get();
+    m_paintRectLayers.add(WTFMove(paintLayer));
 
     GraphicsLayer& overlayRootLayer = m_paintRectOverlay->layer();
-    overlayRootLayer.addChild(paintLayer.release());
+    overlayRootLayer.addChild(rawLayer);
 }
 
 void WebInspectorClient::animationEndedForLayer(const GraphicsLayer* layer)
 {
-    const_cast<GraphicsLayer*>(layer)->removeFromParent();
-    m_paintRectLayers.remove(const_cast<GraphicsLayer*>(layer));
-    delete layer;
+    GraphicsLayer* nonConstLayer = const_cast<GraphicsLayer*>(layer);
+    nonConstLayer->removeFromParent();
+    m_paintRectLayers.remove(*nonConstLayer);
 }
 
 #if PLATFORM(IOS)

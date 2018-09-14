@@ -1,3 +1,135 @@
+2018-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Make GraphicsLayers ref-counted, so their tree can persist when disconnected from RenderLayerBackings
+        https://bugs.webkit.org/show_bug.cgi?id=189521
+
+        Reviewed by Tim Horton.
+        
+        Make GraphicsLayer be RefCounted<GraphicsLayer>. GraphicsLayers own their children, via a Vector<Ref<GraphicsLayer>>.
+        
+        RenderLayerBacking and other holders of GraphicsLayers use RefPtr<GraphicsLayer>.
+        
+        All the other changes are just to adapt to the new ownership patterns.
+        
+        I verified that no GraphicsLayers were leaked or abandoned after this change.
+
+        No behavior change.
+
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::layerWithDocumentOverlays):
+        (WebCore::PageOverlayController::layerWithViewOverlays):
+        (WebCore::PageOverlayController::installPageOverlay):
+        (WebCore::PageOverlayController::uninstallPageOverlay):
+        (WebCore::PageOverlayController::setPageOverlayNeedsDisplay):
+        (WebCore::PageOverlayController::didChangeViewSize):
+        (WebCore::PageOverlayController::didChangeDocumentSize):
+        (WebCore::PageOverlayController::didChangeSettings):
+        (WebCore::PageOverlayController::paintContents):
+        (WebCore::PageOverlayController::didChangeOverlayFrame):
+        (WebCore::PageOverlayController::didChangeOverlayBackgroundColor):
+        * page/PageOverlayController.h:
+        * page/mac/ServicesOverlayController.h:
+        (WebCore::ServicesOverlayController::Highlight::layer const):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::Highlight):
+        (WebCore::ServicesOverlayController::Highlight::invalidate):
+        (WebCore::ServicesOverlayController::Highlight::fadeIn):
+        (WebCore::ServicesOverlayController::Highlight::fadeOut):
+        (WebCore::ServicesOverlayController::Highlight::didFinishFadeOutAnimation):
+        (WebCore::ServicesOverlayController::determineActiveHighlight):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::willBeDestroyed):
+        (WebCore::GraphicsLayer::setChildren):
+        (WebCore::GraphicsLayer::addChild):
+        (WebCore::GraphicsLayer::addChildAtIndex):
+        (WebCore::GraphicsLayer::addChildBelow):
+        (WebCore::GraphicsLayer::addChildAbove):
+        (WebCore::GraphicsLayer::replaceChild):
+        (WebCore::GraphicsLayer::removeAllChildren):
+        (WebCore::GraphicsLayer::removeFromParent):
+        (WebCore::GraphicsLayer::setMaskLayer):
+        (WebCore::GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants):
+        (WebCore::GraphicsLayer::distributeOpacity):
+        (WebCore::GraphicsLayer::traverse):
+        (WebCore::dumpChildren):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::children const):
+        (WebCore::GraphicsLayer::children):
+        (WebCore::GraphicsLayer::maskLayer const):
+        (WebCore::GraphicsLayer::replicaLayer const):
+        (WebCore::GraphicsLayer::beingDestroyed const):
+        (WebCore::GraphicsLayer:: const): Deleted.
+        * platform/graphics/GraphicsLayerFactory.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayer::create):
+        (WebCore::GraphicsLayerCA::setChildren):
+        (WebCore::GraphicsLayerCA::addChild):
+        (WebCore::GraphicsLayerCA::addChildAtIndex):
+        (WebCore::GraphicsLayerCA::addChildBelow):
+        (WebCore::GraphicsLayerCA::addChildAbove):
+        (WebCore::GraphicsLayerCA::replaceChild):
+        (WebCore::GraphicsLayerCA::setMaskLayer):
+        (WebCore::GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush const):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayer::create):
+        (WebCore::GraphicsLayerTextureMapper::setChildren):
+        (WebCore::GraphicsLayerTextureMapper::addChild):
+        (WebCore::GraphicsLayerTextureMapper::addChildAtIndex):
+        (WebCore::GraphicsLayerTextureMapper::addChildAbove):
+        (WebCore::GraphicsLayerTextureMapper::addChildBelow):
+        (WebCore::GraphicsLayerTextureMapper::replaceChild):
+        (WebCore::GraphicsLayerTextureMapper::setMaskLayer):
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::create):
+        (WebCore::CoordinatedGraphicsLayer::setShouldUpdateVisibleRect):
+        (WebCore::CoordinatedGraphicsLayer::addChild):
+        (WebCore::CoordinatedGraphicsLayer::addChildAtIndex):
+        (WebCore::CoordinatedGraphicsLayer::addChildAbove):
+        (WebCore::CoordinatedGraphicsLayer::addChildBelow):
+        (WebCore::CoordinatedGraphicsLayer::replaceChild):
+        (WebCore::CoordinatedGraphicsLayer::setMaskLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers):
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffersIncludingSubLayers):
+        (WebCore::CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/win/GraphicsLayerDirect2D.cpp:
+        (WebCore::GraphicsLayer::create):
+        (WebCore::GraphicsLayerDirect2D::GraphicsLayerDirect2D): Deleted.
+        (WebCore::GraphicsLayerDirect2D::initialize): Deleted.
+        (WebCore::GraphicsLayerDirect2D::~GraphicsLayerDirect2D): Deleted.
+        (WebCore::GraphicsLayerDirect2D::setNeedsDisplay): Deleted.
+        (WebCore::GraphicsLayerDirect2D::setNeedsDisplayInRect): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateInternalHierarchy):
+        (WebCore::RenderLayerBacking::updateMaskingLayer):
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy):
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+        (WebCore::RenderLayerCompositor::setCompositingParent):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::parentFrameContentLayers):
+        (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+        * rendering/RenderLayerCompositor.h:
+
 2018-09-14  Eric Carlson  <eric.carlson@apple.com>
 
         Support arbitrary video resolution in getUserMedia API
