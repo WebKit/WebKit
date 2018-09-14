@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! @abstract Creates a new web view.
  @param webView The web view invoking the delegate method.
  @param configuration The configuration to use when creating the new web
- view.
+ view. This configuration is a copy of webView.configuration.
  @param navigationAction The navigation action causing the new web view to
  be created.
  @param windowFeatures Window features requested by the webpage.
