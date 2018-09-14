@@ -69,6 +69,8 @@ private:
     void curlDidComplete(WebCore::CurlRequest&) override;
     void curlDidFailWithError(WebCore::CurlRequest&, const WebCore::ResourceError&) override;
 
+    void invokeDidReceiveResponse();
+
     bool shouldRedirectAsGET(const WebCore::ResourceRequest&, bool crossOrigin);
     void willPerformHTTPRedirection();
 
@@ -85,6 +87,8 @@ private:
     WebCore::ResourceResponse m_response;
     unsigned m_redirectCount { 0 };
     unsigned m_authFailureCount { 0 };
+    bool m_didChallengeEmptyCredentialForAuth { false };
+    bool m_didChallengeEmptyCredentialForProxyAuth { false };
 };
 
 } // namespace WebKit

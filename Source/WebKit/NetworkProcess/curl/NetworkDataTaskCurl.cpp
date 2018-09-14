@@ -172,22 +172,7 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, const Cur
         return;
     }
 
-    didReceiveResponse(ResourceResponse(m_response), [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
-        if (m_state == State::Canceling || m_state == State::Completed)
-            return;
-
-        switch (policyAction) {
-        case PolicyAction::Use:
-            if (m_curlRequest)
-                m_curlRequest->completeDidReceiveResponse();
-            break;
-        case PolicyAction::Ignore:
-            break;
-        case PolicyAction::Download:
-            notImplemented();
-            break;
-        }
-    });
+    invokeDidReceiveResponse();
 }
 
 void NetworkDataTaskCurl::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&& buffer)
@@ -235,6 +220,26 @@ bool NetworkDataTaskCurl::shouldRedirectAsGET(const ResourceRequest& request, bo
         return true;
 
     return false;
+}
+
+void NetworkDataTaskCurl::invokeDidReceiveResponse()
+{
+    didReceiveResponse(ResourceResponse(m_response), [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
+        if (m_state == State::Canceling || m_state == State::Completed)
+            return;
+
+        switch (policyAction) {
+        case PolicyAction::Use:
+            if (m_curlRequest)
+                m_curlRequest->completeDidReceiveResponse();
+            break;
+        case PolicyAction::Ignore:
+            break;
+        case PolicyAction::Download:
+            notImplemented();
+            break;
+        }
+    });
 }
 
 void NetworkDataTaskCurl::willPerformHTTPRedirection()
@@ -353,14 +358,23 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
             return;
         }
 
-        if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty()) {
+        if (disposition == AuthenticationChallengeDisposition::UseCredential && (!credential.isEmpty() || !m_didChallengeEmptyCredentialForAuth)) {
+            // When "isAllowedToAskUserForCredentials" is false, an empty credential, which might cause
+            // an infinite authentication loop. To avoid such infinite loop, a HTTP authentication with empty
+            // user and password is processed only once.
+            if (credential.isEmpty())
+                m_didChallengeEmptyCredentialForAuth = true;
+
             if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
                 if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
                     m_session->networkStorageSession().credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
             }
+
+            restartWithCredential(credential);
+            return;
         }
 
-        restartWithCredential(credential);
+        invokeDidReceiveResponse();
     });
 }
 
@@ -376,11 +390,19 @@ void NetworkDataTaskCurl::tryProxyAuthentication(WebCore::AuthenticationChalleng
             return;
         }
 
-        CurlContext::singleton().setProxyUserPass(credential.user(), credential.password());
-        CurlContext::singleton().setDefaultProxyAuthMethod();
+        if (disposition == AuthenticationChallengeDisposition::UseCredential && (!credential.isEmpty() || !m_didChallengeEmptyCredentialForProxyAuth)) {
+            if (credential.isEmpty())
+                m_didChallengeEmptyCredentialForProxyAuth = true;
 
-        auto requestCredential = m_curlRequest ? Credential(m_curlRequest->user(), m_curlRequest->password(), CredentialPersistenceNone) : Credential();
-        restartWithCredential(requestCredential);
+            CurlContext::singleton().setProxyUserPass(credential.user(), credential.password());
+            CurlContext::singleton().setDefaultProxyAuthMethod();
+
+            auto requestCredential = m_curlRequest ? Credential(m_curlRequest->user(), m_curlRequest->password(), CredentialPersistenceNone) : Credential();
+            restartWithCredential(requestCredential);
+            return;
+        }
+
+        invokeDidReceiveResponse();
     });
 }
 
