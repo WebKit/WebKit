@@ -15,33 +15,14 @@ frames:
     0: activeTexture(1)
       swizzleTypes: [Number]
       trace:
-        0: activeTexture - [native code] (2)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:72:34 (5)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
-        3: performActions - inspector/canvas/recording-webgl.html:495:25 (9)
-        4: Global Code - [program code] (11)
-        5: evaluateWithScopeExtension - [native code] (13)
-        6: _evaluateOn (15)
-        7: _evaluateAndWrap (17)
-data:
-  0: "activeTexture"
-  1: "[native code]"
-  2: [0,1,0,0]
-  3: ""
-  4: "inspector/canvas/recording-webgl.html"
-  5: [3,4,73,34]
-  6: "executeFrameFunction"
-  7: [6,4,492,24]
-  8: "performActions"
-  9: [8,4,496,25]
-  10: "global code"
-  11: [10,3,1,15]
-  12: "evaluateWithScopeExtension"
-  13: [12,1,0,0]
-  14: "_evaluateOn"
-  15: [14,3,130,29]
-  16: "_evaluateAndWrap"
-  17: [16,3,124,108]
+        0: activeTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: performActions
+        4: Global Code
+        5: evaluateWithScopeExtension
+        6: _evaluateOn
+        7: _evaluateAndWrap
 
 -- Running test case: Canvas.recordingWebGL.multipleFrames
 initialState:
@@ -56,1408 +37,975 @@ frames:
     0: activeTexture(1)
       swizzleTypes: [Number]
       trace:
-        0: activeTexture - [native code] (2)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:72:34 (5)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
-        3: performActions - inspector/canvas/recording-webgl.html:495:25 (9)
-        4: Global Code - [program code] (11)
-        5: evaluateWithScopeExtension - [native code] (13)
-        6: _evaluateOn (15)
-        7: _evaluateAndWrap (17)
+        0: activeTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: performActions
+        4: Global Code
+        5: evaluateWithScopeExtension
+        6: _evaluateOn
+        7: _evaluateAndWrap
   1: (duration)
     0: attachShader(0, 0)
       swizzleTypes: [WebGLProgram, WebGLShader]
       trace:
-        0: attachShader - [native code] (19)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:75:33 (20)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: attachShader
+        1: (anonymous function)
+        2: executeFrameFunction
   2: (duration)
     0: bindAttribLocation(0, 1, "test")
-      swizzleTypes: [WebGLProgram, Number, String (22)]
+      swizzleTypes: [WebGLProgram, Number, String]
       trace:
-        0: bindAttribLocation - [native code] (23)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:78:39 (24)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: bindAttribLocation
+        1: (anonymous function)
+        2: executeFrameFunction
   3: (duration)
     0: bindBuffer(1, 0)
       swizzleTypes: [Number, WebGLBuffer]
       trace:
-        0: bindBuffer - [native code] (26)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:81:31 (27)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: bindBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   4: (duration)
     0: bindFramebuffer(1, 0)
       swizzleTypes: [Number, WebGLFramebuffer]
       trace:
-        0: bindFramebuffer - [native code] (29)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:84:36 (30)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: bindFramebuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   5: (duration)
     0: bindRenderbuffer(1, 0)
       swizzleTypes: [Number, WebGLRenderbuffer]
       trace:
-        0: bindRenderbuffer - [native code] (32)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:87:37 (33)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: bindRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   6: (duration)
     0: bindTexture(1, 0)
       swizzleTypes: [Number, WebGLTexture]
       trace:
-        0: bindTexture - [native code] (35)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:90:32 (36)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: bindTexture
+        1: (anonymous function)
+        2: executeFrameFunction
   7: (duration)
     0: blendColor(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: blendColor - [native code] (38)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:93:31 (39)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: blendColor
+        1: (anonymous function)
+        2: executeFrameFunction
   8: (duration)
     0: blendEquation(1)
       swizzleTypes: [Number]
       trace:
-        0: blendEquation - [native code] (41)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:96:34 (42)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: blendEquation
+        1: (anonymous function)
+        2: executeFrameFunction
   9: (duration)
     0: blendEquationSeparate(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: blendEquationSeparate - [native code] (44)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:99:42 (45)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: blendEquationSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
   10: (duration)
     0: blendFunc(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: blendFunc - [native code] (47)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:102:30 (48)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: blendFunc
+        1: (anonymous function)
+        2: executeFrameFunction
   11: (duration)
     0: blendFuncSeparate(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: blendFuncSeparate - [native code] (50)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:105:38 (51)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: blendFuncSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
   12: (duration)
     0: bufferData(1, 0, 2)
       swizzleTypes: [Number, TypedArray, Number]
       trace:
-        0: bufferData - [native code] (53)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:108:31 (54)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: bufferData
+        1: (anonymous function)
+        2: executeFrameFunction
     1: bufferData(3, 4, 5)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: bufferData - [native code] (53)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:109:31 (55)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: bufferData
+        1: (anonymous function)
+        2: executeFrameFunction
   13: (duration)
     0: bufferSubData(1, 2, 0)
       swizzleTypes: [Number, Number, TypedArray]
       trace:
-        0: bufferSubData - [native code] (57)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:112:34 (58)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: bufferSubData
+        1: (anonymous function)
+        2: executeFrameFunction
   14: (duration)
     0: checkFramebufferStatus(1)
       swizzleTypes: [Number]
       trace:
-        0: checkFramebufferStatus - [native code] (60)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:115:43 (61)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: checkFramebufferStatus
+        1: (anonymous function)
+        2: executeFrameFunction
   15: (duration)
     0: clear(1)
       swizzleTypes: [Number]
       trace:
-        0: clear - [native code] (63)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:118:26 (64)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC" (65)
+        0: clear
+        1: (anonymous function)
+        2: executeFrameFunction
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
   16: (duration)
     0: clearColor(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: clearColor - [native code] (67)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:121:31 (68)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: clearColor
+        1: (anonymous function)
+        2: executeFrameFunction
   17: (duration)
     0: clearDepth(1)
       swizzleTypes: [Number]
       trace:
-        0: clearDepth - [native code] (70)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:124:31 (71)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: clearDepth
+        1: (anonymous function)
+        2: executeFrameFunction
   18: (duration)
     0: clearStencil(1)
       swizzleTypes: [Number]
       trace:
-        0: clearStencil - [native code] (73)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:127:33 (74)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: clearStencil
+        1: (anonymous function)
+        2: executeFrameFunction
   19: (duration)
     0: colorMask(true, false, true, false)
       swizzleTypes: [Boolean, Boolean, Boolean, Boolean]
       trace:
-        0: colorMask - [native code] (76)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:130:30 (77)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: colorMask
+        1: (anonymous function)
+        2: executeFrameFunction
   20: (duration)
     0: compileShader(0)
       swizzleTypes: [WebGLShader]
       trace:
-        0: compileShader - [native code] (79)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:133:34 (80)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: compileShader
+        1: (anonymous function)
+        2: executeFrameFunction
   21: (duration)
     0: compressedTexImage2D(1, 2, 3, 4, 5, 6, 0)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, TypedArray]
       trace:
-        0: compressedTexImage2D - [native code] (82)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:136:41 (83)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: compressedTexImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
   22: (duration)
     0: compressedTexSubImage2D(1, 2, 3, 4, 5, 6, 7, 0)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, TypedArray]
       trace:
-        0: compressedTexSubImage2D - [native code] (85)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:139:44 (86)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: compressedTexSubImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
   23: (duration)
     0: copyTexImage2D(1, 2, 3, 4, 5, 6, 7, 8)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number]
       trace:
-        0: copyTexImage2D - [native code] (88)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:142:35 (89)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: copyTexImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
   24: (duration)
     0: copyTexSubImage2D(1, 2, 3, 4, 5, 6, 7, 8)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number]
       trace:
-        0: copyTexSubImage2D - [native code] (91)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:145:38 (92)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: copyTexSubImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
   25: (duration)
     0: createBuffer()
       trace:
-        0: createBuffer - [native code] (94)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:148:33 (95)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: createBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   26: (duration)
     0: createFramebuffer()
       trace:
-        0: createFramebuffer - [native code] (97)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:151:38 (98)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: createFramebuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   27: (duration)
     0: createProgram()
       trace:
-        0: createProgram - [native code] (100)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:154:34 (101)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: createProgram
+        1: (anonymous function)
+        2: executeFrameFunction
   28: (duration)
     0: createRenderbuffer()
       trace:
-        0: createRenderbuffer - [native code] (103)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:157:39 (104)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: createRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   29: (duration)
     0: createShader(1)
       swizzleTypes: [Number]
       trace:
-        0: createShader - [native code] (106)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:160:33 (107)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: createShader
+        1: (anonymous function)
+        2: executeFrameFunction
   30: (duration)
     0: createTexture()
       trace:
-        0: createTexture - [native code] (109)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:163:34 (110)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: createTexture
+        1: (anonymous function)
+        2: executeFrameFunction
   31: (duration)
     0: cullFace(1)
       swizzleTypes: [Number]
       trace:
-        0: cullFace - [native code] (112)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:166:29 (113)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: cullFace
+        1: (anonymous function)
+        2: executeFrameFunction
   32: (duration)
     0: deleteBuffer(0)
       swizzleTypes: [WebGLBuffer]
       trace:
-        0: deleteBuffer - [native code] (115)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:169:33 (116)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: deleteBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   33: (duration)
     0: deleteFramebuffer(0)
       swizzleTypes: [WebGLFramebuffer]
       trace:
-        0: deleteFramebuffer - [native code] (118)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:172:38 (119)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: deleteFramebuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   34: (duration)
     0: deleteProgram(0)
       swizzleTypes: [WebGLProgram]
       trace:
-        0: deleteProgram - [native code] (121)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:175:34 (122)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: deleteProgram
+        1: (anonymous function)
+        2: executeFrameFunction
   35: (duration)
     0: deleteRenderbuffer(0)
       swizzleTypes: [WebGLRenderbuffer]
       trace:
-        0: deleteRenderbuffer - [native code] (124)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:178:39 (125)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: deleteRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   36: (duration)
     0: deleteShader(0)
       swizzleTypes: [WebGLShader]
       trace:
-        0: deleteShader - [native code] (127)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:181:33 (128)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: deleteShader
+        1: (anonymous function)
+        2: executeFrameFunction
   37: (duration)
     0: deleteTexture(0)
       swizzleTypes: [WebGLTexture]
       trace:
-        0: deleteTexture - [native code] (130)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:184:34 (131)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: deleteTexture
+        1: (anonymous function)
+        2: executeFrameFunction
   38: (duration)
     0: depthFunc(1)
       swizzleTypes: [Number]
       trace:
-        0: depthFunc - [native code] (133)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:187:30 (134)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: depthFunc
+        1: (anonymous function)
+        2: executeFrameFunction
   39: (duration)
     0: depthMask(true)
       swizzleTypes: [Boolean]
       trace:
-        0: depthMask - [native code] (136)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:190:30 (137)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: depthMask
+        1: (anonymous function)
+        2: executeFrameFunction
   40: (duration)
     0: depthRange(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: depthRange - [native code] (139)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:193:31 (140)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: depthRange
+        1: (anonymous function)
+        2: executeFrameFunction
   41: (duration)
     0: detachShader(0, 0)
       swizzleTypes: [WebGLProgram, WebGLShader]
       trace:
-        0: detachShader - [native code] (142)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:196:33 (143)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: detachShader
+        1: (anonymous function)
+        2: executeFrameFunction
   42: (duration)
     0: disable(1)
       swizzleTypes: [Number]
       trace:
-        0: disable - [native code] (145)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:199:28 (146)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: disable
+        1: (anonymous function)
+        2: executeFrameFunction
   43: (duration)
     0: disableVertexAttribArray(1)
       swizzleTypes: [Number]
       trace:
-        0: disableVertexAttribArray - [native code] (148)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:202:45 (149)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: disableVertexAttribArray
+        1: (anonymous function)
+        2: executeFrameFunction
   44: (duration)
     0: drawArrays(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: drawArrays - [native code] (151)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:205:31 (152)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC" (65)
+        0: drawArrays
+        1: (anonymous function)
+        2: executeFrameFunction
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
   45: (duration)
     0: drawElements(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: drawElements - [native code] (154)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:208:33 (155)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC" (65)
+        0: drawElements
+        1: (anonymous function)
+        2: executeFrameFunction
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
   46: (duration)
     0: enable(1)
       swizzleTypes: [Number]
       trace:
-        0: enable - [native code] (157)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:211:27 (158)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: enable
+        1: (anonymous function)
+        2: executeFrameFunction
   47: (duration)
     0: enableVertexAttribArray(1)
       swizzleTypes: [Number]
       trace:
-        0: enableVertexAttribArray - [native code] (160)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:214:44 (161)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: enableVertexAttribArray
+        1: (anonymous function)
+        2: executeFrameFunction
   48: (duration)
     0: finish()
       trace:
-        0: finish - [native code] (163)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:217:27 (164)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: finish
+        1: (anonymous function)
+        2: executeFrameFunction
   49: (duration)
     0: flush()
       trace:
-        0: flush - [native code] (166)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:220:26 (167)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: flush
+        1: (anonymous function)
+        2: executeFrameFunction
   50: (duration)
     0: framebufferRenderbuffer(1, 2, 3, 0)
       swizzleTypes: [Number, Number, Number, WebGLRenderbuffer]
       trace:
-        0: framebufferRenderbuffer - [native code] (169)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:223:44 (170)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: framebufferRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   51: (duration)
     0: framebufferTexture2D(1, 2, 3, 0, 4)
       swizzleTypes: [Number, Number, Number, WebGLTexture, Number]
       trace:
-        0: framebufferTexture2D - [native code] (172)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:226:41 (173)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: framebufferTexture2D
+        1: (anonymous function)
+        2: executeFrameFunction
   52: (duration)
     0: frontFace(1)
       swizzleTypes: [Number]
       trace:
-        0: frontFace - [native code] (175)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:229:30 (176)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: frontFace
+        1: (anonymous function)
+        2: executeFrameFunction
   53: (duration)
     0: generateMipmap(1)
       swizzleTypes: [Number]
       trace:
-        0: generateMipmap - [native code] (178)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:232:35 (179)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: generateMipmap
+        1: (anonymous function)
+        2: executeFrameFunction
   54: (duration)
     0: getActiveAttrib(0, 1)
       swizzleTypes: [WebGLProgram, Number]
       trace:
-        0: getActiveAttrib - [native code] (181)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:235:36 (182)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getActiveAttrib
+        1: (anonymous function)
+        2: executeFrameFunction
   55: (duration)
     0: getActiveUniform(0, 1)
       swizzleTypes: [WebGLProgram, Number]
       trace:
-        0: getActiveUniform - [native code] (184)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:238:37 (185)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getActiveUniform
+        1: (anonymous function)
+        2: executeFrameFunction
   56: (duration)
     0: getAttachedShaders(0)
       swizzleTypes: [WebGLProgram]
       trace:
-        0: getAttachedShaders - [native code] (187)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:241:39 (188)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getAttachedShaders
+        1: (anonymous function)
+        2: executeFrameFunction
   57: (duration)
     0: getAttribLocation(0, "test")
-      swizzleTypes: [WebGLProgram, String (22)]
+      swizzleTypes: [WebGLProgram, String]
       trace:
-        0: getAttribLocation - [native code] (190)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:244:38 (191)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getAttribLocation
+        1: (anonymous function)
+        2: executeFrameFunction
   58: (duration)
     0: getBufferParameter(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: getBufferParameter - [native code] (193)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:247:39 (194)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getBufferParameter
+        1: (anonymous function)
+        2: executeFrameFunction
   59: (duration)
     0: getContextAttributes()
       trace:
-        0: getContextAttributes - [native code] (196)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:250:41 (197)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getContextAttributes
+        1: (anonymous function)
+        2: executeFrameFunction
   60: (duration)
     0: getError()
       trace:
-        0: getError - [native code] (199)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:253:29 (200)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getError
+        1: (anonymous function)
+        2: executeFrameFunction
   61: (duration)
     0: getExtension("test")
-      swizzleTypes: [String (22)]
+      swizzleTypes: [String]
       trace:
-        0: getExtension - [native code] (202)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:256:33 (203)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getExtension
+        1: (anonymous function)
+        2: executeFrameFunction
   62: (duration)
     0: getFramebufferAttachmentParameter(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: getFramebufferAttachmentParameter - [native code] (205)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:259:54 (206)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getFramebufferAttachmentParameter
+        1: (anonymous function)
+        2: executeFrameFunction
   63: (duration)
     0: getParameter(1)
       swizzleTypes: [Number]
       trace:
-        0: getParameter - [native code] (208)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:262:33 (209)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getParameter
+        1: (anonymous function)
+        2: executeFrameFunction
   64: (duration)
     0: getProgramInfoLog(0)
       swizzleTypes: [WebGLProgram]
       trace:
-        0: getProgramInfoLog - [native code] (211)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:265:38 (212)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getProgramInfoLog
+        1: (anonymous function)
+        2: executeFrameFunction
   65: (duration)
     0: getProgramParameter(0, 1)
       swizzleTypes: [WebGLProgram, Number]
       trace:
-        0: getProgramParameter - [native code] (214)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:268:40 (215)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getProgramParameter
+        1: (anonymous function)
+        2: executeFrameFunction
   66: (duration)
     0: getRenderbufferParameter(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: getRenderbufferParameter - [native code] (217)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:271:45 (218)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getRenderbufferParameter
+        1: (anonymous function)
+        2: executeFrameFunction
   67: (duration)
     0: getShaderInfoLog(0)
       swizzleTypes: [WebGLShader]
       trace:
-        0: getShaderInfoLog - [native code] (220)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:274:37 (221)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getShaderInfoLog
+        1: (anonymous function)
+        2: executeFrameFunction
   68: (duration)
     0: getShaderParameter(0, 1)
       swizzleTypes: [WebGLShader, Number]
       trace:
-        0: getShaderParameter - [native code] (223)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:277:39 (224)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getShaderParameter
+        1: (anonymous function)
+        2: executeFrameFunction
   69: (duration)
     0: getShaderPrecisionFormat(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: getShaderPrecisionFormat - [native code] (226)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:280:45 (227)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getShaderPrecisionFormat
+        1: (anonymous function)
+        2: executeFrameFunction
   70: (duration)
     0: getShaderSource(0)
       swizzleTypes: [WebGLShader]
       trace:
-        0: getShaderSource - [native code] (229)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:283:36 (230)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getShaderSource
+        1: (anonymous function)
+        2: executeFrameFunction
   71: (duration)
     0: getSupportedExtensions()
       trace:
-        0: getSupportedExtensions - [native code] (232)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:286:43 (233)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getSupportedExtensions
+        1: (anonymous function)
+        2: executeFrameFunction
   72: (duration)
     0: getTexParameter(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: getTexParameter - [native code] (235)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:289:36 (236)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getTexParameter
+        1: (anonymous function)
+        2: executeFrameFunction
   73: (duration)
     0: getUniform(0)
       swizzleTypes: [WebGLProgram]
       trace:
-        0: getUniform - [native code] (238)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:292:31 (239)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getUniform
+        1: (anonymous function)
+        2: executeFrameFunction
   74: (duration)
     0: getUniformLocation(0, "test")
-      swizzleTypes: [WebGLProgram, String (22)]
+      swizzleTypes: [WebGLProgram, String]
       trace:
-        0: getUniformLocation - [native code] (241)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:295:39 (242)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getUniformLocation
+        1: (anonymous function)
+        2: executeFrameFunction
   75: (duration)
     0: getVertexAttrib(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: getVertexAttrib - [native code] (244)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:298:36 (245)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getVertexAttrib
+        1: (anonymous function)
+        2: executeFrameFunction
   76: (duration)
     0: getVertexAttribOffset(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: getVertexAttribOffset - [native code] (247)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:301:42 (248)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: getVertexAttribOffset
+        1: (anonymous function)
+        2: executeFrameFunction
   77: (duration)
     0: hint(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: hint - [native code] (250)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:304:25 (251)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: hint
+        1: (anonymous function)
+        2: executeFrameFunction
   78: (duration)
     0: isBuffer(0)
       swizzleTypes: [WebGLBuffer]
       trace:
-        0: isBuffer - [native code] (253)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:307:29 (254)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: isBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   79: (duration)
     0: isContextLost()
       trace:
-        0: isContextLost - [native code] (256)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:310:34 (257)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: isContextLost
+        1: (anonymous function)
+        2: executeFrameFunction
   80: (duration)
     0: isEnabled(1)
       swizzleTypes: [Number]
       trace:
-        0: isEnabled - [native code] (259)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:313:30 (260)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: isEnabled
+        1: (anonymous function)
+        2: executeFrameFunction
   81: (duration)
     0: isFramebuffer(0)
       swizzleTypes: [WebGLFramebuffer]
       trace:
-        0: isFramebuffer - [native code] (262)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:316:34 (263)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: isFramebuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   82: (duration)
     0: isProgram(0)
       swizzleTypes: [WebGLProgram]
       trace:
-        0: isProgram - [native code] (265)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:319:30 (266)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: isProgram
+        1: (anonymous function)
+        2: executeFrameFunction
   83: (duration)
     0: isRenderbuffer(0)
       swizzleTypes: [WebGLRenderbuffer]
       trace:
-        0: isRenderbuffer - [native code] (268)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:322:35 (269)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: isRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
   84: (duration)
     0: isShader(0)
       swizzleTypes: [WebGLShader]
       trace:
-        0: isShader - [native code] (271)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:325:29 (272)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: isShader
+        1: (anonymous function)
+        2: executeFrameFunction
   85: (duration)
     0: isTexture(0)
       swizzleTypes: [WebGLTexture]
       trace:
-        0: isTexture - [native code] (274)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:328:30 (275)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: isTexture
+        1: (anonymous function)
+        2: executeFrameFunction
   86: (duration)
     0: lineWidth(1)
       swizzleTypes: [Number]
       trace:
-        0: lineWidth - [native code] (277)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:331:30 (278)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: lineWidth
+        1: (anonymous function)
+        2: executeFrameFunction
   87: (duration)
     0: linkProgram(0)
       swizzleTypes: [WebGLProgram]
       trace:
-        0: linkProgram - [native code] (280)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:334:32 (281)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: linkProgram
+        1: (anonymous function)
+        2: executeFrameFunction
   88: (duration)
     0: pixelStorei(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: pixelStorei - [native code] (283)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:337:32 (284)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: pixelStorei
+        1: (anonymous function)
+        2: executeFrameFunction
   89: (duration)
     0: polygonOffset(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: polygonOffset - [native code] (286)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:340:34 (287)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: polygonOffset
+        1: (anonymous function)
+        2: executeFrameFunction
   90: (duration)
     0: readPixels(1, 2, 3, 4, 5, 6, 0)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, TypedArray]
       trace:
-        0: readPixels - [native code] (289)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:343:31 (290)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: readPixels
+        1: (anonymous function)
+        2: executeFrameFunction
   91: (duration)
     0: releaseShaderCompiler()
       trace:
-        0: releaseShaderCompiler - [native code] (292)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:346:42 (293)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: releaseShaderCompiler
+        1: (anonymous function)
+        2: executeFrameFunction
   92: (duration)
     0: renderbufferStorage(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: renderbufferStorage - [native code] (295)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:349:40 (296)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: renderbufferStorage
+        1: (anonymous function)
+        2: executeFrameFunction
   93: (duration)
     0: sampleCoverage(1, true)
       swizzleTypes: [Number, Boolean]
       trace:
-        0: sampleCoverage - [native code] (298)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:352:35 (299)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: sampleCoverage
+        1: (anonymous function)
+        2: executeFrameFunction
   94: (duration)
     0: scissor(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: scissor - [native code] (301)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:355:28 (302)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: scissor
+        1: (anonymous function)
+        2: executeFrameFunction
   95: (duration)
     0: shaderSource(0, "test")
-      swizzleTypes: [WebGLShader, String (22)]
+      swizzleTypes: [WebGLShader, String]
       trace:
-        0: shaderSource - [native code] (304)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:358:33 (305)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: shaderSource
+        1: (anonymous function)
+        2: executeFrameFunction
   96: (duration)
     0: stencilFunc(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: stencilFunc - [native code] (307)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:361:32 (308)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: stencilFunc
+        1: (anonymous function)
+        2: executeFrameFunction
   97: (duration)
     0: stencilFuncSeparate(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: stencilFuncSeparate - [native code] (310)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:364:40 (311)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: stencilFuncSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
   98: (duration)
     0: stencilMask(1)
       swizzleTypes: [Number]
       trace:
-        0: stencilMask - [native code] (313)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:367:32 (314)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: stencilMask
+        1: (anonymous function)
+        2: executeFrameFunction
   99: (duration)
     0: stencilMaskSeparate(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: stencilMaskSeparate - [native code] (316)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:370:40 (317)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: stencilMaskSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
   100: (duration)
     0: stencilOp(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: stencilOp - [native code] (319)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:373:30 (320)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: stencilOp
+        1: (anonymous function)
+        2: executeFrameFunction
   101: (duration)
     0: stencilOpSeparate(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: stencilOpSeparate - [native code] (322)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:376:38 (323)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: stencilOpSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
   102: (duration)
     0: texImage2D(1, 2, 3, 4, 5, [object HTMLImageElement])
-      swizzleTypes: [Number, Number, Number, Number, Number, Image (325)]
+      swizzleTypes: [Number, Number, Number, Number, Number, Image]
       trace:
-        0: texImage2D - [native code] (326)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:379:31 (327)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: texImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
     1: texImage2D(6, 7, 8, 9, 10, 11, 12, 13, 0)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number, TypedArray]
       trace:
-        0: texImage2D - [native code] (326)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:380:31 (328)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: texImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
   103: (duration)
     0: texParameterf(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: texParameterf - [native code] (330)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:383:34 (331)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: texParameterf
+        1: (anonymous function)
+        2: executeFrameFunction
   104: (duration)
     0: texParameteri(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: texParameteri - [native code] (333)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:386:34 (334)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: texParameteri
+        1: (anonymous function)
+        2: executeFrameFunction
   105: (duration)
     0: texSubImage2D(1, 2, 3, 4, 5, 6, [object HTMLImageElement])
-      swizzleTypes: [Number, Number, Number, Number, Number, Number, Image (325)]
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Image]
       trace:
-        0: texSubImage2D - [native code] (336)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:389:34 (337)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: texSubImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
     1: texSubImage2D(7, 8, 9, 10, 11, 12, 13, 14, 0)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number, TypedArray]
       trace:
-        0: texSubImage2D - [native code] (336)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:390:34 (338)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: texSubImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
   106: (duration)
     0: uniform1f(1)
       swizzleTypes: [Number]
       trace:
-        0: uniform1f - [native code] (340)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:393:30 (341)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform1f
+        1: (anonymous function)
+        2: executeFrameFunction
   107: (duration)
     0: uniform1fv(0)
       swizzleTypes: [TypedArray]
       trace:
-        0: uniform1fv - [native code] (343)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:396:31 (344)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform1fv
+        1: (anonymous function)
+        2: executeFrameFunction
   108: (duration)
     0: uniform1i(1)
       swizzleTypes: [Number]
       trace:
-        0: uniform1i - [native code] (346)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:399:30 (347)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform1i
+        1: (anonymous function)
+        2: executeFrameFunction
   109: (duration)
     0: uniform1iv(0)
       swizzleTypes: [TypedArray]
       trace:
-        0: uniform1iv - [native code] (349)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:402:31 (350)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform1iv
+        1: (anonymous function)
+        2: executeFrameFunction
   110: (duration)
     0: uniform2f(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: uniform2f - [native code] (352)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:405:30 (353)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform2f
+        1: (anonymous function)
+        2: executeFrameFunction
   111: (duration)
     0: uniform2fv(0)
       swizzleTypes: [TypedArray]
       trace:
-        0: uniform2fv - [native code] (355)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:408:31 (356)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform2fv
+        1: (anonymous function)
+        2: executeFrameFunction
   112: (duration)
     0: uniform2i(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: uniform2i - [native code] (358)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:411:30 (359)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform2i
+        1: (anonymous function)
+        2: executeFrameFunction
   113: (duration)
     0: uniform2iv(0)
       swizzleTypes: [TypedArray]
       trace:
-        0: uniform2iv - [native code] (361)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:414:31 (362)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform2iv
+        1: (anonymous function)
+        2: executeFrameFunction
   114: (duration)
     0: uniform3f(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: uniform3f - [native code] (364)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:417:30 (365)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform3f
+        1: (anonymous function)
+        2: executeFrameFunction
   115: (duration)
     0: uniform3fv(0)
       swizzleTypes: [TypedArray]
       trace:
-        0: uniform3fv - [native code] (367)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:420:31 (368)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform3fv
+        1: (anonymous function)
+        2: executeFrameFunction
   116: (duration)
     0: uniform3i(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: uniform3i - [native code] (370)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:423:30 (371)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform3i
+        1: (anonymous function)
+        2: executeFrameFunction
   117: (duration)
     0: uniform3iv(0)
       swizzleTypes: [TypedArray]
       trace:
-        0: uniform3iv - [native code] (373)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:426:31 (374)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform3iv
+        1: (anonymous function)
+        2: executeFrameFunction
   118: (duration)
     0: uniform4f(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: uniform4f - [native code] (376)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:429:30 (377)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform4f
+        1: (anonymous function)
+        2: executeFrameFunction
   119: (duration)
     0: uniform4fv(0)
       swizzleTypes: [TypedArray]
       trace:
-        0: uniform4fv - [native code] (379)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:432:31 (380)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform4fv
+        1: (anonymous function)
+        2: executeFrameFunction
   120: (duration)
     0: uniform4i(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: uniform4i - [native code] (382)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:435:30 (383)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform4i
+        1: (anonymous function)
+        2: executeFrameFunction
   121: (duration)
     0: uniform4iv(0)
       swizzleTypes: [TypedArray]
       trace:
-        0: uniform4iv - [native code] (385)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:438:31 (386)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniform4iv
+        1: (anonymous function)
+        2: executeFrameFunction
   122: (duration)
     0: uniformMatrix2fv(true, 0)
       swizzleTypes: [Boolean, TypedArray]
       trace:
-        0: uniformMatrix2fv - [native code] (388)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:441:37 (389)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniformMatrix2fv
+        1: (anonymous function)
+        2: executeFrameFunction
   123: (duration)
     0: uniformMatrix3fv(true, 0)
       swizzleTypes: [Boolean, TypedArray]
       trace:
-        0: uniformMatrix3fv - [native code] (391)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:444:37 (392)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniformMatrix3fv
+        1: (anonymous function)
+        2: executeFrameFunction
   124: (duration)
     0: uniformMatrix4fv(true, 0)
       swizzleTypes: [Boolean, TypedArray]
       trace:
-        0: uniformMatrix4fv - [native code] (394)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:447:37 (395)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: uniformMatrix4fv
+        1: (anonymous function)
+        2: executeFrameFunction
   125: (duration)
     0: useProgram(0)
       swizzleTypes: [WebGLProgram]
       trace:
-        0: useProgram - [native code] (397)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:450:31 (398)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: useProgram
+        1: (anonymous function)
+        2: executeFrameFunction
   126: (duration)
     0: validateProgram(0)
       swizzleTypes: [WebGLProgram]
       trace:
-        0: validateProgram - [native code] (400)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:453:36 (401)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: validateProgram
+        1: (anonymous function)
+        2: executeFrameFunction
   127: (duration)
     0: vertexAttrib1f(1, 2)
       swizzleTypes: [Number, Number]
       trace:
-        0: vertexAttrib1f - [native code] (403)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:456:35 (404)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttrib1f
+        1: (anonymous function)
+        2: executeFrameFunction
   128: (duration)
     0: vertexAttrib1fv(1, 0)
       swizzleTypes: [Number, TypedArray]
       trace:
-        0: vertexAttrib1fv - [native code] (406)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:459:36 (407)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttrib1fv
+        1: (anonymous function)
+        2: executeFrameFunction
   129: (duration)
     0: vertexAttrib2f(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
-        0: vertexAttrib2f - [native code] (409)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:462:35 (410)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttrib2f
+        1: (anonymous function)
+        2: executeFrameFunction
   130: (duration)
     0: vertexAttrib2fv(1, 0)
       swizzleTypes: [Number, TypedArray]
       trace:
-        0: vertexAttrib2fv - [native code] (412)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:465:36 (413)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttrib2fv
+        1: (anonymous function)
+        2: executeFrameFunction
   131: (duration)
     0: vertexAttrib3f(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: vertexAttrib3f - [native code] (415)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:468:35 (416)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttrib3f
+        1: (anonymous function)
+        2: executeFrameFunction
   132: (duration)
     0: vertexAttrib3fv(1, 0)
       swizzleTypes: [Number, TypedArray]
       trace:
-        0: vertexAttrib3fv - [native code] (418)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:471:36 (419)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttrib3fv
+        1: (anonymous function)
+        2: executeFrameFunction
   133: (duration)
     0: vertexAttrib4f(1, 2, 3, 4, 5)
       swizzleTypes: [Number, Number, Number, Number, Number]
       trace:
-        0: vertexAttrib4f - [native code] (421)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:474:35 (422)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttrib4f
+        1: (anonymous function)
+        2: executeFrameFunction
   134: (duration)
     0: vertexAttrib4fv(1, 0)
       swizzleTypes: [Number, TypedArray]
       trace:
-        0: vertexAttrib4fv - [native code] (424)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:477:36 (425)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttrib4fv
+        1: (anonymous function)
+        2: executeFrameFunction
   135: (duration)
     0: vertexAttribPointer(1, 2, 3, true, 5, 6)
       swizzleTypes: [Number, Number, Number, Boolean, Number, Number]
       trace:
-        0: vertexAttribPointer - [native code] (427)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:480:40 (428)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
+        0: vertexAttribPointer
+        1: (anonymous function)
+        2: executeFrameFunction
   136: (duration)
     0: viewport(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
-        0: viewport - [native code] (430)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:483:29 (431)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
-data:
-  0: "activeTexture"
-  1: "[native code]"
-  2: [0,1,0,0]
-  3: ""
-  4: "inspector/canvas/recording-webgl.html"
-  5: [3,4,73,34]
-  6: "executeFrameFunction"
-  7: [6,4,492,24]
-  8: "performActions"
-  9: [8,4,496,25]
-  10: "global code"
-  11: [10,3,1,15]
-  12: "evaluateWithScopeExtension"
-  13: [12,1,0,0]
-  14: "_evaluateOn"
-  15: [14,3,130,29]
-  16: "_evaluateAndWrap"
-  17: [16,3,124,108]
-  18: "attachShader"
-  19: [18,1,0,0]
-  20: [3,4,76,33]
-  21: "bindAttribLocation"
-  22: "test"
-  23: [21,1,0,0]
-  24: [3,4,79,39]
-  25: "bindBuffer"
-  26: [25,1,0,0]
-  27: [3,4,82,31]
-  28: "bindFramebuffer"
-  29: [28,1,0,0]
-  30: [3,4,85,36]
-  31: "bindRenderbuffer"
-  32: [31,1,0,0]
-  33: [3,4,88,37]
-  34: "bindTexture"
-  35: [34,1,0,0]
-  36: [3,4,91,32]
-  37: "blendColor"
-  38: [37,1,0,0]
-  39: [3,4,94,31]
-  40: "blendEquation"
-  41: [40,1,0,0]
-  42: [3,4,97,34]
-  43: "blendEquationSeparate"
-  44: [43,1,0,0]
-  45: [3,4,100,42]
-  46: "blendFunc"
-  47: [46,1,0,0]
-  48: [3,4,103,30]
-  49: "blendFuncSeparate"
-  50: [49,1,0,0]
-  51: [3,4,106,38]
-  52: "bufferData"
-  53: [52,1,0,0]
-  54: [3,4,109,31]
-  55: [3,4,110,31]
-  56: "bufferSubData"
-  57: [56,1,0,0]
-  58: [3,4,113,34]
-  59: "checkFramebufferStatus"
-  60: [59,1,0,0]
-  61: [3,4,116,43]
-  62: "clear"
-  63: [62,1,0,0]
-  64: [3,4,119,26]
-  65: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
-  66: "clearColor"
-  67: [66,1,0,0]
-  68: [3,4,122,31]
-  69: "clearDepth"
-  70: [69,1,0,0]
-  71: [3,4,125,31]
-  72: "clearStencil"
-  73: [72,1,0,0]
-  74: [3,4,128,33]
-  75: "colorMask"
-  76: [75,1,0,0]
-  77: [3,4,131,30]
-  78: "compileShader"
-  79: [78,1,0,0]
-  80: [3,4,134,34]
-  81: "compressedTexImage2D"
-  82: [81,1,0,0]
-  83: [3,4,137,41]
-  84: "compressedTexSubImage2D"
-  85: [84,1,0,0]
-  86: [3,4,140,44]
-  87: "copyTexImage2D"
-  88: [87,1,0,0]
-  89: [3,4,143,35]
-  90: "copyTexSubImage2D"
-  91: [90,1,0,0]
-  92: [3,4,146,38]
-  93: "createBuffer"
-  94: [93,1,0,0]
-  95: [3,4,149,33]
-  96: "createFramebuffer"
-  97: [96,1,0,0]
-  98: [3,4,152,38]
-  99: "createProgram"
-  100: [99,1,0,0]
-  101: [3,4,155,34]
-  102: "createRenderbuffer"
-  103: [102,1,0,0]
-  104: [3,4,158,39]
-  105: "createShader"
-  106: [105,1,0,0]
-  107: [3,4,161,33]
-  108: "createTexture"
-  109: [108,1,0,0]
-  110: [3,4,164,34]
-  111: "cullFace"
-  112: [111,1,0,0]
-  113: [3,4,167,29]
-  114: "deleteBuffer"
-  115: [114,1,0,0]
-  116: [3,4,170,33]
-  117: "deleteFramebuffer"
-  118: [117,1,0,0]
-  119: [3,4,173,38]
-  120: "deleteProgram"
-  121: [120,1,0,0]
-  122: [3,4,176,34]
-  123: "deleteRenderbuffer"
-  124: [123,1,0,0]
-  125: [3,4,179,39]
-  126: "deleteShader"
-  127: [126,1,0,0]
-  128: [3,4,182,33]
-  129: "deleteTexture"
-  130: [129,1,0,0]
-  131: [3,4,185,34]
-  132: "depthFunc"
-  133: [132,1,0,0]
-  134: [3,4,188,30]
-  135: "depthMask"
-  136: [135,1,0,0]
-  137: [3,4,191,30]
-  138: "depthRange"
-  139: [138,1,0,0]
-  140: [3,4,194,31]
-  141: "detachShader"
-  142: [141,1,0,0]
-  143: [3,4,197,33]
-  144: "disable"
-  145: [144,1,0,0]
-  146: [3,4,200,28]
-  147: "disableVertexAttribArray"
-  148: [147,1,0,0]
-  149: [3,4,203,45]
-  150: "drawArrays"
-  151: [150,1,0,0]
-  152: [3,4,206,31]
-  153: "drawElements"
-  154: [153,1,0,0]
-  155: [3,4,209,33]
-  156: "enable"
-  157: [156,1,0,0]
-  158: [3,4,212,27]
-  159: "enableVertexAttribArray"
-  160: [159,1,0,0]
-  161: [3,4,215,44]
-  162: "finish"
-  163: [162,1,0,0]
-  164: [3,4,218,27]
-  165: "flush"
-  166: [165,1,0,0]
-  167: [3,4,221,26]
-  168: "framebufferRenderbuffer"
-  169: [168,1,0,0]
-  170: [3,4,224,44]
-  171: "framebufferTexture2D"
-  172: [171,1,0,0]
-  173: [3,4,227,41]
-  174: "frontFace"
-  175: [174,1,0,0]
-  176: [3,4,230,30]
-  177: "generateMipmap"
-  178: [177,1,0,0]
-  179: [3,4,233,35]
-  180: "getActiveAttrib"
-  181: [180,1,0,0]
-  182: [3,4,236,36]
-  183: "getActiveUniform"
-  184: [183,1,0,0]
-  185: [3,4,239,37]
-  186: "getAttachedShaders"
-  187: [186,1,0,0]
-  188: [3,4,242,39]
-  189: "getAttribLocation"
-  190: [189,1,0,0]
-  191: [3,4,245,38]
-  192: "getBufferParameter"
-  193: [192,1,0,0]
-  194: [3,4,248,39]
-  195: "getContextAttributes"
-  196: [195,1,0,0]
-  197: [3,4,251,41]
-  198: "getError"
-  199: [198,1,0,0]
-  200: [3,4,254,29]
-  201: "getExtension"
-  202: [201,1,0,0]
-  203: [3,4,257,33]
-  204: "getFramebufferAttachmentParameter"
-  205: [204,1,0,0]
-  206: [3,4,260,54]
-  207: "getParameter"
-  208: [207,1,0,0]
-  209: [3,4,263,33]
-  210: "getProgramInfoLog"
-  211: [210,1,0,0]
-  212: [3,4,266,38]
-  213: "getProgramParameter"
-  214: [213,1,0,0]
-  215: [3,4,269,40]
-  216: "getRenderbufferParameter"
-  217: [216,1,0,0]
-  218: [3,4,272,45]
-  219: "getShaderInfoLog"
-  220: [219,1,0,0]
-  221: [3,4,275,37]
-  222: "getShaderParameter"
-  223: [222,1,0,0]
-  224: [3,4,278,39]
-  225: "getShaderPrecisionFormat"
-  226: [225,1,0,0]
-  227: [3,4,281,45]
-  228: "getShaderSource"
-  229: [228,1,0,0]
-  230: [3,4,284,36]
-  231: "getSupportedExtensions"
-  232: [231,1,0,0]
-  233: [3,4,287,43]
-  234: "getTexParameter"
-  235: [234,1,0,0]
-  236: [3,4,290,36]
-  237: "getUniform"
-  238: [237,1,0,0]
-  239: [3,4,293,31]
-  240: "getUniformLocation"
-  241: [240,1,0,0]
-  242: [3,4,296,39]
-  243: "getVertexAttrib"
-  244: [243,1,0,0]
-  245: [3,4,299,36]
-  246: "getVertexAttribOffset"
-  247: [246,1,0,0]
-  248: [3,4,302,42]
-  249: "hint"
-  250: [249,1,0,0]
-  251: [3,4,305,25]
-  252: "isBuffer"
-  253: [252,1,0,0]
-  254: [3,4,308,29]
-  255: "isContextLost"
-  256: [255,1,0,0]
-  257: [3,4,311,34]
-  258: "isEnabled"
-  259: [258,1,0,0]
-  260: [3,4,314,30]
-  261: "isFramebuffer"
-  262: [261,1,0,0]
-  263: [3,4,317,34]
-  264: "isProgram"
-  265: [264,1,0,0]
-  266: [3,4,320,30]
-  267: "isRenderbuffer"
-  268: [267,1,0,0]
-  269: [3,4,323,35]
-  270: "isShader"
-  271: [270,1,0,0]
-  272: [3,4,326,29]
-  273: "isTexture"
-  274: [273,1,0,0]
-  275: [3,4,329,30]
-  276: "lineWidth"
-  277: [276,1,0,0]
-  278: [3,4,332,30]
-  279: "linkProgram"
-  280: [279,1,0,0]
-  281: [3,4,335,32]
-  282: "pixelStorei"
-  283: [282,1,0,0]
-  284: [3,4,338,32]
-  285: "polygonOffset"
-  286: [285,1,0,0]
-  287: [3,4,341,34]
-  288: "readPixels"
-  289: [288,1,0,0]
-  290: [3,4,344,31]
-  291: "releaseShaderCompiler"
-  292: [291,1,0,0]
-  293: [3,4,347,42]
-  294: "renderbufferStorage"
-  295: [294,1,0,0]
-  296: [3,4,350,40]
-  297: "sampleCoverage"
-  298: [297,1,0,0]
-  299: [3,4,353,35]
-  300: "scissor"
-  301: [300,1,0,0]
-  302: [3,4,356,28]
-  303: "shaderSource"
-  304: [303,1,0,0]
-  305: [3,4,359,33]
-  306: "stencilFunc"
-  307: [306,1,0,0]
-  308: [3,4,362,32]
-  309: "stencilFuncSeparate"
-  310: [309,1,0,0]
-  311: [3,4,365,40]
-  312: "stencilMask"
-  313: [312,1,0,0]
-  314: [3,4,368,32]
-  315: "stencilMaskSeparate"
-  316: [315,1,0,0]
-  317: [3,4,371,40]
-  318: "stencilOp"
-  319: [318,1,0,0]
-  320: [3,4,374,30]
-  321: "stencilOpSeparate"
-  322: [321,1,0,0]
-  323: [3,4,377,38]
-  324: "texImage2D"
-  325: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII="
-  326: [324,1,0,0]
-  327: [3,4,380,31]
-  328: [3,4,381,31]
-  329: "texParameterf"
-  330: [329,1,0,0]
-  331: [3,4,384,34]
-  332: "texParameteri"
-  333: [332,1,0,0]
-  334: [3,4,387,34]
-  335: "texSubImage2D"
-  336: [335,1,0,0]
-  337: [3,4,390,34]
-  338: [3,4,391,34]
-  339: "uniform1f"
-  340: [339,1,0,0]
-  341: [3,4,394,30]
-  342: "uniform1fv"
-  343: [342,1,0,0]
-  344: [3,4,397,31]
-  345: "uniform1i"
-  346: [345,1,0,0]
-  347: [3,4,400,30]
-  348: "uniform1iv"
-  349: [348,1,0,0]
-  350: [3,4,403,31]
-  351: "uniform2f"
-  352: [351,1,0,0]
-  353: [3,4,406,30]
-  354: "uniform2fv"
-  355: [354,1,0,0]
-  356: [3,4,409,31]
-  357: "uniform2i"
-  358: [357,1,0,0]
-  359: [3,4,412,30]
-  360: "uniform2iv"
-  361: [360,1,0,0]
-  362: [3,4,415,31]
-  363: "uniform3f"
-  364: [363,1,0,0]
-  365: [3,4,418,30]
-  366: "uniform3fv"
-  367: [366,1,0,0]
-  368: [3,4,421,31]
-  369: "uniform3i"
-  370: [369,1,0,0]
-  371: [3,4,424,30]
-  372: "uniform3iv"
-  373: [372,1,0,0]
-  374: [3,4,427,31]
-  375: "uniform4f"
-  376: [375,1,0,0]
-  377: [3,4,430,30]
-  378: "uniform4fv"
-  379: [378,1,0,0]
-  380: [3,4,433,31]
-  381: "uniform4i"
-  382: [381,1,0,0]
-  383: [3,4,436,30]
-  384: "uniform4iv"
-  385: [384,1,0,0]
-  386: [3,4,439,31]
-  387: "uniformMatrix2fv"
-  388: [387,1,0,0]
-  389: [3,4,442,37]
-  390: "uniformMatrix3fv"
-  391: [390,1,0,0]
-  392: [3,4,445,37]
-  393: "uniformMatrix4fv"
-  394: [393,1,0,0]
-  395: [3,4,448,37]
-  396: "useProgram"
-  397: [396,1,0,0]
-  398: [3,4,451,31]
-  399: "validateProgram"
-  400: [399,1,0,0]
-  401: [3,4,454,36]
-  402: "vertexAttrib1f"
-  403: [402,1,0,0]
-  404: [3,4,457,35]
-  405: "vertexAttrib1fv"
-  406: [405,1,0,0]
-  407: [3,4,460,36]
-  408: "vertexAttrib2f"
-  409: [408,1,0,0]
-  410: [3,4,463,35]
-  411: "vertexAttrib2fv"
-  412: [411,1,0,0]
-  413: [3,4,466,36]
-  414: "vertexAttrib3f"
-  415: [414,1,0,0]
-  416: [3,4,469,35]
-  417: "vertexAttrib3fv"
-  418: [417,1,0,0]
-  419: [3,4,472,36]
-  420: "vertexAttrib4f"
-  421: [420,1,0,0]
-  422: [3,4,475,35]
-  423: "vertexAttrib4fv"
-  424: [423,1,0,0]
-  425: [3,4,478,36]
-  426: "vertexAttribPointer"
-  427: [426,1,0,0]
-  428: [3,4,481,40]
-  429: "viewport"
-  430: [429,1,0,0]
-  431: [3,4,484,29]
+        0: viewport
+        1: (anonymous function)
+        2: executeFrameFunction
 
 -- Running test case: Canvas.recordingWebGL.memoryLimit
 initialState:
@@ -1472,33 +1020,14 @@ frames:
     0: activeTexture(1)
       swizzleTypes: [Number]
       trace:
-        0: activeTexture - [native code] (2)
-        1: (anonymous function) - inspector/canvas/recording-webgl.html:72:34 (5)
-        2: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (7)
-        3: performActions - inspector/canvas/recording-webgl.html:495:25 (9)
-        4: Global Code - [program code] (11)
-        5: evaluateWithScopeExtension - [native code] (13)
-        6: _evaluateOn (15)
-        7: _evaluateAndWrap (17)
-data:
-  0: "activeTexture"
-  1: "[native code]"
-  2: [0,1,0,0]
-  3: ""
-  4: "inspector/canvas/recording-webgl.html"
-  5: [3,4,73,34]
-  6: "executeFrameFunction"
-  7: [6,4,492,24]
-  8: "performActions"
-  9: [8,4,496,25]
-  10: "global code"
-  11: [10,3,1,15]
-  12: "evaluateWithScopeExtension"
-  13: [12,1,0,0]
-  14: "_evaluateOn"
-  15: [14,3,130,29]
-  16: "_evaluateAndWrap"
-  17: [16,3,124,108]
+        0: activeTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: performActions
+        4: Global Code
+        5: evaluateWithScopeExtension
+        6: _evaluateOn
+        7: _evaluateAndWrap
 
 -- Running test case: Canvas.recordingWebGL.Console
 PASS: The recording should have the name "TEST".

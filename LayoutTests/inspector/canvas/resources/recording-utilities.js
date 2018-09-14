@@ -47,12 +47,7 @@ TestPage.registerInitializer(() => {
                 InspectorTest.log(actionText);
 
                 if (action.swizzleTypes.length) {
-                    let swizzleNames = action.swizzleTypes.map((item, i) => {
-                        let swizzleText = WI.Recording.displayNameForSwizzleType(item);
-                        if (action.parameters[i] != action._payloadParameters[i] && Number.isInteger(action._payloadParameters[i]))
-                            swizzleText += " (" + action._payloadParameters[i] + ")";
-                        return swizzleText;
-                    });
+                    let swizzleNames = action.swizzleTypes.map((item) => WI.Recording.displayNameForSwizzleType(item));
                     InspectorTest.log("      swizzleTypes: [" + swizzleNames.join(", ") + "]");
                 }
 
@@ -60,31 +55,15 @@ TestPage.registerInitializer(() => {
                     InspectorTest.log("      trace:");
 
                     for (let k = 0; k < action.trace.length; ++k) {
-                        let callFrame = action.trace[k];
-                        let traceText = `        ${k}: `;
-                        traceText += callFrame.functionName || "(anonymous function)";
-
-                        if (callFrame.nativeCode)
-                            traceText += " - [native code]";
-                        else if (callFrame.programCode)
-                            traceText += " - [program code]";
-                        else if (callFrame.sourceCodeLocation) {
-                            let location = callFrame.sourceCodeLocation;
-                            traceText += " - " + sanitizeURL(location.sourceCode.url) + `:${location.lineNumber}:${location.columnNumber}`;
-                        }
-
-                        traceText += " (" + action._payloadTrace[k] + ")";
-                        InspectorTest.log(traceText);
+                        let functionName = action.trace[k].functionName || "(anonymous function)";
+                        InspectorTest.log(`        ${k}: ` + functionName);
                     }
                 }
 
                 if (action.snapshot)
-                    InspectorTest.log("      snapshot: " + JSON.stringify(action.snapshot) + " (" + action._payloadSnapshot + ")");
+                    InspectorTest.log("      snapshot: " + JSON.stringify(action.snapshot));
             }
         }
-
-        InspectorTest.log("data:");
-        log(recording.data, "  ");
     }
 
     window.getCanvas = function(type) {

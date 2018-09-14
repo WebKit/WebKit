@@ -121,6 +121,11 @@ bool InspectorCanvas::currentFrameHasData() const
     return !!m_frames;
 }
 
+static bool shouldSnapshotBitmapRendererAction(const String& name)
+{
+    return name == "transferFromImageBitmap";
+}
+
 static bool shouldSnapshotWebGLAction(const String& name)
 {
     return name == "clear"
@@ -156,8 +161,10 @@ void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasAction
     m_bufferUsed += action->memoryCost();
     m_currentActions->addItem(action.ptr());
 
+    if (is<ImageBitmapRenderingContext>(m_context) && shouldSnapshotBitmapRendererAction(name))
+        m_actionNeedingSnapshot = WTFMove(action);
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContext>(m_context) && shouldSnapshotWebGLAction(name))
+    else if (is<WebGLRenderingContext>(m_context) && shouldSnapshotWebGLAction(name))
         m_actionNeedingSnapshot = WTFMove(action);
 #endif
 }

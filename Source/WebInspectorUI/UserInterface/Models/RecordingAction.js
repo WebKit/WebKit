@@ -91,6 +91,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     {
         if (type === WI.Recording.Type.Canvas2D)
             return CanvasRenderingContext2D.prototype;
+        if (type === WI.Recording.Type.CanvasBitmapRenderer)
+            return ImageBitmapRenderingContext.prototype;
         if (type === WI.Recording.Type.CanvasWebGL)
             return WebGLRenderingContext.prototype;
         return null;
@@ -345,6 +347,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         case "strokeStyle":
         // 2D (non-standard)
         case "drawImageFromRect":
+        // BitmapRenderer
+        case "transferFromImageBitmap":
             return this._parameters.slice(0, 1);
         }
 
@@ -378,6 +382,9 @@ WI.RecordingAction._visualNames = {
         "stroke",
         "strokeRect",
         "strokeText",
+    ]),
+    [WI.Recording.Type.CanvasBitmapRenderer]: new Set([
+        "transferFromImageBitmap",
     ]),
     [WI.Recording.Type.CanvasWebGL]: new Set([
         "clear",

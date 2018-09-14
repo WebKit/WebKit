@@ -1,3 +1,34 @@
+2018-09-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Record actions performed on ImageBitmapRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=181341
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.fromPayload):
+        (WI.Recording.prototype.createContext):
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction._prototypeForType):
+        (WI.RecordingAction.prototype.getImageParameters):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._classNameForAction.classNameForActionName):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.get navigationItems):
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        (WI.RecordingContentView.prototype.shown):
+        (WI.RecordingContentView.prototype.hidden):
+        (WI.RecordingContentView.prototype._generateContentFromSnapshot): Renamed.
+        (WI.RecordingContentView.prototype._updateImageGrid):
+        (WI.RecordingContentView.prototype._generateContentCanvasWebGL): Deleted.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+
 2018-09-13  Jamal Nasser  <jamaln@mail.com>
 
         Web Inspector: Dark Mode: bezier curve editor should be updated

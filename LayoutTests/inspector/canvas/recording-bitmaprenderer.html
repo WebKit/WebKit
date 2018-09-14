@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script>
+let ctx = null;
+
+let redImage = new Image;
+redImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+
+let blueImage = new Image;
+blueImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABRJREFUCB1jZGD4/58BCJhABAgAAB0ZAgJSPDJ6AAAAAElFTkSuQmCC";
+
+let transparentImage = new Image;
+transparentImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC";
+
+// Blank canvas
+let canvas = document.createElement("canvas");
+canvas.width = 2;
+canvas.height = 2;
+
+function load() {
+    ctx = canvas.getContext("bitmaprenderer");
+
+    document.body.appendChild(canvas);
+
+    runTest();
+}
+
+function ignoreException(func){
+    try {
+        func();
+    } catch (e) { }
+}
+
+let timeoutID = NaN;
+
+function cancelActions() {
+    clearTimeout(timeoutID);
+    timeoutID = NaN;
+
+    createImageBitmap(transparentImage).then((transparentBitmap) => {
+        ctx.transferFromImageBitmap(transparentBitmap);
+    });
+}
+
+async function performActions() {
+    let redBitmap = await createImageBitmap(redImage);
+
+    let frames = [
+        () => {
+            ctx.transferFromImageBitmap(redBitmap);
+        },
+        () => {
+            TestPage.dispatchEventToFrontend("LastFrame");
+        },
+    ];
+    let index = 0;
+    function executeFrameFunction() {
+        frames[index++]();
+        if (index < frames.length)
+            timeoutID = setTimeout(executeFrameFunction, 0);
+    };
+    executeFrameFunction();
+}
+
+async function performConsoleActions() {
+    let [redBitmap, blueBitmap] = await Promise.all([
+        createImageBitmap(redImage),
+        createImageBitmap(blueImage),
+    ]);
+
+    console.record(ctx, {name: "TEST"});
+
+    ctx.transferFromImageBitmap(redBitmap);
+
+    console.recordEnd(ctx);
+
+    ctx.transferFromImageBitmap(blueBitmap);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingBitmapRenderer");
+
+    suite.addTestCase({
+        name: "Canvas.recordingBitmapRenderer.singleFrame",
+        description: "Check that the recording is stopped after a single frame.",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {singleFrame: true});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.recordingBitmapRenderer.multipleFrames",
+        description: "Check that recording data is serialized correctly for multiple frames.",
+        test(resolve, reject) {
+            let canvas = startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {singleFrame: false});
+
+            InspectorTest.singleFireEventListener("LastFrame", () => {
+                CanvasAgent.stopRecording(canvas.identifier, (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.recordingBitmapRenderer.memoryLimit",
+        description: "Check that the recording is stopped when it reaches the memory limit.",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {memoryLimit: 10});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.recordingBitmapRenderer.Console",
+        description: "Check that a recording can be triggered by console.record().",
+        test(resolve, reject) {
+            consoleRecord(resolve, reject);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager is able to record actions made to BitmapRenderer canvas contexts.</p>
+</body>
+</html>

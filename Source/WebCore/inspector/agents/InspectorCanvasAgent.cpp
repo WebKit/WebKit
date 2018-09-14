@@ -528,6 +528,8 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(CanvasRenderingContext&
     Inspector::Protocol::Recording::Type type;
     if (is<CanvasRenderingContext2D>(inspectorCanvas->context()))
         type = Inspector::Protocol::Recording::Type::Canvas2D;
+    else if (is<ImageBitmapRenderingContext>(inspectorCanvas->context()))
+        type = Inspector::Protocol::Recording::Type::CanvasBitmapRenderer;
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContext>(inspectorCanvas->context()))
         type = Inspector::Protocol::Recording::Type::CanvasWebGL;

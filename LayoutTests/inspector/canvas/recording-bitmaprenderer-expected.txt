@@ -1,0 +1,72 @@
+Test that CanvasManager is able to record actions made to BitmapRenderer canvas contexts.
+
+
+== Running test suite: Canvas.recordingBitmapRenderer
+-- Running test case: Canvas.recordingBitmapRenderer.singleFrame
+initialState:
+  attributes:
+    width: 2
+    height: 2
+  parameters:
+  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+frames:
+  0: (duration)
+    0: transferFromImageBitmap([object ImageBitmap])
+      swizzleTypes: [ImageBitmap]
+      trace:
+        0: transferFromImageBitmap
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: (anonymous function)
+        4: asyncFunctionResume
+        5: (anonymous function)
+        6: promiseReactionJob
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII="
+
+-- Running test case: Canvas.recordingBitmapRenderer.multipleFrames
+initialState:
+  attributes:
+    width: 2
+    height: 2
+  parameters:
+  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+frames:
+  0: (duration)
+    0: transferFromImageBitmap([object ImageBitmap])
+      swizzleTypes: [ImageBitmap]
+      trace:
+        0: transferFromImageBitmap
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: (anonymous function)
+        4: asyncFunctionResume
+        5: (anonymous function)
+        6: promiseReactionJob
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII="
+
+-- Running test case: Canvas.recordingBitmapRenderer.memoryLimit
+initialState:
+  attributes:
+    width: 2
+    height: 2
+  parameters:
+  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+frames:
+  0: (duration) (incomplete)
+    0: transferFromImageBitmap([object ImageBitmap])
+      swizzleTypes: [ImageBitmap]
+      trace:
+        0: transferFromImageBitmap
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: (anonymous function)
+        4: asyncFunctionResume
+        5: (anonymous function)
+        6: promiseReactionJob
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+
+-- Running test case: Canvas.recordingBitmapRenderer.Console
+PASS: The recording should have the name "TEST".
+PASS: The recording should have one frame.
+PASS: The first frame should have one action.
+

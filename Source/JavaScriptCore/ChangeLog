@@ -1,3 +1,13 @@
+2018-09-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Record actions performed on ImageBitmapRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=181341
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Recording.json:
+        * inspector/scripts/codegen/generator.py:
+
 2018-09-14  Mike Gorse  <mgorse@suse.com>
 
         builtins directory causes name conflict on Python 3

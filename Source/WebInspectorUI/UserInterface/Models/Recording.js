@@ -58,6 +58,9 @@ WI.Recording = class Recording extends WI.Object
         case RecordingAgent.Type.Canvas2D:
             type = WI.Recording.Type.Canvas2D;
             break;
+        case RecordingAgent.Type.CanvasBitmapRenderer:
+            type = WI.Recording.Type.CanvasBitmapRenderer;
+            break;
         case RecordingAgent.Type.CanvasWebGL:
             type = WI.Recording.Type.CanvasWebGL;
             break;
@@ -319,6 +322,9 @@ WI.Recording = class Recording extends WI.Object
         if (this._type === WI.Recording.Type.Canvas2D)
             return createCanvasContext("2d");
 
+        if (this._type === WI.Recording.Type.BitmapRenderer)
+            return createCanvasContext("bitmaprenderer");
+
         if (this._type === WI.Recording.Type.CanvasWebGL)
             return createCanvasContext("webgl");
 
@@ -476,6 +482,7 @@ WI.Recording.CanvasRecordingNamesSymbol = Symbol("canvas-recording-names");
 
 WI.Recording.Type = {
     Canvas2D: "canvas-2d",
+    CanvasBitmapRenderer: "canvas-bitmaprenderer",
     CanvasWebGL: "canvas-webgl",
 };
 

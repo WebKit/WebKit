@@ -1,3 +1,20 @@
+2018-09-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Record actions performed on ImageBitmapRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=181341
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-bitmaprenderer-expected.txt: Added.
+        * inspector/canvas/recording-bitmaprenderer.html: Added.
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots-expected.txt:
+        * inspector/canvas/resources/recording-utilities.js:
+        Simplify the test output to avoid unrelated failures, such as if line numbers change.
+        Also remove non-human-readable text, as it makes it more difficult for those unfamiliar with
+        the test to determine if any differences are acceptable.
+
 2018-09-14  Ms2ger  <Ms2ger@igalia.com>
 
         Remove some obsolete XHR tests
