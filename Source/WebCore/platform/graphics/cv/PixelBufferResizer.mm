@@ -48,7 +48,7 @@ PixelBufferResizer::PixelBufferResizer(IntSize size, OSType videoFormat)
         (__bridge NSString *)kCVPixelBufferWidthKey :@(size.width()),
         (__bridge NSString *)kCVPixelBufferHeightKey:@(size.height()),
         (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey:@(videoFormat),
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
         (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @(YES),
 #else
         (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @(YES),

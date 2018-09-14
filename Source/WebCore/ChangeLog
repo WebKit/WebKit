@@ -1,3 +1,10 @@
+2018-09-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix the iOSMac build after r236015.
+
+        * platform/graphics/cv/PixelBufferResizer.mm:
+        (WebCore::PixelBufferResizer::PixelBufferResizer):
+
 2018-09-11  Simon Fraser  <simon.fraser@apple.com>
 
         Make GraphicsLayers ref-counted, so their tree can persist when disconnected from RenderLayerBackings
