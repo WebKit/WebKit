@@ -43,6 +43,12 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
+#if HAVE(MEDIA_PLAYER)
+#import <MediaPlayer/MPMediaItem.h>
+#import <MediaPlayer/MPNowPlayingInfoCenter.h>
+#import <pal/spi/ios/MediaPlayerSPI.h>
+#endif
+
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
 SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionNotification, NSString *)
@@ -71,6 +77,22 @@ SOFT_LINK_CONSTANT(UIKit, UIApplicationDidEnterBackgroundNotification, NSString 
 #define UIApplicationWillEnterForegroundNotification getUIApplicationWillEnterForegroundNotification()
 #define UIApplicationDidBecomeActiveNotification getUIApplicationDidBecomeActiveNotification()
 #define UIApplicationDidEnterBackgroundNotification getUIApplicationDidEnterBackgroundNotification()
+
+#if HAVE(MEDIA_PLAYER)
+SOFT_LINK_FRAMEWORK(MediaPlayer)
+SOFT_LINK_CLASS(MediaPlayer, MPNowPlayingInfoCenter)
+SOFT_LINK_CONSTANT(MediaPlayer, MPMediaItemPropertyTitle, NSString *)
+SOFT_LINK_CONSTANT(MediaPlayer, MPMediaItemPropertyPlaybackDuration, NSString *)
+SOFT_LINK_CONSTANT(MediaPlayer, MPNowPlayingInfoPropertyElapsedPlaybackTime, NSString *)
+SOFT_LINK_CONSTANT(MediaPlayer, MPNowPlayingInfoPropertyPlaybackRate, NSString *)
+SOFT_LINK_CONSTANT(MediaPlayer, kMRMediaRemoteNowPlayingInfoUniqueIdentifier, NSString *)
+
+#define MPMediaItemPropertyTitle getMPMediaItemPropertyTitle()
+#define MPMediaItemPropertyPlaybackDuration getMPMediaItemPropertyPlaybackDuration()
+#define MPNowPlayingInfoPropertyElapsedPlaybackTime getMPNowPlayingInfoPropertyElapsedPlaybackTime()
+#define MPNowPlayingInfoPropertyPlaybackRate getMPNowPlayingInfoPropertyPlaybackRate()
+#define kMRMediaRemoteNowPlayingInfoUniqueIdentifier getkMRMediaRemoteNowPlayingInfoUniqueIdentifier()
+#endif // HAVE(MEDIA_PLAYER)
 
 WEBCORE_EXPORT NSString* WebUIApplicationWillResignActiveNotification = @"WebUIApplicationWillResignActiveNotification";
 WEBCORE_EXPORT NSString* WebUIApplicationWillEnterForegroundNotification = @"WebUIApplicationWillEnterForegroundNotification";
@@ -180,6 +202,104 @@ void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 
     END_BLOCK_OBJC_EXCEPTIONS
 #endif
+}
+
+bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& session)
+{
+    if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
+        return false;
+
+    LOG(Media, "MediaSessionManageriOS::sessionWillBeginPlayback");
+    updateNowPlayingInfo();
+    return true;
+}
+
+void MediaSessionManageriOS::removeSession(PlatformMediaSession& session)
+{
+    PlatformMediaSessionManager::removeSession(session);
+    LOG(Media, "MediaSessionManageriOS::removeSession");
+    updateNowPlayingInfo();
+}
+
+void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& session)
+{
+    PlatformMediaSessionManager::sessionWillEndPlayback(session);
+    LOG(Media, "MediaSessionManageriOS::sessionWillEndPlayback");
+    updateNowPlayingInfo();
+}
+
+void MediaSessionManageriOS::clientCharacteristicsChanged(PlatformMediaSession&)
+{
+    LOG(Media, "MediaSessionManageriOS::clientCharacteristicsChanged");
+    updateNowPlayingInfo();
+}
+
+PlatformMediaSession* MediaSessionManageriOS::nowPlayingEligibleSession()
+{
+    return findSession([] (PlatformMediaSession& session, size_t) {
+        PlatformMediaSession::MediaType type = session.mediaType();
+        if (type != PlatformMediaSession::VideoAudio && type != PlatformMediaSession::Audio)
+            return false;
+
+        if (session.characteristics() & PlatformMediaSession::HasAudio)
+            return true;
+
+        return false;
+    });
+}
+
+void MediaSessionManageriOS::updateNowPlayingInfo()
+{
+#if HAVE(MEDIA_PLAYER)
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    MPNowPlayingInfoCenter *nowPlaying = (MPNowPlayingInfoCenter *)[getMPNowPlayingInfoCenterClass() defaultCenter];
+    const PlatformMediaSession* currentSession = this->nowPlayingEligibleSession();
+
+    LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - currentSession = %p", currentSession);
+
+    if (!currentSession) {
+        if (m_nowPlayingActive) {
+            LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - clearing now playing info");
+            [nowPlaying setNowPlayingInfo:nil];
+            m_nowPlayingActive = false;
+        }
+
+        return;
+    }
+
+    String title = currentSession->title();
+    double duration = currentSession->duration();
+    double rate = currentSession->state() == PlatformMediaSession::Playing ? 1 : 0;
+    double currentTime = currentSession->currentTime();
+    if (m_reportedTitle == title && m_reportedRate == rate && m_reportedDuration == duration) {
+        LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - nothing new to show");
+        return;
+    }
+
+    m_reportedRate = rate;
+    m_reportedDuration = duration;
+    m_reportedTitle = title;
+    m_reportedCurrentTime = currentTime;
+    m_lastUpdatedNowPlayingInfoUniqueIdentifier = currentSession->uniqueIdentifier();
+
+    auto info = adoptNS([[NSMutableDictionary alloc] init]);
+    if (!title.isEmpty())
+        info.get()[MPMediaItemPropertyTitle] = static_cast<NSString *>(title);
+    if (std::isfinite(duration) && duration != MediaPlayer::invalidTime())
+        info.get()[MPMediaItemPropertyPlaybackDuration] = @(duration);
+    info.get()[MPNowPlayingInfoPropertyPlaybackRate] = @(rate);
+    info.get()[kMRMediaRemoteNowPlayingInfoUniqueIdentifier] = @(title.impl() ? title.impl()->hash() : 0);
+
+    if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime())
+        info.get()[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @(currentTime);
+
+    LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - title = \"%s\", rate = %f, duration = %f, now = %f",
+        title.utf8().data(), rate, duration, currentTime);
+
+    m_nowPlayingActive = true;
+    [nowPlaying setNowPlayingInfo:info.get()];
+    END_BLOCK_OBJC_EXCEPTIONS
+#endif // HAVE(MEDIA_PLAYER)
 }
 
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()

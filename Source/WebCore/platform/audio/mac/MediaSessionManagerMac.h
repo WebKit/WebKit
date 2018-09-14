@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,64 +25,55 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(MAC)
 
+#include "GenericTaskQueue.h"
 #include "MediaSessionManagerCocoa.h"
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS WebMediaSessionHelper;
-
-#if defined(__OBJC__) && __OBJC__
-extern NSString* WebUIApplicationWillResignActiveNotification;
-extern NSString* WebUIApplicationWillEnterForegroundNotification;
-extern NSString* WebUIApplicationDidBecomeActiveNotification;
-extern NSString* WebUIApplicationDidEnterBackgroundNotification;
-#endif
 
 namespace WebCore {
 
-class MediaSessionManageriOS : public MediaSessionManagerCocoa {
+class MediaSessionManagerMac : public MediaSessionManagerCocoa {
 public:
-    virtual ~MediaSessionManageriOS();
+    virtual ~MediaSessionManagerMac();
 
-    void externalOutputDeviceAvailableDidChange();
-    bool hasWirelessTargetsAvailable() override;
+    bool hasActiveNowPlayingSession() const final { return m_nowPlayingActive; }
+    String lastUpdatedNowPlayingTitle() const final { return m_lastUpdatedNowPlayingTitle; }
+    double lastUpdatedNowPlayingDuration() const final { return m_lastUpdatedNowPlayingDuration; }
+    double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
+    uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
+    bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
 
 private:
     friend class PlatformMediaSessionManager;
 
-    MediaSessionManageriOS();
+    MediaSessionManagerMac();
 
+    void scheduleUpdateNowPlayingInfo() override;
     void removeSession(PlatformMediaSession&) override;
 
     bool sessionWillBeginPlayback(PlatformMediaSession&) override;
     void sessionWillEndPlayback(PlatformMediaSession&) override;
+    void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) override;
     void clientCharacteristicsChanged(PlatformMediaSession&) override;
+    void sessionCanProduceAudioChanged(PlatformMediaSession&) override;
 
     void updateNowPlayingInfo();
-    
-    void resetRestrictions() override;
-
-    void configureWireLessTargetMonitoring() override;
-
-    bool hasActiveNowPlayingSession() const final { return m_nowPlayingActive; }
-    String lastUpdatedNowPlayingTitle() const final { return m_reportedTitle; }
-    double lastUpdatedNowPlayingDuration() const final { return m_reportedDuration; }
-    double lastUpdatedNowPlayingElapsedTime() const final { return m_reportedCurrentTime; }
-    uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
-    bool registeredAsNowPlayingApplication() const final { return m_nowPlayingActive; }
 
     PlatformMediaSession* nowPlayingEligibleSession();
-    
-    RetainPtr<WebMediaSessionHelper> m_objcObserver;
-    double m_reportedRate { 0 };
-    double m_reportedDuration { 0 };
-    double m_reportedCurrentTime { 0 };
-    uint64_t m_lastUpdatedNowPlayingInfoUniqueIdentifier { 0 };
-    String m_reportedTitle;
+
     bool m_nowPlayingActive { false };
+    bool m_isInBackground { false };
+    bool m_registeredAsNowPlayingApplication { false };
+
+    // For testing purposes only.
+    String m_lastUpdatedNowPlayingTitle;
+    double m_lastUpdatedNowPlayingDuration { NAN };
+    double m_lastUpdatedNowPlayingElapsedTime { NAN };
+    uint64_t m_lastUpdatedNowPlayingInfoUniqueIdentifier { 0 };
+
+    GenericTaskQueue<Timer> m_nowPlayingUpdateTaskQueue;
 };
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(MAC)

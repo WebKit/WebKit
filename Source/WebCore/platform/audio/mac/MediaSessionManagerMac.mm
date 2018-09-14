@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MediaSessionManagerCocoa.h"
+#import "config.h"
+#import "MediaSessionManagerMac.h"
 
-#if USE(AUDIO_SESSION) && PLATFORM(COCOA)
+#if PLATFORM(MAC)
 
-#include "AudioSession.h"
-#include "DeprecatedGlobalSettings.h"
-#include "HTMLMediaElement.h"
-#include "Logging.h"
-#include "MediaPlayer.h"
-#include "PlatformMediaSession.h"
-#include <wtf/BlockObjCExceptions.h>
-#include <wtf/Function.h>
+#import "HTMLMediaElement.h"
+#import "Logging.h"
+#import "MediaPlayer.h"
+#import "PlatformMediaSession.h"
+#import <wtf/BlockObjCExceptions.h>
 
-#include "MediaRemoteSoftLink.h"
+#import "MediaRemoteSoftLink.h"
 
 using namespace WebCore;
 
-static const size_t kWebAudioBufferSize = 128;
-static const size_t kLowPowerVideoBufferSize = 4096;
+namespace WebCore {
 
-#if PLATFORM(MAC)
-static MediaSessionManagerCocoa* platformMediaSessionManager = nullptr;
+static MediaSessionManagerMac* platformMediaSessionManager = nullptr;
 
 PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
 {
     if (!platformMediaSessionManager)
-        platformMediaSessionManager = new MediaSessionManagerCocoa;
+        platformMediaSessionManager = new MediaSessionManagerMac;
     return *platformMediaSessionManager;
 }
 
@@ -58,116 +53,65 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 {
     return platformMediaSessionManager;
 }
-#endif
 
-void MediaSessionManagerCocoa::updateSessionState()
+MediaSessionManagerMac::MediaSessionManagerMac()
+    : MediaSessionManagerCocoa()
 {
-    LOG(Media, "PlatformMediaSessionManager::scheduleUpdateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(PlatformMediaSession::Video), count(PlatformMediaSession::Audio), count(PlatformMediaSession::WebAudio));
-
-    if (has(PlatformMediaSession::WebAudio))
-        AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
-    // In case of audio capture, we want to grab 20 ms chunks to limit the latency so that it is not noticeable by users
-    // while having a large enough buffer so that the audio rendering remains stable, hence a computation based on sample rate.
-    else if (has(PlatformMediaSession::MediaStreamCapturingAudio))
-        AudioSession::sharedSession().setPreferredBufferSize(AudioSession::sharedSession().sampleRate() / 50);
-    else if ((has(PlatformMediaSession::VideoAudio) || has(PlatformMediaSession::Audio)) && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled()) {
-        // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
-        // causes media LayoutTests to fail on 10.8.
-
-        size_t bufferSize;
-        if (audioHardwareListener() && audioHardwareListener()->outputDeviceSupportsLowPowerMode())
-            bufferSize = kLowPowerVideoBufferSize;
-        else
-            bufferSize = kWebAudioBufferSize;
-
-        AudioSession::sharedSession().setPreferredBufferSize(bufferSize);
-    }
-
-    if (!DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
-        return;
-
-    bool hasWebAudioType = false;
-    bool hasAudibleAudioOrVideoMediaType = false;
-    bool hasAudioCapture = anyOfSessions([&hasWebAudioType, &hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
-        auto type = session.mediaType();
-        if (type == PlatformMediaSession::WebAudio)
-            hasWebAudioType = true;
-        if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.hasPlayedSinceLastInterruption())
-            hasAudibleAudioOrVideoMediaType = true;
-        if (session.isPlayingToWirelessPlaybackTarget())
-            hasAudibleAudioOrVideoMediaType = true;
-        return (type == PlatformMediaSession::MediaStreamCapturingAudio);
-    });
-
-    if (hasAudioCapture)
-        AudioSession::sharedSession().setCategory(AudioSession::PlayAndRecord);
-    else if (hasAudibleAudioOrVideoMediaType)
-        AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
-    else if (hasWebAudioType)
-        AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
-    else
-        AudioSession::sharedSession().setCategory(AudioSession::None);
+    resetRestrictions();
 }
 
-void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::InterruptionType type)
+MediaSessionManagerMac::~MediaSessionManagerMac()
 {
-    if (type == PlatformMediaSession::InterruptionType::SystemInterruption) {
-        forEachSession([] (PlatformMediaSession& session, size_t) {
-            session.clearHasPlayedSinceLastInterruption();
-        });
-    }
-
-    PlatformMediaSessionManager::beginInterruption(type);
 }
 
-void MediaSessionManagerCocoa::scheduleUpdateNowPlayingInfo()
+void MediaSessionManagerMac::scheduleUpdateNowPlayingInfo()
 {
     if (!m_nowPlayingUpdateTaskQueue.hasPendingTasks())
-        m_nowPlayingUpdateTaskQueue.enqueueTask(std::bind(&MediaSessionManagerCocoa::updateNowPlayingInfo, this));
+        m_nowPlayingUpdateTaskQueue.enqueueTask(std::bind(&MediaSessionManagerMac::updateNowPlayingInfo, this));
 }
 
-bool MediaSessionManagerCocoa::sessionWillBeginPlayback(PlatformMediaSession& session)
+bool MediaSessionManagerMac::sessionWillBeginPlayback(PlatformMediaSession& session)
 {
     if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
         return false;
-    
-    LOG(Media, "MediaSessionManagerCocoa::sessionWillBeginPlayback");
+
+    LOG(Media, "MediaSessionManagerMac::sessionWillBeginPlayback");
     scheduleUpdateNowPlayingInfo();
     return true;
 }
 
-void MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing(const PlatformMediaSession&)
+void MediaSessionManagerMac::sessionDidEndRemoteScrubbing(const PlatformMediaSession&)
 {
     scheduleUpdateNowPlayingInfo();
 }
 
-void MediaSessionManagerCocoa::removeSession(PlatformMediaSession& session)
+void MediaSessionManagerMac::removeSession(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::removeSession(session);
-    LOG(Media, "MediaSessionManagerCocoa::removeSession");
+    LOG(Media, "MediaSessionManagerMac::removeSession");
     scheduleUpdateNowPlayingInfo();
 }
 
-void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& session)
+void MediaSessionManagerMac::sessionWillEndPlayback(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session);
-    LOG(Media, "MediaSessionManagerCocoa::sessionWillEndPlayback");
+    LOG(Media, "MediaSessionManagerMac::sessionWillEndPlayback");
     updateNowPlayingInfo();
 }
 
-void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession&)
+void MediaSessionManagerMac::clientCharacteristicsChanged(PlatformMediaSession&)
 {
-    LOG(Media, "MediaSessionManagerCocoa::clientCharacteristicsChanged");
+    LOG(Media, "MediaSessionManagerMac::clientCharacteristicsChanged");
     scheduleUpdateNowPlayingInfo();
 }
-
-void MediaSessionManagerCocoa::sessionCanProduceAudioChanged(PlatformMediaSession& session)
+    
+void MediaSessionManagerMac::sessionCanProduceAudioChanged(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::sessionCanProduceAudioChanged(session);
     scheduleUpdateNowPlayingInfo();
 }
 
-PlatformMediaSession* MediaSessionManagerCocoa::nowPlayingEligibleSession()
+PlatformMediaSession* MediaSessionManagerMac::nowPlayingEligibleSession()
 {
     if (auto element = HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::NowPlaying))
         return &element->mediaSession();
@@ -175,7 +119,7 @@ PlatformMediaSession* MediaSessionManagerCocoa::nowPlayingEligibleSession()
     return nullptr;
 }
 
-void MediaSessionManagerCocoa::updateNowPlayingInfo()
+void MediaSessionManagerMac::updateNowPlayingInfo()
 {
 #if USE(MEDIAREMOTE)
     if (!isMediaRemoteFrameworkAvailable())
@@ -185,13 +129,13 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     const PlatformMediaSession* currentSession = this->nowPlayingEligibleSession();
 
-    LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - currentSession = %p", currentSession);
+    LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - currentSession = %p", currentSession);
 
     if (!currentSession) {
         if (canLoad_MediaRemote_MRMediaRemoteSetNowPlayingVisibility())
             MRMediaRemoteSetNowPlayingVisibility(MRMediaRemoteGetLocalOrigin(), MRNowPlayingClientVisibilityNeverVisible);
 
-        LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - clearing now playing info");
+        LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - clearing now playing info");
 
         MRMediaRemoteSetCanBeNowPlayingApplication(false);
         m_registeredAsNowPlayingApplication = false;
@@ -207,7 +151,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
             UNUSED_PARAM(error);
 #else
             if (error)
-                LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error %ud", error);
+                LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error %ud", error);
 #endif
         });
 
@@ -249,7 +193,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         m_lastUpdatedNowPlayingElapsedTime = currentTime;
     }
 
-    LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - title = \"%s\", rate = %f, duration = %f, now = %f",
+    LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - title = \"%s\", rate = %f, duration = %f, now = %f",
         title.utf8().data(), rate, duration, currentTime);
 
     String parentApplication = currentSession->sourceApplicationIdentifier();
@@ -262,7 +206,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 #if LOG_DISABLED
         UNUSED_PARAM(error);
 #else
-        LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error %ud", error);
+        LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error %ud", error);
 #endif
     });
     MRMediaRemoteSetNowPlayingInfo(info.get());
@@ -275,4 +219,6 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 #endif // USE(MEDIAREMOTE)
 }
 
-#endif // USE(AUDIO_SESSION)
+} // namespace WebCore
+
+#endif // PLATFORM(MAC)
