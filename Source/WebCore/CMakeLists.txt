@@ -1870,7 +1870,7 @@ set(WebCore_BUILTINS_SOURCES
 )
 
 set(BUILTINS_GENERATOR_SCRIPTS
-    ${JavaScriptCore_SCRIPTS_DIR}/builtins.py
+    ${JavaScriptCore_SCRIPTS_DIR}/wkbuiltins.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generator.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_model.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_templates.py

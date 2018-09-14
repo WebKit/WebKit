@@ -37,7 +37,7 @@ log = logging.getLogger('global')
 
 from lazywriter import LazyFileWriter
 
-from builtins import *
+from wkbuiltins import *
 
 
 def concatenated_output_filename(builtins_files, framework_name, generate_only_wrapper_files):

@@ -1,3 +1,15 @@
+2018-09-14  Mike Gorse  <mgorse@suse.com>
+
+        builtins directory causes name conflict on Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=189552
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests (No behavior change).
+
+        * CMakeLists.txt: builtins -> wkbuiltins.
+        * DerivedSources.make: builtins -> wkbuiltins.
+
 2018-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Capturing event listeners are called during bubbling phase for shadow hosts

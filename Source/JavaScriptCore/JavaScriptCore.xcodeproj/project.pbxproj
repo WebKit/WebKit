@@ -1274,7 +1274,7 @@
 		99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009A1BD5992700F4575C /* builtins_generator.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A41BD5993100F4575C /* builtins_model.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009B1BD5992700F4575C /* builtins_model.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009C1BD5992700F4575C /* builtins_templates.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		99DA00A61BD5993100F4575C /* builtins.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009D1BD5992700F4575C /* builtins.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00A61BD5993100F4575C /* wkbuiltins.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009D1BD5992700F4575C /* wkbuiltins.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A71BD5993100F4575C /* builtins_generate_combined_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009E1BD5992700F4575C /* builtins_generate_combined_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A91BD5993100F4575C /* builtins_generate_separate_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3948,7 +3948,7 @@
 		99DA009A1BD5992700F4575C /* builtins_generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generator.py; sourceTree = "<group>"; };
 		99DA009B1BD5992700F4575C /* builtins_model.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_model.py; sourceTree = "<group>"; };
 		99DA009C1BD5992700F4575C /* builtins_templates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_templates.py; sourceTree = "<group>"; };
-		99DA009D1BD5992700F4575C /* builtins.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins.py; sourceTree = "<group>"; };
+		99DA009D1BD5992700F4575C /* wkbuiltins.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = wkbuiltins.py; sourceTree = "<group>"; };
 		99DA009E1BD5992700F4575C /* builtins_generate_combined_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_combined_header.py; sourceTree = "<group>"; };
 		99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_combined_implementation.py; sourceTree = "<group>"; };
 		99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_separate_header.py; sourceTree = "<group>"; };
@@ -7826,11 +7826,11 @@
 			path = Scripts;
 			sourceTree = "<group>";
 		};
-		99DA00971BD598E000F4575C /* builtins */ = {
+		99DA00971BD598E000F4575C /* wkbuiltins */ = {
 			isa = PBXGroup;
 			children = (
 				99DA00991BD5992700F4575C /* __init__.py */,
-				99DA009D1BD5992700F4575C /* builtins.py */,
+				99DA009D1BD5992700F4575C /* wkbuiltins.py */,
 				99DA009E1BD5992700F4575C /* builtins_generate_combined_header.py */,
 				99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */,
 				412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */,
@@ -7843,7 +7843,7 @@
 				99DA009B1BD5992700F4575C /* builtins_model.py */,
 				99DA009C1BD5992700F4575C /* builtins_templates.py */,
 			);
-			path = builtins;
+			path = wkbuiltins;
 			sourceTree = "<group>";
 		};
 		A513E5CC185FB992007E95AD /* agents */ = {
@@ -8439,7 +8439,7 @@
 				DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */,
 				A7D801A51880D66E0026C39B /* BuiltinExecutables.h in Headers */,
 				A75EE9B218AAB7E200AAD043 /* BuiltinNames.h in Headers */,
-				99DA00A61BD5993100F4575C /* builtins.py in Headers */,
+				99DA00A61BD5993100F4575C /* wkbuiltins.py in Headers */,
 				99DA00A71BD5993100F4575C /* builtins_generate_combined_header.py in Headers */,
 				99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */,
 				412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */,

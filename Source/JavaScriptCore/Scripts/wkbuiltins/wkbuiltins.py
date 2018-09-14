@@ -1,4 +1,4 @@
-# This file is used to simulate the builtins/ directory when generate-js-builtins.py
+# This file is used to simulate the wkbuiltins/ directory when generate-js-builtins.py
 # is run from JavaScriptCore framework's private headers directory, which is flattened.
 
 from builtins_model import *

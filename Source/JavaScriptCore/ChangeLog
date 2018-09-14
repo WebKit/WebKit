@@ -1,3 +1,27 @@
+2018-09-14  Mike Gorse  <mgorse@suse.com>
+
+        builtins directory causes name conflict on Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=189552
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt: builtins -> wkbuiltins.
+        * DerivedSources.make: builtins -> wkbuiltins.
+        * Scripts/generate-js-builtins.py: import wkbuiltins, rather than
+          builtins.
+        * Scripts/wkbuiltins/__init__.py: Renamed from Source/JavaScriptCore/Scripts/builtins/__init__.py.
+        * Scripts/wkbuiltins/builtins_generate_combined_header.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_generate_combined_header.py.
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_generate_internals_wrapper_implementation.py.
+        * Scripts/wkbuiltins/builtins_generate_separate_header.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_generate_separate_header.py.
+        * Scripts/wkbuiltins/builtins_generate_separate_implementation.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_generate_separate_implementation.py.
+        * Scripts/wkbuiltins/builtins_generate_wrapper_header.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_generate_wrapper_header.py.
+        * Scripts/wkbuiltins/builtins_generate_wrapper_implementation.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_generate_wrapper_implementation.py.
+        * Scripts/wkbuiltins/builtins_generator.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_generator.py.
+        * Scripts/wkbuiltins/builtins_model.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_model.py.
+        * Scripts/wkbuiltins/builtins_templates.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins_templates.py.
+        * Scripts/wkbuiltins/wkbuiltins.py: Renamed from Source/JavaScriptCore/Scripts/builtins/builtins.py.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Update for the renaming.
+
 2018-09-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WebAssembly] Inline WasmContext accessor functions
