@@ -1,3 +1,40 @@
+2018-09-14  Mark Lam  <mark.lam@apple.com>
+
+        Refactor some ForInContext code for better encapsulation.
+        https://bugs.webkit.org/show_bug.cgi?id=189626
+        <rdar://problem/44466415>
+
+        Reviewed by Keith Miller.
+
+        1. Add a ForInContext::m_type field to store the context type.  This does not
+           increase the class size, but eliminates the need for a virtual call to get the
+           type.
+
+           Note: we still need a virtual destructor because we'll be mingling
+           IndexedForInContexts and StructureForInContexts in the BytecodeGenerator::m_forInContextStack.
+
+        2. Add ForInContext::isIndexedForInContext() and ForInContext::isStructureForInContext()
+           convenience methods.
+
+        3. Add ForInContext::asIndexedForInContext() and ForInContext::asStructureForInContext()
+           to do the casting to the subclass types.  This ensures that we'll properly
+           assert that the casting is legal.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::popIndexedForInScope):
+        (JSC::BytecodeGenerator::popStructureForInScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ForInContext::type const):
+        (JSC::ForInContext::isIndexedForInContext const):
+        (JSC::ForInContext::isStructureForInContext const):
+        (JSC::ForInContext::asIndexedForInContext):
+        (JSC::ForInContext::asStructureForInContext):
+        (JSC::ForInContext::ForInContext):
+        (JSC::StructureForInContext::StructureForInContext):
+        (JSC::IndexedForInContext::IndexedForInContext):
+        (JSC::ForInContext::~ForInContext): Deleted.
+
 2018-09-14  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Record actions performed on ImageBitmapRenderingContext
