@@ -16,9 +16,9 @@ PASS settings['height'] is 480
 PASS settings['width'] is 640
 PASS settings['height'] is 480
 
-** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":6000,"height":6000},{"width":1920,"height":1080}]} - first width and height in advanced are too big, second is used.
-PASS settings['width'] is 1920
-PASS settings['height'] is 1080
+** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":6000,"height":6000},{"width":1280,"height":720}]} - first width and height in advanced are too big, second is used.
+PASS settings['width'] is 1280
+PASS settings['height'] is 720
 
 ** Constraint: {"width":320,"height":240} - reset width and height.
 PASS settings['width'] is 320

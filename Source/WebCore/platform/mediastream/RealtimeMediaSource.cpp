@@ -693,7 +693,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     return true;
 }
 
-bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint) const
+bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
 {
     auto& capabilities = this->capabilities();
 

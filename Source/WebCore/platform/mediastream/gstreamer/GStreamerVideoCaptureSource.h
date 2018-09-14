@@ -32,8 +32,8 @@ public:
     static CaptureSourceOrError create(const String& deviceID, const MediaConstraints*);
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
-    const RealtimeMediaSourceCapabilities& capabilities() const override;
-    const RealtimeMediaSourceSettings& settings() const override;
+    const RealtimeMediaSourceCapabilities& capabilities() override;
+    const RealtimeMediaSourceSettings& settings() override;
     GstElement* pipeline() { return m_capturer->pipeline(); }
     GStreamerCapturer* capturer() { return m_capturer.get(); }
 

@@ -37,8 +37,8 @@ public:
 private:
     void stopProducingData() final;
     void startProducingData() final;
-    const RealtimeMediaSourceSettings& settings() const final;
-    const RealtimeMediaSourceCapabilities& capabilities() const final;
+    const RealtimeMediaSourceSettings& settings() final;
+    const RealtimeMediaSourceCapabilities& capabilities() final;
 
     void captureFailed();
     std::unique_ptr<RealtimeMediaSource> m_wrappedSource;

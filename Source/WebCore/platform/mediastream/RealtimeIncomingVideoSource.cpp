@@ -70,12 +70,12 @@ void RealtimeIncomingVideoSource::stopProducingData()
         m_videoTrack->RemoveSink(this);
 }
 
-const RealtimeMediaSourceCapabilities& RealtimeIncomingVideoSource::capabilities() const
+const RealtimeMediaSourceCapabilities& RealtimeIncomingVideoSource::capabilities()
 {
     return RealtimeMediaSourceCapabilities::emptyCapabilities();
 }
 
-const RealtimeMediaSourceSettings& RealtimeIncomingVideoSource::settings() const
+const RealtimeMediaSourceSettings& RealtimeIncomingVideoSource::settings()
 {
     return m_currentSettings;
 }

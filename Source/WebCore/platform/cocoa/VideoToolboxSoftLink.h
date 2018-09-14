@@ -29,6 +29,7 @@
 #include <wtf/SoftLinking.h>
 
 typedef struct OpaqueVTImageRotationSession* VTImageRotationSessionRef;
+typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, VideoToolbox)
 
@@ -68,3 +69,15 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTImageRotationPropertyKey
 #define kVTImageRotationPropertyKey_FlipHorizontalOrientation get_VideoToolbox_kVTImageRotationPropertyKey_FlipHorizontalOrientation()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTImageRotationPropertyKey_FlipVerticalOrientation, CFStringRef)
 #define kVTImageRotationPropertyKey_FlipVerticalOrientation get_VideoToolbox_kVTImageRotationPropertyKey_FlipVerticalOrientation()
+
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelTransferSessionCreate, OSStatus, (CFAllocatorRef allocator, VTPixelTransferSessionRef* pixelTransferSessionOut), (allocator, pixelTransferSessionOut))
+#define VTPixelTransferSessionCreate softLink_VideoToolbox_VTPixelTransferSessionCreate
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelTransferSessionTransferImage, OSStatus, (VTPixelTransferSessionRef session, CVPixelBufferRef sourceBuffer, CVPixelBufferRef destinationBuffer), (session, sourceBuffer, destinationBuffer))
+#define VTPixelTransferSessionTransferImage softLink_VideoToolbox_VTPixelTransferSessionTransferImage
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTSessionSetProperty, OSStatus, (VTSessionRef session, CFStringRef propertyKey, CFTypeRef propertyValue), (session, propertyKey, propertyValue))
+#define VTSessionSetProperty softLink_VideoToolbox_VTSessionSetProperty
+
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTPixelTransferPropertyKey_ScalingMode, CFStringRef)
+#define kVTPixelTransferPropertyKey_ScalingMode get_VideoToolbox_kVTPixelTransferPropertyKey_ScalingMode()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTScalingMode_Trim, CFStringRef)
+#define kVTScalingMode_Trim get_VideoToolbox_kVTScalingMode_Trim()

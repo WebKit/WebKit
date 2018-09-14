@@ -73,12 +73,12 @@ void RealtimeIncomingAudioSource::setSourceTrack(rtc::scoped_refptr<webrtc::Audi
         m_audioTrack->AddSink(this);
 }
 
-const RealtimeMediaSourceCapabilities& RealtimeIncomingAudioSource::capabilities() const
+const RealtimeMediaSourceCapabilities& RealtimeIncomingAudioSource::capabilities()
 {
     return RealtimeMediaSourceCapabilities::emptyCapabilities();
 }
 
-const RealtimeMediaSourceSettings& RealtimeIncomingAudioSource::settings() const
+const RealtimeMediaSourceSettings& RealtimeIncomingAudioSource::settings()
 {
     return m_currentSettings;
 }

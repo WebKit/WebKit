@@ -79,7 +79,7 @@ struct MockCameraProperties {
         if (!facingMode)
             return std::nullopt;
 
-        std::optional<Vector<VideoPreset>> presets;
+        std::optional<Vector<VideoPresetData>> presets;
         decoder >> presets;
         if (!presets)
             return std::nullopt;
@@ -94,7 +94,7 @@ struct MockCameraProperties {
 
     double defaultFrameRate { 30 };
     RealtimeMediaSourceSettings::VideoFacingMode facingMode { RealtimeMediaSourceSettings::VideoFacingMode::User };
-    Vector<VideoPreset> presets { { { 640, 480 }, { { 30, 30}, { 15, 15 } } } };
+    Vector<VideoPresetData> presets { { { 640, 480 }, { { 30, 30}, { 15, 15 } } } };
     Color fillColor { Color::black };
 };
 

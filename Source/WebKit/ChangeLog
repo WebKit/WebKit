@@ -1,3 +1,13 @@
+2018-09-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Support arbitrary video resolution in getUserMedia API
+        https://bugs.webkit.org/show_bug.cgi?id=178109
+        <rdar://problem/35083128>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+
 2018-09-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl][WebKit] Bug fix for continuously retrying with empty credentials.

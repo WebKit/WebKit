@@ -118,12 +118,12 @@ void MockGStreamerVideoCaptureSource::applyConstraints(const MediaConstraints& c
     m_wrappedSource->applyConstraints(constraints, WTFMove(successHandler), WTFMove(failureHandler));
 }
 
-const RealtimeMediaSourceSettings& MockGStreamerVideoCaptureSource::settings() const
+const RealtimeMediaSourceSettings& MockGStreamerVideoCaptureSource::settings()
 {
     return m_wrappedSource->settings();
 }
 
-const RealtimeMediaSourceCapabilities& MockGStreamerVideoCaptureSource::capabilities() const
+const RealtimeMediaSourceCapabilities& MockGStreamerVideoCaptureSource::capabilities()
 {
     m_capabilities = m_wrappedSource->capabilities();
     m_currentSettings = m_wrappedSource->settings();

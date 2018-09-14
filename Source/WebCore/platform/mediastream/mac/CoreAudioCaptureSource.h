@@ -86,16 +86,16 @@ private:
 
     std::optional<Vector<int>> discreteSampleRates() const final { return { { 8000, 16000, 32000, 44100, 48000, 96000 } }; }
 
-    const RealtimeMediaSourceCapabilities& capabilities() const final;
-    const RealtimeMediaSourceSettings& settings() const final;
+    const RealtimeMediaSourceCapabilities& capabilities() final;
+    const RealtimeMediaSourceSettings& settings() final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
     bool interrupted() const final;
 
     uint32_t m_captureDeviceID { 0 };
 
-    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
     enum class SuspensionType { None, WhilePaused, WhilePlaying };
     SuspensionType m_suspendType { SuspensionType::None };

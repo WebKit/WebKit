@@ -841,7 +841,7 @@ void CoreAudioCaptureSource::stopProducingData()
     unit.stopProducingData();
 }
 
-const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities() const
+const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities()
 {
     if (!m_capabilities) {
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
@@ -854,7 +854,7 @@ const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities() co
     return m_capabilities.value();
 }
 
-const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings() const
+const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings()
 {
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;

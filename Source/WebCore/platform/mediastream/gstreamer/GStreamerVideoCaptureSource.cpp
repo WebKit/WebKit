@@ -148,7 +148,7 @@ void GStreamerVideoCaptureSource::stopProducingData()
     setSize({ 0, 0 });
 }
 
-const RealtimeMediaSourceCapabilities& GStreamerVideoCaptureSource::capabilities() const
+const RealtimeMediaSourceCapabilities& GStreamerVideoCaptureSource::capabilities()
 {
     if (m_capabilities)
         return m_capabilities.value();
@@ -234,7 +234,7 @@ const RealtimeMediaSourceCapabilities& GStreamerVideoCaptureSource::capabilities
     return m_capabilities.value();
 }
 
-const RealtimeMediaSourceSettings& GStreamerVideoCaptureSource::settings() const
+const RealtimeMediaSourceSettings& GStreamerVideoCaptureSource::settings()
 {
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;

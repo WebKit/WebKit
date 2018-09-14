@@ -65,8 +65,8 @@ private:
         // RealtimeMediaSource API
         void startProducingData() final;
         void stopProducingData()  final;
-        const RealtimeMediaSourceCapabilities& capabilities() const final { return RealtimeMediaSourceCapabilities::emptyCapabilities(); }
-        const RealtimeMediaSourceSettings& settings() const final { return m_settings; }
+        const RealtimeMediaSourceCapabilities& capabilities() final { return RealtimeMediaSourceCapabilities::emptyCapabilities(); }
+        const RealtimeMediaSourceSettings& settings() final { return m_settings; }
 
         void captureCanvas();
         void requestFrameTimerFired();

@@ -191,8 +191,8 @@ public:
     bool echoCancellation() const { return m_echoCancellation; }
     void setEchoCancellation(bool);
 
-    virtual const RealtimeMediaSourceCapabilities& capabilities() const = 0;
-    virtual const RealtimeMediaSourceSettings& settings() const = 0;
+    virtual const RealtimeMediaSourceCapabilities& capabilities() = 0;
+    virtual const RealtimeMediaSourceSettings& settings() = 0;
 
     using SuccessHandler = WTF::Function<void()>;
     using FailureHandler = WTF::Function<void(const String& badConstraint, const String& errorString)>;
@@ -200,7 +200,7 @@ public:
     std::optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
 
     bool supportsConstraints(const MediaConstraints&, String&);
-    bool supportsConstraint(const MediaConstraint&) const;
+    bool supportsConstraint(const MediaConstraint&);
 
     virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>);
 

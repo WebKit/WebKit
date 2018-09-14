@@ -63,17 +63,18 @@ protected:
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
 
 private:
-    const RealtimeMediaSourceCapabilities& capabilities() const final;
-    const RealtimeMediaSourceSettings& settings() const final;
+    const RealtimeMediaSourceCapabilities& capabilities() final;
+    const RealtimeMediaSourceSettings& settings() final;
 
     void startProducingData() final;
     void stopProducingData() final;
+    bool isCaptureSource() const final { return true; }
+
+    void generatePresets() final;
 
     void drawAnimation(GraphicsContext&);
     void drawText(GraphicsContext&);
     void drawBoxes(GraphicsContext&);
-
-    bool isCaptureSource() const final { return true; }
 
     void generateFrame();
     void startCaptureTimer();
@@ -98,8 +99,8 @@ private:
 
     unsigned m_frameNumber { 0 };
     RunLoop::Timer<MockRealtimeVideoSource> m_emitFrameTimer;
-    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     Color m_fillColor { Color::black };
     MockMediaDevice m_device;

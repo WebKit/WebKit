@@ -65,13 +65,15 @@ public:
     }
 
     SharedRingBufferStorage& storage() { return static_cast<SharedRingBufferStorage&>(m_ringBuffer.storage()); }
-    const RealtimeMediaSourceCapabilities& capabilities() const final {
+
+    const RealtimeMediaSourceCapabilities& capabilities() final
+    {
         if (!m_capabilities)
             m_capabilities = m_manager.capabilities(m_id);
         return m_capabilities.value();
     }
 
-    const RealtimeMediaSourceSettings& settings() const final { return m_settings; }
+    const RealtimeMediaSourceSettings& settings() final { return m_settings; }
     void setSettings(RealtimeMediaSourceSettings&& settings)
     {
         auto changed = m_settings.difference(settings);

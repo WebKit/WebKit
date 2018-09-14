@@ -67,8 +67,8 @@ private:
     void startProducingData() final;
     void stopProducingData()  final;
 
-    const RealtimeMediaSourceCapabilities& capabilities() const final;
-    const RealtimeMediaSourceSettings& settings() const final;
+    const RealtimeMediaSourceCapabilities& capabilities() final;
+    const RealtimeMediaSourceSettings& settings() final;
 
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
 };

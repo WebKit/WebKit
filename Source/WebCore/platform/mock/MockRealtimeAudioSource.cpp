@@ -98,7 +98,7 @@ MockRealtimeAudioSource::~MockRealtimeAudioSource()
 #endif
 }
 
-const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings() const
+const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings()
 {
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;
@@ -119,7 +119,7 @@ const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings() const
     return m_currentSettings.value();
 }
 
-const RealtimeMediaSourceCapabilities& MockRealtimeAudioSource::capabilities() const
+const RealtimeMediaSourceCapabilities& MockRealtimeAudioSource::capabilities()
 {
     if (!m_capabilities) {
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());

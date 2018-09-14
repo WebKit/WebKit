@@ -4,12 +4,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 video track capabilities:
-  capabilities.aspectRatio = { max: 1.778, min: 1.222 }
+  capabilities.aspectRatio = { max: 1.778, min: 1 }
   capabilities.deviceId = <UUID>
   capabilities.facingMode = [ user ]
   capabilities.frameRate = { max: 30, min: 5 }
-  capabilities.height = { max: 2160, min: 240 }
-  capabilities.width = { max: 3840, min: 320 }
+  capabilities.height = { max: 720, min: 112 }
+  capabilities.width = { max: 1280, min: 112 }
 
 audio track capabilities:
   capabilities.deviceId = <UUID>

@@ -136,7 +136,7 @@ void GStreamerAudioCaptureSource::stopProducingData()
     m_capturer->stop();
 }
 
-const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities() const
+const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities()
 {
     if (m_capabilities)
         return m_capabilities.value();
@@ -180,7 +180,7 @@ void GStreamerAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourc
     RealtimeMediaSource::settingsDidChange(settings);
 }
 
-const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings() const
+const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings()
 {
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;

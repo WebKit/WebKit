@@ -60,7 +60,7 @@ DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa()
 #endif
 }
 
-const RealtimeMediaSourceCapabilities& DisplayCaptureSourceCocoa::capabilities() const
+const RealtimeMediaSourceCapabilities& DisplayCaptureSourceCocoa::capabilities()
 {
     if (!m_capabilities) {
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
@@ -75,7 +75,7 @@ const RealtimeMediaSourceCapabilities& DisplayCaptureSourceCocoa::capabilities()
     return m_capabilities.value();
 }
 
-const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings() const
+const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings()
 {
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;

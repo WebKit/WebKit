@@ -42,9 +42,9 @@ public:
 private:
     void stopProducingData() final;
     void startProducingData() final;
-    const RealtimeMediaSourceSettings& settings() const final;
+    const RealtimeMediaSourceSettings& settings() final;
     std::unique_ptr<RealtimeMediaSource> m_wrappedSource;
-    const RealtimeMediaSourceCapabilities& capabilities() const final;
+    const RealtimeMediaSourceCapabilities& capabilities() final;
     void captureFailed() override;
 
     void videoSampleAvailable(MediaSample&) override;

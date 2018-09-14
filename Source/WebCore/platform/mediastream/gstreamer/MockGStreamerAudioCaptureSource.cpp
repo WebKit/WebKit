@@ -83,12 +83,12 @@ void MockGStreamerAudioCaptureSource::startProducingData()
     m_wrappedSource->start();
 }
 
-const RealtimeMediaSourceSettings& MockGStreamerAudioCaptureSource::settings() const
+const RealtimeMediaSourceSettings& MockGStreamerAudioCaptureSource::settings()
 {
     return m_wrappedSource->settings();
 }
 
-const RealtimeMediaSourceCapabilities& MockGStreamerAudioCaptureSource::capabilities() const
+const RealtimeMediaSourceCapabilities& MockGStreamerAudioCaptureSource::capabilities()
 {
     m_capabilities = m_wrappedSource->capabilities();
     m_currentSettings = m_wrappedSource->settings();
