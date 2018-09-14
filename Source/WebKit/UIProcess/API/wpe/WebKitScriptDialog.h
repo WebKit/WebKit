@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 #define WEBKIT_TYPE_SCRIPT_DIALOG (webkit_script_dialog_get_type())
 
 typedef struct _WebKitScriptDialog WebKitScriptDialog;
+typedef struct _WebKitWebView WebKitWebView;
 
 /**
  * WebKitScriptDialogType:
