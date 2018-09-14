@@ -857,7 +857,7 @@ WI.DataGrid = class DataGrid extends WI.View
             let columnWidths = [];
             for (let i = 0; i < numColumns; ++i) {
                 let headerCellElement = cells[i];
-                if (this._isColumnVisible(headerCellElement.columnIdentifier)) {
+                if (this.isColumnVisible(headerCellElement.columnIdentifier)) {
                     let columnWidth = headerCellElement.offsetWidth;
                     let percentWidth = ((columnWidth / tableWidth) * 100) + "%";
                     columnWidths.push(percentWidth);
@@ -894,7 +894,7 @@ WI.DataGrid = class DataGrid extends WI.View
         this._cachedScrollableOffsetHeight = NaN;
     }
 
-    _isColumnVisible(columnIdentifier)
+    isColumnVisible(columnIdentifier)
     {
         return !this.columns.get(columnIdentifier)["hidden"];
     }
@@ -969,7 +969,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
             leadingOffset = columnWidths[i];
 
-            if (this._isColumnVisible(this.orderedColumns[i])) {
+            if (this.isColumnVisible(this.orderedColumns[i])) {
                 resizer.element.style.removeProperty("display");
                 resizer.element.style.setProperty(WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left", `${leadingOffset}px`);
                 resizer[WI.DataGrid.PreviousColumnOrdinalSymbol] = i;
