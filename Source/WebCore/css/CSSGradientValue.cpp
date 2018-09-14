@@ -280,7 +280,7 @@ public:
                 float prevOffset = stops[lastOneOrLessIndex].offset;
                 float nextOffset = stops[lastOneOrLessIndex + 1].offset;
                 
-                float interStopProportion = 1 / (nextOffset - prevOffset);
+                float interStopProportion = (1 - prevOffset) / (nextOffset - prevOffset);
                 // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
                 Color blendedColor = blend(stops[lastOneOrLessIndex].color, stops[lastOneOrLessIndex + 1].color, interStopProportion);
                 

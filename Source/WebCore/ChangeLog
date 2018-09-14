@@ -1,3 +1,19 @@
+2018-09-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix color stop blending in conic gradients for stops past 1
+        https://bugs.webkit.org/show_bug.cgi?id=189532
+        <rdar://problem/44158221>
+
+        Reviewed by Simon Fraser.
+
+        Calculation was wrong, fixed it, and wrote a test that failed
+        without the change, and passes with it.
+
+        Test: fast/gradients/conic-repeating-last-stop.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::ConicGradientAdapter::normalizeStopsAndEndpointsOutsideRange):
+
 2018-09-13  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON): setting window.opener to null allows process swapping in cases that are not web-compatible

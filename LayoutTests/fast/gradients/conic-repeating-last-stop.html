@@ -1,0 +1,42 @@
+<html>
+<head>
+<style>
+svg {
+    width: 800px;
+    display: none;
+}
+
+.container {
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+
+#test {
+    width: 200px;
+    height: 200px;
+    background-image: repeating-conic-gradient(gold, orange 20deg);
+    filter: url(#posterize);
+    transform: scale(20);
+    transform-origin: 45% top;
+}
+</style>
+</head>
+
+<body>
+<svg viewBox="0 0 700 100">
+<defs>
+    <filter id="posterize" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox">
+        <feComponentTransfer>
+            <feFuncR type="discrete" tableValues="0 1"/>
+            <feFuncG type="discrete" tableValues="0 1"/>
+            <feFuncB type="discrete" tableValues="0 1"/>
+        </feComponentTransfer>
+    </filter>
+</defs>
+</svg>
+
+<div class="container">
+    <div id="test"></div>
+</div>
+</html>

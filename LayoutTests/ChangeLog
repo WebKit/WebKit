@@ -1,3 +1,18 @@
+2018-09-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix color stop blending in conic gradients for stops past 1
+        https://bugs.webkit.org/show_bug.cgi?id=189532
+        <rdar://problem/44158221>
+
+        Reviewed by Simon Fraser.
+
+        Tests that last stop in the gradient is correct.
+
+        * fast/gradients/conic-repeating-last-stop-expected.html: Added.
+        * fast/gradients/conic-repeating-last-stop.html: Added.
+        * platform/ios-12/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r235954.
