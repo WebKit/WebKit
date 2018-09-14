@@ -1,12 +1,4 @@
 Tests for screen functions accessed data collection in ResourceLoadStatistics plist by querying for all the screen properties and dumping the entire resource load statistics map.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
 Resource load statistics:
 
 High level domain: 127.0.0.1
@@ -20,9 +12,8 @@ High level domain: 127.0.0.1
     isMarkedForCookieBlocking: No
     fontsSuccessfullyLoaded:
         Times
-        Courier
     topFrameRegistrableDomainsWhichAccessedWebAPIs:
-        127.0.0.1: 13
+        127.0.0.1: 9
     screenFunctionsAccessed:
         height
         width

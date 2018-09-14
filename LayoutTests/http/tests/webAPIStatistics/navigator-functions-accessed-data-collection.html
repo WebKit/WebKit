@@ -2,17 +2,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Test for navigator functions accessed data collection in resource load statistics</title>
-    <script src="/js-test-resources/js-test.js"></script>
 </head>
-<body>
 <script>
-    description("Tests for navigator functions accessed data collection in ResourceLoadStatistics plist by querying for all the navigator properties and dumping the entire resource load statistics map.");
+    internals.setResourceLoadStatisticsEnabled(false);
+</script>
+<body>
+<p> Tests for navigator functions accessed data collection in ResourceLoadStatistics plist by querying for all the navigator properties and dumping the entire resource load statistics map. </p>
+<script>
     const hostUnderTest = "127.0.0.1:8000";
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
 
     function completeTest() {
-        testRunner.dumpResourceLoadStatistics();
-            
         testRunner.statisticsResetToConsistentState(function() {
             testRunner.notifyDone();
         });
@@ -29,9 +29,12 @@
         var mimetypes = navigator.mimeTypes;
         var plugins = navigator.plugins;
         var appversion = navigator.appVersion;
+        testRunner.statisticsNotifyObserver();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceLoadStatistics();
         testRunner.waitUntilDone();
         internals.setResourceLoadStatisticsEnabled(true);
         testRunner.setWebAPIStatisticsEnabled(true);
