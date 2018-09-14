@@ -1,3 +1,23 @@
+2018-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME] Add support the waitingforkey event
+        https://bugs.webkit.org/show_bug.cgi?id=189616
+
+        Reviewed by Philippe Normand.
+
+        Crossplatform support to fire the waitingforkey event from the
+        player to the element. The element implements the W3C specified
+        algorithm.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerWaitingForKey):
+        (WebCore::HTMLMediaElement::attemptToResumePlaybackIfNecessary):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::waitingForKey):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerWaitingForKey):
+
 2018-09-14  Mike Gorse  <mgorse@suse.com>
 
         builtins directory causes name conflict on Python 3

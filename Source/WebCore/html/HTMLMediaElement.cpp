@@ -2787,6 +2787,63 @@ void HTMLMediaElement::mediaPlayerInitializationDataEncountered(const String& in
     m_asyncEventQueue.enqueueEvent(MediaEncryptedEvent::create(eventNames().encryptedEvent, initializer, Event::IsTrusted::Yes));
 }
 
+void HTMLMediaElement::mediaPlayerWaitingForKey()
+{
+    // https://www.w3.org/TR/encrypted-media/#wait-for-key
+    // W3C Recommendation 18 September 2017
+
+    // The Wait for Key algorithm queues a waitingforkey event and
+    // updates readyState. It should only be called when the
+    // HTMLMediaElement object is potentially playing and its
+    // readyState is equal to HAVE_FUTURE_DATA or greater. Requests to
+    // run this algorithm include a target HTMLMediaElement object.
+
+    // The following steps are run:
+
+    // 1. Let the media element be the specified HTMLMediaElement
+    // object.
+    // 2. If the media element's playback blocked waiting for key
+    // value is true, abort these steps.
+    if (m_playbackBlockedWaitingForKey)
+        return;
+
+    // 3. Set the media element's playback blocked waiting for key
+    // value to true.
+    m_playbackBlockedWaitingForKey = true;
+
+    // NOTE
+    // As a result of the above step, the media element will become a
+    // blocked media element if it wasn't already. In that case, the
+    // media element will stop playback.
+
+    // 4. Follow the steps for the first matching condition from the
+    // following list:
+
+    // If data for the immediate current playback position is
+    // available
+    // Set the readyState of media element to HAVE_CURRENT_DATA.
+    // Otherwise
+    // Set the readyState of media element to HAVE_METADATA.
+    ReadyState nextReadyState = buffered()->contain(currentTime()) ? HAVE_CURRENT_DATA : HAVE_METADATA;
+    if (nextReadyState < m_readyState)
+        setReadyState(static_cast<MediaPlayer::ReadyState>(nextReadyState));
+
+    // NOTE
+    // In other words, if the video frame and audio data for the
+    // current playback position have been decoded because they were
+    // unencrypted and/or successfully decrypted, set readyState to
+    // HAVE_CURRENT_DATA. Otherwise, including if this was previously
+    // the case but the data is no longer available, set readyState to
+    // HAVE_METADATA.
+
+    // 5. Queue a task to fire a simple event named waitingforkey at the
+    // media element.
+    scheduleEvent(eventNames().waitingforkeyEvent);
+
+    // 6. Suspend playback.
+    // GStreamer handles this without suspending explicitly.
+}
+
 void HTMLMediaElement::attemptToDecrypt()
 {
     // https://w3c.github.io/encrypted-media/#attempt-to-decrypt
@@ -2827,16 +2884,20 @@ void HTMLMediaElement::attemptToResumePlaybackIfNecessary()
 
     // 1. Let the media element be the specified HTMLMediaElement object.
     // 2. If the media element's playback blocked waiting for key is false, abort these steps.
-    // FIXME: ^
+    if (!m_playbackBlockedWaitingForKey)
+        return;
 
     // 3. Run the Attempt to Decrypt algorithm on the media element.
     attemptToDecrypt();
 
     // 4. If the user agent can advance the current playback position in the direction of playback:
     //   4.1. Set the media element's decryption blocked waiting for key value to false.
-    //   4.2. Set the media element's playback blocked waiting for key value to false.
-    //   4.3. Set the media element's readyState value to HAVE_CURRENT_DATA, HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA as appropriate.
     // FIXME: ^
+    //   4.2. Set the media element's playback blocked waiting for key value to false.
+    m_playbackBlockedWaitingForKey = false;
+
+    //   4.3. Set the media element's readyState value to HAVE_CURRENT_DATA, HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA as appropriate.
+    setReadyState(m_player->readyState());
 }
 
 void HTMLMediaElement::cdmClientAttemptToResumePlaybackIfNecessary()
