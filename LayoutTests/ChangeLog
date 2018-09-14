@@ -1,3 +1,35 @@
+2018-09-14  Justin Michaud  <justin_michaud@apple.com>
+
+        Add support for spreadMethod=reflect and repeat on SVG gradients (for CoreGraphics platforms)
+        https://bugs.webkit.org/show_bug.cgi?id=5968
+
+        Add new svg tests for linear gradients with spreadMethod, and alpha values specified in
+        both stop-opacity and color.
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.png:
+        * svg/gradients/spreadMethod-expected.svg: Added.
+        * svg/gradients/spreadMethod.svg: Added.
+        * svg/gradients/spreadMethodAlpha-expected.svg: Added.
+        * svg/gradients/spreadMethodAlpha.svg: Added.
+        * svg/gradients/spreadMethodClose0-expected-mismatch.svg: Added.
+        * svg/gradients/spreadMethodClose0.svg: Added.
+        * svg/gradients/spreadMethodClose1-expected-mismatch.svg: Added.
+        * svg/gradients/spreadMethodClose1.svg: Added.
+        * svg/gradients/spreadMethodClose2-expected.svg: Added.
+        * svg/gradients/spreadMethodClose2.svg: Added.
+        * svg/gradients/spreadMethodDiagonal-expected.svg: Added.
+        * svg/gradients/spreadMethodDiagonal.svg: Added.
+        * svg/gradients/spreadMethodDiagonal2-expected.svg: Added.
+        * svg/gradients/spreadMethodDiagonal2.svg: Added.
+        * svg/gradients/spreadMethodDuplicateStop-expected.svg: Added.
+        * svg/gradients/spreadMethodDuplicateStop.svg: Added.
+        * svg/gradients/spreadMethodReversed-expected.svg: Added.
+        * svg/gradients/spreadMethodReversed.svg: Added.
+        * svg/gradients/stopAlpha-expected.svg: Added.
+        * svg/gradients/stopAlpha.svg: Added.
+
 2018-09-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed test gardening.

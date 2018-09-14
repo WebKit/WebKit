@@ -99,7 +99,8 @@ Color SVGStopElement::stopColorIncludingOpacity() const
         return Color(Color::transparent, true); // Transparent black.
 
     const SVGRenderStyle& svgStyle = style->svgStyle();
-    return colorWithOverrideAlpha(svgStyle.stopColor().rgb(), svgStyle.stopOpacity());
+    float colorAlpha = svgStyle.stopColor().alpha() / 255.0;
+    return colorWithOverrideAlpha(svgStyle.stopColor().rgb(), colorAlpha * svgStyle.stopOpacity());
 }
 
 }

@@ -106,10 +106,63 @@ void Gradient::paint(GraphicsContext& context)
 void Gradient::paint(CGContextRef platformContext)
 {
     CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
+    CGGradientRef gradient = platformGradient();
 
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {
-            CGContextDrawLinearGradient(platformContext, platformGradient(), data.point0, data.point1, extendOptions);
+            switch (m_spreadMethod) {
+            case SpreadMethodRepeat:
+            case SpreadMethodReflect: {
+                CGContextStateSaver saveState(platformContext);
+
+                FloatPoint gradientVectorNorm(data.point1 - data.point0);
+                gradientVectorNorm.normalize();
+                CGFloat angle = acos(gradientVectorNorm.dot({ 1, 0 }));
+                CGContextRotateCTM(platformContext, angle);
+
+                CGAffineTransform transform = CGAffineTransformMakeRotation(-angle);
+                FloatPoint point0 = CGPointApplyAffineTransform(data.point0, transform);
+                FloatPoint point1 = CGPointApplyAffineTransform(data.point1, transform);
+
+                CGRect boundingBox = CGContextGetClipBoundingBox(platformContext);
+                CGFloat width = point1.x() - point0.x();
+                CGFloat pixelSize = CGFAbs(CGContextConvertSizeToUserSpace(platformContext, CGSizeMake(1, 1)).width);
+
+                if (width > 0 && !CGRectIsInfinite(boundingBox) && !CGRectIsEmpty(boundingBox)) {
+                    extendOptions = 0;
+                    if (width < pixelSize)
+                        width = pixelSize;
+
+                    CGFloat gradientStart = point0.x();
+                    CGFloat gradientEnd = point1.x();
+                    bool flip = m_spreadMethod == SpreadMethodReflect;
+
+                    // Find first gradient position to the left of the bounding box
+                    int n = CGFloor((boundingBox.origin.x - gradientStart) / width);
+                    gradientStart += n * width;
+                    if (!(n % 2))
+                        flip = false;
+
+                    gradientEnd -= CGFloor((gradientEnd - CGRectGetMaxX(boundingBox)) / width) * width;
+
+                    for (CGFloat start = gradientStart; start <= gradientEnd; start += width) {
+                        CGPoint left = CGPointMake(flip ? start + width : start, boundingBox.origin.y);
+                        CGPoint right = CGPointMake(flip ? start : start + width, boundingBox.origin.y);
+
+                        CGContextDrawLinearGradient(platformContext, gradient, left, right, extendOptions);
+
+                        if (m_spreadMethod == SpreadMethodReflect)
+                            flip = !flip;
+                    }
+
+                    break;
+                }
+
+                FALLTHROUGH;
+            }
+            case SpreadMethodPad:
+                CGContextDrawLinearGradient(platformContext, gradient, data.point0, data.point1, extendOptions);
+            }
         },
         [&] (const RadialData& data) {
             bool needScaling = data.aspectRatio != 1;
@@ -123,7 +176,7 @@ void Gradient::paint(CGContextRef platformContext)
                 CGContextTranslateCTM(platformContext, -data.point0.x(), -data.point0.y());
             }
 
-            CGContextDrawRadialGradient(platformContext, platformGradient(), data.point0, data.startRadius, data.point1, data.endRadius, extendOptions);
+            CGContextDrawRadialGradient(platformContext, gradient, data.point0, data.startRadius, data.point1, data.endRadius, extendOptions);
 
             if (needScaling)
                 CGContextRestoreGState(platformContext);

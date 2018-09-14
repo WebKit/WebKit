@@ -1,3 +1,39 @@
+2018-09-14  Justin Michaud  <justin_michaud@apple.com>
+
+        Add support for spreadMethod=reflect and repeat on SVG gradients (for CoreGraphics platforms)
+        https://bugs.webkit.org/show_bug.cgi?id=5968
+
+        Add support for spreadMethod=repeat and reflect. Also, the opacity of a gradient is now
+        the result of multiplying stop-opacity with the opacity of the color.
+
+        Reviewed by Simon Fraser.
+
+        Tests: svg/gradients/spreadMethod-expected.svg
+               svg/gradients/spreadMethod.svg
+               svg/gradients/spreadMethodAlpha-expected.svg
+               svg/gradients/spreadMethodAlpha.svg
+               svg/gradients/spreadMethodClose0-expected-mismatch.svg
+               svg/gradients/spreadMethodClose0.svg
+               svg/gradients/spreadMethodClose1-expected-mismatch.svg
+               svg/gradients/spreadMethodClose1.svg
+               svg/gradients/spreadMethodClose2-expected.svg
+               svg/gradients/spreadMethodClose2.svg
+               svg/gradients/spreadMethodDiagonal-expected.svg
+               svg/gradients/spreadMethodDiagonal.svg
+               svg/gradients/spreadMethodDiagonal2-expected.svg
+               svg/gradients/spreadMethodDiagonal2.svg
+               svg/gradients/spreadMethodDuplicateStop-expected.svg
+               svg/gradients/spreadMethodDuplicateStop.svg
+               svg/gradients/spreadMethodReversed-expected.svg
+               svg/gradients/spreadMethodReversed.svg
+               svg/gradients/stopAlpha-expected.svg
+               svg/gradients/stopAlpha.svg
+
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::stopColorIncludingOpacity const):
+
 2018-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, attempt to fix the iOSMac build after r236015.
