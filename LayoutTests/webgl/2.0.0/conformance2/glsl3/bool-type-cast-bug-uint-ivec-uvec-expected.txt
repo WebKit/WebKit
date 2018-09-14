@@ -1,48 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html
-[ 1: PASS ] should be 0,255,0,255
-[ 2: PASS ] should be 255,0,0,255
-[ 3: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 4: PASS ] should be 0,255,0,255
-[ 5: PASS ] should be 255,0,0,255
-[ 6: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 7: PASS ] should be 0,255,0,255
-[ 8: PASS ] should be 255,0,0,255
-[ 9: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 10: PASS ] should be 0,255,0,255
-[ 11: PASS ] should be 255,0,0,255
-[ 12: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 13: PASS ] should be 0,255,0,255
-[ 14: PASS ] should be 255,0,0,255
-[ 15: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 16: PASS ] should be 0,255,0,255
-[ 17: PASS ] should be 255,0,0,255
-[ 18: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 19: PASS ] should be 0,255,0,255
-[ 20: PASS ] should be 255,0,0,255
-[ 21: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 22: PASS ] should be 0,255,0,255
-[ 23: PASS ] should be 255,0,0,255
-[ 24: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 25: PASS ] should be 0,255,0,255
-[ 26: PASS ] should be 255,0,0,255
-[ 27: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 28: PASS ] should be 0,255,0,255
-[ 29: PASS ] should be 255,0,0,255
-[ 30: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 31: PASS ] should be 0,255,0,255
-[ 32: PASS ] should be 255,0,0,255
-[ 33: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 34: PASS ] should be 0,255,0,255
-[ 35: PASS ] should be 255,0,0,255
-[ 36: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 37: PASS ] should be 0,255,0,255
-[ 38: PASS ] should be 255,0,0,255
-[ 39: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 40: PASS ] should be 0,255,0,255
-[ 41: PASS ] should be 255,0,0,255
-[ 42: PASS ] getError was expected value: NO_ERROR : Should be no errors from testing
-[ 43: PASS ] successfullyParsed is true
 [ PASS ] All tests passed
 

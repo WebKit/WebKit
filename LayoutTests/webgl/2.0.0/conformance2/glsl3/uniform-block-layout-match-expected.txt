@@ -1,7 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/uniform-block-layout-match.html
-[ 1: PASS ] A uniform block's layout defaults to std140 if not specified.
-[ 2: PASS ] successfullyParsed is true
 [ PASS ] All tests passed
 

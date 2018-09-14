@@ -1,8 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/uniform-block-layouts.html
-[ 1: PASS ] Packed uniform buffers are disallowed
-[ 2: PASS ] Shared uniform buffers are disallowed
-[ 3: PASS ] successfullyParsed is true
 [ PASS ] All tests passed
 

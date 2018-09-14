@@ -1,13 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/texture-offset-uniform-texture-coordinate.html
-[ 1: PASS ] textureOffset with uniform texture coordinates should not crash
-[ 2: PASS ] textureLodOffset with uniform texture coordinates should not crash
-[ 3: PASS ] textureGradOffset with uniform texture coordinates should not crash
-[ 4: PASS ] textureProjOffset with uniform texture coordinates should not crash
-[ 5: PASS ] textureProjLodOffset with uniform texture coordinates should not crash
-[ 6: PASS ] textureProjGradOffset with uniform texture coordinates should not crash
-[ 7: PASS ] texelFetchOffset with uniform texture coordinates should not crash
-[ 8: PASS ] successfullyParsed is true
 [ PASS ] All tests passed
 

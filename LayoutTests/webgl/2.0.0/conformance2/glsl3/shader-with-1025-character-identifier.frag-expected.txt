@@ -1,7 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/shader-with-1025-character-identifier.frag.html
-[ 1: PASS ] shader that uses 1025 character identifier should fail
-[ 2: PASS ] successfullyParsed is true
 [ PASS ] All tests passed
 

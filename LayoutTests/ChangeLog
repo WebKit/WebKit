@@ -1,3 +1,47 @@
+2018-09-13  Justin Fan  <justin_fan@apple.com>
+
+        Update webkit-webgl-test-harness.js for more details on WebGL 2 conformance tests part 4
+        https://bugs.webkit.org/show_bug.cgi?id=189609
+
+        Unreviewed small change for only the few webgl 2 tests' harness; completely passing 
+        tests now only report the PASS line, to avoid discrepancies between e.g. feature ability 
+        of different graphics cards causing diffs to fail.
+
+        * webgl/2.0.0/conformance2/glsl3/array-as-return-value-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/array-assign-constructor-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/array-assign-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/array-complex-indexing-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/array-element-increment-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/array-equality-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/array-in-complex-expression-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/compare-structs-containing-arrays-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/const-array-init-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/forbidden-operators-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/frag-depth-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/invalid-default-precision-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/invalid-invariant-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/loops-with-side-effects-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/misplaced-version-directive-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/sampler-no-precision-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/sequence-operator-returns-non-constant-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-1025-character-define-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-1025-character-identifier.frag-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/short-circuiting-in-loop-condition-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/texture-offset-out-of-range-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/texture-offset-uniform-texture-coordinate-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/uniform-block-layout-match-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/uniform-block-layouts-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing-nv-driver-bug-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/framebuffer-test-expected.txt:
+        * webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object-expected.txt:
+        * webgl/2.0.0/resources/webkit-webgl-test-harness.js:
+        (window.webglTestHarness.notifyFinished):
+
 2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.html is flaky

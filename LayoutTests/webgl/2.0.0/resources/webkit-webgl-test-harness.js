@@ -64,8 +64,9 @@
       if (numFailures > 0) {
         log(`[ FAIL ] ${numFailures} failures reported`, "red");
       } else {
-        log("[ PASS ] All tests passed", "green");
+        resultsList.innerHTML = "";
         iframe.innerHTML = "";
+        log("[ PASS ] All tests passed", "green");
       }
 
       if (window.layoutTestController) {

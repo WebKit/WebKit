@@ -1,12 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/forbidden-operators.html
-[ 1: PASS ] Using ternary operators with arrays is not allowed
-[ 2: PASS ] Using ternary operators with structs containing arrays is not allowed
-[ 3: PASS ] Using ternary operators with void is not allowed
-[ 4: PASS ] Using sequence operators with arrays is not allowed
-[ 5: PASS ] Using sequence operators with structs containing arrays is not allowed
-[ 6: PASS ] Using sequence operators with void is not allowed
-[ 7: PASS ] successfullyParsed is true
 [ PASS ] All tests passed
 

@@ -1,8 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/sequence-operator-returns-non-constant.html
-[ 1: PASS ] Sequence operator cannot return a constant expression
-[ 2: PASS ] Sequence operator return value cannot be used as an array size
-[ 3: PASS ] successfullyParsed is true
 [ PASS ] All tests passed
 
