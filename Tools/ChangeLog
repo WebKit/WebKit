@@ -1,3 +1,16 @@
+2018-09-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        bots should pass --clobber-old-results to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=189623
+
+        Reviewed by Aakash Jain.
+
+        In order to ensure that bots to not produce confusing results due to transient execptions,
+        or run out of space if they continually hit an exception, old layout test results should be clobbered.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunWebKitTests):
+
 2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r235954.

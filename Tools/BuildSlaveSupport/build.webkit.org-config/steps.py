@@ -390,6 +390,7 @@ class RunWebKitTests(shell.Test):
                "--no-build",
                "--no-show-results",
                "--no-new-test-results",
+               "--clobber-old-results",
                "--builder-name", WithProperties("%(buildername)s"),
                "--build-number", WithProperties("%(buildnumber)s"),
                "--master-name", "webkit.org",
