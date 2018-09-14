@@ -431,7 +431,7 @@ mediaSourceEnabled:
   conditional: MEDIA_SOURCE
 
 sourceBufferChangeTypeEnabled:
-  initial: false
+  initial: true
   conditional: MEDIA_SOURCE
 
 # FIXME: Rename to allowMultiElementImplicitFormSubmission once we upstream the iOS changes to WebView.mm.

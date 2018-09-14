@@ -1,3 +1,13 @@
+2018-09-14  Jer Noble  <jer.noble@apple.com>
+
+        Turn SourceBufferChangeTypeEnabled on by default
+        https://bugs.webkit.org/show_bug.cgi?id=189527
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2018-09-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, speculative WPE build fix after r236004

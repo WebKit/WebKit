@@ -605,7 +605,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey,
 #if ENABLE(MEDIA_SOURCE)
         [NSNumber numberWithBool:YES], WebKitMediaSourceEnabledPreferenceKey,
-        @NO, WebKitSourceBufferChangeTypeEnabledPreferenceKey,
+        @YES, WebKitSourceBufferChangeTypeEnabledPreferenceKey,
 #endif
 #if ENABLE(SERVICE_CONTROLS)
         [NSNumber numberWithBool:NO], WebKitImageControlsEnabledPreferenceKey,

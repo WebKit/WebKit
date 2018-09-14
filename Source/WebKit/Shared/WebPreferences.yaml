@@ -1125,6 +1125,11 @@ IsSecureContextAttributeEnabled:
   defaultValue: true
   webcoreBinding: RuntimeEnabledFeatures
 
+SourceBufferChangeTypeEnabled:
+  type: bool
+  defaultValue: true
+  condition: ENABLE(MEDIA_SOURCE)
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all experimental features. They
@@ -1269,14 +1274,6 @@ ProcessSwapOnCrossSiteNavigationEnabled:
   humanReadableDescription: "Swap WebContent processes on cross-site navigations"
   category: internal
   webcoreBinding: none
-
-SourceBufferChangeTypeEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Media Source Codec Switching Support"
-  humanReadableDescription: "Media Source Codec Switching through changeType()"
-  category: internal
-  condition: ENABLE(MEDIA_SOURCE)
 
 ResourceLoadStatisticsDebugMode:
   type: bool
