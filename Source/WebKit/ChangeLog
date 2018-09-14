@@ -1,3 +1,67 @@
+2018-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make script dialogs modal to the current web view only
+        https://bugs.webkit.org/show_bug.cgi?id=189545
+
+        Reviewed by Michael Catanzaro.
+
+        Change the default implementation of script dialogs to use an embedded window, like the HTTP auth dialog,
+        instead of a GtkMessageDialog. This patch adds a base class WebKitWebViewDialog shared by
+        WebKitAuthenticationDialog and the new WebKitScriptDialogImpl.
+
+        * SourcesGTK.txt: Add new files to compilation.
+        * UIProcess/API/glib/WebKitScriptDialogPrivate.h:
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (webkitAuthenticationDialogInitialize): Do not use a frame and use a better styled title.
+        (webkit_authentication_dialog_class_init): Remove implementation of vfuncs that are now implemented by the
+        parent.
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.h:
+        * UIProcess/API/gtk/WebKitScriptDialogGtk.cpp:
+        (webkitScriptDialogAccept): Use WebKitScriptDialogImpl API.
+        (webkitScriptDialogDismiss): Ditto.
+        (webkitScriptDialogSetUserInput): Ditto.
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.cpp: Added.
+        (webkitScriptDialogImplClose):
+        (webkitScriptDialogImplKeyPressEvent):
+        (webkitScriptDialogImplMap):
+        (webkitScriptDialogImplConstructed):
+        (webkitScriptDialogImplDispose):
+        (webkit_script_dialog_impl_class_init):
+        (webkitScriptDialogImplAddButton):
+        (webkitScriptDialogImplNew):
+        (webkitScriptDialogImplCancel):
+        (webkitScriptDialogImplConfirm):
+        (webkitScriptDialogImplSetEntryText):
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.h: Added.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewChildIsInternalWidget): Rename authenticationDialog as just dialog.
+        (webkitWebViewBaseAddDialog): Ditto.
+        (webkitWebViewBaseContainerRemove): Ditto.
+        (webkitWebViewBaseContainerForall): Ditto.
+        (webkitWebViewBaseConstructed): Ditto.
+        (webkitWebViewBaseSizeAllocate): Ditto.
+        (webkitWebViewBaseKeyPressEvent): Ditto.
+        (webkitWebViewBaseHandleMouseEvent): Ditto.
+        (webkitWebViewBaseButtonPressEvent): Ditto.
+        (webkitWebViewBaseButtonReleaseEvent): Ditto.
+        (webkitWebViewBaseHandleWheelEvent): Ditto.
+        (webkitWebViewBaseScrollEvent): Ditto.
+        (webkitWebViewBaseMotionNotifyEvent): Ditto.
+        (webkitWebViewBaseCrossingNotifyEvent): Ditto.
+        (webkitWebViewBaseTouchEvent): Ditto.
+        (webkitWebViewBaseFocus): Ditto.
+        (webkitWebViewBaseDestroy): Ditto.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewDialog.cpp: Added.
+        (webkitWebViewDialogDraw):
+        (webkitWebViewDialogSizeAllocate):
+        (webkitWebViewDialogConstructed):
+        (webkit_web_view_dialog_class_init):
+        * UIProcess/API/gtk/WebKitWebViewDialog.h: Added.
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkitWebViewAuthenticate):
+        (webkitWebViewScriptDialog):
+
 2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r235954.

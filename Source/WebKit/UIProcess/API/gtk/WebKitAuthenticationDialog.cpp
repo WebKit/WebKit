@@ -38,10 +38,9 @@ struct _WebKitAuthenticationDialogPrivate {
     GtkWidget* rememberCheckButton;
     GtkWidget* defaultButton;
     unsigned long authenticationCancelledID;
-    GRefPtr<GtkStyleContext> styleContext;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitAuthenticationDialog, webkit_authentication_dialog, GTK_TYPE_EVENT_BOX)
+WEBKIT_DEFINE_TYPE(WebKitAuthenticationDialog, webkit_authentication_dialog, WEBKIT_TYPE_WEB_VIEW_DIALOG)
 
 static void okButtonClicked(GtkButton*, WebKitAuthenticationDialog* authDialog)
 {
@@ -82,28 +81,28 @@ static GtkWidget* createLabelWithLineWrap(const char* text)
 
 static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* authDialog)
 {
-    GtkWidget* frame = gtk_frame_new(0);
-    gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+    GtkWidget* vBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 20);
 
-    GtkWidget* vBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
-    gtk_container_set_border_width(GTK_CONTAINER(vBox), 12);
-
-    GtkWidget* label = gtk_label_new(nullptr);
-    // Title of the HTTP authentication dialog.
-    GUniquePtr<char> title(g_strdup_printf("<b>%s</b>", _("Authentication Required")));
-    gtk_label_set_markup(GTK_LABEL(label), title.get());
-    gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
-    gtk_widget_show(label);
-    gtk_box_pack_start(GTK_BOX(vBox), label, FALSE, FALSE, 0);
+    GtkWidget* box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(box), GTK_STYLE_CLASS_TITLEBAR);
+    gtk_widget_set_size_request(box, -1, 16);
+    GtkWidget* title = gtk_label_new(_("Authentication Required"));
+    gtk_widget_set_margin_top(title, 6);
+    gtk_widget_set_margin_bottom(title, 6);
+    gtk_style_context_add_class(gtk_widget_get_style_context(title), GTK_STYLE_CLASS_TITLE);
+    gtk_box_set_center_widget(GTK_BOX(box), title);
+    gtk_widget_show(title);
+    gtk_box_pack_start(GTK_BOX(vBox), box, TRUE, FALSE, 0);
+    gtk_widget_show(box);
 
     GtkWidget* buttonBox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-    gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_END);
-    gtk_container_set_border_width(GTK_CONTAINER(buttonBox), 5);
-    gtk_box_set_spacing(GTK_BOX(buttonBox), 6);
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_EXPAND);
+    gtk_widget_set_hexpand(buttonBox, TRUE);
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonBox), "dialog-action-area");
 
     GtkWidget* button = gtk_button_new_with_mnemonic(_("_Cancel"));
     g_signal_connect(button, "clicked", G_CALLBACK(cancelButtonClicked), authDialog);
-    gtk_box_pack_end(GTK_BOX(buttonBox), button, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(buttonBox), button, FALSE, TRUE, 0);
     gtk_widget_show(button);
 
     WebKitAuthenticationDialogPrivate* priv = authDialog->priv;
@@ -114,14 +113,15 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     gtk_box_pack_end(GTK_BOX(buttonBox), button, FALSE, TRUE, 0);
     gtk_widget_show(button);
 
-    GtkWidget* authBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
-    gtk_container_set_border_width(GTK_CONTAINER(authBox), 5);
+    GtkWidget* authBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_widget_set_margin_start(authBox, 10);
+    gtk_widget_set_margin_end(authBox, 10);
 
     const WebCore::AuthenticationChallenge& challenge = webkitAuthenticationRequestGetAuthenticationChallenge(priv->request.get())->core();
     // Prompt on the HTTP authentication dialog.
     GUniquePtr<char> prompt(g_strdup_printf(_("Authentication required by %s:%i"),
         challenge.protectionSpace().host().utf8().data(), challenge.protectionSpace().port()));
-    label = createLabelWithLineWrap(prompt.get());
+    GtkWidget* label = createLabelWithLineWrap(prompt.get());
     gtk_widget_show(label);
     gtk_box_pack_start(GTK_BOX(authBox), label, FALSE, FALSE, 0);
 
@@ -189,36 +189,10 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     gtk_box_pack_end(GTK_BOX(vBox), buttonBox, FALSE, TRUE, 0);
     gtk_widget_show(buttonBox);
 
-    gtk_container_add(GTK_CONTAINER(frame), vBox);
+    gtk_container_add(GTK_CONTAINER(authDialog), vBox);
     gtk_widget_show(vBox);
 
-    gtk_container_add(GTK_CONTAINER(authDialog), frame);
-    gtk_widget_show(frame);
-
     authDialog->priv->authenticationCancelledID = g_signal_connect(authDialog->priv->request.get(), "cancelled", G_CALLBACK(authenticationCancelled), authDialog);
-}
-
-static gboolean webkitAuthenticationDialogDraw(GtkWidget* widget, cairo_t* cr)
-{
-    WebKitAuthenticationDialogPrivate* priv = WEBKIT_AUTHENTICATION_DIALOG(widget)->priv;
-
-    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-    cairo_set_source_rgba(cr, 0, 0, 0, 0.5);
-    cairo_paint(cr);
-
-    if (GtkWidget* child = gtk_bin_get_child(GTK_BIN(widget))) {
-        GtkAllocation allocation;
-        gtk_widget_get_allocation(child, &allocation);
-
-        gtk_style_context_save(priv->styleContext.get());
-        gtk_style_context_add_class(priv->styleContext.get(), GTK_STYLE_CLASS_BACKGROUND);
-        gtk_render_background(priv->styleContext.get(), cr, allocation.x, allocation.y, allocation.width, allocation.height);
-        gtk_style_context_restore(priv->styleContext.get());
-    }
-
-    GTK_WIDGET_CLASS(webkit_authentication_dialog_parent_class)->draw(widget, cr);
-
-    return FALSE;
 }
 
 static void webkitAuthenticationDialogMap(GtkWidget* widget)
@@ -228,39 +202,6 @@ static void webkitAuthenticationDialogMap(GtkWidget* widget)
     gtk_widget_grab_default(priv->defaultButton);
 
     GTK_WIDGET_CLASS(webkit_authentication_dialog_parent_class)->map(widget);
-}
-
-static void webkitAuthenticationDialogSizeAllocate(GtkWidget* widget, GtkAllocation* allocation)
-{
-    GTK_WIDGET_CLASS(webkit_authentication_dialog_parent_class)->size_allocate(widget, allocation);
-
-    GtkWidget* child = gtk_bin_get_child(GTK_BIN(widget));
-    if (!child)
-        return;
-
-    GtkRequisition naturalSize;
-    gtk_widget_get_preferred_size(child, 0, &naturalSize);
-
-    GtkAllocation childAllocation;
-    gtk_widget_get_allocation(child, &childAllocation);
-
-    childAllocation.x += (allocation->width - naturalSize.width) / 2;
-    childAllocation.y += (allocation->height - naturalSize.height) / 2;
-    childAllocation.width = naturalSize.width;
-    childAllocation.height = naturalSize.height;
-    gtk_widget_size_allocate(child, &childAllocation);
-}
-
-static void webkitAuthenticationDialogConstructed(GObject* object)
-{
-    G_OBJECT_CLASS(webkit_authentication_dialog_parent_class)->constructed(object);
-
-    WebKitAuthenticationDialogPrivate* priv = WEBKIT_AUTHENTICATION_DIALOG(object)->priv;
-    priv->styleContext = adoptGRef(gtk_style_context_new());
-    GtkWidgetPath* path = gtk_widget_path_new();
-    gtk_widget_path_append_type(path, GTK_TYPE_WINDOW);
-    gtk_style_context_set_path(priv->styleContext.get(), path);
-    gtk_widget_path_free(path);
 }
 
 static void webkitAuthenticationDialogDispose(GObject* object)
@@ -277,13 +218,10 @@ static void webkitAuthenticationDialogDispose(GObject* object)
 static void webkit_authentication_dialog_class_init(WebKitAuthenticationDialogClass* klass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(klass);
-    objectClass->constructed = webkitAuthenticationDialogConstructed;
     objectClass->dispose = webkitAuthenticationDialogDispose;
 
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(klass);
-    widgetClass->draw = webkitAuthenticationDialogDraw;
     widgetClass->map = webkitAuthenticationDialogMap;
-    widgetClass->size_allocate = webkitAuthenticationDialogSizeAllocate;
 }
 
 GtkWidget* webkitAuthenticationDialogNew(WebKitAuthenticationRequest* request, CredentialStorageMode mode)

@@ -20,7 +20,6 @@
 #pragma once
 
 #include "WebKitScriptDialog.h"
-#include "WebKitWebView.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,7 +49,6 @@ struct _WebKitScriptDialog {
 };
 
 WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const CString& message, const CString& defaultText, Function<void(bool, const String&)>&& completionHandler);
-void webkitScriptDialogRun(WebKitScriptDialog*, WebKitWebView*);
 bool webkitScriptDialogIsRunning(WebKitScriptDialog*);
 void webkitScriptDialogAccept(WebKitScriptDialog*);
 void webkitScriptDialogDismiss(WebKitScriptDialog*);

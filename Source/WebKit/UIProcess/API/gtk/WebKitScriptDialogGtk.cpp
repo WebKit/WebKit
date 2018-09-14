@@ -20,122 +20,27 @@
 #include "config.h"
 #include "WebKitScriptDialog.h"
 
+#include "WebKitScriptDialogImpl.h"
 #include "WebKitScriptDialogPrivate.h"
-#include "WebKitWebViewPrivate.h"
-#include <WebCore/GtkUtilities.h>
-#include <glib/gi18n-lib.h>
-#include <gtk/gtk.h>
-#include <wtf/glib/GUniquePtr.h>
-
-static void scriptDialogResponseCallback(GtkWidget* dialog, int responseID, WebKitScriptDialog* scriptDialog)
-{
-    switch (scriptDialog->type) {
-    case WEBKIT_SCRIPT_DIALOG_ALERT:
-        break;
-    case WEBKIT_SCRIPT_DIALOG_CONFIRM:
-    case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
-        scriptDialog->confirmed = responseID == GTK_RESPONSE_OK;
-        break;
-    case WEBKIT_SCRIPT_DIALOG_PROMPT:
-        if (responseID == GTK_RESPONSE_OK) {
-            if (auto* entry = g_object_get_data(G_OBJECT(dialog), "wk-script-dialog-entry"))
-                scriptDialog->text = gtk_entry_get_text(GTK_ENTRY(entry));
-        }
-        break;
-    }
-
-    scriptDialog->nativeDialog = nullptr;
-    webkit_script_dialog_close(scriptDialog);
-    webkit_script_dialog_unref(scriptDialog);
-    gtk_widget_destroy(dialog);
-}
-
-static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, GtkMessageType type, GtkButtonsType buttons, int defaultResponse, const char* primaryText, const char* secondaryText = nullptr)
-{
-    GtkWidget* parent = gtk_widget_get_toplevel(GTK_WIDGET(webView));
-    GtkWidget* dialog = gtk_message_dialog_new(WebCore::widgetIsOnscreenToplevelWindow(parent) ? GTK_WINDOW(parent) : nullptr,
-        GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", primaryText);
-    if (secondaryText)
-        gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", secondaryText);
-    GUniquePtr<char> title(g_strdup_printf("JavaScript - %s", webkitWebViewGetPage(webView).pageLoadState().url().utf8().data()));
-    gtk_window_set_title(GTK_WINDOW(dialog), title.get());
-    if (buttons != GTK_BUTTONS_NONE)
-        gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
-
-    return dialog;
-}
-
-void webkitScriptDialogRun(WebKitScriptDialog* scriptDialog, WebKitWebView* webView)
-{
-    GtkWidget* dialog = nullptr;
-
-    switch (scriptDialog->type) {
-    case WEBKIT_SCRIPT_DIALOG_ALERT:
-        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_WARNING, GTK_BUTTONS_CLOSE, GTK_RESPONSE_CLOSE, scriptDialog->message.data());
-        break;
-    case WEBKIT_SCRIPT_DIALOG_CONFIRM:
-        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, scriptDialog->message.data());
-        break;
-    case WEBKIT_SCRIPT_DIALOG_PROMPT: {
-        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, scriptDialog->message.data());
-        GtkWidget* entry = gtk_entry_new();
-        g_object_set_data(G_OBJECT(dialog), "wk-script-dialog-entry", entry);
-        gtk_entry_set_text(GTK_ENTRY(entry), scriptDialog->defaultText.data());
-        gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), entry);
-        gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
-        gtk_widget_show(entry);
-        break;
-    }
-    case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
-        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, GTK_RESPONSE_OK,
-            _("Are you sure you want to leave this page?"), scriptDialog->message.data());
-        gtk_dialog_add_buttons(GTK_DIALOG(dialog), _("Stay on Page"), GTK_RESPONSE_CLOSE, _("Leave Page"), GTK_RESPONSE_OK, nullptr);
-        gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
-        break;
-    }
-
-    ASSERT(dialog);
-    scriptDialog->nativeDialog = dialog;
-    g_signal_connect(dialog, "response", G_CALLBACK(scriptDialogResponseCallback), webkit_script_dialog_ref(scriptDialog));
-    gtk_widget_show(dialog);
-}
 
 void webkitScriptDialogAccept(WebKitScriptDialog* scriptDialog)
 {
-    int response = 0;
-    switch (scriptDialog->type) {
-    case WEBKIT_SCRIPT_DIALOG_ALERT:
-        response = GTK_RESPONSE_CLOSE;
-        break;
-    case WEBKIT_SCRIPT_DIALOG_CONFIRM:
-    case WEBKIT_SCRIPT_DIALOG_PROMPT:
-    case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
-        response = GTK_RESPONSE_OK;
-        break;
-    }
-    ASSERT(scriptDialog->nativeDialog);
-    gtk_dialog_response(GTK_DIALOG(scriptDialog->nativeDialog), response);
+    if (!WEBKIT_IS_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog))
+        return;
+    webkitScriptDialogImplConfirm(WEBKIT_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog));
 }
 
 void webkitScriptDialogDismiss(WebKitScriptDialog* scriptDialog)
 {
-    ASSERT(scriptDialog->nativeDialog);
-    gtk_dialog_response(GTK_DIALOG(scriptDialog->nativeDialog), GTK_RESPONSE_CLOSE);
+    if (!WEBKIT_IS_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog))
+        return;
+    webkitScriptDialogImplCancel(WEBKIT_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog));
 }
 
 void webkitScriptDialogSetUserInput(WebKitScriptDialog* scriptDialog, const String& userInput)
 {
-    if (scriptDialog->type != WEBKIT_SCRIPT_DIALOG_PROMPT)
+    if (!WEBKIT_IS_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog))
         return;
 
-    ASSERT(scriptDialog->nativeDialog);
-    GtkWidget* dialogContentArea = gtk_dialog_get_content_area(GTK_DIALOG(scriptDialog->nativeDialog));
-    GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(dialogContentArea)));
-    for (GList* child = children.get(); child; child = g_list_next(child)) {
-        GtkWidget* childWidget = GTK_WIDGET(child->data);
-        if (GTK_IS_ENTRY(childWidget)) {
-            gtk_entry_set_text(GTK_ENTRY(childWidget), userInput.utf8().data());
-            break;
-        }
-    }
+    webkitScriptDialogImplSetEntryText(WEBKIT_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog), userInput);
 }

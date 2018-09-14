@@ -29,7 +29,7 @@ LocalizedStringsGtk.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp
-../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogGtk.cpp
+../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp

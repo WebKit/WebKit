@@ -1,3 +1,12 @@
+2018-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make script dialogs modal to the current web view only
+        https://bugs.webkit.org/show_bug.cgi?id=189545
+
+        Reviewed by Michael Catanzaro.
+
+        * POTFILES.in:
+
 2018-08-16  Piotr Drąg  <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+ for 2.22
