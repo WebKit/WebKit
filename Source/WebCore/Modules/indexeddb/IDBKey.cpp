@@ -55,7 +55,7 @@ Ref<IDBKey> IDBKey::createBinary(JSC::JSArrayBufferView& arrayBufferView)
     return adoptRef(*new IDBKey(ThreadSafeDataBuffer::copyData(bufferView->data(), bufferView->byteLength())));
 }
 
-IDBKey::IDBKey(KeyType type, double number)
+IDBKey::IDBKey(IndexedDB::KeyType type, double number)
     : m_type(type)
     , m_value(number)
     , m_sizeEstimate(OverheadSize + sizeof(double))
@@ -63,21 +63,21 @@ IDBKey::IDBKey(KeyType type, double number)
 }
 
 IDBKey::IDBKey(const String& value)
-    : m_type(KeyType::String)
+    : m_type(IndexedDB::KeyType::String)
     , m_value(value)
     , m_sizeEstimate(OverheadSize + value.length() * sizeof(UChar))
 {
 }
 
 IDBKey::IDBKey(const IDBKeyVector& keyArray, size_t arraySize)
-    : m_type(KeyType::Array)
+    : m_type(IndexedDB::KeyType::Array)
     , m_value(keyArray)
     , m_sizeEstimate(OverheadSize + arraySize)
 {
 }
 
 IDBKey::IDBKey(const ThreadSafeDataBuffer& buffer)
-    : m_type(KeyType::Binary)
+    : m_type(IndexedDB::KeyType::Binary)
     , m_value(buffer)
     , m_sizeEstimate(OverheadSize + buffer.size())
 {
@@ -87,10 +87,10 @@ IDBKey::~IDBKey() = default;
 
 bool IDBKey::isValid() const
 {
-    if (m_type == KeyType::Invalid)
+    if (m_type == IndexedDB::KeyType::Invalid)
         return false;
 
-    if (m_type == KeyType::Array) {
+    if (m_type == IndexedDB::KeyType::Array) {
         for (auto& key : WTF::get<IDBKeyVector>(m_value)) {
             if (!key->isValid())
                 return false;
@@ -106,7 +106,7 @@ int IDBKey::compare(const IDBKey& other) const
         return m_type > other.m_type ? -1 : 1;
 
     switch (m_type) {
-    case KeyType::Array: {
+    case IndexedDB::KeyType::Array: {
         auto& array = WTF::get<IDBKeyVector>(m_value);
         auto& otherArray = WTF::get<IDBKeyVector>(other.m_value);
         for (size_t i = 0; i < array.size() && i < otherArray.size(); ++i) {
@@ -119,19 +119,19 @@ int IDBKey::compare(const IDBKey& other) const
             return 1;
         return 0;
     }
-    case KeyType::Binary:
+    case IndexedDB::KeyType::Binary:
         return compareBinaryKeyData(WTF::get<ThreadSafeDataBuffer>(m_value), WTF::get<ThreadSafeDataBuffer>(other.m_value));
-    case KeyType::String:
+    case IndexedDB::KeyType::String:
         return -codePointCompare(WTF::get<String>(other.m_value), WTF::get<String>(m_value));
-    case KeyType::Date:
-    case KeyType::Number: {
+    case IndexedDB::KeyType::Date:
+    case IndexedDB::KeyType::Number: {
         auto number = WTF::get<double>(m_value);
         auto otherNumber = WTF::get<double>(other.m_value);
         return (number < otherNumber) ? -1 : ((number > otherNumber) ? 1 : 0);
     }
-    case KeyType::Invalid:
-    case KeyType::Min:
-    case KeyType::Max:
+    case IndexedDB::KeyType::Invalid:
+    case IndexedDB::KeyType::Min:
+    case IndexedDB::KeyType::Max:
         ASSERT_NOT_REACHED();
         return 0;
     }

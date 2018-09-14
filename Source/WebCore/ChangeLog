@@ -1,3 +1,62 @@
+2018-09-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r235954): Fix build failure on watchOS
+        <https://webkit.org/b/189605>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove `using WebCore::IndexedDB::KeyType;` from
+        Source/WebCore/Modules/indexeddb/IDBKey.h and fix all the
+        resulting build failures.
+
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::IDBKey):
+        (WebCore::IDBKey::isValid const):
+        (WebCore::IDBKey::compare const):
+        * Modules/indexeddb/IDBKey.h:
+        (WebCore::IDBKey::createNumber):
+        (WebCore::IDBKey::createDate):
+        (WebCore::IDBKey::type const):
+        (WebCore::IDBKey::array const):
+        (WebCore::IDBKey::string const):
+        (WebCore::IDBKey::date const):
+        (WebCore::IDBKey::number const):
+        (WebCore::IDBKey::binary const):
+        (WebCore::IDBKey::compareTypes):
+        (WebCore::IDBKey::IDBKey):
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::IDBKeyData):
+        (WebCore::IDBKeyData::maybeCreateIDBKey const):
+        (WebCore::IDBKeyData::isolatedCopy):
+        (WebCore::IDBKeyData::encode const):
+        (WebCore::IDBKeyData::decode):
+        (WebCore::IDBKeyData::compare const):
+        (WebCore::IDBKeyData::loggingString const):
+        (WebCore::IDBKeyData::setArrayValue):
+        (WebCore::IDBKeyData::setBinaryValue):
+        (WebCore::IDBKeyData::setStringValue):
+        (WebCore::IDBKeyData::setDateValue):
+        (WebCore::IDBKeyData::setNumberValue):
+        (WebCore::IDBKeyData::isValid const):
+        (WebCore::IDBKeyData::operator== const):
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::IDBKeyData):
+        (WebCore::IDBKeyData::minimum):
+        (WebCore::IDBKeyData::maximum):
+        (WebCore::IDBKeyData::type const):
+        (WebCore::IDBKeyData::hash const):
+        (WebCore::IDBKeyData::string const):
+        (WebCore::IDBKeyData::date const):
+        (WebCore::IDBKeyData::number const):
+        (WebCore::IDBKeyData::binary const):
+        (WebCore::IDBKeyData::array const):
+        (WebCore::IDBKeyData::encode const):
+        (WebCore::IDBKeyData::decode):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::toJS):
+
 2018-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME] Add support the waitingforkey event

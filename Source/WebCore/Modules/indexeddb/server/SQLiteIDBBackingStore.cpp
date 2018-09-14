@@ -2219,7 +2219,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey");
 
-    ASSERT(key.isValid() && key.type() != KeyType::Max && key.type() != KeyType::Min);
+    ASSERT(key.isValid() && key.type() != IndexedDB::KeyType::Max && key.type() != IndexedDB::KeyType::Min);
 
     RefPtr<SharedBuffer> buffer = serializeIDBKeyData(key);
     if (!buffer) {

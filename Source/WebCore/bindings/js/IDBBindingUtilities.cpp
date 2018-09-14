@@ -96,7 +96,7 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     switch (key->type()) {
-    case KeyType::Array: {
+    case IndexedDB::KeyType::Array: {
         auto& inArray = key->array();
         unsigned size = inArray.size();
         auto outArray = constructEmptyArray(&state, 0, &globalObject, size);
@@ -107,7 +107,7 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
         }
         return outArray;
     }
-    case KeyType::Binary: {
+    case IndexedDB::KeyType::Binary: {
         auto* data = key->binary().data();
         if (!data) {
             ASSERT_NOT_REACHED();
@@ -121,17 +121,17 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
 
         return JSArrayBuffer::create(state.vm(), structure, WTFMove(arrayBuffer));
     }
-    case KeyType::String:
+    case IndexedDB::KeyType::String:
         return jsStringWithCache(&state, key->string());
-    case KeyType::Date:
+    case IndexedDB::KeyType::Date:
         // FIXME: This should probably be toJS<IDLDate>(...) as per:
         // http://w3c.github.io/IndexedDB/#request-convert-a-key-to-a-value
         return toJS<IDLNullable<IDLDate>>(state, key->date());
-    case KeyType::Number:
+    case IndexedDB::KeyType::Number:
         return jsNumber(key->number());
-    case KeyType::Min:
-    case KeyType::Max:
-    case KeyType::Invalid:
+    case IndexedDB::KeyType::Min:
+    case IndexedDB::KeyType::Max:
+    case IndexedDB::KeyType::Invalid:
         ASSERT_NOT_REACHED();
         return jsUndefined();
     }
