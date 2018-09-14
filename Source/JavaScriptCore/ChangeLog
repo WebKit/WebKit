@@ -1,3 +1,20 @@
+2018-09-14  Saam barati  <sbarati@apple.com>
+
+        Don't dump OSRAvailabilityData in Graph::dump because a stale Availability may point to a Node that is already freed
+        https://bugs.webkit.org/show_bug.cgi?id=189628
+        <rdar://problem/39481690>
+
+        Reviewed by Mark Lam.
+
+        An Availability may point to a Node. And that Node may be removed from
+        the graph, e.g, it's freed and its memory is no longer owned by Graph.
+        This patch makes it so we no longer dump this metadata by default. If
+        this metadata is interesting to you, you'll need to go in and change
+        Graph::dump to dump the needed metadata.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+
 2018-09-14  Mark Lam  <mark.lam@apple.com>
 
         Refactor some ForInContext code for better encapsulation.
