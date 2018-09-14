@@ -1,3 +1,20 @@
+2018-09-13  Jamal Nasser  <jamaln@mail.com>
+
+        Web Inspector: Dark Mode: bezier curve editor should be updated
+        https://bugs.webkit.org/show_bug.cgi?id=187657
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.bezier-editor > .bezier-preview-timing):
+        (.bezier-editor > .bezier-container .bezier-curve):
+        (.bezier-editor > .bezier-container .linear-curve):
+        (.bezier-editor > .bezier-preview):
+        (.bezier-editor > .bezier-preview > div):
+        (.bezier-editor > .bezier-container .control-handle):
+        (.bezier-editor > .bezier-container .control-line):
+
 2018-09-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Timelines: clicking a row in Script > Events grid triggers Location popover when column is hidden

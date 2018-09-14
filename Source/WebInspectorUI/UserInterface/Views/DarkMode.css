@@ -1160,8 +1160,39 @@
     .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
         filter: var(--filter-invert);
     }
+    
     .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle{
         color: var(--text-color);
+    }
+    
+    
+    /* BezierEditor.css */
+    .bezier-editor > .bezier-preview-timing {
+        border-top-color: var(--text-color-tertiary);
+    }
+    
+    .bezier-editor > .bezier-container .bezier-curve {
+        stroke: white;
+    }
+    
+    .bezier-editor > .bezier-container .linear-curve {
+        stroke: var(--text-color-tertiary);
+    }
+    
+    .bezier-editor > .bezier-preview {
+        border-bottom-color: var(--text-color-tertiary);
+    }
+    
+    .bezier-editor > .bezier-preview > div {
+        background-color: var(--selected-background-color-active);
+    }
+    
+    .bezier-editor > .bezier-container .control-handle {
+        fill: var(--selected-background-color-active);
+    }
+    
+    .bezier-editor > .bezier-container .control-line {
+        stroke: var(--selected-background-color-active);
     }
 
 
