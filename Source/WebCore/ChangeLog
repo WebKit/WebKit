@@ -1,3 +1,21 @@
+2018-09-14  Frederic Wang  <fwang@igalia.com>
+
+        Bug 189541 - Build error in FontDescriptionKey::computeHash when compiling FontTaggedSettings and FontCascadeFonts together
+        https://bugs.webkit.org/show_bug.cgi?id=189541
+
+        Reviewed by Alex Christensen.
+
+        FontDescriptionKey::computeHash() from In FontCache.h requires implicit instantiation of the
+        FontTaggedSettings::hash() template function. This instantiation may happen before
+        FontTaggedSettings::hash() is actually fully specialized in FontTaggedSettings.cpp. To avoid
+        compiler errors when FontCache.h and FontTaggedSettings.cpp are in the same translation unit,
+        we declare full specialization of the hash() functions in FontTaggedSettings.h.
+
+        No new tests, behavior unchanged.
+
+        * platform/graphics/FontCache.h: Explicitly include FontTaggedSettings to avoid possible future breakage.
+        * platform/graphics/FontTaggedSettings.h: Declare full specialization of FontTaggedSettings::hash().
+
 2018-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r235990.

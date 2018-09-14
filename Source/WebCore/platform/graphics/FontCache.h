@@ -31,6 +31,7 @@
 
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "FontTaggedSettings.h"
 #include "Timer.h"
 #include <array>
 #include <limits.h>

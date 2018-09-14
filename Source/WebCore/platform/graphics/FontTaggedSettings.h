@@ -139,10 +139,14 @@ void FontTaggedSettings<T>::insert(FontTaggedSetting<T>&& feature)
 typedef FontTaggedSetting<int> FontFeature;
 typedef FontTaggedSettings<int> FontFeatureSettings;
 
+template <> unsigned FontFeatureSettings::hash() const;
+
 #if ENABLE(VARIATION_FONTS)
 
 typedef FontTaggedSettings<float> FontVariationSettings;
 WTF::TextStream& operator<<(WTF::TextStream&, const FontVariationSettings&);
+
+template <> unsigned FontVariationSettings::hash() const;
 
 #else
 
