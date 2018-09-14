@@ -37,7 +37,7 @@ class WindowEventContext final : public EventContext {
 public:
     WindowEventContext(Node&, DOMWindow&, EventTarget&);
 private:
-    void handleLocalEvents(Event&) const final;
+    void handleLocalEvents(Event&, EventInvokePhase) const final;
 };
 
 inline WindowEventContext::WindowEventContext(Node& node, DOMWindow& currentTarget, EventTarget& target)
@@ -45,11 +45,11 @@ inline WindowEventContext::WindowEventContext(Node& node, DOMWindow& currentTarg
 {
 }
 
-void WindowEventContext::handleLocalEvents(Event& event) const
+void WindowEventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 {
     event.setTarget(m_target.get());
     event.setCurrentTarget(m_currentTarget.get());
-    m_currentTarget->fireEventListeners(event);
+    m_currentTarget->fireEventListeners(event, phase);
 }
 
 static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shadowRoot, EventTarget& target)

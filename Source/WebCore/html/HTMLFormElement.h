@@ -133,7 +133,7 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) final;
     void finishParsingChildren() final;
 
-    void handleLocalEvents(Event&) final;
+    void handleLocalEvents(Event&, EventInvokePhase) final;
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     bool isURLAttribute(const Attribute&) const final;

@@ -8,11 +8,11 @@ EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadeddata)
 EVENT(canplaythrough)
+EVENT(canplaythrough)
 
 RUN(document.getElementById('parent').appendChild(mediaElement))
 RUN(mediaElement.play())
 
-EVENT(canplaythrough)
 EVENT(play)
 EVENT(playing)
 

@@ -1,3 +1,22 @@
+2018-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Capturing event listeners are called during bubbling phase for shadow hosts
+        https://bugs.webkit.org/show_bug.cgi?id=174288
+
+        Reviewed by Darin Adler.
+
+        Added a W3C style testharness.js test and rebaselined two tests. See below for rationals of rebaselines.
+
+        * fast/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees-expected.txt: Added.
+        * fast/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html: Added.
+
+        * media/media-load-event-expected.txt: Rebaselined. The logging of oncanplaythrough event is now happening
+        before canplaythrough() is called because the logging is done by waitForEvent which uses a capturing event
+        listener whereas canplaythrough is called by a event handler, which is non-capturing.
+
+        * platform/ios-11/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+
 2018-09-13  Justin Fan  <justin_fan@apple.com>
 
         Update webkit-webgl-test-harness.js for more details on WebGL 2 conformance tests part 4

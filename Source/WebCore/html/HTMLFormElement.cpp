@@ -142,13 +142,13 @@ void HTMLFormElement::removedFromAncestor(RemovalType removalType, ContainerNode
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
-void HTMLFormElement::handleLocalEvents(Event& event)
+void HTMLFormElement::handleLocalEvents(Event& event, EventInvokePhase phase)
 {
     if (event.eventPhase() != Event::CAPTURING_PHASE && is<Node>(event.target()) && event.target() != this && (event.type() == eventNames().submitEvent || event.type() == eventNames().resetEvent)) {
         event.stopPropagation();
         return;
     }
-    HTMLElement::handleLocalEvents(event);
+    HTMLElement::handleLocalEvents(event, phase);
 }
 
 unsigned HTMLFormElement::length() const

@@ -36,6 +36,8 @@ class TouchList;
 class EventContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using EventInvokePhase = EventTarget::EventInvokePhase;
+
     EventContext(Node*, EventTarget* currentTarget, EventTarget*);
     virtual ~EventContext();
 
@@ -43,7 +45,7 @@ public:
     EventTarget* currentTarget() const { return m_currentTarget.get(); }
     EventTarget* target() const { return m_target.get(); }
 
-    virtual void handleLocalEvents(Event&) const;
+    virtual void handleLocalEvents(Event&, EventInvokePhase) const;
 
     virtual bool isMouseOrFocusEventContext() const;
     virtual bool isTouchEventContext() const;
@@ -67,7 +69,7 @@ public:
     void setRelatedTarget(Node*);
 
 private:
-    void handleLocalEvents(Event&) const final;
+    void handleLocalEvents(Event&, EventInvokePhase) const final;
     bool isMouseOrFocusEventContext() const final;
 
     RefPtr<Node> m_relatedTarget;
@@ -84,7 +86,7 @@ public:
     TouchList& touchList(TouchListType);
 
 private:
-    void handleLocalEvents(Event&) const final;
+    void handleLocalEvents(Event&, EventInvokePhase) const final;
     bool isTouchEventContext() const final;
 
     void checkReachability(const Ref<TouchList>&) const;

@@ -1,3 +1,87 @@
+2018-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Capturing event listeners are called during bubbling phase for shadow hosts
+        https://bugs.webkit.org/show_bug.cgi?id=174288
+        <rdar://problem/33530455>
+
+        Reviewed by Darin Adler.
+
+        Implemented the new behavior proposed in https://github.com/whatwg/dom/pull/686 [1] to fix the problem
+        that capturing event listeners on a shadow host is invoked during bubbling phase when an event is
+        dispatched within its shadow tree.
+
+        To see why this is a problem, suppose we fire a composed event at span#target in the following DOM tree:
+          section#hostParent
+            + div#host -- ShadowRoot
+                            - p#parent
+                                - span#target
+        Then capturing and bubbling event listeners on #target, #parent, #host, and #hostParent are invoked in
+        the following order in WebKit & Chrome right now:
+
+        1. #hostParent, capturing, eventPhase: CAPTURING_PHASE
+        2. #parent, capturing, eventPhase: CAPTURING_PHASE
+        3. #target, capturing, eventPhase: AT_TARGET
+        4. #target, non-capturing, eventPhase: AT_TARGET
+        5. #parent, non-capturing, eventPhase: BUBBLING_PHASE
+        6. #host, capturing, eventPhase: AT_TARGET
+        7. #host, non-capturing, eventPhase: AT_TARGET
+        8. #hostParent, non-capturing, eventPhase: BUBBLING_PHASE
+
+        This is counter-intuitive because capturing event listeners on #host isn't invoked until bubblign phase
+        started. A more natural ordering would be:
+
+        1. #hostParent, capturing, eventPhase: CAPTURING_PHASE
+        2. #host, capturing, eventPhase: AT_TARGET
+        3. #parent, capturing, eventPhase: CAPTURING_PHASE
+        4. #target, capturing, eventPhase: AT_TARGET
+        5. #target, non-capturing, eventPhase: AT_TARGET
+        6. #parent, non-capturing, eventPhase: BUBBLING_PHASE
+        7. #host, non-capturing, eventPhase: AT_TARGET
+        8. #hostParent, non-capturing, eventPhase: BUBBLING_PHASE
+
+        This also happens to be the order by which Gecko's current shadow DOM implementation invoke event listners.
+        This patch implements this new behavior using the spec-change proposed in [1]. Note that this patch also
+        impacts the invocation order of event listeners when there is no shadow tree. Namely, before this patch,
+        event listeners on the event's target is invoked in the registration order. After this patch, all capturing
+        event listeners are invoked before bubbling event listeners are invoked.
+
+        To implement this behavior, this patch introduces EventTarget::EventInvokePhase indicating whether we're
+        in the capturing phase or bubbling phase to EventTarget::fireEventListeners. We can't use Event's eventPhase
+        enum because that's set to Event::Phase::AT_TARGET when we're at a shadow host.
+
+        Test: fast/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html
+
+        * Modules/modern-media-controls/media/media-controller-support.js:
+        (MediaControllerSupport.prototype.enable): Use capturing event listeners so that we can update the states of
+        media controls before author scripts recieve the event.
+        (MediaControllerSupport.prototype.disable): Ditto.
+        * dom/EventContext.cpp:
+        (WebCore::EventContext::handleLocalEvents const):
+        (WebCore::MouseOrFocusEventContext::handleLocalEvents const):
+        (WebCore::TouchEventContext::handleLocalEvents const):
+        * dom/EventContext.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::dispatchEventInDOM): Invoke capturing event listners even when target and current target are same.
+        This happens when the current target is a shadow host and event's target is in its shadow tree. Also merged
+        the special code path for the event's target with the code in the bubbling phase.
+        * dom/EventPath.cpp:
+        (WebCore::WindowEventContext::handleLocalEvents const):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::dispatchEvent): Invoke capturing and bubbling event listeners in the order.
+        (WebCore::EventTarget::fireEventListeners):
+        (WebCore::EventTarget::innerInvokeEventListeners): Renamed from fireEventListeners to match the spec. Use
+        EventInvokePhase to filter out event listeners so that we can invoke capturing event listners before bubbling
+        event listeners even when eventPhase is Event::Phase::AT_TARGET.
+        * dom/EventTarget.h:
+        * dom/Node.cpp:
+        (WebCore::Node::handleLocalEvents):
+        * dom/Node.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::handleLocalEvents):
+        * html/HTMLFormElement.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchEvent):
+
 2018-09-13  Megan Gardner  <megan_gardner@apple.com>
 
         Fix color stop blending in conic gradients for stops past 1

@@ -486,7 +486,7 @@ public:
 
     void dispatchScopedEvent(Event&);
 
-    virtual void handleLocalEvents(Event&);
+    virtual void handleLocalEvents(Event&, EventInvokePhase);
 
     void dispatchSubtreeModifiedEvent();
     void dispatchDOMActivateEvent(Event& underlyingClickEvent);

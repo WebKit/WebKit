@@ -38,7 +38,7 @@ class MediaControllerSupport
     enable()
     {
         for (let eventType of this.mediaEvents)
-            this.mediaController.media.addEventListener(eventType, this);
+            this.mediaController.media.addEventListener(eventType, this, true);
 
         for (let tracks of this.tracksToMonitor) {
             for (let eventType of ["change", "addtrack", "removetrack"])
@@ -55,7 +55,7 @@ class MediaControllerSupport
     disable()
     {
         for (let eventType of this.mediaEvents)
-            this.mediaController.media.removeEventListener(eventType, this);
+            this.mediaController.media.removeEventListener(eventType, this, true);
 
         for (let tracks of this.tracksToMonitor) {
             for (let eventType of ["change", "addtrack", "removetrack"])

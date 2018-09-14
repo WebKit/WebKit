@@ -2307,7 +2307,7 @@ void Node::notifyMutationObserversNodeWillDetach()
     }
 }
 
-void Node::handleLocalEvents(Event& event)
+void Node::handleLocalEvents(Event& event, EventInvokePhase phase)
 {
     if (!hasEventTargetData())
         return;
@@ -2316,7 +2316,7 @@ void Node::handleLocalEvents(Event& event)
     if (is<Element>(*this) && downcast<Element>(*this).isDisabledFormControl() && event.isMouseEvent() && !event.isWheelEvent())
         return;
 
-    fireEventListeners(event);
+    fireEventListeners(event, phase);
 }
 
 void Node::dispatchScopedEvent(Event& event)
