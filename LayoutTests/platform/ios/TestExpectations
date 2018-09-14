@@ -3137,3 +3137,5 @@ webkit.org/b/188578 svg/custom/scrolling-embedded-svg-file-image-repaint-problem
 webkit.org/b/188762 fast/writing-mode/english-rl-text-with-spelling-marker.html [ ImageOnlyFailure ]
 
 webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
+
+webkit.org/b/188070 imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.html [ Pass Failure ]

@@ -616,3 +616,5 @@ webkit.org/b/189087 svg/animations/animate-end-attribute-numeric-precision.html 
 
 webkit.org/b/188008 fast/text/variations/ipc2.html [ Skip ]
 webkit.org/b/189594 imported/w3c/web-platform-tests/css/css-animations/pending-style-changes-001.html [ Pass Failure ]
+
+webkit.org/b/188070 imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.html [ Pass Failure ]
