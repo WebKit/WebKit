@@ -85,10 +85,10 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, WebFramePolicyListener
             }
 
             NSArray<SSBServiceLookupResult *> *results = [result serviceLookupResults];
-            Vector<Ref<SafeBrowsingResult>> resultsVector;
+            Vector<SafeBrowsingResult> resultsVector;
             resultsVector.reserveInitialCapacity([results count]);
             for (SSBServiceLookupResult *result in results)
-                resultsVector.uncheckedAppend(SafeBrowsingResult::create(URL(url), result));
+                resultsVector.uncheckedAppend({ URL(url), result });
             listener->didReceiveSafeBrowsingResults(WTFMove(resultsVector));
         });
     }).get()];

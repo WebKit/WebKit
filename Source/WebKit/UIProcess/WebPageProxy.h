@@ -913,7 +913,6 @@ public:
 
     class PolicyDecisionSender;
     void receivedPolicyDecision(WebCore::PolicyAction, API::Navigation*, std::optional<WebsitePoliciesData>&&, Ref<PolicyDecisionSender>&&);
-    void receivedNavigationPolicyDecision(WebCore::PolicyAction, API::Navigation&, ProcessSwapRequestedByClient, WebFrameProxy&, API::WebsitePolicies*, Ref<PolicyDecisionSender>&&);
 
     void backForwardRemovedItem(const WebCore::BackForwardItemIdentifier&);
 

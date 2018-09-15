@@ -47,7 +47,7 @@ enum class ShouldExpectSafeBrowsingResult { No, Yes };
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
-    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, Vector<Ref<SafeBrowsingResult>>&&)>;
+    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, Vector<SafeBrowsingResult>&&)>;
     static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expect)
     {
         return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expect));
@@ -58,13 +58,13 @@ public:
     void download();
     void ignore();
     
-    void didReceiveSafeBrowsingResults(Vector<Ref<SafeBrowsingResult>>&&);
+    void didReceiveSafeBrowsingResults(Vector<SafeBrowsingResult>&&);
 
 private:
     WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult);
 
     std::optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
-    std::optional<Vector<Ref<SafeBrowsingResult>>> m_safeBrowsingResults;
+    std::optional<Vector<SafeBrowsingResult>> m_safeBrowsingResults;
     Reply m_reply;
 };
 
