@@ -46,6 +46,11 @@ WI.DOMBreakpointTreeController = class DOMBreakpointsTreeController extends WI.O
     {
         console.assert(WI.domDebuggerManager.supported);
 
+        if (contextMenu.__domBreakpointItemsAdded)
+            return;
+
+        contextMenu.__domBreakpointItemsAdded = true;
+
         let subMenu = contextMenu.appendSubMenuItem(WI.UIString("Break on…"));
 
         let breakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);
