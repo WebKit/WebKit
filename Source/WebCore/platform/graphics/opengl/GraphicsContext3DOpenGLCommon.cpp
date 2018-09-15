@@ -570,6 +570,26 @@ void GraphicsContext3D::copyBufferSubData(GC3Denum readTarget, GC3Denum writeTar
     ::glCopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
 }
 
+void GraphicsContext3D::getInternalformativ(GC3Denum target, GC3Denum internalformat, GC3Denum pname, GC3Dsizei bufSize, GC3Dint* params)
+{
+#if USE(OPENGL_ES)
+    makeContextCurrent();
+    ::glGetInternalformativ(target, internalformat, pname, bufSize, params);
+#else
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(internalformat);
+    UNUSED_PARAM(pname);
+    UNUSED_PARAM(bufSize);
+    UNUSED_PARAM(params);
+#endif
+}
+
+void GraphicsContext3D::renderbufferStorageMultisample(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+{
+    makeContextCurrent();
+    ::glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
+}
+
 void GraphicsContext3D::texStorage2D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
     makeContextCurrent();

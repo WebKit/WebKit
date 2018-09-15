@@ -316,9 +316,100 @@ void WebGL2RenderingContext::framebufferTextureLayer(GC3Denum, GC3Denum, WebGLTe
 {
 }
 
-WebGLAny WebGL2RenderingContext::getInternalformatParameter(GC3Denum, GC3Denum, GC3Denum)
+#if !USE(OPENGL_ES)
+static bool isRenderableInternalformat(GC3Denum internalformat)
 {
-    return nullptr;
+    // OpenGL ES 3: internalformat must be a color-renderable, depth-renderable, or stencil-renderable format, as shown in Table 1 below.
+    switch (internalformat) {
+    case GraphicsContext3D::R8:
+    case GraphicsContext3D::R8UI:
+    case GraphicsContext3D::R16UI:
+    case GraphicsContext3D::R16I:
+    case GraphicsContext3D::R32UI:
+    case GraphicsContext3D::R32I:
+    case GraphicsContext3D::RG8:
+    case GraphicsContext3D::RG8UI:
+    case GraphicsContext3D::RG8I:
+    case GraphicsContext3D::RG16UI:
+    case GraphicsContext3D::RG16I:
+    case GraphicsContext3D::RG32UI:
+    case GraphicsContext3D::RG32I:
+    case GraphicsContext3D::RGB8:
+    case GraphicsContext3D::RGB565:
+    case GraphicsContext3D::RGBA8:
+    case GraphicsContext3D::SRGB8_ALPHA8:
+    case GraphicsContext3D::RGB5_A1:
+    case GraphicsContext3D::RGBA4:
+    case GraphicsContext3D::RGB10_A2:
+    case GraphicsContext3D::RGBA8UI:
+    case GraphicsContext3D::RGBA8I:
+    case GraphicsContext3D::RGB10_A2UI:
+    case GraphicsContext3D::RGBA16UI:
+    case GraphicsContext3D::RGBA16I:
+    case GraphicsContext3D::RGBA32I:
+    case GraphicsContext3D::RGBA32UI:
+    case GraphicsContext3D::DEPTH_COMPONENT16:
+    case GraphicsContext3D::DEPTH_COMPONENT24:
+    case GraphicsContext3D::DEPTH_COMPONENT32F:
+    case GraphicsContext3D::DEPTH24_STENCIL8:
+    case GraphicsContext3D::DEPTH32F_STENCIL8:
+    case GraphicsContext3D::STENCIL_INDEX8:
+        return true;
+    }
+    return false;
+}
+#endif
+
+WebGLAny WebGL2RenderingContext::getInternalformatParameter(GC3Denum target, GC3Denum internalformat, GC3Denum pname)
+{
+    if (isContextLostOrPending())
+        return nullptr;
+
+    if (pname != GraphicsContext3D::SAMPLES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getInternalformatParameter", "invalid parameter name");
+        return nullptr;
+    }
+
+    int numValues = 0;
+#if USE(OPENGL_ES)
+    m_context->getInternalformativ(target, internalformat, GraphicsContext3D::NUM_SAMPLE_COUNTS, 1, &numValues);
+
+    GC3Dint params[numValues];
+    m_context->getInternalformativ(target, internalformat, pname, numValues, params);
+#else
+    // On desktop OpenGL 4.1 or below we must emulate glGetInternalformativ.
+
+    // GL_INVALID_ENUM is generated if target is not GL_RENDERBUFFER.
+    if (target != GraphicsContext3D::RENDERBUFFER) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getInternalformatParameter", "invalid target");
+        return nullptr;
+    }
+
+    // GL_INVALID_ENUM is generated if internalformat is not color-, depth-, or stencil-renderable.
+    if (!isRenderableInternalformat(internalformat)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getInternalformatParameter", "invalid internal format");
+        return nullptr;
+    }
+
+    Vector<GC3Dint> samples;
+    // The way I understand this is that this will return a MINIMUM numSamples for all accepeted internalformats.
+    // However, the true value of this on supported GL versions is gleaned via a getInternalformativ call that depends on internalformat.
+    int numSamplesMask = getIntParameter(GraphicsContext3D::MAX_SAMPLES);
+
+    while (numSamplesMask > 0) {
+        samples.append(numSamplesMask);
+        numSamplesMask = numSamplesMask >> 1;
+    }
+
+    // Since multisampling is not supported for signed and unsigned integer internal formats,
+    // the value of GL_NUM_SAMPLE_COUNTS will be zero for such formats.
+    numValues = isIntegerFormat(internalformat) ? 0 : samples.size();
+    GC3Dint params[numValues];
+    for (size_t i = 0; i < samples.size(); ++i)
+        params[i] = samples[i];
+#endif
+
+    return Int32Array::create(params, numValues);
 }
 
 void WebGL2RenderingContext::invalidateFramebuffer(GC3Denum, const Vector<GC3Denum>&)
@@ -333,8 +424,73 @@ void WebGL2RenderingContext::readBuffer(GC3Denum)
 {
 }
 
-void WebGL2RenderingContext::renderbufferStorageMultisample(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
+void WebGL2RenderingContext::renderbufferStorageMultisample(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
+    // To be backward compatible with WebGL 1, also accepts internal format DEPTH_STENCIL,
+    // which should be mapped to DEPTH24_STENCIL8 by implementations.
+    if (internalformat == GraphicsContext3D::DEPTH_STENCIL)
+        internalformat = GraphicsContext3D::DEPTH24_STENCIL8;
+
+    // ES 3: GL_INVALID_OPERATION is generated if internalformat is a signed or unsigned integer format and samples is greater than 0.
+    if (isIntegerFormat(internalformat) && samples > 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "renderbufferStorageMultisample", "multisampling not supported for this format");
+        return;
+    }
+
+    switch (internalformat) {
+    case GraphicsContext3D::DEPTH_COMPONENT16:
+    case GraphicsContext3D::DEPTH_COMPONENT32F:
+    case GraphicsContext3D::DEPTH_COMPONENT24:
+    case GraphicsContext3D::RGBA32I:
+    case GraphicsContext3D::RGBA32UI:
+    case GraphicsContext3D::RGBA16I:
+    case GraphicsContext3D::RGBA16UI:
+    case GraphicsContext3D::RGBA8:
+    case GraphicsContext3D::RGBA8I:
+    case GraphicsContext3D::RGBA8UI:
+    case GraphicsContext3D::RGB10_A2:
+    case GraphicsContext3D::RGB10_A2UI:
+    case GraphicsContext3D::RGBA4:
+    case GraphicsContext3D::RG32I:
+    case GraphicsContext3D::RG32UI:
+    case GraphicsContext3D::RG16I:
+    case GraphicsContext3D::RG16UI:
+    case GraphicsContext3D::RG8:
+    case GraphicsContext3D::RG8I:
+    case GraphicsContext3D::RG8UI:
+    case GraphicsContext3D::R32I:
+    case GraphicsContext3D::R32UI:
+    case GraphicsContext3D::R16I:
+    case GraphicsContext3D::R16UI:
+    case GraphicsContext3D::R8:
+    case GraphicsContext3D::R8I:
+    case GraphicsContext3D::R8UI:
+    case GraphicsContext3D::RGB5_A1:
+    case GraphicsContext3D::RGB565:
+    case GraphicsContext3D::RGB8:
+    case GraphicsContext3D::STENCIL_INDEX8:
+    case GraphicsContext3D::SRGB8_ALPHA8:
+        m_context->renderbufferStorageMultisample(target, samples, internalformat, width, height);
+        m_renderbufferBinding->setInternalFormat(internalformat);
+        m_renderbufferBinding->setIsValid(true);
+        m_renderbufferBinding->setSize(width, height);
+        break;
+    case GraphicsContext3D::DEPTH32F_STENCIL8:
+    case GraphicsContext3D::DEPTH24_STENCIL8:
+        if (!isDepthStencilSupported()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
+            return;
+        }
+        m_context->renderbufferStorageMultisample(target, samples, internalformat, width, height);
+        m_renderbufferBinding->setSize(width, height);
+        m_renderbufferBinding->setIsValid(isDepthStencilSupported());
+        m_renderbufferBinding->setInternalFormat(internalformat);
+        break;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
+        return;
+    }
+    applyStencilTest();
 }
 
 bool WebGL2RenderingContext::validateTexStorageFuncParameters(GC3Denum target, GC3Dsizei levels, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, const char* functionName)
@@ -1371,6 +1527,7 @@ void WebGL2RenderingContext::renderbufferStorage(GC3Denum target, GC3Denum inter
     case GraphicsContext3D::R8UI:
     case GraphicsContext3D::RGB5_A1:
     case GraphicsContext3D::RGB565:
+    case GraphicsContext3D::RGB8:
     case GraphicsContext3D::STENCIL_INDEX8:
     case GraphicsContext3D::SRGB8_ALPHA8:
         m_context->renderbufferStorage(target, internalformat, width, height);
@@ -1422,65 +1579,69 @@ GC3Denum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GC3Denum i
     case GraphicsContext3D::R8_SNORM:
     case GraphicsContext3D::R16F:
     case GraphicsContext3D::R32F:
+    case GraphicsContext3D::COMPRESSED_R11_EAC:
+    case GraphicsContext3D::COMPRESSED_SIGNED_R11_EAC:
+        return GraphicsContext3D::RED;
     case GraphicsContext3D::R8I:
     case GraphicsContext3D::R8UI:
     case GraphicsContext3D::R16I:
     case GraphicsContext3D::R16UI:
     case GraphicsContext3D::R32I:
     case GraphicsContext3D::R32UI:
-    case GraphicsContext3D::COMPRESSED_R11_EAC:
-    case GraphicsContext3D::COMPRESSED_SIGNED_R11_EAC:
-        return GraphicsContext3D::RED;
+        return GraphicsContext3D::RED_INTEGER;
     case GraphicsContext3D::RG8:
     case GraphicsContext3D::RG8_SNORM:
     case GraphicsContext3D::RG16F:
     case GraphicsContext3D::RG32F:
+    case GraphicsContext3D::COMPRESSED_RG11_EAC:
+    case GraphicsContext3D::COMPRESSED_SIGNED_RG11_EAC:
+        return GraphicsContext3D::RG;
     case GraphicsContext3D::RG8I:
     case GraphicsContext3D::RG8UI:
     case GraphicsContext3D::RG16I:
     case GraphicsContext3D::RG16UI:
     case GraphicsContext3D::RG32I:
     case GraphicsContext3D::RG32UI:
-    case GraphicsContext3D::COMPRESSED_RG11_EAC:
-    case GraphicsContext3D::COMPRESSED_SIGNED_RG11_EAC:
-        return GraphicsContext3D::RG;
+        return GraphicsContext3D::RG_INTEGER;
     case GraphicsContext3D::RGB8:
     case GraphicsContext3D::RGB8_SNORM:
     case GraphicsContext3D::RGB565:
     case GraphicsContext3D::SRGB8:
     case GraphicsContext3D::RGB16F:
     case GraphicsContext3D::RGB32F:
+    case GraphicsContext3D::RGB:
+    case GraphicsContext3D::COMPRESSED_RGB8_ETC2:
+    case GraphicsContext3D::COMPRESSED_SRGB8_ETC2:
+        return GraphicsContext3D::RGB;
     case GraphicsContext3D::RGB8I:
     case GraphicsContext3D::RGB8UI:
     case GraphicsContext3D::RGB16I:
     case GraphicsContext3D::RGB16UI:
     case GraphicsContext3D::RGB32I:
     case GraphicsContext3D::RGB32UI:
-    case GraphicsContext3D::RGB:
-    case GraphicsContext3D::COMPRESSED_RGB8_ETC2:
-    case GraphicsContext3D::COMPRESSED_SRGB8_ETC2:
-        return GraphicsContext3D::RGB;
+        return GraphicsContext3D::RGB_INTEGER;
     case GraphicsContext3D::RGBA4:
     case GraphicsContext3D::RGB5_A1:
     case GraphicsContext3D::RGBA8:
     case GraphicsContext3D::RGBA8_SNORM:
     case GraphicsContext3D::RGB10_A2:
-    case GraphicsContext3D::RGB10_A2UI:
     case GraphicsContext3D::SRGB8_ALPHA8:
     case GraphicsContext3D::RGBA16F:
     case GraphicsContext3D::RGBA32F:
-    case GraphicsContext3D::RGBA8I:
-    case GraphicsContext3D::RGBA8UI:
-    case GraphicsContext3D::RGBA16I:
-    case GraphicsContext3D::RGBA16UI:
-    case GraphicsContext3D::RGBA32I:
-    case GraphicsContext3D::RGBA32UI:
     case GraphicsContext3D::RGBA:
     case GraphicsContext3D::COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
     case GraphicsContext3D::COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
     case GraphicsContext3D::COMPRESSED_RGBA8_ETC2_EAC:
     case GraphicsContext3D::COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
         return GraphicsContext3D::RGBA;
+    case GraphicsContext3D::RGBA8I:
+    case GraphicsContext3D::RGBA8UI:
+    case GraphicsContext3D::RGB10_A2UI:
+    case GraphicsContext3D::RGBA16I:
+    case GraphicsContext3D::RGBA16UI:
+    case GraphicsContext3D::RGBA32I:
+    case GraphicsContext3D::RGBA32UI:
+        return GraphicsContext3D::RGBA_INTEGER;
     case GraphicsContext3D::DEPTH_COMPONENT16:
     case GraphicsContext3D::DEPTH_COMPONENT24:
     case GraphicsContext3D::DEPTH_COMPONENT32F:
@@ -1500,8 +1661,6 @@ GC3Denum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GC3Denum i
 
 bool WebGL2RenderingContext::isIntegerFormat(GC3Denum internalformat)
 {
-    // FIXME: baseInternalFormatFromInternalFormat() never returns any of these enums.
-    // Because of that, this function erroneously always returns false!
     switch (baseInternalFormatFromInternalFormat(internalformat)) {
     case GraphicsContext3D::RED_INTEGER:
     case GraphicsContext3D::RG_INTEGER:

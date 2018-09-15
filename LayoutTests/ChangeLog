@@ -1,3 +1,17 @@
+2018-09-14  Justin Fan  <justin_fan@apple.com>
+
+        WebGL 2 conformance: rgb-format-support.html
+        https://bugs.webkit.org/show_bug.cgi?id=189610
+        <rdar://problem/44403343>
+
+        Reviewed by Dean Jackson.
+
+        Enabled rgb-format-support.html, and updated expectation for gl-teximage.html.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        * webgl/2.0.0/conformance2/rendering/rgb-format-support-expected.txt:
+
 2018-09-14  Justin Michaud  <justin_michaud@apple.com>
 
         Add support for spreadMethod=reflect and repeat on SVG gradients (for CoreGraphics platforms)
