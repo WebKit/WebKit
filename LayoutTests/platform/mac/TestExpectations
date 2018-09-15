@@ -1764,5 +1764,8 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 [ Mojave+ ] fast/gradients/conic-extended-stops.html [ Pass ]
 [ Mojave+ ] fast/gradients/conic-from-angle.html [ Pass ]
 [ Mojave+ ] fast/gradients/conic-repeating-last-stop.html [ Pass ]
+[ Mojave+ ] fast/gradients/conic-gradient-alpha.html [ Pass ]
+[ Mojave+ ] fast/gradients/conic-gradient-extended-stops.html [ Pass ]
+[ Mojave+ ] fast/gradients/conic-gradient.html [ Pass ]
 
 

@@ -1,3 +1,27 @@
+2018-09-14  Megan Gardner  <megan_gardner@apple.com>
+
+        Additional tests for conic gradients
+        https://bugs.webkit.org/show_bug.cgi?id=189566
+
+        Reviewed by Simon Fraser.
+
+        Adding tests that actually test the gradient nature of gradients.
+        This is done by using an svg filter to consolidate the sections
+        of the gradient to sections we can actuall test the color of. Also,
+        the seams are clipped out, to reduce noise. Since gradients are 
+        highly noise prone, this is the best way to check and make sure
+        that gradients are functional without sevear noise issues.
+
+        * TestExpectations:
+        * fast/gradients/conic-gradient-alpha-expected.html: Added.
+        * fast/gradients/conic-gradient-alpha.html: Added.
+        * fast/gradients/conic-gradient-expected.html: Added.
+        * fast/gradients/conic-gradient-extended-stops-expected.html: Added.
+        * fast/gradients/conic-gradient-extended-stops.html: Added.
+        * fast/gradients/conic-gradient.html: Added.
+        * platform/ios-12/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-09-14  Justin Fan  <justin_fan@apple.com>
 
         WebGL 2 conformance: rgb-format-support.html

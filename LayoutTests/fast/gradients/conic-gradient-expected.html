@@ -1,0 +1,66 @@
+<html>
+<head>
+    <style>
+        div {
+            width: 200px;
+            height: 200px;
+            float: left;
+        }
+        #topleft {
+            width: 0; 
+            height: 0; 
+            border-left: 100px solid rgb(0,32,0);
+            border-top: 100px solid rgb(0,0,0);
+        }
+        #topright {
+            width: 0; 
+            height: 0; 
+            border-right: 100px solid rgb(0,192,0);
+            border-top: 100px solid rgb(0,224,0);
+        }
+        #bottomleft {
+            clear: left;
+            width: 0; 
+            height: 0; 
+            border-left: 100px solid rgb(0,64,0);
+            border-bottom: 100px solid rgb(0,96,0);
+        }
+        #bottomright {
+            width: 0; 
+            height: 0; 
+            border-right: 100px solid rgb(0,160,0);
+            border-bottom: 100px solid rgb(0,128,0);
+        }
+        .box {
+            position: absolute;
+        }
+        .x {
+            position: absolute;
+            -webkit-clip-path: polygon(0% 0%, 0% 5%, 45% 50%, 0% 95%, 0% 100%, 5% 100%, 50% 55%, 95% 100%, 100% 100%, 100% 95%, 55% 50%, 100% 5%, 100% 0%, 95% 0%, 50% 45%, 5% 0%);
+        }
+        #x {
+            background-color:black;
+        }
+        .plus {
+            position: absolute;
+            -webkit-clip-path: polygon(45% 0%, 55% 0%, 55% 45%, 100% 45%, 100% 55%, 55% 55%, 55% 100%, 45% 100%, 45% 55%, 0% 55%, 0% 45%, 45% 45%);
+        }
+        #plus {
+            background-color:black;
+        }
+        
+    </style>
+</head>
+<body>
+    <div>
+        <div class="box">
+            <div id="topleft"></div>
+            <div id="topright"></div>
+            <div id="bottomleft"></div>
+            <div id="bottomright"></div>
+        </div>
+        <div id="x" class="x"></div>
+        <div id="plus" class="plus"></div>
+    </div>
+</body>
+</html>

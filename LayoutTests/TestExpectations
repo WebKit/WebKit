@@ -2243,5 +2243,8 @@ fast/gradients/conic-center-outside-box.html [ Skip ]
 fast/gradients/conic-extended-stops.html [ Skip ]
 fast/gradients/conic-from-angle.html [ Skip ]
 fast/gradients/conic-repeating-last-stop.html [ Skip ]
+fast/gradients/conic-gradient-alpha.html [ Skip ]
+fast/gradients/conic-gradient-extended-stops.html [ Skip ]
+fast/gradients/conic-gradient.html [ Skip ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]

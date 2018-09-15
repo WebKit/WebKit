@@ -1,0 +1,55 @@
+<html>
+<head>
+<style>
+    svg {
+        width: 800px;
+        display: none;
+    }
+    div {
+        width: 200px;
+        height: 200px;
+    }
+    #gradient {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background-image: conic-gradient(lime, black);
+        filter: url(#posterize);
+    }
+
+    .x {
+        position: absolute;
+        -webkit-clip-path: polygon(0% 0%, 0% 5%, 45% 50%, 0% 95%, 0% 100%, 5% 100%, 50% 55%, 95% 100%, 100% 100%, 100% 95%, 55% 50%, 100% 5%, 100% 0%, 95% 0%, 50% 45%, 5% 0%);
+    }
+    #x {
+        background-color:black;
+    }
+    .plus {
+        position: absolute;
+        -webkit-clip-path: polygon(45% 0%, 55% 0%, 55% 45%, 100% 45%, 100% 55%, 55% 55%, 55% 100%, 45% 100%, 45% 55%, 0% 55%, 0% 45%, 45% 45%);
+    }
+    #plus {
+        background-color:black;
+    }
+</style>
+</head>
+
+<body>
+<svg viewBox="0 0 700 100">
+<defs>
+    <filter id="posterize" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox">
+        <feComponentTransfer>
+            <feFuncR type="discrete" tableValues="0 0.125 0.25 0.375 0.5 0.625 0.75 0.875"/>
+            <feFuncG type="discrete" tableValues="0 0.125 0.25 0.375 0.5 0.625 0.75 0.875"/>
+            <feFuncB type="discrete" tableValues="0 0.125 0.25 0.375 0.5 0.625 0.75 0.875"/>
+        </feComponentTransfer>
+    </filter>
+</defs>
+</svg>
+
+<div>
+    <div id="gradient"></div>
+    <div id="x" class="x"></div>
+    <div id="plus" class="plus"></div>
+</div>
+</html>
