@@ -50,7 +50,7 @@ inline WKRetainPtr<WKStringRef> toWK(JSStringRef string)
     return adoptWK(WKStringCreateWithJSString(string));
 }
 
-inline WKRetainPtr<WKStringRef> toWK(JSRetainPtr<JSStringRef> string)
+inline WKRetainPtr<WKStringRef> toWK(const JSRetainPtr<JSStringRef>& string)
 {
     return toWK(string.get());
 }
@@ -62,7 +62,7 @@ inline WKRetainPtr<WKStringRef> toWK(const WTF::String& string)
 
 inline JSRetainPtr<JSStringRef> toJS(WKStringRef string)
 {
-    return JSRetainPtr<JSStringRef>(Adopt, WKStringCopyJSString(string));
+    return adopt(WKStringCopyJSString(string));
 }
 
 inline JSRetainPtr<JSStringRef> toJS(const WKRetainPtr<WKStringRef>& string)

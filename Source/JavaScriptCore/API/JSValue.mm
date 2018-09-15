@@ -154,8 +154,10 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 + (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context
 {
-    JSStringRef string = JSStringCreateWithCFString(reinterpret_cast<CFStringRef>(description));
-    return [JSValue valueWithJSValueRef:JSValueMakeSymbol([context JSGlobalContextRef], string) inContext:context];
+    JSStringRef string = JSStringCreateWithCFString((__bridge CFStringRef)description);
+    auto value = [JSValue valueWithJSValueRef:JSValueMakeSymbol([context JSGlobalContextRef], string) inContext:context];
+    JSStringRelease(string);
+    return value;
 }
 
 

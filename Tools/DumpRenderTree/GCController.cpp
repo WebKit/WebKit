@@ -73,7 +73,7 @@ static JSValueRef getJSObjectCountCallback(JSContextRef context, JSObjectRef fun
 
 void GCController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> gcControllerStr(Adopt, JSStringCreateWithUTF8CString("GCController"));
+    auto gcControllerStr = adopt(JSStringCreateWithUTF8CString("GCController"));
 
     JSClassRef classRef = getJSClass();
     JSValueRef gcControllerObject = JSObjectMake(context, classRef, this);

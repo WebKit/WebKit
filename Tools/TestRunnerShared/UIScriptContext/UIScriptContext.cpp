@@ -39,7 +39,7 @@ static inline bool isPersistentCallbackID(unsigned callbackID)
 }
 
 UIScriptContext::UIScriptContext(UIScriptContextDelegate& delegate)
-    : m_context(Adopt, JSGlobalContextCreate(nullptr))
+    : m_context(adopt(JSGlobalContextCreate(nullptr)))
     , m_delegate(delegate)
 {
     m_controller = UIScriptController::create(*this);
@@ -60,14 +60,14 @@ void UIScriptContext::runUIScript(const String& script, unsigned scriptCallbackI
 {
     m_currentScriptCallbackID = scriptCallbackID;
 
-    JSRetainPtr<JSStringRef> stringRef(Adopt, JSStringCreateWithUTF8CString(script.utf8().data()));
+    auto stringRef = adopt(JSStringCreateWithUTF8CString(script.utf8().data()));
 
     JSValueRef exception = nullptr;
     JSValueRef result = JSEvaluateScript(m_context.get(), stringRef.get(), 0, 0, 1, &exception);
     
     if (!hasOutstandingAsyncTasks()) {
         JSValueRef stringifyException = nullptr;
-        JSRetainPtr<JSStringRef> stringified(Adopt, JSValueToStringCopy(m_context.get(), result, &stringifyException));
+        auto stringified = adopt(JSValueToStringCopy(m_context.get(), result, &stringifyException));
         requestUIScriptCompletion(stringified.get());
         tryToCompleteUIScriptForCurrentParentCallback();
     }

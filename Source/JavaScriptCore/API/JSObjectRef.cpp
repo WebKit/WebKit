@@ -46,7 +46,6 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
-#include "JSRetainPtr.h"
 #include "JSString.h"
 #include "JSValueRef.h"
 #include "ObjectConstructor.h"
@@ -763,6 +762,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
 struct OpaqueJSPropertyNameArray {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    // FIXME: Why not inherit from RefCounted?
     OpaqueJSPropertyNameArray(VM* vm)
         : refCount(0)
         , vm(vm)
@@ -771,7 +771,7 @@ public:
     
     unsigned refCount;
     VM* vm;
-    Vector<JSRetainPtr<JSStringRef>> array;
+    Vector<Ref<OpaqueJSString>> array;
 };
 
 JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef object)
@@ -793,8 +793,8 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
     size_t size = array.size();
     propertyNames->array.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
-        propertyNames->array.uncheckedAppend(JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create(array[i].string()).leakRef()));
-    
+        propertyNames->array.uncheckedAppend(OpaqueJSString::create(array[i].string()).releaseNonNull());
+
     return JSPropertyNameArrayRetain(propertyNames);
 }
 
@@ -819,7 +819,7 @@ size_t JSPropertyNameArrayGetCount(JSPropertyNameArrayRef array)
 
 JSStringRef JSPropertyNameArrayGetNameAtIndex(JSPropertyNameArrayRef array, size_t index)
 {
-    return array->array[static_cast<unsigned>(index)].get();
+    return array->array[static_cast<unsigned>(index)].ptr();
 }
 
 void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStringRef propertyName)

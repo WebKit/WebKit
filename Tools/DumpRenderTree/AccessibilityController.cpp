@@ -30,7 +30,6 @@
 #include "AccessibilityController.h"
 
 #include "AccessibilityUIElement.h"
-#include <JavaScriptCore/JSRetainPtr.h>
 
 // Static Value Getters
 
@@ -50,7 +49,7 @@ static JSValueRef getRootElementCallback(JSContextRef context, JSObjectRef thisO
 
 void AccessibilityController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> accessibilityControllerStr(Adopt, JSStringCreateWithUTF8CString("accessibilityController"));
+    auto accessibilityControllerStr = adopt(JSStringCreateWithUTF8CString("accessibilityController"));
     
     JSClassRef classRef = getJSClass();
     JSValueRef accessibilityControllerObject = JSObjectMake(context, classRef, this);

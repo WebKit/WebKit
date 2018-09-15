@@ -210,14 +210,14 @@ void TestRunner::clearBackForwardList()
     backForwardList->goToItem(item.get());
 }
 
-JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
+JSRetainPtr<JSStringRef> TestRunner::copyDecodedHostName(JSStringRef name)
 {
     // FIXME: Implement!
     fprintf(testResult, "ERROR: TestRunner::copyDecodedHostName(JSStringRef) not implemented\n");
     return 0;
 }
 
-JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
+JSRetainPtr<JSStringRef> TestRunner::copyEncodedHostName(JSStringRef name)
 {
     // FIXME: Implement!
     fprintf(testResult, "ERROR: TestRunner::copyEncodedHostName(JSStringRef) not implemented\n");
@@ -311,7 +311,7 @@ static wstring jsStringRefToWString(JSStringRef jsStr)
     return buffer.data();
 }
 
-JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef url)
+JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
     wstring input(JSStringGetCharactersPtr(url), JSStringGetLength(url));
 
@@ -321,7 +321,7 @@ JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef ur
         return nullptr;
     }
 
-    return JSStringCreateWithCharacters(localPath.c_str(), localPath.length());
+    return adopt(JSStringCreateWithCharacters(localPath.c_str(), localPath.length()));
 }
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
@@ -346,7 +346,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 
     wstring wURL = jsStringRefToWString(url);
     wstring wAbsoluteURL = responseURL + TEXT("/") + wURL;
-    JSRetainPtr<JSStringRef> jsAbsoluteURL(Adopt, JSStringCreateWithCharacters(wAbsoluteURL.data(), wAbsoluteURL.length()));
+    auto jsAbsoluteURL = adopt(JSStringCreateWithCharacters(wAbsoluteURL.data(), wAbsoluteURL.length()));
 
     WorkQueue::singleton().queue(new LoadItem(jsAbsoluteURL.get(), target));
 }
@@ -991,7 +991,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
 
     unsigned char options = 0;
 
-    JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
+    auto lengthPropertyName = adopt(JSStringCreateWithUTF8CString("length"));
     JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), nullptr);
     if (!JSValueIsNumber(context, lengthValue))
         return false;
@@ -1004,7 +1004,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
         if (!JSValueIsString(context, value))
             continue;
 
-        JSRetainPtr<JSStringRef> optionName(Adopt, JSValueToStringCopy(context, value, nullptr));
+        auto optionName = adopt(JSValueToStringCopy(context, value, nullptr));
 
         if (JSStringIsEqualToUTF8CString(optionName.get(), "CaseInsensitive"))
             options |= WebFindOptionsCaseInsensitive;
@@ -1185,7 +1185,7 @@ void TestRunner::evaluateInWebInspector(JSStringRef script)
     inspectorPrivate->evaluateInFrontend(bstrT(script).GetBSTR());
 }
 
-JSStringRef TestRunner::inspectorTestStubURL()
+JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 {
     CFBundleRef webkitBundle = webKitBundle();
     if (!webkitBundle)
@@ -1195,7 +1195,7 @@ JSStringRef TestRunner::inspectorTestStubURL()
     if (!url)
         return nullptr;
 
-    return JSStringCreateWithCFString(CFURLGetString(url.get()));
+    return adopt(JSStringCreateWithCFString(CFURLGetString(url.get())));
 }
 
 typedef HashMap<unsigned, COMPtr<IWebScriptWorld> > WorldMap;

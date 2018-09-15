@@ -308,8 +308,9 @@ static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSConte
         if (!value)
             continue;
 
-        JSStringRef name = JSStringCreateWithCFString((CFStringRef)key);
+        JSStringRef name = JSStringCreateWithCFString((__bridge CFStringRef)key);
         JSObjectSetProperty([context JSGlobalContextRef], resultObject, name, [value JSValueRef], 0, &exception);
+        JSStringRelease(name);
         if (exception)
             continue;
     }

@@ -155,6 +155,5 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("ios"));
-    return platformName;
+    return adopt(JSStringCreateWithUTF8CString("ios"));
 }

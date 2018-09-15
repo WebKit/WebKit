@@ -30,7 +30,6 @@
 #include "AccessibilityUIElement.h"
 
 #include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <limits.h>
 
 // Static Functions
@@ -43,67 +42,67 @@ static inline AccessibilityUIElement* toAXElement(JSObjectRef object)
 
 static JSValueRef allAttributesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> attributes(Adopt, toAXElement(thisObject)->allAttributes());
+    auto attributes = toAXElement(thisObject)->allAttributes();
     return JSValueMakeString(context, attributes.get());
 }
 
 static JSValueRef attributesOfLinkedUIElementsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> linkedUIDescription(Adopt, toAXElement(thisObject)->attributesOfLinkedUIElements());
+    auto linkedUIDescription = toAXElement(thisObject)->attributesOfLinkedUIElements();
     return JSValueMakeString(context, linkedUIDescription.get());
 }
 
 static JSValueRef attributesOfDocumentLinksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> linkedUIDescription(Adopt, toAXElement(thisObject)->attributesOfDocumentLinks());
+    auto linkedUIDescription = toAXElement(thisObject)->attributesOfDocumentLinks();
     return JSValueMakeString(context, linkedUIDescription.get());
 }
 
 static JSValueRef attributesOfChildrenCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> childrenDescription(Adopt, toAXElement(thisObject)->attributesOfChildren());
+    auto childrenDescription = toAXElement(thisObject)->attributesOfChildren();
     return JSValueMakeString(context, childrenDescription.get());
 }
 
 static JSValueRef parameterizedAttributeNamesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> parameterizedAttributeNames(Adopt, toAXElement(thisObject)->parameterizedAttributeNames());
+    auto parameterizedAttributeNames = toAXElement(thisObject)->parameterizedAttributeNames();
     return JSValueMakeString(context, parameterizedAttributeNames.get());
 }
 
 static JSValueRef attributesOfColumnHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> attributesOfColumnHeaders(Adopt, toAXElement(thisObject)->attributesOfColumnHeaders());
+    auto attributesOfColumnHeaders = toAXElement(thisObject)->attributesOfColumnHeaders();
     return JSValueMakeString(context, attributesOfColumnHeaders.get());
 }
 
 static JSValueRef attributesOfRowHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> attributesOfRowHeaders(Adopt, toAXElement(thisObject)->attributesOfRowHeaders());
+    auto attributesOfRowHeaders = toAXElement(thisObject)->attributesOfRowHeaders();
     return JSValueMakeString(context, attributesOfRowHeaders.get());
 }
 
 static JSValueRef attributesOfColumnsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> attributesOfColumns(Adopt, toAXElement(thisObject)->attributesOfColumns());
+    auto attributesOfColumns = toAXElement(thisObject)->attributesOfColumns();
     return JSValueMakeString(context, attributesOfColumns.get());
 }
 
 static JSValueRef attributesOfRowsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> attributesOfRows(Adopt, toAXElement(thisObject)->attributesOfRows());
+    auto attributesOfRows = toAXElement(thisObject)->attributesOfRows();
     return JSValueMakeString(context, attributesOfRows.get());
 }
 
 static JSValueRef attributesOfVisibleCellsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> attributesOfVisibleCells(Adopt, toAXElement(thisObject)->attributesOfVisibleCells());
+    auto attributesOfVisibleCells = toAXElement(thisObject)->attributesOfVisibleCells();
     return JSValueMakeString(context, attributesOfVisibleCells.get());
 }
 
 static JSValueRef attributesOfHeaderCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> attributesOfHeader(Adopt, toAXElement(thisObject)->attributesOfHeader());
+    auto attributesOfHeader = toAXElement(thisObject)->attributesOfHeader();
     return JSValueMakeString(context, attributesOfHeader.get());
 }
 
@@ -114,13 +113,13 @@ static JSValueRef indexInTableCallback(JSContextRef context, JSObjectRef functio
 
 static JSValueRef rowIndexRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> rowIndexRange(Adopt, toAXElement(thisObject)->rowIndexRange());
+    auto rowIndexRange = toAXElement(thisObject)->rowIndexRange();
     return JSValueMakeString(context, rowIndexRange.get());
 }
 
 static JSValueRef columnIndexRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> columnIndexRange(Adopt, toAXElement(thisObject)->columnIndexRange());
+    auto columnIndexRange = toAXElement(thisObject)->columnIndexRange();
     return JSValueMakeString(context, columnIndexRange.get());
 }
 
@@ -139,7 +138,7 @@ static JSValueRef rangeForLineCallback(JSContextRef context, JSObjectRef functio
     if (argumentCount == 1)
         indexNumber = JSValueToNumber(context, arguments[0], exception);
     
-    JSRetainPtr<JSStringRef> rangeLine(Adopt, toAXElement(thisObject)->rangeForLine(indexNumber));
+    auto rangeLine = toAXElement(thisObject)->rangeForLine(indexNumber);
     return JSValueMakeString(context, rangeLine.get());
 }
 
@@ -151,7 +150,7 @@ static JSValueRef boundsForRangeCallback(JSContextRef context, JSObjectRef funct
         length = JSValueToNumber(context, arguments[1], exception);
     }
 
-    JSRetainPtr<JSStringRef> boundsDescription(Adopt, toAXElement(thisObject)->boundsForRange(location, length));
+    auto boundsDescription = toAXElement(thisObject)->boundsForRange(location, length);
     return JSValueMakeString(context, boundsDescription.get());    
 }
 
@@ -163,7 +162,7 @@ static JSValueRef rangeForPositionCallback(JSContextRef context, JSObjectRef fun
         y = JSValueToNumber(context, arguments[1], exception);
     }
     
-    JSRetainPtr<JSStringRef> rangeDescription(Adopt, toAXElement(thisObject)->rangeForPosition(x, y));
+    auto rangeDescription = toAXElement(thisObject)->rangeForPosition(x, y);
     return JSValueMakeString(context, rangeDescription.get());    
 }
 
@@ -175,7 +174,7 @@ static JSValueRef stringForRangeCallback(JSContextRef context, JSObjectRef funct
         length = JSValueToNumber(context, arguments[1], exception);
     }
     
-    JSRetainPtr<JSStringRef> stringDescription(Adopt, toAXElement(thisObject)->stringForRange(location, length));
+    auto stringDescription = toAXElement(thisObject)->stringForRange(location, length);
     return JSValueMakeString(context, stringDescription.get());    
 }
 
@@ -187,7 +186,7 @@ static JSValueRef attributedStringForRangeCallback(JSContextRef context, JSObjec
         length = JSValueToNumber(context, arguments[1], exception);
     }
     
-    JSRetainPtr<JSStringRef> stringDescription(Adopt, toAXElement(thisObject)->attributedStringForRange(location, length));
+    auto stringDescription = toAXElement(thisObject)->attributedStringForRange(location, length);
     return JSValueMakeString(context, stringDescription.get());    
 }
 
@@ -219,7 +218,7 @@ static JSValueRef uiElementCountForSearchPredicateCallback(JSContextRef context,
         searchKey = arguments[2];
         
         if (JSValueIsString(context, arguments[3]))
-            searchText.adopt(JSValueToStringCopy(context, arguments[3], exception));
+            searchText = adopt(JSValueToStringCopy(context, arguments[3], exception));
         
         visibleOnly = JSValueToBoolean(context, arguments[4]);
         
@@ -247,7 +246,7 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
         searchKey = arguments[2];
         
         if (JSValueIsString(context, arguments[3]))
-            searchText.adopt(JSValueToStringCopy(context, arguments[3], exception));
+            searchText = adopt(JSValueToStringCopy(context, arguments[3], exception));
         
         visibleOnly = JSValueToBoolean(context, arguments[4]);
         
@@ -263,7 +262,7 @@ static JSValueRef selectTextWithCriteriaCallback(JSContextRef context, JSObjectR
     if (argumentCount < 2 || argumentCount > 4)
         return JSValueMakeUndefined(context);
     
-    JSRetainPtr<JSStringRef> ambiguityResolution(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    auto ambiguityResolution = adopt(JSValueToStringCopy(context, arguments[0], exception));
     JSValueRef searchStrings = arguments[1];
     JSStringRef replacementString = nullptr;
     if (argumentCount == 3)
@@ -272,7 +271,7 @@ static JSValueRef selectTextWithCriteriaCallback(JSContextRef context, JSObjectR
     if (argumentCount == 4)
         activityString = JSValueToStringCopy(context, arguments[3], exception);
     
-    JSRetainPtr<JSStringRef> result(Adopt, toAXElement(thisObject)->selectTextWithCriteria(context, ambiguityResolution.get(), searchStrings, replacementString, activityString));
+    auto result = toAXElement(thisObject)->selectTextWithCriteria(context, ambiguityResolution.get(), searchStrings, replacementString, activityString);
     if (replacementString)
         JSStringRelease(replacementString);
     if (activityString)
@@ -371,7 +370,7 @@ static JSValueRef fieldsetAncestorElementCallback(JSContextRef context, JSObject
 
 static JSValueRef attributedStringForElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> stringDescription(Adopt, toAXElement(thisObject)->attributedStringForElement());
+    auto stringDescription = toAXElement(thisObject)->attributedStringForElement();
     return JSValueMakeString(context, stringDescription.get());
 }
 
@@ -474,7 +473,7 @@ static JSValueRef setValueCallback(JSContextRef context, JSObjectRef function, J
     JSRetainPtr<JSStringRef> valueText = 0;
     if (argumentCount == 1) {
         if (JSValueIsString(context, arguments[0]))
-            valueText.adopt(JSValueToStringCopy(context, arguments[0], exception));
+            valueText = adopt(JSValueToStringCopy(context, arguments[0], exception));
     }
     
     toAXElement(thisObject)->setValue(valueText.get());
@@ -591,7 +590,7 @@ static JSValueRef stringAttributeValueCallback(JSContextRef context, JSObjectRef
     JSStringRef attribute = 0;
     if (argumentCount == 1)
         attribute = JSValueToStringCopy(context, arguments[0], exception);
-    JSRetainPtr<JSStringRef> stringAttributeValue(Adopt, toAXElement(thisObject)->stringAttributeValue(attribute));
+    auto stringAttributeValue = toAXElement(thisObject)->stringAttributeValue(attribute);
     JSValueRef result = JSValueMakeString(context, stringAttributeValue.get());
     if (attribute)
         JSStringRelease(attribute);
@@ -629,7 +628,7 @@ static JSValueRef uiElementArrayAttributeValueCallback(JSContextRef context, JSO
     if (argumentCount != 1)
         return JSValueMakeUndefined(context);
     
-    JSRetainPtr<JSStringRef> attribute(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    auto attribute = adopt(JSValueToStringCopy(context, arguments[0], exception));
     
     Vector<AccessibilityUIElement> elements;
     toAXElement(thisObject)->uiElementArrayAttributeValue(attribute.get(), elements);
@@ -640,7 +639,7 @@ static JSValueRef uiElementAttributeValueCallback(JSContextRef context, JSObject
 {
     JSRetainPtr<JSStringRef> attribute;
     if (argumentCount == 1)
-        attribute.adopt(JSValueToStringCopy(context, arguments[0], exception));
+        attribute = adopt(JSValueToStringCopy(context, arguments[0], exception));
     
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementAttributeValue(attribute.get()));
 }
@@ -883,7 +882,7 @@ static JSValueRef stringForTextMarkerRangeCallback(JSContextRef context, JSObjec
     if (argumentCount == 1)
         markerRange = toTextMarkerRange(JSValueToObject(context, arguments[0], exception));
     
-    JSRetainPtr<JSStringRef> markerRangeString(Adopt, toAXElement(thisObject)->stringForTextMarkerRange(markerRange));
+    auto markerRangeString = toAXElement(thisObject)->stringForTextMarkerRange(markerRange);
     return JSValueMakeString(context, markerRangeString.get());    
 }
 
@@ -893,7 +892,7 @@ static JSValueRef attributedStringForTextMarkerRangeCallback(JSContextRef contex
     if (argumentCount == 1)
         markerRange = toTextMarkerRange(JSValueToObject(context, arguments[0], exception));
 
-    JSRetainPtr<JSStringRef> markerRangeString(Adopt, toAXElement(thisObject)->attributedStringForTextMarkerRange(markerRange));
+    auto markerRangeString = toAXElement(thisObject)->attributedStringForTextMarkerRange(markerRange);
     return JSValueMakeString(context, markerRangeString.get());
 }
 
@@ -906,7 +905,7 @@ static JSValueRef attributedStringForTextMarkerRangeWithOptionsCallback(JSContex
         includeSpellCheck = JSValueToBoolean(context, arguments[1]);
     }
 
-    JSRetainPtr<JSStringRef> markerRangeString(Adopt, toAXElement(thisObject)->attributedStringForTextMarkerRangeWithOptions(markerRange, includeSpellCheck));
+    auto markerRangeString = toAXElement(thisObject)->attributedStringForTextMarkerRangeWithOptions(markerRange, includeSpellCheck);
     return JSValueMakeString(context, markerRangeString.get());
 }
 
@@ -1110,13 +1109,13 @@ static JSValueRef setSelectedVisibleTextRangeCallback(JSContextRef context, JSOb
 
 static JSValueRef getARIADropEffectsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> dropEffects(Adopt, toAXElement(thisObject)->ariaDropEffects());
+    auto dropEffects = toAXElement(thisObject)->ariaDropEffects();
     return JSValueMakeString(context, dropEffects.get());
 }
 
 static JSValueRef getClassListCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> classList(Adopt, toAXElement(thisObject)->classList());
+    auto classList = toAXElement(thisObject)->classList();
     return JSValueMakeString(context, classList.get());
 }
 
@@ -1138,61 +1137,61 @@ static JSValueRef getIsValidCallback(JSContextRef context, JSObjectRef thisObjec
 
 static JSValueRef getRoleCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> role(Adopt, toAXElement(thisObject)->role());
+    auto role = toAXElement(thisObject)->role();
     return JSValueMakeString(context, role.get());
 }
 
 static JSValueRef getSubroleCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> role(Adopt, toAXElement(thisObject)->subrole());
+    auto role = toAXElement(thisObject)->subrole();
     return JSValueMakeString(context, role.get());
 }
 
 static JSValueRef getRoleDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> roleDesc(Adopt, toAXElement(thisObject)->roleDescription());
+    auto roleDesc = toAXElement(thisObject)->roleDescription();
     return JSValueMakeString(context, roleDesc.get());
 }
 
 static JSValueRef getComputedRoleStringCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> compRole(Adopt, toAXElement(thisObject)->computedRoleString());
+    auto compRole = toAXElement(thisObject)->computedRoleString();
     return JSValueMakeString(context, compRole.get());
 }
 
 static JSValueRef getTitleCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> title(Adopt, toAXElement(thisObject)->title());
+    auto title = toAXElement(thisObject)->title();
     return JSValueMakeString(context, title.get());
 }
 
 static JSValueRef getDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> description(Adopt, toAXElement(thisObject)->description());
+    auto description = toAXElement(thisObject)->description();
     return JSValueMakeString(context, description.get());
 }
 
 static JSValueRef getStringValueCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> stringValue(Adopt, toAXElement(thisObject)->stringValue());
+    auto stringValue = toAXElement(thisObject)->stringValue();
     return JSValueMakeString(context, stringValue.get());
 }
 
 static JSValueRef getLanguageCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> language(Adopt, toAXElement(thisObject)->language());
+    auto language = toAXElement(thisObject)->language();
     return JSValueMakeString(context, language.get());
 }
 
 static JSValueRef getHelpTextCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> language(Adopt, toAXElement(thisObject)->helpText());
+    auto language = toAXElement(thisObject)->helpText();
     return JSValueMakeString(context, language.get());
 }
 
 static JSValueRef getOrientationCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> orientation(Adopt, toAXElement(thisObject)->orientation());
+    auto orientation = toAXElement(thisObject)->orientation();
     return JSValueMakeString(context, orientation.get());
 }
 
@@ -1263,13 +1262,13 @@ static JSValueRef getInsertionPointLineNumberCallback(JSContextRef context, JSOb
 
 static JSValueRef getPathDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> pathDescription(Adopt, toAXElement(thisObject)->pathDescription());
+    auto pathDescription = toAXElement(thisObject)->pathDescription();
     return JSValueMakeString(context, pathDescription.get());
 }
 
 static JSValueRef getSelectedTextRangeCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> selectedTextRange(Adopt, toAXElement(thisObject)->selectedTextRange());
+    auto selectedTextRange = toAXElement(thisObject)->selectedTextRange();
     return JSValueMakeString(context, selectedTextRange.get());
 }
 
@@ -1350,7 +1349,7 @@ static JSValueRef isIgnoredCallback(JSContextRef context, JSObjectRef thisObject
 
 static JSValueRef speakAsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSRetainPtr<JSStringRef> speakAsString(Adopt, toAXElement(thisObject)->speakAs());
+    auto speakAsString = toAXElement(thisObject)->speakAs();
     return JSValueMakeString(context, speakAsString.get());
 }
 
@@ -1381,31 +1380,31 @@ static JSValueRef hierarchicalLevelCallback(JSContextRef context, JSObjectRef th
 
 static JSValueRef getValueDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> valueDescription(Adopt, toAXElement(thisObject)->valueDescription());
+    auto valueDescription = toAXElement(thisObject)->valueDescription();
     return JSValueMakeString(context, valueDescription.get());
 }
 
 static JSValueRef getAccessibilityValueCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> accessibilityValue(Adopt, toAXElement(thisObject)->accessibilityValue());
+    auto accessibilityValue = toAXElement(thisObject)->accessibilityValue();
     return JSValueMakeString(context, accessibilityValue.get());
 }
 
 static JSValueRef getDocumentEncodingCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> documentEncoding(Adopt, toAXElement(thisObject)->documentEncoding());
+    auto documentEncoding = toAXElement(thisObject)->documentEncoding();
     return JSValueMakeString(context, documentEncoding.get());
 }
 
 static JSValueRef getDocumentURICallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> documentURI(Adopt, toAXElement(thisObject)->documentURI());
+    auto documentURI = toAXElement(thisObject)->documentURI();
     return JSValueMakeString(context, documentURI.get());
 }
 
 static JSValueRef getURLCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> url(Adopt, toAXElement(thisObject)->url());
+    auto url = toAXElement(thisObject)->url();
     return JSValueMakeString(context, url.get());
 }
 
@@ -1432,7 +1431,7 @@ static JSValueRef characterAtOffsetCallback(JSContextRef context, JSObjectRef fu
     if (argumentCount == 1)
         offset = JSValueToNumber(context, arguments[0], exception);
 
-    JSRetainPtr<JSStringRef> characterAtOffset(Adopt, toAXElement(thisObject)->characterAtOffset(offset));
+    auto characterAtOffset = toAXElement(thisObject)->characterAtOffset(offset);
     return JSValueMakeString(context, characterAtOffset.get());
 }
 
@@ -1442,7 +1441,7 @@ static JSValueRef wordAtOffsetCallback(JSContextRef context, JSObjectRef functio
     if (argumentCount == 1)
         offset = JSValueToNumber(context, arguments[0], exception);
 
-    JSRetainPtr<JSStringRef> wordAtOffset(Adopt, toAXElement(thisObject)->wordAtOffset(offset));
+    auto wordAtOffset = toAXElement(thisObject)->wordAtOffset(offset);
     return JSValueMakeString(context, wordAtOffset.get());
 }
 
@@ -1452,7 +1451,7 @@ static JSValueRef lineAtOffsetCallback(JSContextRef context, JSObjectRef functio
     if (argumentCount == 1)
         offset = JSValueToNumber(context, arguments[0], exception);
 
-    JSRetainPtr<JSStringRef> lineAtOffset(Adopt, toAXElement(thisObject)->lineAtOffset(offset));
+    auto lineAtOffset = toAXElement(thisObject)->lineAtOffset(offset);
     return JSValueMakeString(context, lineAtOffset.get());
 }
 
@@ -1462,7 +1461,7 @@ static JSValueRef sentenceAtOffsetCallback(JSContextRef context, JSObjectRef fun
     if (argumentCount == 1)
         offset = JSValueToNumber(context, arguments[0], exception);
 
-    JSRetainPtr<JSStringRef> sentenceAtOffset(Adopt, toAXElement(thisObject)->sentenceAtOffset(offset));
+    auto sentenceAtOffset = toAXElement(thisObject)->sentenceAtOffset(offset);
     return JSValueMakeString(context, sentenceAtOffset.get());
 }
 
@@ -1480,20 +1479,20 @@ static JSValueRef getIsTextAreaCallback(JSContextRef context, JSObjectRef thisOb
 
 static JSValueRef stringForSelectionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> labelString(Adopt, toAXElement(thisObject)->stringForSelection());
+    auto labelString = toAXElement(thisObject)->stringForSelection();
     return JSValueMakeString(context, labelString.get());
 }
 
 static JSValueRef getIdentifierCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->identifier());
+    auto valueString = toAXElement(thisObject)->identifier();
     return JSValueMakeString(context, valueString.get());
 }
 
 
 static JSValueRef getTraitsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->traits());
+    auto valueString = toAXElement(thisObject)->traits();
     return JSValueMakeString(context, valueString.get());
 }
 
@@ -1534,19 +1533,19 @@ static JSValueRef textMarkerRangeMatchesTextNearMarkersCallback(JSContextRef con
 #if PLATFORM(MAC) && !PLATFORM(IOS)
 static JSValueRef supportedActionsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->supportedActions());
+    auto valueString = toAXElement(thisObject)->supportedActions();
     return JSValueMakeString(context, valueString.get());
 }
 
 static JSValueRef mathPostscriptsDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->mathPostscriptsDescription());
+    auto valueString = toAXElement(thisObject)->mathPostscriptsDescription();
     return JSValueMakeString(context, valueString.get());
 }
 
 static JSValueRef mathPrescriptsDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->mathPrescriptsDescription());
+    auto valueString = toAXElement(thisObject)->mathPrescriptsDescription();
     return JSValueMakeString(context, valueString.get());
 }
 
@@ -1556,8 +1555,8 @@ static JSValueRef mathPrescriptsDescriptionCallback(JSContextRef context, JSObje
 
 // Unsupported methods on various platforms.
 #if !PLATFORM(MAC) || PLATFORM(IOS)
-JSStringRef AccessibilityUIElement::rangeForLine(int line) { return 0; }
-JSStringRef AccessibilityUIElement::rangeForPosition(int, int) { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int line) { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int, int) { return 0; }
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement*) const { }
 void AccessibilityUIElement::setSelectedChildAtIndex(unsigned) const { }
 void AccessibilityUIElement::removeSelectionAtIndex(unsigned) const { }
@@ -1567,8 +1566,8 @@ AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringR
 #endif
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
-JSStringRef AccessibilityUIElement::speakAs() { return nullptr; }
-JSStringRef AccessibilityUIElement::pathDescription() const { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs() { return nullptr; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const { return 0; }
 void AccessibilityUIElement::setValue(JSStringRef) { }
 #endif
 
@@ -1660,17 +1659,17 @@ AccessibilityTextMarker AccessibilityUIElement::nextTextMarker(AccessibilityText
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     return nullptr;
 }
 
-JSStringRef AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool includeSpellCheck)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool includeSpellCheck)
 {
     return nullptr;
 }

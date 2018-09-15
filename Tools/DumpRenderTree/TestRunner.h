@@ -66,8 +66,8 @@ public:
     void clearBackForwardList();
     void clearPersistentUserStyleSheet();
     bool callShouldCloseOnWebView();
-    JSStringRef copyDecodedHostName(JSStringRef name);
-    JSStringRef copyEncodedHostName(JSStringRef name);
+    JSRetainPtr<JSStringRef> copyDecodedHostName(JSStringRef name);
+    JSRetainPtr<JSStringRef> copyEncodedHostName(JSStringRef name);
     void dispatchPendingLoadRequests();
     void display();
     void displayAndTrackRepaints();
@@ -83,7 +83,7 @@ public:
     int numberOfPendingGeolocationPermissionRequests();
     bool isGeolocationProviderActive();
     void overridePreference(JSStringRef key, JSStringRef value);
-    JSStringRef pathToLocalResource(JSContextRef, JSStringRef url);
+    JSRetainPtr<JSStringRef> pathToLocalResource(JSContextRef, JSStringRef url);
     void queueBackNavigation(int howFarBackward);
     void queueForwardNavigation(int howFarForward);
     void queueLoad(JSStringRef url, JSStringRef target);
@@ -319,7 +319,7 @@ public:
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(JSStringRef script);
-    JSStringRef inspectorTestStubURL();
+    JSRetainPtr<JSStringRef> inspectorTestStubURL();
 
     void evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script);
     void evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script);

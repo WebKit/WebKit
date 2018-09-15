@@ -58,7 +58,7 @@ static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScript
     JSValueRef scriptValue = WKSerializedScriptValueDeserialize(resultSerializedScriptValue, scriptContext, 0);
     ASSERT_NOT_NULL(scriptValue);
 
-    context->actualString.adopt(JSValueToStringCopy(scriptContext, scriptValue, 0));
+    context->actualString = adopt(JSValueToStringCopy(scriptContext, scriptValue, 0));
     ASSERT_NOT_NULL(context->actualString.get());
 
     context->didFinish = true;

@@ -1,3 +1,16 @@
+2018-09-08  Darin Adler  <darin@apple.com>
+
+        Streamline JSRetainPtr, fix leaks of JSString and JSGlobalContext
+        https://bugs.webkit.org/show_bug.cgi?id=189455
+
+        Reviewed by Keith Miller.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::toJSString): Use adopt function instead of adopt construuctor.
+        (WebKit::evaluate): Ditto.
+        (WebKit::evaluateJavaScriptCallback): Ditto.
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction): Ditto.
+
 2018-09-14  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r236020.

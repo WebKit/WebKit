@@ -49,7 +49,7 @@ int testJSObjectGetProxyTarget()
     };
     
     JSContextGroupRef group = JSContextGroupCreate();
-    JSContextRef context = JSGlobalContextCreateInGroup(group, nullptr);
+    JSGlobalContextRef context = JSGlobalContextCreateInGroup(group, nullptr);
     
     ExecState* exec = toJS(context);
     VM& vm = *toJS(group);
@@ -96,7 +96,8 @@ int testJSObjectGetProxyTarget()
     test("proxy target of ProxyObject works", JSObjectGetProxyTarget(proxyObject) == array);
     
     test("proxy target of GlobalObject is the globalObject", JSObjectGetProxyTarget(globalObjectProxy) == globalObject);
-    
+
+    JSGlobalContextRelease(context);
     JSContextGroupRelease(group);
 
     printf("JSObjectGetProxyTargetTest: %s\n", overallResult ? "PASS" : "FAIL");

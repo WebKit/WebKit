@@ -42,7 +42,7 @@ DeviceOrientation* toDeviceOrientation(JSContextRef context, JSValueRef value)
         DeviceOrientation::LandscapeRight
     };
 
-    JSRetainPtr<JSStringRef> option(Adopt, JSValueToStringCopy(context, value, nullptr));
+    auto option = adopt(JSValueToStringCopy(context, value, nullptr));
     if (option.get()->string() == "portrait")
         return &values[0];
         

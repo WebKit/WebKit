@@ -1,3 +1,467 @@
+2018-09-08  Darin Adler  <darin@apple.com>
+
+        Streamline JSRetainPtr, fix leaks of JSString and JSGlobalContext
+        https://bugs.webkit.org/show_bug.cgi?id=189455
+
+        Reviewed by Keith Miller.
+
+        There is a lot of copied and pasted code for WebKit vs. Legacy WebKit
+        testing and even for macOS vs. iOS vs. Windows platform-specific code.
+        For now, this patch just makes corresponding changes to the copied code.
+        Later we might get better results by merging more code instead of having
+        all these separate copies.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (AccessibilityController::makeWindowObject): Use the adopt function
+        instead of the special Adopt constructor of JSRetainPtr.
+
+        * DumpRenderTree/AccessibilityTextMarker.cpp: Removed unneeded include.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp: Ditto.
+        (allAttributesCallback): Don't adopt at this level; changed the
+        underlying function to return a JSRetainPtr so the adopt is right next
+        to the call to the create or copy function.
+        (attributesOfLinkedUIElementsCallback): Ditto.
+        (attributesOfDocumentLinksCallback): Ditto.
+        (attributesOfChildrenCallback): Ditto.
+        (parameterizedAttributeNamesCallback): Ditto.
+        (attributesOfColumnHeadersCallback): Ditto.
+        (attributesOfRowHeadersCallback): Ditto.
+        (attributesOfColumnsCallback): Ditto.
+        (attributesOfRowsCallback): Ditto.
+        (attributesOfVisibleCellsCallback): Ditto.
+        (attributesOfHeaderCallback): Ditto.
+        (rowIndexRangeCallback): Ditto.
+        (columnIndexRangeCallback): Ditto.
+        (rangeForLineCallback): Ditto.
+        (boundsForRangeCallback): Ditto.
+        (rangeForPositionCallback): Ditto.
+        (stringForRangeCallback): Ditto.
+        (attributedStringForRangeCallback): Ditto.
+        (uiElementCountForSearchPredicateCallback): Use the free adopt
+        function instead of the adopt member function.
+        (uiElementForSearchPredicateCallback): Ditto.
+        (selectTextWithCriteriaCallback): Don't adopt at this level.
+        (attributedStringForElementCallback): Ditto.
+        (setValueCallback): Use free adopt.
+        (stringAttributeValueCallback): Don't adopt at this level.
+        (uiElementArrayAttributeValueCallback): Ditto.
+        (uiElementAttributeValueCallback): Ditto.
+        (stringForTextMarkerRangeCallback): Ditto.
+        (attributedStringForTextMarkerRangeCallback): Ditto.
+        (attributedStringForTextMarkerRangeWithOptionsCallback): Ditto.
+        (getARIADropEffectsCallback): Ditto.
+        (getClassListCallback): Ditto.
+        (getRoleCallback): Ditto.
+        (getSubroleCallback): Ditto.
+        (getRoleDescriptionCallback): Ditto.
+        (getComputedRoleStringCallback): Ditto.
+        (getTitleCallback): Ditto.
+        (getDescriptionCallback): Ditto.
+        (getStringValueCallback): Ditto.
+        (getLanguageCallback): Ditto.
+        (getHelpTextCallback): Ditto.
+        (getOrientationCallback): Ditto.
+        (getPathDescriptionCallback): Ditto.
+        (getSelectedTextRangeCallback): Ditto.
+        (speakAsCallback): Ditto.
+        (getValueDescriptionCallback): Ditto.
+        (getAccessibilityValueCallback): Ditto.
+        (getDocumentEncodingCallback): Ditto.
+        (getDocumentURICallback): Ditto.
+        (getURLCallback): Ditto.
+        (characterAtOffsetCallback): Ditto.
+        (wordAtOffsetCallback): Ditto.
+        (lineAtOffsetCallback): Ditto.
+        (sentenceAtOffsetCallback): Ditto.
+        (stringForSelectionCallback): Ditto.
+        (getIdentifierCallback): Ditto.
+        (getTraitsCallback): Ditto.
+        (supportedActionsCallback): Ditto.
+        (mathPostscriptsDescriptionCallback): Ditto.
+        (mathPrescriptsDescriptionCallback): Ditto.
+        (AccessibilityUIElement::rangeForLine): Updated to return JSRetainPtr.
+        (AccessibilityUIElement::rangeForPosition): Ditto.
+        (AccessibilityUIElement::speakAs): Ditto.
+        (AccessibilityUIElement::pathDescription const): Ditto.
+        (AccessibilityUIElement::stringForTextMarkerRange): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRange): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions): Ditto.
+
+        * DumpRenderTree/AccessibilityUIElement.h: Use JSRetainPtr instead of
+        raw pointers for the results of the functions that create strings.
+        The old way was difficult to get right; the functions didn't even follow
+        the create/copy naming rule.
+
+        * DumpRenderTree/Bindings/CodeGeneratorDumpRenderTree.pm:
+        (_platformTypeConstructor): Use the adopt function instead of the
+        JSRetainPtr adopt constructor. Also nullptr instead of 0.
+
+        * DumpRenderTree/GCController.cpp:
+        (GCController::makeWindowObject): Use adopt function instead of constructor.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (pathToLocalResourceCallback): Use adopt function instead of constructor.
+        (addDisallowedURLCallback): Ditto.
+        (addURLToRedirectCallback): Ditto.
+        (clearApplicationCacheForOriginCallback): Ditto.
+        (applicationCacheDiskUsageForOriginCallback): Ditto.
+        (decodeHostNameCallback): Don't adopt at this level.
+        (encodeHostNameCallback): Ditto.
+        (execCommandCallback): Use adopt instead of JSRetainPtr::adopt.
+        (findStringCallback): Use adopt function instead of constructor.
+        (isCommandEnabledCallback): Ditto.
+        (overridePreferenceCallback): Ditto.
+        (queueLoadCallback): Ditto.
+        (queueLoadHTMLStringCallback): Ditto.
+        (queueLoadingScriptCallback): Ditto.
+        (queueNonLoadingScriptCallback): Ditto.
+        (setAuthenticationPasswordCallback): Ditto.
+        (setAuthenticationUsernameCallback): Ditto.
+        (setDomainRelaxationForbiddenForURLSchemeCallback): Ditto.
+        (setMockGeolocationPositionUnavailableErrorCallback): Ditto.
+        (setPOSIXLocaleCallback): Ditto.
+        (setPersistentUserStyleSheetLocationCallback): Ditto.
+        (setUserStyleSheetLocationCallback): Ditto.
+        (setValueForUserCallback): Ditto.
+        (setWillSendRequestClearHeaderCallback): Ditto.
+        (setPageVisibilityCallback): Ditto.
+        (evaluateInWebInspectorCallback): Ditto.
+        (evaluateScriptInIsolatedWorldCallback): Ditto.
+        (evaluateScriptInIsolatedWorldAndReturnValueCallback): Ditto.
+        (addOriginAccessWhitelistEntryCallback): Ditto.
+        (removeOriginAccessWhitelistEntryCallback): Ditto.
+        (setScrollbarPolicyCallback): Ditto.
+        (addUserScriptCallback): Ditto.
+        (addUserStyleSheetCallback): Ditto.
+        (apiTestNewWindowDataLoadBaseURLCallback): Ditto.
+        (authenticateSessionCallback): Ditto.
+        (getTitleTextDirectionCallback): Ditto.
+        (getInspectorTestStubURLCallback): Ditto.
+        (simulateLegacyWebNotificationClickCallback): Ditto.
+        (setTextDirectionCallback): Ditto.
+        (grantWebNotificationPermissionCallback): Ditto.
+        (denyWebNotificationPermissionCallback): Ditto.
+        (accummulateLogsForChannel): Ditto.
+        (runUIScriptCallback): Ditto.
+        (TestRunner::makeWindowObject): Ditto.
+        (TestRunner::uiScriptDidComplete): Ditto.
+        (TestRunner::setOpenPanelFiles): Ditto.
+
+        * DumpRenderTree/TestRunner.h: Use JSRetainPtr instead of
+        raw pointers for the results of the functions that create strings.
+
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm:
+        (AccessibilityController::platformName const): Use the adopt
+        function instead of the adopt constructor.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (createEmptyJSString): Added. This helper function makes reduces the
+        repetitive code to create empty strings.
+        (concatenateAttributeAndValue): Changed to return a JSRetainPtr.
+        (AccessibilityUIElement::identifier): Ditto.
+        (AccessibilityUIElement::traits): Ditto.
+        (AccessibilityUIElement::url): Ditto.
+        (AccessibilityUIElement::speakAs): Ditto.
+        (AccessibilityUIElement::stringForSelection): Ditto.
+        (AccessibilityUIElement::stringForRange): Ditto.
+        (AccessibilityUIElement::attributedStringForRange): Ditto.
+        (AccessibilityUIElement::attributedStringForElement): Ditto.
+        (AccessibilityUIElement::pathDescription const): Ditto.
+        (AccessibilityUIElement::stringForTextMarkerRange): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRange): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions): Ditto.
+        (AccessibilityUIElement::attributesOfLinkedUIElements): Ditto.
+        (AccessibilityUIElement::attributesOfDocumentLinks): Ditto.
+        (AccessibilityUIElement::attributesOfChildren): Ditto.
+        (AccessibilityUIElement::allAttributes): Ditto.
+        (AccessibilityUIElement::stringAttributeValue): Ditto.
+        (AccessibilityUIElement::parameterizedAttributeNames): Ditto.
+        (AccessibilityUIElement::role): Ditto.
+        (AccessibilityUIElement::subrole): Ditto.
+        (AccessibilityUIElement::roleDescription): Ditto.
+        (AccessibilityUIElement::computedRoleString): Ditto.
+        (AccessibilityUIElement::title): Ditto.
+        (AccessibilityUIElement::description): Ditto.
+        (AccessibilityUIElement::orientation const): Ditto.
+        (AccessibilityUIElement::stringValue): Ditto.
+        (AccessibilityUIElement::language): Ditto.
+        (AccessibilityUIElement::helpText const): Ditto.
+        (AccessibilityUIElement::valueDescription): Ditto.
+        (AccessibilityUIElement::ariaDropEffects const): Ditto.
+        (AccessibilityUIElement::boundsForRange): Ditto.
+        (AccessibilityUIElement::attributesOfColumnHeaders): Ditto.
+        (AccessibilityUIElement::attributesOfRowHeaders): Ditto.
+        (AccessibilityUIElement::attributesOfColumns): Ditto.
+        (AccessibilityUIElement::attributesOfRows): Ditto.
+        (AccessibilityUIElement::attributesOfVisibleCells): Ditto.
+        (AccessibilityUIElement::attributesOfHeader): Ditto.
+        (AccessibilityUIElement::rowIndexRange): Ditto.
+        (AccessibilityUIElement::columnIndexRange): Ditto.
+        (AccessibilityUIElement::selectedTextRange): Ditto.
+        (AccessibilityUIElement::accessibilityValue const): Ditto.
+        (AccessibilityUIElement::documentEncoding): Ditto.
+        (AccessibilityUIElement::documentURI): Ditto.
+        (AccessibilityUIElement::selectTextWithCriteria): Ditto.
+        (AccessibilityUIElement::classList const): Ditto.
+
+        * DumpRenderTree/mac/AccessibilityCommonMac.h: Changed the
+        createJSStringRef method to return a JSRetainPtr.
+        * DumpRenderTree/mac/AccessibilityCommonMac.mm:
+        (-[NSString createJSStringRef]): Ditto.
+        (searchPredicateParameterizedAttributeForSearchCriteria): Use the
+        adopt function instead of the adopt constructor.
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::platformName const): Ditto.
+
+        * DumpRenderTree/mac/AccessibilityNotificationHandler.mm:
+        (-[NSString createJSStringRef]): Return a JSRetainPtr.
+        (makeValueRefForValue): Updated for the above, no adopt needed here now.
+        (makeObjectRefForDictionary): Ditto.
+        (-[AccessibilityNotificationHandler _notificationReceived:]): Ditto.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (createEmptyJSString): Added. This helper function makes reduces the
+        repetitive code to create empty strings.
+        (concatenateAttributeAndValue): Changed to return a JSRetainPtr.
+        (descriptionOfElements): Ditto.
+        (selectTextParameterizedAttributeForCriteria): Ditto.
+        (AccessibilityUIElement::attributesOfLinkedUIElements): Ditto.
+        (AccessibilityUIElement::attributesOfDocumentLinks): Ditto.
+        (AccessibilityUIElement::attributesOfChildren): Ditto.
+        (AccessibilityUIElement::allAttributes): Ditto.
+        (AccessibilityUIElement::stringAttributeValue): Ditto.
+        (AccessibilityUIElement::parameterizedAttributeNames): Ditto.
+        (AccessibilityUIElement::role): Ditto.
+        (AccessibilityUIElement::subrole): Ditto.
+        (AccessibilityUIElement::roleDescription): Ditto.
+        (AccessibilityUIElement::computedRoleString): Ditto.
+        (AccessibilityUIElement::title): Ditto.
+        (AccessibilityUIElement::description): Ditto.
+        (AccessibilityUIElement::orientation const): Ditto.
+        (AccessibilityUIElement::stringValue): Ditto.
+        (AccessibilityUIElement::language): Ditto.
+        (AccessibilityUIElement::helpText const): Ditto.
+        (AccessibilityUIElement::valueDescription): Ditto.
+        (AccessibilityUIElement::speakAs): Ditto.
+        (AccessibilityUIElement::classList const): Ditto.
+        (AccessibilityUIElement::ariaDropEffects const): Ditto.
+        (AccessibilityUIElement::rangeForLine): Ditto.
+        (AccessibilityUIElement::rangeForPosition): Ditto.
+        (AccessibilityUIElement::boundsForRange): Ditto.
+        (AccessibilityUIElement::stringForRange): Ditto.
+        (AccessibilityUIElement::attributedStringForRange): Ditto.
+        (AccessibilityUIElement::selectTextWithCriteria): Ditto.
+        (AccessibilityUIElement::attributesOfColumnHeaders): Ditto.
+        (AccessibilityUIElement::attributesOfRowHeaders): Ditto.
+        (AccessibilityUIElement::attributesOfColumns): Ditto.
+        (AccessibilityUIElement::attributesOfRows): Ditto.
+        (AccessibilityUIElement::attributesOfVisibleCells): Ditto.
+        (AccessibilityUIElement::attributesOfHeader): Ditto.
+        (AccessibilityUIElement::rowIndexRange): Ditto.
+        (AccessibilityUIElement::columnIndexRange): Ditto.
+        (AccessibilityUIElement::pathDescription const): Ditto.
+        (AccessibilityUIElement::selectedTextRange): Ditto.
+        (AccessibilityUIElement::accessibilityValue const): Ditto.
+        (AccessibilityUIElement::documentEncoding): Ditto.
+        (AccessibilityUIElement::documentURI): Ditto.
+        (AccessibilityUIElement::url): Ditto.
+        (AccessibilityUIElement::stringForTextMarkerRange): Ditto.
+        (createJSStringRef): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRange): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions): Ditto.
+        (AccessibilityUIElement::supportedActions): Ditto.
+        (AccessibilityUIElement::mathPostscriptsDescription const): Ditto.
+        (AccessibilityUIElement::mathPrescriptsDescription const): Ditto.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate didClearWindowObjectForFrame:inIsolatedWorld:]):
+        Use the adopt function instead of the adopt constructor.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (originsArrayToJS): Ditto.
+        (TestRunner::copyDecodedHostName): Return a JSRetainPtr.
+        (TestRunner::copyEncodedHostName): Ditto.
+        (TestRunner::pathToLocalResource): Ditto.
+        (TestRunner::queueLoad): Use adopt function instead of constructor.
+        (TestRunner::findString): Ditto.
+        (TestRunner::inspectorTestStubURL): Return a JSRetainPtr.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::winNotificationReceived): Use adopt function
+        instead of adopt constructor.
+        (AccessibilityController::platformName const): Ditto.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (createEmptyJSString): Added. This helper function makes reduces the
+        repetitive code to create empty strings.
+        (AccessibilityUIElement::allAttributes): Changed to return a JSRetainPtr.
+        (AccessibilityUIElement::attributesOfLinkedUIElements): Ditto.
+        (AccessibilityUIElement::attributesOfDocumentLinks): Ditto.
+        (AccessibilityUIElement::attributesOfChildren): Ditto.
+        (AccessibilityUIElement::parameterizedAttributeNames): Ditto.
+        (AccessibilityUIElement::role): Ditto.
+        (AccessibilityUIElement::subrole): Ditto.
+        (AccessibilityUIElement::roleDescription): Ditto.
+        (AccessibilityUIElement::computedRoleString): Ditto.
+        (AccessibilityUIElement::title): Ditto.
+        (AccessibilityUIElement::description): Ditto.
+        (AccessibilityUIElement::stringValue): Ditto.
+        (AccessibilityUIElement::language): Ditto.
+        (AccessibilityUIElement::helpText const): Ditto.
+        (AccessibilityUIElement::valueDescription): Ditto.
+        (AccessibilityUIElement::ariaDropEffects const): Ditto.
+        (AccessibilityUIElement::orientation const): Ditto.
+        (AccessibilityUIElement::attributesOfColumnHeaders): Ditto.
+        (AccessibilityUIElement::attributesOfRowHeaders): Ditto.
+        (AccessibilityUIElement::attributesOfColumns): Ditto.
+        (AccessibilityUIElement::attributesOfRows): Ditto.
+        (AccessibilityUIElement::attributesOfVisibleCells): Ditto.
+        (AccessibilityUIElement::attributesOfHeader): Ditto.
+        (AccessibilityUIElement::rowIndexRange): Ditto.
+        (AccessibilityUIElement::columnIndexRange): Ditto.
+        (AccessibilityUIElement::boundsForRange): Ditto.
+        (AccessibilityUIElement::stringForRange): Ditto.
+        (AccessibilityUIElement::attributedStringForRange): Ditto.
+        (AccessibilityUIElement::selectTextWithCriteria): Ditto.
+        (AccessibilityUIElement::selectedTextRange): Ditto.
+        (AccessibilityUIElement::stringAttributeValue): Ditto.
+        (AccessibilityUIElement::accessibilityValue const): Ditto.
+        (AccessibilityUIElement::documentEncoding): Ditto.
+        (AccessibilityUIElement::documentURI): Ditto.
+        (AccessibilityUIElement::url): Ditto.
+        (AccessibilityUIElement::classList const): Ditto.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::copyDecodedHostName): Changed to return a JSRetainPtr.
+        (TestRunner::copyEncodedHostName): Ditto.
+        (TestRunner::pathToLocalResource): Ditto.
+        (TestRunner::queueLoad): Ditto.
+        (TestRunner::findString): Ditto.
+        (TestRunner::inspectorTestStubURL): Ditto.
+
+        * TestRunnerShared/Bindings/JSWrapper.h:
+        (WTR::setProperty): Use adopt function instead of constructor.
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::UIScriptContext): Ditto.
+        (UIScriptContext::runUIScript): Ditto.
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::toDeviceOrientation): Ditto.
+
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (nsTextCheckingType): Changed this function to not take an rvalue
+        reference to a JSRetainPtr since it doesn't take ownership.
+        (-[LayoutTestSpellChecker setResultsFromJSObject:inContext:]): Updated
+        for the above change.
+
+        * TestWebKitAPI/JavaScriptTest.cpp:
+        (TestWebKitAPI::javaScriptCallback): Use adopt function instead of
+        adopt member function.
+
+        * TestWebKitAPI/Tests/WebKit/WKPageIsPlayingAudio.cpp: Removed unneeded include.
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm: Ditto.
+        * TestWebKitAPI/Tests/mac/DOMNodeFromJSObject.mm: Use adopt function instead of
+        adopt constructor.
+        * TestWebKitAPI/Tests/mac/JSWrapperForNodeInWebFrame.mm: Ditto.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        Removed unneeded includes.
+        * WebKitTestRunner/InjectedBundle/AccessibilityTextMarker.cpp: Ditto.
+        * WebKitTestRunner/InjectedBundle/AccessibilityTextMarkerRange.cpp: Ditto.
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp: Ditto.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (_platformTypeConstructor): Use the adopt function instead of the
+        JSRetainPtr adopt constructor. Also nullptr instead of 0.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::arrayLength): Use adopt function instead of constructor.
+        (WTR::parseModifierArray): Ditto.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::propertyValue): Ditto.
+        (WTR::dumpPath): Ditto.
+        (WTR::toJS): Ditto.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::findString): Ditto.
+        (WTR::TestRunner::statisticsDidRunTelemetryCallback): Ditto.
+        (WTR::TestRunner::callDidReceiveAllStorageAccessEntriesCallback): Ditto.
+        (WTR::TestRunner::setOpenPanelFiles): Ditto.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm:
+        (WTR::AccessibilityController::platformName): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (-[NSString createJSStringRef]): Return a JSRetainPtr.
+        This fixes storage leaks in many functions below, which were using
+        the create function and putting the value right into a JSRetainPtr
+        without adoption.
+        (WTR::createEmptyJSString): Added. This helper function reduces the
+        repetitive code to create empty strings.
+        (WTR::concatenateAttributeAndValue): Return a JSRetainPtr.
+        (WTR::AccessibilityUIElement::attributesOfLinkedUIElements):
+        Use createEmptyJSString, fixing a storage leak due to missing adoption.
+        (WTR::AccessibilityUIElement::attributesOfDocumentLinks): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfChildren): Ditto.
+        (WTR::AccessibilityUIElement::allAttributes): Ditto.
+        (WTR::AccessibilityUIElement::stringAttributeValue): Ditto.
+        (WTR::AccessibilityUIElement::parameterizedAttributeNames): Ditto.
+        (WTR::AccessibilityUIElement::role): Ditto.
+        (WTR::AccessibilityUIElement::subrole): Ditto.
+        (WTR::AccessibilityUIElement::roleDescription): Ditto.
+        (WTR::AccessibilityUIElement::computedRoleString): Ditto.
+        (WTR::AccessibilityUIElement::title): Ditto.
+        (WTR::AccessibilityUIElement::orientation const): Ditto.
+        (WTR::AccessibilityUIElement::language): Ditto.
+        (WTR::AccessibilityUIElement::valueDescription): Ditto.
+        (WTR::AccessibilityUIElement::ariaDropEffects const): Ditto.
+        (WTR::AccessibilityUIElement::boundsForRange): Ditto.
+        (WTR::AccessibilityUIElement::stringForRange): Removed unneeded null check.
+        (WTR::AccessibilityUIElement::attributedStringForRange): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders):
+        Use createEmptyJSString, fixing a storage leak due to missing adoption.
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfColumns): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfRows): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfHeader): Ditto.
+        (WTR::AccessibilityUIElement::selectedTextRange): Ditto.
+        (WTR::AccessibilityUIElement::accessibilityValue const): Ditto.
+        (WTR::AccessibilityUIElement::documentEncoding): Ditto.
+        (WTR::AccessibilityUIElement::documentURI): Ditto.
+        (WTR::AccessibilityUIElement::stringForSelection): Removed unneeded
+        null check.
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange):
+        Use createEmptyJSString, fixing a storage leak due to missing adoption.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.h:
+        Use JSRetainPtr for the return value of createJSStringRef.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.mm:
+        (-[NSString createJSStringRef]): Ditto.
+        (WTR::searchPredicateParameterizedAttributeForSearchCriteria): Use the
+        adopt function instead of the adopt constructor.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::platformName): Ditto
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.mm:
+        (-[NSString createJSStringRef]): Return a JSRetainPtr.
+        (makeValueRefForValue): Updated for above by removing adopt.
+        (makeObjectRefForDictionary): Ditto.
+        (-[AccessibilityNotificationHandler _notificationReceived:]): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::createEmptyJSString): Added. This helper function makes reduces the
+        repetitive code to create empty strings.
+        (WTR::concatenateAttributeAndValue): Return a JSRetainPtr.
+        (WTR::descriptionOfElements): Ditto.
+        (WTR::selectTextParameterizedAttributeForCriteria): Ditto.
+        (WTR::AccessibilityUIElement::accessibilityValue const): Use createEmptyJSString,
+        fixing a storage leak due to missing adoption.
+        (WTR::AccessibilityUIElement::documentEncoding): Ditto.
+        (WTR::AccessibilityUIElement::documentURI): Ditto.
+        (WTR::createJSStringRef): Return a JSRetainPtr.
+
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::toWK): Take a const& to eliminate a little bit of reference count churn.
+        (WTR::toJS): Use the adopt function instead of the constructor.
+
 2018-09-14  Dean Jackson  <dino@grorg.org>
 
         Add Justin Michaud.

@@ -27,7 +27,6 @@
 #include "AccessibilityTextMarker.h"
 
 #include "AccessibilityUIElement.h"
-#include <JavaScriptCore/JSRetainPtr.h>
 
 // MARK: AccessibilityTextMarker
 

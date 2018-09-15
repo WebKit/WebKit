@@ -31,8 +31,6 @@
 #import "config.h"
 #import "AccessibilityCommonMac.h"
 
-#import <JavaScriptCore/JSRetainPtr.h>
-#import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 
 @implementation NSString (JSStringRefAdditions)
@@ -45,9 +43,9 @@
     return CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsStringRef));
 }
 
-- (JSStringRef)createJSStringRef
+- (JSRetainPtr<JSStringRef>)createJSStringRef
 {
-    return JSStringCreateWithCFString((__bridge CFStringRef)self);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)self));
 }
 
 namespace WTR {
@@ -66,14 +64,14 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
     if (searchKey) {
         id searchKeyParameter = nil;
         if (JSValueIsString(context, searchKey)) {
-            JSRetainPtr<JSStringRef> searchKeyString(Adopt, JSValueToStringCopy(context, searchKey, nullptr));
+            auto searchKeyString = adopt(JSValueToStringCopy(context, searchKey, nullptr));
             if (searchKeyString)
                 searchKeyParameter = [NSString stringWithJSStringRef:searchKeyString.get()];
         } else if (JSValueIsObject(context, searchKey)) {
             JSObjectRef searchKeyArray = JSValueToObject(context, searchKey, nullptr);
             unsigned searchKeyArrayLength = 0;
             
-            JSRetainPtr<JSStringRef> lengthPropertyString(Adopt, JSStringCreateWithUTF8CString("length"));
+            auto lengthPropertyString = adopt(JSStringCreateWithUTF8CString("length"));
             JSValueRef searchKeyArrayLengthValue = JSObjectGetProperty(context, searchKeyArray, lengthPropertyString.get(), nullptr);
             if (searchKeyArrayLengthValue && JSValueIsNumber(context, searchKeyArrayLengthValue))
                 searchKeyArrayLength = static_cast<unsigned>(JSValueToNumber(context, searchKeyArrayLengthValue, nullptr));

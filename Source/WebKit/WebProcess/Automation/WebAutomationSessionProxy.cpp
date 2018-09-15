@@ -89,7 +89,7 @@ static JSObjectRef toJSArray(JSContextRef context, const Vector<T>& data, JSValu
 
 static inline JSRetainPtr<JSStringRef> toJSString(const String& string)
 {
-    return JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create(string).leakRef());
+    return adopt(OpaqueJSString::create(string).leakRef());
 }
 
 static inline JSValueRef toJSValue(JSContextRef context, const String& string)
@@ -127,7 +127,7 @@ static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectR
     if (argumentCount != 1)
         return JSValueMakeUndefined(context);
 
-    JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    auto script = adopt(JSValueToStringCopy(context, arguments[0], exception));
     return JSEvaluateScript(context, script.get(), nullptr, nullptr, 0, exception);
 }
 
@@ -150,7 +150,7 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
 
     uint64_t frameID = JSValueToNumber(context, arguments[0], exception);
     uint64_t callbackID = JSValueToNumber(context, arguments[1], exception);
-    JSRetainPtr<JSStringRef> result(Adopt, JSValueToStringCopy(context, arguments[2], exception));
+    auto result = adopt(JSValueToStringCopy(context, arguments[2], exception));
 
     bool resultIsErrorName = JSValueToBoolean(context, arguments[3]);
 
@@ -287,7 +287,7 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t pageID, uint
     JSRetainPtr<JSStringRef> exceptionMessage;
     if (JSValueIsObject(context, exception)) {
         JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), toJSString("name"_s).get(), nullptr);
-        JSRetainPtr<JSStringRef> exceptionName(Adopt, JSValueToStringCopy(context, nameValue, nullptr));
+        auto exceptionName = adopt(JSValueToStringCopy(context, nameValue, nullptr));
         if (exceptionName->string() == "NodeNotFound")
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         else if (exceptionName->string() == "InvalidElementState")
@@ -298,9 +298,9 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t pageID, uint
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidSelector);
 
         JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), toJSString("message"_s).get(), nullptr);
-        exceptionMessage.adopt(JSValueToStringCopy(context, messageValue, nullptr));
+        exceptionMessage = adopt(JSValueToStringCopy(context, messageValue, nullptr));
     } else
-        exceptionMessage.adopt(JSValueToStringCopy(context, exception, nullptr));
+        exceptionMessage = adopt(JSValueToStringCopy(context, exception, nullptr));
 
     didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage->string(), errorType);
 }

@@ -306,7 +306,7 @@ bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
     auto& injectedBundle = InjectedBundle::singleton();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
-    JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
+    auto lengthPropertyName = adopt(JSStringCreateWithUTF8CString("length"));
     JSObjectRef optionsArray = JSValueToObject(context, optionsArrayAsValue, 0);
     JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
     if (!JSValueIsNumber(context, lengthValue))
@@ -318,7 +318,7 @@ bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
         if (!JSValueIsString(context, value))
             continue;
 
-        JSRetainPtr<JSStringRef> optionName(Adopt, JSValueToStringCopy(context, value, 0));
+        auto optionName = adopt(JSValueToStringCopy(context, value, 0));
 
         if (JSStringIsEqualToUTF8CString(optionName.get(), "CaseInsensitive"))
             options |= kWKFindOptionsCaseInsensitive;
@@ -1836,8 +1836,8 @@ void TestRunner::statisticsDidRunTelemetryCallback(unsigned totalPrevalentResour
     stringBuilder.appendNumber(top3SubframeUnderTopFrameOrigins);
     stringBuilder.appendLiteral(" }");
     
-    JSValueRef result = JSValueMakeFromJSONString(context, JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data()));
-    
+    JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data())).get());
+
     callTestRunnerCallback(StatisticsDidRunTelemetryCallbackID, 1, &result);
 }
 
@@ -2029,7 +2029,7 @@ void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& d
     }
     stringBuilder.appendLiteral("]");
     
-    JSValueRef result = JSValueMakeFromJSONString(context, JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data()));
+    JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data())).get());
 
     callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
 }
@@ -2239,7 +2239,7 @@ void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
         return;
 
     JSObjectRef files = JSValueToObject(context, filesValue, nullptr);
-    static auto lengthProperty = JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString("length"));
+    static auto lengthProperty = adopt(JSStringCreateWithUTF8CString("length"));
     JSValueRef filesLengthValue = JSObjectGetProperty(context, files, lengthProperty.get(), nullptr);
     if (!JSValueIsNumber(context, filesLengthValue))
         return;
@@ -2251,7 +2251,7 @@ void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
         if (!JSValueIsString(context, fileValue))
             continue;
 
-        auto file = JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, fileValue, nullptr));
+        auto file = adopt(JSValueToStringCopy(context, fileValue, nullptr));
         size_t fileBufferSize = JSStringGetMaximumUTF8CStringSize(file.get()) + 1;
         auto fileBuffer = std::make_unique<char[]>(fileBufferSize);
         JSStringGetUTF8CString(file.get(), fileBuffer.get(), fileBufferSize);

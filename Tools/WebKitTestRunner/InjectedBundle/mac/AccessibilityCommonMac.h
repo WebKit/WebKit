@@ -28,22 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityCommonMac_h
-#define AccessibilityCommonMac_h
+#pragma once
 
 #import "AccessibilityUIElement.h"
-
-#import <JavaScriptCore/JSStringRef.h>
+#import <JavaScriptCore/JSRetainPtr.h>
 
 // If an unsupported attribute is passed in, it will raise an accessibility exception. These are usually caught by the Accessibility Runtime to inform
 // the AX client app of the error. However, DRT is the AX client app, so it must catch these exceptions.
 #define BEGIN_AX_OBJC_EXCEPTIONS @try {
 #define END_AX_OBJC_EXCEPTIONS } @catch(NSException *e) { if (![[e name] isEqualToString:NSAccessibilityException]) @throw; }
 
-
 @interface NSString (JSStringRefAdditions)
 + (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef;
-- (JSStringRef)createJSStringRef;
+- (JSRetainPtr<JSStringRef>)createJSStringRef;
 @end
 
 namespace WTR {
@@ -51,5 +48,3 @@ namespace WTR {
 extern NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
 
 };
-
-#endif // AccessibilityCommonMac_h

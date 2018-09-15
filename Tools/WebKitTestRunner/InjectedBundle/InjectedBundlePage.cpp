@@ -67,7 +67,7 @@ static JSValueRef propertyValue(JSContextRef context, JSObjectRef object, const 
 {
     if (!object)
         return 0;
-    JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSStringCreateWithUTF8CString(propertyName));
+    auto propertyNameString = adopt(JSStringCreateWithUTF8CString(propertyName));
     return JSObjectGetProperty(context, object, propertyNameString.get(), 0);
 }
 
@@ -93,7 +93,7 @@ static double numericWindowPropertyValue(WKBundleFrameRef frame, const char* pro
 static WTF::String dumpPath(JSGlobalContextRef context, JSObjectRef nodeValue)
 {
     JSValueRef nodeNameValue = propertyValue(context, nodeValue, "nodeName");
-    JSRetainPtr<JSStringRef> jsStringNodeName(Adopt, JSValueToStringCopy(context, nodeNameValue, 0));
+    auto jsStringNodeName = adopt(JSValueToStringCopy(context, nodeNameValue, 0));
     WKRetainPtr<WKStringRef> nodeName = toWK(jsStringNodeName);
 
     JSValueRef parentNode = propertyValue(context, nodeValue, "parentNode");
@@ -818,7 +818,7 @@ void InjectedBundlePage::dumpAllFrameScrollPositions(StringBuilder& stringBuilde
 
 static JSRetainPtr<JSStringRef> toJS(const char* string)
 {
-    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(string));
+    return adopt(JSStringCreateWithUTF8CString(string));
 }
 
 static bool hasDocumentElement(WKBundleFrameRef frame)

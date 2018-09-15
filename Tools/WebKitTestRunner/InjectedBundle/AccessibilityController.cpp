@@ -31,7 +31,6 @@
 #include "InjectedBundlePage.h"
 #include "JSAccessibilityController.h"
 
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>

@@ -434,8 +434,8 @@ sub _platformTypeConstructor
     return "JSValueToNullableBoolean(context, $argumentName)" if $type->name eq "boolean" && $type->isNullable;
     return "JSValueToBoolean(context, $argumentName)" if $type->name eq "boolean";
     return "$argumentName" if $type->name eq "object";
-    return "JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, $argumentName, 0))" if $$self{codeGenerator}->IsStringType($type);
-    return "JSValueToNumber(context, $argumentName, 0)" if $$self{codeGenerator}->IsPrimitiveType($type);
+    return "adopt(JSValueToStringCopy(context, $argumentName, nullptr))" if $$self{codeGenerator}->IsStringType($type);
+    return "JSValueToNumber(context, $argumentName, nullptr)" if $$self{codeGenerator}->IsPrimitiveType($type);
     return "to" . _implementationClassName($type) . "(context, $argumentName)";
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013, 2014-2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,11 @@
 #include <string>
 
 using std::wstring;
+
+static JSRetainPtr<JSStringRef> createEmptyJSString()
+{
+    return adopt(JSStringCreateWithCharacters(nullptr, 0));
+}
 
 static COMPtr<IAccessibleComparable> comparableObject(IAccessible* accessible)
 {
@@ -163,19 +168,19 @@ unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::allAttributes()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfLinkedUIElements()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::attributesOfDocumentLinks()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfDocumentLinks()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
@@ -216,14 +221,14 @@ AccessibilityUIElement AccessibilityUIElement::parentElement()
     return parentAccessible;
 }
 
-JSStringRef AccessibilityUIElement::attributesOfChildren()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfChildren()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::parameterizedAttributeNames()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 static VARIANT& self()
@@ -286,14 +291,14 @@ static _bstr_t convertToDRTLabel(const _bstr_t roleName)
     return roleName;
 }
 
-JSStringRef AccessibilityUIElement::role()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
     if (!m_element)
-        return JSStringCreateWithBSTR(_bstr_t(L"AXRole: "));
+        return adopt(JSStringCreateWithUTF8CString("AXRole: "));
 
     _variant_t vRole;
     if (FAILED(m_element->get_accRole(self(), &vRole.GetVARIANT())))
-        return JSStringCreateWithBSTR(_bstr_t(L"AXRole: "));
+        return adopt(JSStringCreateWithUTF8CString("AXRole: "));
 
     ASSERT(V_VT(&vRole) == VT_I4 || V_VT(&vRole) == VT_BSTR);
 
@@ -309,95 +314,95 @@ JSStringRef AccessibilityUIElement::role()
     } else if (V_VT(&vRole) == VT_BSTR)
         result = V_BSTR(&vRole);
 
-    return JSStringCreateWithBSTR(_bstr_t(L"AXRole: ") + convertToDRTLabel(result));
+    return adopt(JSStringCreateWithBSTR(_bstr_t(L"AXRole: ") + convertToDRTLabel(result)));
 }
 
-JSStringRef AccessibilityUIElement::subrole()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
 {
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::roleDescription()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 {
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::computedRoleString()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 {
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::title()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
     if (!m_element)
-        return JSStringCreateWithBSTR(_bstr_t(L"AXTitle: "));
+        return adopt(JSStringCreateWithUTF8CString("AXTitle: "));
 
     _bstr_t titleBSTR;
     if (FAILED(m_element->get_accName(self(), &titleBSTR.GetBSTR())))
-        return JSStringCreateWithBSTR(_bstr_t(L"AXTitle: "));
+        return adopt(JSStringCreateWithUTF8CString("AXTitle: "));
 
-    return JSStringCreateWithBSTR(_bstr_t(L"AXTitle: ") + titleBSTR);
+    return adopt(JSStringCreateWithBSTR(_bstr_t(L"AXTitle: ") + titleBSTR));
 }
 
-JSStringRef AccessibilityUIElement::description()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 {
     if (!m_element)
-        return JSStringCreateWithBSTR(_bstr_t(L"AXDescription: "));
+        return adopt(JSStringCreateWithUTF8CString("AXDescription: "));
 
     _bstr_t descriptionBSTR;
     if (FAILED(m_element->get_accDescription(self(), &descriptionBSTR.GetBSTR())))
-        return JSStringCreateWithBSTR(_bstr_t(L"AXDescription: "));
+        return adopt(JSStringCreateWithUTF8CString("AXDescription: "));
 
     if (!descriptionBSTR.length())
-        return JSStringCreateWithBSTR(_bstr_t(L"AXDescription: "));
+        return adopt(JSStringCreateWithUTF8CString("AXDescription: "));
 
     if (wcsstr(static_cast<wchar_t*>(descriptionBSTR), L"Description: ") == static_cast<wchar_t*>(descriptionBSTR)) {
         // The Mozilla MSAA implementation requires that the string returned to us be prefixed with "Description: "
         // To match the Mac test results, we will just prefix with AX -> AXDescription:
-        return JSStringCreateWithBSTR(_bstr_t(L"AX") + descriptionBSTR);
+        return adopt(JSStringCreateWithBSTR(_bstr_t(L"AX") + descriptionBSTR));
     }
 
-    return JSStringCreateWithBSTR(descriptionBSTR);
+    return adopt(JSStringCreateWithBSTR(descriptionBSTR));
 }
 
-JSStringRef AccessibilityUIElement::stringValue()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
     if (!m_element)
-        return JSStringCreateWithBSTR(_bstr_t(L"AXValue: "));
+        return adopt(JSStringCreateWithUTF8CString("AXValue: "));
 
     _bstr_t valueBSTR;
     if (FAILED(m_element->get_accValue(self(), &valueBSTR.GetBSTR())))
-        return JSStringCreateWithBSTR(_bstr_t(L"AXValue: "));
+        return adopt(JSStringCreateWithUTF8CString("AXValue: "));
 
-    return JSStringCreateWithBSTR(_bstr_t(L"AXValue: ") + valueBSTR);
+    return adopt(JSStringCreateWithBSTR(_bstr_t(L"AXValue: ") + valueBSTR));
 }
 
-JSStringRef AccessibilityUIElement::language()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
 {
     if (!m_element)
-        return JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: "));
+        return adopt(JSStringCreateWithUTF8CString("AXLanguage: "));
 
     COMPtr<IAccessibleComparable> accessible2Element = comparableObject(m_element.get());
     if (!accessible2Element)
-        return JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: "));
+        return adopt(JSStringCreateWithUTF8CString("AXLanguage: "));
 
     IA2Locale locale;
     if (FAILED(accessible2Element->get_locale(&locale)))
-        return JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: "));
+        return adopt(JSStringCreateWithUTF8CString("AXLanguage: "));
 
-    return JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: ") + _bstr_t(locale.language, false));
+    return adopt(JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: ") + _bstr_t(locale.language, false)));
 }
 
-JSStringRef AccessibilityUIElement::helpText() const
+JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
 {
     if (!m_element)
-        return JSStringCreateWithBSTR(_bstr_t(L"AXHelp: "));
+        return adopt(JSStringCreateWithUTF8CString("AXHelp: "));
 
     _bstr_t helpTextBSTR;
     if (FAILED(m_element->get_accHelp(self(), &helpTextBSTR.GetBSTR())))
-        return JSStringCreateWithBSTR(_bstr_t(L"AXHelp: "));
+        return adopt(JSStringCreateWithUTF8CString("AXHelp: "));
 
-    return JSStringCreateWithBSTR(_bstr_t(L"AXHelp: ") + helpTextBSTR);
+    return adopt(JSStringCreateWithBSTR(_bstr_t(L"AXHelp: ") + helpTextBSTR));
 }
 
 double AccessibilityUIElement::x()
@@ -454,7 +459,7 @@ double AccessibilityUIElement::clickPointY()
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::valueDescription()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
 {
     return nullptr;
 }
@@ -494,7 +499,7 @@ bool AccessibilityUIElement::ariaIsGrabbed() const
     return false;
 }
  
-JSStringRef AccessibilityUIElement::ariaDropEffects() const
+JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const
 {
     return 0;
 }
@@ -522,7 +527,7 @@ bool AccessibilityUIElement::isIndeterminate() const
     return false;
 }
 
-JSStringRef AccessibilityUIElement::orientation() const
+JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 {
     return 0;
 }
@@ -592,34 +597,34 @@ int AccessibilityUIElement::insertionPointLineNumber()
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::attributesOfColumnHeaders()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumnHeaders()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::attributesOfRowHeaders()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfRowHeaders()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::attributesOfColumns()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumns()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::attributesOfRows()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfRows()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::attributesOfVisibleCells()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfVisibleCells()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::attributesOfHeader()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfHeader()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 int AccessibilityUIElement::indexInTable()
@@ -627,14 +632,14 @@ int AccessibilityUIElement::indexInTable()
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::rowIndexRange()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::rowIndexRange()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::columnIndexRange()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 int AccessibilityUIElement::lineForIndex(int)
@@ -642,19 +647,19 @@ int AccessibilityUIElement::lineForIndex(int)
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned length)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::boundsForRange(unsigned location, unsigned length)
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::stringForRange(unsigned, unsigned)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForRange(unsigned, unsigned)
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::attributedStringForRange(unsigned, unsigned)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsigned, unsigned)
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigned)
@@ -672,7 +677,7 @@ AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSCon
     return { nullptr };
 }
 
-JSStringRef AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)
 {
     return 0;
 }
@@ -682,28 +687,28 @@ AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned colu
     return { nullptr };
 }
 
-JSStringRef AccessibilityUIElement::selectedTextRange()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
 {
     COMPtr<IAccessibleComparable> comparable = comparableObject(platformUIElement().get());
     if (!comparable)
-        return JSStringCreateWithCharacters(0, 0);
+        return createEmptyJSString();
 
     _variant_t value;
     if (FAILED(comparable->get_attribute(_bstr_t(L"AXSelectedTextRangeAttribute"), &value.GetVARIANT())))
-        return JSStringCreateWithCharacters(0, 0);    
+        return createEmptyJSString();
 
     ASSERT(V_VT(&value) == VT_BSTR);
-    return JSStringCreateWithBSTR(value.bstrVal);
+    return adopt(JSStringCreateWithBSTR(value.bstrVal));
 }
 
 void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
 {
 }
 
-JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
     // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
@@ -788,16 +793,16 @@ AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
     return { nullptr };
 }
 
-JSStringRef AccessibilityUIElement::accessibilityValue() const
+JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 {
     if (!m_element)
-        return JSStringCreateWithCharacters(0, 0);
+        return createEmptyJSString();
 
     _bstr_t valueBSTR;
     if (FAILED(m_element->get_accValue(self(), &valueBSTR.GetBSTR())) || !valueBSTR.length())
-        return JSStringCreateWithCharacters(0, 0);
+        return createEmptyJSString();
 
-    return JSStringCreateWithBSTR(valueBSTR);
+    return adopt(JSStringCreateWithBSTR(valueBSTR));
 }
 
 void AccessibilityUIElement::clearSelectedChildren() const
@@ -805,20 +810,20 @@ void AccessibilityUIElement::clearSelectedChildren() const
     // FIXME: implement
 }
 
-JSStringRef AccessibilityUIElement::documentEncoding()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::documentURI()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
-JSStringRef AccessibilityUIElement::url()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
 {
     // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallback)
@@ -949,7 +954,7 @@ void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
     // FIXME: implement
 }
 
-JSStringRef AccessibilityUIElement::classList() const
+JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const
 {
     // FIXME: implement
     return 0;

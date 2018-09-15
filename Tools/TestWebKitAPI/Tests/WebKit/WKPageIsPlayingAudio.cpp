@@ -30,7 +30,6 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/WKSerializedScriptValue.h>
 #include <WebKit/WKPagePrivate.h>

@@ -1,3 +1,14 @@
+2018-09-08  Darin Adler  <darin@apple.com>
+
+        Streamline JSRetainPtr, fix leaks of JSString and JSGlobalContext
+        https://bugs.webkit.org/show_bug.cgi?id=189455
+
+        Reviewed by Keith Miller.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::jsValueWithDictionaryInContext): Adding a missing
+        JSStringRelease to fix a leak.
+
 2018-09-15  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest::createResponseBlob() should create a Blob with type for empty response

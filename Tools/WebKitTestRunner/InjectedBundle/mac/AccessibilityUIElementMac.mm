@@ -35,8 +35,6 @@
 
 #import <AppKit/NSAccessibility.h>
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/JSRetainPtr.h>
-#import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/JSObjectRef.h>
 #import <WebKit/WKBundleFrame.h>
@@ -86,6 +84,11 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 @end
 
 namespace WTR {
+
+static JSRetainPtr<JSStringRef> createEmptyJSString()
+{
+    return adopt(JSStringCreateWithCharacters(nullptr, 0));
+}
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
@@ -199,7 +202,7 @@ static JSValueRef convertElementsToObjectArray(JSContextRef context, Vector<RefP
     return arrayResult;
 }
 
-static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* value)
+static JSRetainPtr<JSStringRef> concatenateAttributeAndValue(NSString* attribute, NSString* value)
 {
     Vector<UniChar> buffer([attribute length]);
     [attribute getCharacters:buffer.data()];
@@ -210,7 +213,7 @@ static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* v
     [value getCharacters:valueBuffer.data()];
     buffer.appendVector(valueBuffer);
 
-    return JSStringCreateWithCharacters(buffer.data(), buffer.size());
+    return adopt(JSStringCreateWithCharacters(buffer.data(), buffer.size()));
 }
 
 static void convertNSArrayToVector(NSArray* array, Vector<RefPtr<AccessibilityUIElement> >& elementVector)
@@ -220,7 +223,7 @@ static void convertNSArrayToVector(NSArray* array, Vector<RefPtr<AccessibilityUI
         elementVector.append(AccessibilityUIElement::create([array objectAtIndex:i]));
 }
 
-static JSStringRef descriptionOfElements(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
+static JSRetainPtr<JSStringRef> descriptionOfElements(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
 {
     NSMutableString* allElementString = [NSMutableString string];
     size_t size = elementVector.size();
@@ -243,7 +246,7 @@ static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef co
     if (searchStrings) {
         NSMutableArray *searchStringsParameter = [NSMutableArray array];
         if (JSValueIsString(context, searchStrings)) {
-            JSRetainPtr<JSStringRef> searchStringsString(Adopt, JSValueToStringCopy(context, searchStrings, nullptr));
+            auto searchStringsString = adopt(JSValueToStringCopy(context, searchStrings, nullptr));
             if (searchStringsString)
                 [searchStringsParameter addObject:[NSString stringWithJSStringRef:searchStringsString.get()]];
         }
@@ -251,13 +254,13 @@ static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef co
             JSObjectRef searchStringsArray = JSValueToObject(context, searchStrings, nullptr);
             unsigned searchStringsArrayLength = 0;
             
-            JSRetainPtr<JSStringRef> lengthPropertyString(Adopt, JSStringCreateWithUTF8CString("length"));
+            auto lengthPropertyString = adopt(JSStringCreateWithUTF8CString("length"));
             JSValueRef searchStringsArrayLengthValue = JSObjectGetProperty(context, searchStringsArray, lengthPropertyString.get(), nullptr);
             if (searchStringsArrayLengthValue && JSValueIsNumber(context, searchStringsArrayLengthValue))
                 searchStringsArrayLength = static_cast<unsigned>(JSValueToNumber(context, searchStringsArrayLengthValue, nullptr));
             
             for (unsigned i = 0; i < searchStringsArrayLength; ++i) {
-                JSRetainPtr<JSStringRef> searchStringsString(Adopt, JSValueToStringCopy(context, JSObjectGetPropertyAtIndex(context, searchStringsArray, i, nullptr), nullptr));
+                auto searchStringsString = adopt(JSValueToStringCopy(context, JSObjectGetPropertyAtIndex(context, searchStringsArray, i, nullptr), nullptr));
                 if (searchStringsString)
                     [searchStringsParameter addObject:[NSString stringWithJSStringRef:searchStringsString.get()]];
             }
@@ -1500,7 +1503,7 @@ void AccessibilityUIElement::clearSelectedChildren() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 {
     // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
@@ -1511,7 +1514,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
         return [value createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
     
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
@@ -1522,7 +1525,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
         return [value createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
     
-    return JSStringCreateWithCharacters(0, 0);
+    return createEmptyJSString();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
@@ -1825,7 +1828,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTe
     return nullptr;
 }
 
-static JSStringRef createJSStringRef(id string)
+static JSRetainPtr<JSStringRef> createJSStringRef(id string)
 {
     id mutableString = [[[NSMutableString alloc] init] autorelease];
     id attributes = [string attributesAtIndex:0 effectiveRange:nil];

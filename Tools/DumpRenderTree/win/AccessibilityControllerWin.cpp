@@ -363,7 +363,7 @@ void AccessibilityController::winNotificationReceived(PlatformUIElement element,
         if (!isSame)
             continue;
 
-        JSRetainPtr<JSStringRef> jsNotification(Adopt, JSStringCreateWithUTF8CString(eventName.c_str()));
+        auto jsNotification = adopt(JSStringCreateWithUTF8CString(eventName.c_str()));
         JSValueRef argument = JSValueMakeString(frame->globalContext(), jsNotification.get());
         JSObjectCallAsFunction(frame->globalContext(), slot.value, 0, 1, &argument, 0);
     }
@@ -391,6 +391,5 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));
-    return platformName;
+    return adopt(JSStringCreateWithUTF8CString("win"));
 }

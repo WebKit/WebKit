@@ -40,8 +40,6 @@
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/JSRetainPtr.h>
-#import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebCore/GeolocationPosition.h>
 #import <WebKit/DOMDocument.h>
@@ -187,7 +185,7 @@ JSValueRef originsArrayToJS(JSContextRef context, NSArray *origins)
     JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     for (NSUInteger i = 0; i < count; i++) {
         NSString *origin = [[origins objectAtIndex:i] databaseIdentifier];
-        JSRetainPtr<JSStringRef> originJS(Adopt, JSStringCreateWithCFString((__bridge CFStringRef)origin));
+        auto originJS = adopt(JSStringCreateWithCFString((__bridge CFStringRef)origin));
         JSObjectSetPropertyAtIndex(context, arrayObj, i, JSValueMakeString(context, originJS.get()), 0);
     }
 
@@ -249,18 +247,18 @@ void TestRunner::clearBackForwardList()
     [item release];
 }
 
-JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
+JSRetainPtr<JSStringRef> TestRunner::copyDecodedHostName(JSStringRef name)
 {
-    RetainPtr<CFStringRef> nameCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name));
+    auto nameCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (__bridge NSString *)nameCF.get();
-    return JSStringCreateWithCFString((__bridge CFStringRef)[nameNS _web_decodeHostName]);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)[nameNS _web_decodeHostName]));
 }
 
-JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
+JSRetainPtr<JSStringRef> TestRunner::copyEncodedHostName(JSStringRef name)
 {
-    RetainPtr<CFStringRef> nameCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name));
+    auto nameCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (__bridge NSString *)nameCF.get();
-    return JSStringCreateWithCFString((__bridge CFStringRef)[nameNS _web_encodeHostName]);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)[nameNS _web_encodeHostName]));
 }
 
 void TestRunner::display()
@@ -344,7 +342,7 @@ static inline std::string resourceRootAbsolutePath(const std::string& testURL, c
     return testURL.substr(0, indexOfSeparatorAfterDirectoryName(expectedRootName, testURL));
 }
 
-JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef localResourceJSString)
+JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSContextRef context, JSStringRef localResourceJSString)
 {
     // The passed in path will be an absolute path to the resource starting
     // with "/tmp" or "/tmp/LayoutTests", optionally starting with the explicit file:// protocol.
@@ -372,7 +370,7 @@ JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef lo
         ASSERT(absolutePathToLocalResource[0] == '/');
         absolutePathToLocalResource = std::string("file://") + absolutePathToLocalResource;
     }
-    return JSStringCreateWithUTF8CString(absolutePathToLocalResource.c_str());
+    return adopt(JSStringCreateWithUTF8CString(absolutePathToLocalResource.c_str()));
 }
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
@@ -383,7 +381,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     NSURL *nsurl = [NSURL URLWithString:urlNS relativeToURL:[[[mainFrame dataSource] response] URL]];
     NSString *nsurlString = [nsurl absoluteString];
 
-    JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString([nsurlString UTF8String]));
+    auto absoluteURL = adopt(JSStringCreateWithUTF8CString([nsurlString UTF8String]));
     WorkQueue::singleton().queue(new LoadItem(absoluteURL.get(), target));
 }
 
@@ -681,7 +679,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
 {
     WebFindOptions options = 0;
 
-    JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
+    auto lengthPropertyName = adopt(JSStringCreateWithUTF8CString("length"));
     JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
     if (!JSValueIsNumber(context, lengthValue))
         return false;
@@ -694,7 +692,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
         if (!JSValueIsString(context, value))
             continue;
 
-        JSRetainPtr<JSStringRef> optionName(Adopt, JSValueToStringCopy(context, value, 0));
+        auto optionName = adopt(JSValueToStringCopy(context, value, nullptr));
 
         if (JSStringIsEqualToUTF8CString(optionName.get(), "CaseInsensitive"))
             options |= WebFindOptionsCaseInsensitive;
@@ -816,7 +814,7 @@ void TestRunner::evaluateInWebInspector(JSStringRef script)
     [[[mainFrame webView] inspector] evaluateInFrontend:nil script:scriptNS];
 }
 
-JSStringRef TestRunner::inspectorTestStubURL()
+JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 {
 #if PLATFORM(IOS)
     return nullptr;
@@ -833,7 +831,7 @@ JSStringRef TestRunner::inspectorTestStubURL()
         return nullptr;
 
     CFStringRef urlString = CFURLGetString(url.get());
-    return JSStringCreateWithCFString(urlString);
+    return adopt(JSStringCreateWithCFString(urlString));
 #endif
 }
 

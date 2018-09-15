@@ -35,8 +35,6 @@
 #import "AccessibilityNotificationHandler.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
-#import <JavaScriptCore/JSRetainPtr.h>
-#import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WKBundle.h>
 #import <WebKit/WKBundlePage.h>
@@ -108,8 +106,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
-    return platformName;
+    return adopt(JSStringCreateWithUTF8CString("mac"));
 }
 
 } // namespace WTR

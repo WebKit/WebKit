@@ -201,6 +201,16 @@ static bool MyObject_hasProperty(JSContextRef context, JSObjectRef object, JSStr
     return false;
 }
 
+static JSValueRef throwException(JSContextRef context, JSObjectRef object, JSValueRef* exception)
+{
+    JSStringRef script = JSStringCreateWithUTF8CString("throw 'an exception'");
+    JSStringRef sourceURL = JSStringCreateWithUTF8CString("test script");
+    JSValueRef result = JSEvaluateScript(context, script, object, sourceURL, 1, exception);
+    JSStringRelease(script);
+    JSStringRelease(sourceURL);
+    return result;
+}
+
 static JSValueRef MyObject_getProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
@@ -223,7 +233,7 @@ static JSValueRef MyObject_getProperty(JSContextRef context, JSObjectRef object,
     }
 
     if (JSStringIsEqualToUTF8CString(propertyName, "throwOnGet")) {
-        return JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+        return throwException(context, object, exception);
     }
 
     if (JSStringIsEqualToUTF8CString(propertyName, "0")) {
@@ -245,7 +255,7 @@ static bool MyObject_setProperty(JSContextRef context, JSObjectRef object, JSStr
         return true; // pretend we set the property in order to swallow it
     
     if (JSStringIsEqualToUTF8CString(propertyName, "throwOnSet")) {
-        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+        throwException(context, object, exception);
     }
     
     return false;
@@ -260,7 +270,7 @@ static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JS
         return true;
     
     if (JSStringIsEqualToUTF8CString(propertyName, "throwOnDelete")) {
-        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+        throwException(context, object, exception);
         return false;
     }
 
@@ -283,6 +293,18 @@ static void MyObject_getPropertyNames(JSContextRef context, JSObjectRef object, 
     JSStringRelease(propertyName);
 }
 
+static bool isValueEqualToString(JSContextRef context, JSValueRef value, const char* string)
+{
+    if (!JSValueIsString(context, value))
+        return false;
+    JSStringRef valueString = JSValueToStringCopy(context, value, NULL);
+    if (!valueString)
+        return false;
+    bool isEqual = JSStringIsEqualToUTF8CString(valueString, string);
+    JSStringRelease(valueString);
+    return isEqual;
+}
+
 static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
@@ -290,8 +312,8 @@ static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef obje
     UNUSED_PARAM(thisObject);
     UNUSED_PARAM(exception);
 
-    if (argumentCount > 0 && JSValueIsString(context, arguments[0]) && JSStringIsEqualToUTF8CString(JSValueToStringCopy(context, arguments[0], 0), "throwOnCall")) {
-        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+    if (argumentCount > 0 && isValueEqualToString(context, arguments[0], "throwOnCall")) {
+        throwException(context, object, exception);
         return JSValueMakeUndefined(context);
     }
 
@@ -306,8 +328,8 @@ static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef 
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
 
-    if (argumentCount > 0 && JSValueIsString(context, arguments[0]) && JSStringIsEqualToUTF8CString(JSValueToStringCopy(context, arguments[0], 0), "throwOnConstruct")) {
-        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
+    if (argumentCount > 0 && isValueEqualToString(context, arguments[0], "throwOnConstruct")) {
+        throwException(context, object, exception);
         return object;
     }
 
@@ -322,8 +344,8 @@ static bool MyObject_hasInstance(JSContextRef context, JSObjectRef constructor, 
     UNUSED_PARAM(context);
     UNUSED_PARAM(constructor);
 
-    if (JSValueIsString(context, possibleValue) && JSStringIsEqualToUTF8CString(JSValueToStringCopy(context, possibleValue, 0), "throwOnHasInstance")) {
-        JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), constructor, JSStringCreateWithUTF8CString("test script"), 1, exception);
+    if (isValueEqualToString(context, possibleValue, "throwOnHasInstance")) {
+        throwException(context, constructor, exception);
         return false;
     }
 
@@ -1137,6 +1159,8 @@ static bool globalContextNameTest()
     JSStringRelease(fetchName1);
     JSStringRelease(fetchName2);
 
+    JSGlobalContextRelease(context);
+
     return result;
 }
 
@@ -1191,7 +1215,6 @@ static void heapFinalizer(JSContextGroupRef group, void *userData)
 static void testMarkingConstraintsAndHeapFinalizers(void)
 {
     JSContextGroupRef group;
-    JSContextRef context;
     JSWeakRef *weakRefs;
     unsigned i;
     unsigned deadCount;
@@ -1201,7 +1224,7 @@ static void testMarkingConstraintsAndHeapFinalizers(void)
     group = JSContextGroupCreate();
     expectedContextGroup = group;
     
-    context = JSGlobalContextCreateInGroup(group, NULL);
+    JSGlobalContextRef context = JSGlobalContextCreateInGroup(group, NULL);
 
     weakRefs = (JSWeakRef*)calloc(numWeakRefs, sizeof(JSWeakRef));
 
@@ -1238,7 +1261,8 @@ static void testMarkingConstraintsAndHeapFinalizers(void)
     didRunHeapFinalizer = false;
     JSSynchronousGarbageCollectForDebugging(context);
     assertTrue(!didRunHeapFinalizer, "Did not run heap finalizer");
-    
+
+    JSGlobalContextRelease(context);
     JSContextGroupRelease(group);
 
     printf("PASS: Marking Constraints and Heap Finalizers.\n");

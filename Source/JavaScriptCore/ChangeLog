@@ -1,3 +1,73 @@
+2018-09-08  Darin Adler  <darin@apple.com>
+
+        Streamline JSRetainPtr, fix leaks of JSString and JSGlobalContext
+        https://bugs.webkit.org/show_bug.cgi?id=189455
+
+        Reviewed by Keith Miller.
+
+        * API/JSObjectRef.cpp:
+        (OpaqueJSPropertyNameArray): Use Ref<OpaqueJSString> instead of
+        JSRetainPtr<JSStringRef>.
+        (JSObjectCopyPropertyNames): Remove now-unneeded use of leakRef and
+        adopt constructor.
+        (JSPropertyNameArrayGetNameAtIndex): Use ptr() instead of get() since
+        the array elements are now Ref.
+
+        * API/JSRetainPtr.h: While JSRetainPtr is written as a template,
+        it only works for two specific unrelated types, JSStringRef and
+        JSGlobalContextRef. Simplified the default constructor using data
+        member initialization. Prepared to make the adopt constructor private
+        (got everything compiling that way, then made it public again so that
+        Apple internal software will still build). Got rid of unneeded
+        templated constructor and assignment operator, since it's not relevant
+        since there is no inheritance between JSRetainPtr template types.
+        Added WARN_UNUSED_RETURN to leakRef as in RefPtr and RetainPtr.
+        Added move constructor and move assignment operator for slightly better
+        performance. Simplified implementations of various member functions
+        so they are more obviously correct, by using leakPtr in more of them
+        and using std::exchange to make the flow of values more obvious.
+
+        * API/JSValue.mm:
+        (+[JSValue valueWithNewSymbolFromDescription:inContext:]): Added a
+        missing JSStringRelease to fix a leak.
+
+        * API/tests/CustomGlobalObjectClassTest.c:
+        (customGlobalObjectClassTest): Added a JSGlobalContextRelease to fix a leak.
+        (globalObjectSetPrototypeTest): Ditto.
+        (globalObjectPrivatePropertyTest): Ditto.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testResetAfterTimeout): Added a call to JSStringRelease to fix a leak.
+        (testExecutionTimeLimit): Ditto, lots more.
+
+        * API/tests/FunctionOverridesTest.cpp:
+        (testFunctionOverrides): Added a call to JSStringRelease to fix a leak.
+
+        * API/tests/JSObjectGetProxyTargetTest.cpp:
+        (testJSObjectGetProxyTarget): Added a call to JSGlobalContextRelease to fix
+        a leak.
+
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (testPingPongStackOverflow): Added calls to JSGlobalContextRelease and
+        JSStringRelease to fix leaks.
+
+        * API/tests/testapi.c:
+        (throwException): Added. Helper function for repeated idiom where we want
+        to throw an exception, but with additional JSStringRelease calls so we don't
+        have to leak just to keep the code simpler to read.
+        (MyObject_getProperty): Use throwException.
+        (MyObject_setProperty): Ditto.
+        (MyObject_deleteProperty): Ditto.
+        (isValueEqualToString): Added. Helper function for an idiom where we check
+        if something is a string and then if it's equal to a particular string
+        constant, but a version that has an additional JSStringRelease call so we
+        don't have to leak just to keep the code simpler to read.
+        (MyObject_callAsFunction): Use isValueEqualToString and throwException.
+        (MyObject_callAsConstructor): Ditto.
+        (MyObject_hasInstance): Ditto.
+        (globalContextNameTest): Added a JSGlobalContextRelease to fix a leak.
+        (testMarkingConstraintsAndHeapFinalizers): Ditto.
+
 2018-09-14  Saam barati  <sbarati@apple.com>
 
         Don't dump OSRAvailabilityData in Graph::dump because a stale Availability may point to a Node that is already freed

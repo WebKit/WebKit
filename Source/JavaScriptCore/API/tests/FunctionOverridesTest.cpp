@@ -76,6 +76,7 @@ int testFunctionOverrides()
     JSStringRef script = JSStringCreateWithUTF8CString(scriptString);
     JSValueRef exception = nullptr;
     JSValueRef resultRef = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+    JSStringRelease(script);
 
     if (!JSValueIsBoolean(context, resultRef) || !JSValueToBoolean(context, resultRef))
         failed = true;

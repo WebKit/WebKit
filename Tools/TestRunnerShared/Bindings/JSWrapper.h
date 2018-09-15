@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSWrapper_h
-#define JSWrapper_h
+#pragma once
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
@@ -48,10 +47,8 @@ inline JSValueRef toJS(JSContextRef context, JSWrappable* impl)
 
 inline void setProperty(JSContextRef context, JSObjectRef object, const char* propertyName, JSWrappable* value, JSPropertyAttributes attributes, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSStringCreateWithUTF8CString(propertyName));
+    auto propertyNameString = adopt(JSStringCreateWithUTF8CString(propertyName));
     JSObjectSetProperty(context, object, propertyNameString.get(), JSWrapper::wrap(context, value), attributes, exception);
 }
 
 } // namespace WTR
-
-#endif // JSWrapper_h

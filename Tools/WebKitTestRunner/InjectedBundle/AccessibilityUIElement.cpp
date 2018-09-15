@@ -27,7 +27,6 @@
 #include "AccessibilityUIElement.h"
 
 #include "JSAccessibilityUIElement.h"
-#include <JavaScriptCore/JSRetainPtr.h>
 
 namespace WTR {
 

@@ -162,6 +162,10 @@ int testPingPongStackOverflow()
     exception = nullptr;
     JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
 
+    JSGlobalContextRelease(context);
+    context = nullptr;
+    JSStringRelease(script);
+
     if (!exception) {
         printf("FAIL: PingPongStackOverflowError not thrown in PingPongStackOverflow test\n");
         failed = true;

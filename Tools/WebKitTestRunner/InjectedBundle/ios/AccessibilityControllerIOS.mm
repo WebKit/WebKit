@@ -30,8 +30,6 @@
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
 
-#import <JavaScriptCore/JSRetainPtr.h>
-#import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <UIKit/UIAccessibility.h>
 #import <WebKit/WKBundle.h>
@@ -64,8 +62,7 @@ bool AccessibilityController::removeNotificationListener()
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("ios"));
-    return platformName;
+    return adopt(JSStringCreateWithUTF8CString("ios"));
 }
 
 void AccessibilityController::resetToConsistentState()

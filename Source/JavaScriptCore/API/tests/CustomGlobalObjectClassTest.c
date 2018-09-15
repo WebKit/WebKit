@@ -101,6 +101,8 @@ void customGlobalObjectClassTest()
     JSStringRelease(script);
 
     assertTrue(executedCallback, "Executed custom global object callback");
+
+    JSGlobalContextRelease(globalContext);
 }
 
 void globalObjectSetPrototypeTest()
@@ -116,6 +118,7 @@ void globalObjectSetPrototypeTest()
     JSObjectSetPrototype(context, object, above);
     JSValueRef prototypeAfterChangingAttempt = JSObjectGetPrototype(context, object);
     assertTrue(JSValueIsStrictEqual(context, prototypeAfterChangingAttempt, originalPrototype), "Global object's [[Prototype]] cannot be changed after instantiating it");
+    JSGlobalContextRelease(context);
 }
 
 void globalObjectPrivatePropertyTest()
@@ -137,4 +140,5 @@ void globalObjectPrivatePropertyTest()
     assertTrue(JSValueIsNull(context, result), "Deleted private property is indeed no longer present");
 
     JSStringRelease(privateName);
+    JSGlobalContextRelease(context);
 }

@@ -68,9 +68,9 @@ static const char *stringForCorrectionResponse(NSCorrectionResponse correctionRe
     return "invalid";
 }
 
-static NSTextCheckingType nsTextCheckingType(JSRetainPtr<JSStringRef>&& jsType)
+static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
 {
-    auto cfType = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsType.get()));
+    auto cfType = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsType));
     if (CFStringCompare(cfType.get(), CFSTR("orthography"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         return NSTextCheckingTypeOrthography;
 
@@ -251,7 +251,7 @@ static NSTextCheckingType nsTextCheckingType(JSRetainPtr<JSStringRef>&& jsType)
                 }
                 JSPropertyNameArrayRelease(detailsObjectProperties);
             }
-            [resultsForWord addObject:[[[LayoutTestTextCheckingResult alloc] initWithType:nsTextCheckingType(WTFMove(typeValue)) range:NSMakeRange(fromValue, toValue - fromValue) replacement:(__bridge NSString *)replacementText.get() details:details.get()] autorelease]];
+            [resultsForWord addObject:[[[LayoutTestTextCheckingResult alloc] initWithType:nsTextCheckingType(typeValue.get()) range:NSMakeRange(fromValue, toValue - fromValue) replacement:(__bridge NSString *)replacementText.get() details:details.get()] autorelease]];
         }
         auto cfTextToCheck = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, textToCheck));
         [results setObject:resultsForWord.get() forKey:(__bridge NSString *)cfTextToCheck.get()];
