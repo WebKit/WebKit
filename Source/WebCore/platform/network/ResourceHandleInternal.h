@@ -40,6 +40,7 @@
 #if USE(CURL)
 #include "CurlRequest.h"
 #include <wtf/MessageQueue.h>
+#include <wtf/MonotonicTime.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -125,6 +126,7 @@ public:
     bool m_addedCacheValidationHeaders { false };
     RefPtr<CurlRequest> m_curlRequest;
     MessageQueue<WTF::Function<void()>>* m_messageQueue { };
+    MonotonicTime m_startTime;
 #endif
 
 #if PLATFORM(COCOA)

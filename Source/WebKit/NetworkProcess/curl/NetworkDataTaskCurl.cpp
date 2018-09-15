@@ -46,6 +46,8 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     if (m_scheduledFailureType != NoFailure)
         return;
 
+    m_startTime = MonotonicTime::now();
+
     auto request = requestWithCredentials;
     if (request.url().protocolIsInHTTPFamily()) {
         if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
@@ -64,6 +66,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     m_curlRequest = createCurlRequest(WTFMove(request));
     if (!m_initialCredential.isEmpty())
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
+    m_curlRequest->setStartTime(m_startTime);
     m_curlRequest->start();
 }
 
@@ -296,17 +299,21 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     }
 
     auto response = ResourceResponse(m_response);
-    m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = makeRef(*this), didChangeCredential](const ResourceRequest& newRequest) {
+    m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = makeRef(*this), didChangeCredential, isCrossOrigin](const ResourceRequest& newRequest) {
         if (newRequest.isNull() || m_state == State::Canceling)
             return;
 
         if (m_curlRequest)
             m_curlRequest->cancel();
 
+        if (newRequest.url().protocolIsInHTTPFamily() && isCrossOrigin)
+            m_startTime = MonotonicTime::now();
+
         auto requestCopy = newRequest;
         m_curlRequest = createCurlRequest(WTFMove(requestCopy));
         if (didChangeCredential && !m_initialCredential.isEmpty())
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
+        m_curlRequest->setStartTime(m_startTime);
         m_curlRequest->start();
 
         if (m_state != State::Suspended) {
@@ -415,6 +422,7 @@ void NetworkDataTaskCurl::restartWithCredential(const Credential& credential)
 
     m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);
     m_curlRequest->setUserPass(credential.user(), credential.password());
+    m_curlRequest->setStartTime(m_startTime);
     m_curlRequest->start();
 
     if (m_state != State::Suspended) {

@@ -36,6 +36,7 @@
 #include "NetworkLoadMetrics.h"
 #include "ResourceRequest.h"
 #include <wtf/MessageQueue.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -67,6 +68,7 @@ public:
 
     void invalidateClient();
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
+    void setStartTime(const MonotonicTime& startTime) { m_requestStartTime = startTime; }
 
     void start();
     void cancel();
@@ -197,6 +199,8 @@ private:
 
     CertificateInfo m_certificateInfo;
     NetworkLoadMetrics m_networkLoadMetrics;
+    MonotonicTime m_requestStartTime { MonotonicTime::nan() };
+    MonotonicTime m_performStartTime;
     size_t m_totalReceivedSize { 0 };
 };
 

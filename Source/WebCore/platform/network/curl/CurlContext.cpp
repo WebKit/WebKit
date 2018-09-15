@@ -731,7 +731,7 @@ std::optional<long> CurlHandle::getHttpVersion()
     return version;
 }
 
-std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics()
+std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart)
 {
     double nameLookup = 0.0;
     double connect = 0.0;
@@ -795,18 +795,18 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics()
 
     NetworkLoadMetrics networkLoadMetrics;
 
-    networkLoadMetrics.domainLookupStart = Seconds(0);
-    networkLoadMetrics.domainLookupEnd = Seconds(nameLookup);
-    networkLoadMetrics.connectStart = Seconds(nameLookup);
-    networkLoadMetrics.connectEnd = Seconds(connect);
+    networkLoadMetrics.domainLookupStart = domainLookupStart;
+    networkLoadMetrics.domainLookupEnd = domainLookupStart + Seconds(nameLookup);
+    networkLoadMetrics.connectStart = domainLookupStart + Seconds(nameLookup);
+    networkLoadMetrics.connectEnd = domainLookupStart + Seconds(connect);
 
     if (appConnect > 0.0) {
-        networkLoadMetrics.secureConnectionStart = Seconds(connect);
-        networkLoadMetrics.connectEnd = Seconds(appConnect);
+        networkLoadMetrics.secureConnectionStart = domainLookupStart + Seconds(connect);
+        networkLoadMetrics.connectEnd = domainLookupStart + Seconds(appConnect);
     }
 
     networkLoadMetrics.requestStart = networkLoadMetrics.connectEnd;
-    networkLoadMetrics.responseStart = Seconds(startTransfer);
+    networkLoadMetrics.responseStart = domainLookupStart + Seconds(startTransfer);
 
     networkLoadMetrics.requestHeaderBytesSent = requestHeaderSize;
     networkLoadMetrics.requestBodyBytesSent = requestBodySize;

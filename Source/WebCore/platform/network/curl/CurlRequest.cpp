@@ -80,6 +80,9 @@ void CurlRequest::start()
 
     auto url = m_request.url().isolatedCopy();
 
+    if (std::isnan(m_requestStartTime))
+        m_requestStartTime = MonotonicTime::now();
+
     if (url.isLocalFile())
         invokeDidReceiveResponseForFile(url);
     else
@@ -194,6 +197,8 @@ CURL* CurlRequest::setupTransfer()
 
     if (m_shouldSuspend)
         setRequestPaused(true);
+
+    m_performStartTime = MonotonicTime::now();
 
     return m_curlHandle->handle();
 }
@@ -405,7 +410,10 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
         updateNetworkLoadMetrics();
 
         finalizeTransfer();
-        callClient([](CurlRequest& request, CurlRequestClient& client) {
+        callClient([this, protectedThis = makeRef(*this)](CurlRequest& request, CurlRequestClient& client) {
+            m_networkLoadMetrics.responseEnd = MonotonicTime::now() - m_requestStartTime;
+            m_networkLoadMetrics.markComplete();
+
             client.curlDidComplete(request);
         });
     } else {
@@ -638,7 +646,9 @@ bool CurlRequest::isHandlePaused() const
 
 void CurlRequest::updateNetworkLoadMetrics()
 {
-    if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
+    auto domainLookupStart = m_performStartTime - m_requestStartTime;
+
+    if (auto metrics = m_curlHandle->getNetworkLoadMetrics(domainLookupStart))
         m_networkLoadMetrics = *metrics;
 
     m_networkLoadMetrics.requestHeaders = m_request.httpHeaderFields();
