@@ -1,3 +1,12 @@
+2018-09-15  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest::createResponseBlob() should create a Blob with type for empty response
+        https://bugs.webkit.org/show_bug.cgi?id=189627
+
+        Reviewed by Alexey Proskuryakov.
+
+        * web-platform-tests/xhr/overridemimetype-blob-expected.txt:
+
 2018-09-14  Ms2ger  <Ms2ger@igalia.com>
 
         Remove some obsolete XHR tests

@@ -220,12 +220,10 @@ Ref<Blob> XMLHttpRequest::createResponseBlob()
     ASSERT(responseType() == ResponseType::Blob);
     ASSERT(doneWithoutErrors());
 
-    if (!m_binaryResponseBuilder)
-        return Blob::create();
-
     // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
     Vector<uint8_t> data;
-    data.append(m_binaryResponseBuilder->data(), m_binaryResponseBuilder->size());
+    if (m_binaryResponseBuilder)
+        data.append(m_binaryResponseBuilder->data(), m_binaryResponseBuilder->size());
     m_binaryResponseBuilder = nullptr;
     String normalizedContentType = Blob::normalizedContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
     return Blob::create(WTFMove(data), normalizedContentType);

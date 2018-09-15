@@ -1,3 +1,13 @@
+2018-09-15  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest::createResponseBlob() should create a Blob with type for empty response
+        https://bugs.webkit.org/show_bug.cgi?id=189627
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/files/xhr-response-blob-expected.txt:
+        * fast/files/xhr-response-blob.html:
+
 2018-09-14  Megan Gardner  <megan_gardner@apple.com>
 
         Additional tests for conic gradients
