@@ -1,3 +1,33 @@
+2018-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Source View doesn't scroll to show line when breakpoint is hit inside of <script> in HTML resource
+        https://bugs.webkit.org/show_bug.cgi?id=189638
+        <rdar://problem/43359278>
+
+        Reviewed by Matt Baker.
+
+        Pausing in Document resources on page load have special considerations where we
+        may not receive their full content immediately, so we may synthesize inline script
+        content for the resource until we have full content. Unfortunately, when we get
+        full content and update the TextEditor we were losing the revealed position and
+        other editor information. This change specifically targets those cases, by
+        re-applying editor state when updating such a resource from partial to full content.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._contentAvailable):
+        Signal to the editor that when updating the content it should carry
+        over editor state. Only do this if we had partial content before.
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor):
+        (WI.TextEditor.prototype.set repeatReveal):
+        Provide a way to signal we should restore state when update the content.
+
+        (WI.TextEditor.set string.update):
+        (WI.TextEditor.prototype.set string):
+        When repeatReveal was enabled, restore editor state such as the
+        revealed location and text selection.
+
 2018-09-14  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Record actions performed on ImageBitmapRenderingContext

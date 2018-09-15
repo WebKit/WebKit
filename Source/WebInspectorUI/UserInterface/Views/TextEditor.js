@@ -94,6 +94,7 @@ WI.TextEditor = class TextEditor extends WI.View
         this._formattingPromise = null;
         this._formatterSourceMap = null;
         this._deferReveal = false;
+        this._repeatReveal = false;
 
         this._delegate = delegate || null;
     }
@@ -112,6 +113,8 @@ WI.TextEditor = class TextEditor extends WI.View
 
     set string(newString)
     {
+        let previousSelectedTextRange = this._repeatReveal ? this.selectedTextRange : null;
+
         function update()
         {
             // Clear any styles that may have been set on the empty line before content loaded.
@@ -147,8 +150,13 @@ WI.TextEditor = class TextEditor extends WI.View
             for (var lineNumber in this._breakpoints)
                 this._setBreakpointStylesOnLine(lineNumber);
 
-            // Try revealing the pending line now that we might have content with enough lines.
+            // Try revealing the pending line, or previous position, now that we might have new content.
             this._revealPendingPositionIfPossible();
+            if (previousSelectedTextRange) {
+                this.selectedTextRange = previousSelectedTextRange;
+                let position = this._codeMirrorPositionFromTextRange(previousSelectedTextRange);
+                this._scrollIntoViewCentered(position.start);
+            }
         }
 
         this._ignoreCodeMirrorContentDidChangeEvent++;
@@ -290,6 +298,11 @@ WI.TextEditor = class TextEditor extends WI.View
     set deferReveal(defer)
     {
         this._deferReveal = defer;
+    }
+
+    set repeatReveal(repeat)
+    {
+        this._repeatReveal = repeat;
     }
 
     performSearch(query)
