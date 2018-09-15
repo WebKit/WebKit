@@ -1,3 +1,9 @@
+2018-09-14  Dean Jackson  <dino@grorg.org>
+
+        Add Justin Michaud.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         bots should pass --clobber-old-results to run-webkit-tests
