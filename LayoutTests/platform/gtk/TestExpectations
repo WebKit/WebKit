@@ -2371,8 +2371,6 @@ webkit.org/b/183181 inspector/heap/getPreview.html [ Pass Timeout ]
 
 webkit.org/b/183186 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html [ Pass Timeout ]
 
-webkit.org/b/184080 animations/animation-iteration-event-destroy-renderer.html [ Timeout ]
-
 webkit.org/b/186253 [ Release ] http/tests/media/remove-while-loading.html [ Timeout ]
 webkit.org/b/186253 [ Release ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Timeout ]
 
@@ -3485,7 +3483,6 @@ webkit.org/b/185912 fast/canvas/webgl/index-validation-with-subsequent-draws.htm
 
 webkit.org/b/185913 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Failure ]
 
-webkit.org/b/186035 transitions/interrupted-transition-hardware.html [ ImageOnlyFailure ]
 webkit.org/b/186099 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
 webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.html [ ImageOnlyFailure ]
 webkit.org/b/186100 css3/color-filters/color-filter-opacity.html [ ImageOnlyFailure ]
@@ -3551,6 +3548,8 @@ webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failur
 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
 
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]

@@ -1,3 +1,10 @@
+2018-09-17  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Unmark now passing tests.
+
+        Unreviewed gardening.
+        * platform/gtk/TestExpectations:
+s
 2018-09-17  Sihui Liu  <sihui_liu@apple.com>
 
         Move IndexedDB to Network Process
