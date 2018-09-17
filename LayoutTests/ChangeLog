@@ -1,5 +1,12 @@
 2018-09-17  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Add new failure
+
+        Unreviewed gardening.
+        * platform/wpe/TestExpectations:
+
+2018-09-17  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK][WPE] Update baseline for fast/dom/navigator-detached-no-crash
 
         In GTK it's just a matter of updating the baseline. In WPE
