@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests invoking initKeyboardEvent after setting CapsLock state to true via KeyboardEvent's constructor.`);
+
+evalAndLog(`keyEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, view: window, detail: 0, key: 'a', code: 'KeyA',
+    ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });`);
+shouldBeTrue('keyEvent.ctrlKey');
+shouldBeTrue('keyEvent.shiftKey');
+shouldBeTrue('keyEvent.altKey');
+shouldBeTrue('keyEvent.metaKey');
+shouldBeTrue('keyEvent.getModifierState("Control")');
+shouldBeTrue('keyEvent.getModifierState("Shift")');
+shouldBeTrue('keyEvent.getModifierState("Alt")');
+shouldBeTrue('keyEvent.getModifierState("Meta")');
+shouldBeTrue('keyEvent.getModifierState("AltGraph")');
+shouldBeTrue('keyEvent.getModifierState("CapsLock")');
+
+evalAndLog(`keyEvent.initKeyboardEvent('keydown', false, false, window, 'U+0041', 0, /* ctrl */ false, /* alt */ false, /* shift */ false, /* meta */ false, /* altGraph */ false)`);
+shouldBeFalse('keyEvent.ctrlKey');
+shouldBeFalse('keyEvent.shiftKey');
+shouldBeFalse('keyEvent.altKey');
+shouldBeFalse('keyEvent.metaKey');
+shouldBeFalse('keyEvent.getModifierState("Control")');
+shouldBeFalse('keyEvent.getModifierState("Shift")');
+shouldBeFalse('keyEvent.getModifierState("Alt")');
+shouldBeFalse('keyEvent.getModifierState("Meta")');
+shouldBeFalse('keyEvent.getModifierState("AltGraph")');
+shouldBeFalse('keyEvent.getModifierState("CapsLock")');
+
+evalAndLog(`keyEvent.initKeyboardEvent('keydown', false, false, window, 'U+0041', 0, /* ctrl */ true, /* alt */ true, /* shift */ true, /* meta */ true, /* altGraph */ true)`);
+shouldBeTrue('keyEvent.ctrlKey');
+shouldBeTrue('keyEvent.shiftKey');
+shouldBeTrue('keyEvent.altKey');
+shouldBeTrue('keyEvent.metaKey');
+shouldBeTrue('keyEvent.getModifierState("Control")');
+shouldBeTrue('keyEvent.getModifierState("Shift")');
+shouldBeTrue('keyEvent.getModifierState("Alt")');
+shouldBeTrue('keyEvent.getModifierState("Meta")');
+shouldBeTrue('keyEvent.getModifierState("AltGraph")');
+shouldBeFalse('keyEvent.getModifierState("CapsLock")');
+
+</script>
+</body>
+</html>

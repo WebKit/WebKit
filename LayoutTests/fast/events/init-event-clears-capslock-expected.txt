@@ -1,0 +1,43 @@
+This tests invoking initKeyboardEvent after setting CapsLock state to true via KeyboardEvent's constructor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+keyEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, view: window, detail: 0, key: 'a', code: 'KeyA',
+    ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });
+PASS keyEvent.ctrlKey is true
+PASS keyEvent.shiftKey is true
+PASS keyEvent.altKey is true
+PASS keyEvent.metaKey is true
+PASS keyEvent.getModifierState("Control") is true
+PASS keyEvent.getModifierState("Shift") is true
+PASS keyEvent.getModifierState("Alt") is true
+PASS keyEvent.getModifierState("Meta") is true
+PASS keyEvent.getModifierState("AltGraph") is true
+PASS keyEvent.getModifierState("CapsLock") is true
+keyEvent.initKeyboardEvent('keydown', false, false, window, 'U+0041', 0, /* ctrl */ false, /* alt */ false, /* shift */ false, /* meta */ false, /* altGraph */ false)
+PASS keyEvent.ctrlKey is false
+PASS keyEvent.shiftKey is false
+PASS keyEvent.altKey is false
+PASS keyEvent.metaKey is false
+PASS keyEvent.getModifierState("Control") is false
+PASS keyEvent.getModifierState("Shift") is false
+PASS keyEvent.getModifierState("Alt") is false
+PASS keyEvent.getModifierState("Meta") is false
+PASS keyEvent.getModifierState("AltGraph") is false
+PASS keyEvent.getModifierState("CapsLock") is false
+keyEvent.initKeyboardEvent('keydown', false, false, window, 'U+0041', 0, /* ctrl */ true, /* alt */ true, /* shift */ true, /* meta */ true, /* altGraph */ true)
+PASS keyEvent.ctrlKey is true
+PASS keyEvent.shiftKey is true
+PASS keyEvent.altKey is true
+PASS keyEvent.metaKey is true
+PASS keyEvent.getModifierState("Control") is true
+PASS keyEvent.getModifierState("Shift") is true
+PASS keyEvent.getModifierState("Alt") is true
+PASS keyEvent.getModifierState("Meta") is true
+PASS keyEvent.getModifierState("AltGraph") is true
+PASS keyEvent.getModifierState("CapsLock") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
