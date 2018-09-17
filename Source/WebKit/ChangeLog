@@ -1,3 +1,33 @@
+2018-09-17  Tim Horton  <timothy_horton@apple.com>
+
+        Swipe snapshot can get stuck if swiping is disabled while it is visible
+        https://bugs.webkit.org/show_bug.cgi?id=189667
+        <rdar://problem/40367780>
+
+        Reviewed by Simon Fraser.
+
+        If navigation gestures are disabled while a swipe snapshot is visible,
+        WKWebView will tear down the ViewGestureController, which means that
+        the SnapshotRemovalTracker will no longer be around to ever remove
+        the snapshot.
+
+        It's currently very hard to write a test for this because we have
+        yet to come up with a good mechanism for testing swiping on iOS.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+        Instead of tearing down the ViewGestureController when navigation
+        gestures are disabled, just set a bit on it that disables gestures.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::canSwipeInDirection const):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        (WebKit::ViewGestureController::setSwipeGestureEnabled):
+        (WebKit::ViewGestureController::isSwipeGestureEnabled):
+        Add a bit to ViewGestureController that makes starting new gestures
+        always fail, but allows e.g. snapshots from existing swipes to continue
+        their usual behavior.
+
 2018-09-17  Alex Christensen  <achristensen@webkit.org>
 
         Expose WKWebProcess.h as a private header

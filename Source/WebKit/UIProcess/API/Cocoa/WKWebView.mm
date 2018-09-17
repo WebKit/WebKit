@@ -3089,15 +3089,15 @@ static int32_t activeOrientation(WKWebView *webView)
 
     _allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
 
-    if (allowsBackForwardNavigationGestures) {
-        if (!_gestureController) {
-            _gestureController = std::make_unique<WebKit::ViewGestureController>(*_page);
-            _gestureController->installSwipeHandler(self, [self scrollView]);
-            if (WKWebView *alternateWebView = [_configuration _alternateWebViewForNavigationGestures])
-                _gestureController->setAlternateBackForwardListSourcePage(alternateWebView->_page.get());
-        }
-    } else
-        _gestureController = nullptr;
+    if (allowsBackForwardNavigationGestures && !_gestureController) {
+        _gestureController = std::make_unique<WebKit::ViewGestureController>(*_page);
+        _gestureController->installSwipeHandler(self, [self scrollView]);
+        if (WKWebView *alternateWebView = [_configuration _alternateWebViewForNavigationGestures])
+            _gestureController->setAlternateBackForwardListSourcePage(alternateWebView->_page.get());
+    }
+
+    if (_gestureController)
+        _gestureController->setSwipeGestureEnabled(allowsBackForwardNavigationGestures);
 
     _page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
 }

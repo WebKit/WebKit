@@ -112,10 +112,14 @@ void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* 
     
 bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 {
+    if (!m_swipeGestureEnabled)
+        return false;
+
 #if ENABLE(FULLSCREEN_API)
     if (m_webPageProxy.fullScreenManager() && m_webPageProxy.fullScreenManager()->isFullScreen())
         return false;
 #endif
+
     RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
     auto& backForwardList = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage->backForwardList() : m_webPageProxy.backForwardList();
     if (direction == SwipeDirection::Back)

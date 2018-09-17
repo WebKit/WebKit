@@ -136,6 +136,9 @@ public:
 
     void removeSwipeSnapshot();
 
+    void setSwipeGestureEnabled(bool enabled) { m_swipeGestureEnabled = enabled; }
+    bool isSwipeGestureEnabled() { return m_swipeGestureEnabled; }
+
     // Testing
     bool beginSimulatedSwipeInDirectionForTesting(SwipeDirection);
     bool completeSimulatedSwipeInDirectionForTesting(SwipeDirection);
@@ -246,6 +249,8 @@ private:
 
     WebPageProxy& m_webPageProxy;
     ViewGestureType m_activeGestureType { ViewGestureType::None };
+
+    bool m_swipeGestureEnabled { true };
 
     RunLoop::Timer<ViewGestureController> m_swipeActiveLoadMonitoringTimer;
 
