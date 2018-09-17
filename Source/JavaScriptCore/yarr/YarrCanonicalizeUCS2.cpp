@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,17 @@ const UChar32 ucs2CharacterSet10[] = { 0x03a0, 0x03c0, 0x03d6, 0 };
 const UChar32 ucs2CharacterSet11[] = { 0x03a1, 0x03c1, 0x03f1, 0 };
 const UChar32 ucs2CharacterSet12[] = { 0x03a3, 0x03c2, 0x03c3, 0 };
 const UChar32 ucs2CharacterSet13[] = { 0x03a6, 0x03c6, 0x03d5, 0 };
-const UChar32 ucs2CharacterSet14[] = { 0x1e60, 0x1e61, 0x1e9b, 0 };
+const UChar32 ucs2CharacterSet14[] = { 0x0412, 0x0432, 0x1c80, 0 };
+const UChar32 ucs2CharacterSet15[] = { 0x0414, 0x0434, 0x1c81, 0 };
+const UChar32 ucs2CharacterSet16[] = { 0x041e, 0x043e, 0x1c82, 0 };
+const UChar32 ucs2CharacterSet17[] = { 0x0421, 0x0441, 0x1c83, 0 };
+const UChar32 ucs2CharacterSet18[] = { 0x0422, 0x0442, 0x1c84, 0x1c85, 0 };
+const UChar32 ucs2CharacterSet19[] = { 0x042a, 0x044a, 0x1c86, 0 };
+const UChar32 ucs2CharacterSet20[] = { 0x0462, 0x0463, 0x1c87, 0 };
+const UChar32 ucs2CharacterSet21[] = { 0x1e60, 0x1e61, 0x1e9b, 0 };
+const UChar32 ucs2CharacterSet22[] = { 0x1c88, 0xa64a, 0xa64b, 0 };
 
-static const size_t UCS2_CANONICALIZATION_SETS = 15;
+static const size_t UCS2_CANONICALIZATION_SETS = 23;
 const UChar32* const ucs2CharacterSetInfo[UCS2_CANONICALIZATION_SETS] = {
     ucs2CharacterSet0,
     ucs2CharacterSet1,
@@ -63,9 +71,17 @@ const UChar32* const ucs2CharacterSetInfo[UCS2_CANONICALIZATION_SETS] = {
     ucs2CharacterSet12,
     ucs2CharacterSet13,
     ucs2CharacterSet14,
+    ucs2CharacterSet15,
+    ucs2CharacterSet16,
+    ucs2CharacterSet17,
+    ucs2CharacterSet18,
+    ucs2CharacterSet19,
+    ucs2CharacterSet20,
+    ucs2CharacterSet21,
+    ucs2CharacterSet22,
 };
 
-const size_t UCS2_CANONICALIZATION_RANGES = 391;
+const size_t UCS2_CANONICALIZATION_RANGES = 448;
 const CanonicalizationRange ucs2RangeInfo[UCS2_CANONICALIZATION_RANGES] = {
     { 0x0000, 0x0040, 0x0000, CanonicalizeUnique },
     { 0x0041, 0x005a, 0x0020, CanonicalizeRangeLo },
@@ -182,7 +198,7 @@ const CanonicalizationRange ucs2RangeInfo[UCS2_CANONICALIZATION_RANGES] = {
     { 0x0267, 0x0267, 0x0000, CanonicalizeUnique },
     { 0x0268, 0x0268, 0x00d1, CanonicalizeRangeHi },
     { 0x0269, 0x0269, 0x00d3, CanonicalizeRangeHi },
-    { 0x026a, 0x026a, 0x0000, CanonicalizeUnique },
+    { 0x026a, 0x026a, 0xa544, CanonicalizeRangeLo },
     { 0x026b, 0x026b, 0x29f7, CanonicalizeRangeLo },
     { 0x026c, 0x026c, 0xa541, CanonicalizeRangeLo },
     { 0x026d, 0x026e, 0x0000, CanonicalizeUnique },
@@ -206,7 +222,8 @@ const CanonicalizationRange ucs2RangeInfo[UCS2_CANONICALIZATION_RANGES] = {
     { 0x028c, 0x028c, 0x0047, CanonicalizeRangeHi },
     { 0x028d, 0x0291, 0x0000, CanonicalizeUnique },
     { 0x0292, 0x0292, 0x00db, CanonicalizeRangeHi },
-    { 0x0293, 0x029d, 0x0000, CanonicalizeUnique },
+    { 0x0293, 0x029c, 0x0000, CanonicalizeUnique },
+    { 0x029d, 0x029d, 0xa515, CanonicalizeRangeLo },
     { 0x029e, 0x029e, 0xa512, CanonicalizeRangeLo },
     { 0x029f, 0x0344, 0x0000, CanonicalizeUnique },
     { 0x0345, 0x0345, 0x0007, CanonicalizeSet },
@@ -288,10 +305,34 @@ const CanonicalizationRange ucs2RangeInfo[UCS2_CANONICALIZATION_RANGES] = {
     { 0x03fc, 0x03fc, 0x0000, CanonicalizeUnique },
     { 0x03fd, 0x03ff, 0x0082, CanonicalizeRangeHi },
     { 0x0400, 0x040f, 0x0050, CanonicalizeRangeLo },
-    { 0x0410, 0x042f, 0x0020, CanonicalizeRangeLo },
-    { 0x0430, 0x044f, 0x0020, CanonicalizeRangeHi },
+    { 0x0410, 0x0411, 0x0020, CanonicalizeRangeLo },
+    { 0x0412, 0x0412, 0x000e, CanonicalizeSet },
+    { 0x0413, 0x0413, 0x0020, CanonicalizeRangeLo },
+    { 0x0414, 0x0414, 0x000f, CanonicalizeSet },
+    { 0x0415, 0x041d, 0x0020, CanonicalizeRangeLo },
+    { 0x041e, 0x041e, 0x0010, CanonicalizeSet },
+    { 0x041f, 0x0420, 0x0020, CanonicalizeRangeLo },
+    { 0x0421, 0x0421, 0x0011, CanonicalizeSet },
+    { 0x0422, 0x0422, 0x0012, CanonicalizeSet },
+    { 0x0423, 0x0429, 0x0020, CanonicalizeRangeLo },
+    { 0x042a, 0x042a, 0x0013, CanonicalizeSet },
+    { 0x042b, 0x042f, 0x0020, CanonicalizeRangeLo },
+    { 0x0430, 0x0431, 0x0020, CanonicalizeRangeHi },
+    { 0x0432, 0x0432, 0x000e, CanonicalizeSet },
+    { 0x0433, 0x0433, 0x0020, CanonicalizeRangeHi },
+    { 0x0434, 0x0434, 0x000f, CanonicalizeSet },
+    { 0x0435, 0x043d, 0x0020, CanonicalizeRangeHi },
+    { 0x043e, 0x043e, 0x0010, CanonicalizeSet },
+    { 0x043f, 0x0440, 0x0020, CanonicalizeRangeHi },
+    { 0x0441, 0x0441, 0x0011, CanonicalizeSet },
+    { 0x0442, 0x0442, 0x0012, CanonicalizeSet },
+    { 0x0443, 0x0449, 0x0020, CanonicalizeRangeHi },
+    { 0x044a, 0x044a, 0x0013, CanonicalizeSet },
+    { 0x044b, 0x044f, 0x0020, CanonicalizeRangeHi },
     { 0x0450, 0x045f, 0x0050, CanonicalizeRangeHi },
-    { 0x0460, 0x0481, 0x0000, CanonicalizeAlternatingAligned },
+    { 0x0460, 0x0461, 0x0000, CanonicalizeAlternatingAligned },
+    { 0x0462, 0x0463, 0x0014, CanonicalizeSet },
+    { 0x0464, 0x0481, 0x0000, CanonicalizeAlternatingAligned },
     { 0x0482, 0x0489, 0x0000, CanonicalizeUnique },
     { 0x048a, 0x04bf, 0x0000, CanonicalizeAlternatingAligned },
     { 0x04c0, 0x04c0, 0x000f, CanonicalizeRangeLo },
@@ -308,16 +349,38 @@ const CanonicalizationRange ucs2RangeInfo[UCS2_CANONICALIZATION_RANGES] = {
     { 0x10c7, 0x10c7, 0x1c60, CanonicalizeRangeLo },
     { 0x10c8, 0x10cc, 0x0000, CanonicalizeUnique },
     { 0x10cd, 0x10cd, 0x1c60, CanonicalizeRangeLo },
-    { 0x10ce, 0x1d78, 0x0000, CanonicalizeUnique },
+    { 0x10ce, 0x10cf, 0x0000, CanonicalizeUnique },
+    { 0x10d0, 0x10fa, 0x0bc0, CanonicalizeRangeLo },
+    { 0x10fb, 0x10fc, 0x0000, CanonicalizeUnique },
+    { 0x10fd, 0x10ff, 0x0bc0, CanonicalizeRangeLo },
+    { 0x1100, 0x139f, 0x0000, CanonicalizeUnique },
+    { 0x13a0, 0x13ef, 0x97d0, CanonicalizeRangeLo },
+    { 0x13f0, 0x13f5, 0x0008, CanonicalizeRangeLo },
+    { 0x13f6, 0x13f7, 0x0000, CanonicalizeUnique },
+    { 0x13f8, 0x13fd, 0x0008, CanonicalizeRangeHi },
+    { 0x13fe, 0x1c7f, 0x0000, CanonicalizeUnique },
+    { 0x1c80, 0x1c80, 0x000e, CanonicalizeSet },
+    { 0x1c81, 0x1c81, 0x000f, CanonicalizeSet },
+    { 0x1c82, 0x1c82, 0x0010, CanonicalizeSet },
+    { 0x1c83, 0x1c83, 0x0011, CanonicalizeSet },
+    { 0x1c84, 0x1c85, 0x0012, CanonicalizeSet },
+    { 0x1c86, 0x1c86, 0x0013, CanonicalizeSet },
+    { 0x1c87, 0x1c87, 0x0014, CanonicalizeSet },
+    { 0x1c88, 0x1c88, 0x0016, CanonicalizeSet },
+    { 0x1c89, 0x1c8f, 0x0000, CanonicalizeUnique },
+    { 0x1c90, 0x1cba, 0x0bc0, CanonicalizeRangeHi },
+    { 0x1cbb, 0x1cbc, 0x0000, CanonicalizeUnique },
+    { 0x1cbd, 0x1cbf, 0x0bc0, CanonicalizeRangeHi },
+    { 0x1cc0, 0x1d78, 0x0000, CanonicalizeUnique },
     { 0x1d79, 0x1d79, 0x8a04, CanonicalizeRangeLo },
     { 0x1d7a, 0x1d7c, 0x0000, CanonicalizeUnique },
     { 0x1d7d, 0x1d7d, 0x0ee6, CanonicalizeRangeLo },
     { 0x1d7e, 0x1dff, 0x0000, CanonicalizeUnique },
     { 0x1e00, 0x1e5f, 0x0000, CanonicalizeAlternatingAligned },
-    { 0x1e60, 0x1e61, 0x000e, CanonicalizeSet },
+    { 0x1e60, 0x1e61, 0x0015, CanonicalizeSet },
     { 0x1e62, 0x1e95, 0x0000, CanonicalizeAlternatingAligned },
     { 0x1e96, 0x1e9a, 0x0000, CanonicalizeUnique },
-    { 0x1e9b, 0x1e9b, 0x000e, CanonicalizeSet },
+    { 0x1e9b, 0x1e9b, 0x0015, CanonicalizeSet },
     { 0x1e9c, 0x1e9f, 0x0000, CanonicalizeUnique },
     { 0x1ea0, 0x1eff, 0x0000, CanonicalizeAlternatingAligned },
     { 0x1f00, 0x1f07, 0x0008, CanonicalizeRangeLo },
@@ -428,7 +491,9 @@ const CanonicalizationRange ucs2RangeInfo[UCS2_CANONICALIZATION_RANGES] = {
     { 0x2d28, 0x2d2c, 0x0000, CanonicalizeUnique },
     { 0x2d2d, 0x2d2d, 0x1c60, CanonicalizeRangeHi },
     { 0x2d2e, 0xa63f, 0x0000, CanonicalizeUnique },
-    { 0xa640, 0xa66d, 0x0000, CanonicalizeAlternatingAligned },
+    { 0xa640, 0xa649, 0x0000, CanonicalizeAlternatingAligned },
+    { 0xa64a, 0xa64b, 0x0016, CanonicalizeSet },
+    { 0xa64c, 0xa66d, 0x0000, CanonicalizeAlternatingAligned },
     { 0xa66e, 0xa67f, 0x0000, CanonicalizeUnique },
     { 0xa680, 0xa69b, 0x0000, CanonicalizeAlternatingAligned },
     { 0xa69c, 0xa721, 0x0000, CanonicalizeUnique },
@@ -450,10 +515,18 @@ const CanonicalizationRange ucs2RangeInfo[UCS2_CANONICALIZATION_RANGES] = {
     { 0xa7ab, 0xa7ab, 0xa54f, CanonicalizeRangeHi },
     { 0xa7ac, 0xa7ac, 0xa54b, CanonicalizeRangeHi },
     { 0xa7ad, 0xa7ad, 0xa541, CanonicalizeRangeHi },
-    { 0xa7ae, 0xa7af, 0x0000, CanonicalizeUnique },
+    { 0xa7ae, 0xa7ae, 0xa544, CanonicalizeRangeHi },
+    { 0xa7af, 0xa7af, 0x0000, CanonicalizeUnique },
     { 0xa7b0, 0xa7b0, 0xa512, CanonicalizeRangeHi },
     { 0xa7b1, 0xa7b1, 0xa52a, CanonicalizeRangeHi },
-    { 0xa7b2, 0xff20, 0x0000, CanonicalizeUnique },
+    { 0xa7b2, 0xa7b2, 0xa515, CanonicalizeRangeHi },
+    { 0xa7b3, 0xa7b3, 0x03a0, CanonicalizeRangeLo },
+    { 0xa7b4, 0xa7b9, 0x0000, CanonicalizeAlternatingAligned },
+    { 0xa7ba, 0xab52, 0x0000, CanonicalizeUnique },
+    { 0xab53, 0xab53, 0x03a0, CanonicalizeRangeHi },
+    { 0xab54, 0xab6f, 0x0000, CanonicalizeUnique },
+    { 0xab70, 0xabbf, 0x97d0, CanonicalizeRangeHi },
+    { 0xabc0, 0xff20, 0x0000, CanonicalizeUnique },
     { 0xff21, 0xff3a, 0x0020, CanonicalizeRangeLo },
     { 0xff3b, 0xff40, 0x0000, CanonicalizeUnique },
     { 0xff41, 0xff5a, 0x0020, CanonicalizeRangeHi },
