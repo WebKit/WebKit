@@ -75,9 +75,12 @@ private:
     bool checkDatabaseValidity();
     void deleteAllDatabaseFiles();
 
-    void createPrepareStatement(const char* sql);
-    SQLiteStatement* getPrepareStatement(const char* sql);
-    int executeSimpleSql(const char* sql, bool ignoreError = false);
+    void verifySchemaVersion();
+    void deleteAllTables();
+
+    void createPrepareStatement(const String& sql);
+    SQLiteStatement* getPrepareStatement(const String& sql);
+    int executeSimpleSql(const String& sql, bool ignoreError = false);
 
     int deleteCookieInternal(const String& name, const String& domain, const String& path);
     bool hasHttpOnlyCookie(const String& name, const String& domain, const String& path);

@@ -1,3 +1,29 @@
+2018-09-17  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Add schema version and enable auto vacuum for cookie database.
+        https://bugs.webkit.org/show_bug.cgi?id=189669
+
+        Reviewed by Alex Christensen.
+
+        Turning on auto incremental vacuuming and adding versioning to the database. Right now we
+        reset tables if there's an unknown schema or if the none is set. There is placeholder logic
+        in place to upgrade databases as the schema changes in the future.
+
+        Tested by checking the database manually after launching MiniBrowser.
+
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::openDatabase):
+        (WebCore::CookieJarDB::verifySchemaVersion):
+        (WebCore::CookieJarDB::deleteAllTables):
+        (WebCore::CookieJarDB::createPrepareStatement):
+        (WebCore::CookieJarDB::getPrepareStatement):
+        (WebCore::CookieJarDB::executeSimpleSql):
+        * platform/network/curl/CookieJarDB.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::defaultSession):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::turnOnIncrementalAutoVacuum): fixed a bug.
+
 2018-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Re-order Node flags based on semantics

@@ -488,6 +488,7 @@ bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
     SQLiteStatement statement(*this, "PRAGMA auto_vacuum"_s);
     int autoVacuumMode = statement.getColumnInt(0);
     int error = lastError();
+    statement.finalize();
 
     // Check if we got an error while trying to get the value of the auto_vacuum flag.
     // If we got a SQLITE_BUSY error, then there's probably another transaction in

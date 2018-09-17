@@ -85,7 +85,7 @@ CookieJarDB& NetworkStorageSession::cookieDatabase() const
 static std::unique_ptr<NetworkStorageSession>& defaultSession()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    static std::unique_ptr<NetworkStorageSession> session;
     return session;
 }
 
