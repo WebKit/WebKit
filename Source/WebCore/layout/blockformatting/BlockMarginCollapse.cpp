@@ -112,7 +112,7 @@ static bool isMarginTopCollapsedWithParent(const LayoutContext& layoutContext, c
     if (parentDisplayBox.borderTop())
         return false;
 
-    if (parentDisplayBox.paddingTop())
+    if (parentDisplayBox.paddingTop().value_or(0))
         return false;
 
     return true;
@@ -128,7 +128,7 @@ static bool isMarginBottomCollapsedThrough(const LayoutContext& layoutContext, c
     if (displayBox.borderTop() || displayBox.borderBottom())
         return false;
 
-    if (displayBox.paddingTop() || displayBox.paddingBottom())
+    if (displayBox.paddingTop().value_or(0) || displayBox.paddingBottom().value_or(0))
         return false;
 
     if (!layoutBox.style().height().isAuto() || !layoutBox.style().minHeight().isAuto())
@@ -289,7 +289,7 @@ bool BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(c
     if (parentDisplayBox.borderTop())
         return false;
 
-    if (parentDisplayBox.paddingTop())
+    if (parentDisplayBox.paddingTop().value_or(0))
         return false;
 
     if (!parent.style().height().isAuto())
