@@ -1,3 +1,13 @@
+2018-09-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Move IndexedDB to Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=189415
+        <rdar://problem/44396973>
+
+        Reviewed by Chris Dumez.
+
+        * storage/indexeddb/modern/opendatabase-after-storage-crash.html:
+
 2018-09-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, mark fast/text/variations/ipc2.html as slow.

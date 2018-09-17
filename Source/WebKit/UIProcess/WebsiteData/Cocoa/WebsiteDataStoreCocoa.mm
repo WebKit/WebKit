@@ -85,6 +85,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!cookieFile.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(WebCore::FileSystem::directoryName(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
+#if ENABLE(INDEXED_DATABASE)
+    parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
+    if (!parameters.indexedDatabaseDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+#endif
+
     return parameters;
 }
 

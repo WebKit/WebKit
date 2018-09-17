@@ -49,6 +49,8 @@
 #include "SessionTracker.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebIDBConnectionToClient.h"
+#include "WebIDBConnectionToClientMessages.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/NetworkStorageSession.h>
@@ -56,7 +58,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityPolicy.h>
-#include <pal/SessionID.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -146,6 +147,15 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         return;
     }
 
+#if ENABLE(INDEXED_DATABASE)
+    if (decoder.messageReceiverName() == Messages::WebIDBConnectionToClient::messageReceiverName()) {
+        auto iterator = m_webIDBConnections.find(decoder.destinationID());
+        if (iterator != m_webIDBConnections.end())
+            iterator->value->didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
+
     ASSERT_NOT_REACHED();
 }
 
@@ -196,6 +206,15 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection&)
         m_rtcProvider = nullptr;
     }
 #endif
+
+#if ENABLE(INDEXED_DATABASE)
+    auto idbConnections = m_webIDBConnections;
+    for (auto& connection : idbConnections.values())
+        connection->disconnectedFromWebProcess();
+    
+    m_webIDBConnections.clear();
+#endif
+
 }
 
 void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
@@ -483,12 +502,14 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
         for (auto& file : fileReferences)
             file->revokeFileAccess();
 
-        NetworkProcess::singleton().grantSandboxExtensionsToStorageProcessForBlobs(fileNames, [this, protectedThis = WTFMove(protectedThis), requestIdentifier, fileNames]() {
-            if (!m_connection->isValid())
-                return;
-
-            m_connection->send(Messages::NetworkProcessConnection::DidWriteBlobsToTemporaryFiles(requestIdentifier, fileNames), 0);
+#if ENABLE(SANDBOX_EXTENSIONS)
+        NetworkProcess::singleton().getSandboxExtensionsForBlobFiles(fileNames, [protectedThis = WTFMove(protectedThis), fileNames](SandboxExtension::HandleArray&& handles) {
+            ASSERT(fileNames.size() == handles.size());
+            NetworkProcess::singleton().updateTemporaryFileSandboxExtensions(fileNames, handles);
         });
+#endif
+
+        m_connection->send(Messages::NetworkProcessConnection::DidWriteBlobsToTemporaryFiles(requestIdentifier, fileNames), 0);
     });
 }
 
@@ -642,5 +663,31 @@ size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(ResourceLoadIde
         return item.resourceID == resourceID;
     });
 }
+
+#if ENABLE(INDEXED_DATABASE)
+static uint64_t generateIDBConnectionToServerIdentifier()
+{
+    ASSERT(RunLoop::isMain());
+    static uint64_t identifier = 0;
+    return ++identifier;
+}
+
+void NetworkConnectionToWebProcess::establishIDBConnectionToServer(PAL::SessionID sessionID, uint64_t& serverConnectionIdentifier)
+{
+    serverConnectionIdentifier = generateIDBConnectionToServerIdentifier();
+    LOG(IndexedDB, "StorageToWebProcessConnection::establishIDBConnectionToServer - %" PRIu64, serverConnectionIdentifier);
+    ASSERT(!m_webIDBConnections.contains(serverConnectionIdentifier));
+    
+    m_webIDBConnections.set(serverConnectionIdentifier, WebIDBConnectionToClient::create(*this, serverConnectionIdentifier, sessionID));
+}
+
+void NetworkConnectionToWebProcess::removeIDBConnectionToServer(uint64_t serverConnectionIdentifier)
+{
+    ASSERT(m_webIDBConnections.contains(serverConnectionIdentifier));
+    
+    auto connection = m_webIDBConnections.take(serverConnectionIdentifier);
+    connection->disconnectedFromWebProcess();
+}
+#endif
 
 } // namespace WebKit

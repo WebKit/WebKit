@@ -1,3 +1,217 @@
+2018-09-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Move IndexedDB to Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=189415
+        <rdar://problem/44396973>
+
+        Reviewed by Chris Dumez.
+
+        We are going to eliminate storage process and move its functionality to network process. 
+        The reasons why we want to do this:
+        1. Lower resource usage of having an additional process for storage operations, especially
+        memory. Single storage process takes about 5MB memory on macOS.
+        2. Reduce latency of Service Workers. After enabling Service Workers, we've seen
+        regression in app launch. The launch time of storage process is partly attributed to this:
+        Service Workers delay page loading until receiving response from storage process.
+        3. We choose network process because UI process may have broader access in file system
+        that we don't want the storage operations to have.
+
+        This patch is the first piece towards the goal. It mainly moves indexedDB from storage process
+        to corresponding components of network process. Moving of Service Worker and stopping to 
+        launch storage process will be done in following patches.
+
+        We expect to see the higher cpu and memory usage of network process as it is taking more work,
+        but the overall gain in memory and latency after we completely remove storage process should be 
+        positive.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp: Renamed from Source/WebKit/StorageProcess/IndexedDB/WebIDBConnectionToClient.cpp.
+        (WebKit::WebIDBConnectionToClient::create):
+        (WebKit::WebIDBConnectionToClient::WebIDBConnectionToClient):
+        (WebKit::WebIDBConnectionToClient::~WebIDBConnectionToClient):
+        (WebKit::WebIDBConnectionToClient::disconnectedFromWebProcess):
+        (WebKit::WebIDBConnectionToClient::messageSenderConnection):
+        (WebKit::WebIDBConnectionToClient::connectionToClient):
+        (WebKit::WebIDBConnectionToClient::didDeleteDatabase):
+        (WebKit::WebIDBConnectionToClient::didOpenDatabase):
+        (WebKit::WebIDBConnectionToClient::didAbortTransaction):
+        (WebKit::WebIDBConnectionToClient::didCommitTransaction):
+        (WebKit::WebIDBConnectionToClient::didCreateObjectStore):
+        (WebKit::WebIDBConnectionToClient::didDeleteObjectStore):
+        (WebKit::WebIDBConnectionToClient::didRenameObjectStore):
+        (WebKit::WebIDBConnectionToClient::didClearObjectStore):
+        (WebKit::WebIDBConnectionToClient::didCreateIndex):
+        (WebKit::WebIDBConnectionToClient::didDeleteIndex):
+        (WebKit::WebIDBConnectionToClient::didRenameIndex):
+        (WebKit::WebIDBConnectionToClient::didPutOrAdd):
+        (WebKit::WebIDBConnectionToClient::handleGetResult):
+        (WebKit::WebIDBConnectionToClient::didGetRecord):
+        (WebKit::WebIDBConnectionToClient::didGetAllRecords):
+        (WebKit::WebIDBConnectionToClient::didGetCount):
+        (WebKit::WebIDBConnectionToClient::didDeleteRecord):
+        (WebKit::WebIDBConnectionToClient::didOpenCursor):
+        (WebKit::WebIDBConnectionToClient::didIterateCursor):
+        (WebKit::WebIDBConnectionToClient::fireVersionChangeEvent):
+        (WebKit::WebIDBConnectionToClient::didStartTransaction):
+        (WebKit::WebIDBConnectionToClient::didCloseFromServer):
+        (WebKit::WebIDBConnectionToClient::notifyOpenDBRequestBlocked):
+        (WebKit::WebIDBConnectionToClient::didGetAllDatabaseNames):
+        (WebKit::WebIDBConnectionToClient::deleteDatabase):
+        (WebKit::WebIDBConnectionToClient::openDatabase):
+        (WebKit::WebIDBConnectionToClient::abortTransaction):
+        (WebKit::WebIDBConnectionToClient::commitTransaction):
+        (WebKit::WebIDBConnectionToClient::didFinishHandlingVersionChangeTransaction):
+        (WebKit::WebIDBConnectionToClient::createObjectStore):
+        (WebKit::WebIDBConnectionToClient::deleteObjectStore):
+        (WebKit::WebIDBConnectionToClient::renameObjectStore):
+        (WebKit::WebIDBConnectionToClient::clearObjectStore):
+        (WebKit::WebIDBConnectionToClient::createIndex):
+        (WebKit::WebIDBConnectionToClient::deleteIndex):
+        (WebKit::WebIDBConnectionToClient::renameIndex):
+        (WebKit::WebIDBConnectionToClient::putOrAdd):
+        (WebKit::WebIDBConnectionToClient::getRecord):
+        (WebKit::WebIDBConnectionToClient::getAllRecords):
+        (WebKit::WebIDBConnectionToClient::getCount):
+        (WebKit::WebIDBConnectionToClient::deleteRecord):
+        (WebKit::WebIDBConnectionToClient::openCursor):
+        (WebKit::WebIDBConnectionToClient::iterateCursor):
+        (WebKit::WebIDBConnectionToClient::establishTransaction):
+        (WebKit::WebIDBConnectionToClient::databaseConnectionPendingClose):
+        (WebKit::WebIDBConnectionToClient::databaseConnectionClosed):
+        (WebKit::WebIDBConnectionToClient::abortOpenAndUpgradeNeeded):
+        (WebKit::WebIDBConnectionToClient::didFireVersionChangeEvent):
+        (WebKit::WebIDBConnectionToClient::openDBRequestCancelled):
+        (WebKit::WebIDBConnectionToClient::confirmDidCloseFromServer):
+        (WebKit::WebIDBConnectionToClient::getAllDatabaseNames):
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h: Renamed from Source/WebKit/StorageProcess/IndexedDB/WebIDBConnectionToClient.h.
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.messages.in: Renamed from Source/WebKit/StorageProcess/IndexedDB/WebIDBConnectionToClient.messages.in.
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+
+        Code moved from StorageToWebProcessConnection::didReceiveMessage.
+
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+
+        Network process receives and stores sandbox extension of temporary files for later indexedDB
+        use.
+
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+        (WebKit::generateIDBConnectionToServerIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::establishIDBConnectionToServer):
+        (WebKit::NetworkConnectionToWebProcess::removeIDBConnectionToServer):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::idbServer):
+        (WebKit::NetworkProcess::ensurePathExists):
+        (WebKit::NetworkProcess::postStorageTask):
+        (WebKit::NetworkProcess::performNextStorageTask):
+        (WebKit::NetworkProcess::prepareForAccessToTemporaryFile):
+        (WebKit::NetworkProcess::accessToTemporaryFileComplete):
+        (WebKit::NetworkProcess::indexedDatabaseOrigins):
+        (WebKit::NetworkProcess::addIndexedDatabaseSession):
+        (WebKit::NetworkProcess::getSandboxExtensionsForBlobFiles):
+
+        Instead of asking UI process to grant sandbox extension to storage process, now network 
+        process just asks for sandbox extension fot itself.
+
+        (WebKit::NetworkProcess::didGetSandboxExtensionsForBlobFiles):
+        (WebKit::NetworkProcess::updateTemporaryFileSandboxExtensions):
+        (WebKit::NetworkProcess::grantSandboxExtensionsToStorageProcessForBlobs): Deleted.
+        (WebKit::NetworkProcess::didGrantSandboxExtensionsToStorageProcessForBlobs): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * Shared/Storage/StorageProcessCreationParameters.cpp:
+        (WebKit::StorageProcessCreationParameters::encode const):
+        (WebKit::StorageProcessCreationParameters::decode):
+        * Shared/Storage/StorageProcessCreationParameters.h:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+        * Shared/WebsiteDataStoreParameters.h:
+        * Sources.txt:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::initializeWebsiteDataStore):
+        (WebKit::StorageProcess::fetchWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+        (WebKit::StorageProcess::idbServer): Deleted.
+        (WebKit::StorageProcess::grantSandboxExtensionsForBlobs): Deleted.
+        (WebKit::StorageProcess::prepareForAccessToTemporaryFile): Deleted.
+        (WebKit::StorageProcess::accessToTemporaryFileComplete): Deleted.
+        (WebKit::StorageProcess::indexedDatabaseOrigins): Deleted.
+        (WebKit::StorageProcess::getSandboxExtensionsForBlobFiles): Deleted.
+        (WebKit::StorageProcess::didGetSandboxExtensionsForBlobFiles): Deleted.
+        * StorageProcess/StorageProcess.h:
+        (WebKit::StorageProcess::queue): Deleted.
+        * StorageProcess/StorageProcess.messages.in:
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::didReceiveMessage):
+        (WebKit::StorageToWebProcessConnection::didClose):
+        (WebKit::generateIDBConnectionToServerIdentifier): Deleted.
+        (WebKit::StorageToWebProcessConnection::establishIDBConnectionToServer): Deleted.
+        (WebKit::StorageToWebProcessConnection::removeIDBConnectionToServer): Deleted.
+        * StorageProcess/StorageToWebProcessConnection.h:
+        * StorageProcess/StorageToWebProcessConnection.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getSandboxExtensionsForBlobFiles):
+        (WebKit::NetworkProcessProxy::grantSandboxExtensionsToStorageProcessForBlobs): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::getSandboxExtensionsForBlobFiles): Deleted.
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeNetworkProcessAccessTypeForDataFetch):
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::computeNetworkProcessAccessTypeForDataRemoval):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::storageProcessParameters):
+        (WebKit::WebsiteDataStore::parameters):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer):
+        (WebKit::WebIDBConnectionToServer::~WebIDBConnectionToServer):
+        (WebKit::WebIDBConnectionToServer::messageSenderConnection):
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::idbConnectionToServerForSession):
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didClose):
+        (WebKit::NetworkProcessConnection::idbConnectionToServerForSession):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit::NetworkProcessConnection::existingIDBConnectionToServerForIdentifier const):
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::didReceiveMessage):
+        (WebKit::WebToStorageProcessConnection::didClose):
+        (WebKit::WebToStorageProcessConnection::idbConnectionToServerForSession): Deleted.
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+        (WebKit::WebToStorageProcessConnection::existingIDBConnectionToServerForIdentifier): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::webToStorageProcessConnectionClosed):
+
 2018-09-08  Darin Adler  <darin@apple.com>
 
         Streamline JSRetainPtr, fix leaks of JSString and JSGlobalContext

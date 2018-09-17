@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebDatabaseProvider.h"
 
+#include "NetworkProcessConnection.h"
 #include "WebProcess.h"
-#include "WebToStorageProcessConnection.h"
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -67,7 +67,6 @@ WebDatabaseProvider::~WebDatabaseProvider()
 }
 
 #if ENABLE(INDEXED_DATABASE)
-
 WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const PAL::SessionID& sessionID)
 {
     if (sessionID.isEphemeral()) {
@@ -78,9 +77,8 @@ WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToS
         return result.iterator->value->connectionToServer();
     }
 
-    return WebProcess::singleton().ensureWebToStorageProcessConnection(sessionID).idbConnectionToServerForSession(sessionID).coreConnectionToServer();
+    return WebProcess::singleton().ensureNetworkProcessConnection().idbConnectionToServerForSession(sessionID).coreConnectionToServer();
 }
-
 #endif
 
 }

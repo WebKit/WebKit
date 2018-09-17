@@ -37,6 +37,10 @@
 #include <WebCore/ResourceLoadPriority.h>
 #include <wtf/RefCounted.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class BlobDataFileReference;
 class HTTPHeaderMap;
@@ -54,6 +58,7 @@ class NetworkLoadParameters;
 class NetworkResourceLoader;
 class NetworkSocketStream;
 class SyncNetworkResourceLoader;
+class WebIDBConnectionToClient;
 typedef uint64_t ResourceLoadIdentifier;
 
 namespace NetworkCache {
@@ -173,6 +178,12 @@ private:
     
     void ensureLegacyPrivateBrowsingSession();
 
+#if ENABLE(INDEXED_DATABASE)
+    // Messages handlers (Modern IDB).
+    void establishIDBConnectionToServer(PAL::SessionID, uint64_t& serverConnectionIdentifier);
+    void removeIDBConnectionToServer(uint64_t serverConnectionIdentifier);
+#endif
+
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
 #endif
@@ -238,6 +249,11 @@ private:
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
 
     RefPtr<CacheStorageEngineConnection> m_cacheStorageConnection;
+
+#if ENABLE(INDEXED_DATABASE)
+    HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;
+#endif
+
 };
 
 } // namespace WebKit

@@ -1,3 +1,22 @@
+2018-09-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Move IndexedDB to Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=189415
+        <rdar://problem/44396973>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBDeleteRecovery.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBDatabaseProcessKill.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBMultiProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+        (TEST):
+
 2018-09-08  Darin Adler  <darin@apple.com>
 
         Streamline JSRetainPtr, fix leaks of JSString and JSGlobalContext
