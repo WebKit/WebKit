@@ -1,5 +1,12 @@
 2018-09-17  Alex Christensen  <achristensen@webkit.org>
 
+        Expose WKWebProcess.h as a private header
+        https://bugs.webkit.org/show_bug.cgi?id=189636
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2018-09-17  Alex Christensen  <achristensen@webkit.org>
+
         Expose XPCServiceMain in a WebProcess header rather than WKProcessPool
         https://bugs.webkit.org/show_bug.cgi?id=189636
 

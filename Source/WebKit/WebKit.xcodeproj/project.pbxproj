@@ -1055,6 +1055,7 @@
 		5C8DD3801FE4521600F2A556 /* WebsiteAutoplayPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C8DD37F1FE4519200F2A556 /* WebsiteAutoplayPolicy.h */; };
 		5C9E56831DF7F1B300C9EE33 /* WKWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9E56811DF7F05500C9EE33 /* WKWebsitePolicies.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CA9854A210BEB640057EB6B /* SafeBrowsingResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA98549210BEB5A0057EB6B /* SafeBrowsingResult.h */; };
+		5CADDE05215046BD0067D309 /* WKWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C74300E21500492004BFA17 /* WKWebProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CAFDE422130843500B1F7E1 /* _WKInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CAFDE472130846A00B1F7E1 /* _WKInspectorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */; };
 		5CB2378C1DF0DE6E00117AA3 /* _WKWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB237891DF0DD4300117AA3 /* _WKWebsitePolicies.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9807,6 +9808,7 @@
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
 				C5E1AFE916B20B75006CC1F2 /* WKWebArchive.h in Headers */,
 				C5E1AFEB16B20B7E006CC1F2 /* WKWebArchiveResource.h in Headers */,
+				5CADDE05215046BD0067D309 /* WKWebProcess.h in Headers */,
 				1AA2E56718D77508003814BD /* WKWebProcessBundleParameters.h in Headers */,
 				BC989D82161A7E5D000D46D3 /* WKWebProcessPlugIn.h in Headers */,
 				BC8F2F2B16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h in Headers */,
