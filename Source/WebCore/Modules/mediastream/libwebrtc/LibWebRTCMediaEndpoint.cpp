@@ -445,6 +445,22 @@ void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransc
     fireTrackEvent(makeRef(newTransceiver.receiver()), newTransceiver.receiver().track(), rtcReceiver->streams(), makeRef(newTransceiver));
 }
 
+void LibWebRTCMediaEndpoint::removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& receiver)
+{
+    // FIXME: Support plan B code path.
+    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
+        return;
+
+    auto* transceiver = m_peerConnectionBackend.existingTransceiver([&receiver](auto& transceiverBackend) {
+        auto* rtcTransceiver = transceiverBackend.rtcTransceiver();
+        return rtcTransceiver && receiver.get() == rtcTransceiver->receiver().get();
+    });
+    if (!transceiver)
+        return;
+
+    transceiver->receiver().track().source().setMuted(true);
+}
+
 template<typename T>
 std::optional<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::createTransceiverBackends(T&& trackOrKind, const RTCRtpTransceiverInit& init, LibWebRTCRtpSenderBackend::Source&& source)
 {
@@ -546,6 +562,14 @@ void LibWebRTCMediaEndpoint::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverIn
     });
 }
 
+void LibWebRTCMediaEndpoint::OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver)
+{
+    callOnMainThread([protectedThis = makeRef(*this), receiver = WTFMove(receiver)]() mutable {
+        if (protectedThis->isStopped())
+            return;
+        protectedThis->removeRemoteTrack(WTFMove(receiver));
+    });
+}
 
 std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel(const String& label, const RTCDataChannelInit& options)
 {

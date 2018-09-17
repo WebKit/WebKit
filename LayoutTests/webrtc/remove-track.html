@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script src ="routines.js"></script>
+        <script>
+let firstConnection, secondConnection;
+let stream;
+let remoteAudioTrack, remoteVideoTrack;
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    await new Promise((resolve, reject) => {
+        createConnections((connection) => {
+            firstConnection = connection;
+            firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+            firstConnection.addTrack(stream.getAudioTracks()[0], stream);
+        }, (connection) => {
+            secondConnection = connection;
+            secondConnection.ontrack = (trackEvent) => {
+                if (!remoteVideoTrack) {
+                    remoteVideoTrack = trackEvent.track;
+                    return;
+                }
+                remoteAudioTrack = trackEvent.track;
+                resolve();
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+}, "Setup audio video exchange");
+
+async function renegotiate()
+{
+    let d = await firstConnection.createOffer();
+    await firstConnection.setLocalDescription(d);
+    await secondConnection.setRemoteDescription(firstConnection.localDescription);
+    d = await secondConnection.createAnswer();
+    await secondConnection.setLocalDescription(d);
+}
+
+promise_test((test) => {
+    const promise = new Promise((resolve, reject) => {
+        remoteVideoTrack.onmute = resolve;
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+     
+    firstConnection.removeTrack(firstConnection.getSenders()[0]);
+    renegotiate();
+    return promise;
+}, "Remove video track");
+
+promise_test((test) => {
+    const promise = new Promise((resolve, reject) => {
+        remoteAudioTrack.onmute = resolve;
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+     
+    firstConnection.removeTrack(firstConnection.getSenders()[1]);
+    renegotiate();
+    return promise;
+}, "Remove audio track");
+        </script>
+    </body>
+</html>

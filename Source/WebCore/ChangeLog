@@ -1,3 +1,25 @@
+2018-09-17  Youenn Fablet  <youenn@apple.com>
+
+        track.onmute isn't called for a remote MediaStreamTrack when its counter part track is removed from the peer connection
+        https://bugs.webkit.org/show_bug.cgi?id=176281
+        <rdar://problem/44525674>
+
+        Reviewed by Eric Carlson.
+
+        Listen to libwebrtc remove track callbacks.
+        Implement handling as per https://w3c.github.io/webrtc-pc/#process-remote-track-removal.
+        This triggers a mute event on the track.
+
+        Test: webrtc/remove-track.html
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::removeRemoteTrack):
+        (WebCore::LibWebRTCMediaEndpoint::OnRemoveTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::shouldOfferAllowToReceive const):
+        Drive by fix: Plan B code path does not mandate having an rtc backend for each sender.
+
 2018-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Add more Fullscreen logging

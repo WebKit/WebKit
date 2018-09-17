@@ -486,8 +486,8 @@ bool LibWebRTCPeerConnectionBackend::shouldOfferAllowToReceive(const char* kind)
         if (transceiver->direction() != RTCRtpTransceiverDirection::Sendrecv)
             continue;
 
-        auto& backend = static_cast<LibWebRTCRtpSenderBackend&>(*transceiver->sender().backend());
-        if (!backend.rtcSender())
+        auto* backend = static_cast<LibWebRTCRtpSenderBackend*>(transceiver->sender().backend());
+        if (backend && !backend->rtcSender())
             return true;
     }
     return false;
