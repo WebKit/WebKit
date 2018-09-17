@@ -2234,7 +2234,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 }
 
                 // If the parentheses are quantified Greedy then add a label to jump back
-                // to if get a failed match from after the parentheses. For NonGreedy
+                // to if we get a failed match from after the parentheses. For NonGreedy
                 // parentheses, link the jump from before the subpattern to here.
                 if (term->quantityType == QuantifierGreedy)
                     op.m_reentry = label();
@@ -2298,11 +2298,11 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 //    match within the parentheses, or the second having skipped over them.
                 //  - To check for empty matches, which must be rejected.
                 //
-                // At the head of a NonGreedy set of parentheses we'll immediately set the
-                // value on the stack to -1 (indicating a match skipping the subpattern),
+                // At the head of a NonGreedy set of parentheses we'll immediately set 'begin'
+                // in the backtrack info to -1 (indicating a match skipping the subpattern),
                 // and plant a jump to the end. We'll also plant a label to backtrack to
-                // to reenter the subpattern later, with a store to set up index on the
-                // second iteration.
+                // to reenter the subpattern later, with a store to set 'begin' to current index
+                // on the second iteration.
                 //
                 // FIXME: for capturing parens, could use the index in the capture array?
                 if (term->quantityType == QuantifierGreedy || term->quantityType == QuantifierNonGreedy) {
@@ -2389,7 +2389,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 }
 
                 // If the parentheses are quantified Greedy then add a label to jump back
-                // to if get a failed match from after the parentheses. For NonGreedy
+                // to if we get a failed match from after the parentheses. For NonGreedy
                 // parentheses, link the jump from before the subpattern to here.
                 if (term->quantityType == QuantifierGreedy) {
                     if (term->quantityMaxCount != quantifyInfinite)
@@ -2401,6 +2401,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 } else if (term->quantityType == QuantifierNonGreedy) {
                     YarrOp& beginOp = m_ops[op.m_previousOp];
                     beginOp.m_jumps.link(this);
+                    op.m_reentry = label();
                 }
 #else // !YARR_JIT_ALL_PARENS_EXPRESSIONS
                 RELEASE_ASSERT_NOT_REACHED();
@@ -2962,32 +2963,32 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 if (term->quantityType != QuantifierFixedCount) {
                     m_backtrackingState.link(this);
 
-                    if (term->quantityType == QuantifierGreedy) {
-                        RegisterID currParenContextReg = regT0;
-                        RegisterID newParenContextReg = regT1;
+                    RegisterID currParenContextReg = regT0;
+                    RegisterID newParenContextReg = regT1;
 
-                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex(), currParenContextReg);
+                    loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex(), currParenContextReg);
+                    
+                    restoreParenContext(currParenContextReg, regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
+                    
+                    freeParenContext(currParenContextReg, newParenContextReg);
+                    storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
 
-                        restoreParenContext(currParenContextReg, regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
+                    const RegisterID countTemporary = regT0;
+                    loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
+                    Jump zeroLengthMatch = branchTest32(Zero, countTemporary);
 
-                        freeParenContext(currParenContextReg, newParenContextReg);
-                        storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
-                        const RegisterID countTemporary = regT0;
-                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
-                        Jump zeroLengthMatch = branchTest32(Zero, countTemporary);
+                    sub32(TrustedImm32(1), countTemporary);
+                    storeToFrame(countTemporary, parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
 
-                        sub32(TrustedImm32(1), countTemporary);
-                        storeToFrame(countTemporary, parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
+                    jump(m_ops[op.m_nextOp].m_reentry);
 
+                    zeroLengthMatch.link(this);
+
+                    // Clear the flag in the stackframe indicating we didn't run through the subpattern.
+                    storeToFrame(TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
+
+                    if (term->quantityType == QuantifierGreedy)
                         jump(m_ops[op.m_nextOp].m_reentry);
-
-                        zeroLengthMatch.link(this);
-
-                        // Clear the flag in the stackframe indicating we didn't run through the subpattern.
-                        storeToFrame(TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
-
-                        jump(m_ops[op.m_nextOp].m_reentry);
-                    }
 
                     // If Greedy, jump to the end.
                     if (term->quantityType == QuantifierGreedy) {
@@ -3010,13 +3011,14 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 if (term->quantityType != QuantifierFixedCount) {
                     m_backtrackingState.link(this);
 
-                    // Check whether we should backtrack back into the parentheses, or if we
-                    // are currently in a state where we had skipped over the subpattern
-                    // (in which case the flag value on the stack will be -1).
                     unsigned parenthesesFrameLocation = term->frameLocation;
-                    Jump hadSkipped = branch32(Equal, Address(stackPointerRegister, (parenthesesFrameLocation  + BackTrackInfoParentheses::beginIndex()) * sizeof(void*)), TrustedImm32(-1));
 
                     if (term->quantityType == QuantifierGreedy) {
+                        // Check whether we should backtrack back into the parentheses, or if we
+                        // are currently in a state where we had skipped over the subpattern
+                        // (in which case the flag value on the stack will be -1).
+                        Jump hadSkipped = branch32(Equal, Address(stackPointerRegister, (parenthesesFrameLocation  + BackTrackInfoParentheses::beginIndex()) * sizeof(void*)), TrustedImm32(-1));
+
                         // For Greedy parentheses, we skip after having already tried going
                         // through the subpattern, so if we get here we're done.
                         YarrOp& beginOp = m_ops[op.m_previousOp];
@@ -3027,8 +3029,25 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                         // next. Jump back to the start of the parentheses in the forwards
                         // matching path.
                         ASSERT(term->quantityType == QuantifierNonGreedy);
+
+                        const RegisterID beginTemporary = regT0;
+                        const RegisterID countTemporary = regT1;
+
                         YarrOp& beginOp = m_ops[op.m_previousOp];
-                        hadSkipped.linkTo(beginOp.m_reentry, this);
+
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex(), beginTemporary);
+                        branch32(Equal, beginTemporary, TrustedImm32(-1)).linkTo(beginOp.m_reentry, this);
+
+                        JumpList exceededMatchLimit;
+
+                        if (term->quantityMaxCount != quantifyInfinite) {
+                            loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
+                            exceededMatchLimit.append(branch32(AboveOrEqual, countTemporary, Imm32(term->quantityMaxCount.unsafeGet())));
+                        }
+
+                        branch32(Above, index, beginTemporary).linkTo(beginOp.m_reentry, this);
+
+                        exceededMatchLimit.link(this);
                     }
 
                     m_backtrackingState.fallthrough();
@@ -3102,7 +3121,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
     // the parentheses.
     // Supported types of parentheses are 'Once' (quantityMaxCount == 1),
     // 'Terminal' (non-capturing parentheses quantified as greedy
-    // and infinite), and 0 based greedy quantified parentheses.
+    // and infinite), and 0 based greedy / non-greedy quantified parentheses.
     // Alternatives will use the 'Simple' set of ops if either the
     // subpattern is terminal (in which case we will never need to
     // backtrack), or if the subpattern only contains one alternative.
@@ -3124,7 +3143,9 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         if (term->quantityMinCount && term->quantityMinCount != term->quantityMaxCount) {
             m_failureReason = JITFailureReason::VariableCountedParenthesisWithNonZeroMinimum;
             return;
-        } if (term->quantityMaxCount == 1 && !term->parentheses.isCopy) {
+        }
+        
+        if (term->quantityMaxCount == 1 && !term->parentheses.isCopy) {
             // Select the 'Once' nodes.
             parenthesesBeginOpCode = OpParenthesesSubpatternOnceBegin;
             parenthesesEndOpCode = OpParenthesesSubpatternOnceEnd;
@@ -3141,10 +3162,10 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             parenthesesEndOpCode = OpParenthesesSubpatternTerminalEnd;
         } else {
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-            // We only handle generic parenthesis with greedy counts.
-            if (term->quantityType != QuantifierGreedy) {
+            // We only handle generic parenthesis with non-fixed counts.
+            if (term->quantityType == QuantifierFixedCount) {
                 // This subpattern is not supported by the JIT.
-                m_failureReason = JITFailureReason::NonGreedyParenthesizedSubpattern;
+                m_failureReason = JITFailureReason::FixedCountParenthesizedSubpattern;
                 return;
             }
 
@@ -3562,7 +3583,7 @@ public:
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (m_containsNestedSubpatterns)
-            codeBlock.setUsesPaternContextBuffer();
+            codeBlock.setUsesPatternContextBuffer();
 #endif
 
         generateEnter();
@@ -3774,19 +3795,27 @@ public:
         case OpParenthesesSubpatternOnceBegin:
             out.print("OpParenthesesSubpatternOnceBegin ");
             if (term->capture())
-                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+                out.printf("capturing pattern #%u", term->parentheses.subpatternId);
             else
-                out.print("non-capturing\n");
+                out.print("non-capturing");
+            term->dumpQuantifier(out);
+            out.print("\n");
             return(0);
 
         case OpParenthesesSubpatternOnceEnd:
-            out.print("OpParenthesesSubpatternOnceEnd\n");
+            out.print("OpParenthesesSubpatternOnceEnd ");
+            if (term->capture())
+                out.printf("capturing pattern #%u", term->parentheses.subpatternId);
+            else
+                out.print("non-capturing");
+            term->dumpQuantifier(out);
+            out.print("\n");
             return(0);
 
         case OpParenthesesSubpatternTerminalBegin:
             out.print("OpParenthesesSubpatternTerminalBegin ");
             if (term->capture())
-                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+                out.printf("capturing pattern #%u\n", term->parentheses.subpatternId);
             else
                 out.print("non-capturing\n");
             return(0);
@@ -3794,7 +3823,7 @@ public:
         case OpParenthesesSubpatternTerminalEnd:
             out.print("OpParenthesesSubpatternTerminalEnd ");
             if (term->capture())
-                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+                out.printf("capturing pattern #%u\n", term->parentheses.subpatternId);
             else
                 out.print("non-capturing\n");
             return(0);
@@ -3802,25 +3831,29 @@ public:
         case OpParenthesesSubpatternBegin:
             out.print("OpParenthesesSubpatternBegin ");
             if (term->capture())
-                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+                out.printf("capturing pattern #%u", term->parentheses.subpatternId);
             else
-                out.print("non-capturing\n");
+                out.print("non-capturing");
+            term->dumpQuantifier(out);
+            out.print("\n");
             return(0);
 
         case OpParenthesesSubpatternEnd:
             out.print("OpParenthesesSubpatternEnd ");
             if (term->capture())
-                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+                out.printf("capturing pattern #%u", term->parentheses.subpatternId);
             else
-                out.print("non-capturing\n");
+                out.print("non-capturing");
+            term->dumpQuantifier(out);
+            out.print("\n");
             return(0);
 
         case OpParentheticalAssertionBegin:
-            out.printf("OpParentheticalAssertionBegin%s\n", op.m_term->invert() ? " inverted" : "");
+            out.printf("OpParentheticalAssertionBegin%s\n", term->invert() ? " inverted" : "");
             return(0);
 
         case OpParentheticalAssertionEnd:
-            out.print("OpParentheticalAssertionEnd%s\n", op.m_term->invert() ? " inverted" : "");
+            out.print("OpParentheticalAssertionEnd%s\n", term->invert() ? " inverted" : "");
             return(0);
 
         case OpMatchFailed:
@@ -3892,8 +3925,8 @@ static void dumpCompileFailure(JITFailureReason failure)
     case JITFailureReason::ParenthesizedSubpattern:
         dataLog("Can't JIT a pattern containing parenthesized subpatterns\n");
         break;
-    case JITFailureReason::NonGreedyParenthesizedSubpattern:
-        dataLog("Can't JIT a pattern containing non-greedy parenthesized subpatterns\n");
+    case JITFailureReason::FixedCountParenthesizedSubpattern:
+        dataLog("Can't JIT a pattern containing fixed count parenthesized subpatterns\n");
         break;
     case JITFailureReason::ExecutableMemoryAllocationFailure:
         dataLog("Can't JIT because of failure of allocation of executable memory\n");
@@ -3909,8 +3942,11 @@ void jitCompile(YarrPattern& pattern, String& patternString, YarrCharSize charSi
         YarrGenerator<IncludeSubpatterns>(vm, pattern, patternString, codeBlock, charSize).compile();
 
     if (auto failureReason = codeBlock.failureReason()) {
-        if (Options::dumpCompiledRegExpPatterns())
+        if (Options::dumpCompiledRegExpPatterns()) {
+            pattern.dumpPatternString(WTF::dataFile(), patternString);
+            dataLog(" : ");
             dumpCompileFailure(*failureReason);
+        }
     }
 }
 

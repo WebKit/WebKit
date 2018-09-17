@@ -54,7 +54,7 @@ enum class JITFailureReason : uint8_t {
     BackReference,
     VariableCountedParenthesisWithNonZeroMinimum,
     ParenthesizedSubpattern,
-    NonGreedyParenthesizedSubpattern,
+    FixedCountParenthesizedSubpattern,
     ExecutableMemoryAllocationFailure,
 };
 
@@ -96,7 +96,7 @@ public:
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     bool usesPatternContextBuffer() { return m_usesPatternContextBuffer; }
-    void setUsesPaternContextBuffer() { m_usesPatternContextBuffer = true; }
+    void setUsesPatternContextBuffer() { m_usesPatternContextBuffer = true; }
 
     MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize)
     {
