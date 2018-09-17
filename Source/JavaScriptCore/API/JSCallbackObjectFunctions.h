@@ -34,7 +34,6 @@
 #include "JSLock.h"
 #include "JSObjectRef.h"
 #include "JSString.h"
-#include "JSStringRef.h"
 #include "OpaqueJSString.h"
 #include "PropertyNameArray.h"
 #include <wtf/Vector.h>

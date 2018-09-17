@@ -38,7 +38,6 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObject.h>
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefPrivate.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/CookieJar.h>
@@ -87,14 +86,9 @@ static JSObjectRef toJSArray(JSContextRef context, const Vector<T>& data, JSValu
     return array;
 }
 
-static inline JSRetainPtr<JSStringRef> toJSString(const String& string)
-{
-    return adopt(OpaqueJSString::create(string).leakRef());
-}
-
 static inline JSValueRef toJSValue(JSContextRef context, const String& string)
 {
-    return JSValueMakeString(context, toJSString(string).get());
+    return JSValueMakeString(context, OpaqueJSString::create(string).get());
 }
 
 static inline JSValueRef callPropertyFunction(JSContextRef context, JSObjectRef object, const String& propertyName, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -102,7 +96,7 @@ static inline JSValueRef callPropertyFunction(JSContextRef context, JSObjectRef 
     ASSERT_ARG(object, object);
     ASSERT_ARG(object, JSValueIsObject(context, object));
 
-    JSObjectRef function = const_cast<JSObjectRef>(JSObjectGetProperty(context, object, toJSString(propertyName).get(), exception));
+    JSObjectRef function = const_cast<JSObjectRef>(JSObjectGetProperty(context, object, OpaqueJSString::create(propertyName).get(), exception));
     ASSERT(JSObjectIsFunction(context, function));
 
     return JSObjectCallAsFunction(context, function, object, argumentCount, arguments, exception);
@@ -127,7 +121,7 @@ static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectR
     if (argumentCount != 1)
         return JSValueMakeUndefined(context);
 
-    auto script = adopt(JSValueToStringCopy(context, arguments[0], exception));
+    auto script = adoptRef(JSValueToStringCopy(context, arguments[0], exception));
     return JSEvaluateScript(context, script.get(), nullptr, nullptr, 0, exception);
 }
 
@@ -150,7 +144,7 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
 
     uint64_t frameID = JSValueToNumber(context, arguments[0], exception);
     uint64_t callbackID = JSValueToNumber(context, arguments[1], exception);
-    auto result = adopt(JSValueToStringCopy(context, arguments[2], exception));
+    auto result = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
 
     bool resultIsErrorName = JSValueToBoolean(context, arguments[3]);
 
@@ -183,7 +177,7 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
 
     String script = StringImpl::createWithoutCopying(WebAutomationSessionProxyScriptSource, sizeof(WebAutomationSessionProxyScriptSource));
 
-    JSObjectRef scriptObjectFunction = const_cast<JSObjectRef>(JSEvaluateScript(context, toJSString(script).get(), nullptr, nullptr, 0, &exception));
+    JSObjectRef scriptObjectFunction = const_cast<JSObjectRef>(JSEvaluateScript(context, OpaqueJSString::create(script).get(), nullptr, nullptr, 0, &exception));
     ASSERT(JSValueIsObject(context, scriptObjectFunction));
 
     JSValueRef arguments[] = { sessionIdentifier, evaluateFunction, createUUIDFunction };
@@ -284,25 +278,25 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t pageID, uint
 
     String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
 
-    JSRetainPtr<JSStringRef> exceptionMessage;
+    String exceptionMessage;
     if (JSValueIsObject(context, exception)) {
-        JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), toJSString("name"_s).get(), nullptr);
-        auto exceptionName = adopt(JSValueToStringCopy(context, nameValue, nullptr));
-        if (exceptionName->string() == "NodeNotFound")
+        JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::create("name"_s).get(), nullptr);
+        auto exceptionName = adoptRef(JSValueToStringCopy(context, nameValue, nullptr))->string();
+        if (exceptionName == "NodeNotFound")
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
-        else if (exceptionName->string() == "InvalidElementState")
+        else if (exceptionName == "InvalidElementState")
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidElementState);
-        else if (exceptionName->string() == "InvalidParameter")
+        else if (exceptionName == "InvalidParameter")
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidParameter);
-        else if (exceptionName->string() == "InvalidSelector")
+        else if (exceptionName == "InvalidSelector")
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidSelector);
 
-        JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), toJSString("message"_s).get(), nullptr);
-        exceptionMessage = adopt(JSValueToStringCopy(context, messageValue, nullptr));
+        JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::create("message"_s).get(), nullptr);
+        exceptionMessage = adoptRef(JSValueToStringCopy(context, messageValue, nullptr))->string();
     } else
-        exceptionMessage = adopt(JSValueToStringCopy(context, exception, nullptr));
+        exceptionMessage = adoptRef(JSValueToStringCopy(context, exception, nullptr))->string();
 
-    didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage->string(), errorType);
+    didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
 }
 
 void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(uint64_t frameID, uint64_t callbackID, const String& result, const String& errorType)

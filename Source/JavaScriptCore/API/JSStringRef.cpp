@@ -125,9 +125,5 @@ bool JSStringIsEqual(JSStringRef a, JSStringRef b)
 
 bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b)
 {
-    JSStringRef bBuf = JSStringCreateWithUTF8CString(b);
-    bool result = JSStringIsEqual(a, bBuf);
-    JSStringRelease(bBuf);
-    
-    return result;
+    return JSStringIsEqual(a, adoptRef(JSStringCreateWithUTF8CString(b)).get());
 }

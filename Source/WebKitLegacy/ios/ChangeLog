@@ -1,3 +1,15 @@
+2018-09-17  Darin Adler  <darin@apple.com>
+
+        Use OpaqueJSString rather than JSRetainPtr inside WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=189652
+
+        Reviewed by Saam Barati.
+
+        * WebView/WebPDFViewIOS.mm:
+        (-[WebPDFView finishedLoadingWithDataSource:]): Use OpaqueJSString::create.
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder _evaluateJSForDocument:]): Ditto.
+
 2018-08-29  Olivia Barnett  <obarnett@apple.com>
 
         Implement the Web Share API

@@ -29,7 +29,6 @@
 
 #include "WKAPICast.h"
 #include <JavaScriptCore/InitializeThreading.h>
-#include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 
 using namespace WebKit;

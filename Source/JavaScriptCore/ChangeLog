@@ -1,3 +1,37 @@
+2018-09-17  Darin Adler  <darin@apple.com>
+
+        Use OpaqueJSString rather than JSRetainPtr inside WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=189652
+
+        Reviewed by Saam Barati.
+
+        * API/JSCallbackObjectFunctions.h: Removed an uneeded include of
+        JSStringRef.h.
+
+        * API/JSContext.mm:
+        (-[JSContext evaluateScript:withSourceURL:]): Use OpaqueJSString::create rather
+        than JSStringCreateWithCFString, simplifying the code and also obviating the
+        need for explicit JSStringRelease.
+        (-[JSContext setName:]): Ditto.
+
+        * API/JSStringRef.cpp:
+        (JSStringIsEqualToUTF8CString): Use adoptRef rather than explicit JSStringRelease.
+        It seems that additional optimization is possible, obviating the need to allocate
+        an OpaqueJSString, but that's true almost everywhere else in this patch, too.
+
+        * API/JSValue.mm:
+        (+[JSValue valueWithNewRegularExpressionFromPattern:flags:inContext:]): Use
+        OpaqueJSString::create and adoptRef as appropriate.
+        (+[JSValue valueWithNewErrorFromMessage:inContext:]): Ditto.
+        (+[JSValue valueWithNewSymbolFromDescription:inContext:]): Ditto.
+        (performPropertyOperation): Ditto.
+        (-[JSValue invokeMethod:withArguments:]): Ditto.
+        (valueToObjectWithoutCopy): Ditto.
+        (containerValueToObject): Ditto.
+        (valueToString): Ditto.
+        (objectToValueWithoutCopy): Ditto.
+        (objectToValue): Ditto.
+
 2018-09-08  Darin Adler  <darin@apple.com>
 
         Streamline JSRetainPtr, fix leaks of JSString and JSGlobalContext

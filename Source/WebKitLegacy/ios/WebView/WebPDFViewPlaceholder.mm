@@ -30,8 +30,6 @@
 #import "WebFrameInternal.h"
 #import "WebPDFViewIOS.h"
 #import <JavaScriptCore/JSContextRef.h>
-#import <JavaScriptCore/JSStringRef.h>
-#import <JavaScriptCore/JSStringRefCF.h>
 #import <WebCore/DataTransfer.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
@@ -309,18 +307,11 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
     NSArray *scripts = allScriptsInPDFDocument(pdfDocument);
 
-    NSUInteger scriptCount = [scripts count];
-    if (scriptCount) {
-
+    if ([scripts count]) {
         JSGlobalContextRef ctx = JSGlobalContextCreate(0);
         JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx, _dataSource);
-
-        for (NSUInteger i = 0; i < scriptCount; ++i) {
-            JSStringRef script = JSStringCreateWithCFString((CFStringRef)[scripts objectAtIndex:i]);
-            JSEvaluateScript(ctx, script, jsPDFDoc, 0, 0, 0);
-            JSStringRelease(script);
-        }
-
+        for (NSString *script in scripts)
+            JSEvaluateScript(ctx, OpaqueJSString::create(script).get(), jsPDFDoc, nullptr, 0, nullptr);
         JSGlobalContextRelease(ctx);
     }
 }

@@ -48,8 +48,6 @@
 #import "WebProcess.h"
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSObjectRef.h>
-#import <JavaScriptCore/JSStringRef.h>
-#import <JavaScriptCore/JSStringRefCF.h>
 #import <PDFKit/PDFKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
@@ -1096,19 +1094,13 @@ void PDFPlugin::runScriptsInPDFDocument()
     Vector<RetainPtr<CFStringRef>> scripts;
     getAllScriptsInPDFDocument([m_pdfDocument documentRef], scripts);
 
-    size_t scriptCount = scripts.size();
-    if (!scriptCount)
+    if (scripts.isEmpty())
         return;
 
     JSGlobalContextRef ctx = JSGlobalContextCreate(0);
     JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx);
-
-    for (size_t i = 0; i < scriptCount; ++i) {
-        JSStringRef script = JSStringCreateWithCFString(scripts[i].get());
-        JSEvaluateScript(ctx, script, jsPDFDoc, 0, 0, 0);
-        JSStringRelease(script);
-    }
-    
+    for (auto& script : scripts)
+        JSEvaluateScript(ctx, OpaqueJSString::create(script.get()).get(), jsPDFDoc, nullptr, 0, nullptr);
     JSGlobalContextRelease(ctx);
 }
 

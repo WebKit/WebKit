@@ -255,6 +255,7 @@ void QuickTimePluginReplacement::postEvent(const String& eventName)
 }
 
 #if PLATFORM(IOS)
+
 static JSValue *jsValueWithDataInContext(NSData *data, const String& mimeType, JSContext *context)
 {
     Vector<char> base64Data;
@@ -291,7 +292,6 @@ static JSValue *jsValueWithArrayInContext(NSArray *array, JSContext *context)
     return result;
 }
 
-
 static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSContext *context)
 {
     JSValueRef exception = 0;
@@ -308,9 +308,8 @@ static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSConte
         if (!value)
             continue;
 
-        JSStringRef name = JSStringCreateWithCFString((__bridge CFStringRef)key);
-        JSObjectSetProperty([context JSGlobalContextRef], resultObject, name, [value JSValueRef], 0, &exception);
-        JSStringRelease(name);
+        auto name = OpaqueJSString::create(key);
+        JSObjectSetProperty([context JSGlobalContextRef], resultObject, name.get(), [value JSValueRef], 0, &exception);
         if (exception)
             continue;
     }
@@ -350,12 +349,8 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItemType *item, JSC
         [dictionary setObject:item.locale forKey:@"locale"];
 
     if (CMTIME_IS_VALID(item.time)) {
-        CFDictionaryRef timeDict = PAL::CMTimeCopyAsDictionary(item.time, kCFAllocatorDefault);
-
-        if (timeDict) {
-            [dictionary setObject:(id)timeDict forKey:@"timestamp"];
-            CFRelease(timeDict);
-        }
+        if (auto timeDictionary = adoptCF(PAL::CMTimeCopyAsDictionary(item.time, kCFAllocatorDefault)))
+            [dictionary setObject:(__bridge NSDictionary *)timeDictionary.get() forKey:@"timestamp"];
     }
     
     if (item.value) {
@@ -365,13 +360,14 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItemType *item, JSC
             Vector<char> base64Data;
             base64Encode([value bytes], [value length], base64Data);
             String data64 = "data:" + String(mimeType) + ";base64," + base64Data;
-            [dictionary setObject:(id)data64.createCFString().get() forKey:@"value"];
+            [dictionary setObject:(__bridge NSString *)data64.createCFString().get() forKey:@"value"];
         } else
             [dictionary setObject:value forKey:@"value"];
     }
 
     return jsValueWithDictionaryInContext(dictionary, context);
 }
+
 #endif
 
 JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::ExecState& state) const
@@ -391,7 +387,7 @@ JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::ExecState& state) 
 
     JSContext *jsContext = frame->script().javaScriptContext();
     JSValue *metaDataValue = jsValueWithValueInContext(metaData, jsContext);
-    
+
     return toJS(&state, [metaDataValue JSValueRef]);
 #else
     UNUSED_PARAM(state);
