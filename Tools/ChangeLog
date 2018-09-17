@@ -1,5 +1,14 @@
 2018-09-17  Philippe Normand  <pnormand@igalia.com>
 
+        [JHBuild] Update to GStreamer 1.14.3
+        https://bugs.webkit.org/show_bug.cgi?id=189450
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * gstreamer/jhbuild.modules: Bump GStreamer modules from 1.14.1 to 1.14.3.
+
+2018-09-17  Philippe Normand  <pnormand@igalia.com>
+
         [JHBuild] Doesn't check sha256 sums
         https://bugs.webkit.org/show_bug.cgi?id=189646
 
