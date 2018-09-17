@@ -40,6 +40,10 @@ namespace WebCore {
 
 class HostWindow;
     
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+class ImageBuffer;
+#endif
+
 class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
 public:

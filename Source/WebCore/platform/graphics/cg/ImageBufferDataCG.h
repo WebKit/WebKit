@@ -33,10 +33,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
-#define USE_IOSURFACE_CANVAS_BACKING_STORE 1
-#endif
-
 typedef struct CGColorSpace *CGColorSpaceRef;
 typedef struct CGDataProvider *CGDataProviderRef;
 typedef uint32_t CGBitmapInfo;

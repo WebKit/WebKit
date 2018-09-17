@@ -1347,4 +1347,8 @@
 #define HAVE_SEC_KEY_PROXY 1
 #endif
 
+#if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
+#define USE_IOSURFACE_CANVAS_BACKING_STORE 1
+#endif
+
 #endif /* WTF_Platform_h */
