@@ -1,5 +1,17 @@
 2018-09-17  Youenn Fablet  <youenn@apple.com>
 
+        Build fix after https://trac.webkit.org/changeset/236070
+        https://bugs.webkit.org/show_bug.cgi?id=189635
+        <rdar://problem/44361849>
+
+        Unreviewed.
+        Fix for iOS internal builds.
+
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
+2018-09-17  Youenn Fablet  <youenn@apple.com>
+
         Enable VCP for iOS and reenable it for MacOS
         https://bugs.webkit.org/show_bug.cgi?id=189635
         <rdar://problem/43621029>
