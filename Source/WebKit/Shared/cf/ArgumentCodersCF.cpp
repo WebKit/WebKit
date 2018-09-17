@@ -427,13 +427,14 @@ void encode(Encoder& encoder, CFDictionaryRef dictionary)
 
     for (CFIndex i = 0; i < size; ++i) {
         ASSERT(keys[i]);
+        ASSERT(CFGetTypeID(keys[i]) == CFStringGetTypeID());
         ASSERT(values[i]);
 
         // Ignore values we don't recognize.
         if (typeFromCFTypeRef(values[i]) == Unknown)
             continue;
 
-        encode(encoder, keys[i]);
+        encode(encoder, static_cast<CFStringRef>(keys[i]));
         encode(encoder, values[i]);
     }
 }
@@ -455,7 +456,7 @@ bool decode(Decoder& decoder, RetainPtr<CFDictionaryRef>& result)
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     for (uint64_t i = 0; i < size; ++i) {
         // Try to decode the key name.
-        RetainPtr<CFTypeRef> key;
+        RetainPtr<CFStringRef> key;
         if (!decode(decoder, key))
             return false;
 

@@ -1,1 +1,0 @@
-This makes sure that variable fonts can be sent across IPC. The test passes if there is no crash. 
