@@ -44,7 +44,7 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch hash="sha:28d82b0d261544a9bf85b429399929e4986eb00efcf1ce16cc71d269a4c3186c" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.14.1">
+    <branch hash="sha256:28d82b0d261544a9bf85b429399929e4986eb00efcf1ce16cc71d269a4c3186c" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.14.1">
     </branch>
   </autotools>
 
@@ -57,7 +57,7 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch hash="sha:1026c7c3082d825d9b5d034c1a6dd8a4ebab60eb3738b0a0afde4ad2dc0b0db5" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.14.1" >
+    <branch hash="sha256:1026c7c3082d825d9b5d034c1a6dd8a4ebab60eb3738b0a0afde4ad2dc0b0db5" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.14.1" >
       <patch file="gst-plugins-base-0001-parsebin-Post-STREAM_COLLECTION-on-EVENT_STREAM_COLL.patch" strip="1"/> <!-- Merged as 89d0e9cc92a86aa0227ee87406737b6d31670aea -->
     </branch>
   </autotools>
@@ -68,7 +68,7 @@
       <dep package="libvpx"/>
     </dependencies>
 
-    <branch hash="sha:34ec062ddb766a32377532e039781f4a16fbc3e8b449e642605bacab26a99172" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.14.1">
+    <branch hash="sha256:34ec062ddb766a32377532e039781f4a16fbc3e8b449e642605bacab26a99172" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.14.1">
       <patch file="gst-plugins-good-0002-qtdemux-add-context-for-a-preferred-protection.patch" strip="1" /> <!-- Merged as ee4b45da24cb7465b416c230597f8efc7b2c45cb -->
       <patch file="gst-plugins-good-0003-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1" /> <!-- Merged as 844423ff99e281fc831303b92861ed43ce5c1518 -->
       <patch file="gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch" strip="1" /> <!-- Merged as 3e063703b3a51b8aaa7f75f36c4660c583a60e93 -->
@@ -83,18 +83,18 @@
       <dep package="gst-plugins-base"/>
       <dep package="openh264"/>
     </dependencies>
-    <branch hash="sha:2a77c6908032aafdf2cd2e5823fec948f16a25c2d1497a953828d762dc20d61a" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
+    <branch hash="sha256:2a77c6908032aafdf2cd2e5823fec948f16a25c2d1497a953828d762dc20d61a" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
   </autotools>
 
   <autotools id="gst-libav" autogen-sh="configure" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch hash="sha:eff80a02d2f2fb9f34b67e9a26e9954d3218c7aa18e863f2a47805fa7066029d" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
+    <branch hash="sha256:eff80a02d2f2fb9f34b67e9a26e9954d3218c7aa18e863f2a47805fa7066029d" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
   </autotools>
 
   <autotools id="gstreamer-vaapi" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc">
-    <branch hash="sha:585c3ddb0c39220de0a33e5d0ed6196a108b8407ec3538d7c64617713b4434e8" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
+    <branch hash="sha256:585c3ddb0c39220de0a33e5d0ed6196a108b8407ec3538d7c64617713b4434e8" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.14.1" />
     <dependencies>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
@@ -105,7 +105,7 @@
 
    <autotools id="libva" autogenargs="--enable-va-messaging=no">
      <branch module="intel/libva/releases/download/${version}/libva-${version}.tar.bz2" version="2.1.0"
-             hash="sha:f3fa953a11d3210c3a4ee79031abdbe0863d5ce13d9b3f93f315f1eec60a4b0f"
+             hash="sha256:f3fa953a11d3210c3a4ee79031abdbe0863d5ce13d9b3f93f315f1eec60a4b0f"
             checkoutdir="libva-${version}" repo="github-tarball"/>
    </autotools>
 

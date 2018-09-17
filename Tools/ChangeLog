@@ -1,3 +1,12 @@
+2018-09-17  Philippe Normand  <pnormand@igalia.com>
+
+        [JHBuild] Doesn't check sha256 sums
+        https://bugs.webkit.org/show_bug.cgi?id=189646
+
+        Reviewed by Michael Catanzaro.
+
+        * gstreamer/jhbuild.modules: Properly set the sha256: prefix on hashes.
+
 2018-09-17  Sihui Liu  <sihui_liu@apple.com>
 
         Move IndexedDB to Network Process
