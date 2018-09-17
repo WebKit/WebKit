@@ -88,7 +88,8 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-reloop:
+    ensureWritable(vm);
+
     Butterfly* butterfly = this->butterfly();
 
     switch (indexingMode()) {
@@ -228,11 +229,8 @@ reloop:
         return;
     }
 
-    default: {
-        RELEASE_ASSERT(isCopyOnWrite(indexingMode()));
-        convertFromCopyOnWrite(vm);
-        goto reloop;
-    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
