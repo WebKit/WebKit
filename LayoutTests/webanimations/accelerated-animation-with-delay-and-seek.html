@@ -4,29 +4,52 @@
 <style>
 
 div {
+    left: 0;
+    top: 0;
     position: absolute;
-    width: 100px;
     height: 100px;
+}
+
+.mask {
+    /* We add an extra pixel to account for rounding errors */
+    width: 51px;
+    background-color: red;
+}
+
+#target {
+    width: 100px;
     background-color: black;
+}
+
+#right {
+    left: 149px;
 }
 
 </style>
 </head>
 <body>
+
+<div id="target"></div>
+<div id="left" class="mask"></div>
+<div id="right" class="mask"></div>
+
 <script>
 
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-const animation = document.body.appendChild(document.createElement("div")).animate({
+const animation = document.getElementById("target").animate({
     transform: ["translateX(100px)", "none"]
 }, { duration: 10000, delay: 1000 });
 
 requestAnimationFrame(() => {
     animation.pause();
     animation.currentTime = 6000;
-    if (window.testRunner)
-        requestAnimationFrame(() => testRunner.notifyDone());
+    if (window.testRunner) {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => testRunner.notifyDone())
+        });
+    }
 });
 
 </script>
