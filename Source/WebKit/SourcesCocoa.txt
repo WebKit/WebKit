@@ -463,6 +463,8 @@ UIProcess/WebStorage/StorageManager.cpp
 
 UIProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm
 
+WebProcess/API/Cocoa/WKWebProcess.cpp
+
 WebProcess/ApplePay/WebPaymentCoordinator.cpp
 
 WebProcess/cocoa/PlaybackSessionManager.mm

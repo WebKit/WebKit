@@ -3427,6 +3427,8 @@
 		5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskPrivate.h; sourceTree = "<group>"; };
 		5C6CE6D01F59BC460007C6CB /* PageClientImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageClientImplCocoa.mm; sourceTree = "<group>"; };
 		5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClientImplCocoa.h; sourceTree = "<group>"; };
+		5C74300E21500492004BFA17 /* WKWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcess.h; sourceTree = "<group>"; };
+		5C74300F21500492004BFA17 /* WKWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebProcess.cpp; sourceTree = "<group>"; };
 		5C7706731D111D8B0012700F /* WebSocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketProvider.cpp; path = Network/WebSocketProvider.cpp; sourceTree = "<group>"; };
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
 		5C84CF901F96AC4E00B6705A /* NetworkSessionCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSessionCreationParameters.h; sourceTree = "<group>"; };
@@ -6814,6 +6816,23 @@
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
+		5C74300C21500434004BFA17 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				5C74300D21500442004BFA17 /* Cocoa */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		5C74300D21500442004BFA17 /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				5C74300F21500492004BFA17 /* WKWebProcess.cpp */,
+				5C74300E21500492004BFA17 /* WKWebProcess.h */,
+			);
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
 		6BE969BF1E54D452008B7483 /* ResourceLoadStatistics */ = {
 			isa = PBXGroup;
 			children = (
@@ -7061,6 +7080,7 @@
 		BC032D5C10F436D50058C15A /* WebProcess */ = {
 			isa = PBXGroup;
 			children = (
+				5C74300C21500434004BFA17 /* API */,
 				1AB1F7701D1B2F5D007C9BD1 /* ApplePay */,
 				1C0A19431C8FF1A800FE0EBB /* Automation */,
 				41D129D81F3D101400D15E47 /* Cache */,

@@ -79,8 +79,6 @@
 
 - (void)_registerURLSchemeAsCanDisplayOnlyIfCanRequest:(NSString *)scheme WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
-+ (int)_webContentProcessXPCMain WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateStorageProcess;
 - (void)_terminateNetworkProcess;

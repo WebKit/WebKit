@@ -40,7 +40,6 @@
 #import "WebCookieManagerProxy.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
-#import "XPCServiceEntryPoint.h"
 #import "_WKAutomationDelegate.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKDownloadDelegate.h"
@@ -180,11 +179,6 @@ static WKProcessPool *sharedProcessPool;
         url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
 
     return [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
-}
-
-+ (int)_webContentProcessXPCMain
-{
-    return WebKit::XPCServiceMain();
 }
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host

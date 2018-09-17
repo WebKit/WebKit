@@ -56,8 +56,6 @@
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
 const CFStringRef kLSPlugInBundleIdentifierKey = CFSTR("LSPlugInBundleIdentifierKey");
 
 // These values were chosen to match default NSURLCache sizes at the time of this writing.
@@ -217,11 +215,11 @@ static void carbonWindowHidden(WindowRef window)
 static bool openCFURLRef(CFURLRef url, int32_t& status, CFURLRef* launchedURL)
 {
     String launchedURLString;
-    if (!PluginProcess::singleton().openURL(URL(url).string(), status, launchedURLString))
+    if (!PluginProcess::singleton().openURL(WebCore::URL(url).string(), status, launchedURLString))
         return false;
 
     if (!launchedURLString.isNull() && launchedURL)
-        *launchedURL = URL(ParsedURLString, launchedURLString).createCFURL().leakRef();
+        *launchedURL = WebCore::URL(WebCore::URL(), launchedURLString).createCFURL().leakRef();
     return true;
 }
 
@@ -401,7 +399,7 @@ static NSRunningApplication *replacedNSWorkspace_launchApplicationAtURL_options_
         }
     }
 
-    if (PluginProcess::singleton().launchApplicationAtURL(URL(url).string(), arguments)) {
+    if (PluginProcess::singleton().launchApplicationAtURL(WebCore::URL(url).string(), arguments)) {
         if (error)
             *error = nil;
         return nil;
@@ -534,7 +532,7 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
     initializeCocoaOverrides();
 
     bool experimentalPlugInSandboxProfilesEnabled = parameters.extraInitializationData.get("experimental-sandbox-plugin") == "1";
-    RuntimeEnabledFeatures::sharedFeatures().setExperimentalPlugInSandboxProfilesEnabled(experimentalPlugInSandboxProfilesEnabled);
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setExperimentalPlugInSandboxProfilesEnabled(experimentalPlugInSandboxProfilesEnabled);
 
     // FIXME: It would be better to proxy SetCursor calls over to the UI process instead of
     // allowing plug-ins to change the mouse cursor at any time.

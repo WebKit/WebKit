@@ -1,3 +1,37 @@
+2018-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Expose XPCServiceMain in a WebProcess header rather than WKProcessPool
+        https://bugs.webkit.org/show_bug.cgi?id=189636
+
+        Reviewed by Dan Bernstein.
+
+        Fix a few build failures along the way.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::windowAndViewFramesChanged):
+        (WebKit::PluginControllerProxy::updateLayerHostingContext):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::replacedNSWorkspace_launchApplicationAtURL_options_configuration_error):
+        (WebKit::PluginProcess::platformInitializeProcess):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        (main):
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _webContentProcessXPCMain]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/API: Added.
+        * WebProcess/API/Cocoa: Added.
+        * WebProcess/API/Cocoa/WKWebProcess.cpp: Added.
+        (WKWebProcessMain):
+        * WebProcess/API/Cocoa/WKWebProcess.h: Added.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject convertScreenPointToRootView:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2018-09-17  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Respond with requested authentication scheme for authentication challenge.

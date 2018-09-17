@@ -117,7 +117,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     XPCServiceType::singleton().initialize(parameters);
 }
 
-int XPCServiceMain();
+int XPCServiceMain(int, const char**);
 
 void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage);
 

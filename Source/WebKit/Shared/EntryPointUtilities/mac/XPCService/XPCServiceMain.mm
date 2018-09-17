@@ -92,7 +92,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
-int XPCServiceMain()
+int XPCServiceMain(int, const char**)
 {
 #if defined(__i386__)
     // FIXME: This should only be done for the 32-bit plug-in XPC service so we rely on the fact that
@@ -160,7 +160,7 @@ int XPCServiceMain()
 
 } // namespace WebKit
 
-int main(int argc, char** argv)
+int main(int argc, const char** argv)
 {
-    return WebKit::XPCServiceMain();
+    return WebKit::XPCServiceMain(argc, argv);
 }
