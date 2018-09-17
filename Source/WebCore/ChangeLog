@@ -1,3 +1,24 @@
+2018-08-22  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Never return an uninitialized ImageGStreamer object.
+        https://bugs.webkit.org/show_bug.cgi?id=188305
+
+        Reviewed by Philippe Normand.
+
+        The single caller was already checking for a null return value, so
+        make that check actually do something. Also remove the null-check on
+        the return value of image(), which asserted that it would never return
+        null.
+
+        Test: fast/canvas/canvas-createPattern-video-loading.html
+
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        (WebCore::ImageGStreamer::createImage): Return null if m_image wasn't created.
+        (WebCore::ImageGStreamer::image): Return a reference.
+        (WebCore::ImageGStreamer::rect): Always assert that m_image is present.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint): Update for new signature.
+
 2018-08-22  Zalan Bujtas  <zalan@apple.com>
 
         Add changes missing from r234925.
