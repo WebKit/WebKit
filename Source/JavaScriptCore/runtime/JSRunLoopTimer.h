@@ -47,54 +47,91 @@ public:
     typedef void TimerNotificationType();
     using TimerNotificationCallback = RefPtr<WTF::SharedTask<TimerNotificationType>>;
 
-    JSRunLoopTimer(VM*);
+    class Manager {
 #if USE(CF)
-    static void timerDidFireCallback(CFRunLoopTimerRef, void*);
+        static void timerDidFireCallback(CFRunLoopTimerRef, void*);
 #else
-    void timerDidFireCallback();
+        void timerDidFireCallback();
 #endif
 
-    JS_EXPORT_PRIVATE virtual ~JSRunLoopTimer();
-    virtual void doWork() = 0;
+        void timerDidFire();
 
-    void scheduleTimer(Seconds intervalInSeconds);
+    public:
+        using EpochTime = Seconds;
+
+        static Manager& shared();
+        void registerVM(VM&);
+        void unregisterVM(VM&);
+        void scheduleTimer(JSRunLoopTimer&, Seconds nextFireTime);
+        void cancelTimer(JSRunLoopTimer&);
+
+        std::optional<Seconds> timeUntilFire(JSRunLoopTimer&);
+
+#if USE(CF)
+        void didChangeRunLoop(VM&, CFRunLoopRef newRunLoop);
+#endif
+
+    private:
+        Lock m_lock;
+
+        struct PerVMData {
+            PerVMData() = default;
+#if USE(CF)
+            PerVMData(Manager&) { }
+#else
+            PerVMData(Manager&);
+#endif
+            PerVMData(PerVMData&&) = default;
+            PerVMData& operator=(PerVMData&&) = default;
+
+            ~PerVMData();
+
+#if USE(CF)
+            void setRunLoop(Manager*, CFRunLoopRef);
+            RetainPtr<CFRunLoopTimerRef> timer;
+            RetainPtr<CFRunLoopRef> runLoop;
+            CFRunLoopTimerContext context;
+#else
+            RunLoop* runLoop;
+            std::unique_ptr<RunLoop::Timer<Manager>> timer;
+#endif
+            Vector<std::pair<Ref<JSRunLoopTimer>, EpochTime>> timers;
+        };
+
+        HashMap<Ref<JSLock>, PerVMData> m_mapping;
+    };
+
+    JSRunLoopTimer(VM*);
+    JS_EXPORT_PRIVATE virtual ~JSRunLoopTimer();
+    virtual void doWork(VM&) = 0;
+
+    void setTimeUntilFire(Seconds intervalInSeconds);
     void cancelTimer();
     bool isScheduled() const { return m_isScheduled; }
 
     // Note: The only thing the timer notification callback cannot do is
-    // call scheduleTimer(). This will cause a deadlock. It would not
+    // call setTimeUntilFire(). This will cause a deadlock. It would not
     // be hard to make this work, however, there are no clients that need
     // this behavior. We should implement it only if we find that we need it.
     JS_EXPORT_PRIVATE void addTimerSetNotification(TimerNotificationCallback);
     JS_EXPORT_PRIVATE void removeTimerSetNotification(TimerNotificationCallback);
 
-#if USE(CF)
-    JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
-#endif // USE(CF)
+    JS_EXPORT_PRIVATE std::optional<Seconds> timeUntilFire();
 
 protected:
-    VM* m_vm;
-
     static const Seconds s_decade;
+    Ref<JSLock> m_apiLock;
 
-    RefPtr<JSLock> m_apiLock;
-    bool m_isScheduled { false };
-#if USE(CF)
-    RetainPtr<CFRunLoopTimerRef> m_timer;
-    RetainPtr<CFRunLoopRef> m_runLoop;
-
-    CFRunLoopTimerContext m_context;
-
-    Lock m_shutdownMutex;
-#else
-    RunLoop::Timer<JSRunLoopTimer> m_timer;
-#endif
-
-    Lock m_timerCallbacksLock;
-    HashSet<TimerNotificationCallback> m_timerSetCallbacks;
-    
 private:
+    friend class Manager;
+
     void timerDidFire();
+
+    HashSet<TimerNotificationCallback> m_timerSetCallbacks;
+    Lock m_timerCallbacksLock;
+
+    Lock m_lock;
+    bool m_isScheduled { false };
 };
     
 } // namespace JSC

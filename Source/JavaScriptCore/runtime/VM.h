@@ -307,7 +307,6 @@ private:
     RefPtr<JSLock> m_apiLock;
 #if USE(CF)
     // These need to be initialized before heap below.
-    HashSet<JSRunLoopTimer*> m_runLoopTimers;
     RetainPtr<CFRunLoopRef> m_runLoop;
 #endif
 
@@ -887,8 +886,6 @@ public:
 
 #if USE(CF)
     CFRunLoopRef runLoop() const { return m_runLoop.get(); }
-    void registerRunLoopTimer(JSRunLoopTimer*);
-    void unregisterRunLoopTimer(JSRunLoopTimer*);
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
 #endif // USE(CF)
 

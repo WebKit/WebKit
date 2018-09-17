@@ -539,7 +539,7 @@ void Heap::reportAbandonedObjectGraph()
     // be more profitable. Since allocation is the trigger for collection, 
     // we hasten the next collection by pretending that we've allocated more memory. 
     if (m_fullActivityCallback) {
-        m_fullActivityCallback->didAllocate(
+        m_fullActivityCallback->didAllocate(*this,
             m_sizeAfterLastCollect - m_sizeAfterLastFullCollect + m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
     }
     m_bytesAbandonedSinceLastFullCollect += abandonedBytes;
@@ -2194,7 +2194,7 @@ void Heap::notifyIncrementalSweeper()
             m_indexOfNextLogicallyEmptyWeakBlockToSweep = 0;
     }
 
-    m_sweeper->startSweeping();
+    m_sweeper->startSweeping(*this);
 }
 
 void Heap::updateAllocationLimits()
@@ -2273,7 +2273,7 @@ void Heap::updateAllocationLimits()
             dataLog("Eden: maxEdenSize = ", m_maxEdenSize, "\n");
         if (m_fullActivityCallback) {
             ASSERT(currentHeapSize >= m_sizeAfterLastFullCollect);
-            m_fullActivityCallback->didAllocate(currentHeapSize - m_sizeAfterLastFullCollect);
+            m_fullActivityCallback->didAllocate(*this, currentHeapSize - m_sizeAfterLastFullCollect);
         }
     }
 
@@ -2354,7 +2354,7 @@ void Heap::setGarbageCollectionTimerEnabled(bool enable)
 void Heap::didAllocate(size_t bytes)
 {
     if (m_edenActivityCallback)
-        m_edenActivityCallback->didAllocate(m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
+        m_edenActivityCallback->didAllocate(*this, m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
     m_bytesAllocatedThisCycle += bytes;
     performIncrement(bytes);
 }
