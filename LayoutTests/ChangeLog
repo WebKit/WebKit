@@ -1,3 +1,12 @@
+2018-09-17  Dawei Fenton  <realdawei@apple.com>
+
+        Fixed typo in TestExpectations file.
+        https://bugs.webkit.org/show_bug.cgi?id=188020.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-09-17  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Respond with requested authentication scheme for authentication challenge.
