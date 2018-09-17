@@ -1,5 +1,13 @@
 2018-09-17  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Mark crashing animations test.
+
+        animations/play-state-start-paused.html crashing.
+        Unreviewed gardening.
+        * platform/wpe/TestExpectations:
+
+2018-09-17  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Unmark now passing tests
 
         Unreviewed gardening.
