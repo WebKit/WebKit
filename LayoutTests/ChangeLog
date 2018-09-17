@@ -1,5 +1,15 @@
 2018-09-17  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK][WPE] Update baseline for fast/dom/navigator-detached-no-crash
+
+        In GTK it's just a matter of updating the baseline. In WPE
+        there's some JS output that just needs to be ignored.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wpe/TestExpectations:
+
+2018-09-17  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Mark crashing animations test.
 
         animations/play-state-start-paused.html crashing.

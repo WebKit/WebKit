@@ -1141,6 +1141,7 @@ Bug(WPE) fast/dom/HTMLDocument/hasFocus.html [ Failure ]
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 Bug(WPE) fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Failure ]
 Bug(WPE) fast/dom/Range/getClientRects.html [ Failure ]
+fast/dom/navigator-detached-no-crash.html [ DumpJSConsoleLogInStdErr ]
 
 Bug(WPE) storage/indexeddb/modern/date-basic-private.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/date-basic.html [ Failure ]
