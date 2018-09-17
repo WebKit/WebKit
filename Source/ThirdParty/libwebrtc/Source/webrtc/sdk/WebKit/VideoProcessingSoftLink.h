@@ -33,7 +33,9 @@
 // Macro taken from WTF/wtf/Platform.h
 #if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
 
-#if (defined(TARGET_OS_IPHONE)  && TARGET_OS_IPHONE)
+#if (defined(TARGET_IPHONE_SIMULATOR)  && TARGET_IPHONE_SIMULATOR)
+#define ENABLE_VCP_ENCODER 0
+#elif (defined(TARGET_OS_IPHONE)  && TARGET_OS_IPHONE)
 #define ENABLE_VCP_ENCODER (__IPHONE_OS_VERSION_MAX_ALLOWED >= 120000)
 #elif (defined(TARGET_OS_MAC) && TARGET_OS_MAC)
 #define ENABLE_VCP_ENCODER (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101304)
