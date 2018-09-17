@@ -1,3 +1,16 @@
+2018-08-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Shrink size of XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=188944
+
+        Reviewed by Saam Barati.
+
+        StringBuilder is included in XMLHttpRequest. We reduce the size of StringBuilder too
+        by reordering members.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::StringBuilder):
+
 2018-08-24  Tim Horton  <timothy_horton@apple.com>
 
         Improve unified source generator script logging and error messages
