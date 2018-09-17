@@ -1,3 +1,28 @@
+2018-09-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for dumping the GraphicsLayer tree via notifyutil
+        https://bugs.webkit.org/show_bug.cgi?id=189639
+
+        Reviewed by Zalan Bujtas.
+
+        Make "notifyutil -p com.apple.WebKit.showGraphicsLayerTree" work. It dumps the GraphicsLayer tree
+        for each top-level document (GraphicsLayers are connected across frame boundaries, so this prints
+        the entire tree for each main frame).
+        
+        It uses WTFLogAlways rather than fprintf() so output shows on all platforms (other tree dumps should
+        be converted in the same way).
+
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+        * platform/graphics/GraphicsLayer.cpp:
+        (showGraphicsLayerTree):
+        * rendering/RenderLayerCompositor.cpp:
+        (showGraphicsLayerTreeForCompositor):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::printGraphicsLayerTreeForLiveDocuments):
+        * rendering/RenderObject.h:
+
 2018-09-17  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Add schema version and enable auto vacuum for cookie database.

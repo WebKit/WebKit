@@ -580,3 +580,8 @@ WTF::TextStream& operator<<(WTF::TextStream&, CompositingUpdateType);
 WTF::TextStream& operator<<(WTF::TextStream&, CompositingPolicy);
 
 } // namespace WebCore
+
+#if ENABLE(TREE_DEBUGGING)
+// Outside the WebCore namespace for ease of invocation from the debugger.
+void showGraphicsLayerTreeForCompositor(WebCore::RenderLayerCompositor&);
+#endif

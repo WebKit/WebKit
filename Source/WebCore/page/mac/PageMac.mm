@@ -58,6 +58,7 @@ void Page::platformInitialize()
 #if ENABLE(TREE_DEBUGGING)
         PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree", printGraphicsLayerTreeForLiveDocuments);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree", Layout::printLayoutTreeForLiveDocuments);
 #endif

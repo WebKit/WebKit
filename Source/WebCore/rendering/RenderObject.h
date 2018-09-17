@@ -1103,6 +1103,7 @@ inline bool RenderObject::needsSimplifiedNormalFlowLayoutOnly() const
 #if ENABLE(TREE_DEBUGGING)
 void printRenderTreeForLiveDocuments();
 void printLayerTreeForLiveDocuments();
+void printGraphicsLayerTreeForLiveDocuments();
 #endif
 
 } // namespace WebCore

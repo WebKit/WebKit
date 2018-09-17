@@ -4146,3 +4146,10 @@ TextStream& operator<<(TextStream& ts, CompositingPolicy compositingPolicy)
 }
 
 } // namespace WebCore
+
+#if ENABLE(TREE_DEBUGGING)
+void showGraphicsLayerTreeForCompositor(WebCore::RenderLayerCompositor& compositor)
+{
+    showGraphicsLayerTree(compositor.rootGraphicsLayer());
+}
+#endif

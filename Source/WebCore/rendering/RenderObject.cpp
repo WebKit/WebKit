@@ -52,6 +52,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderRuby.h"
 #include "RenderSVGBlock.h"
@@ -1934,6 +1935,18 @@ void printLayerTreeForLiveDocuments()
             fprintf(stderr, "----------------------main frame--------------------------\n");
         fprintf(stderr, "%s", document->url().string().utf8().data());
         showLayerTree(document->renderView());
+    }
+}
+
+void printGraphicsLayerTreeForLiveDocuments()
+{
+    for (const auto* document : Document::allDocuments()) {
+        if (!document->renderView())
+            continue;
+        if (document->frame() && document->frame()->isMainFrame()) {
+            WTFLogAlways("Graphics layer tree for root document %p %s", document, document->url().string().utf8().data());
+            showGraphicsLayerTreeForCompositor(document->renderView()->compositor());
+        }
     }
 }
 

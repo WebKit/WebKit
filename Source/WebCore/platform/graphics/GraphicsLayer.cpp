@@ -980,6 +980,6 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
         return;
 
     String output = layer->layerTreeAsText(WebCore::LayerTreeAsTextShowAll);
-    fprintf(stderr, "%s\n", output.utf8().data());
+    WTFLogAlways("%s\n", output.utf8().data());
 }
 #endif
