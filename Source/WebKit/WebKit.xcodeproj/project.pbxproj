@@ -3024,6 +3024,7 @@
 		414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProcessProxy.h; sourceTree = "<group>"; };
 		414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProcessProxy.cpp; sourceTree = "<group>"; };
 		4151E5C31FBB90A900E47E2D /* FormDataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataReference.h; sourceTree = "<group>"; };
+		4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-webcontent-resources-to-private-headers.sh"; sourceTree = "<group>"; };
 		4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.google.o1dbrowserplugin.sb; sourceTree = "<group>"; };
 		4188C154211377700012ABCD /* process-network-sandbox-entitlements.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "process-network-sandbox-entitlements.sh"; sourceTree = "<group>"; };
 		4188C156211377E80012ABCD /* process-webcontent-sandbox-entitlements.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "process-webcontent-sandbox-entitlements.sh"; sourceTree = "<group>"; };
@@ -8496,6 +8497,7 @@
 			children = (
 				7CDE73A21F9DA59700390312 /* PreferencesTemplates */,
 				0FC0856E187CE0A900780D86 /* __init__.py */,
+				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				C0CE73371247F70E00BC0EC4 /* generate-messages-header.py */,
 				7CDE73A11F9DA41400390312 /* GeneratePreferences.rb */,
@@ -9987,6 +9989,7 @@
 				BCDC308D15FDB99A006B6695 /* Frameworks */,
 				BC3DE46415A91763008D26FC /* Resources */,
 				7AFCBD5420B8911D00F55C9C /* Process WebContent entitlements */,
+				4157853721279CC600DD3800 /* Copy Custom WebContent Resources to Framework Private Headers */,
 			);
 			buildRules = (
 			);
@@ -10354,6 +10357,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${WK_PLATFORM_NAME}\" == \"macosx\" || \"${WK_PLATFORM_NAME}\" == \"iosmac\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval SANDBOX_PROFILE=\\${SCRIPT_INPUT_FILE_${i}}\n        ditto \"${SANDBOX_PROFILE}\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${SANDBOX_PROFILE##*/}\"\n    done\nfi\n";
+		};
+		4157853721279CC600DD3800 /* Copy Custom WebContent Resources to Framework Private Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			inputPaths = (
+				"$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).xcent",
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/Resources/WebContentProcess.xib",
+			);
+			name = "Copy Custom WebContent Resources to Framework Private Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/copy-webcontent-resources-to-private-headers.sh\n";
 		};
 		41D0FC7F20E43B0B00076AE8 /* Remove stale entitlements file */ = {
 			isa = PBXShellScriptBuildPhase;
