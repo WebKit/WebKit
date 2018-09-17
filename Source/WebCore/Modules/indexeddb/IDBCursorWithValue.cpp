@@ -32,23 +32,23 @@
 
 namespace WebCore {
 
-Ref<IDBCursorWithValue> IDBCursorWithValue::create(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
+Ref<IDBCursorWithValue> IDBCursorWithValue::create(IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {
-    return adoptRef(*new IDBCursorWithValue(transaction, objectStore, info));
+    return adoptRef(*new IDBCursorWithValue(objectStore, info));
 }
 
-Ref<IDBCursorWithValue> IDBCursorWithValue::create(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
+Ref<IDBCursorWithValue> IDBCursorWithValue::create(IDBIndex& index, const IDBCursorInfo& info)
 {
-    return adoptRef(*new IDBCursorWithValue(transaction, index, info));
+    return adoptRef(*new IDBCursorWithValue(index, info));
 }
 
-IDBCursorWithValue::IDBCursorWithValue(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
-    : IDBCursor(transaction, objectStore, info)
+IDBCursorWithValue::IDBCursorWithValue(IDBObjectStore& objectStore, const IDBCursorInfo& info)
+    : IDBCursor(objectStore, info)
 {
 }
 
-IDBCursorWithValue::IDBCursorWithValue(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
-    : IDBCursor(transaction, index, info)
+IDBCursorWithValue::IDBCursorWithValue(IDBIndex& index, const IDBCursorInfo& info)
+    : IDBCursor(index, info)
 {
 }
 

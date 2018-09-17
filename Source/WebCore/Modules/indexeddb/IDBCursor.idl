@@ -24,7 +24,6 @@
  */
 
 [
-    ActiveDOMObject,
     Conditional=INDEXED_DATABASE,
     CustomToJSObject,
     JSCustomMarkFunction,

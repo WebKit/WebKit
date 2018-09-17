@@ -45,34 +45,28 @@
 namespace WebCore {
 using namespace JSC;
 
-Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
+Ref<IDBCursor> IDBCursor::create(IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {
-    return adoptRef(*new IDBCursor(transaction, objectStore, info));
+    return adoptRef(*new IDBCursor(objectStore, info));
 }
 
-Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
+Ref<IDBCursor> IDBCursor::create(IDBIndex& index, const IDBCursorInfo& info)
 {
-    return adoptRef(*new IDBCursor(transaction, index, info));
+    return adoptRef(*new IDBCursor(index, info));
 }
 
-IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
-    : ActiveDOMObject(transaction.scriptExecutionContext())
-    , m_info(info)
+IDBCursor::IDBCursor(IDBObjectStore& objectStore, const IDBCursorInfo& info)
+    : m_info(info)
     , m_source(&objectStore)
 {
     ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
-
-    suspendIfNeeded();
 }
 
-IDBCursor::IDBCursor(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
-    : ActiveDOMObject(transaction.scriptExecutionContext())
-    , m_info(info)
+IDBCursor::IDBCursor(IDBIndex& index, const IDBCursorInfo& info)
+    : m_info(info)
     , m_source(&index)
 {
     ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
-
-    suspendIfNeeded();
 }
 
 IDBCursor::~IDBCursor()
@@ -140,7 +134,6 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(ExecState& state, JSValue value)
 
     auto request = putResult.releaseReturnValue();
     request->setSource(*this);
-    ++m_outstandingRequestCount;
 
     return WTFMove(request);
 }
@@ -269,8 +262,6 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 {
     ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
-    ++m_outstandingRequestCount;
-
     m_request->willIterateCursor(*this);
     transaction().iterateCursor(*this, { key, { }, count });
 }
@@ -278,8 +269,6 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, const IDBKeyData& primaryKey)
 {
     ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
-
-    ++m_outstandingRequestCount;
 
     m_request->willIterateCursor(*this);
     transaction().iterateCursor(*this, { key, primaryKey, 0 });
@@ -311,7 +300,6 @@ ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction(ExecState& state
 
     auto request = result.releaseReturnValue();
     request->setSource(*this);
-    ++m_outstandingRequestCount;
 
     return WTFMove(request);
 }
@@ -355,27 +343,6 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
         m_currentValue = { };
 
     m_gotValue = true;
-}
-
-const char* IDBCursor::activeDOMObjectName() const
-{
-    return "IDBCursor";
-}
-
-bool IDBCursor::canSuspendForDocumentSuspension() const
-{
-    return false;
-}
-
-bool IDBCursor::hasPendingActivity() const
-{
-    return m_outstandingRequestCount;
-}
-
-void IDBCursor::decrementOutstandingRequestCount()
-{
-    ASSERT(m_outstandingRequestCount);
-    --m_outstandingRequestCount;
 }
 
 } // namespace WebCore
