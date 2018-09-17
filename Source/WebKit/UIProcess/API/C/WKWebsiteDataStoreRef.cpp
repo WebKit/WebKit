@@ -464,16 +464,19 @@ void WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(WKWebsiteDataSto
 
 void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsResetToConsistentStateFunction completionHandler)
 {
-    auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
-    if (!store)
-        return;
-
     auto callbackAggregator = CallbackAggregator::create([context, completionHandler]() {
         completionHandler(context);
     });
-    
-    store->resetParametersToDefaultValues([callbackAggregator = callbackAggregator.copyRef()] { });
-    store->scheduleClearInMemory([callbackAggregator = callbackAggregator.copyRef()] { });
+
+    auto& store = WebKit::toImpl(dataStoreRef)->websiteDataStore();
+    store.clearResourceLoadStatisticsInWebProcesses([callbackAggregator = callbackAggregator.copyRef()] { });
+
+    auto* statisticsStore = store.resourceLoadStatistics();
+    if (!statisticsStore)
+        return;
+
+    statisticsStore->resetParametersToDefaultValues([callbackAggregator = callbackAggregator.copyRef()] { });
+    statisticsStore->scheduleClearInMemory([callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
 void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback)
