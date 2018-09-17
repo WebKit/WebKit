@@ -1,3 +1,26 @@
+2018-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Add more ResourceLoading logging, particularly in MemoryCache code
+        https://bugs.webkit.org/show_bug.cgi?id=189651
+
+        Reviewed by Tim Horton.
+
+        Adding more logging to the ResourceLoading log channel, which I found useful
+        when trying to understand cached SVGImage lifetimes (bug 189437).
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::deleteIfPossible):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResources):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::add):
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        (WebCore::MemoryCache::pruneDeadResources):
+        (WebCore::MemoryCache::pruneDeadResourcesToSize):
+        (WebCore::MemoryCache::remove):
+        (WebCore::MemoryCache::dumpLRULists const):
+
 2018-09-17  Jer Noble  <jer.noble@apple.com>
 
         Enable USE_MEDIAREMOTE on iOS
