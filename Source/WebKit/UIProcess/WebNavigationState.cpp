@@ -30,9 +30,8 @@
 #include "WebPageProxy.h"
 #include <WebCore/ResourceRequest.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebNavigationState::WebNavigationState()
 {

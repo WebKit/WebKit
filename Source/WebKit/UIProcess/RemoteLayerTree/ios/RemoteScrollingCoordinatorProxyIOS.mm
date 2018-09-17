@@ -44,9 +44,8 @@
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static LayerRepresentation layerRepresentationFromLayerOrView(LayerOrView *layerOrView)
 {

@@ -56,9 +56,9 @@
 
 @end
 
+namespace WebKit {
 using namespace WebCore;
 
-namespace WebKit {
     
 void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {

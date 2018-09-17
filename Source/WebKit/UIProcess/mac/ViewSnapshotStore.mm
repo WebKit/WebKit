@@ -35,8 +35,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #endif
 
-using namespace WebCore;
-
 #if PLATFORM(IOS)
 static const size_t maximumSnapshotCacheSize = 50 * (1024 * 1024);
 #else
@@ -44,6 +42,7 @@ static const size_t maximumSnapshotCacheSize = 400 * (1024 * 1024);
 #endif
 
 namespace WebKit {
+using namespace WebCore;
 
 ViewSnapshotStore::ViewSnapshotStore()
 {

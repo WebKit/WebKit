@@ -44,8 +44,6 @@
 
 #pragma clang diagnostic pop
 
-using namespace WebCore;
-
 static const float smartMagnificationPanScrollThresholdZoomedOut = 60;
 static const float smartMagnificationPanScrollThresholdIPhone = 100;
 static const float smartMagnificationPanScrollThresholdIPad = 150;
@@ -55,6 +53,7 @@ static const double smartMagnificationMaximumScale = 1.6;
 static const double smartMagnificationMinimumScale = 0;
 
 namespace WebKit {
+using namespace WebCore;
 
 SmartMagnificationController::SmartMagnificationController(WKContentView *contentView)
     : m_webPageProxy(*contentView.page)

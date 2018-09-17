@@ -48,17 +48,15 @@
 #import <pal/system/SleepDisabler.h>
 #import <wtf/BlockObjCExceptions.h>
 
-using namespace WebCore;
-
 static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
 namespace WebKit {
 
-class WKFullScreenWindowControllerVideoFullscreenModelClient : VideoFullscreenModelClient {
+class WKFullScreenWindowControllerVideoFullscreenModelClient : WebCore::VideoFullscreenModelClient {
 public:
     void setParent(WKFullScreenWindowController *parent) { m_parent = parent; }
 
-    void setInterface(VideoFullscreenInterfaceMac* interface)
+    void setInterface(WebCore::VideoFullscreenInterfaceMac* interface)
     {
         if (m_interface == interface)
             return;
@@ -70,7 +68,7 @@ public:
             m_interface->videoFullscreenModel()->addClient(*this);
     }
 
-    VideoFullscreenInterfaceMac* interface() const { return m_interface.get(); }
+    WebCore::VideoFullscreenInterfaceMac* interface() const { return m_interface.get(); }
 
     void didEnterPictureInPicture() final
     {
@@ -79,12 +77,10 @@ public:
 
 private:
     WKFullScreenWindowController *m_parent { nullptr };
-    RefPtr<VideoFullscreenInterfaceMac> m_interface;
+    RefPtr<WebCore::VideoFullscreenInterfaceMac> m_interface;
 };
 
 }
-
-using namespace WebKit;
 
 enum FullScreenState : NSInteger {
     NotInFullScreen,
@@ -101,8 +97,8 @@ enum FullScreenState : NSInteger {
 @end
 
 @interface WKFullScreenWindowController (Private) <NSAnimationDelegate>
-- (void)_replaceView:(NSView*)view with:(NSView*)otherView;
-- (WebFullScreenManagerProxy*)_manager;
+- (void)_replaceView:(NSView *)view with:(NSView *)otherView;
+- (WebKit::WebFullScreenManagerProxy *)_manager;
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
@@ -122,7 +118,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
 
 #pragma mark -
 #pragma mark Initialization
-- (id)initWithWindow:(NSWindow *)window webView:(NSView *)webView page:(WebPageProxy&)page
+- (id)initWithWindow:(NSWindow *)window webView:(NSView *)webView page:(WebKit::WebPageProxy&)page
 {
     self = [super initWithWindow:window];
     if (!self)
@@ -150,7 +146,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     _webView = webView;
     _page = &page;
 
-    _videoFullscreenClient = std::make_unique<WKFullScreenWindowControllerVideoFullscreenModelClient>();
+    _videoFullscreenClient = std::make_unique<WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient>();
     _videoFullscreenClient->setParent(self);
 
     [self videoControlsManagerDidChange];
@@ -301,7 +297,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     _webView.frame = NSInsetRect(contentView.bounds, 0, -_page->topContentInset());
 
     _savedScale = _page->pageScaleFactor();
-    _page->scalePage(1, IntPoint());
+    _page->scalePage(1, WebCore::IntPoint());
     [self _manager]->setAnimatingFullScreen(true);
     [self _manager]->willEnterFullScreen();
 }
@@ -366,7 +362,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
         makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
         [[_webView window] makeKeyAndOrderFront:self];
 
-        _page->scalePage(_savedScale, IntPoint());
+        _page->scalePage(_savedScale, WebCore::IntPoint());
         [self _manager]->restoreScrollPosition();
         _page->setTopContentInset(_savedTopContentInset);
         [self _manager]->didExitFullScreen();
@@ -494,7 +490,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
     [self _manager]->didExitFullScreen();
     [self _manager]->setAnimatingFullScreen(false);
-    _page->scalePage(_savedScale, IntPoint());
+    _page->scalePage(_savedScale, WebCore::IntPoint());
     [self _manager]->restoreScrollPosition();
     _page->setTopContentInset(_savedTopContentInset);
 
@@ -504,7 +500,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
         // clears _repaintCallback.
         ASSERT(!_repaintCallback);
     }
-    _repaintCallback = VoidCallback::create([self](WebKit::CallbackBase::Error) {
+    _repaintCallback = WebKit::VoidCallback::create([self](WebKit::CallbackBase::Error) {
         [self completeFinishExitFullScreenAnimationAfterRepaint];
     });
     _page->forceRepaint(_repaintCallback.copyRef());
@@ -589,7 +585,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     [self finishedEnterFullScreenAnimation:NO];
 }
 
-- (void)windowDidEnterFullScreen:(NSNotification*)notification
+- (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
     [self finishedEnterFullScreenAnimation:YES];
 }
@@ -599,7 +595,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     [self finishedExitFullScreenAnimation:NO];
 }
 
-- (void)windowDidExitFullScreen:(NSNotification*)notification
+- (void)windowDidExitFullScreen:(NSNotification *)notification
 {
     [self finishedExitFullScreenAnimation:YES];
 }
@@ -612,14 +608,14 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 #pragma mark -
 #pragma mark Internal Interface
 
-- (WebFullScreenManagerProxy*)_manager
+- (WebKit::WebFullScreenManagerProxy*)_manager
 {
     if (!_page)
         return nullptr;
     return _page->fullScreenManager();
 }
 
-- (void)_replaceView:(NSView*)view with:(NSView*)otherView
+- (void)_replaceView:(NSView *)view with:(NSView *)otherView
 {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -639,10 +635,10 @@ static CAMediaTimingFunction *timingFunctionForDuration(CFTimeInterval duration)
 }
 
 enum AnimationDirection { AnimateIn, AnimateOut };
-static CAAnimation *zoomAnimation(const FloatRect& initialFrame, const FloatRect& finalFrame, const FloatRect& screenFrame, CFTimeInterval duration, AnimationDirection direction)
+static CAAnimation *zoomAnimation(const WebCore::FloatRect& initialFrame, const WebCore::FloatRect& finalFrame, const WebCore::FloatRect& screenFrame, CFTimeInterval duration, AnimationDirection direction)
 {
     CABasicAnimation *scaleAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
-    FloatRect scaleRect = smallestRectWithAspectRatioAroundRect(finalFrame.size().aspectRatio(), initialFrame);
+    WebCore::FloatRect scaleRect = smallestRectWithAspectRatioAroundRect(finalFrame.size().aspectRatio(), initialFrame);
     CGAffineTransform resetOriginTransform = CGAffineTransformMakeTranslation(screenFrame.x() - finalFrame.x(), screenFrame.y() - finalFrame.y());
     CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scaleRect.width() / finalFrame.width(), scaleRect.height() / finalFrame.height());
     CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(scaleRect.x() - screenFrame.x(), scaleRect.y() - screenFrame.y());
@@ -661,7 +657,7 @@ static CAAnimation *zoomAnimation(const FloatRect& initialFrame, const FloatRect
     return scaleAnimation;
 }
 
-static CALayer *createMask(const FloatRect& bounds)
+static CALayer *createMask(const WebCore::FloatRect& bounds)
 {
     CALayer *maskLayer = [CALayer layer];
     maskLayer.anchorPoint = CGPointZero;
@@ -671,18 +667,18 @@ static CALayer *createMask(const FloatRect& bounds)
     return maskLayer;
 }
 
-static CAAnimation *maskAnimation(const FloatRect& initialFrame, const FloatRect& finalFrame, const FloatRect& screenFrame, CFTimeInterval duration, AnimationDirection direction)
+static CAAnimation *maskAnimation(const WebCore::FloatRect& initialFrame, const WebCore::FloatRect& finalFrame, const WebCore::FloatRect& screenFrame, CFTimeInterval duration, AnimationDirection direction)
 {
     CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"bounds"];
-    FloatRect boundsRect = largestRectWithAspectRatioInsideRect(initialFrame.size().aspectRatio(), finalFrame);
-    NSValue *boundsValue = [NSValue valueWithRect:FloatRect(FloatPoint(), boundsRect.size())];
+    WebCore::FloatRect boundsRect = largestRectWithAspectRatioInsideRect(initialFrame.size().aspectRatio(), finalFrame);
+    NSValue *boundsValue = [NSValue valueWithRect:WebCore::FloatRect(WebCore::FloatPoint(), boundsRect.size())];
     if (direction == AnimateIn)
         boundsAnimation.fromValue = boundsValue;
     else
         boundsAnimation.toValue = boundsValue;
 
     CABasicAnimation *positionAnimation = [CABasicAnimation animationWithKeyPath:@"position"];
-    NSValue *positionValue = [NSValue valueWithPoint:FloatPoint(boundsRect.location() - screenFrame.location())];
+    NSValue *positionValue = [NSValue valueWithPoint:WebCore::FloatPoint(boundsRect.location() - screenFrame.location())];
     if (direction == AnimateIn)
         positionAnimation.fromValue = positionValue;
     else

@@ -39,7 +39,6 @@
 #include <WebCore/RegistrationDatabase.h>
 
 namespace WebKit {
-
 using namespace WebCore;
 
 Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool& pool, const SecurityOriginData& securityOrigin, WebsiteDataStore& store)

@@ -31,18 +31,16 @@
 #import "WebPageProxy.h"
 #import "WebViewImpl.h"
 
-using namespace WebCore;
-
-static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextType alternativeTextType)
+static inline NSCorrectionIndicatorType correctionIndicatorType(WebCore::AlternativeTextType alternativeTextType)
 {
     switch (alternativeTextType) {
-    case AlternativeTextTypeCorrection:
+    case WebCore::AlternativeTextTypeCorrection:
         return NSCorrectionIndicatorTypeDefault;
-    case AlternativeTextTypeReversion:
+    case WebCore::AlternativeTextTypeReversion:
         return NSCorrectionIndicatorTypeReversion;
-    case AlternativeTextTypeSpellingSuggestions:
+    case WebCore::AlternativeTextTypeSpellingSuggestions:
         return NSCorrectionIndicatorTypeGuesses;
-    case AlternativeTextTypeDictationAlternatives:
+    case WebCore::AlternativeTextTypeDictationAlternatives:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -51,6 +49,7 @@ static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextT
 }
 
 namespace WebKit {
+using namespace WebCore;
 
 CorrectionPanel::CorrectionPanel()
     : m_wasDismissedExternally(false)

@@ -49,9 +49,6 @@
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
 SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
-using namespace WebCore;
-using namespace WebKit;
-
 @interface WKImmediateActionController () <QLPreviewMenuItemDelegate>
 @end
 
@@ -63,7 +60,7 @@ using namespace WebKit;
 
 @implementation WKImmediateActionController
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)viewImpl recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)viewImpl recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
 {
     self = [super init];
 
@@ -85,7 +82,7 @@ using namespace WebKit;
     _page = nullptr;
     _view = nil;
     _viewImpl = nullptr;
-    _hitTestResultData = WebHitTestResultData();
+    _hitTestResultData = WebKit::WebHitTestResultData();
     _contentPreventsDefault = NO;
     
     id animationController = [_immediateActionRecognizer animationController];
@@ -125,8 +122,8 @@ using namespace WebKit;
             [getDDActionsManagerClass() didUseActions];
     }
 
-    _state = ImmediateActionState::None;
-    _hitTestResultData = WebHitTestResultData();
+    _state = WebKit::ImmediateActionState::None;
+    _hitTestResultData = WebKit::WebHitTestResultData();
     _contentPreventsDefault = NO;
     _type = kWKImmediateActionNone;
     _currentActionContext = nil;
@@ -135,15 +132,15 @@ using namespace WebKit;
     _hasActiveImmediateAction = NO;
 }
 
-- (void)didPerformImmediateActionHitTest:(const WebHitTestResultData&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
+- (void)didPerformImmediateActionHitTest:(const WebKit::WebHitTestResultData&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
 {
     // If we've already given up on this gesture (either because it was canceled or the
     // willBeginAnimation timeout expired), we shouldn't build a new animationController for it.
-    if (_state != ImmediateActionState::Pending)
+    if (_state != WebKit::ImmediateActionState::Pending)
         return;
 
     // FIXME: This needs to use the WebKit2 callback mechanism to avoid out-of-order replies.
-    _state = ImmediateActionState::Ready;
+    _state = WebKit::ImmediateActionState::Ready;
     _hitTestResultData = hitTestResult;
     _contentPreventsDefault = contentPreventsDefault;
     _userData = userData;
@@ -176,7 +173,7 @@ using namespace WebKit;
 
     _page->setMaintainsInactiveSelection(true);
 
-    _state = ImmediateActionState::Pending;
+    _state = WebKit::ImmediateActionState::Pending;
     immediateActionRecognizer.animationController = nil;
 
     _page->performImmediateActionHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
@@ -187,22 +184,22 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (_state == ImmediateActionState::None)
+    if (_state == WebKit::ImmediateActionState::None)
         return;
 
     _hasActiveImmediateAction = YES;
 
     // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
-    if (_state == ImmediateActionState::Pending) {
+    if (_state == WebKit::ImmediateActionState::Pending) {
         if (auto* connection = _page->process().connection()) {
             bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(_page->pageID(), Seconds::fromMilliseconds(500));
             if (!receivedReply)
-                _state = ImmediateActionState::TimedOut;
+                _state = WebKit::ImmediateActionState::TimedOut;
         }
     }
 
-    if (_state != ImmediateActionState::Ready) {
+    if (_state != WebKit::ImmediateActionState::Ready) {
         [self _updateImmediateActionItem];
         [self _cancelImmediateActionIfNeeded];
     }
@@ -257,7 +254,7 @@ using namespace WebKit;
 - (RefPtr<API::HitTestResult>)_webHitTestResult
 {
     RefPtr<API::HitTestResult> hitTestResult;
-    if (_state == ImmediateActionState::Ready)
+    if (_state == WebKit::ImmediateActionState::Ready)
         hitTestResult = API::HitTestResult::create(_hitTestResultData);
     else
         hitTestResult = _page->lastMouseMoveHitTestResult();
@@ -279,12 +276,12 @@ using namespace WebKit;
 
     String absoluteLinkURL = hitTestResult->absoluteLinkURL();
     if (!absoluteLinkURL.isEmpty()) {
-        if (protocolIs(absoluteLinkURL, "mailto")) {
+        if (WebCore::protocolIs(absoluteLinkURL, "mailto")) {
             _type = kWKImmediateActionMailtoLink;
             return [self _animationControllerForDataDetectedLink];
         }
 
-        if (protocolIs(absoluteLinkURL, "tel")) {
+        if (WebCore::protocolIs(absoluteLinkURL, "tel")) {
             _type = kWKImmediateActionTelLink;
             return [self _animationControllerForDataDetectedLink];
         }
@@ -297,7 +294,7 @@ using namespace WebKit;
             item.delegate = self;
             _currentQLPreviewMenuItem = item;
 
-            if (TextIndicator *textIndicator = _hitTestResultData.linkTextIndicator.get())
+            if (auto textIndicator = _hitTestResultData.linkTextIndicator.get())
                 _page->setTextIndicator(textIndicator->data());
 
             return (id<NSImmediateActionAnimationController>)item;
@@ -384,7 +381,7 @@ using namespace WebKit;
         return NSZeroSize;
 
     NSSize screenSize = _view.window.screen.frame.size;
-    FloatRect largestRect = largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _view.bounds);
+    WebCore::FloatRect largestRect = WebCore::largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _view.bounds);
     return NSMakeSize(largestRect.width() * 0.75, largestRect.height() * 0.75);
 }
 
@@ -404,8 +401,8 @@ using namespace WebKit;
     if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.mainResult actionContext:actionContext])
         return nil;
 
-    RefPtr<WebPageProxy> page = _page;
-    PageOverlay::PageOverlayID overlayID = _hitTestResultData.detectedDataOriginatingPageOverlay;
+    RefPtr<WebKit::WebPageProxy> page = _page;
+    WebCore::PageOverlay::PageOverlayID overlayID = _hitTestResultData.detectedDataOriginatingPageOverlay;
     _currentActionContext = [actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
         page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
@@ -440,7 +437,7 @@ using namespace WebKit;
     [actionContext setAltMode:YES];
     [actionContext setImmediate:YES];
 
-    RefPtr<WebPageProxy> page = _page;
+    RefPtr<WebKit::WebPageProxy> page = _page;
     _currentActionContext = [actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (_hitTestResultData.linkTextIndicator)
@@ -464,17 +461,17 @@ using namespace WebKit;
 
 - (id<NSImmediateActionAnimationController>)_animationControllerForText
 {
-    if (_state != ImmediateActionState::Ready)
+    if (_state != WebKit::ImmediateActionState::Ready)
         return nil;
 
-    DictionaryPopupInfo dictionaryPopupInfo = _hitTestResultData.dictionaryPopupInfo;
+    WebCore::DictionaryPopupInfo dictionaryPopupInfo = _hitTestResultData.dictionaryPopupInfo;
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 
     _viewImpl->prepareForDictionaryLookup();
 
-    return DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](TextIndicator& textIndicator) {
-        _viewImpl->setTextIndicator(textIndicator, TextIndicatorWindowLifetime::Permanent);
+    return WebCore::DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](WebCore::TextIndicator& textIndicator) {
+        _viewImpl->setTextIndicator(textIndicator, WebCore::TextIndicatorWindowLifetime::Permanent);
     });
 }
 

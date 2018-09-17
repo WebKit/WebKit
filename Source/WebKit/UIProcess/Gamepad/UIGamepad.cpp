@@ -31,9 +31,8 @@
 #include "GamepadData.h"
 #include <WebCore/PlatformGamepad.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 UIGamepad::UIGamepad(WebCore::PlatformGamepad& platformGamepad)
     : m_index(platformGamepad.index())

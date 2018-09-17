@@ -32,9 +32,8 @@
 #include "WebPageProxy.h"
 #include "WebURLSchemeHandler.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebURLSchemeTask> WebURLSchemeTask::create(WebURLSchemeHandler& handler, WebPageProxy& page, uint64_t resourceIdentifier, ResourceRequest&& request, SyncLoadCompletionHandler&& syncCompletionHandler)
 {

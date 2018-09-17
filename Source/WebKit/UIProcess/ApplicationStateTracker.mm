@@ -41,7 +41,6 @@
 
 namespace WebKit {
 
-
 enum class ApplicationType {
     Application,
     ViewService,

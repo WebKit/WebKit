@@ -36,9 +36,8 @@
 #import <pal/system/mac/PopupMenu.h>
 #import <wtf/ProcessPrivilege.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebPopupMenuProxyMac::WebPopupMenuProxyMac(NSView *webView, WebPopupMenuProxy::Client& client)
     : WebPopupMenuProxy(client)

@@ -52,9 +52,8 @@ static NSString* const WebAutomaticTextReplacementEnabled = @"WebAutomaticTextRe
 
 static NSString* const WebTextCheckingSuppressInitialCapitalizationKey = @"SuppressInitialCapitalization";
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 TextCheckerState textCheckerState;
 

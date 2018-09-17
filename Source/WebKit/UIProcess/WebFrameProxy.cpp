@@ -40,9 +40,8 @@
 #include <stdio.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebFrameProxy::WebFrameProxy(WebPageProxy* page, uint64_t frameID)
     : m_page(page)

@@ -40,9 +40,8 @@
 #include <WebCore/ScrollingTreeFrameScrollingNodeMac.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<RemoteScrollingTree> RemoteScrollingTree::create(RemoteScrollingCoordinatorProxy& scrollingCoordinator)
 {

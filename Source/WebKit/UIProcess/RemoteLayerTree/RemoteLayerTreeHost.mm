@@ -46,9 +46,8 @@
 #import <UIKit/UIView.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(m_drawingArea.isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
 
@@ -312,3 +311,5 @@ void RemoteLayerTreeHost::mapAllIOSurfaceBackingStore()
 }
 
 } // namespace WebKit
+
+#undef RELEASE_LOG_IF_ALLOWED

@@ -36,9 +36,8 @@
 #include <WebCore/PlatformGamepad.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static const Seconds maximumGamepadUpdateInterval { 1_s / 120. };
 

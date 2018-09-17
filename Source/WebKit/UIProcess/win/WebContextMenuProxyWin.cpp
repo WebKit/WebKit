@@ -35,9 +35,8 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebContextMenuProxyWin::show()
 {

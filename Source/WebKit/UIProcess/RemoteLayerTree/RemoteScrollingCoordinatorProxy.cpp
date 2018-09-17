@@ -40,9 +40,8 @@
 #include <WebCore/ScrollingStateTree.h>
 #include <WebCore/ScrollingTreeScrollingNode.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)

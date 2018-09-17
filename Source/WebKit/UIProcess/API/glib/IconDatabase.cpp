@@ -46,9 +46,8 @@
 #define IS_ICON_SYNC_THREAD() (m_syncThread == &Thread::current())
 #define ASSERT_ICON_SYNC_THREAD() ASSERT(IS_ICON_SYNC_THREAD())
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static int databaseCleanupCounter = 0;
 

@@ -31,7 +31,6 @@
 #include <WebCore/DiagnosticLoggingKeys.h>
 
 namespace WebKit {
-
 using namespace WebCore;
 
 static const Seconds samplingInterval { 10_min };

@@ -39,8 +39,6 @@
 #import <WebCore/Color.h>
 #import <WebCore/ColorMac.h>
 
-using namespace WebKit;
-
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
 
 #import <pal/spi/mac/NSColorWellSPI.h>

@@ -32,9 +32,8 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<VisitedLinkStore> VisitedLinkStore::create()
 {

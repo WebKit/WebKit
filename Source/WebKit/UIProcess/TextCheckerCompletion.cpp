@@ -26,9 +26,8 @@
 #include "config.h"
 #include "TextCheckerCompletion.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<TextCheckerCompletion> TextCheckerCompletion::create(uint64_t requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
 {

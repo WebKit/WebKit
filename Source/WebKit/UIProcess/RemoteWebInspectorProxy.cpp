@@ -34,9 +34,8 @@
 #include "WebPageProxy.h"
 #include <WebCore/NotImplemented.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 RemoteWebInspectorProxy::RemoteWebInspectorProxy()
 {

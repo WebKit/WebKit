@@ -39,9 +39,8 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/RunLoop.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static const Seconds minimumLifetime { 2_min };
 static const Seconds snapshottingMinimumLifetime { 30_s };

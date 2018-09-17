@@ -40,17 +40,15 @@
 #import "WebPageProxy.h"
 #import <wtf/text/Base64.h>
 
-using namespace WebKit;
-
 @interface WKRemoteWebInspectorProxyObjCAdapter : NSObject <WKInspectorViewControllerDelegate> {
-    RemoteWebInspectorProxy* _inspectorProxy;
+    WebKit::RemoteWebInspectorProxy* _inspectorProxy;
 }
-- (instancetype)initWithRemoteWebInspectorProxy:(RemoteWebInspectorProxy*)inspectorProxy;
+- (instancetype)initWithRemoteWebInspectorProxy:(WebKit::RemoteWebInspectorProxy*)inspectorProxy;
 @end
 
 @implementation WKRemoteWebInspectorProxyObjCAdapter
 
-- (instancetype)initWithRemoteWebInspectorProxy:(RemoteWebInspectorProxy*)inspectorProxy
+- (instancetype)initWithRemoteWebInspectorProxy:(WebKit::RemoteWebInspectorProxy*)inspectorProxy
 {
     if (!(self = [super init]))
         return nil;

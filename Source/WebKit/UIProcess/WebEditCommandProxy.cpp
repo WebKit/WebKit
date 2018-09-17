@@ -33,9 +33,8 @@
 #include <WebCore/LocalizedStrings.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebEditCommandProxy::WebEditCommandProxy(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
     : m_commandID(commandID)

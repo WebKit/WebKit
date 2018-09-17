@@ -38,9 +38,8 @@
 #import <WebCore/PlatformMouseEvent.h>
 #import <objc/runtime.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #pragma mark Commands for Platform: 'macOS'
 

@@ -34,9 +34,8 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UserMediaRequest.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if ENABLE(MEDIA_STREAM)
 static const MediaProducer::MediaStateFlags activeCaptureMask = MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice;

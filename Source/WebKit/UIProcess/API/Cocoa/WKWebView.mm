@@ -6635,3 +6635,5 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 @end
 
 #endif // WK_API_ENABLED
+
+#undef RELEASE_LOG_IF_ALLOWED

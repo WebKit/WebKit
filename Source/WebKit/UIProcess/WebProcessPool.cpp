@@ -120,10 +120,8 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
-using namespace WebCore;
-using namespace WebKit;
-
 namespace WebKit {
+using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, processPoolCounter, ("WebProcessPool"));
 

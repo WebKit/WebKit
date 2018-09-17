@@ -42,9 +42,8 @@
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <windowsx.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static const LPCWSTR kWebKit2WebPopupMenuProxyWindowClassName = L"WebKit2WebPopupMenuProxyWindowClass";
 

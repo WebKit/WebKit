@@ -36,9 +36,8 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(Ref<WorkQueue>&& queue, const String& localStorageDirectory)
 {

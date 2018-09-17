@@ -36,9 +36,8 @@
 #include <WebCore/URL.h>
 #include <wtf/DebugUtilities.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if !LOG_DISABLED
 static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()

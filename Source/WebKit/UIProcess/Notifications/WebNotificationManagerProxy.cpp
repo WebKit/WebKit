@@ -35,9 +35,8 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static uint64_t generateGlobalNotificationID()
 {

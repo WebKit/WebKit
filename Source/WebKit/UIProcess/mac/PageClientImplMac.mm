@@ -99,10 +99,8 @@
 @end
 #endif
 
-using namespace WebCore;
-using namespace WebKit;
-
 namespace WebKit {
+using namespace WebCore;
 
 PageClientImpl::PageClientImpl(NSView* view, WKWebView *webView)
     : PageClientImplCocoa(webView)

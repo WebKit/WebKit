@@ -36,7 +36,6 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
-
 using namespace WebCore;
 
 static const unsigned DefaultCapacity = 100;

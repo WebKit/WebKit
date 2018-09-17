@@ -30,8 +30,6 @@
 
 #import "UIKitSPI.h"
 
-using namespace WebKit;
-
 namespace WebKit {
 
 InputViewUpdateDeferrer::InputViewUpdateDeferrer()

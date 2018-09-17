@@ -30,9 +30,8 @@
 #include "WebProcessPool.h"
 #include <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody)
 {

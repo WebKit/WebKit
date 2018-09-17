@@ -35,7 +35,7 @@
 #import <wtf/WeakObjCPtr.h>
 
 @implementation WKApplicationStateTrackingView {
-    WeakObjCPtr<WKWebView> _webView;
+    WeakObjCPtr<WKWebView> _webViewToTrack;
     std::unique_ptr<WebKit::ApplicationStateTracker> _applicationStateTracker;
 }
 
@@ -44,7 +44,7 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    _webView = webView;
+    _webViewToTrack = webView;
     return self;
 }
 
@@ -68,7 +68,7 @@
 
 - (void)_applicationDidEnterBackground
 {
-    auto page = [_webView _page];
+    auto page = [_webViewToTrack _page];
     if (!page)
         return;
 
@@ -78,13 +78,13 @@
 
 - (void)_applicationDidFinishSnapshottingAfterEnteringBackground
 {
-    if (auto page = [_webView _page])
+    if (auto page = [_webViewToTrack _page])
         page->applicationDidFinishSnapshottingAfterEnteringBackground();
 }
 
 - (void)_applicationWillEnterForeground
 {
-    auto page = [_webView _page];
+    auto page = [_webViewToTrack _page];
     if (!page)
         return;
 

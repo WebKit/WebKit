@@ -53,19 +53,19 @@ public:
     WebKit::WebsiteDataStore& websiteDataStore() { return m_websiteDataStore.get(); }
     HTTPCookieStore& httpCookieStore();
 
-    static String defaultApplicationCacheDirectory();
-    static String defaultCacheStorageDirectory();
-    static String defaultNetworkCacheDirectory();
-    static String defaultMediaCacheDirectory();
+    static WTF::String defaultApplicationCacheDirectory();
+    static WTF::String defaultCacheStorageDirectory();
+    static WTF::String defaultNetworkCacheDirectory();
+    static WTF::String defaultMediaCacheDirectory();
 
-    static String defaultIndexedDBDatabaseDirectory();
-    static String defaultServiceWorkerRegistrationDirectory();
-    static String defaultLocalStorageDirectory();
-    static String defaultMediaKeysStorageDirectory();
-    static String defaultWebSQLDatabaseDirectory();
-    static String defaultResourceLoadStatisticsDirectory();
+    static WTF::String defaultIndexedDBDatabaseDirectory();
+    static WTF::String defaultServiceWorkerRegistrationDirectory();
+    static WTF::String defaultLocalStorageDirectory();
+    static WTF::String defaultMediaKeysStorageDirectory();
+    static WTF::String defaultWebSQLDatabaseDirectory();
+    static WTF::String defaultResourceLoadStatisticsDirectory();
 
-    static String defaultJavaScriptConfigurationDirectory();
+    static WTF::String defaultJavaScriptConfigurationDirectory();
 
     static WebKit::WebsiteDataStore::Configuration defaultDataStoreConfiguration();
 
@@ -74,9 +74,9 @@ private:
 
     WebsiteDataStore();
 
-    static String tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory = CreateDirectory);
-    static String cacheDirectoryFileSystemRepresentation(const String& directoryName);
-    static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
+    static WTF::String tempDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory = CreateDirectory);
+    static WTF::String cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName);
+    static WTF::String websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName);
 
     Ref<WebKit::WebsiteDataStore> m_websiteDataStore;
     RefPtr<HTTPCookieStore> m_apiHTTPCookieStore;

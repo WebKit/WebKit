@@ -226,64 +226,64 @@ StorageProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
 StorageProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify
 StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp @no-unify
 
-UIProcess/BackgroundProcessResponsivenessTimer.cpp @no-unify
-UIProcess/ChildProcessProxy.cpp @no-unify
-UIProcess/DrawingAreaProxy.cpp @no-unify
-UIProcess/FrameLoadState.cpp @no-unify
-UIProcess/GeolocationPermissionRequestManagerProxy.cpp @no-unify
-UIProcess/GeolocationPermissionRequestProxy.cpp @no-unify
-UIProcess/PageLoadState.cpp @no-unify
-UIProcess/ProcessAssertion.cpp @no-unify
-UIProcess/ProcessThrottler.cpp @no-unify
-UIProcess/RemoteWebInspectorProxy.cpp @no-unify
-UIProcess/ResourceLoadStatisticsMemoryStore.cpp @no-unify
-UIProcess/ResourceLoadStatisticsPersistentStorage.cpp @no-unify
-UIProcess/ResponsivenessTimer.cpp @no-unify
-UIProcess/ServiceWorkerProcessProxy.cpp @no-unify
-UIProcess/StatisticsRequest.cpp @no-unify
-UIProcess/SuspendedPageProxy.cpp @no-unify
-UIProcess/SystemPreviewController.cpp @no-unify
-UIProcess/TextCheckerCompletion.cpp @no-unify
-UIProcess/UIMessagePortChannelProvider.cpp @no-unify
-UIProcess/UserMediaPermissionCheckProxy.cpp @no-unify
-UIProcess/UserMediaPermissionRequestManagerProxy.cpp @no-unify
-UIProcess/UserMediaPermissionRequestProxy.cpp @no-unify
-UIProcess/UserMediaProcessManager.cpp @no-unify
-UIProcess/VisitedLinkStore.cpp @no-unify
-UIProcess/WebBackForwardList.cpp @no-unify
-UIProcess/WebColorPicker.cpp @no-unify
-UIProcess/WebConnectionToWebProcess.cpp @no-unify
-UIProcess/WebContextClient.cpp @no-unify
-UIProcess/WebContextConnectionClient.cpp @no-unify
-UIProcess/WebContextInjectedBundleClient.cpp @no-unify
-UIProcess/WebContextMenuListenerProxy.cpp @no-unify
-UIProcess/WebContextMenuProxy.cpp @no-unify
-UIProcess/WebCookieManagerProxy.cpp @no-unify
-UIProcess/WebCookieManagerProxyClient.cpp @no-unify
-UIProcess/WebEditCommandProxy.cpp @no-unify
-UIProcess/WebFormClient.cpp @no-unify
-UIProcess/WebFormSubmissionListenerProxy.cpp @no-unify
-UIProcess/WebFramePolicyListenerProxy.cpp @no-unify
-UIProcess/WebFrameProxy.cpp @no-unify
-UIProcess/WebFullScreenManagerProxy.cpp @no-unify
-UIProcess/WebGeolocationManagerProxy.cpp @no-unify
-UIProcess/WebGeolocationProvider.cpp @no-unify
-UIProcess/WebInspectorProxy.cpp @no-unify
-UIProcess/WebInspectorUtilities.cpp @no-unify
-UIProcess/WebNavigationState.cpp @no-unify
-UIProcess/WebOpenPanelResultListenerProxy.cpp @no-unify
-UIProcess/WebPageDiagnosticLoggingClient.cpp @no-unify
-UIProcess/WebPageGroup.cpp @no-unify
-UIProcess/WebPageInjectedBundleClient.cpp @no-unify
-UIProcess/WebPageProxy.cpp @no-unify
-UIProcess/WebPasteboardProxy.cpp @no-unify
-UIProcess/WebPreferences.cpp @no-unify
-UIProcess/WebProcessLifetimeObserver.cpp @no-unify
-UIProcess/WebProcessLifetimeTracker.cpp @no-unify
-UIProcess/WebProcessPool.cpp @no-unify
-UIProcess/WebProcessProxy.cpp @no-unify
-UIProcess/WebURLSchemeHandler.cpp @no-unify
-UIProcess/WebURLSchemeTask.cpp @no-unify
+UIProcess/BackgroundProcessResponsivenessTimer.cpp
+UIProcess/ChildProcessProxy.cpp
+UIProcess/DrawingAreaProxy.cpp
+UIProcess/FrameLoadState.cpp
+UIProcess/GeolocationPermissionRequestManagerProxy.cpp
+UIProcess/GeolocationPermissionRequestProxy.cpp
+UIProcess/PageLoadState.cpp
+UIProcess/ProcessAssertion.cpp
+UIProcess/ProcessThrottler.cpp
+UIProcess/RemoteWebInspectorProxy.cpp
+UIProcess/ResourceLoadStatisticsMemoryStore.cpp
+UIProcess/ResourceLoadStatisticsPersistentStorage.cpp
+UIProcess/ResponsivenessTimer.cpp
+UIProcess/ServiceWorkerProcessProxy.cpp
+UIProcess/StatisticsRequest.cpp
+UIProcess/SuspendedPageProxy.cpp
+UIProcess/SystemPreviewController.cpp
+UIProcess/TextCheckerCompletion.cpp
+UIProcess/UIMessagePortChannelProvider.cpp
+UIProcess/UserMediaPermissionCheckProxy.cpp
+UIProcess/UserMediaPermissionRequestManagerProxy.cpp
+UIProcess/UserMediaPermissionRequestProxy.cpp
+UIProcess/UserMediaProcessManager.cpp
+UIProcess/VisitedLinkStore.cpp
+UIProcess/WebBackForwardList.cpp
+UIProcess/WebColorPicker.cpp
+UIProcess/WebConnectionToWebProcess.cpp
+UIProcess/WebContextClient.cpp
+UIProcess/WebContextConnectionClient.cpp
+UIProcess/WebContextInjectedBundleClient.cpp
+UIProcess/WebContextMenuListenerProxy.cpp
+UIProcess/WebContextMenuProxy.cpp
+UIProcess/WebCookieManagerProxy.cpp
+UIProcess/WebCookieManagerProxyClient.cpp
+UIProcess/WebEditCommandProxy.cpp
+UIProcess/WebFormClient.cpp
+UIProcess/WebFormSubmissionListenerProxy.cpp
+UIProcess/WebFramePolicyListenerProxy.cpp
+UIProcess/WebFrameProxy.cpp
+UIProcess/WebFullScreenManagerProxy.cpp
+UIProcess/WebGeolocationManagerProxy.cpp
+UIProcess/WebGeolocationProvider.cpp
+UIProcess/WebInspectorProxy.cpp
+UIProcess/WebInspectorUtilities.cpp
+UIProcess/WebNavigationState.cpp
+UIProcess/WebOpenPanelResultListenerProxy.cpp
+UIProcess/WebPageDiagnosticLoggingClient.cpp
+UIProcess/WebPageGroup.cpp
+UIProcess/WebPageInjectedBundleClient.cpp
+UIProcess/WebPageProxy.cpp
+UIProcess/WebPasteboardProxy.cpp
+UIProcess/WebPreferences.cpp
+UIProcess/WebProcessLifetimeObserver.cpp
+UIProcess/WebProcessLifetimeTracker.cpp
+UIProcess/WebProcessPool.cpp
+UIProcess/WebProcessProxy.cpp
+UIProcess/WebURLSchemeHandler.cpp
+UIProcess/WebURLSchemeTask.cpp
 
 UIProcess/API/APIContentRuleList.cpp @no-unify
 UIProcess/API/APIContentRuleListStore.cpp @no-unify
@@ -354,45 +354,45 @@ UIProcess/API/C/WKWebsiteDataStoreRef.cpp @no-unify
 UIProcess/API/C/WKWebsitePolicies.cpp @no-unify
 UIProcess/API/C/WKWindowFeaturesRef.cpp @no-unify
 
-UIProcess/Authentication/AuthenticationChallengeProxy.cpp @no-unify
-UIProcess/Authentication/AuthenticationDecisionListener.cpp @no-unify
-UIProcess/Authentication/WebCredential.cpp @no-unify
-UIProcess/Authentication/WebProtectionSpace.cpp @no-unify
+UIProcess/Authentication/AuthenticationChallengeProxy.cpp
+UIProcess/Authentication/AuthenticationDecisionListener.cpp
+UIProcess/Authentication/WebCredential.cpp
+UIProcess/Authentication/WebProtectionSpace.cpp
 
-UIProcess/Automation/SimulatedInputDispatcher.cpp @no-unify
-UIProcess/Automation/WebAutomationSession.cpp @no-unify
+UIProcess/Automation/SimulatedInputDispatcher.cpp
+UIProcess/Automation/WebAutomationSession.cpp
 
-UIProcess/Downloads/DownloadProxy.cpp @no-unify
-UIProcess/Downloads/DownloadProxyMap.cpp @no-unify
+UIProcess/Downloads/DownloadProxy.cpp
+UIProcess/Downloads/DownloadProxyMap.cpp
 
-UIProcess/Gamepad/UIGamepad.cpp @no-unify
-UIProcess/Gamepad/UIGamepadProvider.cpp @no-unify
+UIProcess/Gamepad/UIGamepad.cpp
+UIProcess/Gamepad/UIGamepadProvider.cpp
 
 // TODO: This file should be "unified" once GTK's PluginProcess2 is removed.
 UIProcess/Launcher/ProcessLauncher.cpp @no-unify
 
-UIProcess/Network/NetworkProcessProxy.cpp @no-unify
+UIProcess/Network/NetworkProcessProxy.cpp
 
-UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp @no-unify
-UIProcess/Notifications/WebNotification.cpp @no-unify
-UIProcess/Notifications/WebNotificationManagerProxy.cpp @no-unify
-UIProcess/Notifications/WebNotificationProvider.cpp @no-unify
+UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp
+UIProcess/Notifications/WebNotification.cpp
+UIProcess/Notifications/WebNotificationManagerProxy.cpp
+UIProcess/Notifications/WebNotificationProvider.cpp
 
-UIProcess/Plugins/PlugInAutoStartProvider.cpp @no-unify
-UIProcess/Plugins/PluginInfoStore.cpp @no-unify
-UIProcess/Plugins/PluginProcessManager.cpp @no-unify
-UIProcess/Plugins/PluginProcessProxy.cpp @no-unify
+UIProcess/Plugins/PlugInAutoStartProvider.cpp
+UIProcess/Plugins/PluginInfoStore.cpp
+UIProcess/Plugins/PluginProcessManager.cpp
+UIProcess/Plugins/PluginProcessProxy.cpp
 
-UIProcess/Storage/StorageProcessProxy.cpp @no-unify
+UIProcess/Storage/StorageProcessProxy.cpp
 
-UIProcess/UserContent/WebScriptMessageHandler.cpp @no-unify
-UIProcess/UserContent/WebUserContentControllerProxy.cpp @no-unify
+UIProcess/UserContent/WebScriptMessageHandler.cpp
+UIProcess/UserContent/WebUserContentControllerProxy.cpp
 
-UIProcess/WebStorage/LocalStorageDatabase.cpp @no-unify
-UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp @no-unify
+UIProcess/WebStorage/LocalStorageDatabase.cpp
+UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp
 
-UIProcess/WebsiteData/WebsiteDataRecord.cpp @no-unify
-UIProcess/WebsiteData/WebsiteDataStore.cpp @no-unify
+UIProcess/WebsiteData/WebsiteDataRecord.cpp
+UIProcess/WebsiteData/WebsiteDataStore.cpp
 
 WebProcess/WebConnectionToUIProcess.cpp
 WebProcess/WebProcess.cpp

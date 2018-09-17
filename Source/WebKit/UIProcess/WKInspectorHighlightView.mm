@@ -32,8 +32,6 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/InspectorOverlay.h>
 
-using namespace WebCore;
-
 @implementation WKInspectorHighlightView
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -73,10 +71,10 @@ using namespace WebCore;
     }
 }
 
-static bool findIntersectionOnLineBetweenPoints(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection) 
+static bool findIntersectionOnLineBetweenPoints(const WebCore::FloatPoint& p1, const WebCore::FloatPoint& p2, const WebCore::FloatPoint& d1, const WebCore::FloatPoint& d2, WebCore::FloatPoint& intersection) 
 {
     // Do the lines intersect?
-    FloatPoint temporaryIntersectionPoint;
+    WebCore::FloatPoint temporaryIntersectionPoint;
     if (!findIntersection(p1, p2, d1, d2, temporaryIntersectionPoint))
         return false;
 
@@ -102,10 +100,10 @@ static bool findIntersectionOnLineBetweenPoints(const FloatPoint& p1, const Floa
 
 // This quad intersection works because the two quads are known to be at the same
 // rotation and clockwise-ness.
-static FloatQuad quadIntersection(FloatQuad bounds, FloatQuad toClamp)
+static WebCore::FloatQuad quadIntersection(WebCore::FloatQuad bounds, WebCore::FloatQuad toClamp)
 {
     // Resulting points.
-    FloatPoint p1, p2, p3, p4;
+    WebCore::FloatPoint p1, p2, p3, p4;
     bool containsPoint1 = false;
     bool containsPoint2 = false;
     bool containsPoint3 = false;
@@ -167,10 +165,10 @@ static FloatQuad quadIntersection(FloatQuad bounds, FloatQuad toClamp)
     if (!containsPoint4 && !intersectForPoint4)
         findIntersectionOnLineBetweenPoints(bounds.p1(), bounds.p4(), p4, p3, p4);
 
-    return FloatQuad(p1, p2, p3, p4);
+    return WebCore::FloatQuad(p1, p2, p3, p4);
 }
 
-static void layerPathWithHole(CAShapeLayer *layer, const FloatQuad& outerQuad, const FloatQuad& holeQuad)
+static void layerPathWithHole(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad, const WebCore::FloatQuad& holeQuad)
 {
     // Nothing to show.
     if (outerQuad == holeQuad || holeQuad.containsQuad(outerQuad)) {
@@ -181,7 +179,7 @@ static void layerPathWithHole(CAShapeLayer *layer, const FloatQuad& outerQuad, c
     // If there is a negative margin / padding then the outer box might not
     // fully contain the hole box. In such cases we recalculate the hole to
     // be the intersection of the two quads.
-    FloatQuad innerHole;
+    WebCore::FloatQuad innerHole;
     if (outerQuad.containsQuad(holeQuad))
         innerHole = holeQuad;
     else
@@ -201,7 +199,7 @@ static void layerPathWithHole(CAShapeLayer *layer, const FloatQuad& outerQuad, c
     CGPathRelease(path);
 }
 
-static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
+static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
 {
     CGMutablePathRef path = CGPathCreateMutable();
     CGPathMoveToPoint(path, 0, outerQuad.p1().x(), outerQuad.p1().y());
@@ -212,7 +210,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     CGPathRelease(path);
 }
 
-- (void)_layoutForNodeHighlight:(const Highlight&)highlight offset:(unsigned)offset
+- (void)_layoutForNodeHighlight:(const WebCore::Highlight&)highlight offset:(unsigned)offset
 {
     ASSERT([_layers count] >= offset + 4);
     ASSERT(highlight.quads.size() >= offset + 4);
@@ -224,10 +222,10 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     CAShapeLayer *paddingLayer = [_layers objectAtIndex:offset + 2];
     CAShapeLayer *contentLayer = [_layers objectAtIndex:offset + 3];
 
-    FloatQuad marginQuad = highlight.quads[offset];
-    FloatQuad borderQuad = highlight.quads[offset + 1];
-    FloatQuad paddingQuad = highlight.quads[offset + 2];
-    FloatQuad contentQuad = highlight.quads[offset + 3];
+    WebCore::FloatQuad marginQuad = highlight.quads[offset];
+    WebCore::FloatQuad borderQuad = highlight.quads[offset + 1];
+    WebCore::FloatQuad paddingQuad = highlight.quads[offset + 2];
+    WebCore::FloatQuad contentQuad = highlight.quads[offset + 3];
 
     marginLayer.fillColor = cachedCGColor(highlight.marginColor);
     borderLayer.fillColor = cachedCGColor(highlight.borderColor);
@@ -240,7 +238,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     layerPath(contentLayer, contentQuad);
 }
 
-- (void)_layoutForNodeListHighlight:(const Highlight&)highlight
+- (void)_layoutForNodeListHighlight:(const WebCore::Highlight&)highlight
 {
     if (!highlight.quads.size()) {
         [self _removeAllLayers];
@@ -254,7 +252,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
         [self _layoutForNodeHighlight:highlight offset:i * 4];
 }
 
-- (void)_layoutForRectsHighlight:(const Highlight&)highlight
+- (void)_layoutForRectsHighlight:(const WebCore::Highlight&)highlight
 {
     NSUInteger numLayers = highlight.quads.size();
     if (!numLayers) {
@@ -272,11 +270,11 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     }
 }
 
-- (void)update:(const Highlight&)highlight
+- (void)update:(const WebCore::Highlight&)highlight
 {
-    if (highlight.type == HighlightType::Node || highlight.type == HighlightType::NodeList)
+    if (highlight.type == WebCore::HighlightType::Node || highlight.type == WebCore::HighlightType::NodeList)
         [self _layoutForNodeListHighlight:highlight];
-    else if (highlight.type == HighlightType::Rects)
+    else if (highlight.type == WebCore::HighlightType::Rects)
         [self _layoutForRectsHighlight:highlight];
 }
 

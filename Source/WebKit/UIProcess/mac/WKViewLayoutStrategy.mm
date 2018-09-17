@@ -33,9 +33,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
 
-using namespace WebCore;
-using namespace WebKit;
-
 @interface WKViewViewSizeLayoutStrategy : WKViewLayoutStrategy
 @end
 
@@ -50,7 +47,7 @@ using namespace WebKit;
 
 @implementation WKViewLayoutStrategy
 
-+ (instancetype)layoutStrategyWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
++ (instancetype)layoutStrategyWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
     WKViewLayoutStrategy *strategy;
 
@@ -75,7 +72,7 @@ using namespace WebKit;
     return [strategy autorelease];
 }
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
     self = [super init];
 
@@ -155,7 +152,7 @@ using namespace WebKit;
 
 @implementation WKViewViewSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
     self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
 
@@ -175,7 +172,7 @@ using namespace WebKit;
 
 @implementation WKViewFixedSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
     self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
 
@@ -195,7 +192,7 @@ using namespace WebKit;
 
 @implementation WKViewDynamicSizeComputedFromViewScaleLayoutStrategy
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
     self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
 
@@ -234,7 +231,7 @@ using namespace WebKit;
 
 @implementation WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
     self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
 

@@ -31,10 +31,8 @@
 #import <QuartzCore/CALayer.h>
 #import <WebCore/TileController.h>
 
-using namespace WebCore;
-
 namespace WebKit {
-
+using namespace WebCore;
 
 RemoteLayerTreeScrollingPerformanceData::RemoteLayerTreeScrollingPerformanceData(RemoteLayerTreeDrawingAreaProxy& drawingArea)
     : m_drawingArea(drawingArea)

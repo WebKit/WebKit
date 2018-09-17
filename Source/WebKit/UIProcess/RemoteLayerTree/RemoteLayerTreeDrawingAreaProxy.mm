@@ -40,9 +40,6 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/SystemTracing.h>
 
-using namespace IPC;
-using namespace WebCore;
-
 // FIXME: Mac will need something similar; we should figure out how to share this with DisplayRefreshMonitor without
 // breaking WebKit1 behavior or WebKit2-WebKit1 coexistence.
 #if PLATFORM(IOS)
@@ -105,6 +102,8 @@ using namespace WebCore;
 #endif
 
 namespace WebKit {
+using namespace IPC;
+using namespace WebCore;
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
