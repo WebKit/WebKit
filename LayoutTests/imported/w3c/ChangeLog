@@ -1,3 +1,14 @@
+2018-08-22  Rob Buis  <rbuis@igalia.com>
+
+        Fetch: Stop checking Request.integrity's value in no-cors mode
+        https://bugs.webkit.org/show_bug.cgi?id=188802
+
+        Reviewed by Frédéric Wang.
+
+        Update integrity.html expected result.
+
+        * web-platform-tests/fetch/api/basic/integrity-expected.txt:
+
 2018-08-20  Rob Buis  <rbuis@igalia.com>
 
         Throw an exception if window.open() gets passed a URL that cannot be parsed

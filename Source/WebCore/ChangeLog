@@ -1,3 +1,19 @@
+2018-08-22  Rob Buis  <rbuis@igalia.com>
+
+        Fetch: Stop checking Request.integrity's value in no-cors mode
+        https://bugs.webkit.org/show_bug.cgi?id=188802
+
+        Reviewed by Frédéric Wang.
+
+        Remove this check since it was removed from the spec.
+
+        Behavior matches Chrome and Firefox.
+
+        Test: http/tests/subresource-integrity/sri-fetch.js:
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeOptions):
+
 2018-08-22  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Never return an uninitialized ImageGStreamer object.

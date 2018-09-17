@@ -134,8 +134,6 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
         const String& method = m_request.httpMethod();
         if (method != "GET" && method != "POST" && method != "HEAD")
             return Exception { TypeError, "Method must be GET, POST or HEAD in no-cors mode."_s };
-        if (!m_options.integrity.isEmpty())
-            return Exception { TypeError, "There cannot be an integrity in no-cors mode."_s };
         m_headers->setGuard(FetchHeaders::Guard::RequestNoCors);
     }
     

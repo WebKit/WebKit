@@ -2,6 +2,7 @@ CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt.
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt.
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/top.txt?pipe=header(Access-Control-Allow-Origin,*).
+CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/fetch/api/resources/top.txt.
 
 PASS Empty string integrity 
 PASS SHA-256 integrity 
