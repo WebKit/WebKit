@@ -22,10 +22,6 @@
 
 #include "WebKitScriptDialogPrivate.h"
 
-void webkitScriptDialogRun(WebKitScriptDialog*, WebKitWebView*)
-{
-}
-
 void webkitScriptDialogAccept(WebKitScriptDialog*)
 {
 }

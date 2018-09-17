@@ -1,3 +1,16 @@
+2018-09-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix incorrect WPE build fix made in r236009
+
+        This isn't the right place to add the typedef. I failed to notice that the WebKitWebView
+        type is not actually used anywhere in this header. Actually, the problematic function is no
+        longer declared or used anywhere and was just missed when WebKitScriptDialog was refactored,
+        so remove it.
+
+        * UIProcess/API/wpe/WebKitScriptDialog.h:
+        * UIProcess/API/wpe/WebKitScriptDialogWPE.cpp:
+        (webkitScriptDialogRun): Deleted.
+
 2018-09-17  Sihui Liu  <sihui_liu@apple.com>
 
         Move IndexedDB to Network Process
