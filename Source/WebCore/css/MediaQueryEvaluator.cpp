@@ -110,7 +110,7 @@ MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool m
 
 MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, const Document& document, const RenderStyle* style)
     : m_mediaType(acceptedMediaType)
-    , m_document(makeWeakPtr(const_cast<Document&>(document)))
+    , m_document(makeWeakPtr(document))
     , m_style(style)
 {
 }
@@ -787,7 +787,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
     if (!m_document)
         return m_fallbackResult;
 
-    Document& document = *m_document;
+    auto& document = *m_document;
     auto* frame = document.frame();
     if (!frame || !frame->view() || !m_style)
         return m_fallbackResult;

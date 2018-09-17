@@ -111,6 +111,13 @@ public:
         return { makeRef(*m_ref) };
     }
 
+    WeakPtr<const T> createWeakPtr(const T& ptr) const
+    {
+        if (!m_ref)
+            m_ref = WeakReference<T>::create(const_cast<T*>(&ptr));
+        return { makeRef(reinterpret_cast<WeakReference<const T>&>(*m_ref)) };
+    }
+
     void revokeAll()
     {
         if (!m_ref)

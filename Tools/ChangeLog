@@ -1,3 +1,15 @@
+2018-08-24  Antti Koivisto  <antti@apple.com>
+
+        Allow creating WeakPtrs to const objects
+        https://bugs.webkit.org/show_bug.cgi?id=188785
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::Base::weakPtrFactory const):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::Base::weakPtrFactory): Deleted.
+
 2018-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assert in NetworkBlobRegistry::unregisterBlobURL after network process had terminated
