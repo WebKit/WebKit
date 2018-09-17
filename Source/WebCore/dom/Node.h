@@ -559,39 +559,41 @@ protected:
         IsHTMLFlag = 1 << 3,
         IsSVGFlag = 1 << 4,
         IsMathMLFlag = 1 << 5,
-        IsConnectedFlag = 1 << 6,
-        IsInShadowTreeFlag = 1 << 7,
-        IsDocumentNodeFlag = 1 << 8,
-        IsShadowRootFlag = 1 << 9,
+        IsDocumentNodeFlag = 1 << 6,
+        IsShadowRootFlag = 1 << 7,
+        IsConnectedFlag = 1 << 8,
+        IsInShadowTreeFlag = 1 << 9,
         HasRareDataFlag = 1 << 10,
         HasEventTargetDataFlag = 1 << 11,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
         ChildNeedsStyleRecalcFlag = 1 << 12, // ContainerNode
+        DirectChildNeedsStyleRecalcFlag = 1 << 13,
 
-        IsParsingChildrenFinishedFlag = 1 << 13, // Element
-        StyleValidityShift = 14,
+        IsEditingTextOrUndefinedCustomElementFlag = 1 << 14, // Text and Element
+        IsCustomElement = 1 << 15, // Element
+        HasFocusWithin = 1 << 16,
+        IsLinkFlag = 1 << 17,
+        IsUserActionElement = 1 << 18,
+        IsParsingChildrenFinishedFlag = 1 << 19,
+        HasSyntheticAttrChildNodesFlag = 1 << 20,
+        SelfOrAncestorHasDirAutoFlag = 1 << 21,
+
+        // The following flags are used in style invalidation.
+        StyleValidityShift = 22,
         StyleValidityMask = 3 << StyleValidityShift,
-        StyleResolutionShouldRecompositeLayerFlag = 1 << 16,
-        IsEditingTextOrUndefinedCustomElementFlag = 1 << 17,
-        HasFocusWithin = 1 << 18,
-        HasSyntheticAttrChildNodesFlag = 1 << 19,
-        HasCustomStyleResolveCallbacksFlag = 1 << 20,
-        DescendantsAffectedByPreviousSiblingFlag = 1 << 21,
-        IsCustomElement = 1 << 22,
-        IsLinkFlag = 1 << 23,
-        IsUserActionElement = 1 << 24,
+        StyleResolutionShouldRecompositeLayerFlag = 1 << 24,
 
         ChildrenAffectedByFirstChildRulesFlag = 1 << 25,
         ChildrenAffectedByLastChildRulesFlag = 1 << 26,
         ChildrenAffectedByHoverRulesFlag = 1 << 27,
 
-        DirectChildNeedsStyleRecalcFlag = 1 << 28,
-        AffectsNextSiblingElementStyle = 1 << 29,
-        StyleIsAffectedByPreviousSibling = 1 << 30,
+        AffectsNextSiblingElementStyle = 1 << 28,
+        StyleIsAffectedByPreviousSibling = 1 << 29,
+        DescendantsAffectedByPreviousSiblingFlag = 1 << 30,
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 31,
+        HasCustomStyleResolveCallbacksFlag = 1 << 31,
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };

@@ -1,3 +1,14 @@
+2018-09-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Re-order Node flags based on semantics
+        https://bugs.webkit.org/show_bug.cgi?id=189643
+
+        Reviewed by Simon Fraser.
+
+        Re-ordered Node flags based on their category and subclasses of Node which use them.
+
+        * dom/Node.h:
+
 2018-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Add more ResourceLoading logging, particularly in MemoryCache code
