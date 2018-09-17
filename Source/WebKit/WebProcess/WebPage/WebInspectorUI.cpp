@@ -36,9 +36,8 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
 {

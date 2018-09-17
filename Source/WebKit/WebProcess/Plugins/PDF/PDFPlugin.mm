@@ -599,7 +599,6 @@ static void getAllScriptsInPDFDocument(CGPDFDocumentRef pdfDocument, Vector<Reta
 }
 
 namespace WebKit {
-
 using namespace HTMLNames;
 
 Ref<PDFPlugin> PDFPlugin::create(WebFrame& frame)

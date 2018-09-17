@@ -31,7 +31,6 @@
 #include "WebPageProxyMessages.h"
 
 namespace WebKit {
-
 using namespace WebCore;
 
 WebPerformanceLoggingClient::WebPerformanceLoggingClient(WebPage& page)

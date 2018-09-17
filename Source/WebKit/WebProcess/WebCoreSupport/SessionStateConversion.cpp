@@ -32,9 +32,8 @@
 #include <WebCore/FormData.h>
 #include <WebCore/HistoryItem.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static HTTPBody toHTTPBody(const FormData& formData)
 {

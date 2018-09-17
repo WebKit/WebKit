@@ -32,9 +32,8 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsLayer.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<PageBanner> PageBanner::create(CALayer *layer, int height, Client* client)
 {

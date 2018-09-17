@@ -43,9 +43,8 @@
 #include <WebCore/StringUtilities.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebPluginInfoProvider& WebPluginInfoProvider::singleton()
 {

@@ -39,10 +39,9 @@
 #include <pal/SessionID.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
-
-namespace WebKit {
 
 WebServiceWorkerProvider& WebServiceWorkerProvider::singleton()
 {

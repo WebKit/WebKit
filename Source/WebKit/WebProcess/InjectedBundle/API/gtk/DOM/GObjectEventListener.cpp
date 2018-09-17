@@ -25,9 +25,8 @@
 #include <WebCore/Event.h>
 #include <wtf/HashMap.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 GObjectEventListener::GObjectEventListener(GObject* target, EventTarget* coreTarget, const char* domEventName, GClosure* handler, bool capture)
     : EventListener(GObjectEventListenerType)

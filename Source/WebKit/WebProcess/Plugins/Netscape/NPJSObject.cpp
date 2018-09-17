@@ -41,10 +41,9 @@
 #include <WebCore/IdentifierRep.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
-
-namespace WebKit {
 
 NPJSObject* NPJSObject::create(VM& vm, NPRuntimeObjectMap* objectMap, JSObject* jsObject)
 {

@@ -30,9 +30,8 @@
 #include <WebCore/IntPoint.h>
 #include <wtf/SetForScope.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void Plugin::Parameters::encode(IPC::Encoder& encoder) const
 {

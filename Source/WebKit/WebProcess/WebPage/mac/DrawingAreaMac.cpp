@@ -34,9 +34,8 @@
 #include <WebCore/DisplayRefreshMonitorManager.h>
 #include <WebCore/RunLoopObserver.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 

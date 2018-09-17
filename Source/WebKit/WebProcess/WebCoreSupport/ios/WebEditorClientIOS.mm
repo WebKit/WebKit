@@ -33,9 +33,8 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/NotImplemented.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
     
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
