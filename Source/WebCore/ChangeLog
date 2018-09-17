@@ -1,5 +1,26 @@
 2018-08-26  Youenn Fablet  <youenn@apple.com>
 
+        Make IDBCursor::m_request a WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=188938
+
+        Reviewed by Alex Christensen.
+
+        Make m_request a WeakPtr so that if m_request is destroyed, the related cursor will not use the invalid pointer.
+
+        Covered by existing tests.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::continuePrimaryKey): Other continue and advance methods that are calling uncheckedIterateCursor do check for m_request.
+        Apply the same check for continuePrimaryKey.
+        (WebCore::IDBCursor::uncheckedIterateCursor):
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::setRequest):
+        (WebCore::IDBCursor::clearRequest):
+        (WebCore::IDBCursor::request):
+        * Modules/indexeddb/IDBRequest.h:
+
+2018-08-26  Youenn Fablet  <youenn@apple.com>
+
         IDBCursor does not need to be an ActiveDOMObject
         https://bugs.webkit.org/show_bug.cgi?id=188937
 

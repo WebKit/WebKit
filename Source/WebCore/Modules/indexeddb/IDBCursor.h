@@ -32,6 +32,7 @@
 #include "IDBCursorInfo.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Variant.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -65,9 +66,9 @@ public:
 
     const IDBCursorInfo& info() const { return m_info; }
 
-    void setRequest(IDBRequest& request) { m_request = &request; }
-    void clearRequest() { m_request = nullptr; }
-    IDBRequest* request() { return m_request; }
+    void setRequest(IDBRequest& request) { m_request = makeWeakPtr(&request); }
+    void clearRequest() { m_request.clear(); }
+    IDBRequest* request() { return m_request.get(); }
 
     void setGetResult(IDBRequest&, const IDBGetResult&);
 
@@ -87,7 +88,7 @@ private:
 
     IDBCursorInfo m_info;
     Source m_source;
-    IDBRequest* m_request { nullptr };
+    WeakPtr<IDBRequest> m_request;
 
     bool m_gotValue { false };
 

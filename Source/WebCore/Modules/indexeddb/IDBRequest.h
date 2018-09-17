@@ -36,6 +36,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Function.h>
 #include <wtf/Scope.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -56,7 +57,7 @@ class IDBConnectionProxy;
 class IDBConnectionToServer;
 }
 
-class IDBRequest : public EventTargetWithInlineData, public IDBActiveDOMObject, public RefCounted<IDBRequest> {
+class IDBRequest : public EventTargetWithInlineData, public IDBActiveDOMObject, public RefCounted<IDBRequest>, public CanMakeWeakPtr<IDBRequest> {
 public:
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
