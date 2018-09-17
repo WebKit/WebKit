@@ -78,6 +78,7 @@ public:
 
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
     static bool isInheritedProperty(CSSPropertyID);
+    static Vector<String> aliasesForProperty(CSSPropertyID);
     static bool isDirectionAwareProperty(CSSPropertyID);
     static bool isDescriptorOnly(CSSPropertyID);
 

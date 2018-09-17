@@ -151,8 +151,10 @@
             "type": "object",
             "properties": [
                 { "name": "name", "type": "string", "description": "Property name." },
+                { "name": "aliases", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Other names for this property." },
                 { "name": "longhands", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Longhand property names." },
-                { "name": "values", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Supported values for this property." }
+                { "name": "values", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Supported values for this property." },
+                { "name": "inherited", "type": "boolean", "optional": true, "description": "Whether the property is able to be inherited." }
             ]
         },
         {

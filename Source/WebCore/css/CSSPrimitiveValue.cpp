@@ -277,17 +277,9 @@ static const AtomicString& propertyName(CSSPropertyID propertyID)
 
 static const AtomicString& valueName(CSSValueID valueID)
 {
-    ASSERT_ARG(valueID, valueID >= 0);
-    ASSERT_ARG(valueID, valueID < numCSSValueKeywords);
+    ASSERT_ARG(valueID, (valueID >= firstCSSValueKeyword && valueID <= lastCSSValueKeyword));
 
-    if (valueID < 0)
-        return nullAtom();
-
-    static AtomicString* keywordStrings = new AtomicString[numCSSValueKeywords]; // Leaked intentionally.
-    AtomicString& keywordString = keywordStrings[valueID];
-    if (keywordString.isNull())
-        keywordString = getValueName(valueID);
-    return keywordString;
+    return getValueNameAtomicString(valueID);
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(CSSValueID valueID)

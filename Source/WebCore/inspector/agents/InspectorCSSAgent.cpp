@@ -28,12 +28,15 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImportRule.h"
+#include "CSSParserFastPaths.h"
+#include "CSSParserMode.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "CSSValueKeywords.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "FontCache.h"
@@ -715,25 +718,46 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<JSON::Arr
 {
     auto properties = JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
     for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
-        CSSPropertyID id = convertToCSSPropertyID(i);
-        if (isInternalCSSProperty(id))
+        CSSPropertyID propertyID = convertToCSSPropertyID(i);
+        if (isInternalCSSProperty(propertyID))
             continue;
 
         auto property = Inspector::Protocol::CSS::CSSPropertyInfo::create()
-            .setName(getPropertyNameString(id))
+            .setName(getPropertyNameString(propertyID))
             .release();
 
-        const StylePropertyShorthand& shorthand = shorthandForProperty(id);
-        if (!shorthand.length()) {
-            properties->addItem(WTFMove(property));
-            continue;
+        auto aliases = CSSProperty::aliasesForProperty(propertyID);
+        if (!aliases.isEmpty()) {
+            auto aliasesArray = JSON::ArrayOf<String>::create();
+            for (auto& alias : aliases)
+                aliasesArray->addItem(alias);
+            property->setAliases(WTFMove(aliasesArray));
         }
-        auto longhands = JSON::ArrayOf<String>::create();
-        for (unsigned j = 0; j < shorthand.length(); ++j) {
-            CSSPropertyID longhandID = shorthand.properties()[j];
-            longhands->addItem(getPropertyNameString(longhandID));
+
+        const StylePropertyShorthand& shorthand = shorthandForProperty(propertyID);
+        if (shorthand.length()) {
+            auto longhands = JSON::ArrayOf<String>::create();
+            for (unsigned j = 0; j < shorthand.length(); ++j) {
+                CSSPropertyID longhandID = shorthand.properties()[j];
+                longhands->addItem(getPropertyNameString(longhandID));
+            }
+            property->setLonghands(WTFMove(longhands));
         }
-        property->setLonghands(WTFMove(longhands));
+
+        if (CSSParserFastPaths::isKeywordPropertyID(propertyID)) {
+            auto values = JSON::ArrayOf<String>::create();
+            for (int j = firstCSSValueKeyword; j <= lastCSSValueKeyword; ++j) {
+                CSSValueID valueID = convertToCSSValueID(j);
+                if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyID, valueID, HTMLStandardMode))
+                    values->addItem(getValueNameString(valueID));
+            }
+            if (values->length())
+                property->setValues(WTFMove(values));
+        }
+
+        if (CSSProperty::isInheritedProperty(propertyID))
+            property->setInherited(true);
+
         properties->addItem(WTFMove(property));
     }
     cssProperties = WTFMove(properties);

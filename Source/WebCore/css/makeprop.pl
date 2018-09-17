@@ -243,11 +243,10 @@ print GPERF << "EOF";
 #include \"CSSProperty.h\"
 #include \"CSSPropertyNames.h\"
 #include \"HashTools.h\"
-#include <string.h>
-
 #include <wtf/ASCIICType.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/WTFString.h>
+#include <string.h>
 
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -399,6 +398,25 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID id)
     ASSERT(id <= lastCSSProperty);
     ASSERT(id != CSSPropertyInvalid);
     return isInheritedPropertyTable[id];
+}
+
+Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)
+{
+    switch (id) {
+EOF
+
+for my $name (@names) {
+    if (!$nameToAliases{$name}) {
+        next;
+    }
+    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+    print GPERF "        return { \"" . join("\"_s, \"", @{$nameToAliases{$name}}) . "\"_s };\n";
+}
+
+print GPERF << "EOF";
+    default:
+        return { };
+    }
 }
 
 } // namespace WebCore

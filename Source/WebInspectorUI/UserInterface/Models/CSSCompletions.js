@@ -36,7 +36,6 @@ WI.CSSCompletions = class CSSCompletions
     constructor(properties, acceptEmptyPrefix)
     {
         this._values = [];
-        this._longhands = {};
         this._shorthands = {};
 
         // The `properties` parameter can be either a list of objects with 'name' / 'longhand'
@@ -51,10 +50,12 @@ WI.CSSCompletions = class CSSCompletions
 
                 this._values.push(propertyName);
 
+                let aliases = property.aliases;
+                if (aliases)
+                    this._values = this._values.concat(aliases);
+
                 var longhands = property.longhands;
                 if (longhands) {
-                    this._longhands[propertyName] = longhands;
-
                     for (var j = 0; j < longhands.length; ++j) {
                         var longhandName = longhands[j];
 
@@ -123,7 +124,7 @@ WI.CSSCompletions = class CSSCompletions
                 var keywords = WI.CSSKeywordCompletions._propertyKeywordMap[propertyName];
                 for (var i = 0; i < keywords.length; ++i) {
                     // Skip numbers, like the ones defined for font-weight.
-                    if (!isNaN(Number(keywords[i])))
+                    if (keywords[i] === WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder || !isNaN(Number(keywords[i])))
                         continue;
                     valueKeywordsForCodeMirror[nameForCodeMirror(keywords[i])] = true;
                 }
@@ -260,7 +261,7 @@ WI.CSSCompletions = class CSSCompletions
 
     isShorthandPropertyName(shorthand)
     {
-        return shorthand in this._longhands;
+        return WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(shorthand);
     }
 
     shorthandsForLonghand(longhand)

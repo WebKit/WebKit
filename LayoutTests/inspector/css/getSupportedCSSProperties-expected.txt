@@ -1,2 +1,32 @@
-box-shadow is supported
+"box-sizing" is supported
+"box-sizing" has aliases:
+ - "-webkit-box-sizing"
+"box-sizing" has keyword values:
+ - "border-box"
+ - "content-box"
+
+"filter" is supported
+"filter" has aliases:
+ - "-webkit-filter"
+
+"font-style" is supported
+"font-style" is inherited
+
+"margin" is supported
+"margin" has longhands:
+ - "margin-top"
+ - "margin-right"
+ - "margin-bottom"
+ - "margin-left"
+
+"text-transform" is supported
+"text-transform" has aliases:
+ - "-epub-text-transform"
+"text-transform" is inherited
+"text-transform" has keyword values:
+ - "none"
+ - "capitalize"
+ - "uppercase"
+ - "lowercase"
+
 

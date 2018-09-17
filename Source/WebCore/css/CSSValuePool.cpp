@@ -51,7 +51,7 @@ CSSValuePool::CSSValuePool()
     m_whiteColor.construct(Color(Color::white));
     m_blackColor.construct(Color(Color::black));
 
-    for (unsigned i = 0; i < numCSSValueKeywords; ++i)
+    for (unsigned i = firstCSSValueKeyword; i <= lastCSSValueKeyword; ++i)
         m_identifierValues[i].construct(static_cast<CSSValueID>(i));
 
     for (unsigned i = 0; i < (maximumCacheableIntegerValue + 1); ++i) {
@@ -63,7 +63,7 @@ CSSValuePool::CSSValuePool()
 
 Ref<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSValueID ident)
 {
-    RELEASE_ASSERT(ident >= 0 && ident < numCSSValueKeywords);
+    RELEASE_ASSERT(ident >= firstCSSValueKeyword && ident <= lastCSSValueKeyword);
     return m_identifierValues[ident].get();
 }
 

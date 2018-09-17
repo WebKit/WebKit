@@ -40,7 +40,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     static isInheritedPropertyName(name)
     {
         console.assert(typeof name === "string");
-        if (name in WI.CSSKeywordCompletions.InheritedProperties)
+        if (WI.CSSKeywordCompletions.InheritedProperties.has(name))
             return true;
         // Check if the name is a CSS variable.
         return name.startsWith("--");

@@ -1,3 +1,33 @@
+2018-09-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: generate CSSKeywordCompletions from backend values
+        https://bugs.webkit.org/show_bug.cgi?id=189041
+
+        Reviewed by Joseph Pecoraro.
+
+        Modified existing test inspector/css/getSupportedCSSProperties.html.
+
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        Send alias and longhand information for all properties, and any known keyword values for
+        those applicable. This makes use of `CSSParserFastPaths::isValidKeywordPropertyAndValue` to
+        determine if a given keyword is a valid value for each property. This only generates a list
+        for properties who have no non-keyword values.
+
+        * css/makeprop.pl:
+        * css/makevalues.pl:
+        Create additional helper functions/constants for retrieving strings of each CSS keyword.
+
+        * css/CSSProperty.h:
+        (WebCore::CSSProperty::aliasesForProperty):
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::valueName):
+
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::CSSValuePool):
+        (WebCore::CSSValuePool::createIdentifierValue):
+
 2018-09-17  Youenn Fablet  <youenn@apple.com>
 
         track.onmute isn't called for a remote MediaStreamTrack when its counter part track is removed from the peer connection
