@@ -1,3 +1,16 @@
+2018-08-23  Michael Saboff  <msaboff@apple.com>
+
+        YARR: Need to JIT compile a RegExp before using containsNestedSubpatterns flag
+        https://bugs.webkit.org/show_bug.cgi?id=188895
+
+        Reviewed by Mark Lam.
+
+        Found while working on another change.  This will allow processing of nested
+        parenthesis that require saved ParenContext structures.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::compile):
+
 2018-08-22  Mark Lam  <mark.lam@apple.com>
 
         The DFG CFGSimplification phase shouldn’t jettison a block when it’s the target of both branch directions.
