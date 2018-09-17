@@ -29,6 +29,7 @@
 #include "WebBackForwardListItem.h"
 #include <WebCore/Process.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -88,9 +89,6 @@ public:
     void setTreatAsSameOriginNavigation(bool value) { m_treatAsSameOriginNavigation = value; }
     bool treatAsSameOriginNavigation() const { return m_treatAsSameOriginNavigation; }
 
-    void setIsCrossOriginWindowOpenNavigation(bool value) { m_isCrossOriginWindowOpenNavigation = value; }
-    bool isCrossOriginWindowOpenNavigation() const { return m_isCrossOriginWindowOpenNavigation; }
-
     void setHasOpenedFrames(bool value) { m_hasOpenedFrames = value; }
     bool hasOpenedFrames() const { return m_hasOpenedFrames; }
 
@@ -99,6 +97,9 @@ public:
 
     void setOpener(const std::optional<std::pair<uint64_t, uint64_t>>& opener) { m_opener = opener; }
     const std::optional<std::pair<uint64_t, uint64_t>>& opener() const { return m_opener; }
+
+    void setRequesterOrigin(const WebCore::SecurityOriginData& origin) { m_requesterOrigin = origin; }
+    const WebCore::SecurityOriginData& requesterOrigin() const { return m_requesterOrigin; }
 
 #if !LOG_DISABLED
     const char* loggingString() const;
@@ -122,10 +123,10 @@ private:
     RefPtr<WebKit::WebBackForwardListItem> m_fromItem;
     std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
     bool m_treatAsSameOriginNavigation { false };
-    bool m_isCrossOriginWindowOpenNavigation { false };
     bool m_hasOpenedFrames { false };
     bool m_openedViaWindowOpenWithOpener { false };
     std::optional<std::pair<uint64_t, uint64_t>> m_opener;
+    WebCore::SecurityOriginData m_requesterOrigin;
 };
 
 } // namespace API

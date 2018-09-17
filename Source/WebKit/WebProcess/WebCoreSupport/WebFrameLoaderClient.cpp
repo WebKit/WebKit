@@ -866,10 +866,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.downloadAttribute = navigationAction.downloadAttribute();
     navigationActionData.isRedirect = !redirectResponse.isNull();
     navigationActionData.treatAsSameOriginNavigation = navigationAction.treatAsSameOriginNavigation();
-    navigationActionData.isCrossOriginWindowOpenNavigation = navigationAction.isCrossOriginWindowOpenNavigation();
     navigationActionData.hasOpenedFrames = navigationAction.hasOpenedFrames();
     navigationActionData.openedViaWindowOpenWithOpener = navigationAction.openedViaWindowOpenWithOpener();
     navigationActionData.opener = navigationAction.opener();
+    if (auto& requester = navigationAction.requester())
+        navigationActionData.requesterOrigin = requester->securityOrigin().data();
     navigationActionData.targetBackForwardItemIdentifier = navigationAction.targetBackForwardItemIdentifier();
 
     WebCore::Frame* coreFrame = m_frame->coreFrame();

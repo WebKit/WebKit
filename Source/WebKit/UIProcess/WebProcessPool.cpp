@@ -2142,26 +2142,15 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         return page.process();
     }
 
-    if (navigation.isCrossOriginWindowOpenNavigation()) {
-        if (navigation.opener() && !m_configuration->processSwapsOnWindowOpenWithOpener()) {
-            reason = "Browsing context has an opener"_s;
-            return page.process();
-        }
-
-        reason = "Initial navigation is cross-site in a newly opened window"_s;
-        action = PolicyAction::Ignore;
-        return createNewWebProcess(page.websiteDataStore());
-    }
-
     // FIXME: We should support process swap when a window has been opened via window.open() without 'noopener'.
     // The issue is that the opener has a handle to the WindowProxy.
-    if (navigation.openedViaWindowOpenWithOpener()) {
+    if (navigation.openedViaWindowOpenWithOpener() && !m_configuration->processSwapsOnWindowOpenWithOpener()) {
         reason = "Browsing context been opened via window.open() without 'noopener'"_s;
         return page.process();
     }
 
     // FIXME: We should support process swap when a window has an opener.
-    if (navigation.opener()) {
+    if (navigation.opener() && !m_configuration->processSwapsOnWindowOpenWithOpener()) {
         reason = "Browsing context has an opener"_s;
         return page.process();
     }
@@ -2197,7 +2186,12 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
             return page.process();
         }
 
-        auto url = URL { ParsedURLString, page.pageLoadState().url() };
+        bool isInitialLoadInNewWindowOpenedByDOM = page.openedByDOM() && !page.hasCommittedAnyProvisionalLoads();
+        URL url;
+        if (isInitialLoadInNewWindowOpenedByDOM && !navigation.requesterOrigin().isEmpty())
+            url = URL { URL(), navigation.requesterOrigin().toString() };
+        else
+            url = URL { ParsedURLString, page.pageLoadState().url() };
         if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || registrableDomainsAreEqual(url, targetURL)) {
             reason = "Navigation is same-site"_s;
             return page.process();

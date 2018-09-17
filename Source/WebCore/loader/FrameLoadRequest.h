@@ -88,9 +88,6 @@ public:
 
     InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
 
-    void setIsCrossOriginWindowOpenNavigation(bool value) { m_isCrossOriginWindowOpenNavigation = value; }
-    bool isCrossOriginWindowOpenNavigation() const { return m_isCrossOriginWindowOpenNavigation; }
-
     bool isSystemPreview() const { return m_systemPreviewInfo.isSystemPreview; }
     const IntRect& systemPreviewRect() const { return m_systemPreviewInfo.systemPreviewRect; }
 
@@ -112,7 +109,6 @@ private:
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     AtomicString m_downloadAttribute;
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
-    bool m_isCrossOriginWindowOpenNavigation { false };
     SystemPreviewInfo m_systemPreviewInfo;
     ShouldSkipSafeBrowsingCheck m_shouldSkipSafeBrowsingCheck { ShouldSkipSafeBrowsingCheck::No };
 };

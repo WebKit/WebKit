@@ -103,7 +103,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     NavigationAction action = loader->triggeringAction();
     if (action.isEmpty()) {
         action = NavigationAction { *m_frame.document(), request, InitiatedByMainFrame::Unknown, NavigationType::Other, loader->shouldOpenExternalURLsPolicyToPropagate() };
-        loader->setTriggeringAction(action);
+        loader->setTriggeringAction(NavigationAction { action });
     }
 
     // Don't ask more than once for the same request or if we are loading an empty URL.

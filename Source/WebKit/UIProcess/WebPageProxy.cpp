@@ -2552,7 +2552,8 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
         };
     }
 
-    if (!navigation.isCrossOriginWindowOpenNavigation() || !navigatedFrameIdentifierInPreviousProcess)
+    bool isInitialNavigationInNewWindow = openedByDOM() && !hasCommittedAnyProvisionalLoads();
+    if (!isInitialNavigationInNewWindow || !navigatedFrameIdentifierInPreviousProcess)
         return;
 
     m_mainFrameWindowCreationHandler = [this, previousProcess = WTFMove(previousProcess), navigatedFrameIdentifierInPreviousProcess = *navigatedFrameIdentifierInPreviousProcess](const GlobalWindowIdentifier& windowIdentifier) {
@@ -3657,6 +3658,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     if (frame->isMainFrame() && navigationID)
         navigation = &navigationState().navigation(navigationID);
 
+    m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 
 #if PLATFORM(IOS)
@@ -4049,11 +4051,11 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const WebCo
     navigation->setCurrentRequest(ResourceRequest(request), m_process->coreProcessIdentifier());
     navigation->setCurrentRequestIsRedirect(navigationActionData.isRedirect);
     navigation->setTreatAsSameOriginNavigation(navigationActionData.treatAsSameOriginNavigation);
-    navigation->setIsCrossOriginWindowOpenNavigation(navigationActionData.isCrossOriginWindowOpenNavigation);
     navigation->setHasOpenedFrames(navigationActionData.hasOpenedFrames);
     if (navigationActionData.openedViaWindowOpenWithOpener)
         navigation->setOpenedViaWindowOpenWithOpener();
     navigation->setOpener(navigationActionData.opener);
+    navigation->setRequesterOrigin(navigationActionData.requesterOrigin);
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame->didHandleContentFilterUnblockNavigation(request))
@@ -4276,6 +4278,8 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
             reply(0, { });
             return;
         }
+
+        newPage->setOpenedByDOM();
 
         reply(newPage->pageID(), newPage->creationParameters());
 

@@ -1,3 +1,51 @@
+2018-09-17  Chris Dumez  <cdumez@apple.com>
+
+        PSON: window.open() with 'noopener' should only process-swap cross-site, not cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=189602
+        <rdar://problem/44430549>
+
+        Reviewed by Geoff Garen.
+
+        The following fixes were made to our process swap on navigation logic:
+        - Browsing contexts opened via window.open() with 'noopener' option now only same if
+          they are cross-site, instead of doing a stricter cross-origin check.
+        - Support process swapping when opening a new window via <a target="_blank" rel="noopener">
+          that is cross-site.
+
+        In order to support this, the following changes were made:
+        - Stop passing a 'isCrossOriginWindowOpenNavigation' flag to the UIProcess when navigating because:
+          - This is specific to window.open() and does not apply to other windows opened by DOM
+          - This forces the origin check to happens on WebContent process side instead of relying on the
+            one in WebProcessPool in the UIProcess
+        - Pass the origin of the requester to the UIProcess when navigating, so that the WebProcessPool
+          can use the requester's host for the cross-site check for the initial navigation in a new window
+          created by DOM.
+        - Add 2 flags to WebPageProxy which indicate if the page was created by the DOM and if any provisional
+          loads have been committed. The WebProcessPool uses theses flags to recognize initial loads in
+          new windows created by the DOM, so that it uses the requester's origin for the cross-site check.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setRequesterOrigin):
+        (API::Navigation::requesterOrigin const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setOpenedByDOM):
+        (WebKit::WebPageProxy::openedByDOM const):
+        (WebKit::WebPageProxy::hasCommittedAnyProvisionalLoads const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::shouldUseSameProcessBasedOnURLs):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-09-17  Alexey Proskuryakov  <ap@apple.com>
 
         Revert https://trac.webkit.org/r235910, because the new test times out.

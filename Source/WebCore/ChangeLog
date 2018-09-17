@@ -1,3 +1,35 @@
+2018-09-17  Chris Dumez  <cdumez@apple.com>
+
+        PSON: window.open() with 'noopener' should only process-swap cross-site, not cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=189602
+        <rdar://problem/44430549>
+
+        Reviewed by Geoff Garen.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setTriggeringAction):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoadRequest.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        Move NavigationAction's opener setting to loadWithNavigationAction() as this is a better bottleneck.
+        Otherwise, we'd have to set it at several call sites. Also move the NavigationAction around instead
+        of copying it.
+
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::setShouldOpenExternalURLsPolicy):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+
 2018-09-17  Darin Adler  <darin@apple.com>
 
         Use OpaqueJSString rather than JSRetainPtr inside WebKit

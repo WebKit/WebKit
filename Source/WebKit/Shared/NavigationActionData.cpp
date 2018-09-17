@@ -46,10 +46,10 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << clickLocationInRootViewCoordinates;
     encoder << isRedirect;
     encoder << treatAsSameOriginNavigation;
-    encoder << isCrossOriginWindowOpenNavigation;
     encoder << hasOpenedFrames;
     encoder << openedViaWindowOpenWithOpener;
     encoder << opener;
+    encoder << requesterOrigin;
     encoder << targetBackForwardItemIdentifier;
 }
 
@@ -104,11 +104,6 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!treatAsSameOriginNavigation)
         return std::nullopt;
 
-    std::optional<bool> isCrossOriginWindowOpenNavigation;
-    decoder >> isCrossOriginWindowOpenNavigation;
-    if (!isCrossOriginWindowOpenNavigation)
-        return std::nullopt;
-
     std::optional<bool> hasOpenedFrames;
     decoder >> hasOpenedFrames;
     if (!hasOpenedFrames)
@@ -124,6 +119,11 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!opener)
         return std::nullopt;
 
+    std::optional<WebCore::SecurityOriginData> requesterOrigin;
+    decoder >> requesterOrigin;
+    if (!opener)
+        return std::nullopt;
+
     std::optional<std::optional<WebCore::BackForwardItemIdentifier>> targetBackForwardItemIdentifier;
     decoder >> targetBackForwardItemIdentifier;
     if (!targetBackForwardItemIdentifier)
@@ -131,7 +131,8 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
         
     return {{ WTFMove(navigationType), WTFMove(modifiers), WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
-        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *isCrossOriginWindowOpenNavigation, *hasOpenedFrames, *openedViaWindowOpenWithOpener, WTFMove(*opener), WTFMove(*targetBackForwardItemIdentifier) }};
+        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedViaWindowOpenWithOpener, WTFMove(*opener), WTFMove(*requesterOrigin),
+        WTFMove(*targetBackForwardItemIdentifier) }};
 }
 
 } // namespace WebKit

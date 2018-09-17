@@ -440,6 +440,11 @@ public:
     bool tryClose();
     bool isClosed() const { return m_isClosed; }
 
+    void setOpenedByDOM() { m_openedByDOM = true; }
+    bool openedByDOM() const { return m_openedByDOM; }
+
+    bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
+
     void setIsUsingHighPerformanceWebGL(bool value) { m_isUsingHighPerformanceWebGL = value; }
     bool isUsingHighPerformanceWebGL() const { return m_isUsingHighPerformanceWebGL; }
 
@@ -2211,6 +2216,8 @@ private:
 #endif
 
     bool m_isUsingHighPerformanceWebGL { false };
+    bool m_openedByDOM { false };
+    bool m_hasCommittedAnyProvisionalLoads { false };
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
     HashMap<uint64_t, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;
