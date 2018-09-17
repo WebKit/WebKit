@@ -28,7 +28,12 @@ require 'getoptlong'
 SCRIPT_NAME = File.basename($0)
 COMMENT_REGEXP = /\/\//
 
-def usage
+def usage(message)
+    if message
+        puts "Error: #{message}"
+        puts
+    end
+
     puts "usage: #{SCRIPT_NAME} [options] <sources-list-file>..."
     puts "<sources-list-file> may be separate arguments or one semicolon separated string"
     puts "--help                          (-h) Print this message"
@@ -72,7 +77,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     | opt, arg |
     case opt
     when '--help'
-        usage
+        usage(nil)
     when '--verbose'
         $verbose = true
     when '--derived-sources-path'
@@ -81,7 +86,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         FileUtils.mkpath($unifiedSourceOutputPath) if !$unifiedSourceOutputPath.exist?
     when '--source-tree-path'
         $sourceTreePath = Pathname.new(arg)
-        usage if !$sourceTreePath.exist?
+        usage("Source tree #{arg} does not exist.") if !$sourceTreePath.exist?
     when '--feature-flags'
         arg.gsub(/\s+/, ";").split(";").map { |x| $featureFlags[x] = true }
     when '--print-bundled-sources'
@@ -93,14 +98,15 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     end
 }
 
-usage if !$unifiedSourceOutputPath || !$sourceTreePath
-log("putting unified sources in #{$unifiedSourceOutputPath}")
+usage("--derived-sources-path must be specified.") if !$unifiedSourceOutputPath
+usage("--source-tree-path must be specified.") if !$sourceTreePath
+log("Putting unified sources in #{$unifiedSourceOutputPath}")
 log("Active Feature flags: #{$featureFlags.keys.inspect}")
 
-usage if ARGV.length == 0
+usage("At least one source list file must be specified.") if ARGV.length == 0
 # Even though CMake will only pass us a single semicolon separated arguemnts, we separate all the arguments for simplicity.
 sourceListFiles = ARGV.to_a.map { | sourceFileList | sourceFileList.split(";") }.flatten
-log("source files: #{sourceListFiles}")
+log("Source files: #{sourceListFiles}")
 $generatedSources = []
 
 class SourceFile
@@ -162,7 +168,7 @@ class BundleManager
     def writeFile(file, text)
         bundleFile = $unifiedSourceOutputPath + file
         if (!bundleFile.exist? || IO::read(bundleFile) != @currentBundleText)
-            log("writing bundle #{bundleFile} with: \n#{@currentBundleText}")
+            log("Writing bundle #{bundleFile} with: \n#{@currentBundleText}")
             IO::write(bundleFile, @currentBundleText)
         end
     end
@@ -196,7 +202,7 @@ class BundleManager
         path = sourceFile.path
         raise "wrong extension: #{path.extname} expected #{@extension}" unless path.extname == ".#{@extension}"
         if @fileCount == MAX_BUNDLE_SIZE
-            log("flushing because new bundle is full #{@fileCount}")
+            log("Flushing because new bundle is full (#{@fileCount} sources)")
             flush
         end
         @currentBundleText += "#include \"#{sourceFile}\"\n"
@@ -207,14 +213,17 @@ end
 def ProcessFileForUnifiedSourceGeneration(sourceFile)
     path = sourceFile.path
     if ($currentDirectory != path.dirname)
-        log("flushing because new dirname old: #{$currentDirectory}, new: #{path.dirname}")
+        log("Flushing because new dirname; old: #{$currentDirectory}, new: #{path.dirname}")
         $bundleManagers.each_value { |x| x.flush }
         $currentDirectory = path.dirname
     end
 
     bundle = $bundleManagers[path.extname]
-    if !bundle || !sourceFile.unifiable
-        log("No bundle for #{path.extname} files building #{path} standalone")
+    if !bundle
+        log("No bundle for #{path.extname} files, building #{path} standalone")
+        $generatedSources << sourceFile
+    elsif !sourceFile.unifiable
+        log("Not allowed to unify #{path}, building standalone")
         $generatedSources << sourceFile
     else
         bundle.addFile(sourceFile)
@@ -231,16 +240,16 @@ sourceFiles = []
 
 sourceListFiles.each_with_index {
     | path, sourceFileIndex |
-    log("reading #{path}")
+    log("Reading #{path}")
     result = []
     inDisabledLines = false
     File.read(path).lines.each {
         | line |
         commentStart = line =~ COMMENT_REGEXP
-        log("before: #{line}")
+        log("Before: #{line}")
         if commentStart != nil
             line = line.slice(0, commentStart)
-            log("after: #{line}")
+            log("After: #{line}")
         end
         line.strip!
         if line == "#endif"
@@ -261,7 +270,7 @@ sourceListFiles.each_with_index {
     }
     raise "Couldn't find closing \"#endif\"" if inDisabledLines
 
-    log("found #{result.length} source files in #{path}")
+    log("Found #{result.length} source files in #{path}")
     sourceFiles += result
 }
 
@@ -294,8 +303,7 @@ $bundleManagers.each_value {
 }
 
 # We use stdout to report our unified source list to CMake.
-# Add trailing semicolon since CMake seems dislikes not having it.
-# Also, make sure we use print instead of puts because CMake will think the \n is a source file and fail to build.
+# Add trailing semicolon and avoid a trailing newline for CMake's sake.
 
 log($generatedSources.join(";") + ";")
 print($generatedSources.join(";") + ";")
