@@ -106,7 +106,10 @@ public:
                             if (extremeLogging)
                                 m_graph.dump();
                             m_graph.dethread();
-                            mergeBlocks(block, targetBlock, oneBlock(jettisonedBlock));
+                            if (targetBlock == jettisonedBlock)
+                                mergeBlocks(block, targetBlock, noBlocks());
+                            else
+                                mergeBlocks(block, targetBlock, oneBlock(jettisonedBlock));
                         } else {
                             if (extremeLogging)
                                 m_graph.dump();
@@ -116,7 +119,8 @@ public:
                             ASSERT(terminal->isTerminal());
                             NodeOrigin boundaryNodeOrigin = terminal->origin;
 
-                            jettisonBlock(block, jettisonedBlock, boundaryNodeOrigin);
+                            if (targetBlock != jettisonedBlock)
+                                jettisonBlock(block, jettisonedBlock, boundaryNodeOrigin);
 
                             block->replaceTerminal(
                                 m_graph, SpecNone, Jump, boundaryNodeOrigin,
@@ -134,7 +138,7 @@ public:
                         innerChanged = outerChanged = true;
                         break;
                     }
-                    
+
                     // Branch to same destination -> jump.
                     // FIXME: this will currently not be hit because of the lack of jump-only
                     // block simplification.
