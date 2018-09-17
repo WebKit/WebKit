@@ -124,6 +124,19 @@ enum CompositingPolicy {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary HEVCParameterSet {
+    DOMString codecName;
+    unsigned short generalProfileSpace;
+    unsigned short generalProfileIDC;
+    unsigned long generalProfileCompatibilityFlags;
+    boolean generalTierFlag;
+    unsigned short generalLevelIDC;
+    sequence<unsigned short> constraintFlags;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     NoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
@@ -672,4 +685,6 @@ enum CompositingPolicy {
     unsigned long primaryScreenDisplayID();
 
     boolean supportsVCPEncoder();
+
+    HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);
 };

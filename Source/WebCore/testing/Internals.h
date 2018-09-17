@@ -29,6 +29,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
+#include "HEVCUtilities.h"
 #include "JSDOMPromiseDeferred.h"
 #include "OrientationNotifier.h"
 #include "PageConsoleClient.h"
@@ -738,6 +739,9 @@ public:
 
     bool supportsVCPEncoder();
         
+    using HEVCParameterSet = WebCore::HEVCParameterSet;
+    std::optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

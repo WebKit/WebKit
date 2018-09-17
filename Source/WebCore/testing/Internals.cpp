@@ -74,6 +74,7 @@
 #include "FrameView.h"
 #include "GCObservation.h"
 #include "GridPosition.h"
+#include "HEVCUtilities.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
@@ -4735,6 +4736,11 @@ bool Internals::supportsVCPEncoder()
 #else
     return false;
 #endif
+}
+
+std::optional<HEVCParameterSet> Internals::parseHEVCCodecParameters(const String& codecString)
+{
+    return WebCore::parseHEVCCodecParameters(codecString);
 }
 
 } // namespace WebCore

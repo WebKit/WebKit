@@ -1,3 +1,42 @@
+2018-09-17  Jer Noble  <jer.noble@apple.com>
+
+        Add support for HEVC codec types in Media Capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=189565
+
+        Reviewed by Eric Carlson.
+
+        Test: media/hevc-codec-parameters.html
+
+        Add some utility methods for parsing HEVC codec strings, and using those parsed
+        values to query the platform for detailed support for HEVC decoding.
+
+        Drive-by fix: Modify MediaEngineConfigurationFactory to allow for null function
+        pointers in the encode/decode factory pair.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/VideoToolboxSoftLink.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.h:
+        * platform/graphics/HEVCUtilities.cpp: Added.
+        (WebCore::parseHEVCCodecParameters):
+        * platform/graphics/HEVCUtilities.h: Added.
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.cpp: Added.
+        (WebCore::validateHEVCParameters):
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.h: Added.
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp: Added.
+        (WebCore::videoCodecTypeFromRFC4281Type):
+        (WebCore::createMediaPlayerDecodingConfigurationCocoa):
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.h: Added.
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.cpp:
+        (WebCore::factories):
+        (WebCore::MediaEngineConfigurationFactory::createDecodingConfiguration):
+        (WebCore::MediaEngineConfigurationFactory::createEncodingConfiguration):
+        * testing/Internals.cpp:
+        (WebCore::Internals::parseHEVCCodecParameters):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-09-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: generate CSSKeywordCompletions from backend values

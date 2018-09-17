@@ -29,9 +29,10 @@
 #include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
 #include <wtf/Vector.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -930,98 +931,6 @@ String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
 }
 
 // String Operations
-
-static bool isCharacterAllowedInBase(UChar c, int base)
-{
-    if (c > 0x7F)
-        return false;
-    if (isASCIIDigit(c))
-        return c - '0' < base;
-    if (isASCIIAlpha(c)) {
-        if (base > 36)
-            base = 36;
-        return (c >= 'a' && c < 'a' + base - 10)
-            || (c >= 'A' && c < 'A' + base - 10);
-    }
-    return false;
-}
-
-template<typename IntegralType, typename CharacterType>
-static inline IntegralType toIntegralType(const CharacterType* data, size_t length, bool* ok, int base)
-{
-    static const IntegralType integralMax = std::numeric_limits<IntegralType>::max();
-    static const bool isSigned = std::numeric_limits<IntegralType>::is_signed;
-    const IntegralType maxMultiplier = integralMax / base;
-
-    IntegralType value = 0;
-    bool isOk = false;
-    bool isNegative = false;
-
-    if (!data)
-        goto bye;
-
-    // skip leading whitespace
-    while (length && isSpaceOrNewline(*data)) {
-        --length;
-        ++data;
-    }
-
-    if (isSigned && length && *data == '-') {
-        --length;
-        ++data;
-        isNegative = true;
-    } else if (length && *data == '+') {
-        --length;
-        ++data;
-    }
-
-    if (!length || !isCharacterAllowedInBase(*data, base))
-        goto bye;
-
-    while (length && isCharacterAllowedInBase(*data, base)) {
-        --length;
-        IntegralType digitValue;
-        auto c = *data;
-        if (isASCIIDigit(c))
-            digitValue = c - '0';
-        else if (c >= 'a')
-            digitValue = c - 'a' + 10;
-        else
-            digitValue = c - 'A' + 10;
-
-        if (value > maxMultiplier || (value == maxMultiplier && digitValue > (integralMax % base) + isNegative))
-            goto bye;
-
-        value = base * value + digitValue;
-        ++data;
-    }
-
-#if COMPILER(MSVC)
-#pragma warning(push, 0)
-#pragma warning(disable:4146)
-#endif
-
-    if (isNegative)
-        value = -value;
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
-
-    // skip trailing space
-    while (length && isSpaceOrNewline(*data)) {
-        --length;
-        ++data;
-    }
-
-    if (!length)
-        isOk = true;
-bye:
-    if (ok)
-        *ok = isOk;
-    return isOk ? value : 0;
-}
-
 template<typename CharacterType>
 static unsigned lengthOfCharactersAsInteger(const CharacterType* data, size_t length)
 {

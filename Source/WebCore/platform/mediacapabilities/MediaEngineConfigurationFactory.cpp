@@ -35,6 +35,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(COCOA)
+#include "MediaEngineConfigurationFactoryCocoa.h"
+#endif
+
 namespace WebCore {
 
 static bool& mockEnabled()
@@ -51,7 +55,11 @@ struct MediaEngineFactory {
 using FactoryVector = Vector<MediaEngineFactory>;
 static const FactoryVector& factories()
 {
-    static NeverDestroyed<FactoryVector> factories = makeNeverDestroyed(FactoryVector({ }));
+    static NeverDestroyed<FactoryVector> factories = makeNeverDestroyed(FactoryVector({
+#if PLATFORM(COCOA)
+        { &createMediaPlayerDecodingConfigurationCocoa, nullptr },
+#endif
+    }));
     return factories;
 }
 
@@ -69,6 +77,11 @@ void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingC
         }
 
         auto& factory = *nextFactory;
+        if (!factory.createDecodingConfiguration) {
+            callback({ });
+            return;
+        }
+
         factory.createDecodingConfiguration(config, [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (auto&& info) mutable {
             if (info.supported) {
                 callback(WTFMove(info));
@@ -95,6 +108,11 @@ void MediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingC
         }
 
         auto& factory = *nextFactory;
+        if (!factory.createEncodingConfiguration) {
+            callback({ });
+            return;
+        }
+
         factory.createEncodingConfiguration(config, [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (auto&& info) mutable {
             if (info.supported) {
                 callback(WTFMove(info));

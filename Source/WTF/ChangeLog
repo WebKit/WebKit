@@ -1,5 +1,20 @@
 2018-09-17  Jer Noble  <jer.noble@apple.com>
 
+        Add support for HEVC codec types in Media Capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=189565
+
+        Reviewed by Eric Carlson.
+
+        Extract the toIntegralType template into its own header.
+
+        * wtf/CMakeLists.txt:
+        * wtf/text/StringConversion.h: Added.
+        (isCharacterAllowedInBase):
+        (toIntegralType):
+        * wtf/text/WTFString.cpp:
+
+2018-09-17  Jer Noble  <jer.noble@apple.com>
+
         Enable USE_MEDIAREMOTE on iOS
         https://bugs.webkit.org/show_bug.cgi?id=189096
 
