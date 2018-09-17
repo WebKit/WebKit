@@ -50,16 +50,20 @@ using namespace WebCore;
 VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement()
     : EventListener(EventListener::CPPEventListenerType)
 {
+    LOG(Fullscreen, "VideoFullscreenModelVideoElement %p ctor", this);
 }
 
 VideoFullscreenModelVideoElement::~VideoFullscreenModelVideoElement()
 {
+    LOG(Fullscreen, "VideoFullscreenModelVideoElement %p dtor", this);
 }
 
 void VideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
 {
     if (m_videoElement == videoElement)
         return;
+
+    LOG(Fullscreen, "VideoFullscreenModelVideoElement %p setVideoElement(%p)", this, videoElement);
 
     if (m_videoElement && m_videoElement->videoFullscreenLayer())
         m_videoElement->setVideoFullscreenLayer(nullptr);

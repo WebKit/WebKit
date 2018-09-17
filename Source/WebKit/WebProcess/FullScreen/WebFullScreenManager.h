@@ -22,8 +22,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WebFullScreenManager_h
-#define WebFullScreenManager_h
+
+#pragma once
 
 #if ENABLE(FULLSCREEN_API)
 
@@ -89,7 +89,7 @@ protected:
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;
     WebCore::IntPoint m_scrollPosition;
-    float m_topContentInset;
+    float m_topContentInset { 0 };
     RefPtr<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
 #if ENABLE(VIDEO)
@@ -100,5 +100,3 @@ protected:
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)
-
-#endif // WebFullScreenManager_h

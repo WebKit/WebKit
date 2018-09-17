@@ -1,3 +1,26 @@
+2018-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Add more Fullscreen logging
+        https://bugs.webkit.org/show_bug.cgi?id=189656
+
+        Reviewed by Jer Noble.
+
+        Add some fullscreen logging so I can tell whether WebFullScreenManager ever releases
+        the fullscreen element.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::WebFullScreenManager):
+        (WebKit::WebFullScreenManager::videoControlsManagerDidChange):
+        (WebKit::WebFullScreenManager::setPIPStandbyElement):
+        (WebKit::WebFullScreenManager::enterFullScreenForElement):
+        (WebKit::WebFullScreenManager::exitFullScreenForElement):
+        (WebKit::WebFullScreenManager::willEnterFullScreen):
+        (WebKit::WebFullScreenManager::didEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+        (WebKit::WebFullScreenManager::didExitFullScreen):
+        (WebKit::WebFullScreenManager::close):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+
 2018-09-17  Tim Horton  <timothy_horton@apple.com>
 
         Swipe snapshot can get stuck if swiping is disabled while it is visible
