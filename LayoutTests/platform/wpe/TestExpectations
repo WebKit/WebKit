@@ -1036,11 +1036,7 @@ webkit.org/b/148940 fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ]
 # Need support for internals.settings.setDeviceSupportsMouse
 fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Skip ]
 
-webkit.org/b/174673 fast/events/arrow-keys-on-body.html [ Failure ]
 webkit.org/b/174673 fast/events/keyboardevent-code.html [ Failure ]
-webkit.org/b/174673 fast/events/keyboardevent-key.html [ Failure ]
-webkit.org/b/174673 fast/events/key-events-in-input-button.html [ Failure ]
-webkit.org/b/174673 fast/events/key-events-in-input-text.html [ Failure ]
 
 # clickCount related failures
 webkit.org/b/174674 fast/events/click-count.html [ Failure ]
@@ -1303,8 +1299,6 @@ webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]
 webkit.org/b/185676 fullscreen/requestFullscreen-escape-key.html [ Failure ]
 webkit.org/b/185676 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/185676 fullscreen/full-screen-plugin.html [ Timeout ]
-
-webkit.org/b/186035 transitions/interrupted-transition-hardware.html [ ImageOnlyFailure ]
 
 webkit.org/b/185714 js/intl-numberformat-format-to-parts.html [ Failure ]
 webkit.org/b/185714 js/intl-pluralrules.html [ Failure ]
