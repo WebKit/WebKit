@@ -170,10 +170,10 @@ function isVideoBlack(canvas, video, startX, startY, grabbedWidth, grabbedHeight
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     if (!grabbedHeight) {
-        startX = 0;
-        startY = 0;
-        grabbedWidth = canvas.width;
-        grabbedHeight = canvas.height;
+        startX = 10;
+        startY = 10;
+        grabbedWidth = canvas.width - 20;
+        grabbedHeight = canvas.height - 20;
     }
 
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -193,6 +193,8 @@ async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
     if (isVideoBlack(canvas, video) === expected)
         return Promise.resolve();
 
+    if (counter === undefined)
+        counter = 0;
     if (counter > 50) {
         if (!errorMessage)
             errorMessage = "checkVideoBlack timed out expecting " + expected;

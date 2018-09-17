@@ -35,12 +35,12 @@ std::string CFStringToString(const CFStringRef cf_string) {
 }
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTSessionRef session,
+void SetVTSessionProperty(CompressionSessionRef session,
                           CFStringRef key,
                           int32_t value) {
   CFNumberRef cfNum =
       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value);
-  OSStatus status = VTSessionSetProperty(session, key, cfNum);
+  OSStatus status = CompressionSessionSetProperty(session, key, cfNum);
   CFRelease(cfNum);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
@@ -50,13 +50,13 @@ void SetVTSessionProperty(VTSessionRef session,
 }
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTSessionRef session,
+void SetVTSessionProperty(CompressionSessionRef session,
                           CFStringRef key,
                           uint32_t value) {
   int64_t value_64 = value;
   CFNumberRef cfNum =
       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value_64);
-  OSStatus status = VTSessionSetProperty(session, key, cfNum);
+  OSStatus status = CompressionSessionSetProperty(session, key, cfNum);
   CFRelease(cfNum);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
@@ -66,9 +66,9 @@ void SetVTSessionProperty(VTSessionRef session,
 }
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value) {
+void SetVTSessionProperty(CompressionSessionRef session, CFStringRef key, bool value) {
   CFBooleanRef cf_bool = (value) ? kCFBooleanTrue : kCFBooleanFalse;
-  OSStatus status = VTSessionSetProperty(session, key, cf_bool);
+  OSStatus status = CompressionSessionSetProperty(session, key, cf_bool);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
     RTC_LOG(LS_ERROR) << "VTSessionSetProperty failed to set: " << key_string
@@ -77,10 +77,10 @@ void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value) {
 }
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(VTSessionRef session,
+void SetVTSessionProperty(CompressionSessionRef session,
                           CFStringRef key,
                           CFStringRef value) {
-  OSStatus status = VTSessionSetProperty(session, key, value);
+  OSStatus status = CompressionSessionSetProperty(session, key, value);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
     std::string val_string = CFStringToString(value);

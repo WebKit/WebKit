@@ -603,7 +603,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     pixelFormat = nullptr;
   }
   CFDictionaryRef encoderSpecs = nullptr;
-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
+#if (!defined(WEBRTC_IOS) || ENABLE_VCP_ENCODER)
   auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
   // Currently hw accl is supported above 360p on mac, below 360p
   // the compression session will be created with hw accl disabled.
@@ -611,6 +611,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   CFTypeRef sessionValues[] = { useHardwareEncoder, useHardwareEncoder, kCFBooleanTrue };
   encoderSpecs = CFDictionaryCreate(kCFAllocatorDefault, sessionKeys, sessionValues, 3, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 #endif
+
   OSStatus status =
       CompressionSessionCreate(nullptr,  // use default allocator
                                  _width,

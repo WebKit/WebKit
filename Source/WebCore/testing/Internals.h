@@ -735,6 +735,8 @@ public:
     void notifyResourceLoadObserver();
 
     unsigned primaryScreenDisplayID();
+
+    bool supportsVCPEncoder();
         
 private:
     explicit Internals(Document&);

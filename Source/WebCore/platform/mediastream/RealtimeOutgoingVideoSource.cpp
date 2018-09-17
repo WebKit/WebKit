@@ -162,14 +162,12 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
         auto height = m_height;
         if (m_shouldApplyRotation && (m_currentRotation == webrtc::kVideoRotation_0 || m_currentRotation == webrtc::kVideoRotation_90))
             std::swap(width, height);
-        auto frame = m_bufferPool.CreateBuffer(width, height);
-        ASSERT(frame);
-        if (!frame) {
+        m_blackFrame = createBlackFrame(width, height);
+        ASSERT(m_blackFrame);
+        if (!m_blackFrame) {
             RELEASE_LOG(WebRTC, "RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded unable to send black frames");
             return;
         }
-        webrtc::I420Buffer::SetBlack(frame.get());
-        m_blackFrame = WTFMove(frame);
     }
     sendOneBlackFrame();
     m_blackFrameTimer.startRepeating(1_s);

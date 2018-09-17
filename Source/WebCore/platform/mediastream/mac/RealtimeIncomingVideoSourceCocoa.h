@@ -57,6 +57,8 @@ private:
 #endif
 };
 
+RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height);
+
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

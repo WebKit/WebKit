@@ -945,6 +945,7 @@
 		41A392211EFC5CFA00C4516A /* aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 41A391EB1EFC493000C4516A /* aes.c */; };
 		41AF2D13212CD6AC00D033D5 /* RTCVideoCodecH264.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41ECEAB520630108009D5141 /* RTCVideoCodecH264.mm */; };
 		41AF2D14212CD6AF00D033D5 /* RTCVideoDecoderH264.mm in Sources */ = {isa = PBXBuildFile; fileRef = 413A23F81FE1987C00373E99 /* RTCVideoDecoderH264.mm */; };
+		41BCE753214C81A800A748F1 /* VideoProcessingSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 41ECEAFB20646664009D5141 /* VideoProcessingSoftLink.h */; };
 		41D6B45321273159008F9353 /* call_config.cc in Sources */ = {isa = PBXBuildFile; fileRef = 415F1FD72127313F00064CBF /* call_config.cc */; };
 		41D6B45421273159008F9353 /* call_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 415F1FDA2127313F00064CBF /* call_config.h */; };
 		41D6B45521273159008F9353 /* degraded_call.h in Headers */ = {isa = PBXBuildFile; fileRef = 415F1FD22127313E00064CBF /* degraded_call.h */; };
@@ -11696,6 +11697,7 @@
 				5C4B46E71E42AA97002651C8 /* internal.h in Headers */,
 				5C4B47411E42AAEA002651C8 /* internal.h in Headers */,
 				41A391811EFC447C00C4516A /* internal.h in Headers */,
+				41BCE753214C81A800A748F1 /* VideoProcessingSoftLink.h in Headers */,
 				41A3917C1EFC447C00C4516A /* internal.h in Headers */,
 				41A391851EFC447C00C4516A /* internal.h in Headers */,
 				41EA53AE1EFC2C4D002FF04C /* md32_common.h in Headers */,
