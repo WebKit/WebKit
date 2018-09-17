@@ -27,14 +27,49 @@
 
 #if PLATFORM(COCOA)
 
+#include "GenericTaskQueue.h"
 #include "PlatformMediaSessionManager.h"
 
 namespace WebCore {
 
 class MediaSessionManagerCocoa : public PlatformMediaSessionManager {
 public:
+    virtual ~MediaSessionManagerCocoa() = default;
+    
     void updateSessionState() override;
     void beginInterruption(PlatformMediaSession::InterruptionType) override;
+
+    bool hasActiveNowPlayingSession() const final { return m_nowPlayingActive; }
+    String lastUpdatedNowPlayingTitle() const final { return m_lastUpdatedNowPlayingTitle; }
+    double lastUpdatedNowPlayingDuration() const final { return m_lastUpdatedNowPlayingDuration; }
+    double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
+    uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
+    bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
+
+protected:
+    void scheduleUpdateNowPlayingInfo() override;
+    void updateNowPlayingInfo();
+    void removeSession(PlatformMediaSession&) override;
+    
+    bool sessionWillBeginPlayback(PlatformMediaSession&) override;
+    void sessionWillEndPlayback(PlatformMediaSession&) override;
+    void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) override;
+    void clientCharacteristicsChanged(PlatformMediaSession&) override;
+    void sessionCanProduceAudioChanged(PlatformMediaSession&) override;
+
+    PlatformMediaSession* nowPlayingEligibleSession();
+
+private:
+    bool m_nowPlayingActive { false };
+    bool m_registeredAsNowPlayingApplication { false };
+    
+    // For testing purposes only.
+    String m_lastUpdatedNowPlayingTitle;
+    double m_lastUpdatedNowPlayingDuration { NAN };
+    double m_lastUpdatedNowPlayingElapsedTime { NAN };
+    uint64_t m_lastUpdatedNowPlayingInfoUniqueIdentifier { 0 };
+
+    GenericTaskQueue<Timer> m_nowPlayingUpdateTaskQueue;
 };
 
 }

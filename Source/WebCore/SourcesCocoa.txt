@@ -159,7 +159,7 @@ page/scrolling/mac/ScrollingTreeStickyNode.mm
 
 platform/audio/AudioSession.cpp
 
-platform/audio/cocoa/MediaSessionManagerCocoa.cpp
+platform/audio/cocoa/MediaSessionManagerCocoa.mm
 platform/audio/cocoa/WebAudioBufferList.cpp
 
 platform/audio/ios/AudioDestinationIOS.cpp @no-unify
@@ -176,7 +176,6 @@ platform/audio/mac/AudioHardwareListenerMac.cpp
 platform/audio/mac/AudioSessionMac.cpp
 platform/audio/mac/CARingBuffer.cpp
 platform/audio/mac/FFTFrameMac.cpp
-platform/audio/mac/MediaSessionManagerMac.mm
 
 platform/cf/CFURLExtras.cpp
 platform/cf/FileSystemCF.cpp

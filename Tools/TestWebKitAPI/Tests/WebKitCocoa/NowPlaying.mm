@@ -25,10 +25,11 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && USE(MEDIAREMOTE) && (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
+#if WK_API_ENABLED && USE(MEDIAREMOTE) && !PLATFORM(IOS_SIMULATOR) && (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <pal/spi/mac/MediaRemoteSPI.h>
 #import <wtf/Function.h>
@@ -89,6 +90,10 @@ public:
 
         _configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [_configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeAudio];
+#if PLATFORM(IOS)
+        [_configuration setAllowsInlineMediaPlayback:YES];
+        [_configuration _setInlineMediaPlaybackRequiresPlaysInlineAttribute:NO];
+#endif
 
         _webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:_configuration.get() addToWindow:YES]);
     }
