@@ -64,8 +64,10 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     }
 
     m_curlRequest = createCurlRequest(WTFMove(request));
-    if (!m_initialCredential.isEmpty())
+    if (!m_initialCredential.isEmpty()) {
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
+        m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+    }
     m_curlRequest->setStartTime(m_startTime);
     m_curlRequest->start();
 }
@@ -311,8 +313,10 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
 
         auto requestCopy = newRequest;
         m_curlRequest = createCurlRequest(WTFMove(requestCopy));
-        if (didChangeCredential && !m_initialCredential.isEmpty())
+        if (didChangeCredential && !m_initialCredential.isEmpty()) {
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
+            m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+        }
         m_curlRequest->setStartTime(m_startTime);
         m_curlRequest->start();
 
@@ -327,7 +331,7 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
 {
     if (!m_user.isNull() && !m_password.isNull()) {
         auto persistence = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use ? WebCore::CredentialPersistenceForSession : WebCore::CredentialPersistenceNone;
-        restartWithCredential(Credential(m_user, m_password, persistence));
+        restartWithCredential(challenge.protectionSpace(), Credential(m_user, m_password, persistence));
         m_user = String();
         m_password = String();
         return;
@@ -349,7 +353,7 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
                     // Store the credential back, possibly adding it as a default for this directory.
                     m_session->networkStorageSession().credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
-                restartWithCredential(credential);
+                restartWithCredential(challenge.protectionSpace(), credential);
                 return;
             }
         }
@@ -377,7 +381,7 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
                     m_session->networkStorageSession().credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
             }
 
-            restartWithCredential(credential);
+            restartWithCredential(challenge.protectionSpace(), credential);
             return;
         }
 
@@ -405,7 +409,7 @@ void NetworkDataTaskCurl::tryProxyAuthentication(WebCore::AuthenticationChalleng
             CurlContext::singleton().setDefaultProxyAuthMethod();
 
             auto requestCredential = m_curlRequest ? Credential(m_curlRequest->user(), m_curlRequest->password(), CredentialPersistenceNone) : Credential();
-            restartWithCredential(requestCredential);
+            restartWithCredential(challenge.protectionSpace(), requestCredential);
             return;
         }
 
@@ -413,7 +417,7 @@ void NetworkDataTaskCurl::tryProxyAuthentication(WebCore::AuthenticationChalleng
     });
 }
 
-void NetworkDataTaskCurl::restartWithCredential(const Credential& credential)
+void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectionSpace, const Credential& credential)
 {
     ASSERT(m_curlRequest);
 
@@ -421,6 +425,7 @@ void NetworkDataTaskCurl::restartWithCredential(const Credential& credential)
     m_curlRequest->cancel();
 
     m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);
+    m_curlRequest->setAuthenticationScheme(protectionSpace.authenticationScheme());
     m_curlRequest->setUserPass(credential.user(), credential.password());
     m_curlRequest->setStartTime(m_startTime);
     m_curlRequest->start();

@@ -1,3 +1,47 @@
+2018-09-17  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Respond with requested authentication scheme for authentication challenge.
+        https://bugs.webkit.org/show_bug.cgi?id=189318
+
+        Reviewed by Alex Christensen.
+
+        Curl port depends on libcurl's authentication handling by enabling CURLAUTH_ANY. With this
+        mode, the round-trip communication between the client and the server is handled by libcurl
+        internally. That's okay for many cases. But when initial request has a credentials
+        (i.e. XMLHttpRequest), there's no valid chance to store credential to the storage because
+        the returned response is not 401.
+
+        Passes following tests:
+        - http/tests/websocket/tests/hybi/httponly-cookie.pl
+        - http/tests/websocket/tests/hybi/secure-cookie-insecure-connection.pl
+        - http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl
+        - http/tests/xmlhttprequest/basic-auth-default.html
+        - http/tests/xmlhttprequest/cross-origin-authorization.html
+        - http/tests/xmlhttprequest/logout.html
+        - http/tests/xmlhttprequest/null-auth.php
+        - http/tests/xmlhttprequest/re-login-async.html
+        - http/tests/xmlhttprequest/re-login.html
+        - http/tests/xmlhttprequest/redirect-credentials-responseURL.html
+        - http/tests/xmlhttprequest/remember-bad-password.html
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::setHttpAuthUserPass):
+        (WebCore::CurlHandle::enableHttpAuthentication): Deleted.
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setAuthenticationScheme):
+        (WebCore::CurlRequest::setupTransfer):
+        * platform/network/curl/CurlRequest.h:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::getCredential):
+        (WebCore::ResourceHandle::restartRequestWithCredential):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::continueAfterWillSendRequest):
+
 2018-09-17  Youenn Fablet  <youenn@apple.com>
 
         Enable VCP for iOS and reenable it for MacOS

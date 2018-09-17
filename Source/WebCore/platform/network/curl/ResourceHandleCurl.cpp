@@ -85,8 +85,10 @@ bool ResourceHandle::start()
 
     d->m_curlRequest = createCurlRequest(WTFMove(request));
 
-    if (auto credential = getCredential(d->m_firstRequest, false))
-        d->m_curlRequest->setUserPass(credential->first, credential->second);
+    if (auto credential = getCredential(d->m_firstRequest, false)) {
+        d->m_curlRequest->setUserPass(credential->user(), credential->password());
+        d->m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+    }
 
     d->m_curlRequest->setStartTime(d->m_startTime);
     d->m_curlRequest->start();
@@ -231,7 +233,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             urlToStore = challenge.failureResponse().url();
         CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), urlToStore);
 
-        restartRequestWithCredential(credential.user(), credential.password());
+        restartRequestWithCredential(challenge.protectionSpace(), credential);
 
         d->m_user = String();
         d->m_pass = String();
@@ -256,7 +258,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                     CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
 
-                restartRequestWithCredential(credential.user(), credential.password());
+                restartRequestWithCredential(challenge.protectionSpace(), credential);
                 return;
             }
         }
@@ -291,7 +293,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         }
     }
 
-    restartRequestWithCredential(credential.user(), credential.password());
+    restartRequestWithCredential(challenge.protectionSpace(), credential);
 
     clearAuthentication();
 }
@@ -333,13 +335,15 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
     ASSERT_NOT_REACHED();
 }
 
-std::optional<std::pair<String, String>> ResourceHandle::getCredential(ResourceRequest& request, bool redirect)
+std::optional<Credential> ResourceHandle::getCredential(const ResourceRequest& request, bool redirect)
 {
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
-    String partition = request.cachePartition();
+    Credential credential { d->m_user, d->m_pass, CredentialPersistenceNone };
 
     if (shouldUseCredentialStorage()) {
-        if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
+        String partition = request.cachePartition();
+
+        if (credential.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.
             d->m_initialCredential = CredentialStorage::defaultCredentialStorage().get(partition, request.url());
@@ -348,25 +352,17 @@ std::optional<std::pair<String, String>> ResourceHandle::getCredential(ResourceR
             // before sending a request. This makes it possible to implement logout by sending an
             // XMLHttpRequest with known incorrect credentials, and aborting it immediately (so that
             // an authentication dialog doesn't pop up).
-            CredentialStorage::defaultCredentialStorage().set(partition, Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
+            CredentialStorage::defaultCredentialStorage().set(partition, credential, request.url());
         }
     }
 
-    String user = d->m_user;
-    String password = d->m_pass;
+    if (!d->m_initialCredential.isEmpty())
+        return d->m_initialCredential;
 
-    if (!d->m_initialCredential.isEmpty()) {
-        user = d->m_initialCredential.user();
-        password = d->m_initialCredential.password();
-    }
-
-    if (user.isEmpty() && password.isEmpty())
-        return std::nullopt;
-
-    return std::pair<String, String>(user, password);
+    return std::nullopt;
 }
 
-void ResourceHandle::restartRequestWithCredential(const String& user, const String& password)
+void ResourceHandle::restartRequestWithCredential(const ProtectionSpace& protectionSpace, const Credential& credential)
 {
     ASSERT(isMainThread());
 
@@ -377,7 +373,8 @@ void ResourceHandle::restartRequestWithCredential(const String& user, const Stri
     d->m_curlRequest->cancel();
 
     d->m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);
-    d->m_curlRequest->setUserPass(user, password);
+    d->m_curlRequest->setAuthenticationScheme(protectionSpace.authenticationScheme());
+    d->m_curlRequest->setUserPass(credential.user(), credential.password());
     d->m_curlRequest->setStartTime(d->m_startTime);
     d->m_curlRequest->start();
 }
@@ -385,8 +382,11 @@ void ResourceHandle::restartRequestWithCredential(const String& user, const Stri
 void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ASSERT(isMainThread());
+    ASSERT(!request.isEmpty());
 
     SynchronousLoaderClient client;
+    client.setAllowStoredCredentials(storedCredentialsPolicy == StoredCredentialsPolicy::Use);
+
     bool defersLoading = false;
     bool shouldContentSniff = true;
     bool shouldContentEncodingSniff = true;
@@ -401,6 +401,12 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
     auto requestCopy = handle->firstRequest();
     handle->d->m_curlRequest = handle->createCurlRequest(WTFMove(requestCopy));
+
+    if (auto credential = handle->getCredential(handle->d->m_firstRequest, false)) {
+        handle->d->m_curlRequest->setUserPass(credential->user(), credential->password());
+        handle->d->m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+    }
+
     handle->d->m_curlRequest->setStartTime(handle->d->m_startTime);
     handle->d->m_curlRequest->start();
 
@@ -518,7 +524,7 @@ void ResourceHandle::continueAfterWillSendRequest(ResourceRequest&& request)
     d->m_curlRequest = createCurlRequest(WTFMove(request));
 
     if (shouldForwardCredential && credential)
-        d->m_curlRequest->setUserPass(credential->first, credential->second);
+        d->m_curlRequest->setUserPass(credential->user(), credential->password());
 
     d->m_curlRequest->setStartTime(d->m_startTime);
     d->m_curlRequest->start();

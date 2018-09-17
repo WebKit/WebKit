@@ -1,3 +1,24 @@
+2018-09-17  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Respond with requested authentication scheme for authentication challenge.
+        https://bugs.webkit.org/show_bug.cgi?id=189318
+
+        Reviewed by Alex Christensen.
+
+        Curl port depends on libcurl's authentication handling by enabling CURLAUTH_ANY. With this
+        mode, the round-trip communication between the client and the server is handled by libcurl
+        internally. That's okay for many cases. But when initial request has a credentials
+        (i.e. XMLHttpRequest), there's no valid chance to store credential to the storage because
+        the returned response is not 401.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::NetworkDataTaskCurl):
+        (WebKit::NetworkDataTaskCurl::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTaskCurl::tryHttpAuthentication):
+        (WebKit::NetworkDataTaskCurl::tryProxyAuthentication):
+        (WebKit::NetworkDataTaskCurl::restartWithCredential):
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+
 2018-09-17  Woodrow Wang  <woodrow_wang@apple.com>
 
         Clear pending resource load statistics' writes after tests

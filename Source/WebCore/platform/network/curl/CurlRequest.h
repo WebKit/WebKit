@@ -34,6 +34,7 @@
 #include "CurlSSLVerifier.h"
 #include "FileSystem.h"
 #include "NetworkLoadMetrics.h"
+#include "ProtectionSpace.h"
 #include "ResourceRequest.h"
 #include <wtf/MessageQueue.h>
 #include <wtf/MonotonicTime.h>
@@ -67,6 +68,7 @@ public:
     virtual ~CurlRequest() = default;
 
     void invalidateClient();
+    WEBCORE_EXPORT void setAuthenticationScheme(ProtectionSpaceAuthenticationScheme);
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
     void setStartTime(const MonotonicTime& startTime) { m_requestStartTime = startTime; }
 
@@ -165,6 +167,7 @@ private:
     ResourceRequest m_request;
     String m_user;
     String m_password;
+    unsigned long m_authType { CURLAUTH_ANY };
     bool m_shouldSuspend { false };
     bool m_enableMultipart { false };
 

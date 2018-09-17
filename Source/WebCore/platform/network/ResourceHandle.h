@@ -263,8 +263,8 @@ private:
 
     bool shouldRedirectAsGET(const ResourceRequest&, bool crossOrigin);
 
-    std::optional<std::pair<String, String>> getCredential(ResourceRequest&, bool);
-    void restartRequestWithCredential(const String& user, const String& password);
+    std::optional<Credential> getCredential(const ResourceRequest&, bool);
+    void restartRequestWithCredential(const ProtectionSpace&, const Credential&);
 
     void handleDataURL();
 #endif

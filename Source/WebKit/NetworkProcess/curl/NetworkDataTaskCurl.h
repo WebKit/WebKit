@@ -28,6 +28,7 @@
 #include "CurlRequestClient.h"
 #include "NetworkDataTask.h"
 #include <WebCore/NetworkLoadMetrics.h>
+#include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceResponse.h>
 
 namespace WebCore {
@@ -76,7 +77,7 @@ private:
 
     void tryHttpAuthentication(WebCore::AuthenticationChallenge&&);
     void tryProxyAuthentication(WebCore::AuthenticationChallenge&&);
-    void restartWithCredential(const WebCore::Credential&);
+    void restartWithCredential(const WebCore::ProtectionSpace&, const WebCore::Credential&);
 
     void appendCookieHeader(WebCore::ResourceRequest&);
     void handleCookieHeaders(const WebCore::CurlResponse&);

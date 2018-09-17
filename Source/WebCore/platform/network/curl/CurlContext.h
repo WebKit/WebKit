@@ -251,8 +251,7 @@ public:
     void enableAcceptEncoding();
     void enableAllowedProtocols();
 
-    void enableHttpAuthentication(long);
-    void setHttpAuthUserPass(const String&, const String&);
+    void setHttpAuthUserPass(const String&, const String&, long authType = CURLAUTH_ANY);
 
     void setCACertPath(const char*);
     void setSslVerifyPeer(VerifyPeer);

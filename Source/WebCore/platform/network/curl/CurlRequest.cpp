@@ -57,6 +57,31 @@ void CurlRequest::invalidateClient()
     m_messageQueue = nullptr;
 }
 
+void CurlRequest::setAuthenticationScheme(ProtectionSpaceAuthenticationScheme scheme)
+{
+    switch (scheme) {
+    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+        m_authType = CURLAUTH_BASIC;
+        break;
+
+    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+        m_authType = CURLAUTH_DIGEST;
+        break;
+
+    case ProtectionSpaceAuthenticationSchemeNTLM:
+        m_authType = CURLAUTH_NTLM;
+        break;
+
+    case ProtectionSpaceAuthenticationSchemeNegotiate:
+        m_authType = CURLAUTH_NEGOTIATE;
+        break;
+
+    default:
+        m_authType = CURLAUTH_ANY;
+        break;
+    }
+}
+
 void CurlRequest::setUserPass(const String& user, const String& password)
 {
     ASSERT(isMainThread());
@@ -186,8 +211,7 @@ CURL* CurlRequest::setupTransfer()
     }
 
     if (!m_user.isEmpty() || !m_password.isEmpty()) {
-        m_curlHandle->enableHttpAuthentication(CURLAUTH_ANY);
-        m_curlHandle->setHttpAuthUserPass(m_user, m_password);
+        m_curlHandle->setHttpAuthUserPass(m_user, m_password, m_authType);
     }
 
     m_curlHandle->setHeaderCallbackFunction(didReceiveHeaderCallback, this);

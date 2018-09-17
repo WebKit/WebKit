@@ -514,15 +514,11 @@ void CurlHandle::enableAllowedProtocols()
     curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
 }
 
-void CurlHandle::enableHttpAuthentication(long option)
-{
-    curl_easy_setopt(m_handle, CURLOPT_HTTPAUTH, option);
-}
-
-void CurlHandle::setHttpAuthUserPass(const String& user, const String& password)
+void CurlHandle::setHttpAuthUserPass(const String& user, const String& password, long authType)
 {
     curl_easy_setopt(m_handle, CURLOPT_USERNAME, user.utf8().data());
     curl_easy_setopt(m_handle, CURLOPT_PASSWORD, password.utf8().data());
+    curl_easy_setopt(m_handle, CURLOPT_HTTPAUTH, authType);
 }
 
 void CurlHandle::setCACertPath(const char* path)
