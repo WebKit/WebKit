@@ -537,7 +537,7 @@ WebProcess/WebPage/WebInspectorInterruptDispatcher.cpp
 WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.cpp
 WebProcess/WebPage/WebInspectorUI.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
-WebProcess/WebPage/WebPage.cpp
+WebProcess/WebPage/WebPage.cpp @no-unify
 WebProcess/WebPage/WebPageGroupProxy.cpp
 WebProcess/WebPage/WebPageOverlay.cpp
 WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
