@@ -22,7 +22,59 @@
 #include "UIEventWithKeyState.h"
 
 namespace WebCore {
-    
+
+auto UIEventWithKeyState::modifiersFromInitializer(const EventModifierInit& initializer) -> OptionSet<Modifier>
+{
+    OptionSet<Modifier> result;
+    if (initializer.ctrlKey)
+        result |= Modifier::CtrlKey;
+    if (initializer.altKey)
+        result |= Modifier::AltKey;
+    if (initializer.shiftKey)
+        result |= Modifier::ShiftKey;
+    if (initializer.metaKey)
+        result |= Modifier::MetaKey;
+    if (initializer.modifierAltGraph)
+        result |= Modifier::AltGraphKey;
+    if (initializer.modifierCapsLock)
+        result |= Modifier::CapsLockKey;
+    return result;
+}
+
+bool UIEventWithKeyState::getModifierState(const String& keyIdentifier) const
+{
+    if (keyIdentifier == "Control")
+        return ctrlKey();
+    if (keyIdentifier == "Shift")
+        return shiftKey();
+    if (keyIdentifier == "Alt")
+        return altKey();
+    if (keyIdentifier == "Meta")
+        return metaKey();
+    if (keyIdentifier == "AltGraph")
+        return altGraphKey();
+    if (keyIdentifier == "CapsLock")
+        return capsLockKey();
+    // FIXME: The specification also has Fn, FnLock, Hyper, NumLock, Super, ScrollLock, Symbol, SymbolLock.
+    return false;
+}
+
+void UIEventWithKeyState::setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
+{
+    OptionSet<Modifier> result;
+    if (ctrlKey)
+        result |= Modifier::CtrlKey;
+    if (altKey)
+        result |= Modifier::AltKey;
+    if (shiftKey)
+        result |= Modifier::ShiftKey;
+    if (metaKey)
+        result |= Modifier::MetaKey;
+    if (altGraphKey)
+        result |= Modifier::AltGraphKey;
+    m_modifiers = result;
+}
+
 UIEventWithKeyState* findEventWithKeyState(Event* event)
 {
     for (Event* e = event; e; e = e->underlyingEvent())

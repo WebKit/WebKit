@@ -35,6 +35,9 @@
     readonly attribute unsigned short button;
     readonly attribute unsigned short buttons;
     readonly attribute EventTarget? relatedTarget;
+
+    boolean getModifierState(DOMString keyArg);
+
     [Conditional=POINTER_LOCK] readonly attribute long movementX;
     [Conditional=POINTER_LOCK] readonly attribute long movementY;
     [Conditional=MOUSE_FORCE_EVENTS, ImplementedAs=force]readonly attribute double webkitForce;

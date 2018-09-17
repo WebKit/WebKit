@@ -8,7 +8,7 @@
 
 description("This tests KeyboardEvent.getModifierState().");
 
-var event = new KeyboardEvent('keydown', { });
+var event = new MouseEvent('mousedown', { });
 shouldBeFalse("event.getModifierState('Control')");
 shouldBeFalse("event.getModifierState('Alt')");
 shouldBeFalse("event.getModifierState('Shift')");
@@ -16,7 +16,7 @@ shouldBeFalse("event.getModifierState('Meta')");
 shouldBeFalse("event.getModifierState('AltGraph')");
 shouldBeFalse("event.getModifierState('CapsLock')");
 
-var event = new KeyboardEvent('keydown', { ctrlKey: true });
+var event = new MouseEvent('mousedown', { ctrlKey: true });
 shouldBeTrue("event.getModifierState('Control')");
 shouldBeFalse("event.getModifierState('Alt')");
 shouldBeFalse("event.getModifierState('Shift')");
@@ -24,7 +24,7 @@ shouldBeFalse("event.getModifierState('Meta')");
 shouldBeFalse("event.getModifierState('AltGraph')");
 shouldBeFalse("event.getModifierState('CapsLock')");
 
-var event = new KeyboardEvent('keydown', { altKey: true });
+var event = new MouseEvent('mousedown', { altKey: true });
 shouldBeFalse("event.getModifierState('Control')");
 shouldBeTrue("event.getModifierState('Alt')");
 shouldBeFalse("event.getModifierState('Shift')");
@@ -32,7 +32,7 @@ shouldBeFalse("event.getModifierState('Meta')");
 shouldBeFalse("event.getModifierState('AltGraph')");
 shouldBeFalse("event.getModifierState('CapsLock')");
 
-var event = new KeyboardEvent('keydown', { shiftKey: true });
+var event = new MouseEvent('mousedown', { shiftKey: true });
 shouldBeFalse("event.getModifierState('Control')");
 shouldBeFalse("event.getModifierState('Alt')");
 shouldBeTrue("event.getModifierState('Shift')");
@@ -40,7 +40,7 @@ shouldBeFalse("event.getModifierState('Meta')");
 shouldBeFalse("event.getModifierState('AltGraph')");
 shouldBeFalse("event.getModifierState('CapsLock')");
 
-var event = new KeyboardEvent('keydown', { metaKey: true });
+var event = new MouseEvent('mousedown', { metaKey: true });
 shouldBeFalse("event.getModifierState('Control')");
 shouldBeFalse("event.getModifierState('Alt')");
 shouldBeFalse("event.getModifierState('Shift')");
@@ -48,7 +48,7 @@ shouldBeTrue("event.getModifierState('Meta')");
 shouldBeFalse("event.getModifierState('AltGraph')");
 shouldBeFalse("event.getModifierState('CapsLock')");
 
-var event = new KeyboardEvent('keydown', { modifierAltGraph: true });
+var event = new MouseEvent('mousedown', { modifierAltGraph: true });
 shouldBeFalse("event.getModifierState('Control')");
 shouldBeFalse("event.getModifierState('Alt')");
 shouldBeFalse("event.getModifierState('Shift')");
@@ -56,7 +56,7 @@ shouldBeFalse("event.getModifierState('Meta')");
 shouldBeTrue("event.getModifierState('AltGraph')");
 shouldBeFalse("event.getModifierState('CapsLock')");
 
-var event = new KeyboardEvent('keydown', { modifierCapsLock: true });
+var event = new MouseEvent('mousedown', { modifierCapsLock: true });
 shouldBeFalse("event.getModifierState('Control')");
 shouldBeFalse("event.getModifierState('Alt')");
 shouldBeFalse("event.getModifierState('Shift')");
@@ -64,7 +64,7 @@ shouldBeFalse("event.getModifierState('Meta')");
 shouldBeFalse("event.getModifierState('AltGraph')");
 shouldBeTrue("event.getModifierState('CapsLock')");
 
-var event = new KeyboardEvent('keydown', { ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });
+var event = new MouseEvent('mousedown', { ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });
 shouldBeTrue("event.getModifierState('Control')");
 shouldBeTrue("event.getModifierState('Alt')");
 shouldBeTrue("event.getModifierState('Shift')");

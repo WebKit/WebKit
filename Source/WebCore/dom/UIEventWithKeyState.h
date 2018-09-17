@@ -40,7 +40,9 @@ public:
     bool altGraphKey() const { return m_modifiers.contains(Modifier::AltGraphKey); }
     bool capsLockKey() const { return m_modifiers.contains(Modifier::CapsLockKey); }
 
-    OptionSet<Modifier> modifierKeys() { return m_modifiers; }
+    OptionSet<Modifier> modifierKeys() const { return m_modifiers; }
+
+    WEBCORE_EXPORT bool getModifierState(const String& keyIdentifier) const;
 
 protected:
     UIEventWithKeyState() = default;
@@ -63,62 +65,12 @@ protected:
     {
     }
 
-    void setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
-    {
-        OptionSet<Modifier> result;
-        if (ctrlKey)
-            result |= Modifier::CtrlKey;
-        if (altKey)
-            result |= Modifier::AltKey;
-        if (shiftKey)
-            result |= Modifier::ShiftKey;
-        if (metaKey)
-            result |= Modifier::MetaKey;
-        if (altGraphKey)
-            result |= Modifier::AltGraphKey;
-        m_modifiers = result;
-    }
-
-    void setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
-    {
-        OptionSet<Modifier> result;
-        if (ctrlKey)
-            result |= Modifier::CtrlKey;
-        if (altKey)
-            result |= Modifier::AltKey;
-        if (shiftKey)
-            result |= Modifier::ShiftKey;
-        if (metaKey)
-            result |= Modifier::MetaKey;
-        //  FIXME: Chrome or Firefox don't preserve these states.
-        if (m_modifiers & Modifier::AltGraphKey)
-            result |= Modifier::AltGraphKey;
-        if (m_modifiers & Modifier::CapsLockKey)
-            result |= Modifier::CapsLockKey;
-        m_modifiers = result;
-    }
+    void setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
 
 private:
     OptionSet<Modifier> m_modifiers;
 
-    OptionSet<Modifier> modifiersFromInitializer(const EventModifierInit& initializer)
-    {
-        OptionSet<Modifier> result;
-        if (initializer.ctrlKey)
-            result |= Modifier::CtrlKey;
-        if (initializer.altKey)
-            result |= Modifier::AltKey;
-        if (initializer.shiftKey)
-            result |= Modifier::ShiftKey;
-        if (initializer.metaKey)
-            result |= Modifier::MetaKey;
-        if (initializer.modifierAltGraph)
-            result |= Modifier::AltGraphKey;
-        if (initializer.modifierCapsLock)
-            result |= Modifier::CapsLockKey;
-        return result;
-    }
-    
+    static OptionSet<Modifier> modifiersFromInitializer(const EventModifierInit& initializer);
 };
 
 UIEventWithKeyState* findEventWithKeyState(Event*);

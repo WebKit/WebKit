@@ -80,8 +80,6 @@ public:
     unsigned location() const { return m_location; }
     bool repeat() const { return m_repeat; }
 
-    WEBCORE_EXPORT bool getModifierState(const String& keyIdentifier) const;
-    
     const PlatformKeyboardEvent* underlyingPlatformEvent() const { return m_underlyingPlatformEvent.get(); }
     PlatformKeyboardEvent* underlyingPlatformEvent() { return m_underlyingPlatformEvent.get(); }
 

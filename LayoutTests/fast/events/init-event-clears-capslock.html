@@ -43,6 +43,43 @@ shouldBeTrue('keyEvent.getModifierState("Meta")');
 shouldBeTrue('keyEvent.getModifierState("AltGraph")');
 shouldBeFalse('keyEvent.getModifierState("CapsLock")');
 
+evalAndLog(`mouseEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, detail: 0, key: 'a', code: 'KeyA',
+    ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });`);
+shouldBeTrue('mouseEvent.ctrlKey');
+shouldBeTrue('mouseEvent.shiftKey');
+shouldBeTrue('mouseEvent.altKey');
+shouldBeTrue('mouseEvent.metaKey');
+shouldBeTrue('mouseEvent.getModifierState("Control")');
+shouldBeTrue('mouseEvent.getModifierState("Shift")');
+shouldBeTrue('mouseEvent.getModifierState("Alt")');
+shouldBeTrue('mouseEvent.getModifierState("Meta")');
+shouldBeTrue('mouseEvent.getModifierState("AltGraph")');
+shouldBeTrue('mouseEvent.getModifierState("CapsLock")');
+
+evalAndLog(`mouseEvent.initMouseEvent('mousedown', false, false, window, 0, 0, 0, 0, 0, /* ctrl */ false, /* alt */ false, /* shift */ false, /* meta */ false)`);
+shouldBeFalse('mouseEvent.ctrlKey');
+shouldBeFalse('mouseEvent.shiftKey');
+shouldBeFalse('mouseEvent.altKey');
+shouldBeFalse('mouseEvent.metaKey');
+shouldBeFalse('mouseEvent.getModifierState("Control")');
+shouldBeFalse('mouseEvent.getModifierState("Shift")');
+shouldBeFalse('mouseEvent.getModifierState("Alt")');
+shouldBeFalse('mouseEvent.getModifierState("Meta")');
+shouldBeFalse('mouseEvent.getModifierState("AltGraph")');
+shouldBeFalse('mouseEvent.getModifierState("CapsLock")');
+
+evalAndLog(`mouseEvent.initMouseEvent('mousedown', false, false, window, 0, 0, 0, 0, 0, /* ctrl */ true, /* alt */ true, /* shift */ true, /* meta */ true)`);
+shouldBeTrue('mouseEvent.ctrlKey');
+shouldBeTrue('mouseEvent.shiftKey');
+shouldBeTrue('mouseEvent.altKey');
+shouldBeTrue('mouseEvent.metaKey');
+shouldBeTrue('mouseEvent.getModifierState("Control")');
+shouldBeTrue('mouseEvent.getModifierState("Shift")');
+shouldBeTrue('mouseEvent.getModifierState("Alt")');
+shouldBeTrue('mouseEvent.getModifierState("Meta")');
+shouldBeFalse('mouseEvent.getModifierState("AltGraph")');
+shouldBeFalse('mouseEvent.getModifierState("CapsLock")');
+
 </script>
 </body>
 </html>
