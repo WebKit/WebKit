@@ -1,3 +1,9 @@
+2018-09-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, mark fast/text/variations/ipc2.html as slow.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-15  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest::createResponseBlob() should create a Blob with type for empty response

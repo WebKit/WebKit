@@ -871,3 +871,5 @@ imported/w3c/web-platform-tests/payment-request/show-method-postmessage-manual.h
 imported/w3c/web-platform-tests/payment-request/updateWith-method-pmi-handling-manual.https.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/user-abort-algorithm-manual.https.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-algo-manual.https.html [ Skip ]
+
+webkit.org/b/189550 fast/text/variations/ipc2.html [ Slow ]
