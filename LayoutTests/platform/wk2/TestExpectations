@@ -737,6 +737,8 @@ http/wpt/cross-origin-resource-policy/ [ Pass ]
 http/tests/navigation/useragent-reload.php [ Pass ]
 webkit.org/b/187931 storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Skip ]
 
+# testRunner.terminateNetworkProcess() only works in WebKit2
+fast/files/blob-network-process-crash.html [ Pass ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################

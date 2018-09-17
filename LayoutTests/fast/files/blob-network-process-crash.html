@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests unregistering a Blob object after the network process to which it was registered crashed.<br>
+WebKit should not hit a debug assertion in the network process.</p>
+<script>
+
+if (!window.testRunner)
+    document.write('This test requires testRunner and GCController');
+else {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    let blobs = new Array(100);
+    for (let i = 0; i < 100; i++) {
+        blobs[i] = new Array(10);
+        for (let j = 0; j < 10; j++)
+            blobs[i][j] = new Blob(["some text"]);
+    }
+
+    testRunner.terminateNetworkProcess();
+
+    setTimeout(() => {
+        const newBlob = new Blob(["some text"]);
+        for (let i = 0; i < 100; i++) {
+            for (let j = 0; j < 10; j++)
+                blobs[i][j] = { };
+        }
+        blobs = null;
+        GCController.collect();
+        fetch('blob-network-process-crash.html').then(() => {
+            testRunner.notifyDone();
+        });
+    }, 0);
+}
+
+</script>
+</body>
+</html>

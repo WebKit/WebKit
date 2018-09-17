@@ -1,3 +1,17 @@
+2018-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assert in NetworkBlobRegistry::unregisterBlobURL after network process had terminated
+        https://bugs.webkit.org/show_bug.cgi?id=188880
+
+        Reviewed by Saam Barati.
+
+        Added a layout test which demonstrates this debug assertion.
+
+        * TestExpectations:
+        * fast/files/blob-network-process-crash-expected.txt: Added.
+        * fast/files/blob-network-process-crash.html: Added.
+        * platform/wk2/TestExpectations:
+
 2018-08-22  Rob Buis  <rbuis@igalia.com>
 
         Fetch: Stop checking Request.integrity's value in no-cors mode
