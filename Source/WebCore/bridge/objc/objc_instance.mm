@@ -88,8 +88,8 @@ void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
         return;
     }
 
-    if (!s_exceptionEnvironment || s_exceptionEnvironment == exec->vmEntryGlobalObject()) {
-        JSLockHolder lock(exec);
+    if (!s_exceptionEnvironment || s_exceptionEnvironment == vm.vmEntryGlobalObject(exec)) {
+        JSLockHolder lock(vm);
         throwError(exec, scope, s_exception);
     }
 

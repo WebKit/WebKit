@@ -269,7 +269,8 @@ DOMWindow& activeDOMWindow(ExecState& state)
 
 DOMWindow& firstDOMWindow(ExecState& state)
 {
-    return asJSDOMWindow(state.vmEntryGlobalObject())->wrapped();
+    VM& vm = state.vm();
+    return asJSDOMWindow(vm.vmEntryGlobalObject(&state))->wrapped();
 }
 
 Document* responsibleDocument(ExecState& state)

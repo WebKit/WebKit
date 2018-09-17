@@ -169,7 +169,7 @@ std::unique_ptr<Vector<StackFrame>> getStackTrace(ExecState* exec, VM& vm, JSObj
     std::unique_ptr<Vector<StackFrame>> stackTrace = std::make_unique<Vector<StackFrame>>();
     vm.interpreter->getStackTrace(obj, *stackTrace, framesToSkip, errorConstructor->stackTraceLimit().value());
     if (!stackTrace->isEmpty())
-        ASSERT_UNUSED(exec, exec == vm.topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
+        ASSERT_UNUSED(exec, exec == vm.topCallFrame || exec->isGlobalExec());
     return stackTrace;
 }
 

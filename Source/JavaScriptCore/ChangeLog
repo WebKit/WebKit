@@ -1,3 +1,77 @@
+2018-08-23  Mark Lam  <mark.lam@apple.com>
+
+        Move vmEntryGlobalObject() to VM from CallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=188900
+        <rdar://problem/43655753>
+
+        Reviewed by Michael Saboff.
+
+        Also introduced CallFrame::isGlobalExec() which makes use of one property of
+        GlobalExecs to identify them i.e. GlobalExecs have null callerFrame and returnPCs.
+        CallFrame::initGlobalExec() ensures this.
+
+        In contrast, normal CallFrames always have a callerFrame (because they must at
+        least be preceded by a VM EntryFrame) and a returnPC (at least return to the
+        VM entry glue).
+
+        * API/APIUtils.h:
+        (handleExceptionIfNeeded):
+        (setException):
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextRetain):
+        (JSGlobalContextRelease):
+        (JSGlobalContextCopyName):
+        (JSGlobalContextSetName):
+        (JSGlobalContextGetRemoteInspectionEnabled):
+        (JSGlobalContextSetRemoteInspectionEnabled):
+        (JSGlobalContextGetIncludesNativeCallStackWhenReportingExceptions):
+        (JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions):
+        (JSGlobalContextGetDebuggerRunLoop):
+        (JSGlobalContextSetDebuggerRunLoop):
+        (JSGlobalContextGetAugmentableInspectorController):
+        * API/JSValue.mm:
+        (reportExceptionToInspector):
+        * API/glib/JSCClass.cpp:
+        (jscContextForObject):
+        * API/glib/JSCContext.cpp:
+        (jsc_context_evaluate_in_object):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::vmEntryGlobalObject const):
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::vmEntryGlobalObject): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::scope const):
+        (JSC::ExecState::noCaller):
+        (JSC::ExecState::isGlobalExec const):
+        * interpreter/Interpreter.cpp:
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::Interpreter::notifyDebuggerOfExceptionToBeThrown):
+        (JSC::Interpreter::debug):
+        * runtime/CallData.cpp:
+        (JSC::profiledCall):
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        (JSC::profiledEvaluate):
+        (JSC::evaluateWithScopeExtension):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        (JSC::linkAndEvaluateModule):
+        (JSC::importModule):
+        * runtime/ConstructData.cpp:
+        (JSC::profiledConstruct):
+        * runtime/Error.cpp:
+        (JSC::getStackTrace):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        (JSC::VM::vmEntryGlobalObject const):
+        * runtime/VM.h:
+
 2018-08-23  Michael Saboff  <msaboff@apple.com>
 
         YARR: Need to JIT compile a RegExp before using containsNestedSubpatterns flag

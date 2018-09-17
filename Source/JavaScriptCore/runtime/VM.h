@@ -172,6 +172,8 @@ struct HashTable;
 struct Instruction;
 struct ValueProfile;
 
+typedef ExecState CallFrame;
+
 struct LocalTimeOffsetCache {
     LocalTimeOffsetCache()
         : start(0.0)
@@ -292,6 +294,9 @@ public:
     static unsigned numberOfIDs() { return s_numberOfIDs.load(); }
     unsigned id() const { return m_id; }
     bool isEntered() const { return !!entryScope; }
+
+    // Global object in which execution began.
+    JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject(const CallFrame*) const;
 
 private:
     unsigned nextID();

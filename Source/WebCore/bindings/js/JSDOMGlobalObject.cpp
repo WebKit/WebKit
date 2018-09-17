@@ -304,7 +304,11 @@ JSDOMGlobalObject& callerGlobalObject(ExecState& state)
 
     GetCallerGlobalObjectFunctor iter;
     state.iterate(iter);
-    return *jsCast<JSDOMGlobalObject*>(iter.globalObject() ? iter.globalObject() : state.vmEntryGlobalObject());
+    if (iter.globalObject())
+        return *jsCast<JSDOMGlobalObject*>(iter.globalObject());
+
+    VM& vm = state.vm();
+    return *jsCast<JSDOMGlobalObject*>(vm.vmEntryGlobalObject(&state));
 }
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapperWorld& world)

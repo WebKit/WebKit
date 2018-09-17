@@ -718,7 +718,7 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     // reseting the pause state before executing any breakpoint actions.
     TemporaryPausedState pausedState(*this);
 
-    JSGlobalObject* vmEntryGlobalObject = callFrame->vmEntryGlobalObject(vm);
+    JSGlobalObject* vmEntryGlobalObject = vm.vmEntryGlobalObject(callFrame);
 
     if (didHitBreakpoint) {
         handleBreakpointHit(vmEntryGlobalObject, breakpoint);

@@ -1,3 +1,14 @@
+2018-08-23  Mark Lam  <mark.lam@apple.com>
+
+        Move vmEntryGlobalObject() to VM from CallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=188900
+        <rdar://problem/43655753>
+
+        Reviewed by Michael Saboff.
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::sourceParsed):
+
 2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace booleans for modifier keys in UIEventWithKeyState with OptionSet<Modifier>

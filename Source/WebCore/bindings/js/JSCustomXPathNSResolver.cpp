@@ -51,7 +51,8 @@ ExceptionOr<Ref<JSCustomXPathNSResolver>> JSCustomXPathNSResolver::create(ExecSt
     if (!resolverObject)
         return Exception { TypeMismatchError };
 
-    return adoptRef(*new JSCustomXPathNSResolver(state.vm(), resolverObject, asJSDOMWindow(state.vmEntryGlobalObject())));
+    VM& vm = state.vm();
+    return adoptRef(*new JSCustomXPathNSResolver(vm, resolverObject, asJSDOMWindow(vm.vmEntryGlobalObject(&state))));
 }
 
 JSCustomXPathNSResolver::JSCustomXPathNSResolver(VM& vm, JSObject* customResolver, JSDOMWindow* globalObject)
