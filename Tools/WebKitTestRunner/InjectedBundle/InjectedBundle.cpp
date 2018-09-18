@@ -189,6 +189,9 @@ static void postGCTask(void* context)
 
 void InjectedBundle::reportLiveDocuments(WKBundlePageRef page)
 {
+    // Release memory again, after the GC and timer fire. This is necessary to clear entries from CachedResourceLoader's m_documentResources in some scenarios.
+    WKBundleReleaseMemory(m_bundle);
+
     const bool excludeDocumentsInPageGroup = true;
     auto documentURLs = adoptWK(WKBundleGetLiveDocumentURLs(m_bundle, m_pageGroup, excludeDocumentsInPageGroup));
     auto ackMessageName = adoptWK(WKStringCreateWithUTF8CString("LiveDocuments"));
@@ -274,7 +277,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         WKBundleReleaseMemory(m_bundle);
 
         WKRetain(page); // Balanced by the release in postGCTask.
-        WKBundlePagePostTask(page, postGCTask, (void*)page);
+        WKBundlePageCallAfterTasksAndTimers(page, postGCTask, (void*)page);
         return;
     }
 
