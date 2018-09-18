@@ -1,3 +1,17 @@
+2018-09-17  Justin Fan  <justin_fan@apple.com>
+
+        Updated expected test [ PASS ] messages for new test-harness format for webgl tests
+        https://bugs.webkit.org/show_bug.cgi?id=189677
+
+        Reviewed by Dean Jackson.
+
+        Update generate-webgl-tests.py's test expectation template
+        for my new version of webgl-test-harness.js for the webgl 2 suite,
+        and update all webgl/2.0.0 test expectations to match.
+
+        * webgl/resources/webgl-expectation-template.txt: 
+        * webgl/2.0.0/.../*expected.txt: Modified all *expected.txts to match.
+
 2018-09-17  Jer Noble  <jer.noble@apple.com>
 
         Add support for HEVC codec types in Media Capabilities
