@@ -111,8 +111,8 @@ Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t chal
 
 void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
-    if (!pageID || !frameID) // Initiated by SpeculativeLoadManager
-        return completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
+    ASSERT(pageID);
+    ASSERT(frameID);
 
     uint64_t challengeID = addChallengeToChallengeMap({ pageID, authenticationChallenge, WTFMove(completionHandler) });
 
