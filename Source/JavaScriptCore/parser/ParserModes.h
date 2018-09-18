@@ -188,7 +188,7 @@ ALWAYS_INLINE bool isAsyncMethodParseMode(SourceParseMode parseMode)
     
 ALWAYS_INLINE bool isAsyncGeneratorMethodParseMode(SourceParseMode parseMode)
 {
-    return SourceParseModeSet(SourceParseMode::AsyncGeneratorWrapperFunctionMode).contains(parseMode);
+    return SourceParseModeSet(SourceParseMode::AsyncGeneratorWrapperMethodMode).contains(parseMode);
 }
 
 ALWAYS_INLINE bool isMethodParseMode(SourceParseMode parseMode)
