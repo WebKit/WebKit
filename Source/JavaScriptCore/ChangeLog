@@ -1,5 +1,21 @@
 2018-08-31  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception check accounting in constructJSWebAssemblyCompileError().
+        https://bugs.webkit.org/show_bug.cgi?id=189185
+        <rdar://problem/39786007>
+
+        Reviewed by Michael Saboff.
+
+        Also add an exception check in JSWebAssemblyModule::createStub() so that we don't
+        inadvertently overwrite a pre-existing exception (if present).
+
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyCompileError):
+
+2018-08-31  Mark Lam  <mark.lam@apple.com>
+
         Gardening: ARMv7 build fix.
         https://bugs.webkit.org/show_bug.cgi?id=158911
 
