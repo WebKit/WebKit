@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.outer {
+    display: flex;
+    flex-direction: column;
+}
+
+.inner{
+    display: grid;
+    height: 100px;
+}
+</style>
+</head>
+PASS if no crash.
+<div class=outer><div class=inner></div></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</html>

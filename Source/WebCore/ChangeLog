@@ -1,3 +1,18 @@
+2018-09-02  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r191336): RenderFlexibleBox::adjustChildSizeForMinAndMax crashes in std::optional<>::value()
+        https://bugs.webkit.org/show_bug.cgi?id=189232
+        <rdar://problem/43886373>
+
+        Reviewed by Brent Fulgham.
+
+        It's not guaranteed that RenderFlexibleBox::computeMainAxisExtentForChild() always returns with a valid value.
+
+        Test: fast/flexbox/crash-when-min-max-content-is-not-computed.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+
 2018-08-31  Jer Noble  <jer.noble@apple.com>
 
         Compilation error in FormData.cpp: incomplete type 'WebCore::SharedBuffer'
