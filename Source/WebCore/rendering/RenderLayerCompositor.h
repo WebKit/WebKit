@@ -125,10 +125,6 @@ public:
     void scheduleLayerFlush(bool canThrottle);
     void flushPendingLayerChanges(bool isFlushRoot = true);
     
-    // flushPendingLayerChanges() flushes the entire GraphicsLayer tree, which can cross frame boundaries.
-    // This call returns the rootmost compositor that is being flushed (including self).
-    RenderLayerCompositor* enclosingCompositorFlushingLayers() const;
-
     // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
     void didFlushChangesForLayer(RenderLayer&, const GraphicsLayer*);
 
@@ -407,7 +403,6 @@ private:
 
     void notifyIFramesOfCompositingChange();
 
-    bool isFlushingLayers() const { return m_flushingLayers; }
     void updateScrollCoordinatedLayersAfterFlushIncludingSubframes();
     void updateScrollCoordinatedLayersAfterFlush();
 

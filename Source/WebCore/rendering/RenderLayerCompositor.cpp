@@ -482,16 +482,17 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     AnimationUpdateBlock animationUpdateBlock(&frameView.frame().animation());
 
     ASSERT(!m_flushingLayers);
-    m_flushingLayers = true;
+    {
+        SetForScope<bool> flushingLayersScope(m_flushingLayers, true);
 
-    if (auto* rootLayer = rootGraphicsLayer()) {
-        FloatRect visibleRect = visibleRectForLayerFlushing();
-        LOG_WITH_STREAM(Compositing,  stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges (is root " << isFlushRoot << ") visible rect " << visibleRect);
-        rootLayer->flushCompositingState(visibleRect);
+        if (auto* rootLayer = rootGraphicsLayer()) {
+            FloatRect visibleRect = visibleRectForLayerFlushing();
+            LOG_WITH_STREAM(Compositing,  stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges (is root " << isFlushRoot << ") visible rect " << visibleRect);
+            rootLayer->flushCompositingState(visibleRect);
+        }
+        
+        ASSERT(m_flushingLayers);
     }
-    
-    ASSERT(m_flushingLayers);
-    m_flushingLayers = false;
 
     updateScrollCoordinatedLayersAfterFlushIncludingSubframes();
 
@@ -626,17 +627,6 @@ void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer* g
         ASSERT(m_layersWithTiledBackingCount > 0);
         --m_layersWithTiledBackingCount;
     }
-}
-
-RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers() const
-{
-    for (auto* frame = &m_renderView.frameView().frame(); frame; frame = frame->tree().parent()) {
-        auto* compositor = frame->contentRenderer() ? &frame->contentRenderer()->compositor() : nullptr;
-        if (compositor->isFlushingLayers())
-            return compositor;
-    }
-    
-    return nullptr;
 }
 
 void RenderLayerCompositor::scheduleCompositingLayerUpdate()
