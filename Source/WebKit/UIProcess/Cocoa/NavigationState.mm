@@ -121,9 +121,9 @@ NavigationState& NavigationState::fromWebPage(WebPageProxy& webPageProxy)
     return *navigationStates().get(&webPageProxy);
 }
 
-std::unique_ptr<API::NavigationClient> NavigationState::createNavigationClient()
+UniqueRef<API::NavigationClient> NavigationState::createNavigationClient()
 {
-    return std::make_unique<NavigationClient>(*this);
+    return makeUniqueRef<NavigationClient>(*this);
 }
     
 std::unique_ptr<API::HistoryClient> NavigationState::createHistoryClient()

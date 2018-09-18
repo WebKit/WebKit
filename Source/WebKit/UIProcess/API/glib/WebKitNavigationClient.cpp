@@ -140,6 +140,6 @@ private:
 
 void attachNavigationClientToView(WebKitWebView* webView)
 {
-    webkitWebViewGetPage(webView).setNavigationClient(std::make_unique<NavigationClient>(webView));
+    webkitWebViewGetPage(webView).setNavigationClient(makeUniqueRef<NavigationClient>(webView));
 }
 

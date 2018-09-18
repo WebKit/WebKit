@@ -36,6 +36,7 @@
 #import "ProcessThrottler.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/UniqueRef.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
@@ -61,7 +62,7 @@ public:
 
     static NavigationState& fromWebPage(WebPageProxy&);
 
-    std::unique_ptr<API::NavigationClient> createNavigationClient();
+    UniqueRef<API::NavigationClient> createNavigationClient();
     std::unique_ptr<API::HistoryClient> createHistoryClient();
 
     RetainPtr<id <WKNavigationDelegate> > navigationDelegate();

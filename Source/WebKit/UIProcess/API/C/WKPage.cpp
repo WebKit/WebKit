@@ -2256,8 +2256,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
 
     WebPageProxy* webPageProxy = toImpl(pageRef);
 
-    auto navigationClient = std::make_unique<NavigationClient>(wkClient);
-    webPageProxy->setNavigationClient(WTFMove(navigationClient));
+    webPageProxy->setNavigationClient(makeUniqueRef<NavigationClient>(wkClient));
 }
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
