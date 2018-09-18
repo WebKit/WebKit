@@ -1,3 +1,15 @@
+2018-08-28  Don Olmstead  <don.olmstead@sony.com>
+
+        Check for null renderer in canBeScrolledIntoView
+        https://bugs.webkit.org/show_bug.cgi?id=188935
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/spatial-navigation/snav-display-contents-crash.html
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::canBeScrolledIntoView):
+
 2018-08-28  Youenn Fablet  <youenn@apple.com>
 
         IDBDatabase should not return true to hasPendingActivity after being stopped
