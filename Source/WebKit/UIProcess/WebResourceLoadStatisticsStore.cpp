@@ -158,7 +158,7 @@ void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
         m_memoryStore = nullptr;
         semaphore.signal();
     });
-    semaphore.wait(WallTime::infinity());
+    semaphore.wait();
 }
 
 void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool value, CompletionHandler<void()>&& completionHandler)
