@@ -496,7 +496,7 @@ PeerConnectionEnabled:
 
 WebRTCUnifiedPlanEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC Unified Plan"

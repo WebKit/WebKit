@@ -1,3 +1,13 @@
+2018-09-18  Youenn Fablet  <youenn@apple.com>
+
+        Enable Unified Plan by default
+        https://bugs.webkit.org/show_bug.cgi?id=189675
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-addLegacyTransceiver-expected.txt:
+        * webrtc/video-addLegacyTransceiver.html:
+
 2018-09-18  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] change "middle" to "center" for consistency with CSS
