@@ -160,11 +160,6 @@ class Manager(object):
         self._options.child_processes = worker_count
 
     def _set_up_run(self, test_names, device_class=None):
-        self._printer.write_update("Checking build ...")
-        if not self._port.check_build():
-            _log.error("Build check failed")
-            return False
-
         self._options.device_class = device_class
 
         # This must be started before we check the system dependencies,
@@ -182,12 +177,6 @@ class Manager(object):
             if not self._port.check_sys_deps():
                 self._port.stop_helper()
                 return False
-
-        if self._options.clobber_old_results:
-            self._clobber_old_results()
-
-        # Create the output directory if it doesn't already exist.
-        self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
         self._port.setup_test_run(self._options.device_class)
         return True
@@ -238,6 +227,17 @@ class Manager(object):
         needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow,
                                         needs_http=needs_http, needs_web_platform_test_server=needs_web_platform_test_server, needs_websockets=needs_websockets)
+
+        self._printer.write_update("Checking build ...")
+        if not self._port.check_build():
+            _log.error("Build check failed")
+            return test_run_results.RunDetails(exit_code=-1)
+
+        if self._options.clobber_old_results:
+            self._clobber_old_results()
+
+        # Create the output directory if it doesn't already exist.
+        self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
         if default_device_tests:
             _log.info('')
