@@ -903,8 +903,9 @@ void RenderGrid::prepareChildForPositionedLayout(RenderBox& child)
     child.containingBlock()->insertPositionedObject(child);
 
     RenderLayer* childLayer = child.layer();
-    childLayer->setStaticInlinePosition(borderStart());
-    childLayer->setStaticBlockPosition(borderBefore());
+    // Static position of a positioned child should use the content-box (https://drafts.csswg.org/css-grid/#static-position).
+    childLayer->setStaticInlinePosition(borderAndPaddingStart());
+    childLayer->setStaticBlockPosition(borderAndPaddingBefore());
 }
 
 bool RenderGrid::hasStaticPositionForChild(const RenderBox& child, GridTrackSizingDirection direction) const

@@ -1,3 +1,25 @@
+2018-09-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Static position should use content-box, not padding-box
+        https://bugs.webkit.org/show_bug.cgi?id=189698
+
+        Reviewed by Javier Fernandez.
+
+        This is a recent change by the CSSWG:
+        https://github.com/w3c/csswg-drafts/issues/3020
+
+        The spec text (https://drafts.csswg.org/css-grid/#static-position):
+          "The static position of an absolutely-positioned child
+           of a grid container is determined as if it were the sole grid item
+           in a grid area whose edges coincide with the content edges
+           of the grid container."
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-001.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::prepareChildForPositionedLayout):
+        Simple change to use border and padding.
+
 2018-09-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME][GStreamer] The current EME implementation doesn't support the waitingforkey event
