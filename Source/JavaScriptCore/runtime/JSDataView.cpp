@@ -151,6 +151,7 @@ bool JSDataView::defineOwnProperty(
         || propertyName == vm.propertyNames->byteOffset)
         return typeError(exec, scope, shouldThrow, "Attempting to define read-only typed array property."_s);
 
+    scope.release();
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
