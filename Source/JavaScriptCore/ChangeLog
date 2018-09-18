@@ -1,3 +1,14 @@
+2018-08-31  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception check in arrayProtoFuncLastIndexOf().
+        https://bugs.webkit.org/show_bug.cgi?id=189184
+        <rdar://problem/39785959>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncLastIndexOf):
+
 2018-08-31  Saam barati  <sbarati@apple.com>
 
         convertToRegExpMatchFastGlobal must use KnownString as the child use kind
