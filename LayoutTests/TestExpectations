@@ -2246,5 +2246,6 @@ fast/gradients/conic-repeating-last-stop.html [ Skip ]
 fast/gradients/conic-gradient-alpha.html [ Skip ]
 fast/gradients/conic-gradient-extended-stops.html [ Skip ]
 fast/gradients/conic-gradient.html [ Skip ]
+fast/gradients/conic-two-hints.html [ Skip ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]

@@ -1,0 +1,40 @@
+<html>
+<head>
+    <style>
+    	div {
+    		position: absolute;
+        	width: 200px;
+            height: 200px;
+    	}
+        #grad {
+            background: -webkit-radial-gradient(blue 0%, blue 25%, green 25% ,green 50%, orange 50%, orange 75%, lime 75%);
+            -webkit-clip-path: inset(0% 40% 0% 40%);
+        }
+       	.box {
+        	position: absolute;
+        	background-color:black;
+        }
+        #box1 {
+        	-webkit-clip-path: inset(30% 40% 60% 40%);
+        }
+        #box2 {
+        	-webkit-clip-path: inset(60% 40% 30% 40%);
+        }
+        #box3 {
+        	-webkit-clip-path: inset(10% 40% 80% 40%);
+        }
+        #box4 {
+        	-webkit-clip-path: inset(80% 40% 10% 40%);
+        }
+    </style>
+</head>
+<body>
+	<div>
+	    <div id="grad"></div>
+	    <div id="box1" class="box"></div>
+	    <div id="box2" class="box"></div>
+	    <div id="box3" class="box"></div>
+	    <div id="box4" class="box"></div>
+	</div>
+</body>
+</html>

@@ -1,3 +1,25 @@
+2018-09-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Support Images Module Level 4's double-position gradient color stop syntax
+        https://bugs.webkit.org/show_bug.cgi?id=186154
+        <rdar://problem/44158152>
+
+        Reviewed by Simon Fraser.
+
+        Test that uses two angles or positions per color stop.
+
+        * TestExpectations:
+        * fast/gradients/conic-two-hints-expected.html: Added.
+        * fast/gradients/conic-two-hints.html: Added.
+        * fast/gradients/linear-two-hints-angle-expected.html: Added.
+        * fast/gradients/linear-two-hints-angle.html: Added.
+        * fast/gradients/linear-two-hints-expected.html: Added.
+        * fast/gradients/linear-two-hints.html: Added.
+        * fast/gradients/radial-two-hints-expected.html: Added.
+        * fast/gradients/radial-two-hints.html: Added.
+        * platform/ios-12/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-09-18  Youenn Fablet  <youenn@apple.com>
 
         Enable Unified Plan by default

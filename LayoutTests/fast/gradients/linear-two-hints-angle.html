@@ -1,0 +1,42 @@
+<html>
+<head>
+    <style>
+    	div {
+            width: 200px;
+            height: 200px;
+        }
+        #grad {
+        	position: absolute;
+            background: -webkit-linear-gradient(45deg, blue 0% 25%, green 25% 50%, orange 100px 75%, lime 150px);
+        }
+
+        .x1 {
+            position: absolute;
+            -webkit-clip-path: polygon(0% 45%,55% 100%,45% 100%,0% 55%);
+        }
+        #x1 {
+            background-color:black;
+        }
+        .x2 {
+            position: absolute;
+            -webkit-clip-path: polygon(0% 0%, 5% 0%, 100% 95%, 100% 100%, 95% 100%,0% 5%);
+        }
+        #x2 {
+            background-color:black;
+        }
+        .x3 {
+            position: absolute;
+            -webkit-clip-path: polygon(55% 0%, 100% 45%, 100% 55%,45% 0%);
+        }
+        #x3 {
+            background-color:black;
+        }
+    </style>
+</head>
+<body>
+	<div id="grad"></div>
+    <div id="x1" class="x1"></div>
+    <div id="x2" class="x2"></div>
+    <div id="x3" class="x3"></div>
+</body>
+</html>

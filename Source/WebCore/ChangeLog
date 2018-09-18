@@ -1,3 +1,24 @@
+2018-09-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Support Images Module Level 4's double-position gradient color stop syntax
+        https://bugs.webkit.org/show_bug.cgi?id=186154
+        <rdar://problem/44158152>
+
+        Reviewed by Simon Fraser.
+
+        The CSS spec for all gradients allows for each color stop to have two angles to be used for hints.
+        This makes pie chart and checkerboard conic gradients much simpler to write.
+        Any time you want to have a hard line in a gradient, this syntax simplifies the gradient specification.
+
+        Test: fast/gradients/conic-two-hints.html
+        Test: fast/gradients/linear-two-hints-angle.html
+        Test: fast/gradients/linear-two-hints.html
+        Test: fast/gradients/radial-two-hints.html
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeAngularGradientColorStops): Removed.
+        (WebCore::CSSPropertyParserHelpers::consumeGradientColorStops):
+
 2018-09-18  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the unused RenderLayerCompositor::enclosingCompositorFlushingLayers()

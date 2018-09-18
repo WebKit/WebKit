@@ -1,0 +1,66 @@
+<html>
+<head>
+    <style>
+        div {
+            width: 200px;
+            height: 200px;
+        }
+        #grad1 {
+            background-color: orange;
+            height: 33px;
+            -webkit-clip-path: inset( 0% 40% 0% 40%);
+        }
+        #grad2 {
+            background-color: green;
+            height: 33px;
+            -webkit-clip-path: inset( 0% 40% 0% 40%);
+        }
+        #grad3 {
+            background-color: blue;
+            height: 68px;
+            -webkit-clip-path: inset( 0% 40% 0% 40%);
+        }
+        #grad4 {
+            background-color: green;
+            height: 33px;
+            -webkit-clip-path: inset( 0% 40% 0% 40%);
+        }
+        #grad5 {
+            background-color: orange;
+            height: 33px;
+            -webkit-clip-path: inset( 0% 40% 0% 40%);
+        }
+        .box {
+            position: absolute;
+            background-color:black;
+        }
+        #box1 {
+            -webkit-clip-path: inset( 30% 40% 60% 40%);
+        }
+        #box2 {
+            -webkit-clip-path: inset( 60% 40% 30% 40%);
+        }
+        #box3 {
+            -webkit-clip-path: inset( 10% 40% 80% 40%);
+        }
+        #box4 {
+            -webkit-clip-path: inset( 80% 40% 10% 40%);
+        }
+    </style>
+</head>
+<body>
+    <div style="position: absolute">
+        <div id="grad1"></div>
+        <div id="grad2"></div>
+        <div id="grad3"></div>
+        <div id="grad4"></div>
+        <div id="grad5"></div>
+    </div>
+    <div style="position: absolute">
+        <div id="box1" class="box"></div>
+        <div id="box2" class="box"></div>
+        <div id="box3" class="box"></div>
+        <div id="box4" class="box"></div>
+    </div>
+</body>
+</html>

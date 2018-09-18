@@ -963,7 +963,9 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
 
 static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSGradientValue& gradient)
 {
-    bool supportsColorHints = gradient.gradientType() == CSSLinearGradient || gradient.gradientType() == CSSRadialGradient;
+    bool supportsColorHints = gradient.gradientType() == CSSLinearGradient || gradient.gradientType() == CSSRadialGradient || gradient.gradientType() == CSSConicGradient;
+    
+    bool isAngularGradient = gradient.gradientType() == CSSConicGradient;
 
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;
@@ -979,45 +981,27 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
         // FIXME-NEWPARSER: This boolean could be removed. Null checking color would be sufficient.
         stop.isMidpoint = !stop.m_color;
 
-        stop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
+        if (isAngularGradient)
+            stop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
+        else
+            stop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
+        
         if (!stop.m_color && !stop.m_position)
             return false;
         gradient.addStop(stop);
-    } while (consumeCommaIncludingWhitespace(range));
-
-    gradient.doneAddingStops();
-
-    // The last color stop cannot be a color hint.
-    if (previousStopWasColorHint)
-        return false;
-
-    // Must have 2 or more stops to be valid.
-    return gradient.stopCount() >= 2;
-}
-
-// https://www.w3.org/TR/css-images-4/#typedef-angular-color-stop-list
-// FIXME: This should support up to two position hints per color stop.
-static bool consumeAngularGradientColorStops(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSGradientValue& gradient)
-{
-    // The first color stop cannot be a color hint.
-    bool previousStopWasColorHint = true;
-    do {
-        CSSGradientColorStop stop;
-        stop.m_color = consumeColor(range, cssParserMode);
-
-        // Two hints in a row are not allowed.
-        if (!stop.m_color && previousStopWasColorHint)
-            return false;
         
-        previousStopWasColorHint = !stop.m_color;
+        // See if there is a second color hint, which is optional.
+        CSSGradientColorStop secondStop;
+        if (isAngularGradient)
+            secondStop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
+        else
+            secondStop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
         
-        // FIXME-NEWPARSER: This boolean could be removed. Null checking color would be sufficient.
-        stop.isMidpoint = !stop.m_color;
-
-        stop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
-        if (!stop.m_color && !stop.m_position)
-            return false;
-        gradient.addStop(stop);
+        if (secondStop.m_position) {
+            secondStop.m_color = stop.m_color;
+            gradient.addStop(secondStop);
+        }
+        
     } while (consumeCommaIncludingWhitespace(range));
 
     gradient.doneAddingStops();
@@ -1228,7 +1212,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParse
 
     if (expectComma && !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    if (!consumeAngularGradientColorStops(args, context.mode, *result))
+    if (!consumeGradientColorStops(args, context.mode, *result))
         return nullptr;
     return result;
 }

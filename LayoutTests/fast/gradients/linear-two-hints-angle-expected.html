@@ -1,0 +1,115 @@
+<html>
+<head>
+    <style>
+        div {
+            width: 200px;
+            height: 200px;
+            float: left;
+        }
+
+        #topleft {
+            width: 0; 
+            height: 0; 
+            border-left: 50px solid green;
+            border-right: 50px solid orange;
+            border-top: 50px solid orange;
+        }
+        #topright {
+            width: 0; 
+            height: 0; 
+            border-left: 50px solid orange;
+            border-right: 50px solid lime;
+            border-top: 50px solid lime;
+        }
+        #topmiddleleft {
+            width: 0; 
+            height: 0; 
+            clear: left;
+            border-left: 50px solid green;
+            border-right: 50px solid orange;
+            border-bottom: 50px solid green;
+        }
+        #topmiddleright {
+            width: 0; 
+            height: 0; 
+            border-left: 50px solid orange;
+            border-right: 50px solid lime;
+            border-bottom: 50px solid orange;
+        }
+
+        #bottommiddleleft {
+            width: 0; 
+            height: 0; 
+            clear: left;
+            border-left: 50px solid blue;
+            border-right: 50px solid green;
+            border-top: 50px solid green;
+        }
+        #bottommiddleright {
+            width: 0; 
+            height: 0; 
+            border-left: 50px solid green;
+            border-right: 50px solid orange;
+            border-top: 50px solid orange;
+        }
+        #bottomleft {
+            width: 0; 
+            height: 0; 
+            clear: left;
+            border-left: 50px solid blue;
+            border-right: 50px solid green;
+            border-bottom: 50px solid blue;
+        }
+        #bottomright {
+            width: 0; 
+            height: 0; 
+            border-left: 50px solid green;
+            border-right: 50px solid orange;
+            border-bottom: 50px solid green;
+        }
+
+        .box {
+            position: absolute;
+        }
+        .x1 {
+            position: absolute;
+            -webkit-clip-path: polygon(0% 45%,55% 100%,45% 100%,0% 55%);
+        }
+        #x1 {
+            background-color:black;
+        }
+        .x2 {
+            position: absolute;
+            -webkit-clip-path: polygon(0% 0%, 5% 0%, 100% 95%, 100% 100%, 95% 100%,0% 5%);
+        }
+        #x2 {
+            background-color:black;
+        }
+        .x3 {
+            position: absolute;
+            -webkit-clip-path: polygon(55% 0%, 100% 45%, 100% 55%,45% 0%);
+        }
+        #x3 {
+            background-color:black;
+        }
+
+    </style>
+</head>
+<body>
+    <div>
+        <div class="box">
+            <div id="topleft"></div>
+            <div id="topright"></div>
+            <div id="topmiddleleft"></div>
+            <div id="topmiddleright"></div>
+            <div id="bottommiddleleft"></div>
+            <div id="bottommiddleright"></div>
+            <div id="bottomleft"></div>
+            <div id="bottomright"></div>
+        </div>
+        <div id="x1" class="x1"></div>
+        <div id="x2" class="x2"></div>
+        <div id="x3" class="x3"></div>
+    </div>
+</body>
+</html>
