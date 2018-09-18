@@ -178,8 +178,12 @@ void JSRopeString::resolveRopeInternal16NoSubstring(UChar* buffer) const
 
 void JSRopeString::resolveRopeToAtomicString(ExecState* exec) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (length() > maxLengthForOnStackResolve) {
         resolveRope(exec);
+        RETURN_IF_EXCEPTION(scope, void());
         m_value = AtomicString(m_value);
         setIs8Bit(m_value.impl()->is8Bit());
         return;
