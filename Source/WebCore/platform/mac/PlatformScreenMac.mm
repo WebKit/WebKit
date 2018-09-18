@@ -209,20 +209,27 @@ IORegistryGPUID gpuIDForDisplayMask(GLuint displayMask)
     // The 0th renderer should not be the software renderer.
     GLint isAccelerated;
     error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPAccelerated, &isAccelerated);
-    if (!isAccelerated || error != kCGLNoError)
+    if (!isAccelerated || error != kCGLNoError) {
+        CGLDestroyRendererInfo(rendererInfo);
         return 0;
+    }
 
     GLint gpuIDLow = 0;
     GLint gpuIDHigh = 0;
 
     error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPRegistryIDLow, &gpuIDLow);
-    if (error != kCGLNoError)
+    if (error != kCGLNoError) {
+        CGLDestroyRendererInfo(rendererInfo);
         return 0;
+    }
 
     error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPRegistryIDHigh, &gpuIDHigh);
-    if (error != kCGLNoError)
+    if (error != kCGLNoError) {
+        CGLDestroyRendererInfo(rendererInfo);
         return 0;
+    }
 
+    CGLDestroyRendererInfo(rendererInfo);
     return (IORegistryGPUID) gpuIDHigh << 32 | gpuIDLow;
 }
 #endif // !__MAC_OS_X_VERSION_MIN_REQUIRED >= 101300

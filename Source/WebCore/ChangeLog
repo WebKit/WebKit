@@ -1,3 +1,14 @@
+2018-09-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [macOS] Frequent leaks seen under WebCore::gpuIDForDisplayMask
+        https://bugs.webkit.org/show_bug.cgi?id=189685
+        <rdar://problem/44541974>
+
+        Reviewed by Per Arne Vollan.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::gpuIDForDisplayMask):
+
 2018-09-18  Youenn Fablet  <youenn@apple.com>
 
         Implement RTCRtpReceiver getContributingSources/getSynchronizationSources
