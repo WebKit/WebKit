@@ -1,3 +1,13 @@
+2018-08-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Null pointer deref in WidthIterator
+        https://bugs.webkit.org/show_bug.cgi?id=188993
+
+        Reviewed by Brent Fulgham.
+
+        * fast/text/rtl-justification-expected.html: Added.
+        * fast/text/rtl-justification.html: Added.
+
 2018-08-27  Youenn Fablet  <youenn@apple.com>
 
         Various IndexDB tests abandon documents
