@@ -1,3 +1,13 @@
+2018-09-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Gardening after r236124
+
+        Quick gardening. There might be more tests that are now passing or
+        need updated results but this was the most obvious for now.
+        Unreviewed gardening.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/svg/custom/pan-direction-expected.txt:
+
 2018-09-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME][GStreamer] The current EME implementation doesn't support the waitingforkey event

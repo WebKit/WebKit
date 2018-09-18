@@ -1094,7 +1094,6 @@ webkit.org/b/173419 fast/events/platform-wheelevent-paging-y-in-scrolling-div.ht
 webkit.org/b/173419 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
 webkit.org/b/173419 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 webkit.org/b/173419 fast/events/selectstart-by-drag.html [ Failure ]
-webkit.org/b/173419 fast/events/selectstart-by-single-click-with-shift.html [ Failure ]
 webkit.org/b/173419 fast/events/sequential-focus-navigation-starting-point.html [ Failure ]
 webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
 webkit.org/b/173419 fast/events/shadow-event-path.html [ Failure ]
