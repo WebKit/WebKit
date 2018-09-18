@@ -1,3 +1,13 @@
+2018-09-03  Mark Lam  <mark.lam@apple.com>
+
+        The watchdog sometimes fails to terminate a script.
+        https://bugs.webkit.org/show_bug.cgi?id=189227
+        <rdar://problem/39932857>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-189227-watchdog-on-infinite-loop.js: Added.
+
 2018-08-24  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Function object should convert params to string before throw a parsing error

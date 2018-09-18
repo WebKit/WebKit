@@ -1216,8 +1216,7 @@ private:
             compileMaterializeCreateActivation();
             break;
         case CheckTraps:
-            if (Options::usePollingTraps())
-                compileCheckTraps();
+            compileCheckTraps();
             break;
         case CreateRest:
             compileCreateRest();

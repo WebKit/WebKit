@@ -1105,7 +1105,6 @@ private:
         case CheckTierUpInLoop:
         case CheckTierUpAtReturn:
         case CheckTierUpAndOSREnter:
-        case InvalidationPoint:
         case CheckInBounds:
         case ValueToInt32:
         case DoubleRep:
@@ -1230,6 +1229,7 @@ private:
         case FilterInByIdStatus:
         case ClearCatchLocals:
         case DataViewSet:
+        case InvalidationPoint:
             break;
             
         // This gets ignored because it only pretends to produce a value.
