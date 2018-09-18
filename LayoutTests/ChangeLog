@@ -1,3 +1,17 @@
+2018-09-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME][GStreamer] The current EME implementation doesn't support the waitingforkey event
+        https://bugs.webkit.org/show_bug.cgi?id=185590
+
+        Reviewed by Philippe Normand.
+
+        Updated status of
+        imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https
+        and expectations.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https-expected.txt:
+
 2018-09-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Layout Test legacy-animation-engine/animations/play-state-in-shorthand.html is a flaky failure

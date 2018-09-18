@@ -1260,7 +1260,6 @@ unsigned MediaPlayerPrivateGStreamerBase::videoDecodedByteCount() const
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(GstEvent* event)
 {
-    // FIXME: Inform that we are waiting for a key.
     const char* eventKeySystemUUID = nullptr;
     GstBuffer* data = nullptr;
     gst_event_parse_protection(event, &eventKeySystemUUID, &data, nullptr);
@@ -1349,6 +1348,12 @@ void MediaPlayerPrivateGStreamerBase::handleProtectionEvent(GstEvent* event)
         return;
     }
     initializationDataEncountered(event);
+}
+
+void MediaPlayerPrivateGStreamerBase::reportWaitingForKey()
+{
+    GST_TRACE("waiting for key");
+    m_player->waitingForKey();
 }
 #endif
 

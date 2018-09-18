@@ -1,3 +1,27 @@
+2018-09-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME][GStreamer] The current EME implementation doesn't support the waitingforkey event
+        https://bugs.webkit.org/show_bug.cgi?id=185590
+
+        Reviewed by Philippe Normand.
+
+        When decryptors are blocked waiting for the key, instruct the
+        player to run the Wait for key algorithm. As per spec, if we run
+        out of blocks pending to decrypt because we don't have the key, we
+        request running the algorithm again.
+
+        Test: imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered):
+        (WebCore::MediaPlayerPrivateGStreamerBase::reportWaitingForKey):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptTransformInPlace):
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler):
+
 2018-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update composedPath to match the latest spec

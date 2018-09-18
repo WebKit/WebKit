@@ -1211,10 +1211,9 @@ media/encrypted-media/encrypted-media-v2-events.html [ Skip ]
 media/encrypted-media/encrypted-media-v2-syntax.html [ Skip ]
 
 #"waitingforkey" event is not supported yet
-webkit.org/b/185590 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Failure ]
-webkit.org/b/185590 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Failure ]
-webkit.org/b/185590 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html [ Failure ]
-webkit.org/b/185590 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html [ Failure ]
+webkit.org/b/189618 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Failure ]
+webkit.org/b/189618 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Failure ]
+webkit.org/b/189619 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html [ Failure ]
 
 webkit.org/b/185594 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html [ Failure ]
 

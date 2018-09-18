@@ -34,6 +34,7 @@ struct _WebKitMediaCommonEncryptionDecryptPrivate {
     GRefPtr<GstEvent> protectionEvent;
 
     bool keyReceived;
+    bool waitingForKey { false };
     Lock mutex;
     Condition condition;
 };
@@ -197,8 +198,10 @@ static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseT
             GST_ERROR_OBJECT(self, "can't process key requests in less than PAUSED state");
             return GST_FLOW_NOT_SUPPORTED;
         }
-        // Send "drm-cdm-instance-needed" message to the player to resend the CDMInstance if available.
+        // Send "drm-cdm-instance-needed" message to the player to resend the CDMInstance if available and inform we are waiting for key.
         gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-cdm-instance-needed")));
+        priv->waitingForKey = true;
+        gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-waiting-for-key")));
 
         priv->condition.waitFor(priv->mutex, Seconds(5), [priv] {
             return priv->keyReceived;
@@ -303,7 +306,11 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
         if (klass->handleKeyResponse(self, event)) {
             GST_DEBUG_OBJECT(self, "key received");
             priv->keyReceived = true;
+            priv->waitingForKey = false;
             priv->condition.notifyOne();
+        } else if (priv->waitingForKey) {
+            GST_DEBUG_OBJECT(self, "still waiting for key, reposting");
+            gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-waiting-for-key")));
         }
 
         gst_event_unref(event);

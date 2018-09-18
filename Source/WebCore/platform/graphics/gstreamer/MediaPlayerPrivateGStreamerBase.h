@@ -152,6 +152,7 @@ public:
     void attemptToDecryptWithInstance(CDMInstance&) override;
     void dispatchCDMInstance();
     void initializationDataEncountered(GstEvent*);
+    void reportWaitingForKey();
 #endif
 
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);

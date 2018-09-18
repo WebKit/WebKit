@@ -1308,6 +1308,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             GRefPtr<GstEvent> event;
             gst_structure_get(structure, "event", GST_TYPE_EVENT, &event.outPtr(), nullptr);
             handleProtectionEvent(event.get());
+        } else if (gst_structure_has_name(structure, "drm-waiting-for-key")) {
+            GST_DEBUG("drm-waiting-for-key message from %s", GST_MESSAGE_SRC_NAME(message));
+            reportWaitingForKey();
         } else if (gst_structure_has_name(structure, "drm-cdm-instance-needed")) {
             GST_DEBUG("drm-cdm-instance-needed message from %s", GST_MESSAGE_SRC_NAME(message));
             dispatchCDMInstance();
