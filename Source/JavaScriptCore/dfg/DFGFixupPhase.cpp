@@ -2119,7 +2119,7 @@ private:
                     node->setResult(NodeResultInt32);
                     break;
                 case 4:
-                    if (data.isSigned) 
+                    if (data.isSigned)
                         node->setResult(NodeResultInt32);
                     else
                         node->setResult(NodeResultInt52);

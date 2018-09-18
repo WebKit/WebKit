@@ -1763,6 +1763,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case DataViewGetInt: {
         read(MiscFields);
         read(TypedArrayProperties);
+        LocationKind indexedPropertyLoc = indexedPropertyLocForResultType(node->result());
+        def(HeapLocation(indexedPropertyLoc, AbstractHeap(TypedArrayProperties, node->dataViewData().asQuadWord),
+            node->child1(), node->child2(), node->child3()), LazyNode(node));
         return;
     }
 
