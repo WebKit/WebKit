@@ -179,7 +179,7 @@ HRESULT DefaultPolicyDelegate::unableToImplementPolicyWithError(_In_opt_ IWebVie
     BString frameName;
     frame->name(&frameName);
 
-    LOG_ERROR("called unableToImplementPolicyWithError:%S inFrame:%S", errorStr ? errorStr : TEXT(""), frameName ? frameName : TEXT(""));
+    LOG_ERROR("called unableToImplementPolicyWithError:%S inFrame:%S", errorStr ? static_cast<BSTR>(errorStr) : TEXT(""), frameName ? static_cast<BSTR>(frameName) : TEXT(""));
 
     return S_OK;
 }

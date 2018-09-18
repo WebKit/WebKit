@@ -161,7 +161,7 @@ static CFStringRef copyLocalizedStringFromBundle(WebLocalizableStringsBundle* st
 
     CFStringRef result = CFCopyLocalizedStringWithDefaultValue(key.createCFString().get(), 0, bundle, notFound, 0);
 
-    ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key);
+    ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key.utf8().data());
     return result;
 }
 

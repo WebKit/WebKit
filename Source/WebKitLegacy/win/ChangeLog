@@ -1,3 +1,20 @@
+2018-09-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang][WebKitLegacy] error: cannot pass object of non-trivial type through variadic function
+        https://bugs.webkit.org/show_bug.cgi?id=189612
+
+        Reviewed by Alex Christensen.
+
+        Non-trivial types can't be used as aruguments of LOG_ERROR and
+        ASSERT_WITH_MESSAGE.
+
+        * DefaultPolicyDelegate.cpp:
+        (DefaultPolicyDelegate::unableToImplementPolicyWithError): Apply
+        static_cast<BSTR> to convert BString.
+        * WebLocalizableStrings.cpp:
+        (copyLocalizedStringFromBundle): Convert 'key' from WTF::String to
+        char* by using 'key.utf8().data()'.
+
 2018-09-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r235953.
