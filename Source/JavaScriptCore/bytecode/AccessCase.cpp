@@ -1066,7 +1066,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
         allocator.lock(baseGPR);
 #if USE(JSVALUE32_64)
-        allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));
+        allocator.lock(stubInfo.patch.baseTagGPR);
 #endif
         allocator.lock(valueRegs);
         allocator.lock(scratchGPR);

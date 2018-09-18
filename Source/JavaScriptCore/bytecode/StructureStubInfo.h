@@ -191,19 +191,19 @@ public:
         int32_t deltaFromStartToSlowPathCallLocation;
         int32_t deltaFromStartToSlowPathStart;
 
-        int8_t baseGPR;
-        int8_t valueGPR;
-        int8_t thisGPR;
+        GPRReg baseGPR;
+        GPRReg valueGPR;
+        GPRReg thisGPR;
 #if USE(JSVALUE32_64)
-        int8_t valueTagGPR;
-        int8_t baseTagGPR;
-        int8_t thisTagGPR;
+        GPRReg valueTagGPR;
+        GPRReg baseTagGPR;
+        GPRReg thisTagGPR;
 #endif
     } patch;
 
     GPRReg baseGPR() const
     {
-        return static_cast<GPRReg>(patch.baseGPR);
+        return patch.baseGPR;
     }
 
     CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return patch.start.callAtOffset<JSInternalPtrTag>(patch.deltaFromStartToSlowPathCallLocation); }
@@ -219,9 +219,9 @@ public:
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            static_cast<GPRReg>(patch.valueTagGPR),
+            patch.valueTagGPR,
 #endif
-            static_cast<GPRReg>(patch.valueGPR));
+            patch.valueGPR);
     }
 
 
