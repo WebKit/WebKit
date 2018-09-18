@@ -32,6 +32,7 @@
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
 #include "Page.h"
+#include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/text/LineEnding.h>
