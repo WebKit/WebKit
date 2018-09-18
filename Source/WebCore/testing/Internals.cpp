@@ -4316,8 +4316,7 @@ void Internals::setQuickLookPassword(const String& password)
 
 void Internals::setAsRunningUserScripts(Document& document)
 {
-    if (document.page())
-        document.page()->setAsRunningUserScripts();
+    document.topDocument().setAsRunningUserScripts();
 }
 
 #if ENABLE(WEBGL)

@@ -1480,6 +1480,9 @@ public:
     void updateMainArticleElementAfterLayout();
     bool hasMainArticleElement() const { return !!m_mainArticleElement; }
 
+    void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
+    bool isRunningUserScripts() const { return m_isRunningUserScripts; }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1998,6 +2001,8 @@ private:
 #endif
     
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
+
+    bool m_isRunningUserScripts { false };
 };
 
 Element* eventTargetElementForDocument(Document*);
