@@ -1001,7 +1001,7 @@ void RenderBlockFlow::computeBlockDirectionPositionsForLine(RootInlineBox* lineB
         if (is<RenderText>(renderer)) {
             auto& inlineTextBox = downcast<InlineTextBox>(*run->box());
             downcast<RenderText>(renderer).positionLineBox(inlineTextBox);
-            inlineBoxIsRedundant = !inlineTextBox.len();
+            inlineBoxIsRedundant = !inlineTextBox.hasTextContent();
         } else if (is<RenderBox>(renderer)) {
             downcast<RenderBox>(renderer).positionLineBox(downcast<InlineElementBox>(*run->box()));
             inlineBoxIsRedundant = renderer.isOutOfFlowPositioned();

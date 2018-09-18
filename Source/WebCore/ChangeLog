@@ -1,3 +1,40 @@
+2018-09-04  Daniel Bates  <dabates@apple.com>
+
+        Remove redundant inline text boxes for empty combined text
+        https://bugs.webkit.org/show_bug.cgi?id=189119
+
+        Reviewed by Zalan Bujtas.
+
+        We should consider inline text boxes that have a combined text renderer (RenderCombineText)
+        whose composed string is empty as "redundant" just as we do for inline text boxes that have
+        a non-combined text renderer that have zero length so that we remove them. Such boxes are
+        visibly empty and do not take up space visually. By removing them we reduce memory and make
+        it easier to reason about the line box tree.
+
+        Currently RenderBlockFlow::computeBlockDirectionPositionsForLine() tests if an inline text
+        box is empty by checking if it has a zero length (InlineTextBox::len()). However an inline
+        text box associated with a RenderCombineText always has length 1 regardless of whether the
+        composed string it represents is the empty string. Instead we should expose a way to check
+        if an inline text box is visually empty and have RenderBlockFlow::computeBlockDirectionPositionsForLine()
+        query the inline text box for this answer.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::hasTextContent const): Added. Returns whether an inline text box
+        has text content. We do not need to consider hypenation since hypens are an embellishment (i.e.
+        they are not part of the markup of the page).
+        (WebCore::InlineTextBox::paint): Write in terms of hasTextContent().
+        (WebCore::InlineTextBox::subdivideAndResolveStyle): Assert that WebCore::subdivide() always
+        returns a non-empty list of subdivisions. A non-empty text box should always have at least
+        one subdivision, say for the unmarked text. I left the existing conditonal (though marked
+        it as UNLIKELY()) so as to be forgiving and avoid a bad user experience should WebCore::subdivide()
+        return an empty vector in a non-debug build.
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::computeBlockDirectionPositionsForLine): Write in terms of InlineTextBox::hasTextContent()
+        so that we remove empty inline text boxes associated with combined text.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionLineBox): Write in terms of InlineTextBox::hasTextContent().
+
 2018-09-03  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: Layout Test http/tests/security/bypassing-cors-checks-for-extension-urls.html is Flaky
