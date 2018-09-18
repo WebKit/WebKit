@@ -34,7 +34,7 @@
                 testExpected("textCue.line", -1);
                 testExpected("textCue.position", 50);
                 testExpected("textCue.size", 100);
-                testExpected("textCue.align", "middle");
+                testExpected("textCue.align", "center");
 
                 consoleWrite("<br>*** Add the new cue to a track, make sure it is inserted correctly.");
                 run("testTrack.track.addCue(textCue)");
@@ -59,7 +59,7 @@
                 testExpected("newCue.line", -1);
                 testExpected("newCue.position", 50);
                 testExpected("newCue.size", 100);
-                testExpected("newCue.align", "middle");
+                testExpected("newCue.align", "center");
 
                 consoleWrite("<br>*** Create an old-style cue with an id.");
                 run("invalidCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?')");

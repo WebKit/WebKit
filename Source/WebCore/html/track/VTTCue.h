@@ -149,7 +149,7 @@ public:
 
     enum CueAlignment {
         Start = 0,
-        Middle,
+        Center,
         End,
         Left,
         Right,

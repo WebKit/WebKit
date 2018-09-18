@@ -1,3 +1,26 @@
+2018-09-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] change "middle" to "center" for consistency with CSS
+        https://bugs.webkit.org/show_bug.cgi?id=158478
+
+        Reviewed by Eric Carlson.
+
+        No new tests, covered by existing tests.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        * html/track/VTTCue.cpp:
+        (WebCore::centerKeyword):
+        (WebCore::VTTCue::initialize):
+        (WebCore::VTTCue::align const):
+        (WebCore::VTTCue::setAlign):
+        (WebCore::VTTCue::calculateDisplayParameters):
+        (WebCore::VTTCue::setCueSettings):
+        (WebCore::middleKeyword): Deleted.
+        * html/track/VTTCue.h:
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTTreeBuilder::buildFromString):
+
 2018-09-18  Chris Dumez  <cdumez@apple.com>
 
         "DidFirstVisuallyNonEmptyLayout" callback does not get called when restoring a page from PageCache

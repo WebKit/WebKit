@@ -7,17 +7,17 @@ EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].position == '10') OK
 EXPECTED (cues[0].align == 'start') OK
 EXPECTED (cues[1].position == '20') OK
-EXPECTED (cues[1].align == 'middle') OK
+EXPECTED (cues[1].align == 'center') OK
 EXPECTED (cues[2].position == '80') OK
 EXPECTED (cues[2].align == 'end') OK
 
 *** Testing text track 1
 EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].position == '10') OK
-EXPECTED (cues[0].align == 'middle') OK
+EXPECTED (cues[0].align == 'center') OK
 EXPECTED (cues[1].position == '50') OK
-EXPECTED (cues[1].align == 'middle') OK
+EXPECTED (cues[1].align == 'center') OK
 EXPECTED (cues[2].position == '50') OK
-EXPECTED (cues[2].align == 'middle') OK
+EXPECTED (cues[2].align == 'center') OK
 END OF TEST
 

@@ -132,7 +132,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     if (cue->baseFontSizeRelativeToVideoHeight())
         cue->setFontSize(cue->baseFontSizeRelativeToVideoHeight(), videoSize, false);
 
-    if (cue->getAlignment() == VTTCue::Middle)
+    if (cue->getAlignment() == VTTCue::Center)
         setInlineStyleProperty(CSSPropertyTextAlign, CSSValueCenter);
     else if (cue->getAlignment() == VTTCue::End)
         setInlineStyleProperty(CSSPropertyTextAlign, CSSValueEnd);

@@ -31,7 +31,7 @@
                 testExpected("textCue.line", -1);
                 testExpected("textCue.position", 50);
                 testExpected("textCue.size", 100);
-                testExpected("textCue.align", "middle");
+                testExpected("textCue.align", "center");
 
                 consoleWrite("<br>** Modify cue values.");
 
@@ -87,7 +87,7 @@
                 logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-align",
                            "On setting, the text track cue alignment must be set to the value ... is a case-sensitive match for the new value, if any. If none of the values match, then the user agent must instead throw a SyntaxError exception.");
                 testDOMException("textCue.align = 'End'", "DOMException.SYNTAX_ERR");
-                testExpected("textCue.align", "middle");
+                testExpected("textCue.align", "center");
                 run("textCue.align = 'end'");
                 testExpected("textCue.align", "end");
 

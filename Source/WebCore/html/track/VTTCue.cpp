@@ -80,10 +80,10 @@ static const String& startKeyword()
     return start;
 }
 
-static const String& middleKeyword()
+static const String& centerKeyword()
 {
-    static NeverDestroyed<const String> middle(MAKE_STATIC_STRING_IMPL("middle"));
-    return middle;
+    static NeverDestroyed<const String> center(MAKE_STATIC_STRING_IMPL("center"));
+    return center;
 }
 
 static const String& endKeyword()
@@ -288,7 +288,7 @@ void VTTCue::initialize(ScriptExecutionContext& context)
     m_textPosition = 50;
     m_cueSize = 100;
     m_writingDirection = Horizontal;
-    m_cueAlignment = Middle;
+    m_cueAlignment = Center;
     m_webVTTNodeTree = nullptr;
     m_cueBackdropBox = HTMLDivElement::create(downcast<Document>(context));
     m_cueHighlightBox = HTMLSpanElement::create(spanTag, downcast<Document>(context));
@@ -434,8 +434,8 @@ const String& VTTCue::align() const
     switch (m_cueAlignment) {
     case Start:
         return startKeyword();
-    case Middle:
-        return middleKeyword();
+    case Center:
+        return centerKeyword();
     case End:
         return endKeyword();
     case Left:
@@ -459,8 +459,8 @@ ExceptionOr<void> VTTCue::setAlign(const String& value)
     CueAlignment alignment;
     if (value == startKeyword())
         alignment = Start;
-    else if (value == middleKeyword())
-        alignment = Middle;
+    else if (value == centerKeyword())
+        alignment = Center;
     else if (value == endKeyword())
         alignment = End;
     else if (value == leftKeyword())
@@ -680,7 +680,7 @@ void VTTCue::calculateDisplayParameters()
         || (m_writingDirection == VerticalGrowingLeft && (m_cueAlignment == End || m_cueAlignment == Right))
         || (m_writingDirection == VerticalGrowingRight && (m_cueAlignment == End || m_cueAlignment == Right))) {
         maximumSize = m_textPosition;
-    } else if (m_cueAlignment == Middle) {
+    } else if (m_cueAlignment == Center) {
         maximumSize = m_textPosition <= 50 ? m_textPosition : (100 - m_textPosition);
         maximumSize = maximumSize * 2;
     } else
@@ -721,7 +721,7 @@ void VTTCue::calculateDisplayParameters()
             else
                 m_displayPosition.first = 100 - m_textPosition - m_displaySize;
             break;
-        case Middle:
+        case Center:
             if (m_displayDirection == CSSValueLtr)
                 m_displayPosition.first = m_textPosition - m_displaySize / 2;
             else
@@ -1051,9 +1051,9 @@ void VTTCue::setCueSettings(const String& inputString)
             if (input.scanRun(valueRun, startKeyword()))
                 m_cueAlignment = Start;
 
-            // 2. If value is a case-sensitive match for the string "middle", then let cue's text track cue alignment be middle alignment.
-            else if (input.scanRun(valueRun, middleKeyword()))
-                m_cueAlignment = Middle;
+            // 2. If value is a case-sensitive match for the string "center", then let cue's text track cue alignment be center alignment.
+            else if (input.scanRun(valueRun, centerKeyword()))
+                m_cueAlignment = Center;
 
             // 3. If value is a case-sensitive match for the string "end", then let cue's text track cue alignment be end alignment.
             else if (input.scanRun(valueRun, endKeyword()))

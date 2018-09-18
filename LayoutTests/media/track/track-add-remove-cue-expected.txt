@@ -22,7 +22,7 @@ EXPECTED (textCue.snapToLines == 'true') OK
 EXPECTED (textCue.line == '-1') OK
 EXPECTED (textCue.position == '50') OK
 EXPECTED (textCue.size == '100') OK
-EXPECTED (textCue.align == 'middle') OK
+EXPECTED (textCue.align == 'center') OK
 
 *** Add the new cue to a track, make sure it is inserted correctly.
 RUN(testTrack.track.addCue(textCue))
@@ -45,7 +45,7 @@ EXPECTED (newCue.snapToLines == 'true') OK
 EXPECTED (newCue.line == '-1') OK
 EXPECTED (newCue.position == '50') OK
 EXPECTED (newCue.size == '100') OK
-EXPECTED (newCue.align == 'middle') OK
+EXPECTED (newCue.align == 'center') OK
 
 *** Create an old-style cue with an id.
 RUN(invalidCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?'))

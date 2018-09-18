@@ -16,7 +16,7 @@ EXPECTED (trackCue.snapToLines == 'true') OK
 EXPECTED (trackCue.line == '-1') OK
 EXPECTED (trackCue.position == '50') OK
 EXPECTED (trackCue.size == '100') OK
-EXPECTED (trackCue.align == 'middle') OK
+EXPECTED (trackCue.align == 'center') OK
 EXPECTED (trackCue.text == 'Lorem') OK
 EXPECTED (serialize(trackCue.getCueAsHTML()) == 'Lorem') OK
 
@@ -34,7 +34,7 @@ EXPECTED (newCue.snapToLines == 'true') OK
 EXPECTED (newCue.line == '-1') OK
 EXPECTED (newCue.position == '50') OK
 EXPECTED (newCue.size == '100') OK
-EXPECTED (newCue.align == 'middle') OK
+EXPECTED (newCue.align == 'center') OK
 EXPECTED (newCue.text == 'Pie') OK
 EXPECTED (serialize(newCue.getCueAsHTML()) == 'Pie') OK
 END OF TEST

@@ -1,3 +1,30 @@
+2018-09-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] change "middle" to "center" for consistency with CSS
+        https://bugs.webkit.org/show_bug.cgi?id=158478
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-add-remove-cue-expected.txt:
+        * media/track/track-add-remove-cue.html:
+        * media/track/track-cue-mutable-expected.txt:
+        * media/track/track-cue-mutable.html:
+        * media/track/track-cue-rendering-snap-to-lines-not-set-expected.txt:
+        * media/track/track-vttcue-expected.txt:
+        * media/track/track-vttcue.html:
+        * media/track/track-webvtt-tc013-settings-expected.txt:
+        * media/track/track-webvtt-tc013-settings.html:
+        * media/track/track-webvtt-tc014-alignment-expected.txt:
+        * media/track/track-webvtt-tc014-alignment.html:
+        * media/track/track-webvtt-tc016-align-positioning-expected.txt:
+        * media/track/track-webvtt-tc016-align-positioning.html:
+        * media/track/track-webvtt-tc018-align-text-line-position-expected.txt:
+        * media/track/track-webvtt-tc018-align-text-line-position.html:
+        * media/track/track-webvtt-tc020-cue-size-align-expected.txt:
+        * media/track/track-webvtt-tc020-cue-size-align.html:
+        * media/track/track-webvtt-tc021-valign-expected.txt:
+        * media/track/track-webvtt-tc021-valign.html:
+
 2018-09-18  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Gardening after r236124

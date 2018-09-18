@@ -11,7 +11,7 @@ EXPECTED (textCue.snapToLines == 'true') OK
 EXPECTED (textCue.line == '-1') OK
 EXPECTED (textCue.position == '50') OK
 EXPECTED (textCue.size == '100') OK
-EXPECTED (textCue.align == 'middle') OK
+EXPECTED (textCue.align == 'center') OK
 
 ** Modify cue values.
 RUN(textCue.startTime = 1.1)
@@ -63,7 +63,7 @@ EXPECTED (textCue.size == '57') OK
 On setting, the text track cue alignment must be set to the value ... is a case-sensitive match for the new value, if any. If none of the values match, then the user agent must instead throw a SyntaxError exception.
 http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-align
 TEST(textCue.align = 'End') THROWS(DOMException.SYNTAX_ERR) OK
-EXPECTED (textCue.align == 'middle') OK
+EXPECTED (textCue.align == 'center') OK
 RUN(textCue.align = 'end')
 EXPECTED (textCue.align == 'end') OK
 
