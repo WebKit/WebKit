@@ -106,4 +106,9 @@ void ActiveDOMObject::stop()
 {
 }
 
+bool ActiveDOMObject::isContextStopped() const
+{
+    return !scriptExecutionContext() || scriptExecutionContext()->activeDOMObjectsAreStopped();
+}
+
 } // namespace WebCore

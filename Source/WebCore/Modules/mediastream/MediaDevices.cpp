@@ -168,7 +168,7 @@ void MediaDevices::scheduledEventTimerFired()
 
 bool MediaDevices::hasPendingActivity() const
 {
-    return scriptExecutionContext() && hasEventListeners(m_eventNames.devicechangeEvent);
+    return !isContextStopped() && hasEventListeners(m_eventNames.devicechangeEvent);
 }
 
 const char* MediaDevices::activeDOMObjectName() const

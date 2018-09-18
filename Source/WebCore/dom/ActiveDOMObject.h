@@ -110,6 +110,8 @@ public:
         return adoptRef(*new PendingActivity<T>(thisObject));
     }
 
+    bool isContextStopped() const;
+
 protected:
     explicit ActiveDOMObject(ScriptExecutionContext*);
     virtual ~ActiveDOMObject();
