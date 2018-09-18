@@ -1,3 +1,14 @@
+2018-08-30  Zalan Bujtas  <zalan@apple.com>
+
+        CounterMaps should hold a unique_ptr of CounterMap.
+        https://bugs.webkit.org/show_bug.cgi?id=189174
+        <rdar://problem/43686458>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/counters/crash-when-cloning-body-expected.txt: Added.
+        * fast/css/counters/crash-when-cloning-body.html: Added.
+
 2018-08-29  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r226138): WebCore::subdivide() may return an empty vector; Web process can crash when performing find in Epiphany
