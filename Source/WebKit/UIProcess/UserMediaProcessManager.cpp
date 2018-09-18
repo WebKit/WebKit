@@ -21,6 +21,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Logging.h"
 #include "MediaDeviceSandboxExtensions.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -189,6 +190,9 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             return false;
         }
 
+        for (const auto& id : ids)
+            RELEASE_LOG(WebRTC, "UserMediaProcessManager::willCreateMediaStream - granting extension %s", id.utf8().data());
+
         if (withAudio)
             state.grantAudioExtension();
         if (withVideo)
@@ -241,6 +245,9 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
 
     if (params.isEmpty())
         return;
+
+    for (const auto& id : params)
+        RELEASE_LOG(WebRTC, "UserMediaProcessManager::endedCaptureSession - revoking extension %s", id.utf8().data());
 
     proxy.page().process().send(Messages::WebPage::RevokeUserMediaDeviceSandboxExtensions(params), proxy.page().pageID());
 #endif

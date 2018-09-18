@@ -22,6 +22,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Logging.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -210,6 +211,7 @@ void UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions(Me
     for (size_t i = 0; i < extensions.size(); i++) {
         const auto& extension = extensions[i];
         extension.second->consume();
+        RELEASE_LOG(WebRTC, "UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions - granted extension %s", extension.first.utf8().data());
         m_userMediaDeviceSandboxExtensions.add(extension.first, extension.second.copyRef());
     }
 }
@@ -218,8 +220,10 @@ void UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions(c
 {
     for (const auto& extensionID : extensionIDs) {
         auto extension = m_userMediaDeviceSandboxExtensions.take(extensionID);
-        if (extension)
+        if (extension) {
             extension->revoke();
+            RELEASE_LOG(WebRTC, "UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions - revoked extension %s", extensionID.utf8().data());
+        }
     }
 }
 

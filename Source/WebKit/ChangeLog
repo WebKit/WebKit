@@ -1,3 +1,19 @@
+2018-09-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Always log when granting/revoking capture sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=189701
+        <rdar://problem/44564029>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream): Always log.
+        (WebKit::UserMediaProcessManager::endedCaptureSession): Ditto.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions): Ditto.
+        (WebKit::UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions): Ditto.
+
 2018-09-18  Youenn Fablet  <youenn@apple.com>
 
         Enable Unified Plan by default
