@@ -34,9 +34,8 @@
 #import "StringUtilities.h"
 #import <WebCore/PluginBlacklist.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, API::Dictionary::MapType& map)
 {

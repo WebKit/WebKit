@@ -52,10 +52,10 @@ namespace WebCore {
 
 const char* const WebArchivePboardType = "Apple Web Archive pasteboard type";
 const char* const WebURLNamePboardType = "public.url-name";
+const char* const WebURLsWithTitlesPboardType = "WebURLsWithTitlesPboardType";
 
 const char WebSmartPastePboardType[] = "NeXT smart paste pasteboard type";
 const char WebURLPboardType[] = "public.url";
-const char WebURLsWithTitlesPboardType[] = "WebURLsWithTitlesPboardType";
 
 static const Vector<String> writableTypesForURL()
 {

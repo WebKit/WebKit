@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "Document.h"
 #include "LibWebRTCProvider.h"
 #include "RTCPeerConnection.h"
 

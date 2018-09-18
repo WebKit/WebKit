@@ -1,3 +1,38 @@
+2018-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        Bundle unified sources more tightly in projects with deep directory structures
+        https://bugs.webkit.org/show_bug.cgi?id=189009
+
+        Reviewed by Simon Fraser.
+
+        Fix a variety of unification errors due to reshuffling the bundles.
+
+        * Modules/mediastream/RTCController.cpp:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * crypto/algorithms/CryptoAlgorithmECDSA.cpp:
+        (WebCore::CryptoAlgorithmECDSA::importKey):
+        * dom/Document.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        * loader/appcache/ApplicationCacheResourceLoader.h:
+        * page/AlternativeTextClient.h:
+        * platform/Pasteboard.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        * platform/graphics/FontFamilySpecificationNull.cpp:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]):
+        (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+        (-[WebGLLayer display]):
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+        * platform/graphics/cocoa/WebGPULayer.mm:
+        (-[WebGPULayer initWithGPUDevice:]):
+        * platform/graphics/metal/GPUCommandQueueMetal.mm:
+        * platform/mac/PasteboardMac.mm:
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        * platform/network/ResourceRequestBase.cpp:
+        * rendering/updating/RenderTreeBuilderBlockFlow.cpp:
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+
 2018-08-29  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r226138): WebCore::subdivide() may return an empty vector; Web process can crash when performing find in Epiphany

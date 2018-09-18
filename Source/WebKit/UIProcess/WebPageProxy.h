@@ -61,7 +61,6 @@
 #include "WebPageInjectedBundleClient.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebPreferences.h"
-#include <WebCore/AlternativeTextClient.h> // FIXME: Needed by WebPageProxyMessages.h for DICTATION_ALTERNATIVES.
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenuProxy.h"
 #include "WebProcessLifetimeTracker.h"

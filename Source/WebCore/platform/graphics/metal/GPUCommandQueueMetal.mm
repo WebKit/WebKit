@@ -31,6 +31,7 @@
 #import "GPUDevice.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 

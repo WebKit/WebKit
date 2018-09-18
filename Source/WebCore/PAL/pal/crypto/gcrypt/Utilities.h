@@ -28,6 +28,7 @@
 
 #include <gcrypt.h>
 #include <wtf/Assertions.h>
+#include <wtf/Optional.h>
 
 namespace PAL {
 namespace GCrypt {

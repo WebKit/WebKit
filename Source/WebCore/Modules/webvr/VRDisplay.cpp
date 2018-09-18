@@ -29,6 +29,7 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "DOMException.h"
+#include "DOMWindow.h"
 #include "EventNames.h"
 #include "Page.h"
 #include "ScriptedAnimationController.h"

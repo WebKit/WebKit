@@ -299,9 +299,9 @@ UIProcess/API/mac/WKView.mm @no-unify
 
 UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm
 
-UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm
+UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm @no-unify
 
-UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm
+UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm @no-unify
 
 UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm
 UIProcess/Authentication/cocoa/SecKeyProxyStore.mm

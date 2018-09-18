@@ -30,6 +30,7 @@
 
 #include "DisplayRefreshMonitorClient.h"
 #include "DisplayRefreshMonitorManager.h"
+#include "Logging.h"
 
 #if PLATFORM(IOS)
 #include "DisplayRefreshMonitorIOS.h"

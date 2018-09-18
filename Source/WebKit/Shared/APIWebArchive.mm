@@ -34,9 +34,8 @@
 #include <WebCore/LegacyWebArchive.h>
 #include <wtf/RetainPtr.h>
 
-using namespace WebCore;
-
 namespace API {
+using namespace WebCore;
 
 Ref<WebArchive> WebArchive::create(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives)
 {

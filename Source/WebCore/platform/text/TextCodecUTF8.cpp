@@ -29,6 +29,7 @@
 #include "TextCodecASCIIFastPath.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

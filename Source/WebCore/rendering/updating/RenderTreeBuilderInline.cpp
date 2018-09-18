@@ -30,6 +30,8 @@
 #include "RenderFullScreen.h"
 #include "RenderInline.h"
 #include "RenderTable.h"
+#include "RenderTreeBuilderMultiColumn.h"
+#include "RenderTreeBuilderTable.h"
 
 namespace WebCore {
 

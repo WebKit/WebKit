@@ -34,13 +34,11 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/RetainPtr.h>
 
-using namespace WebCore;
-
 @implementation WebGPULayer
 
 @synthesize context=_context;
 
-- (id)initWithGPUDevice:(GPUDevice*)context
+- (id)initWithGPUDevice:(WebCore::GPUDevice*)context
 {
     self = [super init];
     _context = context;
@@ -50,7 +48,7 @@ using namespace WebCore;
 
 #if PLATFORM(MAC)
     self.contentsScale = _devicePixelRatio;
-    self.colorspace = sRGBColorSpaceRef();
+    self.colorspace = WebCore::sRGBColorSpaceRef();
 #endif
     return self;
 }

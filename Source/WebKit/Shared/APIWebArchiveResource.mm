@@ -33,9 +33,8 @@
 #include <WebCore/URL.h>
 #include <wtf/RetainPtr.h>
 
-using namespace WebCore;
-
 namespace API {
+using namespace WebCore;
 
 Ref<WebArchiveResource> WebArchiveResource::create(API::Data* data, const String& URL, const String& MIMEType, const String& textEncoding)
 {

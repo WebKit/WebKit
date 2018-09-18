@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CoreVideoSoftLink.h"
 #include "Logging.h"
 #include <wtf/Algorithms.h>
 #include <wtf/NeverDestroyed.h>

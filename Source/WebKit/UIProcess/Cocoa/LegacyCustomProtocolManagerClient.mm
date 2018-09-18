@@ -32,23 +32,20 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 
-using namespace WebCore;
-using namespace WebKit;
-
 @interface WKCustomProtocolLoader : NSObject <NSURLConnectionDelegate> {
 @private
-    LegacyCustomProtocolManagerProxy* _customProtocolManagerProxy;
+    WebKit::LegacyCustomProtocolManagerProxy* _customProtocolManagerProxy;
     uint64_t _customProtocolID;
     NSURLCacheStoragePolicy _storagePolicy;
     NSURLConnection *_urlConnection;
 }
-- (id)initWithLegacyCustomProtocolManagerProxy:(LegacyCustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request;
+- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request;
 - (void)customProtocolManagerProxyDestroyed;
 @end
 
 @implementation WKCustomProtocolLoader
 
-- (id)initWithLegacyCustomProtocolManagerProxy:(LegacyCustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request
+- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request
 {
     self = [super init];
     if (!self)
@@ -85,7 +82,7 @@ using namespace WebKit;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    ResourceError coreError(error);
+    WebCore::ResourceError coreError(error);
     _customProtocolManagerProxy->didFailWithError(_customProtocolID, coreError);
     _customProtocolManagerProxy->stopLoading(_customProtocolID);
 }
@@ -99,7 +96,7 @@ using namespace WebKit;
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-    ResourceResponse coreResponse(response);
+    WebCore::ResourceResponse coreResponse(response);
     _customProtocolManagerProxy->didReceiveResponse(_customProtocolID, coreResponse, _storagePolicy);
 }
 
@@ -127,6 +124,7 @@ using namespace WebKit;
 @end
 
 namespace WebKit {
+using namespace WebCore;
 
 void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManagerProxy& manager, uint64_t customProtocolID, const ResourceRequest& coreRequest)
 {

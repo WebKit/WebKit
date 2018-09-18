@@ -210,10 +210,20 @@ class BundleManager
     end
 end
 
+def TopLevelDirectoryForPath(path)
+    if !path
+        return nil
+    end
+    while path.dirname != path.dirname.dirname
+        path = path.dirname
+    end
+    return path
+end
+
 def ProcessFileForUnifiedSourceGeneration(sourceFile)
     path = sourceFile.path
-    if ($currentDirectory != path.dirname)
-        log("Flushing because new dirname; old: #{$currentDirectory}, new: #{path.dirname}")
+    if (TopLevelDirectoryForPath($currentDirectory) != TopLevelDirectoryForPath(path.dirname))
+        log("Flushing because new top level directory; old: #{$currentDirectory}, new: #{path.dirname}")
         $bundleManagers.each_value { |x| x.flush }
         $currentDirectory = path.dirname
     end

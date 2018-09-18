@@ -34,6 +34,7 @@
 #if USE(CAIRO)
 
 #include "AffineTransform.h"
+#include "CairoOperations.h"
 #include "CairoUtilities.h"
 #include "Font.h"
 #include "GlyphBuffer.h"

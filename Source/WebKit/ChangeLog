@@ -1,3 +1,53 @@
+2018-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        Bundle unified sources more tightly in projects with deep directory structures
+        https://bugs.webkit.org/show_bug.cgi?id=189009
+
+        Reviewed by Simon Fraser.
+
+        Fix a variety of unification errors due to reshuffling the bundles.
+
+        * Shared/APIWebArchive.mm:
+        * Shared/APIWebArchiveResource.mm:
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        * Shared/Plugins/Netscape/mac/PluginInformationMac.mm:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::sessionIdentifier const):
+        (API::AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage):
+        (API::AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage):
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm:
+        (-[WKCustomProtocolLoader initWithLegacyCustomProtocolManagerProxy:customProtocolID:request:]):
+        (-[WKCustomProtocolLoader connection:didFailWithError:]):
+        (-[WKCustomProtocolLoader connection:didReceiveResponse:]):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::generatePluginProcessCallbackID):
+        (WebKit::PluginProcessProxy::fetchWebsiteData):
+        (WebKit::PluginProcessProxy::deleteWebsiteData):
+        (WebKit::PluginProcessProxy::deleteWebsiteDataForHostNames):
+        (WebKit::generateCallbackID): Deleted.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::generateStorageProcessCallbackID):
+        (WebKit::StorageProcessProxy::fetchWebsiteData):
+        (WebKit::StorageProcessProxy::deleteWebsiteData):
+        (WebKit::StorageProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::generateCallbackID): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFPluginAccessibilityObject accessibilityPerformAction:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityFocusedUIElement]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAssociatedControlForAnnotation:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityHitTest:]):
+        (-[WKPDFLayerControllerDelegate updateScrollPosition:]):
+        (WebKit::PDFPlugin::updateCursor):
+        (WebKit::coreCursor):
+        (appendValuesInPDFNameSubtreeToVector): Deleted.
+        (getAllValuesInPDFNameTree): Deleted.
+        (getAllScriptsInPDFDocument): Deleted.
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Pass webPageID and webFrameID to NetworkLoad for speculative loads

@@ -28,6 +28,7 @@
 
 #include "RenderButton.h"
 #include "RenderMenuList.h"
+#include "RenderTreeBuilderBlock.h"
 
 namespace WebCore {
 

@@ -27,6 +27,8 @@
 #include "RenderTreeBuilderBlockFlow.h"
 
 #include "RenderMultiColumnFlow.h"
+#include "RenderTreeBuilderBlock.h"
+#include "RenderTreeBuilderMultiColumn.h"
 
 namespace WebCore {
 

@@ -41,6 +41,8 @@
 #include "RenderDescendantIterator.h"
 #include "RenderFullScreen.h"
 #include "RenderInline.h"
+#include "RenderMultiColumnFlow.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StyleResolver.h"

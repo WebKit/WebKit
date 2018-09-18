@@ -207,16 +207,16 @@ UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 
 UIProcess/linux/MemoryPressureMonitor.cpp
 
-UIProcess/Plugins/gtk/PluginInfoCache.cpp
+UIProcess/Plugins/gtk/PluginInfoCache.cpp @no-unify
 
-UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
+UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp @no-unify
 UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp @no-unify
 
 UIProcess/WebStorage/StorageManager.cpp
 
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
-UIProcess/cairo/BackingStoreCairo.cpp
+UIProcess/cairo/BackingStoreCairo.cpp @no-unify
 
 UIProcess/glib/RemoteInspectorClient.cpp
 
@@ -229,16 +229,16 @@ UIProcess/gtk/AcceleratedBackingStoreX11.cpp @no-unify
 UIProcess/gtk/DragAndDropHandler.cpp
 UIProcess/gtk/GestureController.cpp
 UIProcess/gtk/HardwareAccelerationManager.cpp
-UIProcess/gtk/InputMethodFilter.cpp
+UIProcess/gtk/InputMethodFilter.cpp @no-unify
 UIProcess/gtk/KeyBindingTranslator.cpp
 UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp @no-unify
 UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/WaylandCompositor.cpp @no-unify
-UIProcess/gtk/WebColorPickerGtk.cpp
+UIProcess/gtk/WebColorPickerGtk.cpp @no-unify
 UIProcess/gtk/WebContextMenuProxyGtk.cpp
 UIProcess/gtk/WebInspectorProxyGtk.cpp
 UIProcess/gtk/WebKitInspectorWindow.cpp
-UIProcess/gtk/WebPageProxyGtk.cpp
+UIProcess/gtk/WebPageProxyGtk.cpp @no-unify
 UIProcess/gtk/WebPasteboardProxyGtk.cpp
 UIProcess/gtk/WebPopupMenuProxyGtk.cpp
 UIProcess/gtk/WebPreferencesGtk.cpp
