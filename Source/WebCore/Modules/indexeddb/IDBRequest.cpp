@@ -261,7 +261,7 @@ bool IDBRequest::canSuspendForDocumentSuspension() const
 bool IDBRequest::hasPendingActivity() const
 {
     ASSERT(&originThread() == &Thread::current() || mayBeGCThread());
-    return m_hasPendingActivity;
+    return !m_contextStopped && m_hasPendingActivity;
 }
 
 void IDBRequest::stop()
@@ -284,7 +284,7 @@ void IDBRequest::cancelForStop()
 void IDBRequest::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT(&originThread() == &Thread::current());
-    if (!scriptExecutionContext() || m_contextStopped)
+    if (m_contextStopped)
         return;
 
     event->setTarget(this);

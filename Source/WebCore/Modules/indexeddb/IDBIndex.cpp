@@ -69,7 +69,7 @@ bool IDBIndex::canSuspendForDocumentSuspension() const
 
 bool IDBIndex::hasPendingActivity() const
 {
-    return !m_objectStore.transaction().isFinished();
+    return m_objectStore.transaction().hasPendingActivity();
 }
 
 const String& IDBIndex::name() const

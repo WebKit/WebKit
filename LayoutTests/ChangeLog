@@ -1,3 +1,16 @@
+2018-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Various IndexDB tests abandon documents
+        https://bugs.webkit.org/show_bug.cgi?id=188728
+        <rdar://problem/43651095>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/IndexedDB/collect-IDB-objects.https-expected.txt: Added.
+        * http/tests/IndexedDB/collect-IDB-objects.https.html: Added.
+        * http/tests/IndexedDB/resources/myidbframe.htm: Added.
+        * http/tests/IndexedDB/resources/support.js: Added.
+
 2018-08-27  Rob Buis  <rbuis@igalia.com>
 
         XMLHTTPRequest.send for Document should have same Content-Type processing rules as String
