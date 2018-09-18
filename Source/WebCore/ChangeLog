@@ -1,5 +1,22 @@
 2018-08-28  Youenn Fablet  <youenn@apple.com>
 
+        IDBDatabase should not return true to hasPendingActivity after being stopped
+        https://bugs.webkit.org/show_bug.cgi?id=189073
+
+        Reviewed by Darin Adler.
+
+        There is a chance that IDBDatabase::hasPendingActivity returns true.
+        The case that might happen is when stop() is called but there are still some active/being committed transactions.
+        In that case, hasPendingActivity will return true until these transactions get finalized.
+        While these transactions will probably be finalized at some point, it delays GC for no good reason.
+        And we might want in a follow-up patch to assert that ActiveDOMObject are GC-able whenever their context is stopped.
+        For that purpose, make sure hasPendingActivity returns false when context is stopped.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::hasPendingActivity const):
+
+2018-08-28  Youenn Fablet  <youenn@apple.com>
+
         MediaDevices should be collectable as soon as its document is stopped
         https://bugs.webkit.org/show_bug.cgi?id=189021
 

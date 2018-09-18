@@ -76,7 +76,7 @@ bool IDBDatabase::hasPendingActivity() const
 {
     ASSERT(&originThread() == &Thread::current() || mayBeGCThread());
 
-    if (m_closedInServer)
+    if (m_closedInServer || isContextStopped())
         return false;
 
     if (!m_activeTransactions.isEmpty() || !m_committingTransactions.isEmpty() || !m_abortingTransactions.isEmpty())
