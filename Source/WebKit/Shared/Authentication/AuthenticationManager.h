@@ -55,7 +55,7 @@ enum class AuthenticationChallengeDisposition {
     UseCredential,
     PerformDefaultHandling,
     Cancel,
-    RejectProtectionSpace
+    RejectProtectionSpaceAndContinue
 };
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 

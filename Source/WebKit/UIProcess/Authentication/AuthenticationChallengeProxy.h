@@ -43,45 +43,28 @@ class WebProtectionSpace;
 
 class AuthenticationChallengeProxy : public API::ObjectImpl<API::Object::Type::AuthenticationChallenge> {
 public:
-    static Ref<AuthenticationChallengeProxy> create(WebCore::AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID, IPC::Connection* connection)
+    static Ref<AuthenticationChallengeProxy> create(WebCore::AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID, Ref<IPC::Connection>&& connection, WeakPtr<SecKeyProxyStore>&& secKeyProxyStore)
     {
-        return adoptRef(*new AuthenticationChallengeProxy(WTFMove(authenticationChallenge), challengeID, connection));
+        return adoptRef(*new AuthenticationChallengeProxy(WTFMove(authenticationChallenge), challengeID, WTFMove(connection), WTFMove(secKeyProxyStore)));
     }
-    
-    ~AuthenticationChallengeProxy();
-    
-    void useCredential(WebCredential*);
-    void cancel();
-    void performDefaultHandling();
-    void rejectProtectionSpaceAndContinue();
 
-    AuthenticationDecisionListener* listener() const { return m_listener.get(); }
     WebCredential* proposedCredential() const;
     WebProtectionSpace* protectionSpace() const;
-    int previousFailureCount() const { return m_coreAuthenticationChallenge.previousFailureCount(); }
+
+    AuthenticationDecisionListener& listener() const { return m_listener.get(); }
     const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }
 
-#if HAVE(SEC_KEY_PROXY)
-    void setSecKeyProxyStore(SecKeyProxyStore&);
-#endif
-
 private:
-    AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&&, uint64_t challengeID, IPC::Connection*);
+    AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&&, uint64_t challengeID, Ref<IPC::Connection>&&, WeakPtr<SecKeyProxyStore>&&);
 
 #if HAVE(SEC_KEY_PROXY)
-    void sendClientCertificateCredentialOverXpc(uint64_t challengeID, const WebCore::Credential&) const;
+    static void sendClientCertificateCredentialOverXpc(IPC::Connection&, SecKeyProxyStore&, uint64_t challengeID, const WebCore::Credential&);
 #endif
 
     WebCore::AuthenticationChallenge m_coreAuthenticationChallenge;
-    uint64_t m_challengeID;
-    RefPtr<IPC::Connection> m_connection;
-    RefPtr<AuthenticationDecisionListener> m_listener;
     mutable RefPtr<WebCredential> m_webCredential;
     mutable RefPtr<WebProtectionSpace> m_webProtectionSpace;
-
-#if HAVE(SEC_KEY_PROXY)
-    WeakPtr<SecKeyProxyStore> m_secKeyProxyStore;
-#endif
+    Ref<AuthenticationDecisionListener> m_listener;
 };
 
 } // namespace WebKit

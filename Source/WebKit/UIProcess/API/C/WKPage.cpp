@@ -50,6 +50,7 @@
 #include "APIWebsitePolicies.h"
 #include "APIWindowFeatures.h"
 #include "AuthenticationChallengeProxy.h"
+#include "AuthenticationDecisionListener.h"
 #include "LegacySessionStateCoding.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
@@ -2147,10 +2148,10 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
         
         void didReceiveAuthenticationChallenge(WebPageProxy& page, AuthenticationChallengeProxy& authenticationChallenge) override
         {
-            if (m_client.canAuthenticateAgainstProtectionSpace && !m_client.canAuthenticateAgainstProtectionSpace(toAPI(&page), toAPI(authenticationChallenge.protectionSpace()), m_client.base.clientInfo))
-                return authenticationChallenge.rejectProtectionSpaceAndContinue();
+            if (m_client.canAuthenticateAgainstProtectionSpace && !m_client.canAuthenticateAgainstProtectionSpace(toAPI(&page), toAPI(WebProtectionSpace::create(authenticationChallenge.core().protectionSpace()).ptr()), m_client.base.clientInfo))
+                return authenticationChallenge.listener().rejectProtectionSpaceAndContinue();
             if (!m_client.didReceiveAuthenticationChallenge)
-                return authenticationChallenge.performDefaultHandling();
+                return authenticationChallenge.listener().performDefaultHandling();
             m_client.didReceiveAuthenticationChallenge(toAPI(&page), toAPI(&authenticationChallenge), m_client.base.clientInfo);
         }
 

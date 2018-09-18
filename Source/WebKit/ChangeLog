@@ -1,3 +1,73 @@
+2018-09-18  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up AuthenticationChallengeProxy
+        https://bugs.webkit.org/show_bug.cgi?id=189668
+
+        Reviewed by Youenn Fablet.
+
+        At its core, it's a CompletionHandler with some information.
+        Make it more elegant and simple with no change in behavior and reduce the complexity of this security-sensitive object.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (toNSURLSessionAuthChallengeDisposition):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * UIProcess/API/C/WKAuthenticationChallenge.cpp:
+        (WKAuthenticationChallengeGetDecisionListener):
+        (WKAuthenticationChallengeGetProtectionSpace):
+        (WKAuthenticationChallengeGetProposedCredential):
+        (WKAuthenticationChallengeGetPreviousFailureCount):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm:
+        (-[WKNSURLAuthenticationChallengeSender cancelAuthenticationChallenge:]):
+        (-[WKNSURLAuthenticationChallengeSender continueWithoutCredentialForAuthenticationChallenge:]):
+        (-[WKNSURLAuthenticationChallengeSender useCredential:forAuthenticationChallenge:]):
+        (-[WKNSURLAuthenticationChallengeSender performDefaultHandlingForAuthenticationChallenge:]):
+        (-[WKNSURLAuthenticationChallengeSender rejectProtectionSpaceAndContinueWithChallenge:]):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::AuthenticationChallengeProxy):
+        (WebKit::AuthenticationChallengeProxy::~AuthenticationChallengeProxy): Deleted.
+        (WebKit::AuthenticationChallengeProxy::useCredential): Deleted.
+        (WebKit::AuthenticationChallengeProxy::cancel): Deleted.
+        (WebKit::AuthenticationChallengeProxy::performDefaultHandling): Deleted.
+        (WebKit::AuthenticationChallengeProxy::rejectProtectionSpaceAndContinue): Deleted.
+        (WebKit::AuthenticationChallengeProxy::proposedCredential const): Deleted.
+        (WebKit::AuthenticationChallengeProxy::protectionSpace const): Deleted.
+        (WebKit::AuthenticationChallengeProxy::setSecKeyProxyStore): Deleted.
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        (WebKit::AuthenticationChallengeProxy::create):
+        (WebKit::AuthenticationChallengeProxy::listener const):
+        (WebKit::AuthenticationChallengeProxy::previousFailureCount const): Deleted.
+        * UIProcess/Authentication/AuthenticationDecisionListener.cpp:
+        (WebKit::AuthenticationDecisionListener::AuthenticationDecisionListener):
+        (WebKit::AuthenticationDecisionListener::~AuthenticationDecisionListener):
+        (WebKit::AuthenticationDecisionListener::useCredential):
+        (WebKit::AuthenticationDecisionListener::cancel):
+        (WebKit::AuthenticationDecisionListener::performDefaultHandling):
+        (WebKit::AuthenticationDecisionListener::rejectProtectionSpaceAndContinue):
+        (WebKit::AuthenticationDecisionListener::detachChallenge): Deleted.
+        * UIProcess/Authentication/AuthenticationDecisionListener.h:
+        (WebKit::AuthenticationDecisionListener::create):
+        * UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm:
+        (WebKit::AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc):
+        (WebKit::AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc const): Deleted.
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didReceiveAuthenticationChallenge):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::secKeyProxyStore):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        * UIProcess/WebPageProxy.h:
+
 2018-09-18  Ben Richards  <benton_richards@apple.com>
 
         Add script to generate WebContent service resource files and change XPC service main SPI to have it's own header

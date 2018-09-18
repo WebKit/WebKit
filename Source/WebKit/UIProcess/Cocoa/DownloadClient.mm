@@ -122,7 +122,7 @@ void DownloadClient::didReceiveAuthenticationChallenge(WebProcessPool&, Download
 {
     // FIXME: System Preview needs code here.
     if (!m_delegateMethods.downloadDidReceiveAuthenticationChallengeCompletionHandler) {
-        authenticationChallenge.listener()->performDefaultHandling();
+        authenticationChallenge.listener().performDefaultHandling();
         return;
     }
 
@@ -131,25 +131,22 @@ void DownloadClient::didReceiveAuthenticationChallenge(WebProcessPool&, Download
             return;
         checker->didCallCompletionHandler();
         switch (disposition) {
-        case NSURLSessionAuthChallengeUseCredential: {
-            RefPtr<WebCredential> webCredential;
+        case NSURLSessionAuthChallengeUseCredential:
             if (credential)
-                webCredential = WebCredential::create(WebCore::Credential(credential));
-            
-            authenticationChallenge->listener()->useCredential(webCredential.get());
+                authenticationChallenge->listener().useCredential(WebCore::Credential(credential));
+            else
+                authenticationChallenge->listener().useCredential(std::nullopt);
             break;
-        }
-            
         case NSURLSessionAuthChallengePerformDefaultHandling:
-            authenticationChallenge->listener()->performDefaultHandling();
+            authenticationChallenge->listener().performDefaultHandling();
             break;
             
         case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
-            authenticationChallenge->listener()->cancel();
+            authenticationChallenge->listener().cancel();
             break;
             
         case NSURLSessionAuthChallengeRejectProtectionSpace:
-            authenticationChallenge->listener()->rejectProtectionSpaceAndContinue();
+            authenticationChallenge->listener().rejectProtectionSpaceAndContinue();
             break;
             
         default:

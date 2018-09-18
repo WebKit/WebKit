@@ -226,7 +226,7 @@ void AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge(u
     ASSERT(!challenge.challenge.isNull());
 
     if (challenge.completionHandler)
-        challenge.completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, Credential());
+        challenge.completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue, { });
     else
         ASSERT_NOT_REACHED();
 }

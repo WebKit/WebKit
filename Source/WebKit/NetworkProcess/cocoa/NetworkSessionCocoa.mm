@@ -78,7 +78,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         return NSURLSessionAuthChallengePerformDefaultHandling;
     case WebKit::AuthenticationChallengeDisposition::Cancel:
         return NSURLSessionAuthChallengeCancelAuthenticationChallenge;
-    case WebKit::AuthenticationChallengeDisposition::RejectProtectionSpace:
+    case WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue:
         return NSURLSessionAuthChallengeRejectProtectionSpace;
     }
 }

@@ -70,35 +70,35 @@ static void checkChallenge(NSURLAuthenticationChallenge *challenge)
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener()->cancel();
+    webChallenge.listener().cancel();
 }
 
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener()->useCredential(nullptr);
+    webChallenge.listener().useCredential(std::nullopt);
 }
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener()->useCredential(WebKit::WebCredential::create(WebCore::Credential(credential)).ptr());
+    webChallenge.listener().useCredential(WebCore::Credential(credential));
 }
 
 - (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener()->performDefaultHandling();
+    webChallenge.listener().performDefaultHandling();
 }
 
 - (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener()->rejectProtectionSpaceAndContinue();
+    webChallenge.listener().rejectProtectionSpaceAndContinue();
 }
 
 @end

@@ -6334,21 +6334,25 @@ void WebPageProxy::gamepadActivity(const Vector<GamepadData>& gamepadDatas, bool
 
 #endif
 
-void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)
+WeakPtr<SecKeyProxyStore> WebPageProxy::secKeyProxyStore(const WebCore::AuthenticationChallenge& challenge)
 {
 #if HAVE(SEC_KEY_PROXY)
-    ASSERT(authenticationChallenge->protectionSpace());
-    if (authenticationChallenge->protectionSpace()->authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
+    if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
         auto secKeyProxyStore = SecKeyProxyStore::create();
-        authenticationChallenge->setSecKeyProxyStore(secKeyProxyStore);
+        auto weakPointer = makeWeakPtr(secKeyProxyStore.get());
         m_websiteDataStore->addSecKeyProxyStore(WTFMove(secKeyProxyStore));
+        return weakPointer;
     }
 #endif
-
+    return nullptr;
+}
+    
+void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)
+{
     if (m_navigationClient)
         m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());
     else
-        authenticationChallenge->performDefaultHandling();
+        authenticationChallenge->listener().performDefaultHandling();
 }
 
 void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)

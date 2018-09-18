@@ -25,6 +25,8 @@
 #include "WebKitAuthenticationRequestPrivate.h"
 #include "WebKitCredentialPrivate.h"
 #include "WebProtectionSpace.h"
+#include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/ProtectionSpace.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -186,7 +188,7 @@ WebKitCredential* webkit_authentication_request_get_proposed_credential(WebKitAu
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
-    const WebCore::Credential& credential = request->priv->authenticationChallenge->proposedCredential()->credential();
+    const auto& credential = request->priv->authenticationChallenge->core().proposedCredential();
     if (credential.isEmpty())
         return 0;
 
@@ -208,7 +210,7 @@ const gchar* webkit_authentication_request_get_host(WebKitAuthenticationRequest*
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
     if (request->priv->host.isNull())
-        request->priv->host = request->priv->authenticationChallenge->protectionSpace()->host().utf8();
+        request->priv->host = request->priv->authenticationChallenge->core().protectionSpace().host().utf8();
     return request->priv->host.data();
 }
 
@@ -226,7 +228,7 @@ guint webkit_authentication_request_get_port(WebKitAuthenticationRequest* reques
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
-    return request->priv->authenticationChallenge->protectionSpace()->port();
+    return request->priv->authenticationChallenge->core().protectionSpace().port();
 }
 
 /**
@@ -244,7 +246,7 @@ const gchar* webkit_authentication_request_get_realm(WebKitAuthenticationRequest
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
     if (request->priv->realm.isNull())
-        request->priv->realm = request->priv->authenticationChallenge->protectionSpace()->realm().utf8();
+        request->priv->realm = request->priv->authenticationChallenge->core().protectionSpace().realm().utf8();
     return request->priv->realm.data();
 }
 
@@ -262,7 +264,7 @@ WebKitAuthenticationScheme webkit_authentication_request_get_scheme(WebKitAuthen
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN);
 
-    return toWebKitAuthenticationScheme(request->priv->authenticationChallenge->protectionSpace()->authenticationScheme());
+    return toWebKitAuthenticationScheme(request->priv->authenticationChallenge->core().protectionSpace().authenticationScheme());
 }
 
 /**
@@ -279,7 +281,7 @@ gboolean webkit_authentication_request_is_for_proxy(WebKitAuthenticationRequest*
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), FALSE);
 
-    return request->priv->authenticationChallenge->protectionSpace()->isProxy();
+    return request->priv->authenticationChallenge->core().protectionSpace().isProxy();
 }
 
 /**
@@ -296,7 +298,7 @@ gboolean webkit_authentication_request_is_retry(WebKitAuthenticationRequest* req
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
-    return request->priv->authenticationChallenge->previousFailureCount() ? TRUE : FALSE;
+    return request->priv->authenticationChallenge->core().previousFailureCount() ? TRUE : FALSE;
 }
 
 /**
@@ -314,9 +316,9 @@ void webkit_authentication_request_authenticate(WebKitAuthenticationRequest* req
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
     if (credential)
-        request->priv->authenticationChallenge->listener()->useCredential(WebCredential::create(webkitCredentialGetCredential(credential)).ptr());
+        request->priv->authenticationChallenge->listener().useCredential(webkitCredentialGetCredential(credential));
     else
-        request->priv->authenticationChallenge->listener()->useCredential(nullptr);
+        request->priv->authenticationChallenge->listener().useCredential(std::nullopt);
 
     request->priv->handledRequest = true;
 }
@@ -334,7 +336,7 @@ void webkit_authentication_request_cancel(WebKitAuthenticationRequest* request)
 {
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
-    request->priv->authenticationChallenge->listener()->cancel();
+    request->priv->authenticationChallenge->listener().cancel();
 
     g_signal_emit(request, signals[CANCELLED], 0);
 }

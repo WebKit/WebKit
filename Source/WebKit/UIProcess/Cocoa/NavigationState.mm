@@ -852,11 +852,11 @@ void NavigationState::NavigationClient::renderingProgressDidChange(WebPageProxy&
 void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy& authenticationChallenge)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler)
-        return authenticationChallenge.performDefaultHandling();
+        return authenticationChallenge.listener().performDefaultHandling();
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     if (!navigationDelegate)
-        return authenticationChallenge.performDefaultHandling();
+        return authenticationChallenge.listener().performDefaultHandling();
 
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:didReceiveAuthenticationChallenge:completionHandler:));
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:BlockPtr<void(NSURLSessionAuthChallengeDisposition, NSURLCredential *)>::fromCallable([challenge = makeRef(authenticationChallenge), checker = WTFMove(checker)](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
@@ -865,25 +865,22 @@ void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPag
         checker->didCallCompletionHandler();
 
         switch (disposition) {
-        case NSURLSessionAuthChallengeUseCredential: {
-            RefPtr<WebCredential> webCredential;
+        case NSURLSessionAuthChallengeUseCredential:
             if (credential)
-                webCredential = WebCredential::create(WebCore::Credential(credential));
-
-            challenge->useCredential(webCredential.get());
+                challenge->listener().useCredential(Credential(credential));
+            else
+                challenge->listener().useCredential(std::nullopt);
             break;
-        }
-
         case NSURLSessionAuthChallengePerformDefaultHandling:
-            challenge->performDefaultHandling();
+            challenge->listener().performDefaultHandling();
             break;
 
         case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
-            challenge->cancel();
+            challenge->listener().cancel();
             break;
 
         case NSURLSessionAuthChallengeRejectProtectionSpace:
-            challenge->rejectProtectionSpaceAndContinue();
+            challenge->listener().rejectProtectionSpaceAndContinue();
             break;
 
         default:

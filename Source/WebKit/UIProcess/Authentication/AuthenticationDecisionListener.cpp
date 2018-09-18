@@ -27,6 +27,7 @@
 #include "AuthenticationDecisionListener.h"
 
 #include "AuthenticationChallengeProxy.h"
+#include "AuthenticationManager.h"
 #include "AuthenticationManagerMessages.h"
 #include "WebCertificateInfo.h"
 #include "WebCredential.h"
@@ -35,38 +36,39 @@
 
 namespace WebKit {
 
-AuthenticationDecisionListener::AuthenticationDecisionListener(AuthenticationChallengeProxy* authenticationChallenge)
-    : m_challengeProxy(authenticationChallenge)
+AuthenticationDecisionListener::AuthenticationDecisionListener(CompletionHandler<void(AuthenticationChallengeDisposition, std::optional<WebCore::Credential>&&)>&& completionHandler)
+    : m_completionHandler(WTFMove(completionHandler))
 {
 }
 
-void AuthenticationDecisionListener::useCredential(WebCredential* credential)
+AuthenticationDecisionListener::~AuthenticationDecisionListener()
 {
-    if (m_challengeProxy)
-        m_challengeProxy->useCredential(credential);
+    if (m_completionHandler)
+        m_completionHandler(AuthenticationChallengeDisposition::Cancel, std::nullopt);
+}
+
+void AuthenticationDecisionListener::useCredential(std::optional<WebCore::Credential>&& credential)
+{
+    if (m_completionHandler)
+        m_completionHandler(AuthenticationChallengeDisposition::UseCredential, WTFMove(credential));
 }
 
 void AuthenticationDecisionListener::cancel()
 {
-    if (m_challengeProxy)
-        m_challengeProxy->cancel();
+    if (m_completionHandler)
+        m_completionHandler(AuthenticationChallengeDisposition::Cancel, std::nullopt);
 }
 
 void AuthenticationDecisionListener::performDefaultHandling()
 {
-    if (m_challengeProxy)
-        m_challengeProxy->performDefaultHandling();
+    if (m_completionHandler)
+        m_completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, std::nullopt);
 }
 
 void AuthenticationDecisionListener::rejectProtectionSpaceAndContinue()
 {
-    if (m_challengeProxy)
-        m_challengeProxy->rejectProtectionSpaceAndContinue();
-}
-
-void AuthenticationDecisionListener::detachChallenge()
-{
-    m_challengeProxy = 0;
+    if (m_completionHandler)
+        m_completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue, std::nullopt);
 }
     
 } // namespace WebKit

@@ -42,7 +42,7 @@ WKTypeID WKAuthenticationChallengeGetTypeID()
 
 WKAuthenticationDecisionListenerRef WKAuthenticationChallengeGetDecisionListener(WKAuthenticationChallengeRef challenge)
 {
-    return toAPI(toImpl(challenge)->listener());
+    return toAPI(&toImpl(challenge)->listener());
 }
 
 WKProtectionSpaceRef WKAuthenticationChallengeGetProtectionSpace(WKAuthenticationChallengeRef challenge)
@@ -57,5 +57,5 @@ WKCredentialRef WKAuthenticationChallengeGetProposedCredential(WKAuthenticationC
 
 int WKAuthenticationChallengeGetPreviousFailureCount(WKAuthenticationChallengeRef challenge)
 {
-    return toImpl(challenge)->previousFailureCount();
+    return toImpl(challenge)->core().previousFailureCount();
 }

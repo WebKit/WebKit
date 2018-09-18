@@ -23,38 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AuthenticationDecisionListener_h
-#define AuthenticationDecisionListener_h
+#pragma once
 
 #include "APIObject.h"
 
-#include <wtf/RefPtr.h>
+#include <WebCore/Credential.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
+enum class AuthenticationChallengeDisposition;
 class AuthenticationChallengeProxy;
-class WebCredential;
 
 class AuthenticationDecisionListener : public API::ObjectImpl<API::Object::Type::AuthenticationDecisionListener> {
 public:
-    static Ref<AuthenticationDecisionListener> create(AuthenticationChallengeProxy* authenticationChallenge)
+    static Ref<AuthenticationDecisionListener> create(CompletionHandler<void(AuthenticationChallengeDisposition, std::optional<WebCore::Credential>&&)>&& completionHandler)
     {
-        return adoptRef(*new AuthenticationDecisionListener(authenticationChallenge));
+        return adoptRef(*new AuthenticationDecisionListener(WTFMove(completionHandler)));
     }
+    ~AuthenticationDecisionListener();
     
-    void useCredential(WebCredential*);
+    void useCredential(std::optional<WebCore::Credential>&&);
     void cancel();
     void performDefaultHandling();
     void rejectProtectionSpaceAndContinue();
 
-    void detachChallenge();
-
 private:
-    explicit AuthenticationDecisionListener(AuthenticationChallengeProxy*);
+    explicit AuthenticationDecisionListener(CompletionHandler<void(AuthenticationChallengeDisposition, std::optional<WebCore::Credential>&&)>&&);
 
-    AuthenticationChallengeProxy* m_challengeProxy;
+    CompletionHandler<void(AuthenticationChallengeDisposition, std::optional<WebCore::Credential>&&)> m_completionHandler;
 };
 
 } // namespace WebKit
-
-#endif // WebAuthenticationDecisionListener_h

@@ -39,7 +39,10 @@ WKTypeID WKAuthenticationDecisionListenerGetTypeID()
 
 void WKAuthenticationDecisionListenerUseCredential(WKAuthenticationDecisionListenerRef authenticationListener, WKCredentialRef credential)
 {
-    toImpl(authenticationListener)->useCredential(toImpl(credential));
+    if (credential)
+        toImpl(authenticationListener)->useCredential(toImpl(credential)->credential());
+    else
+        toImpl(authenticationListener)->useCredential(std::nullopt);
 }
 
 void WKAuthenticationDecisionListenerCancel(WKAuthenticationDecisionListenerRef authenticationListener)

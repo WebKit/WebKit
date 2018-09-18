@@ -225,6 +225,7 @@ class PageClient;
 class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorProxy;
+class SecKeyProxyStore;
 class UserData;
 class ViewSnapshot;
 class VisitedLinkStore;
@@ -436,6 +437,8 @@ public:
 
     void initializeWebPage();
 
+    WeakPtr<SecKeyProxyStore> secKeyProxyStore(const WebCore::AuthenticationChallenge&);
+        
     void close();
     bool tryClose();
     bool isClosed() const { return m_isClosed; }
