@@ -1,3 +1,20 @@
+2018-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Assertion hit in ~CompletionHandler() from ~WebFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=189199
+        <rdar://problem/42657233>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::~WebFrame):
+        (WebKit::WebFrame::setUpWillSubmitFormListener):
+        (WebKit::WebFrame::invalidatePolicyListener):
+        * WebProcess/WebPage/WebFrame.h:
+
 2018-08-30  Tim Horton  <timothy_horton@apple.com>
 
         Bundle unified sources more tightly in projects with deep directory structures
