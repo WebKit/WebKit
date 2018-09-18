@@ -38,13 +38,14 @@
 
 namespace WebCore {
 
-CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, bool shouldSuspend, bool enableMultipart, MessageQueue<Function<void()>>* messageQueue)
+CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, ShouldSuspend shouldSuspend, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics, MessageQueue<Function<void()>>* messageQueue)
     : m_request(request.isolatedCopy())
     , m_client(client)
-    , m_shouldSuspend(shouldSuspend)
-    , m_enableMultipart(enableMultipart)
+    , m_shouldSuspend(shouldSuspend == ShouldSuspend::Yes)
+    , m_enableMultipart(enableMultipart == EnableMultipart::Yes)
     , m_formDataStream(m_request.httpBody())
     , m_messageQueue(messageQueue)
+    , m_captureExtraMetrics(captureExtraMetrics == CaptureNetworkLoadMetrics::Extended)
 {
     ASSERT(isMainThread());
 }
@@ -672,11 +673,15 @@ void CurlRequest::updateNetworkLoadMetrics()
 {
     auto domainLookupStart = m_performStartTime - m_requestStartTime;
 
-    if (auto metrics = m_curlHandle->getNetworkLoadMetrics(domainLookupStart))
+    if (auto metrics = m_curlHandle->getNetworkLoadMetrics(domainLookupStart)) {
         m_networkLoadMetrics = *metrics;
 
-    m_networkLoadMetrics.requestHeaders = m_request.httpHeaderFields();
-    m_networkLoadMetrics.responseBodyDecodedSize = m_totalReceivedSize;
+        if (m_captureExtraMetrics) {
+            m_curlHandle->addExtraNetworkLoadMetrics(m_networkLoadMetrics);
+            m_networkLoadMetrics.requestHeaders = m_request.httpHeaderFields();
+            m_networkLoadMetrics.responseBodyDecodedSize = m_totalReceivedSize;
+        }
+    }
 }
 
 void CurlRequest::enableDownloadToFile()

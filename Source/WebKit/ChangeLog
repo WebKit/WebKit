@@ -1,3 +1,16 @@
+2018-09-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Limit capturing extra metrics for Web Inspector when not required.
+        https://bugs.webkit.org/show_bug.cgi?id=189520
+
+        Reviewed by Alex Christensen.
+
+        Respect the value of NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics() to reduce the process
+        time when they are not needed.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::createCurlRequest):
+
 2018-09-18  Alex Christensen  <achristensen@webkit.org>
 
         Make WebPageProxy always have a API::NavigationClient instead of always having a API::LoaderClient and API::PolicyClient

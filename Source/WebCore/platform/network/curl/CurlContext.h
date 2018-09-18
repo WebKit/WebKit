@@ -282,6 +282,7 @@ public:
     std::optional<long> getProxyAuthAvail();
     std::optional<long> getHttpVersion();
     std::optional<NetworkLoadMetrics> getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart);
+    void addExtraNetworkLoadMetrics(NetworkLoadMetrics&);
 
     int sslErrors() const;
     std::optional<CertificateInfo> certificateInfo() const;

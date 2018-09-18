@@ -60,9 +60,14 @@ public:
         Yes = true
     };
 
-    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No, MessageQueue<Function<void()>>* messageQueue = nullptr)
+    enum class CaptureNetworkLoadMetrics : uint8_t {
+        Basic,
+        Extended
+    };
+
+    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No, CaptureNetworkLoadMetrics captureMetrics = CaptureNetworkLoadMetrics::Basic, MessageQueue<Function<void()>>* messageQueue = nullptr)
     {
-        return adoptRef(*new CurlRequest(request, &client, shouldSuspend == ShouldSuspend::Yes, enableMultipart == EnableMultipart::Yes, messageQueue));
+        return adoptRef(*new CurlRequest(request, &client, shouldSuspend, enableMultipart, captureMetrics, messageQueue));
     }
 
     virtual ~CurlRequest() = default;
@@ -104,7 +109,7 @@ private:
         FinishTransfer
     };
 
-    CurlRequest(const ResourceRequest&, CurlRequestClient*, bool, bool, MessageQueue<Function<void()>>*);
+    CurlRequest(const ResourceRequest&, CurlRequestClient*, ShouldSuspend, EnableMultipart, CaptureNetworkLoadMetrics, MessageQueue<Function<void()>>*);
 
     void retain() override { ref(); }
     void release() override { deref(); }
@@ -201,6 +206,7 @@ private:
     FileSystem::PlatformFileHandle m_downloadFileHandle { FileSystem::invalidPlatformFileHandle };
 
     CertificateInfo m_certificateInfo;
+    bool m_captureExtraMetrics;
     NetworkLoadMetrics m_networkLoadMetrics;
     MonotonicTime m_requestStartTime { MonotonicTime::nan() };
     MonotonicTime m_performStartTime;
