@@ -98,18 +98,46 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
             return JSValue::encode(jsString(exec, classSource.toStringWithoutCopying()));
         }
 
-        if (thisValue.inherits<JSAsyncFunction>(vm)) {
-            String functionHeader = executable->isArrowFunction() ? "async " : "async function ";
+        String functionHeader;
+        switch (executable->parseMode()) {
+        case SourceParseMode::GeneratorWrapperFunctionMode:
+        case SourceParseMode::GeneratorWrapperMethodMode:
+            functionHeader = "function* ";
+            break;
 
-            StringView source = executable->source().provider()->getRange(
-                executable->parametersStartOffset(),
-                executable->parametersStartOffset() + executable->source().length());
-            scope.release();
-            return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source));
+        case SourceParseMode::NormalFunctionMode:
+        case SourceParseMode::GetterMode:
+        case SourceParseMode::SetterMode:
+        case SourceParseMode::MethodMode:
+        case SourceParseMode::ProgramMode:
+        case SourceParseMode::ModuleAnalyzeMode:
+        case SourceParseMode::ModuleEvaluateMode:
+        case SourceParseMode::GeneratorBodyMode:
+        case SourceParseMode::AsyncGeneratorBodyMode:
+        case SourceParseMode::AsyncFunctionBodyMode:
+        case SourceParseMode::AsyncArrowFunctionBodyMode:
+            functionHeader = "function ";
+            break;
+
+        case SourceParseMode::ArrowFunctionMode:
+            functionHeader = "";
+            break;
+
+        case SourceParseMode::AsyncFunctionMode:
+        case SourceParseMode::AsyncMethodMode:
+            functionHeader = "async function ";
+            break;
+
+        case SourceParseMode::AsyncArrowFunctionMode:
+            functionHeader = "async ";
+            break;
+
+        case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
+        case SourceParseMode::AsyncGeneratorWrapperMethodMode:
+            functionHeader = "async function* ";
+            break;
         }
 
-        String functionHeader = executable->isArrowFunction() ? "" : "function ";
-        
         StringView source = executable->source().provider()->getRange(
             executable->parametersStartOffset(),
             executable->parametersStartOffset() + executable->source().length());

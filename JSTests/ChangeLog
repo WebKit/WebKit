@@ -1,3 +1,20 @@
+2018-08-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        output of toString() of Generator is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=188952
+
+        Reviewed by Saam Barati.
+
+        * stress/function-to-string.js: Added.
+        (shouldBe):
+        (shouldBe.test):
+        (test):
+        (shouldBe.async.test):
+        (async.test):
+        (shouldBe.async):
+        (async):
+        * test262/expectations.yaml:
+
 2018-08-29  Mark Lam  <mark.lam@apple.com>
 
         Add some missing exception checks in JSRopeString::resolveRopeToAtomicString().

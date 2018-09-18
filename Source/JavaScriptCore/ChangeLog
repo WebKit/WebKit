@@ -1,3 +1,16 @@
+2018-08-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        output of toString() of Generator is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=188952
+
+        Reviewed by Saam Barati.
+
+        Function#toString does not respect generator and async generator.
+        This patch fixes them and supports all the function types.
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+
 2018-08-29  Mark Lam  <mark.lam@apple.com>
 
         Add some missing exception checks in JSRopeString::resolveRopeToAtomicString().

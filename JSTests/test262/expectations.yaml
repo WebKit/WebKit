@@ -909,8 +909,8 @@ test/built-ins/Function/prototype/toString/GeneratorFunction.js:
   default: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
 test/built-ins/Function/prototype/toString/async-arrow-function.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'async function ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }'.(async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }'.(async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })"
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'async ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }'.(async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }'.(async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })"
 test/built-ins/Function/prototype/toString/async-function-declaration.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'async function f( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }'.(async function /* a */ f /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function f( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }'.(async function /* a */ f /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })"
@@ -942,14 +942,14 @@ test/built-ins/Function/prototype/toString/function-expression.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }'.(function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }'.(function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })"
 test/built-ins/Function/prototype/toString/generator-function-declaration.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function g( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }'.(function /* a */ * /* b */ g /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function g( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }'.(function /* a */ * /* b */ g /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })"
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'function* g( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }'.(function /* a */ * /* b */ g /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function* g( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }'.(function /* a */ * /* b */ g /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })"
 test/built-ins/Function/prototype/toString/generator-function-expression.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function F( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }'.(function /* a */ * /* b */ F /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function F( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }'.(function /* a */ * /* b */ F /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })"
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'function* F( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }'.(function /* a */ * /* b */ F /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function* F( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }'.(function /* a */ * /* b */ F /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })"
 test/built-ins/Function/prototype/toString/generator-method.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* c */ ) /* d */ { /* e */ }'.(* /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function f( /* c */ ) /* d */ { /* e */ }'.(* /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })"
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'function* f( /* c */ ) /* d */ { /* e */ }'.(* /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function* f( /* c */ ) /* d */ { /* e */ }'.(* /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })"
 test/built-ins/Function/prototype/toString/getter-class-expression-static.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'function ( /* c */ ) /* d */ { /* e */ }'.(get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function ( /* c */ ) /* d */ { /* e */ }'.(get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })"
