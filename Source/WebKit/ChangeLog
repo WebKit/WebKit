@@ -1,3 +1,13 @@
+2018-09-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Allow WebContent process to check the "Protocol Characteristics" of files to which it has access
+        https://bugs.webkit.org/show_bug.cgi?id=189712
+        <rdar://problem/44386429>
+
+        Reviewed by Alex Christensen.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2018-09-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Crash under WebPageProxy::navigationGestureSnapshotWasRemoved()

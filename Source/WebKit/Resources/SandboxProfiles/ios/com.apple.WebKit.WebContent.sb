@@ -334,6 +334,7 @@
     (iokit-property "IOClassNameOverride")
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
     (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
+    (iokit-property "Protocol Characteristics")
     (iokit-property "artwork-device-subtype")
     (iokit-property "device-perf-memory-class")
     (iokit-property "emu")
