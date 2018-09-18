@@ -2879,6 +2879,7 @@ JSRTCPeerConnectionIceEvent.cpp
 JSRTCPeerConnectionState.cpp
 JSRTCPriorityType.cpp
 JSRTCRtpCodecParameters.cpp
+JSRTCRtpContributingSource.cpp
 JSRTCRtpEncodingParameters.cpp
 JSRTCRtpFecParameters.cpp
 JSRTCRtpHeaderExtensionParameters.cpp
@@ -2887,6 +2888,7 @@ JSRTCRtpRtxParameters.cpp
 JSRTCRtpReceiver.cpp
 JSRTCRtpSendParameters.cpp
 JSRTCRtpSender.cpp
+JSRTCRtpSynchronizationSource.cpp
 JSRTCRtpTransceiver.cpp
 JSRTCRtpTransceiverDirection.cpp
 JSRTCSessionDescription.cpp

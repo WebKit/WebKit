@@ -1,5 +1,39 @@
 2018-09-18  Youenn Fablet  <youenn@apple.com>
 
+        Implement RTCRtpReceiver getContributingSources/getSynchronizationSources
+        https://bugs.webkit.org/show_bug.cgi?id=189671
+
+        Reviewed by Eric Carlson.
+
+        Introduce implementation of these two methods by calling the libwebrtc corresponding method.
+        Add corresponding IDL as per spec.
+        Covered by rebased WPT tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/RTCRtpContributingSource.h: Added.
+        * Modules/mediastream/RTCRtpContributingSource.idl: Added.
+        * Modules/mediastream/RTCRtpReceiver.h:
+        (WebCore::RTCRtpReceiver::getContributingSources const):
+        (WebCore::RTCRtpReceiver::getSynchronizationSources const):
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpReceiverBackend.h:
+        (WebCore::RTCRtpReceiverBackend::getContributingSources const):
+        (WebCore::RTCRtpReceiverBackend::getSynchronizationSources const):
+        * Modules/mediastream/RTCRtpSynchronizationSource.h: Added.
+        * Modules/mediastream/RTCRtpSynchronizationSource.idl: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp:
+        (WebCore::fillRTCRtpContributingSource):
+        (WebCore::toRTCRtpContributingSource):
+        (WebCore::toRTCRtpSynchronizationSource):
+        (WebCore::LibWebRTCRtpReceiverBackend::getContributingSources const):
+        (WebCore::LibWebRTCRtpReceiverBackend::getSynchronizationSources const):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2018-09-18  Youenn Fablet  <youenn@apple.com>
+
         Enable Unified Plan by default
         https://bugs.webkit.org/show_bug.cgi?id=189675
 

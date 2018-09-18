@@ -1,3 +1,3 @@
 
-FAIL getContributingSources() should return list of CSRC after connection is established promise_test: Unhandled rejection with value: object "TypeError: receiver.getContributingSources is not a function. (In 'receiver.getContributingSources()', 'receiver.getContributingSources' is undefined)"
+FAIL getContributingSources() should return list of CSRC after connection is established assert_greater_than: Expect CSRCs to be available after RTP connection is established expected a number greater than 0 but got 0
 

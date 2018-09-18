@@ -47,6 +47,8 @@ public:
 
 private:
     RTCRtpParameters getParameters() final;
+    Vector<RTCRtpContributingSource> getContributingSources() const final;
+    Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const final;
 
     rtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
 };

@@ -27,6 +27,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCRtpParameters.h"
+#include "RTCRtpSynchronizationSource.h"
 
 namespace WebCore {
 
@@ -34,6 +35,8 @@ class RTCRtpReceiverBackend {
 public:
     virtual ~RTCRtpReceiverBackend() = default;
     virtual RTCRtpParameters getParameters() { return { }; }
+    virtual Vector<RTCRtpContributingSource> getContributingSources() const { return { }; }
+    virtual Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return { }; }
 };
 
 } // namespace WebCore

@@ -36,6 +36,48 @@ RTCRtpParameters LibWebRTCRtpReceiverBackend::getParameters()
     return toRTCRtpParameters(m_rtcReceiver->GetParameters());
 }
 
+static inline void fillRTCRtpContributingSource(RTCRtpContributingSource& source, const webrtc::RtpSource& rtcSource)
+{
+    source.timestamp = rtcSource.timestamp_ms();
+    source.source = rtcSource.source_id();
+    if (rtcSource.audio_level())
+        source.audioLevel = *rtcSource.audio_level();
+}
+
+static inline RTCRtpContributingSource toRTCRtpContributingSource(const webrtc::RtpSource& rtcSource)
+{
+    RTCRtpContributingSource source;
+    fillRTCRtpContributingSource(source, rtcSource);
+    return source;
+}
+
+static inline RTCRtpSynchronizationSource toRTCRtpSynchronizationSource(const webrtc::RtpSource& rtcSource)
+{
+    RTCRtpSynchronizationSource source;
+    fillRTCRtpContributingSource(source, rtcSource);
+    return source;
+}
+
+Vector<RTCRtpContributingSource> LibWebRTCRtpReceiverBackend::getContributingSources() const
+{
+    Vector<RTCRtpContributingSource> sources;
+    for (auto& rtcSource : m_rtcReceiver->GetSources()) {
+        if (rtcSource.source_type() == webrtc::RtpSourceType::CSRC)
+            sources.append(toRTCRtpContributingSource(rtcSource));
+    }
+    return sources;
+}
+
+Vector<RTCRtpSynchronizationSource> LibWebRTCRtpReceiverBackend::getSynchronizationSources() const
+{
+    Vector<RTCRtpSynchronizationSource> sources;
+    for (auto& rtcSource : m_rtcReceiver->GetSources()) {
+        if (rtcSource.source_type() == webrtc::RtpSourceType::SSRC)
+            sources.uncheckedAppend(toRTCRtpSynchronizationSource(rtcSource));
+    }
+    return sources;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

@@ -34,6 +34,7 @@
 
 #include "MediaStreamTrack.h"
 #include "RTCRtpReceiverBackend.h"
+#include "RTCRtpSynchronizationSource.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {
@@ -50,6 +51,8 @@ public:
 
     void setBackend(std::unique_ptr<RTCRtpReceiverBackend>&& backend) { m_backend = WTFMove(backend); }
     RTCRtpParameters getParameters() { return m_backend ? m_backend->getParameters() : RTCRtpParameters(); }
+    Vector<RTCRtpContributingSource> getContributingSources() const { return m_backend ? m_backend->getContributingSources() : Vector<RTCRtpContributingSource> { }; }
+    Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return m_backend ? m_backend->getSynchronizationSources() : Vector<RTCRtpSynchronizationSource> { }; }
 
     MediaStreamTrack& track() { return m_track.get(); }
 
