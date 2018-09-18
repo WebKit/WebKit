@@ -2217,12 +2217,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case RegExpMatchFast:
         ASSERT(node->child2().useKind() == RegExpObjectUse);
-        ASSERT(node->child3().useKind() == StringUse);
+        ASSERT(node->child3().useKind() == StringUse || node->child3().useKind() == KnownStringUse);
         setTypeForNode(node, SpecOther | SpecArray);
         break;
 
     case RegExpMatchFastGlobal:
-        ASSERT(node->child2().useKind() == StringUse);
+        ASSERT(node->child2().useKind() == StringUse || node->child2().useKind() == KnownStringUse);
         setTypeForNode(node, SpecOther | SpecArray);
         break;
             

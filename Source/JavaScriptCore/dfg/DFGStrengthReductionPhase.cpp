@@ -508,7 +508,7 @@ private:
                         m_insertionSet.insertConstantForUse(
                             m_nodeIndex, origin, jsNumber(0), UntypedUse));
                     origin = origin.withInvalidExit();
-                    m_node->convertToRegExpMatchFastGlobal(m_graph.freeze(regExp));
+                    m_node->convertToRegExpMatchFastGlobalWithoutChecks(m_graph.freeze(regExp));
                     m_node->origin = origin;
                     m_changed = true;
                     break;
@@ -774,7 +774,7 @@ private:
                 NodeOrigin origin = m_node->origin;
                 m_insertionSet.insertNode(
                     m_nodeIndex, SpecNone, Check, origin, m_node->children.justChecks());
-                m_node->convertToRegExpExecNonGlobalOrSticky(m_graph.freeze(regExp));
+                m_node->convertToRegExpExecNonGlobalOrStickyWithoutChecks(m_graph.freeze(regExp));
                 m_changed = true;
                 return true;
             };

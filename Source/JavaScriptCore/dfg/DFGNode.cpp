@@ -268,22 +268,22 @@ void Node::convertToCallDOM(Graph& graph)
         clearFlags(NodeMustGenerate);
 }
 
-void Node::convertToRegExpExecNonGlobalOrSticky(FrozenValue* regExp)
+void Node::convertToRegExpExecNonGlobalOrStickyWithoutChecks(FrozenValue* regExp)
 {
     ASSERT(op() == RegExpExec);
     setOpAndDefaultFlags(RegExpExecNonGlobalOrSticky);
     children.child1() = Edge(children.child1().node(), KnownCellUse);
-    children.child2() = Edge(children.child3().node(), StringUse);
+    children.child2() = Edge(children.child3().node(), KnownStringUse);
     children.child3() = Edge();
     m_opInfo = regExp;
 }
 
-void Node::convertToRegExpMatchFastGlobal(FrozenValue* regExp)
+void Node::convertToRegExpMatchFastGlobalWithoutChecks(FrozenValue* regExp)
 {
     ASSERT(op() == RegExpMatchFast);
     setOpAndDefaultFlags(RegExpMatchFastGlobal);
     children.child1() = Edge(children.child1().node(), KnownCellUse);
-    children.child2() = Edge(children.child3().node(), StringUse);
+    children.child2() = Edge(children.child3().node(), KnownStringUse);
     children.child3() = Edge();
     m_opInfo = regExp;
 }
