@@ -5,6 +5,7 @@
         const userShouldGrantAccess = hashArguments[0] === "userShouldGrantAccess";
         const userShouldBeConsulted = hashArguments[1] === "userShouldBeConsulted";
         const policyShouldGrantAccess = hashArguments[2] === "policyShouldGrantAccess";
+        const sameSiteNavigation = hashArguments[3] === "sameSiteNavigation";
 
         if (internals && userShouldGrantAccess)
             internals.setUserGrantsStorageAccess(true);
@@ -26,7 +27,11 @@
         }
 
         function navigate() {
-            document.location.href = "http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html#policyShouldNotGrantAccess"
+            if (sameSiteNavigation) {
+                document.location.href = "http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
+            } else {
+                document.location.href = "http://127.0.0.1:8000/resourceLoadStatistics/resources/redirect.php?redirectTo=http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html";
+            }
         }
 
         function setCookieAndNavigate() {

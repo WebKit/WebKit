@@ -5,7 +5,7 @@
     <script src="/js-test-resources/ui-helper.js"></script>
     <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
-        description("Tests that a cross-origin iframe from a prevalent domain that is granted storage access and then navigates itself does not have storage access.");
+        description("Tests that a cross-origin iframe from a prevalent domain that is granted storage access and then navigates itself same-site still has storage access.");
         jsTestIsAsync = true;
 
         window.addEventListener("message", receiveMessage, false);
@@ -63,7 +63,7 @@
         const statisticsUrl = "http://" + hostUnderTest;
         if (document.location.hash !== "#firstPartyCookieSet") {
             setEnableFeature(true, function() {
-                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html#firstPartyCookieSet";
+                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html#firstPartyCookieSet";
             });
         } else {
             testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
@@ -77,7 +77,7 @@
                         iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
                         iframeElement.onload = runTest;
                         iframeElement.id = "TheIframeThatRequestsStorageAccess";
-                        iframeElement.src = "http://localhost:8000/storageAccess/resources/self-navigating-frame-after-granted-access.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess";
+                        iframeElement.src = "http://localhost:8000/storageAccess/resources/self-navigating-frame-after-granted-access.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,sameSiteNavigation";
                         document.body.appendChild(iframeElement);
                     });
                 });

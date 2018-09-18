@@ -119,12 +119,30 @@
                     break;
                 case "#step7":
                     document.location.hash = "step8";
-                    // Check that no cookie gets sent for localhost under 127.0.0.1 since we're opening in the frame that was granted access.
-                    let existingIframe = document.getElementById("TheIframeThatRequestsStorageAccess");
-                    existingIframe.onload = runTest;
-                    existingIframe.src = thirdPartyBaseUrl + subPathToGetCookies + "&message=After the top frame navigates the sub frame, the sub frame should no longer have access to cookies.";
+                    // Navigate the frame same-site.
+                    let existingIframe1 = document.getElementById("TheIframeThatRequestsStorageAccess");
+                    existingIframe1.onload = function () {
+                        debug("Did navigate iframe same-site and will now check that it still has storage access.");
+                        let iframe = document.getElementById("TheIframeThatRequestsStorageAccess");
+                        iframe.contentWindow.postMessage("reportBackCookies", "http://localhost:8000");
+                    };
+                    existingIframe1.src = thirdPartyBaseUrl + subPathToGetCookies;
                     break;
                 case "#step8":
+                    document.location.hash = "step9";
+                    // Navigate the frame cross-site. This should clear out storage access.
+                    let existingIframe2 = document.getElementById("TheIframeThatRequestsStorageAccess");
+                    existingIframe2.onload = runTest;
+                    existingIframe2.src = "http://" + partitionHost;
+                    break;
+                case "#step9":
+                    document.location.hash = "step10";
+                    // Again open localhost in the existing frame and check that no cookie gets sent for localhost under 127.0.0.1 since it has been navigated cross-site.
+                    let existingIframe3 = document.getElementById("TheIframeThatRequestsStorageAccess");
+                    existingIframe3.onload = runTest;
+                    existingIframe3.src = thirdPartyBaseUrl + subPathToGetCookies + "&message=After the top frame navigates the sub frame cross-site and back, the sub frame should no longer have access to cookies.";
+                    break;
+                case "#step10":
                     setEnableFeature(false, finishJSTest);
                     break;
             }

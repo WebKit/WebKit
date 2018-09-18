@@ -97,7 +97,7 @@ private:
     void dispatchDidFinishDataDetection(NSArray *detectionResults) final;
 #endif
     void dispatchDidChangeMainDocument() final;
-    void dispatchWillChangeDocument() final;
+    void dispatchWillChangeDocument(const WebCore::URL& currentUrl, const WebCore::URL& newUrl) final;
 
     void dispatchDidDispatchOnloadEvents() final;
     void dispatchDidReceiveServerRedirectForProvisionalLoad() final;

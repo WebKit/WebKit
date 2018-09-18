@@ -1,3 +1,20 @@
+2018-08-31  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Maintain access through same-site navigations
+        https://bugs.webkit.org/show_bug.cgi?id=188564
+        <rdar://problem/43445160>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html
+               http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html
+
+        * dom/Document.h:
+            Removed unused member variable m_hasFrameSpecificStorageAccess.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/FrameLoaderClient.h:
+
 2018-08-31  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit in ~CompletionHandler() from ~WebFrame()

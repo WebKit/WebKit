@@ -1,3 +1,18 @@
+2018-08-31  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Maintain access through same-site navigations
+        https://bugs.webkit.org/show_bug.cgi?id=188564
+        <rdar://problem/43445160>
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+            Now takes the current URL and the new URL as parameters
+            and only clears out storage access if the navigation is
+            cross-site, i.e. with differing eTLD+1s.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2018-08-31  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit in ~CompletionHandler() from ~WebFrame()
