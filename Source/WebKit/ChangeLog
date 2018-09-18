@@ -1,4 +1,11 @@
-+2018-08-17  Ben Richards  <benton_richards@apple.com>
+2018-09-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r236092 because it breaks internal builds. Also,  remove stray '+' character from ChangeLog file.
+
+        * Scripts/copy-webcontent-resources-to-private-headers.sh: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2018-08-17  Ben Richards  <benton_richards@apple.com>
 
         Add script to generate WebContent service resource files and change XPC service main SPI to have it's own header
         https://bugs.webkit.org/show_bug.cgi?id=188601
