@@ -91,8 +91,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
 
     updateLayerHostingContext();
     setColorSpace(parameters.colorSpace);
-
-    attachDrawingArea();
 }
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
@@ -101,7 +99,7 @@ TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 }
 
 
-void TiledCoreAnimationDrawingArea::attachDrawingArea()
+void TiledCoreAnimationDrawingArea::attach()
 {
     LayerTreeContext layerTreeContext;
     layerTreeContext.contextID = m_layerHostingContext->contextID();

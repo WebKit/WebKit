@@ -657,7 +657,6 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         m_drawingArea->updatePreferences(parameters.store);
         m_drawingArea->setPaintingEnabled(true);
     }
-    m_drawingArea->attachDrawingArea();
 
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, Vector<CallbackID>());
@@ -2215,7 +2214,7 @@ void WebPage::setLayerTreeStateIsFrozen(bool frozen)
     if (!drawingArea)
         return;
 
-    drawingArea->setLayerTreeStateIsFrozen(frozen);
+    drawingArea->setLayerTreeStateIsFrozen(frozen || m_isSuspended);
 }
 
 void WebPage::callVolatilityCompletionHandlers(bool succeeded)
@@ -2846,7 +2845,7 @@ void WebPage::continueWillSubmitForm(uint64_t frameID, uint64_t listenerID)
 
 void WebPage::didStartPageTransition()
 {
-    m_drawingArea->setLayerTreeStateIsFrozen(true);
+    setLayerTreeStateIsFrozen(true);
 
 #if PLATFORM(MAC)
     bool hasPreviouslyFocusedDueToUserInteraction = m_hasEverFocusedElementDueToUserInteractionSincePageTransition;
@@ -2870,8 +2869,11 @@ void WebPage::didStartPageTransition()
 
 void WebPage::didCompletePageTransition()
 {
-    if (m_drawingArea)
-        m_drawingArea->setLayerTreeStateIsFrozen(false);
+    // FIXME: Layer tree freezing should be managed entirely in the UI process side.
+    setLayerTreeStateIsFrozen(false);
+
+    bool isInitialEmptyDocument = !m_mainFrame;
+    send(Messages::WebPageProxy::DidCompletePageTransition(isInitialEmptyDocument));
 }
 
 void WebPage::show()
@@ -6000,8 +6002,20 @@ void WebPage::setIsSuspended(bool suspended)
         return;
 
     m_isSuspended = suspended;
-    if (m_isSuspended)
-        m_drawingArea = nullptr;
+
+#if PLATFORM(MAC)
+    // Drawing area is cleared by a message from the UI process.
+    setLayerTreeStateIsFrozen(true);
+#else
+    tearDownDrawingAreaForSuspend();
+#endif
+}
+
+void WebPage::tearDownDrawingAreaForSuspend()
+{
+    if (!m_isSuspended)
+        return;
+    m_drawingArea = nullptr;
 }
 
 void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remoteFrameIdentifier, GlobalWindowIdentifier&& remoteWindowIdentifier)

@@ -1,3 +1,96 @@
+2018-09-18  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (PSON): White or Black flash occurs when process swapping on navigation on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=189663
+        <rdar://problem/44184955>
+
+        Reviewed by Geoff Garen.
+
+        We need to keep the layer tree of the previous page alive and visible until we have something
+        to render on the new page. With PSON on Mac this means that we should keep displaying the
+        layer tree from the previus process.
+
+        This patch moves the management of 'attaching' the drawing area (Mac only concept) from web process
+        to UI process. This is when we parent the layer tree to the view root layer. It also ensures that
+        the layer tree is not deleted too early on process swap and that it still eventually gets deleted.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::attachInWebProcess):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::messageNamesToIgnoreWhileSuspended):
+        (WebKit::SuspendedPageProxy::tearDownDrawingAreaInWebProcess):
+
+        We no longer tear down drawing area (layer tree) for suspended pages automatically. Send an explicit
+        message for it.
+
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+
+        Only call didRelaunchProcess when process actually relaunched (not navigation process launch) to
+        match not calling processDidExit in resetStateAfterProcessExited.
+
+        (WebKit::WebPageProxy::didCompletePageTransition):
+
+        Attach the drawing area if appropriate.
+
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
+        Send suspend message to WebPage immediately instead waiting for the runloop callback. This is needed so we
+        can avoid flashing the initial empty document load when the new Page object is created.
+
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
+        Don't call processDidExit when suspending, not exiting the process (this function needs a new name or rafactoring).
+        This avoids clearing the drawing area and flashing to black.
+
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+
+        This is called when we have switched to the new layer tree.
+        Tear down the drawing area in the previus process.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::attachInWebProcess):
+
+        Send a message to the web process to attach the drawing area.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::attach):
+        (WebKit::DrawingArea::attachDrawingArea): Deleted.
+
+        Rename to be less redundant.
+
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+
+        Don't attach drawing area automatically. It will be done by a message from UI process.
+
+        (WebKit::WebPage::setLayerTreeStateIsFrozen):
+
+        Layer tree is always frozen in a suspended process (if it exists).
+
+        (WebKit::WebPage::didStartPageTransition):
+        (WebKit::WebPage::didCompletePageTransition):
+
+        Notify UI process of transition completion.
+
+        (WebKit::WebPage::setIsSuspended):
+        (WebKit::WebPage::tearDownDrawingAreaForSuspend):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+
+        Don't attach drawing area automatically. It will be done by a message from UI process.
+
+        (WebKit::TiledCoreAnimationDrawingArea::attach):
+        (WebKit::TiledCoreAnimationDrawingArea::attachDrawingArea): Deleted.
+
 2018-09-18  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Implement mouse event modifiers
