@@ -1,5 +1,20 @@
 2018-08-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        Shrink size of HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=188945
+
+        Reviewed by Darin Adler.
+
+        Shrink the size of HTMLCollection by reordering members.
+
+        No behavior change.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        * html/HTMLCollection.h:
+
+2018-08-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         Shrink size of XMLHttpRequest
         https://bugs.webkit.org/show_bug.cgi?id=188944
 
