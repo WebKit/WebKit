@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebKit/WKBase.h>
 #include <WebKit/WKFoundation.h>
 
 #ifdef __cplusplus

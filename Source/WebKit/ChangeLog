@@ -1,3 +1,18 @@
+2018-09-18  Ben Richards  <benton_richards@apple.com>
+
+        Add script to generate WebContent service resource files and change XPC service main SPI to have it's own header
+        https://bugs.webkit.org/show_bug.cgi?id=188601
+
+        Reviewed by Dan Bernstein.
+
+        Added a script to the process entitlements build phase of the WebContent service that copies resource
+        files to WebKit.framework/PrivateHeaders/CustomWebContentResources. These resource files are to
+        be used by clients who would like to make a custom WebContent service.
+
+        * Scripts/copy-webcontent-resources-to-private-headers.sh: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/API/Cocoa/WKWebProcess.h: Drive-by fix to make this header compileable alone.
+
 2018-09-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236138.
