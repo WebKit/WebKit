@@ -7105,6 +7105,11 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
 {
     m_isShowingNavigationGestureSnapshot = false;
 
+    // The ViewGestureController may call this method on a WebPageProxy whose view has been destroyed. In such case,
+    // we need to return early as the pageClient will not be valid below.
+    if (m_isClosed)
+        return;
+
     pageClient().didRemoveNavigationGestureSnapshot();
 
     m_navigationClient->didRemoveNavigationGestureSnapshot(*this);

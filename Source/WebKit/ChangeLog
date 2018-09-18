@@ -1,3 +1,25 @@
+2018-09-18  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Crash under WebPageProxy::navigationGestureSnapshotWasRemoved()
+        https://bugs.webkit.org/show_bug.cgi?id=189714
+        <rdar://problem/32839498>
+
+        Reviewed by Tim Horton.
+
+        The ViewGestureController::removeSwipeSnapshot() implementation for iOS calls
+        navigationGestureSnapshotWasRemoved() on m_webPageProxyForBackForwardListForCurrentSwipe.
+        m_webPageProxyForBackForwardListForCurrentSwipe can differ from m_webPageProxy, and
+        is a RefPtr<>. This means that this WebPageProxy's WKWebView might have been deallocated,
+        in which case we'll crash when trying to use the pageClient in
+        WebPageProxy::navigationGestureSnapshotWasRemoved(). To address the issue, we now return
+        early in WebPageProxy::navigationGestureSnapshotWasRemoved() if m_isClosed is true,
+        after resetting m_isShowingNavigationGestureSnapshot to false but *before* trying to use
+        the pageClient. When a WKWebView is deallocated, it calls WebPageProxy::close(), which
+        sets m_isClosed to true.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::navigationGestureSnapshotWasRemoved):
+
 2018-09-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Limit capturing extra metrics for Web Inspector when not required.
