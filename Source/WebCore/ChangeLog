@@ -1,3 +1,20 @@
+2018-09-18  Chris Dumez  <cdumez@apple.com>
+
+        "DidFirstVisuallyNonEmptyLayout" callback does not get called when restoring a page from PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=189681
+        <rdar://problem/44526171>
+
+        Reviewed by Alex Christensen and Zalan Bujtas.
+
+        The "DidFirstVisuallyNonEmptyLayout" callback was not getting called when restoring a page from PageCache
+        because the FrameView is restored from PageCache and we would fail to restore its flags (such as
+        m_firstVisuallyNonEmptyLayoutCallbackPending) when entering Page Cache. We now call reset those flags that
+        are related to layout miletones when entering PageCache so that layout milestone events properly get sent
+        again when restoring from Page Cache.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+
 2018-09-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Static position should use content-box, not padding-box

@@ -154,6 +154,10 @@ CachedFrame::CachedFrame(Frame& frame)
 
     m_document->domWindow()->suspendForDocumentSuspension();
 
+    // Clear FrameView to reset flags such as 'firstVisuallyNonEmptyLayoutCallbackPending' so that the
+    // 'DidFirstVisuallyNonEmptyLayout' callback gets called against when restoring from PageCache.
+    m_view->resetLayoutMilestones();
+
     frame.loader().client().savePlatformDataToCachedFrame(this);
 
     // documentWillSuspendForPageCache() can set up a layout timer on the FrameView, so clear timers after that.

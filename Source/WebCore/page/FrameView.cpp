@@ -267,7 +267,6 @@ void FrameView::reset()
     m_isOverlapped = false;
     m_contentIsOpaque = false;
     m_updateEmbeddedObjectsTimer.stop();
-    m_firstLayoutCallbackPending = false;
     m_wasScrolledByUser = false;
     m_delayedScrollEventTimer.stop();
     m_shouldScrollToFocusedElement = false;
@@ -279,16 +278,22 @@ void FrameView::reset()
     m_lastPaintTime = MonotonicTime();
     m_paintBehavior = PaintBehavior::Normal;
     m_isPainting = false;
-    m_visuallyNonEmptyCharacterCount = 0;
-    m_visuallyNonEmptyPixelCount = 0;
-    m_isVisuallyNonEmpty = false;
-    m_firstVisuallyNonEmptyLayoutCallbackPending = true;
-    m_renderTextCountForVisuallyNonEmptyCharacters = 0;
-    m_renderedSignificantAmountOfText = false;
-    m_significantRenderedTextMilestonePending = true;
     m_needsDeferredScrollbarsUpdate = false;
     m_maintainScrollPositionAnchor = nullptr;
+    resetLayoutMilestones();
     layoutContext().reset();
+}
+
+void FrameView::resetLayoutMilestones()
+{
+    m_firstLayoutCallbackPending = false;
+    m_isVisuallyNonEmpty = false;
+    m_firstVisuallyNonEmptyLayoutCallbackPending = true;
+    m_significantRenderedTextMilestonePending = true;
+    m_renderedSignificantAmountOfText = false;
+    m_visuallyNonEmptyCharacterCount = 0;
+    m_visuallyNonEmptyPixelCount = 0;
+    m_renderTextCountForVisuallyNonEmptyCharacters = 0;
 }
 
 void FrameView::removeFromAXObjectCache()
