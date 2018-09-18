@@ -35,10 +35,11 @@
 
 namespace WebCore {
 
-EventContext::EventContext(Node* node, EventTarget* currentTarget, EventTarget* target)
-    : m_node(node)
-    , m_currentTarget(currentTarget)
-    , m_target(target)
+EventContext::EventContext(Node* node, EventTarget* currentTarget, EventTarget* target, int closedShadowDepth)
+    : m_node { node }
+    , m_currentTarget { currentTarget }
+    , m_target { target }
+    , m_closedShadowDepth { closedShadowDepth }
 {
     ASSERT(!isUnreachableNode(m_target.get()));
 }
@@ -66,8 +67,8 @@ bool EventContext::isTouchEventContext() const
     return false;
 }
 
-MouseOrFocusEventContext::MouseOrFocusEventContext(Node& node, EventTarget* currentTarget, EventTarget* target)
-    : EventContext(&node, currentTarget, target)
+MouseOrFocusEventContext::MouseOrFocusEventContext(Node& node, EventTarget* currentTarget, EventTarget* target, int closedShadowDepth)
+    : EventContext(&node, currentTarget, target, closedShadowDepth)
 {
 }
 
@@ -87,8 +88,8 @@ bool MouseOrFocusEventContext::isMouseOrFocusEventContext() const
 
 #if ENABLE(TOUCH_EVENTS)
 
-TouchEventContext::TouchEventContext(Node& node, EventTarget* currentTarget, EventTarget* target)
-    : EventContext(&node, currentTarget, target)
+TouchEventContext::TouchEventContext(Node& node, EventTarget* currentTarget, EventTarget* target, int closedShadowDepth)
+    : EventContext(&node, currentTarget, target, closedShadowDepth)
     , m_touches(TouchList::create())
     , m_targetTouches(TouchList::create())
     , m_changedTouches(TouchList::create())

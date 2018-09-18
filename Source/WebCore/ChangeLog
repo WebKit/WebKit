@@ -1,3 +1,68 @@
+2018-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update composedPath to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=180378
+        <rdar://problem/42843004>
+
+        Reviewed by Darin Adler.
+
+        This patch makes the check for whether a given node in the event path be included in composedPath
+        pre-determined at the time of the event dispatching per https://github.com/whatwg/dom/issues/525.
+        This was a fix for the issue that if an event listener in a closed shadow tree removes a node in the
+        same tree in the event path, then composedPath called on its shadow host, for example, will include
+        the removed node since it's no longer in the closed shadow tree.
+
+        Naively, implementing this behavior would require remembering the original document or shadow root
+        of each node in the event path as well as its parent shadow root, or worse which node is disclosed
+        to every other node at the time of computing the event path.
+
+        This patch takes a more novel and efficient approach to implement the new behavior by adding a single
+        integer indicating the number of closed-mode shadow root ancestors of each node in the event path.
+        In computePathUnclosedToTarget, any node whose *depth* is greater than the context object is excluded.
+
+        Consider the following example:
+        div ------- ShadowRoot (closed)
+          +- span     +- slot
+        If an event is dispatched on span, then the event path would be [span, slot, ShadowRoot, div]. Then
+        the values of integers assigned to each node would be: [0, 1, 1, 0] respectively. When composedPath
+        is called on span or div, slot and ShadowRoot are excluded because they have a greater *depth* value.
+
+        Unfortunately, this simplistic solution doesn't work when there are multiple shadow roots of the same
+        depth through which an event is dispatched as in:
+        section -- ShadowRoot (closed, SR2)
+          |          +- slot (s2)
+          +div ------ ShadowRoot (closed, SR1)
+            +- span     +- slot (s1)
+        If an event is dispatched on span, the event path would be [span, s1, SR1, div, s2, SR2, section].
+        The values of integers assigned are: [0, 1, 1, 0, 1, 1, 0] respectively. When composedPath is called
+        on SR1, the simplistic approach would include s2 and SR2, which would be wrong.
+
+        To account for this case, in computePathUnclosedToTarget, we traverse the event path upwards (i.e.
+        ancestors) and downwards (i.e. descendants) from the context object and decrease the *allowed depth*
+        of shadow trees when we traverse out of a shadow tree in either direction. When traversing upwards,
+        therefore, moving out of a shadow root to its host would would decrease the allowed depth. When
+        traversing dowards, moving from a slot element to its assigned node would decrease the allowed depth.
+
+        Note that the depths can be negative when a composed event is dispatched inside a closed shadow tree,
+        and it gets out of its shadow host.
+
+        Unfortunately, the latest DOM specification has a bug and doesn't match the behavior of Chrome. This
+        patch proposes a new algorithm which can be adopted in https://github.com/whatwg/dom/issues/684.
+
+        Test: imported/w3c/web-platform-tests/shadow-dom/event-composed-path-after-dom-mutation.html
+
+        * dom/EventContext.cpp:
+        (WebCore::EventContext::EventContext):
+        (WebCore::MouseOrFocusEventContext::MouseOrFocusEventContext):
+        (WebCore::TouchEventContext::TouchEventContext):
+        * dom/EventContext.h:
+        (WebCore::EventContext::closedShadowDepth const): Added.
+        * dom/EventPath.cpp:
+        (WebCore::WindowEventContext::WindowEventContext):
+        (WebCore::EventPath::buildPath): Compute the closed shadow tree's depths for each node in the path.
+        (WebCore::computePathUnclosedToTarget const): Implemented the aforementioned algorithm.
+        (WebCore::EventPath::EventPath):
+
 2018-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Use Semaphore and BinarySemaphore instead of dispatch_semaphore_t
