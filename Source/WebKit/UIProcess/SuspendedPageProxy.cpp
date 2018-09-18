@@ -54,7 +54,6 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
         messageNames.get().add("DidDestroyNavigation");
         messageNames.get().add("DidFinishDocumentLoadForFrame");
         messageNames.get().add("DidFinishProgress");
-        messageNames.get().add("DidCompletePageTransition");
         messageNames.get().add("DidFirstLayoutForFrame");
         messageNames.get().add("DidFirstVisuallyNonEmptyLayoutForFrame");
         messageNames.get().add("DidNavigateWithNavigationData");
@@ -108,11 +107,6 @@ void SuspendedPageProxy::destroyWebPageInWebProcess()
 {
     m_process->send(Messages::WebPage::Close(), m_page.pageID());
     m_page.suspendedPageClosed(*this);
-}
-
-void SuspendedPageProxy::tearDownDrawingAreaInWebProcess()
-{
-    m_process->send(Messages::WebPage::TearDownDrawingAreaForSuspend(), m_page.pageID());
 }
 
 void SuspendedPageProxy::didFinishLoad()

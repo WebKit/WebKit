@@ -56,8 +56,8 @@
 #include "AuthenticationDecisionListener.h"
 #include "DataReference.h"
 #include "DownloadProxy.h"
-#include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
+#include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
 #include "FrameInfoData.h"
 #include "LoadParameters.h"
@@ -798,9 +798,7 @@ void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Nav
 
     initializeWebPage();
 
-    if (!navigation)
-        pageClient().didRelaunchProcess();
-
+    pageClient().didRelaunchProcess();
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
 
@@ -2451,8 +2449,6 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         if (proposedProcess.ptr() != &process()) {
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "%p - WebPageProxy::decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %{public}s", this, processIdentifier(), proposedProcess->processIdentifier(), reason.utf8().data());
             LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), proposedProcess->processIdentifier(), navigation->navigationID(), navigation->loggingString());
-
-            process().send(Messages::WebPage::SetIsSuspended(true), pageID());
             
             RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
                 continueNavigationInNewProcess(navigation, WTFMove(proposedProcess));
@@ -3447,22 +3443,6 @@ void WebPageProxy::didFinishProgress()
     m_pageLoadState.didFinishProgress(transaction);
 
     m_pageLoadState.commitChanges();
-}
-
-void WebPageProxy::didCompletePageTransition(bool isInitialEmptyDocument)
-{
-#if PLATFORM(MAC)
-    if (!m_drawingArea)
-        return;
-
-    // Attach drawing area for the initial empty document only if this is not a process swap.
-    if (isInitialEmptyDocument && m_suspendedPage)
-        return;
-
-    m_drawingArea->attachInWebProcess();
-#else
-    UNUSED_PARAM(isInitialEmptyDocument);
-#endif
 }
 
 void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
@@ -6187,9 +6167,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     m_editorState = EditorState();
 
-    if (terminationReason != ProcessTerminationReason::NavigationSwap)
-        pageClient().processDidExit();
-
+    pageClient().processDidExit();
     pageClient().clearAllEditCommands();
 
     auto resetStateReason = terminationReason == ProcessTerminationReason::NavigationSwap ? ResetStateReason::NavigationSwap : ResetStateReason::WebProcessExited;
@@ -6330,10 +6308,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);
-
-    // We have completed the page transition and can tear down the layers in the suspended process.
-    if (m_suspendedPage)
-        m_suspendedPage->tearDownDrawingAreaInWebProcess();
 }
 
 void WebPageProxy::exitAcceleratedCompositingMode()

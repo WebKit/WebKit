@@ -38,8 +38,6 @@ public:
 
 private:
     // DrawingAreaProxy
-    void attachInWebProcess() override;
-
     void deviceScaleFactorDidChange() override;
     void sizeDidChange() override;
     void colorSpaceDidChange() override;

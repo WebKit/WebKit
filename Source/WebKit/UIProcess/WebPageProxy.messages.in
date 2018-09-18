@@ -117,8 +117,6 @@ messages -> WebPageProxy {
     DidFinishProgress()
     DidStartProgress()
 
-    DidCompletePageTransition(bool isInitialEmptyDocument)
-
     SetNetworkRequestsInProgress(bool networkRequestsInProgress)
 
     # Frame lifetime messages

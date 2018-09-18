@@ -49,7 +49,6 @@ public:
 
     void webProcessDidClose(WebProcessProxy&);
     void destroyWebPageInWebProcess();
-    void tearDownDrawingAreaInWebProcess();
 
 #if !LOG_DISABLED
     const char* loggingString() const;

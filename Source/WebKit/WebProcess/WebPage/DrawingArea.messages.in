@@ -45,11 +45,7 @@ messages -> DrawingArea {
     DestroyNativeSurfaceHandleForCompositing() -> (bool handled)
 #endif
 
-#if PLATFORM(MAC)
-    Attach()
-
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     DisplayWasRefreshed()
-#endif
 #endif
 }
