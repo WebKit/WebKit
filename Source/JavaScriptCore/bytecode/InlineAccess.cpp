@@ -47,6 +47,18 @@ void InlineAccess::dumpCacheSizesAndCrash()
 #else
     JSValueRegs regs(base);
 #endif
+    {
+        CCallHelpers jit;
+
+        jit.patchableBranch8(
+            CCallHelpers::NotEqual,
+            CCallHelpers::Address(base, JSCell::typeInfoTypeOffset()),
+            CCallHelpers::TrustedImm32(StringType));
+        jit.load32(CCallHelpers::Address(base, JSString::offsetOfLength()), regs.payloadGPR());
+        jit.boxInt32(regs.payloadGPR(), regs);
+
+        dataLog("string length size: ", jit.m_assembler.buffer().codeSize(), "\n");
+    }
 
     {
         CCallHelpers jit;
@@ -158,7 +170,7 @@ bool InlineAccess::generateSelfPropertyAccess(StructureStubInfo& stubInfo, Struc
 {
     CCallHelpers jit;
     
-    GPRReg base = static_cast<GPRReg>(stubInfo.patch.baseGPR);
+    GPRReg base = stubInfo.baseGPR();
     JSValueRegs value = stubInfo.valueRegs();
 
     auto branchToSlowPath = jit.patchableBranch32(
@@ -185,7 +197,7 @@ bool InlineAccess::generateSelfPropertyAccess(StructureStubInfo& stubInfo, Struc
 ALWAYS_INLINE static GPRReg getScratchRegister(StructureStubInfo& stubInfo)
 {
     ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
-    allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseGPR));
+    allocator.lock(stubInfo.baseGPR());
     allocator.lock(static_cast<GPRReg>(stubInfo.patch.valueGPR));
 #if USE(JSVALUE32_64)
     allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));
@@ -216,7 +228,7 @@ bool InlineAccess::generateSelfPropertyReplace(StructureStubInfo& stubInfo, Stru
 
     CCallHelpers jit;
 
-    GPRReg base = static_cast<GPRReg>(stubInfo.patch.baseGPR);
+    GPRReg base = stubInfo.baseGPR();
     JSValueRegs value = stubInfo.valueRegs();
 
     auto branchToSlowPath = jit.patchableBranch32(
@@ -258,7 +270,7 @@ bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* arr
 
     CCallHelpers jit;
 
-    GPRReg base = static_cast<GPRReg>(stubInfo.patch.baseGPR);
+    GPRReg base = stubInfo.baseGPR();
     JSValueRegs value = stubInfo.valueRegs();
     GPRReg scratch = getScratchRegister(stubInfo);
 
@@ -276,11 +288,32 @@ bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* arr
     return linkedCodeInline;
 }
 
+bool InlineAccess::generateStringLength(StructureStubInfo& stubInfo)
+{
+    CCallHelpers jit;
+
+    GPRReg base = stubInfo.baseGPR();
+    JSValueRegs value = stubInfo.valueRegs();
+
+    auto branchToSlowPath = jit.patchableBranch8(
+        CCallHelpers::NotEqual,
+        CCallHelpers::Address(base, JSCell::typeInfoTypeOffset()),
+        CCallHelpers::TrustedImm32(StringType));
+    jit.load32(CCallHelpers::Address(base, JSString::offsetOfLength()), value.payloadGPR());
+    jit.boxInt32(value.payloadGPR(), value);
+
+    bool linkedCodeInline = linkCodeInline("string length", jit, stubInfo, [&] (LinkBuffer& linkBuffer) {
+        linkBuffer.link(branchToSlowPath, stubInfo.slowPathStartLocation());
+    });
+    return linkedCodeInline;
+}
+
+
 bool InlineAccess::generateSelfInAccess(StructureStubInfo& stubInfo, Structure* structure)
 {
     CCallHelpers jit;
 
-    GPRReg base = static_cast<GPRReg>(stubInfo.patch.baseGPR);
+    GPRReg base = stubInfo.baseGPR();
     JSValueRegs value = stubInfo.valueRegs();
 
     auto branchToSlowPath = jit.patchableBranch32(

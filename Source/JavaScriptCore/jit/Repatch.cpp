@@ -215,8 +215,18 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 }
 
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::ArrayLength);
-            } else if (isJSString(baseCell))
+            } else if (isJSString(baseCell)) {
+                if (stubInfo.cacheType == CacheType::Unset) {
+                    bool generatedCodeInline = InlineAccess::generateStringLength(stubInfo);
+                    if (generatedCodeInline) {
+                        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
+                        stubInfo.initStringLength();
+                        return RetryCacheLater;
+                    }
+                }
+
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::StringLength);
+            }
             else if (DirectArguments* arguments = jsDynamicCast<DirectArguments*>(vm, baseCell)) {
                 // If there were overrides, then we can handle this as a normal property load! Guarding
                 // this with such a check enables us to add an IC case for that load if needed.

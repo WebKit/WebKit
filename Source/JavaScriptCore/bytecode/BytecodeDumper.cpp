@@ -447,6 +447,9 @@ void BytecodeDumper<Block>::printGetByIdCacheStatus(PrintStream& out, int locati
         case CacheType::ArrayLength:
             out.printf("ArrayLength");
             break;
+        case CacheType::StringLength:
+            out.printf("StringLength");
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
