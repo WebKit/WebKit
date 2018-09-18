@@ -104,6 +104,21 @@ static uint32_t modifierForButton(unsigned button)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static uint32_t wkEventModifiersToWPE(WKEventModifiers wkModifiers)
+{
+    uint32_t modifiers = 0;
+    if (wkModifiers & kWKEventModifiersShiftKey)
+        modifiers |=  wpe_input_keyboard_modifier_shift;
+    if (wkModifiers & kWKEventModifiersControlKey)
+        modifiers |= wpe_input_keyboard_modifier_control;
+    if (wkModifiers & kWKEventModifiersAltKey)
+        modifiers |= wpe_input_keyboard_modifier_alt;
+    if (wkModifiers & kWKEventModifiersMetaKey)
+        modifiers |= wpe_input_keyboard_modifier_meta;
+
+    return modifiers;
+}
+
 void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
 {
     m_clickButton = button;
@@ -113,8 +128,9 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
 
     auto wpeButton = senderButtonToWPEButton(button);
     m_mouseButtonsCurrentlyDown |= modifierForButton(wpeButton);
+    uint32_t modifiers = wkEventModifiersToWPE(wkModifiers);
 
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown };
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown | modifiers };
     wpe_view_backend_dispatch_pointer_event(m_viewBackend, &event);
 }
 
@@ -125,8 +141,9 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
 
     auto wpeButton = senderButtonToWPEButton(button);
     m_mouseButtonsCurrentlyDown &= ~modifierForButton(wpeButton);
+    uint32_t modifiers = wkEventModifiersToWPE(wkModifiers);
 
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown };
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown | modifiers };
     wpe_view_backend_dispatch_pointer_event(m_viewBackend, &event);
 }
 
@@ -167,21 +184,6 @@ void EventSenderProxy::continuousMouseScrollBy(int, int, bool)
 void EventSenderProxy::leapForward(int milliseconds)
 {
     m_time += milliseconds / 1000.0;
-}
-
-static uint32_t wkEventModifiersToWPE(WKEventModifiers wkModifiers)
-{
-    uint32_t modifiers = 0;
-    if (wkModifiers & kWKEventModifiersShiftKey)
-        modifiers |=  wpe_input_keyboard_modifier_shift;
-    if (wkModifiers & kWKEventModifiersControlKey)
-        modifiers |= wpe_input_keyboard_modifier_control;
-    if (wkModifiers & kWKEventModifiersAltKey)
-        modifiers |= wpe_input_keyboard_modifier_alt;
-    if (wkModifiers & kWKEventModifiersMetaKey)
-        modifiers |= wpe_input_keyboard_modifier_meta;
-
-    return modifiers;
 }
 
 static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint32_t* modifiers)

@@ -1,3 +1,15 @@
+2018-09-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Implement mouse event modifiers
+        https://bugs.webkit.org/show_bug.cgi?id=189697
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::wkEventModifiersToWPE):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+
 2018-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Use Semaphore and BinarySemaphore instead of dispatch_semaphore_t
