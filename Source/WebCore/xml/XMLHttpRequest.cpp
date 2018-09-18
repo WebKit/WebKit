@@ -461,6 +461,10 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
 #endif
                 // FIXME: this should include the charset used for encoding.
                 m_requestHeaders.set(HTTPHeaderName::ContentType, document.isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s);
+        } else {
+            String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
+            replaceCharsetInMediaType(contentType, "UTF-8");
+            m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
 
         // FIXME: According to XMLHttpRequest Level 2, this should use the Document.innerHTML algorithm
