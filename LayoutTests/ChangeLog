@@ -1,3 +1,19 @@
+2018-08-29  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r226138): WebCore::subdivide() may return an empty vector; Web process can crash when performing find in Epiphany
+        https://bugs.webkit.org/show_bug.cgi?id=184390
+        <rdar://problem/41804994>
+        And
+        <rdar://problem/39771867>
+
+        Reviewed by Simon Fraser.
+
+        Add a test to ensure that we do not crash when painting an empty inline text box associated
+        with combined text.
+
+        * fast/text/text-combine-surroundContents-crash-expected.txt: Added.
+        * fast/text/text-combine-surroundContents-crash.html: Added.
+
 2018-08-28  Don Olmstead  <don.olmstead@sony.com>
 
         Check for null renderer in canBeScrolledIntoView

@@ -1,3 +1,27 @@
+2018-08-29  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r226138): WebCore::subdivide() may return an empty vector; Web process can crash when performing find in Epiphany
+        https://bugs.webkit.org/show_bug.cgi?id=184390
+        <rdar://problem/41804994>
+        And
+        <rdar://problem/39771867>
+
+        Reviewed by Simon Fraser.
+
+        Speculative fix for Epiphany.
+
+        In theory, WebCore::subdivide() should never return an empty vector - no subdivisions - as such a
+        result represents a programmer error. In practice, InlineTextBox can invoke WebCore::subdivide()
+        such that it returns an empty vector. One way this can happen is when subdividing an empty inline
+        text box associated with combined text (RenderCombineText). For now we add a check to bail out of
+        resolving the style of subdivisions when WebCore::subdivide() returns no subdivisions. In a
+        subsequent patch we will look to assert that WebCore::subdivide() always returns subdivisions.
+
+        Test: fast/text/text-combine-surroundContents-crash.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::subdivideAndResolveStyle):
+
 2018-08-28  Don Olmstead  <don.olmstead@sony.com>
 
         Check for null renderer in canBeScrolledIntoView
