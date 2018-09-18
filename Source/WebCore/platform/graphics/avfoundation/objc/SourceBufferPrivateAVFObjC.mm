@@ -55,6 +55,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/MainThread.h>
+#import <wtf/Semaphore.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/text/AtomicString.h>
@@ -100,11 +101,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 @interface WebAVStreamDataParserListener : NSObject<AVStreamDataParserOutputHandling> {
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
-    OSObjectPtr<dispatch_semaphore_t> _abortSemaphore;
+    Box<Semaphore> _abortSemaphore;
     AVStreamDataParser* _parser;
 }
 @property (assign) WeakPtr<WebCore::SourceBufferPrivateAVFObjC> parent;
-@property (assign) OSObjectPtr<dispatch_semaphore_t> abortSemaphore;
+@property (assign) Box<Semaphore> abortSemaphore;
 - (id)initWithParser:(AVStreamDataParser*)parser parent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>)parent;
 @end
 
@@ -198,19 +199,19 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
     // We must call synchronously to the main thread, as the AVStreamSession must be associated
     // with the streamDataParser before the delegate method returns.
-    OSObjectPtr<dispatch_semaphore_t> respondedSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+    Box<BinarySemaphore> respondedSemaphore = Box<BinarySemaphore>::create();
     callOnMainThread([parent = _parent, trackID, respondedSemaphore]() {
         if (parent)
             parent->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
-        dispatch_semaphore_signal(respondedSemaphore.get());
+        respondedSemaphore->signal();
     });
 
     while (true) {
-        if (!dispatch_semaphore_wait(respondedSemaphore.get(), dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 100)))
+        if (respondedSemaphore->waitFor(100_ms))
             return;
 
-        if (!dispatch_semaphore_wait(_abortSemaphore.get(), dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 100))) {
-            dispatch_semaphore_signal(_abortSemaphore.get());
+        if (_abortSemaphore->waitFor(100_ms)) {
+            _abortSemaphore->signal();
             return;
         }
     }
@@ -220,18 +221,18 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 {
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
-    OSObjectPtr<dispatch_semaphore_t> hasSessionSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+    Box<BinarySemaphore> hasSessionSemaphore = Box<BinarySemaphore>::create();
     callOnMainThread([parent = _parent, protectedInitData = RetainPtr<NSData>(initData), trackID, hasSessionSemaphore] {
         if (parent)
             parent->didProvideContentKeyRequestInitializationDataForTrackID(protectedInitData.get(), trackID, hasSessionSemaphore);
     });
 
     while (true) {
-        if (!dispatch_semaphore_wait(hasSessionSemaphore.get(), dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 100)))
+        if (hasSessionSemaphore->waitFor(100_ms))
             return;
 
-        if (!dispatch_semaphore_wait(_abortSemaphore.get(), dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 100))) {
-            dispatch_semaphore_signal(_abortSemaphore.get());
+        if (_abortSemaphore->waitFor(100_ms)) {
+            _abortSemaphore->signal();
             return;
         }
     }
@@ -490,7 +491,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     , m_mediaSource(parent)
 {
     CMNotificationCenterAddListener(CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
-    m_delegate.get().abortSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+    m_delegate.get().abortSemaphore = Box<Semaphore>::create(0);
 }
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
@@ -502,7 +503,7 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     CMNotificationCenterRemoveListener(CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr);
 
     if (m_hasSessionSemaphore)
-        dispatch_semaphore_signal(m_hasSessionSemaphore.get());
+        m_hasSessionSemaphore->signal();
 }
 
 void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
@@ -637,7 +638,7 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
 #endif
 }
 
-void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(NSData* initData, int trackID, OSObjectPtr<dispatch_semaphore_t> hasSessionSemaphore)
+void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(NSData* initData, int trackID, Box<BinarySemaphore> hasSessionSemaphore)
 {
     if (!m_mediaSource)
         return;
@@ -650,10 +651,10 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     m_mediaSource->sourceBufferKeyNeeded(this, initDataArray.get());
     if (auto session = m_mediaSource->player()->cdmSession()) {
         session->addParser(m_parser.get());
-        dispatch_semaphore_signal(hasSessionSemaphore.get());
+        hasSessionSemaphore->signal();
     } else {
         if (m_hasSessionSemaphore)
-            dispatch_semaphore_signal(m_hasSessionSemaphore.get());
+            m_hasSessionSemaphore->signal();
         m_hasSessionSemaphore = hasSessionSemaphore;
     }
 #endif
@@ -728,12 +729,12 @@ void SourceBufferPrivateAVFObjC::abort()
     // were asked to abort, and that cancels all outstanding append operations. Without cancelling this
     // semaphore, the m_isAppendingGroup wait operation will deadlock.
     if (m_hasSessionSemaphore)
-        dispatch_semaphore_signal(m_hasSessionSemaphore.get());
-    dispatch_semaphore_signal(m_delegate.get().abortSemaphore.get());
+        m_hasSessionSemaphore->signal();
+    m_delegate.get().abortSemaphore->signal();
     dispatch_group_wait(m_isAppendingGroup.get(), DISPATCH_TIME_FOREVER);
     m_appendWeakFactory.revokeAll();
     m_delegate.get().parent = m_appendWeakFactory.createWeakPtr(*this);
-    m_delegate.get().abortSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+    m_delegate.get().abortSemaphore = Box<Semaphore>::create(0);
 }
 
 void SourceBufferPrivateAVFObjC::resetParserState()
@@ -882,7 +883,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
     if (m_session) {
         m_session->addSourceBuffer(this);
         if (m_hasSessionSemaphore) {
-            dispatch_semaphore_signal(m_hasSessionSemaphore.get());
+            m_hasSessionSemaphore->signal();
             m_hasSessionSemaphore = nullptr;
         }
 
@@ -917,7 +918,7 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
     if (m_cdmInstance) {
         [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_parser.get()];
         if (m_hasSessionSemaphore) {
-            dispatch_semaphore_signal(m_hasSessionSemaphore.get());
+            m_hasSessionSemaphore->signal();
             m_hasSessionSemaphore = nullptr;
         }
     }

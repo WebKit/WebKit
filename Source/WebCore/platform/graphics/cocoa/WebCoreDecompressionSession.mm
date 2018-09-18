@@ -54,7 +54,6 @@ WebCoreDecompressionSession::WebCoreDecompressionSession(Mode mode)
     : m_mode(mode)
     , m_decompressionQueue(adoptOSObject(dispatch_queue_create("WebCoreDecompressionSession Decompression Queue", DISPATCH_QUEUE_SERIAL)))
     , m_enqueingQueue(adoptOSObject(dispatch_queue_create("WebCoreDecompressionSession Enqueueing Queue", DISPATCH_QUEUE_SERIAL)))
-    , m_hasAvailableImageSemaphore(adoptOSObject(dispatch_semaphore_create(0)))
 {
 }
 

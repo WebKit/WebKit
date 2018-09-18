@@ -31,6 +31,7 @@
 #include "MediaPlayerPrivateAVFoundation.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS AVAssetResourceLoadingRequest;
@@ -347,7 +348,7 @@ private:
     RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RetainPtr<CGImageRef> m_lastImage;
-    dispatch_semaphore_t m_videoOutputSemaphore;
+    BinarySemaphore m_videoOutputSemaphore;
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
 #endif
 

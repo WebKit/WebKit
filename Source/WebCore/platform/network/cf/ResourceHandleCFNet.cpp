@@ -583,7 +583,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
             while (true)
                 CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1E30, true);
         });
-        sem.wait(TimeWithDynamicClockType(WallTime::infinity()));
+        sem.wait();
     }
     CFURLConnectionScheduleWithRunLoop(handle->connection(), runLoop, kCFRunLoopDefaultMode);
     CFURLConnectionScheduleDownloadWithRunLoop(handle->connection(), runLoop, kCFRunLoopDefaultMode);

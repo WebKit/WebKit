@@ -1,3 +1,25 @@
+2018-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use Semaphore and BinarySemaphore instead of dispatch_semaphore_t
+        https://bugs.webkit.org/show_bug.cgi?id=185339
+
+        Reviewed by Mark Lam.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::wait):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::sendSecItemRequest):
+        Use BinarySemaphore.
+
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::finishAllPendingWorkSynchronously):
+        * UIProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::applicationWillTerminate):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (appLinkForURL):
+        Use BinarySemaphore to wait for async completion handler. We also fix memory leak
+        since the old code does not call dispatch_release for the used semaphore.
+
 2018-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Many modern media control tests leak documents in testing

@@ -1,3 +1,31 @@
+2018-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use Semaphore and BinarySemaphore instead of dispatch_semaphore_t
+        https://bugs.webkit.org/show_bug.cgi?id=185339
+
+        Reviewed by Mark Lam.
+
+        This patch adds WTF::Semaphore, which is based on WTF::Lock and WTF::Condition.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Semaphore.h: Added.
+        (WTF::Semaphore::Semaphore):
+        (WTF::Semaphore::signal):
+        (WTF::Semaphore::waitUntil):
+        (WTF::Semaphore::waitFor):
+        (WTF::Semaphore::wait):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WorkQueue::platformInitialize):
+        * wtf/threads/BinarySemaphore.cpp:
+        (WTF::BinarySemaphore::waitUntil):
+        (WTF::BinarySemaphore::wait): Deleted.
+        * wtf/threads/BinarySemaphore.h:
+        (WTF::BinarySemaphore::waitFor):
+        (WTF::BinarySemaphore::wait):
+        Align the names of the functions to WTF::Condition.
+        Add BinarySemaphore::wait(), which is the same to waitUntil(WallTime::infinity()).
+
 2018-09-17  Jer Noble  <jer.noble@apple.com>
 
         Add support for HEVC codec types in Media Capabilities

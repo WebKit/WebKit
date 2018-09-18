@@ -46,6 +46,7 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/WTFString.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 #if HAVE(APP_LINKS)
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -70,14 +71,15 @@ static bool applicationHasAppLinkEntitlements()
 
 static LSAppLink *appLinkForURL(NSURL *url)
 {
+    BinarySemaphore semaphore;
     __block LSAppLink *syncAppLink = nil;
+    __block BinarySemaphore* semaphorePtr = &semaphore;
 
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     [LSAppLink getAppLinkWithURL:url completionHandler:^(LSAppLink *appLink, NSError *error) {
         syncAppLink = [appLink retain];
-        dispatch_semaphore_signal(semaphore);
+        semaphorePtr->signal();
     }];
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    semaphore.wait();
 
     return [syncAppLink autorelease];
 }

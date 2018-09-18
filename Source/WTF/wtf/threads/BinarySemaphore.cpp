@@ -35,7 +35,7 @@ void BinarySemaphore::signal()
     m_condition.notifyOne();
 }
 
-bool BinarySemaphore::wait(TimeWithDynamicClockType absoluteTime)
+bool BinarySemaphore::waitUntil(const TimeWithDynamicClockType& absoluteTime)
 {
     auto locker = holdLock(m_lock);
     bool satisfied = m_condition.waitUntil(m_lock, absoluteTime, [&] { return m_isSet; });

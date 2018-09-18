@@ -87,7 +87,7 @@ public:
 
     bool wait(TimeWithDynamicClockType absoluteTime)
     {
-        return m_waitForSyncReplySemaphore.wait(absoluteTime);
+        return m_waitForSyncReplySemaphore.waitUntil(absoluteTime);
     }
 
     // Returns true if this message will be handled on a client thread that is currently

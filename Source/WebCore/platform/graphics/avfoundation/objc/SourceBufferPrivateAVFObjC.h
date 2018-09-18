@@ -29,7 +29,7 @@
 
 #include "SourceBufferPrivate.h"
 #include <dispatch/group.h>
-#include <dispatch/semaphore.h>
+#include <wtf/Box.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
@@ -39,6 +39,7 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVStreamDataParser;
@@ -88,7 +89,7 @@ public:
     void didProvideMediaDataForTrackID(int trackID, CMSampleBufferRef, const String& mediaType, unsigned flags);
     void didReachEndOfTrackWithTrackID(int trackID, const String& mediaType);
     void willProvideContentKeyRequestInitializationDataForTrackID(int trackID);
-    void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, int trackID, OSObjectPtr<dispatch_semaphore_t>);
+    void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, int trackID, Box<BinarySemaphore>);
 
     bool processCodedFrame(int trackID, CMSampleBufferRef, const String& mediaType);
 
@@ -170,7 +171,7 @@ private:
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     RetainPtr<WebAVSampleBufferErrorListener> m_errorListener;
     RetainPtr<NSError> m_hdcpError;
-    OSObjectPtr<dispatch_semaphore_t> m_hasSessionSemaphore;
+    Box<BinarySemaphore> m_hasSessionSemaphore;
     OSObjectPtr<dispatch_group_t> m_isAppendingGroup;
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
 

@@ -119,7 +119,7 @@ static CFRunLoopRef getRunLoop()
             while (true)
                 CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1E30, true);
         });
-        sem.wait(TimeWithDynamicClockType(WallTime::infinity()));
+        sem.wait();
     }
 
     return runLoop;
@@ -172,7 +172,7 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
         callOnMainThread(WTFMove(work));
-    m_semaphore.wait(TimeWithDynamicClockType(WallTime::infinity()));
+    m_semaphore.wait();
 
     return m_requestResult.leakRef();
 }
@@ -210,7 +210,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
         callOnMainThread(WTFMove(work));
-    m_semaphore.wait(TimeWithDynamicClockType(WallTime::infinity()));
+    m_semaphore.wait();
 }
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(CFDataRef data, CFIndex originalLength)
@@ -314,7 +314,7 @@ CFCachedURLResponseRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
         callOnMainThread(WTFMove(work));
-    m_semaphore.wait(TimeWithDynamicClockType(WallTime::infinity()));
+    m_semaphore.wait();
     return m_cachedResponseResult.leakRef();
 }
 
@@ -383,7 +383,7 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToPro
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
         callOnMainThread(WTFMove(work));
-    m_semaphore.wait(TimeWithDynamicClockType(WallTime::infinity()));
+    m_semaphore.wait();
     return m_boolResult;
 }
 

@@ -123,7 +123,7 @@ public:
             return;
 
         m_lowerQueue->close();
-        m_produceCloseSemaphore.wait(WallTime::infinity());
+        m_produceCloseSemaphore.wait();
         m_produceQueue = nullptr;
     }
     
@@ -133,7 +133,7 @@ public:
             return;
 
         m_upperQueue->close();
-        m_consumeCloseSemaphore.wait(WallTime::infinity());
+        m_consumeCloseSemaphore.wait();
         m_consumeQueue = nullptr;
     }
     

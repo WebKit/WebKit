@@ -64,7 +64,6 @@ private:
     void handleDecision(NEFilterSourceStatus, NSData *replacementData);
 
     OSObjectPtr<dispatch_queue_t> m_queue;
-    OSObjectPtr<dispatch_semaphore_t> m_semaphore;
     RetainPtr<NSData> m_replacementData;
     RetainPtr<NEFilterSource> m_neFilterSource;
 };

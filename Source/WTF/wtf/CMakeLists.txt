@@ -197,6 +197,7 @@ set(WTF_PUBLIC_HEADERS
     ScopedLambda.h
     Seconds.h
     SegmentedVector.h
+    Semaphore.h
     SentinelLinkedList.h
     SetForScope.h
     SharedTask.h

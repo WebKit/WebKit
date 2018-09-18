@@ -117,7 +117,6 @@ private:
     RetainPtr<CMTimebaseRef> m_timebase;
     OSObjectPtr<dispatch_queue_t> m_decompressionQueue;
     OSObjectPtr<dispatch_queue_t> m_enqueingQueue;
-    OSObjectPtr<dispatch_semaphore_t> m_hasAvailableImageSemaphore;
     OSObjectPtr<dispatch_source_t> m_timerSource;
     std::function<void()> m_notificationCallback;
     std::function<void()> m_hasAvailableFrameCallback;

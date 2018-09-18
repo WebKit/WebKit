@@ -31,6 +31,7 @@
 #include <wtf/MessageQueue.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/SchedulePair.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 class ResourceHandle;
@@ -40,7 +41,7 @@ class ResourceHandle;
     WebCore::ResourceHandle* m_handle;
 
     // Synchronous delegates on operation queue wait until main thread sends an asynchronous response.
-    dispatch_semaphore_t m_semaphore;
+    BinarySemaphore m_semaphore;
     MessageQueue<Function<void()>>* m_messageQueue;
     RetainPtr<NSURLRequest> m_requestResult;
     Lock m_mutex;

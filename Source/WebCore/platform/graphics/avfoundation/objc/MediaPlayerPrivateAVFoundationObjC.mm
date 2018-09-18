@@ -363,7 +363,6 @@ enum MediaPlayerAVFoundationObservationContext {
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 @interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
     MediaPlayerPrivateAVFoundationObjC *m_callback;
-    dispatch_semaphore_t m_semaphore;
 }
 - (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC *)callback;
 - (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
@@ -507,7 +506,6 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_haveCheckedPlayability(false)
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithCallback:this]))
-    , m_videoOutputSemaphore(nullptr)
 #endif
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithCallback:this]))
@@ -542,8 +540,6 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     [m_videoOutputDelegate setCallback:0];
     [m_videoOutput setDelegate:nil queue:0];
-    if (m_videoOutputSemaphore)
-        dispatch_release(m_videoOutputSemaphore);
 #endif
 
     if (m_videoLayer)
@@ -2391,21 +2387,17 @@ NativeImagePtr MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()
 
 void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
 {
-    if (!m_videoOutputSemaphore)
-        m_videoOutputSemaphore = dispatch_semaphore_create(0);
-
     [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
 
     // Wait for 1 second.
-    long result = dispatch_semaphore_wait(m_videoOutputSemaphore, dispatch_time(0, 1 * NSEC_PER_SEC));
-
-    if (result)
+    bool satisfied = m_videoOutputSemaphore.waitFor(1_s);
+    if (!satisfied)
         ERROR_LOG(LOGIDENTIFIER, "timed out");
 }
 
 void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange(AVPlayerItemVideoOutputType *)
 {
-    dispatch_semaphore_signal(m_videoOutputSemaphore);
+    m_videoOutputSemaphore.signal();
 }
 
 #endif

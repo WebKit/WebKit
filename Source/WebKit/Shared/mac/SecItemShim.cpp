@@ -39,6 +39,7 @@
 #include <dlfcn.h>
 #include <mutex>
 #include <wtf/ProcessPrivilege.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <CFNetwork/CFURLConnectionPriv.h>
@@ -75,16 +76,16 @@ static std::optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData:
 {
     std::optional<SecItemResponseData> response;
 
-    auto semaphore = adoptOSObject(dispatch_semaphore_create(0));
+    BinarySemaphore semaphore;
 
     sharedProcess->parentProcessConnection()->sendWithReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), 0, workQueue(), [&response, &semaphore](auto reply) {
         if (reply)
             response = WTFMove(std::get<0>(*reply));
 
-        dispatch_semaphore_signal(semaphore.get());
+        semaphore.signal();
     });
 
-    dispatch_semaphore_wait(semaphore.get(), DISPATCH_TIME_FOREVER);
+    semaphore.wait();
 
     return response;
 }
