@@ -1,3 +1,19 @@
+2018-09-07  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest: open() does not throw a SYNTAX_ERR exception if method is empty or url cannot be resolved
+        https://bugs.webkit.org/show_bug.cgi?id=46008
+
+        Reviewed by Chris Dumez.
+
+        Check if passed URL is valid as specified here [1].
+
+        Test: web-platform-tests/xhr/open-url-bogus.htm
+
+        [1] https://xhr.spec.whatwg.org/#the-open()-method Step 7
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+
 2018-09-07  Don Olmstead  <don.olmstead@sony.com>
 
         [AX] Fix compile error in AXObjectCache constructor when !HAVE(ACCESSIBILITY)

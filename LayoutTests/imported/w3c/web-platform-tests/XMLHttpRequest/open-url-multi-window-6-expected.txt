@@ -1,3 +1,3 @@
 
-FAIL XMLHttpRequest: open() in document that is not fully active (but may be active) should throw assert_throws: function "function () { client.open("GET", "...") }" did not throw
+FAIL XMLHttpRequest: open() in document that is not fully active (but may be active) should throw assert_throws: function "function () { client.open("GET", "...") }" threw object "SyntaxError: The string did not match the expected pattern." that is not a DOMException InvalidStateError: property "code" is equal to 12, expected 11
 
