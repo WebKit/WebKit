@@ -1,3 +1,13 @@
+2018-09-17  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that ForInContexts are invalidated if their loop local is over-written.
+        https://bugs.webkit.org/show_bug.cgi?id=189571
+        <rdar://problem/44402277>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-189571.js: Added.
+
 2018-09-17  Saam barati  <sbarati@apple.com>
 
         We must convert ProfileType to CheckStructureOrEmpty instead of CheckStructure

@@ -1,3 +1,52 @@
+2018-09-18  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that ForInContexts are invalidated if their loop local is over-written.
+        https://bugs.webkit.org/show_bug.cgi?id=189571
+        <rdar://problem/44402277>
+
+        Reviewed by Saam Barati.
+
+        Instead of hunting down every place in the BytecodeGenerator that potentially
+        needs to invalidate an enclosing ForInContext (if one exists), we simply iterate
+        the bytecode range of the loop body when the ForInContext is popped, and
+        invalidate the context if we ever find the loop temp variable over-written.
+
+        This has 2 benefits:
+        1. It ensures that every type of opcode that can write to the loop temp will be
+           handled appropriately, not just the op_mov that we've hunted down.
+        2. It avoids us having to check the BytecodeGenerator's m_forInContextStack
+           every time we emit an op_mov (or other opcodes that can write to a local)
+           even when we're not inside a for-in loop.
+
+        JSC benchmarks show that that this change is performance neutral.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushIndexedForInScope):
+        (JSC::BytecodeGenerator::popIndexedForInScope):
+        (JSC::BytecodeGenerator::pushStructureForInScope):
+        (JSC::BytecodeGenerator::popStructureForInScope):
+        (JSC::ForInContext::finalize):
+        (JSC::StructureForInContext::finalize):
+        (JSC::IndexedForInContext::finalize):
+        (JSC::BytecodeGenerator::invalidateForInContextForLocal): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ForInContext::ForInContext):
+        (JSC::ForInContext::bodyBytecodeStartOffset const):
+        (JSC::StructureForInContext::StructureForInContext):
+        (JSC::IndexedForInContext::IndexedForInContext):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::EmptyLetExpression::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::BindingNode::bindValue const):
+        (JSC::AssignmentElementNode::bindValue const):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2018-09-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: generate CSSKeywordCompletions from backend values
