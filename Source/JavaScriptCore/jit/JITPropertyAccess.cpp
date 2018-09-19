@@ -38,6 +38,7 @@
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
 #include "LinkBuffer.h"
+#include "OpcodeInlines.h"
 #include "ResultType.h"
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
@@ -55,7 +56,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int base = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+    ArrayProfile* profile = arrayProfileFor<OpGetByValShape>(currentInstruction);
     ByValInfo* byValInfo = m_codeBlock->addByValInfo();
 
     emitGetVirtualRegister(base, regT0);
@@ -195,7 +196,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 {
     int base = currentInstruction[1].u.operand;
     int property = currentInstruction[2].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+    ArrayProfile* profile = arrayProfileFor<OpPutByValShape>(currentInstruction);
     ByValInfo* byValInfo = m_codeBlock->addByValInfo();
 
     emitGetVirtualRegister(base, regT0);
@@ -252,8 +253,8 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType, IndexingType indexingShape)
 {
     int value = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-    
+    ArrayProfile* profile = arrayProfileFor<OpPutByValShape>(currentInstruction);
+
     JumpList slowCases;
 
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(indexingShape));
@@ -308,8 +309,8 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
 JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, PatchableJump& badType)
 {
     int value = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-    
+    ArrayProfile* profile = arrayProfileFor<OpPutByValShape>(currentInstruction);
+
     JumpList slowCases;
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ArrayStorageShape));
@@ -1627,7 +1628,7 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
 
 JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, PatchableJump& badType, TypedArrayType type)
 {
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+    ArrayProfile* profile = arrayProfileFor<OpPutByValShape>(currentInstruction);
     ASSERT(isInt(type));
     
     int value = currentInstruction[3].u.operand;
@@ -1700,7 +1701,7 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
 
 JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, PatchableJump& badType, TypedArrayType type)
 {
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+    ArrayProfile* profile = arrayProfileFor<OpPutByValShape>(currentInstruction);
     ASSERT(isFloat(type));
     
     int value = currentInstruction[3].u.operand;

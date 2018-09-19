@@ -38,6 +38,7 @@
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
 #include "LinkBuffer.h"
+#include "OpcodeInlines.h"
 #include "ResultType.h"
 #include "SlowPathCall.h"
 #include "StructureStubInfo.h"
@@ -133,7 +134,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int base = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+    ArrayProfile* profile = arrayProfileFor<OpGetByValShape>(currentInstruction);
     ByValInfo* byValInfo = m_codeBlock->addByValInfo();
 
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
@@ -253,7 +254,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 {
     int base = currentInstruction[1].u.operand;
     int property = currentInstruction[2].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+    ArrayProfile* profile = arrayProfileFor<OpPutByValShape>(currentInstruction);
     ByValInfo* byValInfo = m_codeBlock->addByValInfo();
     
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
@@ -301,8 +302,8 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
 {
     int base = currentInstruction[1].u.operand;
     int value = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-    
+    ArrayProfile* profile = arrayProfileFor<OpPutByValShape>(currentInstruction);
+
     JumpList slowCases;
     
     badType = patchableBranch32(NotEqual, regT1, TrustedImm32(ContiguousShape));
@@ -360,8 +361,8 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
 {
     int base = currentInstruction[1].u.operand;
     int value = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-    
+    ArrayProfile* profile = arrayProfileFor<OpPutByValShape>(currentInstruction);
+
     JumpList slowCases;
     
     badType = patchableBranch32(NotEqual, regT1, TrustedImm32(ArrayStorageShape));
