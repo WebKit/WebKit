@@ -1,5 +1,11 @@
 2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE][GTK] Unreviewed, update to latest GNOME SDK
+
+        * flatpak/org.webkit.WebKit.yaml:
+
+2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, rolling out r235500.
 
         Time to switch back to master runtime
