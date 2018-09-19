@@ -50,6 +50,7 @@ PASS a["offsetWidth"] is 39
 PASS a["offsetHeight"] is 17
 PASS a["outerText"] is nerget
 PASS a["webkitdropzone"] is 
+PASS a["inputMode"] is 
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["onabort"] is null
 PASS a["onblur"] is null
