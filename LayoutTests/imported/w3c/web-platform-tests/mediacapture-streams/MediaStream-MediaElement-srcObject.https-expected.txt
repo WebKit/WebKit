@@ -6,5 +6,5 @@ This test checks that the MediaStream object returned by the success callback in
 
 
 
-FAIL Tests that a MediaStream can be assigned to a video element with srcObject assert_equals:  A MediaStream does not have a pre-defined duration.  expected Infinity but got NaN
+PASS Tests that a MediaStream can be assigned to a video element with srcObject 
 
