@@ -969,6 +969,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInsta
 void MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
     m_player->initializationDataEncountered(initDataType, WTFMove(initData));
+    m_player->waitingForKey();
 }
 #endif
 

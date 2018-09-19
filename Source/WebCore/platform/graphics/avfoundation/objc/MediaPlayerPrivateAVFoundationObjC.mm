@@ -1784,6 +1784,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         RetainPtr<NSData> keyURIData = [keyURI dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
         auto keyURIBuffer = SharedBuffer::create(keyURIData.get());
         player()->initializationDataEncountered("skd"_s, keyURIBuffer->tryCreateArrayBuffer());
+        player()->waitingForKey();
 #endif
         return true;
     }

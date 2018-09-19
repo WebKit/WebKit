@@ -1,3 +1,18 @@
+2018-09-19  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r236006): New waitingForKey() requirement breaks Modern EME tests.
+        https://bugs.webkit.org/show_bug.cgi?id=189720
+        <rdar://problem/44572140>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Always call waitingForKey() after calling initializationDataEncountered().
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered):
+
 2018-09-19  Philippe Normand <pnormand@igalia.com>
 
         [GStreamer] Add support for AV1 decoding
