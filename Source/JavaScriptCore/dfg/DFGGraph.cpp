@@ -60,6 +60,8 @@
 
 namespace JSC { namespace DFG {
 
+static constexpr bool dumpOSRAvailabilityData = false;
+
 // Creates an array of stringized names.
 static const char* dfgOpNames[] = {
 #define STRINGIZE_DFG_OP_ENUM(opcode, flags) #opcode ,
@@ -569,7 +571,8 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             
         case SSA: {
             RELEASE_ASSERT(block->ssa);
-            out.print("  Availability: ", block->ssa->availabilityAtHead, "\n");
+            if (dumpOSRAvailabilityData)
+                out.print("  Availability: ", block->ssa->availabilityAtHead, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtHead), "\n");
             out.print("  Values: ", nodeValuePairListDump(block->ssa->valuesAtHead, context), "\n");
             break;
@@ -597,7 +600,8 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             
         case SSA: {
             RELEASE_ASSERT(block->ssa);
-            out.print("  Availability: ", block->ssa->availabilityAtTail, "\n");
+            if (dumpOSRAvailabilityData)
+                out.print("  Availability: ", block->ssa->availabilityAtTail, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtTail), "\n");
             out.print("  Values: ", nodeValuePairListDump(block->ssa->valuesAtTail, context), "\n");
             break;
