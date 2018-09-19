@@ -39,6 +39,11 @@ function bitwiseCast(typedArrayConstructor1, typedArrayConstructor2, value)
     return typedArray2[0];
 }
 
+function castToBool(value)
+{
+    return !!value;
+}
+
 function castToUchar(number)
 {
     return number & 0xFF;
@@ -112,4 +117,26 @@ function castToHalf(number)
 function castToFloat(number)
 {
     return Math.fround(number);
+}
+
+function castAndCheckValue(castFunction, value)
+{
+    const castedValue = castFunction(value);
+    if (!isBitwiseEquivalent(castedValue, value))
+        throw new Error(`${value} was casted and yielded ${castedValue}, which is not bitwise equivalent.`);
+    return castedValue;
+}
+
+function isBitwiseEquivalent(left, right)
+{
+    let doubleArray = new Float64Array(1);
+    let intArray = new Int32Array(doubleArray.buffer);
+    doubleArray[0] = left;
+    let leftInts = Int32Array.from(intArray);
+    doubleArray[0] = right;
+    for (let i = 0; i < 2; ++i) {
+        if (leftInts[i] != intArray[i])
+            return false;
+    }
+    return true;
 }

@@ -1,3 +1,30 @@
+2018-09-19  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Improve test suite type safety
+        https://bugs.webkit.org/show_bug.cgi?id=189502
+
+        Reviewed by Myles C. Maxfield.
+
+        Each of the 'makeT' functions now call the relevant cast function on the
+        value before hand. The checkNumber function has also been removed and
+        its uses have been replaced with functions that also check the type.
+        Some of the arithmetic checks have been updated to reflect that the
+        casts happen outside of WHLSL evaluation. Other tests have also been
+        updated to reflect that some values cannot be precisely expressed in
+        32-bit floating point.
+
+        * WebGPUShadingLanguageRI/Casts.js:
+        (castToBool): Added.
+        (castAndCheckValue): Added.
+        (isBitwiseEquivalent): Moved from Intrinsics.js.
+        * WebGPUShadingLanguageRI/Intrinsics.js: Ditto.
+        * WebGPUShadingLanguageRI/SPIRV.html: Update depdencies.
+        * WebGPUShadingLanguageRI/Test.html: Ditto.
+        * WebGPUShadingLanguageRI/Test.js: Update makeT functions to do a cast
+        and check the result. Some tests were also updated to reflect the change
+        in the behavior of these functions.
+        * WebGPUShadingLanguageRI/index.html: Update dependencies.
+
 2018-09-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add optional cap on partitioned cache max age

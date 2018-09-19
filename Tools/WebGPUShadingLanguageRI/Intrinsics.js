@@ -34,20 +34,6 @@ class Intrinsics {
         // For example, if a native function is declared using "int" rather than "int", then we must
         // use "int" here, since we don't yet know that they are the same type.
 
-        function isBitwiseEquivalent(left, right)
-        {
-            let doubleArray = new Float64Array(1);
-            let intArray = new Int32Array(doubleArray.buffer);
-            doubleArray[0] = left;
-            let leftInts = Int32Array.from(intArray);
-            doubleArray[0] = right;
-            for (let i = 0; i < 2; ++i) {
-                if (leftInts[i] != intArray[i])
-                    return false;
-            }
-            return true;
-        }
-
         this._map.set(
             "native typedef void",
             type => {

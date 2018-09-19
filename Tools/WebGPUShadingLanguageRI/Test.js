@@ -55,32 +55,37 @@ function doLex(code)
 
 function makeInt(program, value)
 {
-    return TypedValue.box(program.intrinsics.int, value);
+    return TypedValue.box(program.intrinsics.int, castAndCheckValue(castToInt, value));
 }
 
 function makeUint(program, value)
 {
-    return TypedValue.box(program.intrinsics.uint, value);
+    return TypedValue.box(program.intrinsics.uint, castAndCheckValue(castToUint, value));
 }
 
 function makeUchar(program, value)
 {
-    return TypedValue.box(program.intrinsics.uchar, value);
+    return TypedValue.box(program.intrinsics.uchar, castAndCheckValue(castToUchar, value));
 }
 
 function makeBool(program, value)
 {
-    return TypedValue.box(program.intrinsics.bool, value);
+    return TypedValue.box(program.intrinsics.bool, castAndCheckValue(castToBool, value));
 }
 
 function makeFloat(program, value)
 {
-    return TypedValue.box(program.intrinsics.float, value);
+    return TypedValue.box(program.intrinsics.float, castAndCheckValue(castToFloat, value));
+}
+
+function makeCastedFloat(program, value)
+{
+    return TypedValue.box(program.intrinsics.float, castToFloat(value));
 }
 
 function makeHalf(program, value)
 {
-    return TypedValue.box(program.intrinsics.half, value);
+    return TypedValue.box(program.intrinsics.half, castAndCheckValue(castToHalf, value));
 }
 
 function makeEnum(program, enumName, value)
@@ -221,19 +226,12 @@ function makeRW2DDepthTextureArray(program, array, elementType)
     return TypedValue.box(program.intrinsics[`RWTextureDepth2DArray<${elementType}>`], new TextureDepth2DArrayRW(elementType, array));
 }
 
-function checkNumber(program, result, expected)
-{
-    if (!result.type.unifyNode.isNumber)
-        throw new Error("Wrong result type; result: " + result);
-    if (result.value != expected)
-        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
-}
-
 function checkInt(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.int))
         throw new Error("Wrong result type; result: " + result);
-    checkNumber(program, result, expected);
+    if (result.value != expected)
+        throw new Error(`Wrong result: ${result.value} (expected ${expected})`);
 }
 
 function checkEnum(program, result, expected)
@@ -1039,13 +1037,13 @@ tests.passNullToPtrMonomorphicArrayRef = function()
 tests.returnIntLiteralUint = function()
 {
     let program = doPrep("test uint foo() { return 42; }");
-    checkNumber(program, callFunction(program, "foo", []), 42);
+    checkUint(program, callFunction(program, "foo", []), 42);
 }
 
 tests.returnIntLiteralFloat = function()
 {
     let program = doPrep("test float foo() { return 42; }");
-    checkNumber(program, callFunction(program, "foo", []), 42);
+    checkFloat(program, callFunction(program, "foo", []), 42);
 }
 
 tests.badIntLiteralForInt = function()
@@ -2552,7 +2550,7 @@ tests.uintBitAnd = function()
     `);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 1);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 42)]), 42);
-    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, -7)]), 4294967289);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, Math.pow(2, 32) - 1), makeUint(program, Math.pow(2, 32) - 7)]), 4294967289);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 85732)]), 0);
 }
 
@@ -2566,7 +2564,7 @@ tests.uintBitOr = function()
     `);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 7);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 42)]), 65535);
-    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, -7)]), 4294967295);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, Math.pow(2, 32) - 1), makeUint(program, Math.pow(2, 32)  - 7)]), 4294967295);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 85732)]), 85732);
 }
 
@@ -2580,7 +2578,7 @@ tests.uintBitXor = function()
     `);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 6);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 42)]), 65493);
-    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, -7)]), 6);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, Math.pow(2, 32) - 1), makeUint(program, Math.pow(2, 32) - 7)]), 6);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 85732)]), 85732);
 }
 
@@ -2594,7 +2592,7 @@ tests.uintBitNot = function()
     `);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 1)]), 4294967294);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 65535)]), 4294901760);
-    checkUint(program, callFunction(program, "foo", [makeUint(program, -1)]), 0);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, Math.pow(2, 32) - 1)]), 0);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 0)]), 4294967295);
 }
 
@@ -2608,7 +2606,7 @@ tests.uintLShift = function()
     `);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 128);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 2)]), 262140);
-    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, 5)]), 4294967264);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, Math.pow(2, 32) - 1), makeUint(program, 5)]), 4294967264);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 3)]), 0);
 }
 
@@ -2622,7 +2620,7 @@ tests.uintRShift = function()
     `);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 0);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 2)]), 16383);
-    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, 5)]), 134217727);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, Math.pow(2, 32) - 1), makeUint(program, 5)]), 134217727);
     checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 3)]), 0);
 }
 
@@ -2635,9 +2633,8 @@ tests.ucharBitAnd = function()
         }
     `);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUchar(program, 7)]), 1);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUchar(program, 42)]), 42);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUchar(program, -7)]), 249);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 85732)]), 0);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 255), makeUchar(program, 42)]), 42);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 255)]), 0);
 }
 
 tests.ucharBitOr = function()
@@ -2649,9 +2646,8 @@ tests.ucharBitOr = function()
         }
     `);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUchar(program, 7)]), 7);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUchar(program, 42)]), 255);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUchar(program, -7)]), 255);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 85732)]), 228);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 255), makeUchar(program, 42)]), 255);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 228)]), 228);
 }
 
 tests.ucharBitXor = function()
@@ -2663,9 +2659,8 @@ tests.ucharBitXor = function()
         }
     `);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUchar(program, 7)]), 6);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUchar(program, 42)]), 213);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUchar(program, -7)]), 6);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 85732)]), 228);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 255), makeUchar(program, 42)]), 213);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 255)]), 255);
 }
 
 tests.ucharBitNot = function()
@@ -2677,8 +2672,7 @@ tests.ucharBitNot = function()
         }
     `);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1)]), 254);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535)]), 0);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1)]), 0);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 255)]), 0);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0)]), 255);
 }
 
@@ -2691,8 +2685,7 @@ tests.ucharLShift = function()
         }
     `);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUint(program, 7)]), 128);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUint(program, 2)]), 252);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUint(program, 5)]), 224);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 255), makeUint(program, 2)]), 252);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUint(program, 3)]), 0);
 }
 
@@ -2705,8 +2698,8 @@ tests.ucharRShift = function()
         }
     `);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUint(program, 7)]), 0);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUint(program, 2)]), 255);
-    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUint(program, 5)]), 255);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 255), makeUint(program, 2)]), 63);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 255), makeUint(program, 5)]), 7);
     checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUint(program, 3)]), 0);
 }
 
@@ -7293,14 +7286,14 @@ tests.textureSample = function() {
     checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
-    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
-    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
     checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
     checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
-    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
-    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), (34 + 35 + 38 + 39) / 4);
     checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
@@ -7326,25 +7319,25 @@ tests.textureSample = function() {
     checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
-    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
-    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (54 + 55 + 62 + 63) / 4);
     checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
     checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (76 + 77 + 80 + 81) / 4);
-    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
-    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
     checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
     checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
-    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
-    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (54 + 55 + 62 + 63) / 4);
     checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
     checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
     checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (77 + 78 + 81 + 82) / 4);
-    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
-    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((55 + 56 + 63 + 64) / 4) + ((77 + 78 + 81 + 82) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((55 + 56 + 63 + 64) / 4) + ((77 + 78 + 81 + 82) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1)]), (34 + 35 + 38 + 39) / 4);
     checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
@@ -7372,7 +7365,7 @@ tests.textureSample = function() {
     checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear", lodMinClamp: 1, lodMaxClamp: 1}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2)]), (34 + 35 + 38 + 39) / 4);
     checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear", lodMinClamp: 1, lodMaxClamp: 1}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (34 + 35 + 38 + 39) / 4);
     checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
-    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear", maxAnisotropy: 2}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 4 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (4/3) / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear", maxAnisotropy: 2}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 4 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, (4/3) / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
     let texture1DInt4 = make1DTexture(program, [[[1, 2, 3, 4], [100, 200, 300, 400], [101, 202, 301, 401], [13, 14, 15, 16]], [[17, 18, 19, 20], [21, 22, 23, 24]], [[25, 26, 27, 28]]], "int4");
     checkInt(program, callFunction(program, "foo24", [texture1DInt4, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5)]), 100);
     checkInt(program, callFunction(program, "foo25", [texture1DInt4, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5)]), 201);
@@ -7414,14 +7407,14 @@ tests.textureSample = function() {
     checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
-    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
-    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
     checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
     checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
-    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
-    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo37", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo37", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), (34 + 35 + 38 + 39) / 4);
     checkFloat(program, callFunction(program, "foo37", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
@@ -7447,25 +7440,25 @@ tests.textureSample = function() {
     checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
-    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
-    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (54 + 55 + 62 + 63) / 4);
     checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
     checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (76 + 77 + 80 + 81) / 4);
-    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
-    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
     checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
     checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
-    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
-    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (54 + 55 + 62 + 63) / 4);
     checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
     checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
     checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (77 + 78 + 81 + 82) / 4);
-    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
-    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((55 + 56 + 63 + 64) / 4) + ((77 + 78 + 81 + 82) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeCastedFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((55 + 56 + 63 + 64) / 4) + ((77 + 78 + 81 + 82) / 4)) / 2);
     checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
     checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1)]), (34 + 35 + 38 + 39) / 4);
     checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
