@@ -55,11 +55,11 @@ class SetSessionDescriptionObserver;
 }
 
 namespace WebCore {
-
 class LibWebRTCProvider;
 class LibWebRTCPeerConnectionBackend;
 class LibWebRTCRtpReceiverBackend;
 class LibWebRTCRtpTransceiverBackend;
+class LibWebRTCStatsCollector;
 class MediaStreamTrack;
 class RTCSessionDescription;
 
@@ -82,7 +82,9 @@ public:
     void doSetRemoteDescription(RTCSessionDescription&);
     void doCreateOffer(const RTCOfferOptions&);
     void doCreateAnswer();
-    void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&);
+    void getStats(Ref<DeferredPromise>&&);
+    void getStats(webrtc::RtpReceiverInterface&, Ref<DeferredPromise>&&);
+    void getStats(webrtc::RtpSenderInterface&, Ref<DeferredPromise>&&);
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
     bool addIceCandidate(webrtc::IceCandidateInterface& candidate) { return m_backend->AddIceCandidate(&candidate); }
 
@@ -147,6 +149,8 @@ private:
     void gatherStatsForLogging();
     void startLoggingStats();
     void stopLoggingStats();
+
+    void getStats(Ref<DeferredPromise>&&, WTF::Function<void(rtc::scoped_refptr<LibWebRTCStatsCollector>&&)>&&);
 
     MediaStream& mediaStreamFromRTCStream(webrtc::MediaStreamInterface&);
 

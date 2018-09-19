@@ -96,55 +96,76 @@ function checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnectio
 }
 
 var firstConnection, secondConnection;
-promise_test((test) => {
+promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    var localStream, remoteStream;
-    return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
-        localStream = stream;
-        return new Promise((resolve, reject) => {
-            createConnections((connection) => {
-                firstConnection = connection;
-                firstConnection.addTrack(stream.getVideoTracks()[0], stream);
-            }, (connection) => {
-                secondConnection = connection;
-                secondConnection.ontrack = (trackEvent) => {
-                    remoteStream = trackEvent.streams[0];
-                    resolve();
-                };
-            });
-            setTimeout(() => reject("Test timed out"), 5000);
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: true});
+    await new Promise((resolve, reject) => {
+        createConnections((connection) => {
+            firstConnection = connection;
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (connection) => {
+            secondConnection = connection;
+            secondConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            secondConnection.ontrack = (trackEvent) => {
+                resolve();
+            };
         });
-    }).then(() => {
-        return getOutboundRTPStats(firstConnection);
-    }).then((stats) => {
-        assert_true(!!stats, "outbound-rtp stats should not be null");
-        assert_true(Number.isInteger(stats.framesEncoded), "framesEncoded should be an integer");
-        assert_true(Number.isInteger(stats.qpSum), "outbound qpSum should be an integer");
-        assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
-        statsFirstConnection = stats;
-        return getInboundRTPStats(secondConnection);
-    }).then((stats) => {
-        assert_true(!!stats, "inbound-rtp stats should not be null");
-        assert_true(Number.isInteger(stats.framesDecoded), "framesDecoded should be an integer");
-        assert_true(Number.isInteger(stats.qpSum), "inbound qpSum should be an integer");
-        assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
-        statsSecondConnection = stats;
-    }).then(() => {
-        return checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, 0);
-    }).then(() => {
-        return checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
-    }).then(() => {
-        return getStatsType(firstConnection);
-    }).then((types) => {
-        assert_array_equals(types, ["candidate-pair", "certificate", "outbound-rtp", "track"]);
-    }).then(() => {
-        return getStatsType(secondConnection);
-    }).then((types) => {
-        assert_array_equals(types, ["candidate-pair", "certificate", "inbound-rtp", "track"]);
+        setTimeout(() => reject("Test timed out"), 5000);
     });
+
+    let stats = await getOutboundRTPStats(firstConnection);
+    assert_true(!!stats, "outbound-rtp stats should not be null");
+    assert_true(Number.isInteger(stats.framesEncoded), "framesEncoded should be an integer");
+    assert_true(Number.isInteger(stats.qpSum), "outbound qpSum should be an integer");
+    assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
+    statsFirstConnection = stats;
+
+    stats = await getInboundRTPStats(secondConnection);
+    assert_true(!!stats, "inbound-rtp stats should not be null");
+    assert_true(Number.isInteger(stats.framesDecoded), "framesDecoded should be an integer");
+    assert_true(Number.isInteger(stats.qpSum), "inbound qpSum should be an integer");
+    assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
+    statsSecondConnection = stats;
+
+    await checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, 0);
+    await checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
+
+    let types = await getStatsType(firstConnection);
+    assert_array_equals(types, ["candidate-pair", "certificate", "inbound-rtp", "outbound-rtp", "track"]);
+
+    types = await getStatsType(secondConnection);
+    assert_array_equals(types, ["candidate-pair", "certificate", "inbound-rtp", "outbound-rtp", "track"]);
 }, "Basic video stats");
+
+promise_test(async (test) => {
+    const report = await firstConnection.getSenders()[0].getStats();
+    checkStatsReportIterator(report);
+    var instats, outstats;
+    report.forEach((statItem) => {
+        if (statItem.type === "outbound-rtp")
+            outstats = statItem;
+        else if (statItem.type === "inbound-rtp")
+            instats = statItem;
+    });
+    assert_true(!!outstats);
+    assert_false(!!instats);
+}, "Sender stats");
+
+promise_test(async (test) => {
+    const report = await secondConnection.getReceivers()[0].getStats();
+    checkStatsReportIterator(report);
+    var instats, outstats;
+    report.forEach((statItem) => {
+        if (statItem.type === "outbound-rtp")
+            outstats = statItem;
+        else if (statItem.type === "inbound-rtp")
+            instats = statItem;
+    });
+    assert_false(!!outstats);
+    assert_true(!!instats);
+}, "Receiver stats");
         </script>
     </body>
 </html>

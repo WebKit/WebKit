@@ -41,4 +41,5 @@
     // FIXME 169662: missing getCapabilities
     sequence<RTCRtpContributingSource> getContributingSources();
     sequence<RTCRtpSynchronizationSource> getSynchronizationSources();
+    Promise<RTCStatsReport> getStats();
 };

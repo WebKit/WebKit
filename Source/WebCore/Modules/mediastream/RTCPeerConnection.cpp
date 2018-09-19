@@ -328,7 +328,19 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
 
 void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise>&& promise)
 {
-    m_backend->getStats(selector, WTFMove(promise));
+    if (selector) {
+        for (auto& transceiver : m_transceiverSet->list()) {
+            if (transceiver->sender().track() == selector) {
+                m_backend->getStats(transceiver->sender(), WTFMove(promise));
+                return;
+            }
+            if (&transceiver->receiver().track() == selector) {
+                m_backend->getStats(transceiver->receiver(), WTFMove(promise));
+                return;
+            }
+        }
+    }
+    m_backend->getStats(WTFMove(promise));
 }
 
 ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)

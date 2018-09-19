@@ -42,4 +42,5 @@
     RTCRtpSendParameters getParameters();
     Promise<void> setParameters(RTCRtpSendParameters parameters);
     [CallWith=ScriptExecutionContext] Promise<void> replaceTrack(MediaStreamTrack? withTrack);
+    Promise<RTCStatsReport> getStats();
 };

@@ -39,6 +39,7 @@
 #include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -68,8 +69,9 @@ using StatsPromise = DOMPromiseDeferred<IDLInterface<RTCStatsReport>>;
 using CreatePeerConnectionBackend = std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&);
 
 class PeerConnectionBackend
+    : public CanMakeWeakPtr<PeerConnectionBackend>
 #if !RELEASE_LOG_DISABLED
-    : private LoggerHelper
+    , private LoggerHelper
 #endif
 {
 public:
@@ -98,7 +100,9 @@ public:
 
     virtual bool setConfiguration(MediaEndpointConfiguration&&) = 0;
 
-    virtual void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) = 0;
+    virtual void getStats(Ref<DeferredPromise>&&) = 0;
+    virtual void getStats(RTCRtpSender&, Ref<DeferredPromise>&&) = 0;
+    virtual void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&) = 0;
 
     virtual ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, Vector<String>&&);
     virtual void removeTrack(RTCRtpSender&) { }

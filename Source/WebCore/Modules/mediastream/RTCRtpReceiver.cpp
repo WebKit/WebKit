@@ -35,9 +35,10 @@
 
 namespace WebCore {
 
-RTCRtpReceiver::RTCRtpReceiver(Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
+RTCRtpReceiver::RTCRtpReceiver(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
     : m_track(WTFMove(track))
     , m_backend(WTFMove(backend))
+    , m_connection(makeWeakPtr(&connection))
 {
 }
 
@@ -48,6 +49,15 @@ void RTCRtpReceiver::stop()
 
     m_backend = nullptr;
     m_track->stopTrack(MediaStreamTrack::StopMode::PostEvent);
+}
+
+void RTCRtpReceiver::getStats(Ref<DeferredPromise>&& promise)
+{
+    if (!m_connection) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+    m_connection->getStats(*this, WTFMove(promise));
 }
 
 } // namespace WebCore

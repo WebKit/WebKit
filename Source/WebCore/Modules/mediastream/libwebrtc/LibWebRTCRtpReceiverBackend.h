@@ -45,6 +45,8 @@ public:
     {
     }
 
+    webrtc::RtpReceiverInterface* rtcReceiver() { return m_rtcReceiver.get(); }
+
 private:
     RTCRtpParameters getParameters() final;
     Vector<RTCRtpContributingSource> getContributingSources() const final;

@@ -138,7 +138,6 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 
 
     // 8.2 Statistics API
-    // FIXME 169644: |selector| may go away in a future version of the spec
     Promise<RTCStatsReport> getStats(optional MediaStreamTrack? selector = null);
 
 
