@@ -1,3 +1,12 @@
+2018-09-19  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Layout Test imported/w3c/web-platform-tests/beacon/beacon-basic-blob.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=189728
+
+        Unreviewed, send console logging to stderr to adress flakiness.
+
+        * TestExpectations:
+
 2018-09-19  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Unreviewed test gardening

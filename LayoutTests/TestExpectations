@@ -258,6 +258,7 @@ imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm [ S
 imported/w3c/web-platform-tests/workers/constructors/SharedWorker [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html [ Skip ]
 
+imported/w3c/web-platform-tests/beacon/beacon-basic-blob.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/xhr/access-control-and-redirects.htm [ DumpJSConsoleLogInStdErr ]
