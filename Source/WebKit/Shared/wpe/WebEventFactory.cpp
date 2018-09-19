@@ -38,10 +38,9 @@ static inline bool isWPEKeyCodeFromKeyPad(unsigned keyCode)
     return keyCode >= WPE_KEY_KP_Space && keyCode <= WPE_KEY_KP_9;
 }
 
-static WebEvent::Modifiers modifiersForEvent(struct wpe_input_keyboard_event* event)
+static WebEvent::Modifiers modifiersForEventModifiers(unsigned eventModifiers)
 {
     unsigned modifiers = 0;
-    unsigned eventModifiers = event->modifiers;
 
     if (eventModifiers & wpe_input_keyboard_modifier_control)
         modifiers |= WebEvent::ControlKey;
@@ -77,7 +76,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboa
         WebCore::PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(event->key_code),
         event->key_code,
         isWPEKeyCodeFromKeyPad(event->key_code),
-        modifiersForEvent(event),
+        modifiersForEventModifiers(event->modifiers),
         wallTimeForEventTime(event->time));
 }
 
@@ -137,11 +136,11 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
 
     unsigned clickCount = (type == WebEvent::MouseDown) ? 1 : 0;
 
-    // FIXME: Proper button support. Modifiers. deltaX/Y/Z. Click count.
+    // FIXME: Proper button support. deltaX/Y/Z. Click count.
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
     return WebMouseEvent(type, button, pressedMouseButtons(event->modifiers), position, position,
-        0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(0), wallTimeForEventTime(event->time));
+        0, 0, 0, clickCount, modifiersForEventModifiers(event->modifiers), wallTimeForEventTime(event->time));
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor)
