@@ -484,7 +484,7 @@ void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef da
         return;
 
     statisticsStore->resetParametersToDefaultValues([callbackAggregator = callbackAggregator.copyRef()] { });
-    statisticsStore->scheduleClearInMemory([callbackAggregator = callbackAggregator.copyRef()] { });
+    statisticsStore->scheduleClearInMemoryAndPersistent(WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::No, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
 void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback)

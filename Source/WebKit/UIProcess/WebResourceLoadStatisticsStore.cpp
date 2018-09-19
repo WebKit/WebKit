@@ -759,41 +759,30 @@ void WebResourceLoadStatisticsStore::scheduleCookieBlockingStateReset()
 }
 #endif
 
-void WebResourceLoadStatisticsStore::scheduleClearInMemory(CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
-
-        CompletionHandler<void()> callCompletionHandlerOnMainThread = [completionHandler = WTFMove(completionHandler)]() mutable {
-            postTaskReply(WTFMove(completionHandler));
-        };
-
-        if (!m_memoryStore) {
-            callCompletionHandlerOnMainThread();
-            return;
-        }
-
-        m_memoryStore->clear(WTFMove(callCompletionHandlerOnMainThread));
-    });
-}
-
 void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGrandfather shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    postTask([this, shouldGrandfather, completionHandler = WTFMove(completionHandler)] () mutable {
-        if (m_memoryStore)
-            m_memoryStore->clear([] { });
+    postTask([this, protectedThis = makeRef(*this), shouldGrandfather, completionHandler = WTFMove(completionHandler)] () mutable {
         if (m_persistentStorage)
             m_persistentStorage->clear();
-        
-        CompletionHandler<void()> callCompletionHandlerOnMainThread = [completionHandler = WTFMove(completionHandler)]() mutable {
-            postTaskReply(WTFMove(completionHandler));
-        };
 
-        if (shouldGrandfather == ShouldGrandfather::Yes && m_memoryStore)
-            m_memoryStore->grandfatherExistingWebsiteData(WTFMove(callCompletionHandlerOnMainThread));
-        else
-            callCompletionHandlerOnMainThread();
+        CompletionHandlerCallingScope completionHandlerCaller([completionHandler = WTFMove(completionHandler)]() mutable {
+            postTaskReply(WTFMove(completionHandler));
+        });
+
+        if (m_memoryStore) {
+            m_memoryStore->clear([this, protectedThis = protectedThis.copyRef(), shouldGrandfather, completionHandlerCaller = WTFMove(completionHandlerCaller)] () mutable {
+                if (shouldGrandfather == ShouldGrandfather::Yes) {
+                    if (m_memoryStore)
+                        m_memoryStore->grandfatherExistingWebsiteData(completionHandlerCaller.release());
+                    else
+                        RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent After being cleared, m_memoryStore is null when trying to grandfather data.");
+                }
+            });
+        } else {
+            if (shouldGrandfather == ShouldGrandfather::Yes)
+                RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent Before being cleared, m_memoryStore is null when trying to grandfather data.");
+        }
     });
 }
 
