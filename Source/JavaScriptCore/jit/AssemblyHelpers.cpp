@@ -641,7 +641,7 @@ void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspa
     add32(TrustedImm32(MarkedSpace::sizeStep - 1), allocationSize, scratchGPR1);
     urshift32(TrustedImm32(stepShift), scratchGPR1);
     slowPath.append(branch32(Above, scratchGPR1, TrustedImm32(MarkedSpace::largeCutoff >> stepShift)));
-    move(TrustedImmPtr(subspace.allocatorForSizeStep() - 1), scratchGPR2);
+    move(TrustedImmPtr(subspace.allocatorForSizeStep()), scratchGPR2);
     loadPtr(BaseIndex(scratchGPR2, scratchGPR1, timesPtr()), scratchGPR1);
     
     emitAllocate(resultGPR, JITAllocator::variable(), scratchGPR1, scratchGPR2, slowPath);

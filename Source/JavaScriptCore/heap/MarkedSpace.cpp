@@ -171,6 +171,7 @@ void buildSizeClassTable(TableType& table, const SizeClassCons& cons, const Defa
             table[i] = entry;
         nextIndex = index + 1;
     }
+    ASSERT(MarkedSpace::sizeClassToIndex(MarkedSpace::largeCutoff - 1) < MarkedSpace::numSizeClasses);
     for (size_t i = nextIndex; i < MarkedSpace::numSizeClasses; ++i)
         table[i] = defaultCons(MarkedSpace::indexToSizeClass(i));
 }

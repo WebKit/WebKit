@@ -9533,7 +9533,6 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
 
     slowCases.append(m_jit.branch32(
         MacroAssembler::Above, sizeGPR, TrustedImm32(JSArrayBufferView::fastSizeLimit)));
-    slowCases.append(m_jit.branchTest32(MacroAssembler::Zero, sizeGPR));
     
     m_jit.move(sizeGPR, scratchGPR);
     m_jit.lshift32(TrustedImm32(logElementSize(typedArrayType)), scratchGPR);

@@ -64,7 +64,8 @@ public:
     // into one block.
     static constexpr size_t largeCutoff = (blockPayload / 2) & ~(sizeStep - 1);
 
-    static constexpr size_t numSizeClasses = largeCutoff / sizeStep;
+    // We have an extra size class for size zero.
+    static constexpr size_t numSizeClasses = largeCutoff / sizeStep + 1;
     
     static constexpr HeapVersion nullVersion = 0; // The version of freshly allocated blocks.
     static constexpr HeapVersion initialVersion = 2; // The version that the heap starts out with. Set to make sure that nextVersion(nullVersion) != initialVersion.
@@ -79,13 +80,14 @@ public:
     
     static size_t sizeClassToIndex(size_t size)
     {
-        RELEASE_ASSERT(size);
-        return (size + sizeStep - 1) / sizeStep - 1;
+        return (size + sizeStep - 1) / sizeStep;
     }
     
     static size_t indexToSizeClass(size_t index)
     {
-        return (index + 1) * sizeStep;
+        size_t result = index * sizeStep;
+        ASSERT(sizeClassToIndex(result) == index);
+        return result;
     }
     
     MarkedSpace(Heap*);
