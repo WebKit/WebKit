@@ -1,5 +1,14 @@
 2018-09-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [iOS] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=189727
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2018-09-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         [iOS] Layout test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html and fetch-mixed-content-to-outscope.https.html are flaky failures
         https://bugs.webkit.org/show_bug.cgi?id=189726
 
