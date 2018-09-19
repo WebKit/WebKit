@@ -1556,7 +1556,6 @@ RegisterID* PostfixNode::emitResolve(BytecodeGenerator& generator, RegisterID* d
             generator.emitReadOnlyExceptionIfNeeded(var);
             localReg = generator.move(generator.tempDestination(dst), local);
         }
-        generator.invalidateForInContextForLocal(local);
         RefPtr<RegisterID> oldValue = emitPostIncOrDec(generator, generator.finalDestination(dst), localReg.get(), m_operator);
         generator.emitProfileType(localReg.get(), var, divotStart(), divotEnd());
         return oldValue.get();
@@ -1769,7 +1768,6 @@ RegisterID* PrefixNode::emitResolve(BytecodeGenerator& generator, RegisterID* ds
             generator.emitReadOnlyExceptionIfNeeded(var);
             localReg = generator.move(generator.tempDestination(dst), localReg.get());
         } else if (generator.vm()->typeProfiler()) {
-            generator.invalidateForInContextForLocal(local);
             RefPtr<RegisterID> tempDst = generator.tempDestination(dst);
             generator.move(tempDst.get(), localReg.get());
             emitIncOrDec(generator, tempDst.get(), m_operator);
@@ -1777,7 +1775,6 @@ RegisterID* PrefixNode::emitResolve(BytecodeGenerator& generator, RegisterID* ds
             generator.emitProfileType(localReg.get(), var, divotStart(), divotEnd());
             return generator.move(dst, tempDst.get());
         }
-        generator.invalidateForInContextForLocal(local);
         emitIncOrDec(generator, localReg.get(), m_operator);
         return generator.move(dst, localReg.get());
     }
@@ -2441,13 +2438,11 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
             generator.move(result.get(), local);
             emitReadModifyAssignment(generator, result.get(), result.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
             generator.move(local, result.get());
-            generator.invalidateForInContextForLocal(local);
             generator.emitProfileType(local, divotStart(), divotEnd());
             return generator.move(dst, result.get());
         }
         
         RegisterID* result = emitReadModifyAssignment(generator, local, local, m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
-        generator.invalidateForInContextForLocal(local);
         generator.emitProfileType(result, divotStart(), divotEnd());
         return generator.move(dst, result);
     }
@@ -2505,12 +2500,10 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
             generator.emitNode(tempDst.get(), m_right);
             generator.move(local, tempDst.get());
             generator.emitProfileType(local, var, divotStart(), divotEnd());
-            generator.invalidateForInContextForLocal(local);
             result = generator.move(dst, tempDst.get());
         } else {
             RegisterID* right = generator.emitNode(local, m_right);
             generator.emitProfileType(right, var, divotStart(), divotEnd());
-            generator.invalidateForInContextForLocal(local);
             result = generator.move(dst, right);
         }
 
@@ -2752,7 +2745,6 @@ RegisterID* EmptyLetExpression::emitBytecode(BytecodeGenerator& generator, Regis
     Variable var = generator.variable(m_ident);
     if (RegisterID* local = var.local()) {
         generator.emitLoad(local, jsUndefined());
-        generator.invalidateForInContextForLocal(local);
         generator.emitProfileType(local, var, position(), JSTextPosition(-1, position().offset + m_ident.length(), -1));
     } else {
         RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
@@ -2966,7 +2958,6 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
             if (var.isReadOnly())
                 generator.emitReadOnlyExceptionIfNeeded(var);
             generator.move(local, propertyName);
-            generator.invalidateForInContextForLocal(local);
         } else {
             if (generator.isStrictMode())
                 generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
@@ -3034,7 +3025,6 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
             return;
         }
         generator.move(var.local(), propertyName);
-        generator.invalidateForInContextForLocal(var.local());
         generator.emitProfileType(propertyName, var, simpleBinding->divotStart(), simpleBinding->divotEnd());
         return;
     }
@@ -3225,7 +3215,6 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
                 if (var.isReadOnly())
                     generator.emitReadOnlyExceptionIfNeeded(var);
                 generator.move(local, value);
-                generator.invalidateForInContextForLocal(local);
             } else {
                 if (generator.isStrictMode())
                     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
@@ -4399,7 +4388,6 @@ void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) con
             return;
         }
         generator.move(local, value);
-        generator.invalidateForInContextForLocal(local);
         generator.emitProfileType(local, var, divotStart(), divotEnd());
         if (m_bindingContext == AssignmentContext::DeclarationStatement || m_bindingContext == AssignmentContext::ConstDeclarationStatement)
             generator.liftTDZCheckIfPossible(var);
@@ -4448,7 +4436,6 @@ void AssignmentElementNode::bindValue(BytecodeGenerator& generator, RegisterID* 
             if (isReadOnly)
                 generator.emitReadOnlyExceptionIfNeeded(var);
             else {
-                generator.invalidateForInContextForLocal(local);
                 generator.move(local, value);
                 generator.emitProfileType(local, divotStart(), divotEnd());
             }

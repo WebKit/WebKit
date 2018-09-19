@@ -211,23 +211,30 @@ namespace JSC {
         RegisterID* local() const { return m_localRegister.get(); }
 
     protected:
-        ForInContext(RegisterID* localRegister, Type type)
+        ForInContext(RegisterID* localRegister, Type type, unsigned bodyBytecodeStartOffset)
             : m_localRegister(localRegister)
             , m_type(type)
+            , m_bodyBytecodeStartOffset(bodyBytecodeStartOffset)
         { }
+
+        unsigned bodyBytecodeStartOffset() const { return m_bodyBytecodeStartOffset; }
+
+        void finalize(BytecodeGenerator&, UnlinkedCodeBlock*, unsigned bodyBytecodeEndOffset);
 
     private:
         RefPtr<RegisterID> m_localRegister;
         bool m_isValid { true };
         Type m_type;
+        unsigned m_bodyBytecodeStartOffset;
     };
 
     class StructureForInContext : public ForInContext {
+        using Base = ForInContext;
     public:
         using GetInst = std::tuple<unsigned, int, UnlinkedValueProfile>;
 
-        StructureForInContext(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)
-            : ForInContext(localRegister, Type::StructureForIn)
+        StructureForInContext(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, unsigned bodyBytecodeStartOffset)
+            : ForInContext(localRegister, Type::StructureForIn, bodyBytecodeStartOffset)
             , m_indexRegister(indexRegister)
             , m_propertyRegister(propertyRegister)
             , m_enumeratorRegister(enumeratorRegister)
@@ -243,7 +250,7 @@ namespace JSC {
             m_getInsts.append(GetInst { instIndex, propertyRegIndex, valueProfile });
         }
 
-        void finalize(BytecodeGenerator&);
+        void finalize(BytecodeGenerator&, UnlinkedCodeBlock*, unsigned bodyBytecodeEndOffset);
 
     private:
         RefPtr<RegisterID> m_indexRegister;
@@ -253,16 +260,17 @@ namespace JSC {
     };
 
     class IndexedForInContext : public ForInContext {
+        using Base = ForInContext;
     public:
-        IndexedForInContext(RegisterID* localRegister, RegisterID* indexRegister)
-            : ForInContext(localRegister, Type::IndexedForIn)
+        IndexedForInContext(RegisterID* localRegister, RegisterID* indexRegister, unsigned bodyBytecodeStartOffset)
+            : ForInContext(localRegister, Type::IndexedForIn, bodyBytecodeStartOffset)
             , m_indexRegister(indexRegister)
         {
         }
 
         RegisterID* index() const { return m_indexRegister.get(); }
 
-        void finalize(BytecodeGenerator&);
+        void finalize(BytecodeGenerator&, UnlinkedCodeBlock*, unsigned bodyBytecodeEndOffset);
         void addGetInst(unsigned instIndex, int propertyIndex) { m_getInsts.append({ instIndex, propertyIndex }); }
 
     private:
@@ -938,7 +946,6 @@ namespace JSC {
         void popIndexedForInScope(RegisterID* local);
         void pushStructureForInScope(RegisterID* local, RegisterID* index, RegisterID* property, RegisterID* enumerator);
         void popStructureForInScope(RegisterID* local);
-        void invalidateForInContextForLocal(RegisterID* local);
 
         LabelScope* breakTarget(const Identifier&);
         LabelScope* continueTarget(const Identifier&);
