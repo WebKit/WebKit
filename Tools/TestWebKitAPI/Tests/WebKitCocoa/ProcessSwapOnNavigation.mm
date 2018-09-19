@@ -1803,4 +1803,69 @@ TEST(ProcessSwap, APIControlledProcessSwapping)
     EXPECT_NE(pid1, pid3);
 }
 
+TEST(ProcessSwap, TerminatedSuspendedPageProcess)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    @autoreleasepool {
+        auto webViewConfiguration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [webViewConfiguration2 setProcessPool:processPool.get()];
+        [webViewConfiguration2 _setRelatedWebView:webView.get()]; // Make sure it uses the same process.
+        auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration2.get()]);
+        [webView2 setNavigationDelegate:delegate.get()];
+
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
+        [webView2 loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        auto pid2 = [webView2 _webProcessIdentifier];
+        EXPECT_EQ(pid1, pid2);
+
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main2.html"]];
+        [webView loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        [webView2 _killWebContentProcessAndResetState];
+        webView2 = nullptr;
+        webViewConfiguration2 = nullptr;
+    }
+
+    auto pid3 = [webView _webProcessIdentifier];
+    EXPECT_NE(pid1, pid3);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid4 = [webView _webProcessIdentifier];
+    EXPECT_NE(pid1, pid4);
+    EXPECT_NE(pid3, pid4);
+}
+
 #endif // WK_API_ENABLED

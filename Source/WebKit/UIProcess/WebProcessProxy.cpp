@@ -1008,6 +1008,11 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
 
     shutDown();
 
+    for (auto* suspendedPage : copyToVectorOf<SuspendedPageProxy*>(m_suspendedPageMap.values()))
+        suspendedPage->webProcessDidClose(*this);
+
+    m_suspendedPageMap.clear();
+
     for (auto& page : pages)
         page->processDidTerminate(reason);
 }

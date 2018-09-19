@@ -1,3 +1,31 @@
+2018-09-19  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebProcessProxy::suspendedPageWasDestroyed(WebKit::SuspendedPageProxy&)
+        https://bugs.webkit.org/show_bug.cgi?id=189721
+        <rdar://problem/44359788>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix crash when destroying a SuspendedPageProxy whose WebProcessProxy was already
+        destroyed.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        * UIProcess/SuspendedPageProxy.h:
+        (WebKit::SuspendedPageProxy::process const):
+        Update SuspendedPageProxy::m_process to be a RefPtr<> instead of a raw pointer, similarly
+        to what we do in WebPageProxy. Relying on the WebProcessProxy to not get destroyed is
+        risky as this crash demonstrates.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+        When a WebProcessProxy is terminated (by client or WebKit due to memory / cpu usage), call
+        webProcessDidClose() on all SuspendedPages, similarly to what we do in case of a crash in
+        processDidTerminateOrFailedToLaunch(). Failing to do so means that the SuspendedPageProxy
+        may still have a pointer to this WebProcessProxy, even though WebProcessProxy::shutDown()
+        has been called (which may destroy the WebProcessProxy).
+
 2018-09-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add optional cap on partitioned cache max age
