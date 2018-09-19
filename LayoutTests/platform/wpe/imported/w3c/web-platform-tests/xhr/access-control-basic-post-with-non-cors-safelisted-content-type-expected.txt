@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: line 33: Preflight response is not successful
-CONSOLE MESSAGE: line 33: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-options-not-supported.py due to access control checks.
-
-PASS Same-origin request with non-safelisted content type succeeds 
-PASS CORS request with non-safelisted content type sends preflight and fails 
-

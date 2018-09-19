@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Load cannot follow more than 20 redirections
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/XMLHttpRequest/resources/infinite-redirects.py?page=default&type=301&mix=0 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/xhr/resources/infinite-redirects.py?page=default&type=301&mix=0 due to access control checks.
 
 PASS XMLHttpRequest: send() - Redirects (infinite loop) 
 
