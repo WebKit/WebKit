@@ -1,3 +1,15 @@
+2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r235500.
+
+        Time to switch back to master runtime
+
+        Reverted changeset:
+
+        "Unreviewed, rolling out r235114."
+        https://bugs.webkit.org/show_bug.cgi?id=188731
+        https://trac.webkit.org/changeset/235500
+
 2018-09-19  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Add Pablo Saavedra to the list of contributors.
