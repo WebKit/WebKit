@@ -1,3 +1,12 @@
+2018-09-19  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=189744
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Add some expectations.
+
 2018-09-19  Philippe Normand <pnormand@igalia.com>
 
         [GStreamer] Add support for AV1 decoding
