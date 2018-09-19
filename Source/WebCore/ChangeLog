@@ -1,5 +1,30 @@
 2018-09-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Many textarea tests leak documents because Document::removeFocusNavigationNodeOfSubtree() can trigger a Document retain cycle
+        https://bugs.webkit.org/show_bug.cgi?id=188722
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a retain cycle created when Document::adjustFocusNavigationNodeOnNodeRemoval() sets
+        m_focusNavigationStartingNode to itself. m_focusNavigationStartingNode is a Node* (not sure why it's not an Element*),
+        making it possible to assign the Document to it, which creates a reference to the document which prevents
+        Document::removedLastRef() ever running and doing the necessary cleanup.
+        
+        Fix by setting m_focusNavigationStartingNode to null if code tries to set it to the Document. This can happen
+        when an element is focused and the page calls document.write(), which removes all children.
+        
+        Will be tested by future leak testing. Fixes the document leak in at least the following tests:
+          fast/forms/append-children-during-form-submission.html
+          fast/forms/empty-textarea-toggle-disabled.html
+          fast/forms/textarea-paste-newline.html
+          fast/forms/textarea-trailing-newline.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusNavigationStartingNode):
+        (WebCore::Document::adjustFocusNavigationNodeOnNodeRemoval):
+
+2018-09-10  Simon Fraser  <simon.fraser@apple.com>
+
         svg/W3C-SVG-1.1/render-groups-03-t.svg and some other SVG tests leak documents
         https://bugs.webkit.org/show_bug.cgi?id=189147
 
