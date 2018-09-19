@@ -195,7 +195,7 @@ async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
 
     if (counter === undefined)
         counter = 0;
-    if (counter > 50) {
+    if (counter > 400) {
         if (!errorMessage)
             errorMessage = "checkVideoBlack timed out expecting " + expected;
         return Promise.reject(errorMessage);

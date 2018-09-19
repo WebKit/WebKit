@@ -73,9 +73,12 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height)
     status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     ASSERT(status == noErr);
     void* data = CVPixelBufferGetBaseAddress(pixelBuffer);
+
     size_t yLength = width * height;
     memset(data, 0, yLength);
-    memset(static_cast<uint8_t*>(data) + yLength, 128, yLength / 2);
+
+    auto totalSize = CVPixelBufferGetDataSize(pixelBuffer);
+    memset(static_cast<uint8_t*>(data) + yLength, 128, totalSize - yLength);
 
     status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     ASSERT(!status);

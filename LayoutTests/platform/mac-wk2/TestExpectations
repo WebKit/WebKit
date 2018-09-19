@@ -783,8 +783,6 @@ webkit.org/b/176881 plugins/js-from-destroy.html [ Pass Failure ]
 
 webkit.org/b/178553 [ HighSierra Release ] imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/011.html [ Skip ]
 
-webkit.org/b/177501 webrtc/video-mute.html [ Pass Timeout ]
-
 webkit.org/b/165620 [ Sierra ] http/tests/cache/disk-cache/disk-cache-request-headers.html [ Pass Failure ]
 
 webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Pass Failure ]
