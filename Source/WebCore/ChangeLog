@@ -1,3 +1,32 @@
+2018-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        svg/W3C-SVG-1.1/render-groups-03-t.svg and some other SVG tests leak documents
+        https://bugs.webkit.org/show_bug.cgi?id=189147
+
+        Reviewed by Dean Jackson.
+        
+        Document::removedLastRef() needs to clean up m_fontSelector, because it can reference
+        CSSFontFaceSources that keep SVGFontFaceElements alive, and they in turn will keep
+        the Document alive.
+        
+        Also add the beginnings of a Fonts log channel.
+
+        This will be tested by world leak testing (webkit.org/b/189332).
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        * platform/Logging.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontDataIfNeeded):
+        (WebCore::FontCache::purgeInactiveFontData):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        (WebCore::SVGFontFaceElement::~SVGFontFaceElement):
+        * svg/SVGFontFaceElement.h:
+
 2018-09-10  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Fix overflow in buffered ranges

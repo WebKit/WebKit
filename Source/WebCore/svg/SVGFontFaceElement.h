@@ -55,6 +55,7 @@ public:
 
 private:
     SVGFontFaceElement(const QualifiedName&, Document&);
+    ~SVGFontFaceElement();
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
