@@ -1,3 +1,12 @@
+2018-09-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] Layout test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html and fetch-mixed-content-to-outscope.https.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=189726
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-09-18  Megan Gardner  <megan_gardner@apple.com>
 
         Support Images Module Level 4's double-position gradient color stop syntax
