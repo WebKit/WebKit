@@ -1,5 +1,5 @@
 
-FAIL Bogus MIME type does not override encoding assert_equals: expected "text/html;charset=windows-1252" but got "bogus"
+PASS Bogus MIME type does not override encoding 
 FAIL Bogus MIME type does not override encoding, 2 assert_equals: expected "ÿ" but got "\x1a"
-FAIL Bogus MIME type does override MIME type assert_equals: expected "text/xml" but got "bogus"
+PASS Bogus MIME type does override MIME type 
 
