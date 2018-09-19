@@ -341,6 +341,9 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
     ASSERT(from <= to);
     ASSERT(to <= run.length());
 
+    if (!run.length())
+        return 0;
+
     float offsetBeforeRange = 0;
     float offsetAfterRange = 0;
     float totalWidth = 0;
@@ -385,6 +388,9 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
 
 float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
+    if (!run.length())
+        return 0;
+
     CodePath codePathToUse = codePath(run);
     if (codePathToUse != Complex) {
         // The complex path is more restrictive about returning fallback fonts than the simple path, so we need an explicit test to make their behaviors match.
