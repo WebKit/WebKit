@@ -4532,6 +4532,11 @@
       ],
       "status" : "committer"
    },
+   "Pablo Saavedra Rodi\u00F1o" : {
+      "emails" : [
+         "psaavedra@igalia.com"
+      ]
+   },
    "Pam Greene" : {
       "emails" : [
          "pam@chromium.org"

@@ -1,3 +1,9 @@
+2018-09-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Add Pablo Saavedra to the list of contributors.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-09-19  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Add support for AV1 decoding
