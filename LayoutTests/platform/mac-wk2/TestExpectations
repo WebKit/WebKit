@@ -59,6 +59,9 @@ fast/misc/valid-primary-screen-displayID.html [ Pass ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Pass ]
 
+webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
+
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
