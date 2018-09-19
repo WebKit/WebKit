@@ -83,7 +83,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     if (Options::useTracePoints())
         traceScope.emplace(WebAssemblyExecuteStart, WebAssemblyExecuteEnd);
 
-    Vector<JSValue> boxedArgs;
+    Vector<JSValue, MarkedArgumentBuffer::inlineCapacity> boxedArgs;
     JSWebAssemblyInstance* instance = wasmFunction->instance();
     Wasm::Instance* wasmInstance = &instance->instance();
     // When we don't use fast TLS to store the context, the JS
