@@ -180,6 +180,7 @@ public:
     WEBCORE_EXPORT void recalculateScrollbarOverlayStyle();
 
     void clear();
+    void resetLayoutMilestones();
 
     WEBCORE_EXPORT bool isTransparent() const;
     WEBCORE_EXPORT void setTransparent(bool isTransparent);

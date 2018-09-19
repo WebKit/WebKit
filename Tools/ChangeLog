@@ -1,3 +1,17 @@
+2018-09-18  Chris Dumez  <cdumez@apple.com>
+
+        "DidFirstVisuallyNonEmptyLayout" callback does not get called when restoring a page from PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=189681
+        <rdar://problem/44526171>
+
+        Reviewed by Alex Christensen and Zalan Bujtas.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKit/LayoutMilestonesWithAllContentInFrame.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+
 2018-09-18  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Implement mouse event modifiers

@@ -35,14 +35,20 @@
 
 namespace TestWebKitAPI {
 
-static bool testDone;
+static bool didFirstVisuallyNonEmptyLayout;
+static bool didNavigate;
 
 static void renderingProgressDidChange(WKPageRef page, WKPageRenderingProgressEvents milestones, WKTypeRef, const void* clientInfo)
 {
     // This test ensures that the DidFirstVisuallyNonEmptyLayout will be reached for the main frame
     // even when all of the content is in a subframe.
     if (milestones & WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout)
-        testDone = true;
+        didFirstVisuallyNonEmptyLayout = true;
+}
+
+static void didFinishNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef userData, const void* clientInfo)
+{
+    didNavigate = true;
 }
 
 TEST(WebKit, LayoutMilestonesWithAllContentInFrame)
@@ -62,8 +68,53 @@ TEST(WebKit, LayoutMilestonesWithAllContentInFrame)
     WKPageListenForLayoutMilestones(webView.page(), WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout);
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("all-content-in-one-iframe", "html")).get());
 
-    Util::run(&testDone);
-    EXPECT_TRUE(testDone);
+    Util::run(&didFirstVisuallyNonEmptyLayout);
+    EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
+}
+
+TEST(WebKit, FirstVisuallyNonEmptyLayoutAfterPageCacheRestore)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+
+    WKContextSetCacheModel(context.get(), kWKCacheModelPrimaryWebBrowser); // Enables the Page Cache.
+
+    PlatformWebView webView(context.get());
+
+    WKPageNavigationClientV3 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+
+    loaderClient.base.version = 3;
+    loaderClient.base.clientInfo = &webView;
+    loaderClient.renderingProgressDidChange = renderingProgressDidChange;
+    loaderClient.didFinishNavigation = didFinishNavigation;
+
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
+
+    WKPageListenForLayoutMilestones(webView.page(), WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout);
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple-tall", "html")).get());
+
+    Util::run(&didFirstVisuallyNonEmptyLayout);
+    EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
+    didFirstVisuallyNonEmptyLayout = false;
+    Util::run(&didNavigate);
+    EXPECT_TRUE(didNavigate);
+    didNavigate = false;
+
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("large-red-square-image", "html")).get());
+    Util::run(&didFirstVisuallyNonEmptyLayout);
+    EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
+    didFirstVisuallyNonEmptyLayout = false;
+    Util::run(&didNavigate);
+    EXPECT_TRUE(didNavigate);
+    didNavigate = false;
+
+    WKPageGoBack(webView.page());
+    Util::run(&didFirstVisuallyNonEmptyLayout);
+    EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
+    didFirstVisuallyNonEmptyLayout = false;
+    Util::run(&didNavigate);
+    EXPECT_TRUE(didNavigate);
+    didNavigate = false;
 }
 
 } // namespace TestWebKitAPI
