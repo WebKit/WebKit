@@ -155,7 +155,6 @@ NS_ASSUME_NONNULL_END
 }
 
 #pragma mark - NSURLSession API
-@synthesize sessionDescription=_sessionDescription;
 @dynamic delegate;
 - (__nullable id<NSURLSessionDelegate>)delegate
 {
@@ -177,6 +176,16 @@ NS_ASSUME_NONNULL_END
 - (NSURLSessionConfiguration *)configuration
 {
     return nil;
+}
+
+- (NSString *)sessionDescription
+{
+    return _sessionDescription.get();
+}
+
+- (void)setSessionDescription:(NSString *)sessionDescription
+{
+    _sessionDescription = adoptNS([sessionDescription copy]);
 }
 
 @dynamic loader;

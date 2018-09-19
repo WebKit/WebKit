@@ -1,3 +1,20 @@
+2018-09-19  David Kilzer  <ddkilzer@apple.com>
+
+        WebCoreNSURLSession leaks an NSString (_sessionDescription) in -dealloc
+        <https://webkit.org/b/189742>
+        <rdar://problem/44589774>
+
+        Reviewed by Joseph Pecoraro.
+
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        (WebCoreNSURLSession._sessionDescription): Change type from
+        NSString * to RetainPtr<NSString>.
+        * platform/network/cocoa/WebCoreNSURLSession.mm: Remove
+        @synthesized statement for sessionDescription so that custom
+        methods can be implemented to handle RetainPtr<NSString>.
+        (-[WebCoreNSURLSession sessionDescription]): Add.
+        (-[WebCoreNSURLSession setSessionDescription:]): Add.
+
 2018-09-19  Youenn Fablet  <youenn@apple.com>
 
         Implement sender/receiver getStats

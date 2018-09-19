@@ -60,7 +60,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     RefPtr<WebCore::PlatformMediaResourceLoader> _loader;
     RetainPtr<id<NSURLSessionDelegate>> _delegate;
     RetainPtr<NSOperationQueue> _queue;
-    NSString *_sessionDescription;
+    RetainPtr<NSString> _sessionDescription;
     HashSet<RetainPtr<CFTypeRef>> _dataTasks;
     HashSet<RefPtr<WebCore::SecurityOrigin>> _origins;
     Lock _dataTasksLock;
