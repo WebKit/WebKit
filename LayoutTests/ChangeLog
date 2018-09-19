@@ -1,3 +1,19 @@
+2018-09-19  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/navigation/window-open-cross-origin-then-navigated-back-same-origin.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=189710
+
+        Reviewed by Ryosuke Niwa.
+
+        Update the test to stop relying on the test page posting a message to the auxiliary window
+        to trigger a navigation. Instead, the auxiliary window now takes care of navigating itself
+        after it is loaded. This is more robust, especially considering that the test page is cross
+        origin and thus is not getting a load event for the auxiliary window.
+
+        * http/tests/navigation/resources/navigate-back-same-origin-helper.html: Added.
+        * http/tests/navigation/resources/navigate-helper.html: Removed.
+        * http/tests/navigation/window-open-cross-origin-then-navigated-back-same-origin.html:
+
 2018-09-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GTK] Assorted gardening
