@@ -1,3 +1,9 @@
+2018-09-19  Dawei Fenton  <realdawei@apple.com>
+
+       Unreviewed. Update my email and alias in list of contributors.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Unreviewed, try #3 to fix a typo

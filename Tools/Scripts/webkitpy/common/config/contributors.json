@@ -1527,8 +1527,12 @@
       "status" : "committer"
    },
    "David Fenton" : {
+    "aliases" : [
+        "Dawei Fenton"
+     ],
       "emails" : [
-         "david_fenton@apple.com"
+         "david_fenton@apple.com",
+         "realdawei@apple.com"
       ],
       "nicks" : [
          "realdawei"
