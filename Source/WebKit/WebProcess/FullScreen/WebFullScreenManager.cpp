@@ -99,6 +99,7 @@ void WebFullScreenManager::videoControlsManagerDidChange()
 
 void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipStandbyElement)
 {
+#if ENABLE(VIDEO)
     if (pipStandbyElement == m_pipStandbyElement)
         return;
 
@@ -109,6 +110,7 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
 
     if (m_pipStandbyElement)
         m_pipStandbyElement->setVideoFullscreenStandby(true);
+#endif
 }
 
 void WebFullScreenManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
