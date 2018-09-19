@@ -1,3 +1,12 @@
+2018-09-18  Ali Juma  <ajuma@chromium.org>
+
+        [macOS WK1] Mark intersection-observer/no-document-leak.html as a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=189731
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-09-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html is a flaky failure
