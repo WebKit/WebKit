@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,21 +28,21 @@
 
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
+#include "StrongInlines.h"
 
 namespace JSC {
 
 DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock)
-    : m_codeBlock(codeBlock)
-    , m_rootCodeBlock(nullptr)
+    : m_codeBlock(*codeBlock->vm(), codeBlock)
     , m_rootJITType(JITCode::None)
 {
 }
 
-DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock, CodeBlock* rootCodeBlock, JITCode::JITType rootJITType, CodeOrigin callerCodeOrigin)
-    : m_codeBlock(codeBlock)
-    , m_rootCodeBlock(rootCodeBlock)
+DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock, CodeBlock* rootCodeBlock, JITCode::JITType rootJITType, unsigned callerBytecodeIndex)
+    : m_codeBlock(*codeBlock->vm(), codeBlock)
+    , m_rootCodeBlock(*codeBlock->vm(), rootCodeBlock)
     , m_rootJITType(rootJITType)
-    , m_callerCodeOrigin(callerCodeOrigin)
+    , m_callerBytecodeIndex(callerBytecodeIndex)
 {
 }
 
@@ -56,7 +56,7 @@ void DeferredSourceDump::dump()
     dataLog(*m_codeBlock);
 
     if (isInlinedFrame)
-        dataLog(" at ", CodeBlockWithJITType(m_rootCodeBlock, m_rootJITType), " ", m_callerCodeOrigin);
+        dataLog(" at ", CodeBlockWithJITType(*m_rootCodeBlock, m_rootJITType), " ", "bc#", m_callerBytecodeIndex);
 
     dataLog("\n'''");
     m_codeBlock->dumpSource();
