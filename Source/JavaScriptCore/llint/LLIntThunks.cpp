@@ -42,12 +42,6 @@
 
 namespace JSC {
 
-EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWasm(void* code, VM* vm, ProtoCallFrame* frame)
-{
-    code = retagCodePtr<WasmEntryPtrTag, JSEntryPtrTag>(code);
-    return vmEntryToJavaScript(code, vm, frame);
-}
-    
 #if ENABLE(JIT)
 
 namespace LLInt {

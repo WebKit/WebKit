@@ -38,7 +38,11 @@ extern "C" {
     EncodedJSValue vmEntryToNative(void*, VM*, ProtoCallFrame*);
 }
 
-EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWasm(void*, VM*, ProtoCallFrame*);
+inline EncodedJSValue vmEntryToWasm(void* code, VM* vm, ProtoCallFrame* frame)
+{
+    code = retagCodePtr<WasmEntryPtrTag, JSEntryPtrTag>(code);
+    return vmEntryToJavaScript(code, vm, frame);
+}
 
 namespace LLInt {
 

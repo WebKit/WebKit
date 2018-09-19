@@ -155,11 +155,6 @@ macro doVMEntry(makeCall)
     # before we start copying the args from the protoCallFrame below.
     if C_LOOP
         bpaeq t3, VM::m_cloopStackLimit[vm], .stackHeightOK
-    else
-        bpaeq t3, VM::m_softStackLimit[vm], .stackHeightOK
-    end
-
-    if C_LOOP
         move entry, t4
         move vm, t5
         cloopCallSlowPath _llint_stack_check_at_vm_entry, vm, t3
@@ -171,37 +166,10 @@ macro doVMEntry(makeCall)
 .stackCheckFailed:
         move t4, entry
         move t5, vm
-    end
-
-.throwStackOverflow:
-    subp 8, sp # Align stack for cCall2() to make a call.
-    move vm, a0
-    move protoCallFrame, a1
-    cCall2(_llint_throw_stack_overflow_error)
-
-    if ARMv7
-        vmEntryRecord(cfr, t3)
-        move t3, sp
+        jmp .throwStackOverflow
     else
-        vmEntryRecord(cfr, sp)
+        bpb t3, VM::m_softStackLimit[vm], .throwStackOverflow
     end
-
-    loadp VMEntryRecord::m_vm[sp], t5
-    loadp VMEntryRecord::m_prevTopCallFrame[sp], t4
-    storep t4, VM::topCallFrame[t5]
-    loadp VMEntryRecord::m_prevTopEntryFrame[sp], t4
-    storep t4, VM::topEntryFrame[t5]
-
-    if ARMv7
-        subp cfr, CalleeRegisterSaveSize, t5
-        move t5, sp
-    else
-        subp cfr, CalleeRegisterSaveSize, sp
-    end
-
-    popCalleeSaves()
-    functionEpilogue()
-    ret
 
 .stackHeightOK:
     move t3, sp
@@ -244,6 +212,36 @@ macro doVMEntry(makeCall)
     storep cfr, VM::topEntryFrame[vm]
 
     makeCall(entry, t3, t4)
+
+    if ARMv7
+        vmEntryRecord(cfr, t3)
+        move t3, sp
+    else
+        vmEntryRecord(cfr, sp)
+    end
+
+    loadp VMEntryRecord::m_vm[sp], t5
+    loadp VMEntryRecord::m_prevTopCallFrame[sp], t4
+    storep t4, VM::topCallFrame[t5]
+    loadp VMEntryRecord::m_prevTopEntryFrame[sp], t4
+    storep t4, VM::topEntryFrame[t5]
+
+    if ARMv7
+        subp cfr, CalleeRegisterSaveSize, t5
+        move t5, sp
+    else
+        subp cfr, CalleeRegisterSaveSize, sp
+    end
+
+    popCalleeSaves()
+    functionEpilogue()
+    ret
+
+.throwStackOverflow:
+    subp 8, sp # Align stack for cCall2() to make a call.
+    move vm, a0
+    move protoCallFrame, a1
+    cCall2(_llint_throw_stack_overflow_error)
 
     if ARMv7
         vmEntryRecord(cfr, t3)
