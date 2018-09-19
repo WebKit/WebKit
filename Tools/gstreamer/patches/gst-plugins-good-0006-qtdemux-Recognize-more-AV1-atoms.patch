@@ -1,0 +1,44 @@
+From e07ce9afb4edb2ea898763c7ea11f0af2704104e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Olivier=20Cr=C3=AAte?= <olivier.crete@collabora.com>
+Date: Wed, 25 Jul 2018 16:51:38 -0400
+Subject: [PATCH] qtdemux: Recognize more AV1 atoms
+
+---
+ gst/isomp4/fourcc.h        | 4 ++++
+ gst/isomp4/qtdemux_types.c | 5 +++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/gst/isomp4/fourcc.h b/gst/isomp4/fourcc.h
+index e18e6c2c9..6c425e6f9 100644
+--- a/gst/isomp4/fourcc.h
++++ b/gst/isomp4/fourcc.h
+@@ -266,6 +266,10 @@ G_BEGIN_DECLS
+ #define FOURCC_lpcm     GST_MAKE_FOURCC('l','p','c','m')
+ #define FOURCC_av01     GST_MAKE_FOURCC('a','v','0','1')
+ #define FOURCC_av1C     GST_MAKE_FOURCC('a','v','1','C')
++#define FOURCC_av1f     GST_MAKE_FOURCC('a','v','1','f')
++#define FOURCC_av1m     GST_MAKE_FOURCC('a','v','1','m')
++#define FOURCC_av1s     GST_MAKE_FOURCC('a','v','1','s')
++#define FOURCC_av1M     GST_MAKE_FOURCC('a','v','1','M')
+ 
+ #define FOURCC_cfhd     GST_MAKE_FOURCC('C','F','H','D')
+ #define FOURCC_ap4x     GST_MAKE_FOURCC('a','p','4','x')
+diff --git a/gst/isomp4/qtdemux_types.c b/gst/isomp4/qtdemux_types.c
+index 68f98bd45..9ab2e7e3e 100644
+--- a/gst/isomp4/qtdemux_types.c
++++ b/gst/isomp4/qtdemux_types.c
+@@ -215,6 +215,11 @@ static const QtNodeType qt_node_types[] = {
+   {FOURCC_stpp, "XML subtitle sample entry", 0},
+   {FOURCC_clcp, "Closed Caption", 0},
+   {FOURCC_av01, "AV1 Sample Entry", 0},
++  {FOURCC_av1C, "AV1 Codec Configuration", 0},
++  {FOURCC_av1f, "AV1 Forward Key Frame sample group entry", 0},
++  {FOURCC_av1m, "AV1 Multi-Frame sample group entry", 0},
++  {FOURCC_av1s, "AV1 S-Frame sample group entry", 0},
++  {FOURCC_av1M, "AV1 Metadata sample group entry", 0},
+   {0, "unknown", 0,},
+ };
+ 
+-- 
+2.18.0
+

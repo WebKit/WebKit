@@ -1,0 +1,123 @@
+From b6e8c6323e01249bb3ac4f121c3adc3ea8d924bf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Olivier=20Cr=C3=AAte?= <olivier.crete@collabora.com>
+Date: Wed, 25 Jul 2018 10:43:11 -0400
+Subject: [PATCH] qtdemux: Add initial support for AV1 demuxing
+
+Following the spec at
+https://aomediacodec.github.io/av1-isobmff/
+---
+ gst/isomp4/fourcc.h        |  1 +
+ gst/isomp4/qtdemux.c       |  4 ++++
+ gst/isomp4/qtdemux_dump.c  | 49 ++++++++++++++++++++++++++++++++++++++
+ gst/isomp4/qtdemux_types.c |  1 +
+ 4 files changed, 55 insertions(+)
+
+diff --git a/gst/isomp4/fourcc.h b/gst/isomp4/fourcc.h
+index 6f467ffbb..c06b69418 100644
+--- a/gst/isomp4/fourcc.h
++++ b/gst/isomp4/fourcc.h
+@@ -264,6 +264,7 @@ G_BEGIN_DECLS
+ #define FOURCC_wide     GST_MAKE_FOURCC('w','i','d','e')
+ #define FOURCC_zlib     GST_MAKE_FOURCC('z','l','i','b')
+ #define FOURCC_lpcm     GST_MAKE_FOURCC('l','p','c','m')
++#define FOURCC_av01     GST_MAKE_FOURCC('a','v','0','1')
+ 
+ #define FOURCC_cfhd     GST_MAKE_FOURCC('C','F','H','D')
+ #define FOURCC_ap4x     GST_MAKE_FOURCC('a','p','4','x')
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 3efb5ba9d..7a682833f 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -14651,6 +14651,10 @@ qtdemux_video_caps (GstQTDemux * qtdemux, QtDemuxStream * stream,
+       caps = gst_caps_new_simple ("video/x-wmv",
+           "wmvversion", G_TYPE_INT, 3, "format", G_TYPE_STRING, "WVC1", NULL);
+       break;
++    case FOURCC_av01:
++      _codec ("AV1");
++      caps = gst_caps_new_empty_simple ("video/x-av1");
++      break;
+     case GST_MAKE_FOURCC ('k', 'p', 'c', 'd'):
+     default:
+     {
+diff --git a/gst/isomp4/qtdemux_dump.c b/gst/isomp4/qtdemux_dump.c
+index 5ff2e9288..25921dfe2 100644
+--- a/gst/isomp4/qtdemux_dump.c
++++ b/gst/isomp4/qtdemux_dump.c
+@@ -303,6 +303,51 @@ qtdemux_dump_stsd_avc1 (GstQTDemux * qtdemux, GstByteReader * data, guint size,
+   return TRUE;
+ }
+ 
++
++static gboolean
++qtdemux_dump_stsd_av01 (GstQTDemux * qtdemux, GstByteReader * data, guint size,
++    int depth)
++{
++  guint compressor_len;
++  char compressor_name[32];
++
++  /* Size of av01 = 78 bytes */
++  if (size < (6 + 2 + 4 + 12 + 2 + 2 + 4 + 4 + 4 + 2 + 1 + 31 + 2 + 2))
++    return FALSE;
++
++  gst_byte_reader_skip_unchecked (data, 6);
++  GST_LOG_OBJECT (qtdemux, "%*s    data reference:%d", depth, "",
++      GET_UINT16 (data));
++  GST_LOG_OBJECT (qtdemux, "%*s    version/rev.:  %08x", depth, "",
++      GET_UINT32 (data));
++  gst_byte_reader_skip_unchecked (data, 12);    /* pre-defined & reserved */
++  GST_LOG_OBJECT (qtdemux, "%*s    width:         %u", depth, "",
++      GET_UINT16 (data));
++  GST_LOG_OBJECT (qtdemux, "%*s    height:        %u", depth, "",
++      GET_UINT16 (data));
++  GST_LOG_OBJECT (qtdemux, "%*s    horiz. resol:  %g", depth, "",
++      GET_FP32 (data));
++  GST_LOG_OBJECT (qtdemux, "%*s    vert. resol.:  %g", depth, "",
++      GET_FP32 (data));
++  GST_LOG_OBJECT (qtdemux, "%*s    data size:     %u", depth, "",
++      GET_UINT32 (data));
++  GST_LOG_OBJECT (qtdemux, "%*s    frame count:   %u", depth, "",
++      GET_UINT16 (data));
++  /* something is not right with this, it's supposed to be a string but it's
++   * not apparently, so just skip this for now */
++  compressor_len = MAX (GET_UINT8 (data), 31);
++  memcpy (compressor_name, gst_byte_reader_get_data_unchecked (data, 31), 31);
++  compressor_name[compressor_len] = 0;
++  GST_LOG_OBJECT (qtdemux, "%*s    compressor:    %s", depth, "",
++      compressor_name);
++  GST_LOG_OBJECT (qtdemux, "%*s    depth:         %u", depth, "",
++      GET_UINT16 (data));
++  GST_LOG_OBJECT (qtdemux, "%*s    color table ID:%u", depth, "",
++      GET_UINT16 (data));
++
++  return TRUE;
++}
++
+ gboolean
+ qtdemux_dump_stsd (GstQTDemux * qtdemux, GstByteReader * data, int depth)
+ {
+@@ -353,6 +398,10 @@ qtdemux_dump_stsd (GstQTDemux * qtdemux, GstByteReader * data, int depth)
+         if (!qtdemux_dump_unknown (qtdemux, &sub, depth + 1))
+           return FALSE;
+         break;
++      case FOURCC_av01:
++        if (!qtdemux_dump_stsd_av01 (qtdemux, &sub, size, depth + 1))
++          return FALSE;
++        break;
+       default:
+         /* Unknown stsd data, dump the bytes */
+         if (!qtdemux_dump_unknown (qtdemux, &sub, depth + 1))
+diff --git a/gst/isomp4/qtdemux_types.c b/gst/isomp4/qtdemux_types.c
+index 1d5840394..68f98bd45 100644
+--- a/gst/isomp4/qtdemux_types.c
++++ b/gst/isomp4/qtdemux_types.c
+@@ -214,6 +214,7 @@ static const QtNodeType qt_node_types[] = {
+   {FOURCC_tenc, "track encryption", 0},
+   {FOURCC_stpp, "XML subtitle sample entry", 0},
+   {FOURCC_clcp, "Closed Caption", 0},
++  {FOURCC_av01, "AV1 Sample Entry", 0},
+   {0, "unknown", 0,},
+ };
+ 
+-- 
+2.18.0
+

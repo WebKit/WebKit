@@ -21,6 +21,8 @@
       href="https://github.com/"/>
   <repository type="git" name="chromium.googlesource.com"
       href="https://chromium.googlesource.com/webm/"/>
+  <repository type="git" name="aomedia.googlesource.com"
+      href="https://aomedia.googlesource.com/"/>
 
   <autotools id="orc" autogenargs="--disable-gtk-doc" autogen-sh="configure">
     <branch module="orc/orc-${version}.tar.xz" version="0.4.28"
@@ -39,6 +41,11 @@
     autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-pic --as=yasm --disable-unit-tests --size-limit=16384x16384 --enable-postproc --enable-multi-res-encoding --enable-temporal-denoising --enable-vp9-temporal-denoising --enable-vp9-postproc --enable-shared">
     <branch repo="chromium.googlesource.com" checkoutdir="libvpx" tag="v1.7.0"/>
   </autotools>
+
+  <cmake id="aom" cmakeargs="-DBUILD_SHARED_LIBS=1">
+    <branch repo="aomedia.googlesource.com" module="aom" checkoutdir="aom" branch="master"
+            revision="master" tag="cdb083e84a71d6d31163a4f64f18dc1328fd782c" />
+  </cmake>
 
   <autotools id="gstreamer" autogen-sh="configure" autogenargs="--disable-gtk-doc --disable-introspection --disable-examples --disable-tests">
     <dependencies>
@@ -74,6 +81,10 @@
       <patch file="gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch" strip="1" /> <!-- Merged as 3e063703b3a51b8aaa7f75f36c4660c583a60e93 -->
       <patch file="gst-plugins-good-0002-qtdemux-Do-not-unref-a-NULL-stream_tags.patch" strip="1" /> <!-- Merged as 43a540b1cd9f162d3dae5d50e36703dfaf558a3e -->
       <patch file="gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch" strip="1" /> <!-- Merged as 0fbde2a07928ba79b7a4ddb4585f6b1de36a74bb -->
+      <patch file="gst-plugins-good-0001-qtdemux-Detect-and-expose-CEA-608-708-Closed-Caption.patch" strip="1" /> <!-- Merged as 2869edeea29a022007a99db2df41b5a7e1a3025c (to be shipped in 1.16) -->
+      <patch file="gst-plugins-good-0004-qtdemux-Add-initial-support-for-AV1-demuxing.patch" strip="1" /> <!-- Merged as b6e8c6323e01249bb3ac4f121c3adc3ea8d924bf (to be shipped in 1.16) -->
+      <patch file="gst-plugins-good-0005-qtdemux-Extract-AV1-codec_data-and-put-it-in-the-cap.patch" strip="1" /> <!-- Merged as 43ee4055c3d03a9f99acdf3c05f45e154899edef (to be shipped in 1.16) -->
+      <patch file="gst-plugins-good-0006-qtdemux-Recognize-more-AV1-atoms.patch" strip="1" /> <!-- Merged as e07ce9afb4edb2ea898763c7ea11f0af2704104e (to be shipped in 1.16) -->
     </branch>
   </autotools>
 
@@ -82,8 +93,12 @@
       <dep package="graphene"/>
       <dep package="gst-plugins-base"/>
       <dep package="openh264"/>
+      <dep package="aom"/>
     </dependencies>
-    <branch hash="sha256:b2224e5d9c1b85ad51233f6135524bb9e16a9172d395edc79c73b89094659fd5" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.14.3" />
+    <branch hash="sha256:b2224e5d9c1b85ad51233f6135524bb9e16a9172d395edc79c73b89094659fd5" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.14.3">
+      <patch file="gst-plugins-bad-0001-aomenc-Add-support-for-10-12bit-decoding.patch" strip="1" /> <!-- Merged as 1d96d9e842dd71882f54ddffbf6c1ccecdb03fcd (to be shipped in 1.16) -->
+      <patch file="gst-plugins-bad-0002-aomenc-Handle-8-bit_depth-images-with-AOM_IMG_FMT_HI.patch" strip="1" /> <!-- Merged as 10a37e0c3528a721084441c37af37baef0908ddc (to be shipped in 1.16) -->
+    </branch>
   </autotools>
 
   <autotools id="gst-libav" autogen-sh="configure" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">

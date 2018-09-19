@@ -1,3 +1,18 @@
+2018-09-19  Philippe Normand <pnormand@igalia.com>
+
+        [GStreamer] Add support for AV1 decoding
+        https://bugs.webkit.org/show_bug.cgi?id=189647
+
+        Reviewed by Žan Doberšek.
+
+        Layout test for AV1 canPlay() compatiblity checking. Right now
+        GStreamer-based ports are the only ones expecting to support AV1.
+
+        * media/media-can-play-av1-expected.txt: Added.
+        * media/media-can-play-av1.html: Added.
+        * platform/ios/media/media-can-play-av1-expected.txt: Added.
+        * platform/mac/media/media-can-play-av1-expected.txt: Added.
+
 2018-09-19  Chris Dumez  <cdumez@apple.com>
 
         http/tests/navigation/window-open-cross-origin-then-navigated-back-same-origin.html is flaky

@@ -1,0 +1,112 @@
+From 43ee4055c3d03a9f99acdf3c05f45e154899edef Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Olivier=20Cr=C3=AAte?= <olivier.crete@collabora.com>
+Date: Wed, 25 Jul 2018 14:31:39 -0400
+Subject: [PATCH] qtdemux: Extract AV1 codec_data and put it in the caps
+
+Also extract the presentation-delay and put it in the caps.
+---
+ gst/isomp4/fourcc.h  |  1 +
+ gst/isomp4/qtdemux.c | 75 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 76 insertions(+)
+
+diff --git a/gst/isomp4/fourcc.h b/gst/isomp4/fourcc.h
+index c06b69418..e18e6c2c9 100644
+--- a/gst/isomp4/fourcc.h
++++ b/gst/isomp4/fourcc.h
+@@ -265,6 +265,7 @@ G_BEGIN_DECLS
+ #define FOURCC_zlib     GST_MAKE_FOURCC('z','l','i','b')
+ #define FOURCC_lpcm     GST_MAKE_FOURCC('l','p','c','m')
+ #define FOURCC_av01     GST_MAKE_FOURCC('a','v','0','1')
++#define FOURCC_av1C     GST_MAKE_FOURCC('a','v','1','C')
+ 
+ #define FOURCC_cfhd     GST_MAKE_FOURCC('C','F','H','D')
+ #define FOURCC_ap4x     GST_MAKE_FOURCC('a','p','4','x')
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 7a682833f..d1ce320b8 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -11187,6 +11187,81 @@ qtdemux_parse_trak (GstQTDemux * qtdemux, GNode * trak)
+             }
+             break;
+           }
++          case FOURCC_av01:
++          {
++            gint len = QT_UINT32 (stsd_entry_data) - 0x56;
++            const guint8 *av1_data = stsd_entry_data + 0x56;
++
++            /* find av1C */
++            while (len >= 0x8) {
++              gint size;
++
++              if (QT_UINT32 (av1_data) <= len)
++                size = QT_UINT32 (av1_data) - 0x8;
++              else
++                size = len - 0x8;
++
++              if (size < 1)
++                /* No real data, so break out */
++                break;
++
++              switch (QT_FOURCC (av1_data + 0x4)) {
++                case FOURCC_av1C:
++                {
++                  /* parse, if found */
++                  GstBuffer *buf;
++                  guint8 pres_delay_field;
++
++                  GST_DEBUG_OBJECT (qtdemux,
++                      "found av1C codec_data in stsd of size %d", size);
++
++                  /* not enough data, just ignore and hope for the best */
++                  if (size < 5)
++                    break;
++
++                  /* Content is:
++                   * 4 bytes: atom length
++                   * 4 bytes: fourcc
++                   * 1 byte: version
++                   * 3 bytes: flags
++                   * 3 bits: reserved
++                   * 1 bits:  initial_presentation_delay_present
++                   * 4 bits: initial_presentation_delay (if present else reserved
++                   * rest: OBUs.
++                   */
++
++                  if (av1_data[9] != 0) {
++                    GST_WARNING ("Unknown version %d of av1C box", av1_data[9]);
++                    break;
++                  }
++
++                  /* We skip initial_presentation_delay* for now */
++                  pres_delay_field = *(av1_data + 12);
++                  if (pres_delay_field & (1 << 5)) {
++                    gst_caps_set_simple (entry->caps,
++                        "presentation-delay", G_TYPE_INT,
++                        (gint) (pres_delay_field & 0x0F) + 1, NULL);
++                  }
++                  if (size > 5) {
++                    buf = gst_buffer_new_and_alloc (size - 5);
++                    GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_HEADER);
++                    gst_buffer_fill (buf, 0, av1_data + 13, size - 5);
++                    gst_caps_set_simple (entry->caps,
++                        "codec_data", GST_TYPE_BUFFER, buf, NULL);
++                    gst_buffer_unref (buf);
++                  }
++                  break;
++                }
++                default:
++                  break;
++              }
++
++              len -= size + 8;
++              av1_data += size + 8;
++            }
++
++            break;
++          }
+           default:
+             break;
+         }
+-- 
+2.18.0
+

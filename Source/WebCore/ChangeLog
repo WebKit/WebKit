@@ -1,3 +1,21 @@
+2018-09-19  Philippe Normand <pnormand@igalia.com>
+
+        [GStreamer] Add support for AV1 decoding
+        https://bugs.webkit.org/show_bug.cgi?id=189647
+
+        Tweaked by Xabier Rodriguez Calvar <calvaris@igalia.com>.
+        Reviewed by Žan Doberšek.
+
+        AV1 can be muxed in MP4 and WebM containers. The test is an adaptation from Chromium's unittest:
+        https://chromium.googlesource.com/chromium/src/+/master/content/browser/media/media_canplaytype_browsertest.cc
+
+        Test: media/media-can-play-av1.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType): Add AV1
+        support. The av01 codec has to be explicitely checked, along with
+        the presence of a compatible AV1 decoder.
+
 2018-09-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Limit capturing extra metrics for Web Inspector when not required.

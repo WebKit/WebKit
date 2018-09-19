@@ -1,0 +1,165 @@
+From 1d96d9e842dd71882f54ddffbf6c1ccecdb03fcd Mon Sep 17 00:00:00 2001
+From: Sean-Der <sean@siobud.com>
+Date: Wed, 27 Jun 2018 09:44:00 +0000
+Subject: [PATCH] aomenc: Add support for 10/12bit decoding
+
+https://bugzilla.gnome.org/show_bug.cgi?id=791674
+---
+ ext/aom/gstav1dec.c | 108 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 103 insertions(+), 5 deletions(-)
+
+diff --git a/ext/aom/gstav1dec.c b/ext/aom/gstav1dec.c
+index d33118e64..23b18f44c 100644
+--- a/ext/aom/gstav1dec.c
++++ b/ext/aom/gstav1dec.c
+@@ -52,15 +52,26 @@ static GstStaticPadTemplate gst_av1_dec_src_pad_template =
+ GST_STATIC_PAD_TEMPLATE ("src",
+     GST_PAD_SRC,
+     GST_PAD_ALWAYS,
+-    GST_STATIC_CAPS ("video/x-raw, "
+-        "format = (string) \"I420\", "
+-        "framerate = (fraction) [0, MAX], "
+-        "width = (int) [ 4, MAX ], " "height = (int) [ 4, MAX ]")
++    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("{ I420, YV12, Y42B, Y444"
++#if G_BYTE_ORDER == G_LITTLE_ENDIAN
++            ", I420_10LE, I420_12LE, I422_10LE, I422_12LE, Y444_10LE, Y444_12LE"
++#else
++            ", I420_10BE, I420_12BE, I422_10BE, I422_12BE, Y444_10BE, Y444_12BE"
++#endif
++            " }"))
+     );
+ 
+ GST_DEBUG_CATEGORY_STATIC (av1_dec_debug);
+ #define GST_CAT_DEFAULT av1_dec_debug
+ 
++#define GST_VIDEO_FORMAT_WITH_ENDIAN(fmt,endian) GST_VIDEO_FORMAT_##fmt##endian
++
++#if G_BYTE_ORDER == G_LITTLE_ENDIAN
++#define AOM_FMT_TO_GST(fmt) GST_VIDEO_FORMAT_WITH_ENDIAN(fmt,LE)
++#else
++#define AOM_FMT_TO_GST(fmt) GST_VIDEO_FORMAT_WITH_ENDIAN(fmt,BE)
++#endif
++
+ static void gst_av1_dec_set_property (GObject * object, guint prop_id,
+     const GValue * value, GParamSpec * pspec);
+ static void gst_av1_dec_get_property (GObject * object, guint prop_id,
+@@ -79,6 +90,8 @@ static void gst_av1_dec_image_to_buffer (GstAV1Dec * dec,
+     const aom_image_t * img, GstBuffer * buffer);
+ static GstFlowReturn gst_av1_dec_open_codec (GstAV1Dec * av1dec,
+     GstVideoCodecFrame * frame);
++static gboolean gst_av1_dec_get_valid_format (GstAV1Dec * dec,
++    const aom_image_t * img, GstVideoFormat * fmt);
+ 
+ #define gst_av1_dec_parent_class parent_class
+ G_DEFINE_TYPE (GstAV1Dec, gst_av1_dec, GST_TYPE_VIDEO_DECODER);
+@@ -309,6 +322,81 @@ gst_av1_dec_image_to_buffer (GstAV1Dec * dec, const aom_image_t * img,
+   gst_video_frame_unmap (&frame);
+ }
+ 
++gboolean
++gst_av1_dec_get_valid_format (GstAV1Dec * dec, const aom_image_t * img,
++    GstVideoFormat * fmt)
++{
++  switch (img->fmt) {
++    case AOM_IMG_FMT_I420:
++    case AOM_IMG_FMT_I42016:
++      if (img->bit_depth == 8) {
++        *fmt = img->monochrome ? GST_VIDEO_FORMAT_GRAY8 : GST_VIDEO_FORMAT_I420;
++        return TRUE;
++      } else if (img->bit_depth == 10) {
++        *fmt = AOM_FMT_TO_GST (I420_10);
++        return TRUE;
++      } else if (img->bit_depth == 12) {
++        *fmt = AOM_FMT_TO_GST (I420_12);
++        return TRUE;
++      }
++
++      GST_FIXME_OBJECT (dec,
++          "Please add a 4:2:0 planar %u bit depth frame format",
++          img->bit_depth);
++      GST_ELEMENT_WARNING (dec, STREAM, NOT_IMPLEMENTED, (NULL),
++          ("Unsupported frame format - 4:2:0 planar %u bit depth",
++              img->bit_depth));
++      return FALSE;
++
++    case AOM_IMG_FMT_I422:
++    case AOM_IMG_FMT_I42216:
++      if (img->bit_depth == 8) {
++        *fmt = GST_VIDEO_FORMAT_Y42B;
++        return TRUE;
++      } else if (img->bit_depth == 10) {
++        *fmt = AOM_FMT_TO_GST (I422_10);
++        return TRUE;
++      } else if (img->bit_depth == 12) {
++        *fmt = AOM_FMT_TO_GST (I422_12);
++        return TRUE;
++      }
++      GST_FIXME_OBJECT (dec,
++          "Please add a 4:2:2 planar %u bit depth frame format",
++          img->bit_depth);
++      GST_ELEMENT_WARNING (dec, STREAM, NOT_IMPLEMENTED, (NULL),
++          ("Unsupported frame format - 4:2:2 planar %u bit depth",
++              img->bit_depth));
++      return FALSE;
++
++    case AOM_IMG_FMT_I444:
++    case AOM_IMG_FMT_I44416:
++      if (img->bit_depth == 8) {
++        *fmt = GST_VIDEO_FORMAT_Y444;
++        return TRUE;
++      } else if (img->bit_depth == 10) {
++        *fmt = AOM_FMT_TO_GST (Y444_10);
++        return TRUE;
++      } else if (img->bit_depth == 12) {
++        *fmt = AOM_FMT_TO_GST (Y444_12);
++        return TRUE;
++      }
++      GST_FIXME_OBJECT (dec,
++          "Please add a 4:4:4 planar %u bit depth frame format",
++          img->bit_depth);
++      GST_ELEMENT_WARNING (dec, STREAM, NOT_IMPLEMENTED, (NULL),
++          ("Unsupported frame format - 4:4:4 planar %u bit depth",
++              img->bit_depth));
++      return FALSE;
++
++    case AOM_IMG_FMT_YV12:
++      *fmt = GST_VIDEO_FORMAT_YV12;
++      return TRUE;
++
++    default:
++      return FALSE;
++  }
++}
++
+ static GstFlowReturn
+ gst_av1_dec_handle_frame (GstVideoDecoder * dec, GstVideoCodecFrame * frame)
+ {
+@@ -318,6 +406,7 @@ gst_av1_dec_handle_frame (GstVideoDecoder * dec, GstVideoCodecFrame * frame)
+   aom_codec_err_t status;
+   aom_image_t *img;
+   aom_codec_iter_t iter = NULL;
++  GstVideoFormat fmt;
+ 
+   if (!av1dec->decoder_inited) {
+     ret = gst_av1_dec_open_codec (av1dec, frame);
+@@ -349,7 +438,16 @@ gst_av1_dec_handle_frame (GstVideoDecoder * dec, GstVideoCodecFrame * frame)
+ 
+   img = aom_codec_get_frame (&av1dec->decoder, &iter);
+   if (img) {
+-    gst_av1_dec_handle_resolution_change (av1dec, img, GST_VIDEO_FORMAT_I420);
++    if (gst_av1_dec_get_valid_format (av1dec, img, &fmt) == FALSE) {
++      aom_img_free (img);
++      GST_ELEMENT_ERROR (dec, LIBRARY, ENCODE,
++          ("Failed to decode frame"), ("Unsupported color format %d",
++              img->fmt));
++      gst_video_codec_frame_unref (frame);
++      return GST_FLOW_ERROR;
++    }
++
++    gst_av1_dec_handle_resolution_change (av1dec, img, fmt);
+ 
+     ret = gst_video_decoder_allocate_output_frame (dec, frame);
+     if (ret == GST_FLOW_OK) {
+-- 
+2.18.0
+

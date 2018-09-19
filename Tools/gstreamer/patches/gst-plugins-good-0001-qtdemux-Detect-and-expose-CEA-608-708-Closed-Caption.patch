@@ -1,0 +1,234 @@
+From 2869edeea29a022007a99db2df41b5a7e1a3025c Mon Sep 17 00:00:00 2001
+From: Edward Hervey <edward@centricular.com>
+Date: Wed, 31 Jan 2018 15:10:03 +0100
+Subject: [PATCH] qtdemux: Detect and expose CEA 608/708 Closed Caption tracks
+
+https://bugzilla.gnome.org/show_bug.cgi?id=606643
+---
+ gst/isomp4/fourcc.h        |   6 ++
+ gst/isomp4/qtdemux.c       | 151 ++++++++++++++++++++++++++++++++++++-
+ gst/isomp4/qtdemux_types.c |   1 +
+ 3 files changed, 156 insertions(+), 2 deletions(-)
+
+diff --git a/gst/isomp4/fourcc.h b/gst/isomp4/fourcc.h
+index be5c7c04e..6f467ffbb 100644
+--- a/gst/isomp4/fourcc.h
++++ b/gst/isomp4/fourcc.h
+@@ -95,6 +95,12 @@ G_BEGIN_DECLS
+ #define FOURCC_avc1     GST_MAKE_FOURCC('a','v','c','1')
+ #define FOURCC_avc3     GST_MAKE_FOURCC('a','v','c','3')
+ #define FOURCC_avcC     GST_MAKE_FOURCC('a','v','c','C')
++#define FOURCC_c608     GST_MAKE_FOURCC('c','6','0','8')
++#define FOURCC_c708     GST_MAKE_FOURCC('c','7','0','8')
++#define FOURCC_ccdp     GST_MAKE_FOURCC('c','c','d','p')
++#define FOURCC_cdat     GST_MAKE_FOURCC('c','d','a','t')
++#define FOURCC_cdt2     GST_MAKE_FOURCC('c','d','t','2')
++#define FOURCC_clcp     GST_MAKE_FOURCC('c','l','c','p')
+ #define FOURCC_clip     GST_MAKE_FOURCC('c','l','i','p')
+ #define FOURCC_cmov     GST_MAKE_FOURCC('c','m','o','v')
+ #define FOURCC_cmvd     GST_MAKE_FOURCC('c','m','v','d')
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index 79ef5f55b..f732e92b3 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -5370,6 +5370,120 @@ gst_qtdemux_align_buffer (GstQTDemux * demux,
+   return buffer;
+ }
+ 
++static guint8 *
++convert_to_ccdata (const guint8 * ccpair, guint8 ccpair_size, guint field,
++    gsize * res)
++{
++  guint8 *storage;
++  gsize i;
++
++  /* We are converting from pairs to triplets */
++  *res = ccpair_size / 2 * 3;
++  storage = g_malloc (*res);
++  for (i = 0; i * 2 < ccpair_size; i += 1) {
++    if (field == 1)
++      storage[i * 3] = 0xfc;
++    else
++      storage[i * 3] = 0xfd;
++    storage[i * 3 + 1] = ccpair[i * 2];
++    storage[i * 3 + 2] = ccpair[i * 2 + 1];
++  }
++
++  return storage;
++}
++
++static guint8 *
++extract_cc_from_data (QtDemuxStream * stream, const guint8 * data, gsize size,
++    gsize * cclen)
++{
++  guint8 *res = NULL;
++  guint32 atom_length, fourcc;
++  QtDemuxStreamStsdEntry *stsd_entry;
++
++  GST_MEMDUMP ("caption atom", data, size);
++
++  /* There might be multiple atoms */
++
++  *cclen = 0;
++  if (size < 8)
++    goto invalid_cdat;
++  atom_length = QT_UINT32 (data);
++  fourcc = QT_FOURCC (data + 4);
++  if (G_UNLIKELY (atom_length > size || atom_length == 8))
++    goto invalid_cdat;
++
++  GST_DEBUG_OBJECT (stream->pad, "here");
++
++  /* Check if we have somethig compatible */
++  stsd_entry = CUR_STREAM (stream);
++  switch (stsd_entry->fourcc) {
++    case FOURCC_c608:{
++      guint8 *cdat = NULL, *cdt2 = NULL;
++      gsize cdat_size = 0, cdt2_size = 0;
++      /* Should be cdat or cdt2 */
++      if (fourcc != FOURCC_cdat && fourcc != FOURCC_cdt2) {
++        GST_WARNING_OBJECT (stream->pad,
++            "Unknown data atom (%" GST_FOURCC_FORMAT ") for CEA608",
++            GST_FOURCC_ARGS (fourcc));
++        goto invalid_cdat;
++      }
++      /* Convert to cc_data triplet */
++      if (fourcc == FOURCC_cdat)
++        cdat = convert_to_ccdata (data + 8, atom_length - 8, 1, &cdat_size);
++      else
++        cdt2 = convert_to_ccdata (data + 8, atom_length - 8, 2, &cdt2_size);
++      GST_DEBUG_OBJECT (stream->pad, "size:%" G_GSIZE_FORMAT " atom_length:%u",
++          size, atom_length);
++      /* Check for another atom ? */
++      if (size > atom_length + 8) {
++        guint32 new_atom_length = QT_UINT32 (data + atom_length);
++        if (size <= atom_length + new_atom_length) {
++          fourcc = QT_FOURCC (data + atom_length + 4);
++          if (fourcc == FOURCC_cdat)
++            cdat =
++                convert_to_ccdata (data + atom_length + 8, new_atom_length - 8,
++                1, &cdat_size);
++          else
++            cdt2 =
++                convert_to_ccdata (data + atom_length + 8, new_atom_length - 8,
++                2, &cdt2_size);
++        }
++      }
++      *cclen = cdat_size + cdt2_size;
++      res = g_malloc (*cclen);
++      if (cdat_size)
++        memcpy (res, cdat, cdat_size);
++      if (cdt2_size)
++        memcpy (res + cdat_size, cdt2, cdt2_size);
++      g_free (cdat);
++      g_free (cdt2);
++    }
++      break;
++    case FOURCC_c708:
++      if (fourcc != FOURCC_ccdp) {
++        GST_WARNING_OBJECT (stream->pad,
++            "Unknown data atom (%" GST_FOURCC_FORMAT ") for CEA708",
++            GST_FOURCC_ARGS (fourcc));
++        goto invalid_cdat;
++      }
++      *cclen = atom_length - 8;
++      res = g_memdup (data + 8, *cclen);
++      break;
++    default:
++      /* Keep this here in case other closed caption formats are added */
++      g_assert_not_reached ();
++      break;
++  }
++
++  GST_MEMDUMP ("Output", res, *cclen);
++  return res;
++
++  /* Errors */
++invalid_cdat:
++  GST_WARNING ("[cdat] atom is too small or invalid");
++  return NULL;
++}
++
+ /* the input buffer metadata must be writable,
+  * but time/duration etc not yet set and need not be preserved */
+ static GstBuffer *
+@@ -5390,7 +5504,7 @@ gst_qtdemux_process_buffer (GstQTDemux * qtdemux, QtDemuxStream * stream,
+ 
+   if (G_UNLIKELY (stream->subtype != FOURCC_text
+           && stream->subtype != FOURCC_sbtl &&
+-          stream->subtype != FOURCC_subp)) {
++          stream->subtype != FOURCC_subp && stream->subtype != FOURCC_clcp)) {
+     return buf;
+   }
+ 
+@@ -5408,6 +5522,23 @@ gst_qtdemux_process_buffer (GstQTDemux * qtdemux, QtDemuxStream * stream,
+     return buf;
+   }
+ 
++  if (stream->subtype == FOURCC_clcp) {
++    guint8 *cc;
++    gsize cclen = 0;
++    /* For closed caption, we need to extract the information from the
++     * [cdat],[cdt2] or [ccdp] atom */
++    cc = extract_cc_from_data (stream, map.data, map.size, &cclen);
++    gst_buffer_unmap (buf, &map);
++    gst_buffer_unref (buf);
++    if (cc) {
++      buf = _gst_buffer_new_wrapped (cc, cclen, g_free);
++    } else {
++      /* Conversion failed or there's nothing */
++      buf = NULL;
++    }
++    return buf;
++  }
++
+   nsize = GST_READ_UINT16_BE (map.data);
+   nsize = MIN (nsize, map.size - 2);
+ 
+@@ -11557,7 +11688,8 @@ qtdemux_parse_trak (GstQTDemux * qtdemux, GNode * trak)
+       }
+       entry->sampled = TRUE;
+     } else if (stream->subtype == FOURCC_subp || stream->subtype == FOURCC_text
+-        || stream->subtype == FOURCC_sbtl || stream->subtype == FOURCC_subt) {
++        || stream->subtype == FOURCC_sbtl || stream->subtype == FOURCC_subt
++        || stream->subtype == FOURCC_clcp) {
+ 
+       entry->sampled = TRUE;
+       entry->sparse = TRUE;
+@@ -14548,6 +14680,21 @@ qtdemux_sub_caps (GstQTDemux * qtdemux, QtDemuxStream * stream,
+       _codec ("XML subtitles");
+       caps = gst_caps_new_empty_simple ("application/ttml+xml");
+       break;
++    case FOURCC_c608:
++      _codec ("CEA 608 Closed Caption");
++      caps =
++          gst_caps_new_simple ("closedcaption/x-cea-608", "format",
++          G_TYPE_STRING, "cc_data", NULL);
++      stream->need_process = TRUE;
++      break;
++    case FOURCC_c708:
++      _codec ("CEA 708 Closed Caption");
++      caps =
++          gst_caps_new_simple ("closedcaption/x-cea-708", "format",
++          G_TYPE_STRING, "cdp", NULL);
++      stream->need_process = TRUE;
++      break;
++
+     default:
+     {
+       caps = _get_unknown_codec_name ("text", fourcc);
+diff --git a/gst/isomp4/qtdemux_types.c b/gst/isomp4/qtdemux_types.c
+index 88db8c2ce..1d5840394 100644
+--- a/gst/isomp4/qtdemux_types.c
++++ b/gst/isomp4/qtdemux_types.c
+@@ -213,6 +213,7 @@ static const QtNodeType qt_node_types[] = {
+   {FOURCC_pssh, "protection system specific header", 0},
+   {FOURCC_tenc, "track encryption", 0},
+   {FOURCC_stpp, "XML subtitle sample entry", 0},
++  {FOURCC_clcp, "Closed Caption", 0},
+   {0, "unknown", 0,},
+ };
+ 
+-- 
+2.18.0
+
