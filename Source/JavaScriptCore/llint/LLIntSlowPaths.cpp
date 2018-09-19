@@ -61,6 +61,7 @@
 #include "ModuleProgramCodeBlock.h"
 #include "ObjectConstructor.h"
 #include "ObjectPropertyConditionSet.h"
+#include "OpcodeInlines.h"
 #include "ProgramCodeBlock.h"
 #include "ProtoCallFrame.h"
 #include "RegExpObject.h"
@@ -808,6 +809,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         ArrayProfile* arrayProfile = codeBlock->getOrAddArrayProfile(codeBlock->bytecodeOffset(pc));
         arrayProfile->observeStructure(baseValue.asCell()->structure(vm));
         pc[4].u.arrayProfile = arrayProfile;
+        ASSERT(arrayProfileFor<OpGetArrayLengthShape>(pc) == arrayProfile);
 
         // Prevent the prototype cache from ever happening.
         pc[7].u.operand = 0;
@@ -944,7 +946,7 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, Instruction* pc, 
     
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();
-        ArrayProfile* arrayProfile = pc[4].u.arrayProfile;
+        ArrayProfile* arrayProfile = arrayProfileFor<OpGetByValShape>(pc);
 
         if (isJSString(baseValue)) {
             if (asString(baseValue)->canGetIndex(i)) {

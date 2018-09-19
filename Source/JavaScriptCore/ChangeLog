@@ -1,3 +1,80 @@
+2018-09-07  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that handleIntrinsicCall() is only applied on op_call shaped instructions.
+        https://bugs.webkit.org/show_bug.cgi?id=189317
+        <rdar://problem/44152198>
+
+        Reviewed by Filip Pizlo.
+
+        handleIntrinsicCall() is normally used for checking if an op_call is a call to
+        an intrinsic function, and inlining it if it's a match.
+
+        However, getter and setter functions also does calls, and uses handleCall()
+        to implement the call.  handleCall() eventually calls handleIntrinsicCall() to
+        check for intrinsics.  This results in a bug because handleIntrinsicCall()
+        sometimes relies on the ArrayProfile* of the instruction, and is always assuming
+        that the instruction is op_call shaped.  This turns out to be not true: getters
+        and setters can get there with op_get_by_val and op_put_by_val instead.
+
+        Since the intrinsic functions handled by handleIntrinsicCall() are never
+        intended to be used as getter / setter functions anyway, we can prevent this
+        whole class of bugs by having handleIntrinsicCall() fail early if the
+        instruction is not op_call shaped.
+
+        To implement this fix, we did the following:
+
+        1. Introduced the OpcodeShape enum.
+        2. Introduced isOpcodeShape<OpcodeShape>() for testing if a instruction of the
+           shape of the specified OpcodeShape.
+        3. Introduced arrayProfileFor<OpcodeShape>() for fetching the ArrayProfile* from
+           the instruction given the OpcodeShape.
+
+           Using this arrayProfileFor template has the following benefits:
+           1. Centralizes the definition of which instructions has an ArrayProfile* operand.
+           2. Centralizes the definition of which operand is the ArrayProfile*.
+           3. Asserts that the instruction is of the expected shape when retrieving the
+              ArrayProfile*.
+
+        4. Added ArrayProfile::m_typeName and ArrayProfile::s_typeName which are used
+           in ArrayProfile::isValid() as a sanity check that a retrieved ArrayProfile*
+           indeed does point to an ArrayProfile.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ArrayProfile.cpp:
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::isValid const):
+        * bytecode/OpcodeInlines.h: Added.
+        (JSC::isOpcodeShape):
+        (JSC::arrayProfileFor):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::getByVal):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2018-09-06  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [DFG] DFG should handle String#toString

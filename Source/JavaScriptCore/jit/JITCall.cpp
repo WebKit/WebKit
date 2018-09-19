@@ -37,6 +37,7 @@
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
+#include "OpcodeInlines.h"
 #include "ResultType.h"
 #include "SetupVarargsFrame.h"
 #include "StackAlignment.h"
@@ -167,7 +168,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
             emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
             Jump done = branchIfNotCell(regT0);
             load32(Address(regT0, JSCell::structureIDOffset()), regT0);
-            store32(regT0, instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile->addressOfLastSeenStructureID());
+            store32(regT0, arrayProfileFor<OpCallShape>(instruction)->addressOfLastSeenStructureID());
             done.link(this);
         }
     

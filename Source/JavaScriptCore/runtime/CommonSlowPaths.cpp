@@ -61,6 +61,7 @@
 #include "LowLevelInterpreter.h"
 #include "MathCommon.h"
 #include "ObjectConstructor.h"
+#include "OpcodeInlines.h"
 #include "ScopedArguments.h"
 #include "StructureRareDataInlines.h"
 #include "ThunkGenerators.h"
@@ -694,7 +695,7 @@ SLOW_PATH_DECL(slow_path_is_function)
 SLOW_PATH_DECL(slow_path_in_by_val)
 {
     BEGIN();
-    RETURN(jsBoolean(CommonSlowPaths::opInByVal(exec, OP_C(2).jsValue(), OP_C(3).jsValue(), pc[4].u.arrayProfile)));
+    RETURN(jsBoolean(CommonSlowPaths::opInByVal(exec, OP_C(2).jsValue(), OP_C(3).jsValue(), arrayProfileFor<OpInByValShape>(pc))));
 }
 
 SLOW_PATH_DECL(slow_path_in_by_id)
@@ -773,7 +774,7 @@ SLOW_PATH_DECL(slow_path_has_indexed_property)
     JSObject* base = OP(2).jsValue().toObject(exec);
     CHECK_EXCEPTION();
     JSValue property = OP(3).jsValue();
-    pc[4].u.arrayProfile->observeStructure(base->structure(vm));
+    arrayProfileFor<OpHasIndexedPropertyShape>(pc)->observeStructure(base->structure(vm));
     ASSERT(property.isUInt32());
     RETURN(jsBoolean(base->hasPropertyGeneric(exec, property.asUInt32(), PropertySlot::InternalMethodType::GetOwnProperty)));
 }

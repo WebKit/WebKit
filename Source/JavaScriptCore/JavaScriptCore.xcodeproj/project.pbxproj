@@ -1790,6 +1790,7 @@
 		FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6029D91D6E1E4F0030204D /* ExceptionEventLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6029D81D6E1E330030204D /* ExceptionEventLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE63DD541EA9B61E00103A69 /* Printer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE63DD531EA9B60E00103A69 /* Printer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE64872E2141D04800AB0D3E /* OpcodeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE64872D2141D04800AB0D3E /* OpcodeInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6491371D78F01D00A694D4 /* ExceptionScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6491361D78F01300A694D4 /* ExceptionScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6F56DD1E64E92000D17801 /* VMTraps.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4748,6 +4749,7 @@
 		FE6029D81D6E1E330030204D /* ExceptionEventLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionEventLocation.h; sourceTree = "<group>"; };
 		FE63DD531EA9B60E00103A69 /* Printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Printer.h; sourceTree = "<group>"; };
 		FE63DD551EA9BC5D00103A69 /* Printer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Printer.cpp; sourceTree = "<group>"; };
+		FE64872D2141D04800AB0D3E /* OpcodeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeInlines.h; sourceTree = "<group>"; };
 		FE6491361D78F01300A694D4 /* ExceptionScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionScope.h; sourceTree = "<group>"; };
 		FE6491381D78F3A300A694D4 /* ExceptionScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionScope.cpp; sourceTree = "<group>"; };
 		FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerPrinter.cpp; sourceTree = "<group>"; };
@@ -7708,6 +7710,7 @@
 				0FD3E4061B618B6600C80E1E /* ObjectPropertyConditionSet.h */,
 				969A07940ED1D3AE00F1F681 /* Opcode.cpp */,
 				969A07950ED1D3AE00F1F681 /* Opcode.h */,
+				FE64872D2141D04800AB0D3E /* OpcodeInlines.h */,
 				0F2BDC2B151FDE8B00CD8910 /* Operands.h */,
 				A70447E917A0BD4600F5898E /* OperandsInlines.h */,
 				E34E657420668E8E00FB81AC /* ParseHash.cpp */,
@@ -9465,6 +9468,7 @@
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
 				0FDE87FC1DFE6E510064C390 /* SpaceTimeMutatorScheduler.h in Headers */,
+				FE64872E2141D04800AB0D3E /* OpcodeInlines.h in Headers */,
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
