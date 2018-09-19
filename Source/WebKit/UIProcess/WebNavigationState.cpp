@@ -77,20 +77,20 @@ Ref<API::Navigation> WebNavigationState::createLoadDataNavigation()
     return navigation;
 }
 
-API::Navigation& WebNavigationState::navigation(uint64_t navigationID)
+API::Navigation* WebNavigationState::navigation(uint64_t navigationID)
 {
     ASSERT(navigationID);
     ASSERT(m_navigations.contains(navigationID));
 
-    return *m_navigations.get(navigationID);
+    return m_navigations.get(navigationID);
 }
 
-Ref<API::Navigation> WebNavigationState::takeNavigation(uint64_t navigationID)
+RefPtr<API::Navigation> WebNavigationState::takeNavigation(uint64_t navigationID)
 {
     ASSERT(navigationID);
     ASSERT(m_navigations.contains(navigationID));
     
-    return m_navigations.take(navigationID).releaseNonNull();
+    return m_navigations.take(navigationID);
 }
 
 void WebNavigationState::didDestroyNavigation(uint64_t navigationID)

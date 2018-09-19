@@ -3460,7 +3460,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t na
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
-        navigation = &navigationState().navigation(navigationID);
+        navigation = navigationState().navigation(navigationID);
 
     // If this seemingly new load is actually continuing a server redirect for a previous navigation in a new process,
     // then we ignore this notification.
@@ -3507,7 +3507,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (navigationID) {
-        navigation = &navigationState().navigation(navigationID);
+        navigation = navigationState().navigation(navigationID);
         navigation->appendRedirectionURL(request.url());
     }
 
@@ -3634,7 +3634,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
-        navigation = &navigationState().navigation(navigationID);
+        navigation = navigationState().navigation(navigationID);
 
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
@@ -3726,7 +3726,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navi
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
-        navigation = &navigationState().navigation(navigationID);
+        navigation = navigationState().navigation(navigationID);
 
     if (frame->isMainFrame())
         m_navigationClient->didFinishDocumentLoad(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
@@ -3744,7 +3744,7 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
-        navigation = &navigationState().navigation(navigationID);
+        navigation = navigationState().navigation(navigationID);
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -3787,7 +3787,7 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
-        navigation = &navigationState().navigation(navigationID);
+        navigation = navigationState().navigation(navigationID);
 
     clearLoadDependentCallbacks();
 
@@ -3828,7 +3828,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
-        navigation = &navigationState().navigation(navigationID);
+        navigation = navigationState().navigation(navigationID);
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -4002,7 +4002,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const WebCo
 
     RefPtr<API::Navigation> navigation;
     if (navigationID)
-        navigation = makeRef(m_navigationState->navigation(navigationID));
+        navigation = m_navigationState->navigation(navigationID);
 
     if (auto targetBackForwardItemIdentifier = navigationActionData.targetBackForwardItemIdentifier) {
         if (auto* item = m_backForwardList->itemForID(*navigationActionData.targetBackForwardItemIdentifier)) {
@@ -4034,7 +4034,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const WebCo
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame->didHandleContentFilterUnblockNavigation(request))
-        return receivedPolicyDecision(PolicyAction::Ignore, &m_navigationState->navigation(newNavigationID), std::nullopt, WTFMove(sender));
+        return receivedPolicyDecision(PolicyAction::Ignore, m_navigationState->navigation(newNavigationID), std::nullopt, WTFMove(sender));
 #else
     UNUSED_PARAM(newNavigationID);
 #endif
@@ -4128,7 +4128,7 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const SecurityOrigi
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(response.url());
 
-    RefPtr<API::Navigation> navigation = navigationID ? &m_navigationState->navigation(navigationID) : nullptr;
+    RefPtr<API::Navigation> navigation = navigationID ? m_navigationState->navigation(navigationID) : nullptr;
     auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frameID, listenerID, navigation = WTFMove(navigation)] (WebCore::PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, Vector<Ref<SafeBrowsingResult>>&& safeBrowsingResults) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
