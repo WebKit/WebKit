@@ -1,5 +1,14 @@
 2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE][GTK] Unreviewed, fix a pervasive typo in the webkit-flatpak script
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.run):
+
+2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][GTK] Unreviewed, update to latest GNOME SDK
 
         * flatpak/org.webkit.WebKit.yaml:

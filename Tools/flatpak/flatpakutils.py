@@ -504,7 +504,7 @@ class WebkitFlatpak:
         general.add_argument("-y", "--assumeyes",
                             help="Automatically answer yes for all questions.",
                             action="store_true")
-        general.add_argument('--avalaible', action='store_true', dest="check_avalaible", help='Check if required dependencies are avalaible.'),
+        general.add_argument('--available', action='store_true', dest="check_available", help='Check if required dependencies are available.'),
 
         debugoptions = parser.add_argument_group("Debugging")
         debugoptions.add_argument("--gdb", nargs="?", help="Activate gdb, passing extra args to it if wanted.")
@@ -559,7 +559,7 @@ class WebkitFlatpak:
         self.cache_path = None
         self.app_module = None
         self.flatpak_default_args = []
-        self.check_avalaible = False
+        self.check_available = False
         self.assumeyes = False
 
         # Default application to run in the sandbox
@@ -737,7 +737,7 @@ class WebkitFlatpak:
         if not self.clean_args():
             return 1
 
-        if self.check_avalaible:
+        if self.check_available:
             return 0
 
         if self.clean:
