@@ -1,3 +1,16 @@
+2018-09-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [AX] Fix compile error in AXObjectCache constructor when !HAVE(ACCESSIBILITY)
+        https://bugs.webkit.org/show_bug.cgi?id=189423
+        <rdar://problem/44231775>
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests. Compilation fix.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::AXObjectCache):
+
 2018-09-05  Brent Fulgham  <bfulgham@apple.com>
 
         The width of an empty or nullptr TextRun should be zero
