@@ -1,3 +1,11 @@
+2018-09-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/url/failure.html after r235808.
+
+        New checks are passing.
+
+        * web-platform-tests/url/failure-expected.txt:
+
 2018-09-07  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest: open() does not throw a SYNTAX_ERR exception if method is empty or url cannot be resolved
