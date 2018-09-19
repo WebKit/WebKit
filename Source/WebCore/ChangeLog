@@ -1,3 +1,16 @@
+2018-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r235917): 2% regression in Dromaeo CSS selector on MacBookPro11,4
+        https://bugs.webkit.org/show_bug.cgi?id=189738
+
+        Reviewed by Yusuke Suzuki.
+
+        The regression was caused by the regundant walk to the parent element. Removed it to fix the regression.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateNthChildParentCheckAndRelationUpdate):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateNthLastChildParentCheckAndRelationUpdate):
+
 2018-09-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add optional cap on partitioned cache max age

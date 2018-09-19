@@ -3551,7 +3551,6 @@ void SelectorCodeGenerator::generateNthChildParentCheckAndRelationUpdate(Assembl
     failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, parentNode));
     Assembler::Jump notElement = DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, parentNode);
 
-    generateWalkToParentElement(failureCases, parentNode);
     auto relation = fragmentMatchesRightmostOrAdjacentElement(fragment)
         ? Style::Relation::ChildrenAffectedByForwardPositionalRules
         : Style::Relation::DescendantsAffectedByForwardPositionalRules;
@@ -3673,7 +3672,6 @@ void SelectorCodeGenerator::generateNthLastChildParentCheckAndRelationUpdate(Ass
     failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, parentNode));
     Assembler::Jump notElement = DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, parentNode);
 
-    generateWalkToParentElement(failureCases, parentNode);
     auto relation = fragmentMatchesRightmostOrAdjacentElement(fragment)
         ? Style::Relation::ChildrenAffectedByBackwardPositionalRules
         : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
