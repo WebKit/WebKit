@@ -1,3 +1,14 @@
+2018-09-06  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: only visit m_cachedStructureID if it's not null.
+        https://bugs.webkit.org/show_bug.cgi?id=189124
+        <rdar://problem/43863605>
+
+        Not reviewed.
+
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+
 2018-09-06  Tomas Popela  <tpopela@redhat.com>
 
         [JSC] Build broken after r234975 on s390x, ppc64le, armv7hl

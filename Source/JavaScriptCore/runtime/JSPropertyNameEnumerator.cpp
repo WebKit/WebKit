@@ -94,8 +94,10 @@ void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(propertyName);
     visitor.append(thisObject->m_prototypeChain);
 
-    VM& vm = visitor.vm();
-    visitor.appendUnbarriered(vm.getStructure(thisObject->cachedStructureID()));
+    if (thisObject->cachedStructureID()) {
+        VM& vm = visitor.vm();
+        visitor.appendUnbarriered(vm.getStructure(thisObject->cachedStructureID()));
+    }
 }
 
 } // namespace JSC
