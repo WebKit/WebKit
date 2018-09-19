@@ -59,6 +59,7 @@ public:
     virtual void toggleMuted() = 0;
     virtual void setMuted(bool) = 0;
     virtual void setVolume(double) = 0;
+    virtual void setPlayingOnSecondScreen(bool) = 0;
 
     enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
 

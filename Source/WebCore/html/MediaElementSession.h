@@ -87,7 +87,6 @@ public:
 
     void setHasPlaybackTargetAvailabilityListeners(bool);
 
-    bool canPlayToWirelessPlaybackTarget() const override;
     bool isPlayingToWirelessPlaybackTarget() const override;
 
     void mediaStateDidChange(MediaProducer::MediaStateFlags);

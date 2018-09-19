@@ -162,6 +162,7 @@ protected:
     void toggleMuted(uint64_t contextId);
     void setMuted(uint64_t contextId, bool muted);
     void setVolume(uint64_t contextId, double volume);
+    void setPlayingOnSecondScreen(uint64_t contextId, bool value);
 
     WebPage* m_page;
     HashMap<WebCore::HTMLMediaElement*, uint64_t> m_mediaElements;
