@@ -56,6 +56,8 @@ namespace JSC {
 
     class JSImmutableButterfly;
     class Identifier;
+    class IndexedForInContext;
+    class StructureForInContext;
 
     enum ExpectedFunction {
         NoExpectedFunction,
@@ -180,30 +182,44 @@ namespace JSC {
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(ForInContext);
     public:
-        ForInContext(RegisterID* localRegister)
-            : m_localRegister(localRegister)
-            , m_isValid(true)
-        {
-        }
-
-        virtual ~ForInContext()
-        {
-        }
+        virtual ~ForInContext() = default;
 
         bool isValid() const { return m_isValid; }
         void invalidate() { m_isValid = false; }
 
-        enum ForInContextType {
-            StructureForInContextType,
-            IndexedForInContextType
+        enum class Type : uint8_t {
+            IndexedForIn,
+            StructureForIn
         };
-        virtual ForInContextType type() const = 0;
+
+        Type type() const { return m_type; }
+        bool isIndexedForInContext() const { return m_type == Type::IndexedForIn; }
+        bool isStructureForInContext() const { return m_type == Type::StructureForIn; }
+
+        IndexedForInContext& asIndexedForInContext()
+        {
+            ASSERT(isIndexedForInContext());
+            return *reinterpret_cast<IndexedForInContext*>(this);
+        }
+
+        StructureForInContext& asStructureForInContext()
+        {
+            ASSERT(isStructureForInContext());
+            return *reinterpret_cast<StructureForInContext*>(this);
+        }
 
         RegisterID* local() const { return m_localRegister.get(); }
 
+    protected:
+        ForInContext(RegisterID* localRegister, Type type)
+            : m_localRegister(localRegister)
+            , m_type(type)
+        { }
+
     private:
         RefPtr<RegisterID> m_localRegister;
-        bool m_isValid;
+        bool m_isValid { true };
+        Type m_type;
     };
 
     class StructureForInContext : public ForInContext {
@@ -211,16 +227,11 @@ namespace JSC {
         using GetInst = std::tuple<unsigned, int, UnlinkedValueProfile>;
 
         StructureForInContext(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)
-            : ForInContext(localRegister)
+            : ForInContext(localRegister, Type::StructureForIn)
             , m_indexRegister(indexRegister)
             , m_propertyRegister(propertyRegister)
             , m_enumeratorRegister(enumeratorRegister)
         {
-        }
-
-        ForInContextType type() const override
-        {
-            return StructureForInContextType;
         }
 
         RegisterID* index() const { return m_indexRegister.get(); }
@@ -244,14 +255,9 @@ namespace JSC {
     class IndexedForInContext : public ForInContext {
     public:
         IndexedForInContext(RegisterID* localRegister, RegisterID* indexRegister)
-            : ForInContext(localRegister)
+            : ForInContext(localRegister, Type::IndexedForIn)
             , m_indexRegister(indexRegister)
         {
-        }
-
-        ForInContextType type() const override
-        {
-            return IndexedForInContextType;
         }
 
         RegisterID* index() const { return m_indexRegister.get(); }
