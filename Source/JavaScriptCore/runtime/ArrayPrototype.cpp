@@ -855,6 +855,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
     unsigned length = toLength(exec, thisObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
+    thisObject->ensureWritable(vm);
+
     switch (thisObject->indexingType()) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
     case ALL_INT32_INDEXING_TYPES: {

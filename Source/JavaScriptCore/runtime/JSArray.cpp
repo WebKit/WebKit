@@ -287,8 +287,7 @@ bool JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
     }
 
-    if (isCopyOnWrite(thisObject->indexingMode()))
-        thisObject->convertFromCopyOnWrite(vm);
+    thisObject->ensureWritable(vm);
 
     if (propertyName == vm.propertyNames->length) {
         if (!thisObject->isLengthWritable())
@@ -662,8 +661,7 @@ JSValue JSArray::pop(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+    ensureWritable(vm);
 
     Butterfly* butterfly = this->butterfly();
 
@@ -770,14 +768,11 @@ NEVER_INLINE void JSArray::push(ExecState* exec, JSValue value)
 JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count)
 {
     VM& vm = exec.vm();
+
+    ensureWritable(vm);
+
     auto arrayType = indexingMode();
     switch (arrayType) {
-    case CopyOnWriteArrayWithInt32:
-    case CopyOnWriteArrayWithDouble:
-    case CopyOnWriteArrayWithContiguous:
-        convertFromCopyOnWrite(vm);
-        arrayType = indexingMode();
-        FALLTHROUGH;
     case ArrayWithDouble:
     case ArrayWithInt32:
     case ArrayWithContiguous: {
@@ -922,8 +917,7 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned& startInde
     VM& vm = exec->vm();
     RELEASE_ASSERT(count > 0);
 
-    if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+    ensureWritable(vm);
 
     Butterfly* butterfly = this->butterfly();
     
@@ -1081,8 +1075,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+    ensureWritable(vm);
 
     Butterfly* butterfly = this->butterfly();
     

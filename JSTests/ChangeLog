@@ -1,3 +1,47 @@
+2018-09-19  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r235356. rdar://problem/44613253
+
+    [JSC] Array.prototype.reverse modifies JSImmutableButterfly
+    https://bugs.webkit.org/show_bug.cgi?id=188794
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/reverse-with-immutable-butterfly.js: Added.
+    (shouldBe):
+    (reverseInt):
+    (reverseDouble):
+    (reverseContiguous):
+    
+    Source/JavaScriptCore:
+    
+    While Array.prototype.reverse modifies the butterfly of the given Array,
+    it does not account JSImmutableButterfly case. So it accidentally modifies
+    the content of JSImmutableButterfly.
+    This patch converts CoW arrays to writable arrays before reversing.
+    
+    * runtime/ArrayPrototype.cpp:
+    (JSC::arrayProtoFuncReverse):
+    * runtime/JSObject.h:
+    (JSC::JSObject::ensureWritable):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235356 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-24  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+            [JSC] Array.prototype.reverse modifies JSImmutableButterfly
+            https://bugs.webkit.org/show_bug.cgi?id=188794
+
+            Reviewed by Saam Barati.
+
+            * stress/reverse-with-immutable-butterfly.js: Added.
+            (shouldBe):
+            (reverseInt):
+            (reverseDouble):
+            (reverseContiguous):
+
 2018-09-06  Mark Lam  <mark.lam@apple.com>
 
         Cherry-pick r235254, r235419, r235666. rdar://problem/44169332
