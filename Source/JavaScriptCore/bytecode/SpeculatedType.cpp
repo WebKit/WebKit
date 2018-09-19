@@ -697,6 +697,9 @@ SpeculatedType typeOfDoublePow(SpeculatedType xValue, SpeculatedType yValue)
     // We always set a pure NaN in that case.
     if (yValue & SpecDoubleNaN)
         xValue |= SpecDoublePureNaN;
+    // Handle the wierd case of NaN ^ 0, which returns 1. See https://tc39.github.io/ecma262/#sec-applying-the-exp-operator
+    if (xValue & SpecDoubleNaN)
+        xValue |= SpecFullDouble;
     return polluteDouble(xValue);
 }
 

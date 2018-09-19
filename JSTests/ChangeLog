@@ -1,3 +1,16 @@
+2018-09-06  Michael Saboff  <msaboff@apple.com>
+
+        Improper speculation type for Math.pow(NaN, 0) in Abstract Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=189380
+
+        Reviewed by Saam Barati.
+
+        New test.
+
+        * stress/math-pow-nan-to-zero-spec-type.js: Added.
+        (func):
+        (test):
+
 2018-09-05  Mark Lam  <mark.lam@apple.com>
 
         JSPropertyNameEnumerator::visitChildren() needs to visit its m_cachedStructureID.
