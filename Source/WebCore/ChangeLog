@@ -1,3 +1,22 @@
+2018-09-12  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Linking against libWPEWebKit-0.1.so is not posible when WPE is build with ENABLE_VIDEO=OFF and ENABLE_WEB_AUDIO=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=189540
+
+        Reviewed by Philippe Normand.
+
+        Related issues:
+
+        This issue is related with changes in https://bugs.webkit.org/show_bug.cgi?id=183080
+        This issue is introduced in https://bugs.webkit.org/show_bug.cgi?id=186547
+
+        No new tests, no changes in the functionality.
+
+        * platform/GStreamer.cmake:
+        * platform/SourcesGLib.txt:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp:
+        (WebCore::LibWebRTCProvider::webRTCAvailable):
+
 2018-09-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE build fix.
