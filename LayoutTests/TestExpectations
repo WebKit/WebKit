@@ -2206,3 +2206,19 @@ webkit.org/b/172864 imported/blink/storage/indexeddb/blob-delete-objectstore-db.
 webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Skip ]
 
 [ Debug ] fast/multicol/crash-in-vertical-writing-mode.html [ Skip ]
+
+webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Failure ]
+webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
+
+webkit.org/b/187269 [ Debug ] imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html [ Skip ]
+
+webkit.org/b/185308 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
+
+fast/gradients/conic-repeating.html [ Skip ]
+fast/gradients/conic.html [ Skip ]
+fast/gradients/conic-off-center.html [ Skip ]
+fast/gradients/conic-center-outside-box.html [ Skip ]
+fast/gradients/conic-extended-stops.html [ Skip ]
+fast/gradients/conic-from-angle.html [ Skip ]
+
+webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
