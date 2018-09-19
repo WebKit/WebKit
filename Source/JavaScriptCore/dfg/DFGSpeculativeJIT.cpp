@@ -9233,8 +9233,9 @@ GPRReg SpeculativeJIT::temporaryRegisterForPutByVal(GPRTemporary& temporary, Arr
     return temporary.gpr();
 }
 
-void SpeculativeJIT::compileToStringOrCallStringConstructor(Node* node)
+void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node* node)
 {
+    ASSERT(node->op() != StringValueOf || node->child1().useKind() == UntypedUse);
     switch (node->child1().useKind()) {
     case NotCellUse: {
         JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);
@@ -9279,6 +9280,8 @@ void SpeculativeJIT::compileToStringOrCallStringConstructor(Node* node)
         }
         if (node->op() == ToString)
             callOperation(operationToString, resultGPR, op1Regs);
+        else if (node->op() == StringValueOf)
+            callOperation(operationStringValueOf, resultGPR, op1Regs);
         else {
             ASSERT(node->op() == CallStringConstructor);
             callOperation(operationCallStringConstructor, resultGPR, op1Regs);

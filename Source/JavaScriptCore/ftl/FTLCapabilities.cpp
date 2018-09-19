@@ -321,6 +321,7 @@ inline CapabilityLevel canCompile(Node* node)
     case SameValue:
     case DefineDataProperty:
     case DefineAccessorProperty:
+    case StringValueOf:
     case StringSlice:
     case ToLowerCase:
     case NumberToStringWithRadix:

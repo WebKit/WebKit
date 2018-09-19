@@ -1175,6 +1175,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case StringValueOf: {
+        clobberWorld();
+        setTypeForNode(node, SpecString);
+        break;
+    }
+
     case StringSlice: {
         setTypeForNode(node, SpecString);
         break;

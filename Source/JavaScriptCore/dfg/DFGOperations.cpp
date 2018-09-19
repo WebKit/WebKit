@@ -2013,6 +2013,24 @@ StringImpl* JIT_OPERATION operationResolveRope(ExecState* exec, JSString* string
     return string->value(exec).impl();
 }
 
+JSString* JIT_OPERATION operationStringValueOf(ExecState* exec, EncodedJSValue encodedArgument)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue argument = JSValue::decode(encodedArgument);
+
+    if (argument.isString())
+        return asString(argument);
+
+    if (auto* stringObject = jsDynamicCast<StringObject*>(vm, argument))
+        return stringObject->internalValue();
+
+    throwVMTypeError(exec, scope);
+    return nullptr;
+}
+
 JSCell* JIT_OPERATION operationStringSubstr(ExecState* exec, JSCell* cell, int32_t from, int32_t span)
 {
     VM& vm = exec->vm();
@@ -2128,7 +2146,7 @@ JSCell* JIT_OPERATION operationNewStringObject(ExecState* exec, JSString* string
     return StringObject::create(vm, structure, string);
 }
 
-JSCell* JIT_OPERATION operationToStringOnCell(ExecState* exec, JSCell* cell)
+JSString* JIT_OPERATION operationToStringOnCell(ExecState* exec, JSCell* cell)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2136,7 +2154,7 @@ JSCell* JIT_OPERATION operationToStringOnCell(ExecState* exec, JSCell* cell)
     return JSValue(cell).toString(exec);
 }
 
-JSCell* JIT_OPERATION operationToString(ExecState* exec, EncodedJSValue value)
+JSString* JIT_OPERATION operationToString(ExecState* exec, EncodedJSValue value)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2144,7 +2162,7 @@ JSCell* JIT_OPERATION operationToString(ExecState* exec, EncodedJSValue value)
     return JSValue::decode(value).toString(exec);
 }
 
-JSCell* JIT_OPERATION operationCallStringConstructorOnCell(ExecState* exec, JSCell* cell)
+JSString* JIT_OPERATION operationCallStringConstructorOnCell(ExecState* exec, JSCell* cell)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2152,7 +2170,7 @@ JSCell* JIT_OPERATION operationCallStringConstructorOnCell(ExecState* exec, JSCe
     return stringConstructor(exec, cell);
 }
 
-JSCell* JIT_OPERATION operationCallStringConstructor(ExecState* exec, EncodedJSValue value)
+JSString* JIT_OPERATION operationCallStringConstructor(ExecState* exec, EncodedJSValue value)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2160,7 +2178,7 @@ JSCell* JIT_OPERATION operationCallStringConstructor(ExecState* exec, EncodedJSV
     return stringConstructor(exec, JSValue::decode(value));
 }
 
-JSCell* JIT_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSString* right)
+JSString* JIT_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSString* right)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2168,7 +2186,7 @@ JSCell* JIT_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSStri
     return jsString(exec, left, right);
 }
 
-JSCell* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString* b, JSString* c)
+JSString* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString* b, JSString* c)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2176,7 +2194,7 @@ JSCell* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString*
     return jsString(exec, a, b, c);
 }
 
-JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, EncodedJSValue b)
+JSString* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, EncodedJSValue b)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2193,7 +2211,7 @@ JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, Encode
     return jsString(exec, str1, str2);
 }
     
-JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, EncodedJSValue b, EncodedJSValue c)
+JSString* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, EncodedJSValue b, EncodedJSValue c)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);

@@ -1248,7 +1248,7 @@ public:
     void emitSwitchString(Node*, SwitchData*);
     void emitSwitch(Node*);
     
-    void compileToStringOrCallStringConstructor(Node*);
+    void compileToStringOrCallStringConstructorOrStringValueOf(Node*);
     void compileNumberToStringWithRadix(Node*);
     void compileNumberToStringWithValidRadixConstant(Node*);
     void compileNumberToStringWithValidRadixConstant(Node*, int32_t radix);

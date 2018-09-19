@@ -891,7 +891,8 @@ private:
             break;
         case ToString:
         case CallStringConstructor:
-            compileToStringOrCallStringConstructor();
+        case StringValueOf:
+            compileToStringOrCallStringConstructorOrStringValueOf();
             break;
         case ToPrimitive:
             compileToPrimitive();
@@ -6119,8 +6120,9 @@ private:
         }
     }
     
-    void compileToStringOrCallStringConstructor()
+    void compileToStringOrCallStringConstructorOrStringValueOf()
     {
+        ASSERT(m_node->op() != StringValueOf || m_node->child1().useKind() == UntypedUse);
         switch (m_node->child1().useKind()) {
         case StringObjectUse: {
             LValue cell = lowCell(m_node->child1());
@@ -6191,10 +6193,14 @@ private:
             
             m_out.appendTo(notString, continuation);
             LValue operation;
-            if (m_node->child1().useKind() == CellUse)
+            if (m_node->child1().useKind() == CellUse) {
+                ASSERT(m_node->op() != StringValueOf);
                 operation = m_out.operation(m_node->op() == ToString ? operationToStringOnCell : operationCallStringConstructorOnCell);
-            else
-                operation = m_out.operation(m_node->op() == ToString ? operationToString : operationCallStringConstructor);
+            } else {
+                operation = m_out.operation(m_node->op() == ToString
+                    ? operationToString : m_node->op() == StringValueOf
+                    ? operationStringValueOf : operationCallStringConstructor);
+            }
             ValueFromBlock convertedResult = m_out.anchor(vmCall(Int64, operation, m_callFrame, value));
             m_out.jump(continuation);
             
