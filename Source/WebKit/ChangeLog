@@ -1,3 +1,30 @@
+2018-09-13  Keith Rollin  <krollin@apple.com>
+
+        WebPageProxy::reportPageLoadResult can crash on some code paths
+        https://bugs.webkit.org/show_bug.cgi?id=189568
+
+        Reviewed by Chris Dumez.
+
+        WebPageProxy::reportPageLoadResult (which is called from
+        WebPageProxy::didFinishLoadForFrame) can sometimes crash when
+        accessing m_pageLoadStart (a std::optional) in its unloaded state.
+        Normally, m_pageLoadStart is initialized in
+        WebPageProxy::didStartProvisionalLoadForFrame, which one would expect
+        would be called before WebPageProxy::didFinishLoadForFrame. But that
+        turns out to not always be the case. It's not apparent under what
+        conditions didStartProvisionalLoadForFrame will not be called, but
+        it's happening in the wild, leading to crashes now that std::optional
+        asserts in release builds on bad accesses (see
+        https://bugs.webkit.org/show_bug.cgi?id=189568).
+
+        Fix this by checking m_pageLoadState on entry to reportPageLoadResult.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::reportPageLoadResult):
+
 2018-08-31  John Wilander  <wilander@apple.com>
 
         Storage Access API: Maintain access through same-site navigations
