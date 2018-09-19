@@ -2078,7 +2078,7 @@ sub runInFlatpak(@)
     exec @command, argumentsForConfiguration(), "--command", @_, argumentsForConfiguration(), @ARGV or die;
 }
 
-sub runInFlatpakIfAvailible(@)
+sub runInFlatpakIfAvailable(@)
 {
     if (inFlatpakSandbox()) {
         return 0;

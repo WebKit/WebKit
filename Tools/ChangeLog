@@ -1,5 +1,16 @@
 2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE][GTK] Unreviewed, try #3 to fix a typo
+
+        I feel like Charlie Brown, how hard this has been for me....
+
+        * Scripts/run-minibrowser:
+        * Scripts/webkitdirs.pm:
+        (runInFlatpakIfAvailable):
+        (runInFlatpakIfAvailible): Deleted.
+
+2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][GTK] Unreviewed, fix that typo in more places
 
         It got copied into webkitdirs.pm!
