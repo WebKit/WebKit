@@ -36,8 +36,11 @@
 
 #include "DeprecatedGlobalSettings.h"
 #include "Logging.h"
+#include "NetworkStorageSession.h"
+#include "ResourceError.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include "SoupNetworkSession.h"
 #include "URL.h"
 #include <gio/gio.h>
 #include <glib.h>

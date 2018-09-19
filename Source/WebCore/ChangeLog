@@ -1,3 +1,11 @@
+2018-09-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix.
+
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        Add extra header inclusions to get this code building after the unified
+        sources system shifted it into a different translation unit.
+
 2018-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Many textarea tests leak documents because Document::removeFocusNavigationNodeOfSubtree() can trigger a Document retain cycle
