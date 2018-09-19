@@ -164,7 +164,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_readyTimerHandler(RunLoop::main(), this, &MediaPlayerPrivateGStreamer::readyTimerFired)
     , m_totalBytes(0)
     , m_preservesPitch(false)
-    , m_lastQuery(-1)
 {
 #if USE(GLIB)
     m_readyTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
@@ -344,11 +343,13 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
     if (m_isEndReached && m_seeking)
         return m_seekTime;
 
-    double now = WTF::WallTime::now().secondsSinceEpoch().milliseconds();
-    if (m_lastQuery > -1 && ((now - m_lastQuery) < 300) && m_cachedPosition.isValid())
+    // This constant should remain lower than HTMLMediaElement's maxTimeupdateEventFrequency.
+    static const Seconds positionCacheThreshold = 200_ms;
+    Seconds now = WTF::WallTime::now().secondsSinceEpoch();
+    if (m_lastQueryTime && (now - m_lastQueryTime.value()) < positionCacheThreshold && m_cachedPosition.isValid())
         return m_cachedPosition;
 
-    m_lastQuery = now;
+    m_lastQueryTime = now;
 
     // Position is only available if no async state change is going on and the state is either paused or playing.
     gint64 position = GST_CLOCK_TIME_NONE;
@@ -2149,6 +2150,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
     // Synchronize position and duration values to not confuse the
     // HTMLMediaElement. In some cases like reverse playback the
     // position is not always reported as 0 for instance.
+    m_cachedPosition = MediaTime::invalidTime();
     MediaTime now = currentMediaTime();
     if (now > MediaTime { } && now <= durationMediaTime())
         m_player->durationChanged();

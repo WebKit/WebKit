@@ -1,3 +1,22 @@
+2018-09-10  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Several media related tests timing out around the same revision
+        https://bugs.webkit.org/show_bug.cgi?id=189349
+
+        Reviewed by Carlos Garcia Campos.
+
+        The timeouts were happening because the `ended` event was no
+        longer properly emitted. The change in playbackPosition also
+        ensures `timeupdate` event remains emitted in a... timely manner.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+        Reduce the position cache threshold to 200ms, which is a value
+        slightly lower than the 250ms defined in HTMLMediaElement.
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd): Reset the cached
+        position value to ensure the following query will most likely
+        return the same value as reported by the duration query.
+
 2018-09-10  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest: overrideMimeType should not update the response's "Content-Type" header
