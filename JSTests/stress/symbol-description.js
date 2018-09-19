@@ -20,19 +20,31 @@ function shouldThrow(func, errorMessage) {
 
 var s0 = Symbol("Cocoa");
 var s1 = Symbol("Cappuccino");
+var s2 = Symbol("");
+var s3 = Symbol();
 
 shouldBe(s0.description, "Cocoa");
 shouldBe(s0.toString(), "Symbol(Cocoa)");
 shouldBe(s1.description, "Cappuccino");
 shouldBe(s1.toString(), "Symbol(Cappuccino)");
+shouldBe(s2.description, "");
+shouldBe(s2.toString(), "Symbol()");
+shouldBe(s3.description, undefined);
+shouldBe(s3.toString(), "Symbol()");
 
 var o0 = Object(s0);
 var o1 = Object(s1);
+var o2 = Object(s2);
+var o3 = Object(s3);
 
 shouldBe(o0.description, "Cocoa");
 shouldBe(o0.toString(), "Symbol(Cocoa)");
 shouldBe(o1.description, "Cappuccino");
 shouldBe(o1.toString(), "Symbol(Cappuccino)");
+shouldBe(o2.description, "");
+shouldBe(o2.toString(), "Symbol()");
+shouldBe(o3.description, undefined);
+shouldBe(o3.toString(), "Symbol()");
 
 var descriptor = Object.getOwnPropertyDescriptor(Symbol.prototype, "description");
 shouldBe(descriptor.enumerable, false);

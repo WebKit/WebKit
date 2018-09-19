@@ -105,7 +105,8 @@ String Symbol::descriptiveString() const
 
 String Symbol::description() const
 {
-    return privateName().uid();
+    auto& uid = privateName().uid();
+    return uid.isNullSymbol() ? String() : uid;
 }
 
 Symbol* Symbol::create(VM& vm)

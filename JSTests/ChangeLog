@@ -1,3 +1,16 @@
+2018-09-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ESNext] Symbol.prototype.description
+        https://bugs.webkit.org/show_bug.cgi?id=186686
+
+        Reviewed by Keith Miller.
+
+        * stress/symbol-description.js:
+        Add tests for empty and null symbol cases.
+
+        * test262/config.yaml:
+        Enable Symbol.prototype.description tests.
+
 2018-09-05  Mark Lam  <mark.lam@apple.com>
 
         isAsyncGeneratorMethodParseMode() should check for SourceParseMode::AsyncGeneratorWrapperMethodMode.
