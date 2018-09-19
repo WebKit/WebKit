@@ -52,6 +52,10 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
         if (debugManualPrevalentResource)
             setPrevalentResourceForDebugMode(debugManualPrevalentResource);
         setStorageAccessPromptsEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalStorageAccessPromptsEnabled"]);
+
+        Seconds cacheMaxAgeCapForPrevalentResources([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsCacheMaxAgeCap"]);
+        if (cacheMaxAgeCapForPrevalentResources > 0_s && cacheMaxAgeCapForPrevalentResources <= 24_h * 365)
+            setCacheMaxAgeCap(cacheMaxAgeCapForPrevalentResources);
     });
 }
 

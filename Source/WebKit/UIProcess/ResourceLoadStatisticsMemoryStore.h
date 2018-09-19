@@ -113,6 +113,7 @@ public:
     void setTimeToLiveUserInteraction(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
+    void setCacheMaxAgeCap(Seconds);
     void setResourceLoadStatisticsDebugMode(bool);
     bool isDebugModeEnabled() const { return m_debugModeEnabled; };
     void setPrevalentResourceForDebugMode(const String& domain);

@@ -143,6 +143,8 @@ public:
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
 #endif
+    void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
+    void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
     void networkProcessDidCrash();
     void resolveDirectoriesIfNecessary();
     const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration.applicationCacheDirectory; }

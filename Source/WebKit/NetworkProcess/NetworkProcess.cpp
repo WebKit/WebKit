@@ -473,6 +473,24 @@ void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vect
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
         networkStorageSession->removePrevalentDomains(domains);
 }
+
+void NetworkProcess::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, uint64_t contextId)
+{
+    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        networkStorageSession->setCacheMaxAgeCapForPrevalentResources(Seconds { seconds });
+    else
+        ASSERT_NOT_REACHED();
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSetCacheMaxAgeCapForPrevalentResources(contextId), 0);
+}
+
+void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, uint64_t contextId)
+{
+    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        networkStorageSession->resetCacheMaxAgeCapForPrevalentResources();
+    else
+        ASSERT_NOT_REACHED();
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidResetCacheMaxAgeCapForPrevalentResources(contextId), 0);
+}
 #endif
 
 bool NetworkProcess::sessionIsControlledByAutomation(PAL::SessionID sessionID) const

@@ -1358,6 +1358,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsCacheMaxAgeCap")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
+        WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);
+        TestController::singleton().setStatisticsCacheMaxAgeCap(WKDoubleGetValue(seconds));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
         if (m_shouldDumpResourceLoadStatistics)
             m_savedResourceLoadStatistics = TestController::singleton().dumpResourceLoadStatistics();

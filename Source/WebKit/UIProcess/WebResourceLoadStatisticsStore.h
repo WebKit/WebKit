@@ -125,6 +125,7 @@ public:
     void setTimeToLiveUserInteraction(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
+    void setCacheMaxAgeCap(Seconds, CompletionHandler<void()>&&);
     void setMaxStatisticsEntries(size_t);
     void setPruneEntriesDownTo(size_t);
 

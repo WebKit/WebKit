@@ -730,6 +730,7 @@ http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subreso
 http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Skip ]
+http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html [ Skip ]
 
 # Process swapping is only implemented on WebKit2.
 http/tests/navigation/process-swap-window-open.html [ Pass ]

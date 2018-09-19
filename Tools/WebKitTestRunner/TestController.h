@@ -221,6 +221,7 @@ public:
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     void statisticsClearThroughWebsiteDataRemoval();
+    void setStatisticsCacheMaxAgeCap(double seconds);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();

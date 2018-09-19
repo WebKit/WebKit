@@ -266,6 +266,13 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     return shouldBlockThirdPartyCookies(resourceDomain);
 }
 
+std::optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceRequest& request)
+{
+    if (m_cacheMaxAgeCapForPrevalentResources && shouldBlockCookies(request, std::nullopt, std::nullopt))
+        return m_cacheMaxAgeCapForPrevalentResources;
+    return std::nullopt;
+}
+
 void NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(const Vector<String>& domains, bool clearFirst)
 {
     if (clearFirst) {
@@ -370,6 +377,15 @@ void NetworkStorageSession::removeAllStorageAccess()
     m_framesGrantedStorageAccess.clear();
 }
 
+void NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources(Seconds seconds)
+{
+    m_cacheMaxAgeCapForPrevalentResources = seconds;
+}
+    
+void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
+{
+    m_cacheMaxAgeCapForPrevalentResources = std::nullopt;
+}
 #endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)
 
 #if !PLATFORM(COCOA)

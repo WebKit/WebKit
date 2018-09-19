@@ -1945,6 +1945,13 @@ void TestRunner::statisticsClearThroughWebsiteDataRemoval(JSValueRef callback)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
 
+void TestRunner::setStatisticsCacheMaxAgeCap(double seconds)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsCacheMaxAgeCap"));
+    WKRetainPtr<WKDoubleRef> messageBody(AdoptWK, WKDoubleCreate(seconds));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()
 {
     callTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID);

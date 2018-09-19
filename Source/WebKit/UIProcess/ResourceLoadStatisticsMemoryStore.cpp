@@ -832,6 +832,16 @@ void ResourceLoadStatisticsMemoryStore::setGrandfatheringTime(Seconds seconds)
     m_parameters.grandfatheringTime = seconds;
 }
 
+void ResourceLoadStatisticsMemoryStore::setCacheMaxAgeCap(Seconds seconds)
+{
+    ASSERT(!RunLoop::isMain());
+    ASSERT(seconds >= 0_s);
+
+    RunLoop::main().dispatch([store = makeRef(m_store), seconds] () {
+        store->setCacheMaxAgeCap(seconds, [] { });
+    });
+}
+
 bool ResourceLoadStatisticsMemoryStore::shouldRemoveDataRecords() const
 {
     ASSERT(!RunLoop::isMain());

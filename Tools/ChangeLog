@@ -1,3 +1,23 @@
+2018-09-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add optional cap on partitioned cache max age
+        https://bugs.webkit.org/show_bug.cgi?id=189711
+        <rdar://problem/39246837>
+
+        Reviewed by Antti Koivisto and Chris Dumez.
+
+        This change adds infrastructure for layout tests of capped cache max age.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsCacheMaxAgeCap):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsCacheMaxAgeCap):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2018-09-19  Dawei Fenton  <realdawei@apple.com>
 
        Unreviewed. Update my email and alias in list of contributors.

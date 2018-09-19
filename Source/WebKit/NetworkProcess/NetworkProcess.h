@@ -146,6 +146,8 @@ public:
     void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId);
     void removeAllStorageAccess(PAL::SessionID, uint64_t contextId);
     void removePrevalentDomains(PAL::SessionID, const Vector<String>& domains);
+    void setCacheMaxAgeCapForPrevalentResources(PAL::SessionID, Seconds, uint64_t contextId);
+    void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, uint64_t contextId);
 #endif
 
     Seconds loadThrottleLatency() const { return m_loadThrottleLatency; }

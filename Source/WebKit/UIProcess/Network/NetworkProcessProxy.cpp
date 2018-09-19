@@ -404,15 +404,9 @@ void NetworkProcessProxy::didUpdateBlockCookies(uint64_t callbackId)
     m_updateBlockCookiesCallbackMap.take(callbackId)();
 }
 
-static uint64_t nextRequestStorageAccessContextId()
-{
-    static uint64_t nextContextId = 0;
-    return ++nextContextId;
-}
-
 void NetworkProcessProxy::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool)>&& callback)
 {
-    auto contextId = nextRequestStorageAccessContextId();
+    auto contextId = generateCallbackID();
     auto addResult = m_storageAccessResponseCallbackMap.add(contextId, WTFMove(callback));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     send(Messages::NetworkProcess::HasStorageAccessForFrame(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, contextId), 0);
@@ -420,7 +414,7 @@ void NetworkProcessProxy::hasStorageAccessForFrame(PAL::SessionID sessionID, con
 
 void NetworkProcessProxy::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::CompletionHandler<void(bool)>&& callback)
 {
-    auto contextId = nextRequestStorageAccessContextId();
+    auto contextId = generateCallbackID();
     auto addResult = m_storageAccessResponseCallbackMap.add(contextId, WTFMove(callback));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     send(Messages::NetworkProcess::GrantStorageAccess(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, contextId), 0);
@@ -439,7 +433,7 @@ void NetworkProcessProxy::removeAllStorageAccess(PAL::SessionID sessionID, Compl
         return;
     }
 
-    auto contextId = nextRequestStorageAccessContextId();
+    auto contextId = generateCallbackID();
     auto addResult = m_removeAllStorageAccessCallbackMap.add(contextId, WTFMove(completionHandler));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     send(Messages::NetworkProcess::RemoveAllStorageAccess(sessionID, contextId), 0);
@@ -453,7 +447,7 @@ void NetworkProcessProxy::didRemoveAllStorageAccess(uint64_t contextId)
 
 void NetworkProcessProxy::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&& domains)>&& callback)
 {
-    auto contextId = nextRequestStorageAccessContextId();
+    auto contextId = generateCallbackID();
     auto addResult = m_allStorageAccessEntriesCallbackMap.add(contextId, WTFMove(callback));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     send(Messages::NetworkProcess::GetAllStorageAccessEntries(sessionID, contextId), 0);
@@ -463,6 +457,44 @@ void NetworkProcessProxy::allStorageAccessEntriesResult(Vector<String>&& domains
 {
     auto callback = m_allStorageAccessEntriesCallbackMap.take(contextId);
     callback(WTFMove(domains));
+}
+
+void NetworkProcessProxy::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+    
+    auto contextId = generateCallbackID();
+    auto addResult = m_updateRuntimeSettingsCallbackMap.add(contextId, WTFMove(completionHandler));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::NetworkProcess::SetCacheMaxAgeCapForPrevalentResources(sessionID, seconds, contextId), 0);
+}
+
+void NetworkProcessProxy::didSetCacheMaxAgeCapForPrevalentResources(uint64_t contextId)
+{
+    auto completionHandler = m_updateRuntimeSettingsCallbackMap.take(contextId);
+    completionHandler();
+}
+
+void NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+    
+    auto contextId = generateCallbackID();
+    auto addResult = m_updateRuntimeSettingsCallbackMap.add(contextId, WTFMove(completionHandler));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::NetworkProcess::ResetCacheMaxAgeCapForPrevalentResources(sessionID, contextId), 0);
+}
+
+void NetworkProcessProxy::didResetCacheMaxAgeCapForPrevalentResources(uint64_t contextId)
+{
+    auto completionHandler = m_updateRuntimeSettingsCallbackMap.take(contextId);
+    completionHandler();
 }
 #endif
 

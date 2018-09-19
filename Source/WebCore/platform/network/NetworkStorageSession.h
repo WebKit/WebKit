@@ -110,6 +110,9 @@ public:
     WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
     WEBCORE_EXPORT void removeStorageAccessForAllFramesOnPage(uint64_t pageID);
     WEBCORE_EXPORT void removeAllStorageAccess();
+    WEBCORE_EXPORT void setCacheMaxAgeCapForPrevalentResources(Seconds);
+    WEBCORE_EXPORT void resetCacheMaxAgeCapForPrevalentResources();
+    WEBCORE_EXPORT std::optional<Seconds> maxAgeCacheCap(const ResourceRequest&);
 #endif
 #elif USE(SOUP)
     NetworkStorageSession(PAL::SessionID, std::unique_ptr<SoupNetworkSession>&&);
@@ -187,6 +190,7 @@ private:
     HashSet<String> m_topPrivatelyControlledDomainsToBlock;
     HashMap<uint64_t, HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
     HashMap<uint64_t, HashMap<String, String>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pagesGrantedStorageAccess;
+    std::optional<Seconds> m_cacheMaxAgeCapForPrevalentResources { };
 #endif
 
 #if PLATFORM(COCOA)

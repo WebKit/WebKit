@@ -1,3 +1,22 @@
+2018-09-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add optional cap on partitioned cache max age
+        https://bugs.webkit.org/show_bug.cgi?id=189711
+        <rdar://problem/39246837>
+
+        Reviewed by Antti Koivisto and Chris Dumez.
+
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html: Added.
+        * http/tests/resourceLoadStatistics/resources/cached-permanent-redirect.php: Added.
+        * http/tests/resourceLoadStatistics/resources/echo-query.php: Added.
+        * platform/ios/TestExpectations:
+            New test marked as [ Pass ].
+        * platform/mac-wk2/TestExpectations:
+            New test marked as [ Pass ].
+        * platform/wk2/TestExpectations:
+            New test marked as [ Skip ] because it's not supported on non-Cocoa platforms.
+
 2018-09-19  Youenn Fablet  <youenn@apple.com>
 
         Layout Test webrtc/video-mute.html is flaky.

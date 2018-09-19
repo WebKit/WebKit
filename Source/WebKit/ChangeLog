@@ -1,3 +1,72 @@
+2018-09-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add optional cap on partitioned cache max age
+        https://bugs.webkit.org/show_bug.cgi?id=189711
+        <rdar://problem/39246837>
+
+        Reviewed by Antti Koivisto and Chris Dumez.
+
+        These changes add the capability to set a max age cap for prevalent resources
+        and consults it when retrieving cache entries. If an entry is capped and found
+        to be too old, it will not be used but instead removed from the cache.
+
+        This functionality is off by default because no cap is set by default.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcess::resetCacheMaxAgeCapForPrevalentResources):
+            Infrastructure for testing.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+            Now sends in the session ID in the retrieve call.
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::hasReachedPrevalentResourceAgeCap):
+            Static convenience function.
+        (WebKit::NetworkCache::makeUseDecision):
+            Now receives an optional maxAge parameter and checks
+            hasReachedPrevalentResourceAgeCap() first.
+        (WebKit::NetworkCache::Cache::retrieve):
+            Now takes a session ID.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::cachedEntryReuseFailureToDiagnosticKey):
+            Added UseDecision::NoDueToPrevalentResourceAgeCap which causes a
+            return of WebCore::DiagnosticLoggingKeys::otherKey().
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap):
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+            Infrastructure for testing.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Cocoa/ResourceLoadStatisticsMemoryStoreCocoa.mm:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded):
+            Now supports a user default ResourceLoadStatisticsCacheMaxAgeCap.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::hasStorageAccessForFrame):
+        (WebKit::NetworkProcessProxy::grantStorageAccess):
+        (WebKit::NetworkProcessProxy::removeAllStorageAccess):
+        (WebKit::NetworkProcessProxy::getAllStorageAccessEntries):
+        (WebKit::NetworkProcessProxy::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcessProxy::didSetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcessProxy::didResetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::nextRequestStorageAccessContextId): Deleted.
+            Deleted this to make all code use the generic generateCallbackID().
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+            Used to transfer the setting from the UI process to the network process. 
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::setCacheMaxAgeCap):
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setCacheMaxAgeCap):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-09-18  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Allow WebContent process to check the "Protocol Characteristics" of files to which it has access

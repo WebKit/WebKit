@@ -1342,6 +1342,35 @@ void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFra
 }
 #endif
 
+void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, CompletionHandler<void()>&& completionHandler)
+{
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->setCacheMaxAgeCapForPrevalentResources(m_sessionID, seconds, [callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+#else
+    UNUSED_PARAM(seconds);
+    completionHandler();
+#endif
+}
+
+void WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&& completionHandler)
+{
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->resetCacheMaxAgeCapForPrevalentResources(m_sessionID, [callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+#else
+    completionHandler();
+#endif
+}
+
 void WebsiteDataStore::networkProcessDidCrash()
 {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
