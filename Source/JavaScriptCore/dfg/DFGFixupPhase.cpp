@@ -1783,7 +1783,7 @@ private:
                 }
                 if (!set.isEmpty()) {
                     fixEdge<CellUse>(node->child1());
-                    node->convertToCheckStructure(m_graph.addStructureSet(set));
+                    node->convertToCheckStructureOrEmpty(m_graph.addStructureSet(set));
                 }
             }
 

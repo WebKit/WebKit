@@ -461,6 +461,15 @@ public:
         m_opInfo = set;
     }
 
+    void convertToCheckStructureOrEmpty(RegisteredStructureSet* set)
+    {
+        if (SpecCellCheck & SpecEmpty)
+            setOpAndDefaultFlags(CheckStructureOrEmpty);
+        else
+            setOpAndDefaultFlags(CheckStructure);
+        m_opInfo = set;
+    }
+
     void convertCheckStructureOrEmptyToCheckStructure()
     {
         ASSERT(op() == CheckStructureOrEmpty);

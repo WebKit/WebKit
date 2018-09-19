@@ -1,3 +1,16 @@
+2018-09-17  Saam barati  <sbarati@apple.com>
+
+        We must convert ProfileType to CheckStructureOrEmpty instead of CheckStructure
+        https://bugs.webkit.org/show_bug.cgi?id=189676
+        <rdar://problem/39682897>
+
+        Reviewed by Michael Saboff.
+
+        * typeProfiler/check-structure-or-empty-in-fixup.js: Added.
+        (A):
+        (K):
+        (i.catch):
+
 2018-09-14  Saam barati  <sbarati@apple.com>
 
         Don't dump OSRAvailabilityData in Graph::dump because a stale Availability may point to a Node that is already freed
