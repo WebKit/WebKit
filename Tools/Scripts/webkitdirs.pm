@@ -2078,14 +2078,14 @@ sub runInFlatpak(@)
     exec @command, argumentsForConfiguration(), "--command", @_, argumentsForConfiguration(), @ARGV or die;
 }
 
-sub runInFlatpakIfAvalaible(@)
+sub runInFlatpakIfAvailible(@)
 {
     if (inFlatpakSandbox()) {
         return 0;
     }
 
     my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "webkit-flatpak"));
-    if (system(@command, "--avalaible") != 0) {
+    if (system(@command, "--available") != 0) {
         return 0;
     }
 

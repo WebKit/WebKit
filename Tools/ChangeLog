@@ -1,5 +1,15 @@
 2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE][GTK] Unreviewed, fix that typo in more places
+
+        It got copied into webkitdirs.pm!
+
+        * Scripts/webkitdirs.pm:
+        (runInFlatpakIfAvailible):
+        (runInFlatpakIfAvalaible): Deleted.
+
+2018-09-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][GTK] Unreviewed, fix a pervasive typo in the webkit-flatpak script
 
         * flatpak/flatpakutils.py:
