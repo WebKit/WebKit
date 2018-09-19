@@ -93,7 +93,7 @@ void KeyedEncoderGlib::encodeString(const String& key, const String& value)
 
 void KeyedEncoderGlib::beginObject(const String& key)
 {
-    GRefPtr<GVariantBuilder> builder = adoptGRef(g_variant_builder_new(G_VARIANT_TYPE("aa{sv}")));
+    GRefPtr<GVariantBuilder> builder = adoptGRef(g_variant_builder_new(G_VARIANT_TYPE("a{sv}")));
     m_objectStack.append(std::make_pair(key, builder));
     m_variantBuilderStack.append(builder.get());
 }
