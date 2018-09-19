@@ -1,3 +1,16 @@
+2018-09-19  Saam barati  <sbarati@apple.com>
+
+        AI rule for MultiPutByOffset executes its effects in the wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=189757
+        <rdar://problem/43535257>
+
+        Reviewed by Michael Saboff.
+
+        * stress/multi-put-by-offset-must-filter-value-before-filtering-base.js: Added.
+        (foo):
+        (Foo):
+        (g):
+
 2018-09-17  Mark Lam  <mark.lam@apple.com>
 
         Ensure that ForInContexts are invalidated if their loop local is over-written.
