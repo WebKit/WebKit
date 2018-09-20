@@ -1,3 +1,12 @@
+2018-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed crash fix after r236226.
+
+        We need to protect |this| in WebProcessProxy::requestTermination().
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+
 2018-09-20  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (PSON): White or Black flash occurs when process swapping on navigation on Mac
