@@ -186,16 +186,27 @@ enum {
     kHIDUsage_KeyboardPeriod = 0x37,
     kHIDUsage_KeyboardSlash = 0x38,
     kHIDUsage_KeyboardF1 = 0x3A,
+    kHIDUsage_KeyboardPrintScreen = 0x46,
+    kHIDUsage_KeyboardInsert = 0x49,
     kHIDUsage_KeyboardHome = 0x4A,
     kHIDUsage_KeyboardPageUp = 0x4B,
+    kHIDUsage_KeyboardDeleteForward = 0x4C,
     kHIDUsage_KeyboardEnd = 0x4D,
+    kHIDUsage_KeyboardPageDown = 0x4E,
     kHIDUsage_KeyboardRightArrow = 0x4F,
     kHIDUsage_KeyboardLeftArrow = 0x50,
     kHIDUsage_KeyboardDownArrow = 0x51,
     kHIDUsage_KeyboardUpArrow = 0x52,
+    kHIDUsage_KeyboardF13 = 0x68,
+    kHIDUsage_KeyboardMenu = 0x76,
     kHIDUsage_KeyboardLeftControl = 0xE0,
     kHIDUsage_KeyboardLeftShift = 0xE1,
-    kHIDUsage_KeyboardLeftAlt = 0xE2
+    kHIDUsage_KeyboardLeftAlt = 0xE2,
+    kHIDUsage_KeyboardLeftGUI = 0xE3,
+    kHIDUsage_KeyboardRightControl = 0xE4,
+    kHIDUsage_KeyboardRightShift = 0xE5,
+    kHIDUsage_KeyboardRightAlt = 0xE6,
+    kHIDUsage_KeyboardRightGUI = 0xE7,
 };
 
 WTF_EXTERN_C_END

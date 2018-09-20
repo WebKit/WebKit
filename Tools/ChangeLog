@@ -1,3 +1,17 @@
+2018-09-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Support testing more hardware special keys
+        https://bugs.webkit.org/show_bug.cgi?id=189793
+
+        Reviewed by Simon Fraser.
+
+        * TestRunnerShared/spi/IOKitSPI.h: Add more SPI constants.
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (keyCodeForDOMFunctionKey): Extracted out logic from hidUsageCodeForCharacter() to return the
+        key code for the F1, F2, ..., F12 keys and extended the code to compute the key code for the
+        F13, F14, ..., F24 keys.
+        (hidUsageCodeForCharacter): Modified to call keyCodeForDOMFunctionKey().
+
 2018-09-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, remove accidentally-committed debugging changes from flatpakutils script

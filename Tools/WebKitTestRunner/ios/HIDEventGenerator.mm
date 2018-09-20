@@ -32,6 +32,7 @@
 #import <mach/mach_time.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
@@ -825,6 +826,22 @@ static inline bool shouldWrapWithShiftKeyEventForCharacter(NSString *key)
     return false;
 }
 
+static std::optional<uint32_t> keyCodeForDOMFunctionKey(NSString *key)
+{
+    // Compare the input string with the function-key names defined by the DOM spec (i.e. "F1",...,"F24").
+    // If the input string is a function-key name, set its key code. On iOS the key codes for the first 12
+    // function keys are disjoint from the key codes of the last 12 function keys.
+    for (int i = 1; i <= 12; ++i) {
+        if ([key isEqualToString:[NSString stringWithFormat:@"F%d", i]])
+            return kHIDUsage_KeyboardF1 + i - 1;
+    }
+    for (int i = 13; i <= 24; ++i) {
+        if ([key isEqualToString:[NSString stringWithFormat:@"F%d", i]])
+            return kHIDUsage_KeyboardF13 + i - 1;
+    }
+    return std::nullopt;
+}
+
 static inline uint32_t hidUsageCodeForCharacter(NSString *key)
 {
     const int uppercaseAlphabeticOffset = 'A' - kHIDUsage_KeyboardA;
@@ -907,11 +924,20 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
             return kHIDUsage_KeyboardSpacebar;
         }
     }
-    const int functionKeyOffset = kHIDUsage_KeyboardF1;
-    for (int functionKeyIndex = 1; functionKeyIndex <= 12; ++functionKeyIndex) {
-        if ([key isEqualToString:[NSString stringWithFormat:@"F%d", functionKeyIndex]])
-            return functionKeyOffset + functionKeyIndex - 1;
-    }
+
+    if (auto keyCode = keyCodeForDOMFunctionKey(key))
+        return *keyCode;
+
+    if ([key isEqualToString:@"pageUp"])
+        return kHIDUsage_KeyboardPageUp;
+    if ([key isEqualToString:@"pageDown"])
+        return kHIDUsage_KeyboardPageDown;
+    if ([key isEqualToString:@"home"])
+        return kHIDUsage_KeyboardHome;
+    if ([key isEqualToString:@"insert"])
+        return kHIDUsage_KeyboardInsert;
+    if ([key isEqualToString:@"end"])
+        return kHIDUsage_KeyboardEnd;
     if ([key isEqualToString:@"escape"])
         return kHIDUsage_KeyboardEscape;
     if ([key isEqualToString:@"return"] || [key isEqualToString:@"enter"])
@@ -926,6 +952,10 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         return kHIDUsage_KeyboardDownArrow;
     if ([key isEqualToString:@"delete"])
         return kHIDUsage_KeyboardDeleteOrBackspace;
+    if ([key isEqualToString:@"leftCommand"])
+        return kHIDUsage_KeyboardLeftGUI;
+    if ([key isEqualToString:@"rightCommand"])
+        return kHIDUsage_KeyboardRightGUI;
     // The simulator keyboard interprets both left and right modifier keys using the left version of the usage code.
     if ([key isEqualToString:@"leftControl"] || [key isEqualToString:@"rightControl"])
         return kHIDUsage_KeyboardLeftControl;

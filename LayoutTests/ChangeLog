@@ -1,3 +1,16 @@
+2018-09-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Support testing more hardware special keys
+        https://bugs.webkit.org/show_bug.cgi?id=189793
+
+        Reviewed by Simon Fraser.
+
+        For now, many of the DOM keydown and keyup events for special hardware keys are wrong.
+        We will fix this up in a subsequent commit(s).
+
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element-expected.txt: Added.
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element.html: Added.
+
 2018-09-20  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Update the parser according to the new region syntax.
