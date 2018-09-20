@@ -1,3 +1,31 @@
+2018-09-20  Brent Fulgham  <bfulgham@apple.com>
+
+        InjectedBundle parameters often need initialization function called before unarchiving
+        https://bugs.webkit.org/show_bug.cgi?id=189709
+        <rdar://problem/44573653>
+
+        Reviewed by Chris Dumez.
+
+        Handle the case where the InjectedBundle parameters do not successfully decode because they contain
+        an unexpected class from the embedding program. If this happens, try decoding the bundle parameters
+        after the bundle initialiation function runs, which gives the embedding program the opportunity to
+        register additional classes that are safe for serialization.
+        
+        Create a new 'decodeBundleParameters' method that contains the logic that used to live in 'initialize'.
+        This new method returns 'true' if the serialization was successful, otherwise it returns false.
+
+        Revise 'initialize' to call this new method and check the return value. If it fails, try decoding the
+        bundle parameters after the bundle's initialization function is called.
+
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::initialize): Use the new method.
+        (WebKit::InjectedBundle::decodeBundleParameters): Added.
+        (WebKit::InjectedBundle::setBundleParameters): Use 'decodeObjectOfClasses' with the more complete
+        'classesForCoder' method to unarchive the passed bundle parameters, rather than the
+        NSDictionary-specific method, since InjectedBundles often encode other types of objects, and the
+        NSDictionary object may itself hold other kinds of objects.
+
 2018-09-20  Jer Noble  <jer.noble@apple.com>
 
         Enable Modern EME by default

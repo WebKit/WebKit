@@ -98,35 +98,21 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         }
     }
 
-#if WK_API_ENABLED
-    if (parameters.bundleParameterData) {
-        auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(parameters.bundleParameterData->bytes())) length:parameters.bundleParameterData->size() freeWhenDone:NO]);
-
-        auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
-
-        NSDictionary *dictionary = nil;
-        @try {
-            dictionary = [unarchiver.get() decodeObjectOfClass:[NSObject class] forKey:@"parameters"];
-            ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
-        } @catch (NSException *exception) {
-            LOG_ERROR("Failed to decode bundle parameters: %@", exception);
-        }
-
-        ASSERT(!m_bundleParameters);
-        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
-    }
-#endif
-    
     if (!initializeFunction)
         initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
 
     // First check to see if the bundle has a WKBundleInitialize function.
     if (initializeFunction) {
         initializeFunction(toAPI(this), toAPI(initializationUserData));
+#if WK_API_ENABLED
+        decodeBundleParameters(parameters.bundleParameterData.get());
+#endif
         return true;
     }
 
 #if WK_API_ENABLED
+    decodeBundleParameters(parameters.bundleParameterData.get());
+
     // Otherwise, look to see if the bundle has a principal class
     Class principalClass = [m_platformBundle principalClass];
     if (!principalClass) {
@@ -205,6 +191,29 @@ NSSet* InjectedBundle::classesForCoder()
 
     return m_classesForCoder.get();
 }
+
+void InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
+{
+    if (!bundleParameterDataPtr)
+        return;
+
+    auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(bundleParameterDataPtr->bytes())) length:bundleParameterDataPtr->size() freeWhenDone:NO]);
+    
+    auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
+    
+    NSDictionary *dictionary = nil;
+    @try {
+        dictionary = [unarchiver.get() decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
+        ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to decode bundle parameters: %@", exception);
+        return;
+    }
+    
+    ASSERT(!m_bundleParameters || m_bundleParameters.get());
+    m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
+}
+
 #endif
 
 void InjectedBundle::setBundleParameter(const String& key, const IPC::DataReference& value)
@@ -238,13 +247,15 @@ void InjectedBundle::setBundleParameters(const IPC::DataReference& value)
 
     NSDictionary *parameters = nil;
     @try {
-        parameters = [unarchiver decodeObjectOfClass:[NSDictionary class] forKey:@"parameters"];
+        parameters = [unarchiver decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode bundle parameter: %@", exception);
     }
 
     if (!parameters)
         return;
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION([parameters isKindOfClass:[NSDictionary class]]);
 
     if (!m_bundleParameters) {
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:parameters]);
