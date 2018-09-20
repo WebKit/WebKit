@@ -1,3 +1,12 @@
+2018-09-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r235962-r235963): Layout Test animations/suspend-resume-animation-events.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=189607
+
+        Unreivewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Mark test as flaky.
+
 2018-09-20  Dawei Fenton  <realdawei@apple.com>
 
         WebGL 2 updated test expectations.
