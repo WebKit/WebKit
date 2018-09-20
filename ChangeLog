@@ -1,3 +1,11 @@
+2018-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update GTK+ library versions after r235362.
+
+        Project version number was updated without bumping the library versions too.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2018-09-12  Dan Bernstein  <mitz@apple.com>
 
         Updated svn:ignore after r235381.
