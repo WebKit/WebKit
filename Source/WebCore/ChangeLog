@@ -1,5 +1,29 @@
 2018-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Improve node statistics for rare data
+        https://bugs.webkit.org/show_bug.cgi?id=189775
+
+        Reviewed by Simon Fraser.
+
+        Report reasons we created NodeRareData and ElementRareData in node statistics.
+
+        Added NodeRareData::useTypes and ElementRareData::useTypes which returns OptionSet<NodeRareData::UseType>
+        indicating which instance member of the rare data is currently in use.
+
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::defaultMinimumSizeForResizing):
+        (WebCore::ElementRareData::useTypes const):
+        * dom/Node.cpp:
+        (WebCore::stringForRareDataUseType):
+        (WebCore::Node::dumpStatistics):
+        * dom/NodeRareData.cpp:
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::useTypes const):
+
+2018-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r235917): 2% regression in Dromaeo CSS selector on MacBookPro11,4
         https://bugs.webkit.org/show_bug.cgi?id=189738
 

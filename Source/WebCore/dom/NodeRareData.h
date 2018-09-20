@@ -26,7 +26,6 @@
 #include "HTMLNames.h"
 #include "LiveNodeList.h"
 #include "MutationObserverRegistration.h"
-#include "Page.h"
 #include "QualifiedName.h"
 #include "TagCollection.h"
 #include <wtf/HashSet.h>
@@ -250,6 +249,27 @@ public:
 class NodeRareData : public NodeRareDataBase {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:
+#if defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS
+    enum class UseType : uint16_t {
+        ConnectedFrameCount = 1 << 0,
+        NodeList = 1 << 1,
+        MutationObserver = 1 << 2,
+
+        TabIndex = 1 << 3,
+        StyleFlags = 1 << 4,
+        MinimumSize = 1 << 5,
+        ScrollingPosition = 1 << 6,
+        ComputedStyle = 1 << 7,
+        Dataset = 1 << 8,
+        ClassList = 1 << 9,
+        ShadowRoot = 1 << 10,
+        CustomElementQueue = 1 << 11,
+        AttributeMap = 1 << 12,
+        InteractionObserver = 1 << 13,
+        PseudoElements = 1 << 14,
+    };
+#endif
+
     NodeRareData(RenderObject* renderer)
         : NodeRareDataBase(renderer)
         , m_connectedFrameCount(0)
@@ -284,6 +304,20 @@ public:
         m_connectedFrameCount -= amount;
     }
 
+#if DUMP_NODE_STATISTICS
+    OptionSet<UseType> useTypes() const
+    {
+        OptionSet<UseType> result;
+        if (m_connectedFrameCount)
+            result.add(UseType::ConnectedFrameCount);
+        if (m_nodeLists)
+            result.add(UseType::NodeList);
+        if (m_mutationObserverData)
+            result.add(UseType::MutationObserver);
+        return result;
+    }
+#endif
+
 private:
     unsigned m_connectedFrameCount : 10; // Must fit Page::maxNumberOfFrames.
 
@@ -313,8 +347,5 @@ inline NodeRareData& Node::ensureRareData()
         materializeRareData();
     return *rareData();
 }
-
-// Ensure the 10 bits reserved for the m_connectedFrameCount cannot overflow
-static_assert(Page::maxNumberOfFrames < 1024, "Frame limit should fit in rare data count");
 
 } // namespace WebCore

@@ -91,6 +91,44 @@ static HashSet<Node*>& liveNodeSet()
     static NeverDestroyed<HashSet<Node*>> liveNodes;
     return liveNodes;
 }
+
+static const char* stringForRareDataUseType(NodeRareData::UseType useType)
+{
+    switch (useType) {
+    case NodeRareData::UseType::ConnectedFrameCount:
+        return "ConnectedFrameCount";
+    case NodeRareData::UseType::NodeList:
+        return "NodeList";
+    case NodeRareData::UseType::MutationObserver:
+        return "MutationObserver";
+    case NodeRareData::UseType::TabIndex:
+        return "TabIndex";
+    case NodeRareData::UseType::StyleFlags:
+        return "StyleFlags";
+    case NodeRareData::UseType::MinimumSize:
+        return "MinimumSize";
+    case NodeRareData::UseType::ScrollingPosition:
+        return "ScrollingPosition";
+    case NodeRareData::UseType::ComputedStyle:
+        return "ComputedStyle";
+    case NodeRareData::UseType::Dataset:
+        return "Dataset";
+    case NodeRareData::UseType::ClassList:
+        return "ClassList";
+    case NodeRareData::UseType::ShadowRoot:
+        return "ShadowRoot";
+    case NodeRareData::UseType::CustomElementQueue:
+        return "CustomElementQueue";
+    case NodeRareData::UseType::AttributeMap:
+        return "AttributeMap";
+    case NodeRareData::UseType::InteractionObserver:
+        return "InteractionObserver";
+    case NodeRareData::UseType::PseudoElements:
+        return "PseudoElements";
+    }
+    return nullptr;
+}
+
 #endif
 
 void Node::dumpStatistics()
@@ -117,6 +155,9 @@ void Node::dumpStatistics()
     size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
+    HashMap<uint16_t, size_t> rareDataSingleUseTypeCounts;
+    size_t mixedRareDataUseCount = 0;
+
     for (auto* node : liveNodeSet()) {
         if (node->hasRareData()) {
             ++nodesWithRareData;
@@ -125,6 +166,18 @@ void Node::dumpStatistics()
                 if (downcast<Element>(*node).hasNamedNodeMap())
                     ++elementsWithNamedNodeMap;
             }
+            auto* rareData = node->rareData();
+            auto useTypes = is<Element>(node) ? static_cast<ElementRareData*>(rareData)->useTypes() : rareData->useTypes();
+            unsigned useTypeCount = 0;
+            for (auto type : useTypes) {
+                UNUSED_PARAM(type);
+                useTypeCount++;
+            }
+            if (useTypeCount == 1) {
+                auto result = rareDataSingleUseTypeCounts.add(static_cast<uint16_t>(*useTypes.begin()), 0);
+                result.iterator->value++;
+            } else
+                mixedRareDataUseCount++;
         }
 
         switch (node->nodeType()) {
@@ -143,7 +196,7 @@ void Node::dumpStatistics()
                     ++elementsWithAttributeStorage;
                     for (unsigned i = 0; i < length; ++i) {
                         const Attribute& attr = elementData->attributeAt(i);
-                        if (!attr.isEmpty())
+                        if (element.attrIfExists(attr.name()))
                             ++attributesWithAttr;
                     }
                 }
@@ -188,7 +241,12 @@ void Node::dumpStatistics()
     }
 
     printf("Number of Nodes: %d\n\n", liveNodeSet().size());
-    printf("Number of Nodes with RareData: %zu\n\n", nodesWithRareData);
+    printf("Number of Nodes with RareData: %zu\n", nodesWithRareData);
+    printf("  Mixed use: %zu\n", mixedRareDataUseCount);
+    for (auto it : rareDataSingleUseTypeCounts)
+        printf("  %s: %zu\n", stringForRareDataUseType(static_cast<NodeRareData::UseType>(it.key)), it.value);
+    printf("\n");
+
 
     printf("NodeType distribution:\n");
     printf("  Number of Element nodes: %zu\n", elementNodes);

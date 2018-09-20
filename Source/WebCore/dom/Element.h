@@ -104,7 +104,7 @@ public:
     WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif
 
-#ifdef DUMP_NODE_STATISTICS
+#if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;
 #endif
     WEBCORE_EXPORT bool hasAttributes() const;
