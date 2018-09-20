@@ -612,9 +612,9 @@ class WebkitFlatpak:
 
         repos = FlatpakRepos()
         self.sdk_repo = repos.add(
-            FlatpakRepo("gnome-nightly",
-                        url="https://sdk.gnome.org/nightly/repo/",
-                        repo_file="https://sdk.gnome.org/gnome-nightly.flatpakrepo"))
+            FlatpakRepo("flathub",
+                        url="https://dl.flathub.org/repo/",
+                        repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo"))
 
         manifest = load_manifest(self.manifest_path)
         if not manifest:
@@ -625,14 +625,14 @@ class WebkitFlatpak:
         self.finish_args = remove_extension_points(self.finish_args)
         self.runtime = FlatpakPackage("org.gnome.Platform", self.sdk_branch,
                                       self.sdk_repo, "x86_64",
-                                      hash=manifest.get("runtime-hash"),
+                                      #hash=manifest.get("runtime-hash"),
                                       assumeyes=self.assumeyes)
         self.locale = FlatpakPackage("org.gnome.Platform.Locale",
                                      self.sdk_branch, self.sdk_repo, "x86_64",
                                      assumeyes=self.assumeyes)
         self.sdk = FlatpakPackage("org.gnome.Sdk", self.sdk_branch,
                                   self.sdk_repo, "x86_64",
-                                  hash=manifest.get("sdk-hash"),
+                                  #hash=manifest.get("sdk-hash"),
                                   assumeyes=self.assumeyes)
         self.packs = [self.runtime, self.locale, self.sdk]
 

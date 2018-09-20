@@ -1,0 +1,50 @@
+From b5ebe404f1388ddda3603e53277f87e0b96ba695 Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Mon, 11 Jun 2018 16:14:38 -0400
+Subject: [PATCH] configure: use pkg-config for PCRE detection
+
+---
+ configure.in | 27 +++++----------------------
+ 1 file changed, 5 insertions(+), 22 deletions(-)
+
+diff --git a/configure.in b/configure.in
+index 761e836..b155d4b 100644
+--- a/configure.in
++++ b/configure.in
+@@ -215,28 +215,11 @@ fi
+ AC_ARG_WITH(pcre,
+ APACHE_HELP_STRING(--with-pcre=PATH,Use external PCRE library))
+ 
+-AC_PATH_PROG(PCRE_CONFIG, pcre-config, false)
+-if test -d "$with_pcre" && test -x "$with_pcre/bin/pcre-config"; then
+-   PCRE_CONFIG=$with_pcre/bin/pcre-config
+-elif test -x "$with_pcre"; then
+-   PCRE_CONFIG=$with_pcre
+-fi
+-
+-if test "$PCRE_CONFIG" != "false"; then
+-  if $PCRE_CONFIG --version >/dev/null 2>&1; then :; else
+-    AC_MSG_ERROR([Did not find pcre-config script at $PCRE_CONFIG])
+-  fi
+-  case `$PCRE_CONFIG --version` in
+-  [[1-5].*])
+-    AC_MSG_ERROR([Need at least pcre version 6.0])
+-    ;;
+-  esac
+-  AC_MSG_NOTICE([Using external PCRE library from $PCRE_CONFIG])
+-  APR_ADDTO(PCRE_INCLUDES, [`$PCRE_CONFIG --cflags`])
+-  APR_ADDTO(PCRE_LIBS, [`$PCRE_CONFIG --libs`])
+-else
+-  AC_MSG_ERROR([pcre-config for libpcre not found. PCRE is required and available from http://pcre.org/])
+-fi
++PKG_CHECK_MODULES([PCRE], [libpcre], [
++  AC_DEFINE([HAVE_PCRE], [1], [Define if you have PCRE library])
++], [
++  AC_MSG_ERROR([$PCRE_PKG_ERRORS])
++])
+ APACHE_SUBST(PCRE_LIBS)
+ 
+ AC_MSG_NOTICE([])
+-- 
+2.17.1
+

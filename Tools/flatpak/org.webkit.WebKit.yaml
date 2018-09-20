@@ -1,14 +1,14 @@
 app-id: %(PORTNAME)s
 runtime: org.gnome.Platform
-runtime-version: "master"
+runtime-version: "3.28"
 # Control the exact version of the Sdk/Runtime that is being used.
-sdk-hash: 3be7c30b2d7e9b8084d0234a128c39832cade96ef6e8375e49c81397264fe8f0
-runtime-hash: 31775c4fb522f109783180128b159a66e83c8d3dcdddbfcc168bf92c5e9ace41
+sdk-hash: ba3017972f1cc6c7c8b0ed7f80d3297ad4c6f4076bd799d0bab0e2cbaa3e3c0a
+runtime-hash: 9d3fe926d425ad837e40a0945020a00f09c1f531335987a753e07f276d76ee36
 sdk: org.gnome.Sdk
 command: %(COMMAND)s
 finish-args:
   # Basically no sandboxing, the goal here is to make it flexible
-  # for developers, not really to isolate (opening all devices
+  # for developers, not really to isolate (openning all devices
   # to allow acces video cameras until we have a portal at least).
   - --share=ipc
   - --socket=x11
@@ -42,14 +42,21 @@ modules:
       - --with-apr=/app/bin/apr-1-config
   - name: httpd
     sources:
-      - type: archive
-        url: http://mirror.metrocast.net/apache//httpd/httpd-2.4.34.tar.gz
-        sha256: 6eaef0313b071d105eb3ca49289fc0f1431392e1061e1df420ca5775caed2211
+      - type: git
+        url: https://github.com/apache/httpd.git
+        branch: 2.4.33
+      - type : file
+        path : files/httpd-autogen.sh
+        dest-filename : autogen.sh
+      # The version embedded in the sandbox doesn't have a working pcre-config
+      - type: patch
+        path: patches/httpd-0001-configure-use-pkg-config-for-PCRE-detection.patch
     config-opts:
       - --enable-mpms-shared=all
       - --enable-modules=all
       - --with-apr=/app/bin/apr-1-config
       - --with-apr-util=/app/bin/apu-1-config
+      - --with-pcre=/app
       - --enable-authnz-fcgi
       - --enable-cgi
       - --enable-cgid
@@ -103,13 +110,96 @@ modules:
       url: https://files.pythonhosted.org/packages/9e/17/1d4ed6e1a4c0918a0357dfa2fdbe26bf63f6e616013c04a14bce9fd33e40/pyaml-17.12.1.tar.gz
       sha256: 66623c52f34d83a2c0fc963e08e8b9d0c13d88404e3b43b1852ef71eda19afa3
 
-  # Speed up libgcrypt for testing.
-  # (You'd better not be using this flatpak environment for real use!)
-  - name: libgcrypt
+  # GStreamer modules
+  - name: libvpx
+    no-autogen: true
+    sources:
+      - type: git
+        url: https://chromium.googlesource.com/webm/libvpx
+        branch: v1.7.0
+    config-opts:
+      - --enable-pic
+      - --as=yasm
+      - --disable-unit-tests
+      - --size-limit=16384x16384
+      - --enable-postproc
+      - --enable-multi-res-encoding
+      - --enable-temporal-denoising
+      - --enable-vp9-temporal-denoising
+      - --enable-vp9-postproc
+      - --enable-shared
+  - name: libopenh264
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://github.com/cisco/openh264.git
+        branch: a1b3f07c5271f312997fcc3451237031444c4475 # 1.8.0 + fix for gcc 8
+  - name: gstreamer
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://anongit.freedesktop.org/git/gstreamer/gstreamer
+        branch: 1.14.1
+    config-opts:
+      - -Ddisable_gtkdoc=true
+  - name: gst-plugins-base
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://anongit.freedesktop.org/git/gstreamer/gst-plugins-base
+        branch: 1.14.1
+    config-opts:
+      - -Ddisable_gtkdoc=true
+  - name: gst-plugins-good
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://anongit.freedesktop.org/git/gstreamer/gst-plugins-good
+        branch: 1.14.1
+      - type: patch
+        path: ../gstreamer/patches/gst-plugins-good-0002-qtdemux-add-context-for-a-preferred-protection.patch
+      - type: patch
+        path: ../gstreamer/patches/gst-plugins-good-0003-qtdemux-also-push-buffers-without-encryption-info-in.patch
+      - type: patch
+        path: ../gstreamer/patches/gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch
+      - type: patch
+        path: ../gstreamer/patches/gst-plugins-good-0002-qtdemux-Do-not-unref-a-NULL-stream_tags.patch
+      - type: patch
+        path: ../gstreamer/patches/gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch
+    config-opts:
+      - -Ddisable_gtkdoc=true
+  - name: gst-plugins-ugly
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://anongit.freedesktop.org/git/gstreamer/gst-plugins-ugly
+        branch: 1.14.1
+    config-opts:
+      - -Ddisable_gtkdoc=true
+  - name: gst-plugins-bad
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://anongit.freedesktop.org/git/gstreamer/gst-plugins-bad
+        branch: 1.14.1
+    config-opts:
+      - -Ddisable_gtkdoc=true
+  - name: gst-libav
+    buildsystem: meson
+    sources:
+      - type: archive
+        url: https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.14.1.tar.xz
+        sha256: eff80a02d2f2fb9f34b67e9a26e9954d3218c7aa18e863f2a47805fa7066029d
+    config-opts:
+      - -Ddisable_gtkdoc=true
+
+  - name: libgcrypt # Speedup libgrcypt
     sources:
       - type: git
         url: https://dev.gnupg.org/source/libgcrypt.git
-        branch: libgcrypt-1.8.3
+        branch: libgcrypt-1.7.6
+      - type: patch
+        path: patches/libgcrypt-0001-Use-pkg-config-to-detect-gpg-error.patch
       - type: patch
         path: ../gtk/patches/libgcrypt-use-only-dev-urandom-for-testing.patch
     config-opts:

@@ -1,3 +1,19 @@
+2018-09-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, manually rollout our switch to master runtime
+
+        Phil wants html5-codecs, which aren't available yet here. Let's switch back to 3.28 in the
+        meantime, where we were already building GStreamer ourselves anyway. But use an updated
+        SDK revision.
+
+        * flatpak/files/httpd-autogen.sh: Added.
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args):
+        * flatpak/org.webkit.GTK.yaml:
+        * flatpak/org.webkit.WebKit.yaml:
+        * flatpak/patches/httpd-0001-configure-use-pkg-config-for-PCRE-detection.patch: Added.
+        * flatpak/patches/libgcrypt-0001-Use-pkg-config-to-detect-gpg-error.patch: Added.
+
 2018-09-20  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK] webkit-flatpak intercepts --help for other commands
