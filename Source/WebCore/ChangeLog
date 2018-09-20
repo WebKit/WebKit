@@ -1,3 +1,21 @@
+2018-09-20  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r196265): WKWebView fires mouseover, mouseenter, and mouseleave events even when it's in a background window
+        https://bugs.webkit.org/show_bug.cgi?id=187545
+        <rdar://problem/42401575>
+
+        Reviewed by Ryosuke Niwa.
+
+        When the window is not active, we should only update the scrollbar for mouse events. GTK
+        apps have different expectation on this behavior.
+
+        Test: fast/events/inactive-window-no-mouse-event.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::shouldSendMouseEventsToInactiveWindows const):
+        * page/EventHandler.h:
+
 2018-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r235976.

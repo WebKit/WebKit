@@ -493,6 +493,8 @@ private:
     void clearOrScheduleClearingLatchedStateIfNeeded(const PlatformWheelEvent&);
     void clearLatchedState();
 
+    bool shouldSendMouseEventsToInactiveWindows() const;
+
     Frame& m_frame;
 
     bool m_mousePressed { false };

@@ -62,6 +62,8 @@ webkit.org/b/187773 http/tests/webAPIStatistics [ Pass ]
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
 
+fast/events/inactive-window-no-mouse-event.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

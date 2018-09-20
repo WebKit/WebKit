@@ -1,3 +1,16 @@
+2018-09-20  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r196265): WKWebView fires mouseover, mouseenter, and mouseleave events even when it's in a background window
+        https://bugs.webkit.org/show_bug.cgi?id=187545
+        <rdar://problem/42401575>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        * fast/events/inactive-window-no-mouse-event-expected.txt: Added.
+        * fast/events/inactive-window-no-mouse-event.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-20  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] TestRunner::queueLoad() fails to generate correct url for some urls.

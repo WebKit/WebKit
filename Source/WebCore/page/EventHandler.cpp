@@ -1965,7 +1965,9 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
             scrollbar->mouseMoved(platformMouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
 #endif
         if (onlyUpdateScrollbars) {
-            updateMouseEventTargetNode(mouseEvent.targetNode(), platformMouseEvent, true);
+            if (shouldSendMouseEventsToInactiveWindows())
+                updateMouseEventTargetNode(mouseEvent.targetNode(), platformMouseEvent, true);
+
             return true;
         }
     }
@@ -2006,6 +2008,14 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 #endif
 
     return swallowEvent;
+}
+
+bool EventHandler::shouldSendMouseEventsToInactiveWindows() const
+{
+#if PLATFORM(GTK)
+    return true;
+#endif
+    return false;
 }
 
 void EventHandler::invalidateClick()
