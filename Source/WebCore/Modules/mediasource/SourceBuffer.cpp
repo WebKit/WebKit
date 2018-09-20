@@ -1675,7 +1675,17 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
         // Add the coded frame with the presentation timestamp, decode timestamp, and frame duration to the track buffer.
         trackBuffer.samples.addSample(sample);
 
-        if (trackBuffer.lastEnqueuedDecodeEndTime.isInvalid() || decodeTimestamp >= trackBuffer.lastEnqueuedDecodeEndTime) {
+        // Note: The terminology here is confusing: "enqueuing" means providing a frame to the inner media framework.
+        // First, frames are inserted in the decode queue; later, at the end of the append all the frames in the decode
+        // queue are "enqueued" (sent to the inner media framework) in `provideMediaData()`.
+        //
+        // In order to check whether a frame should be added to the decode queue we check whether it starts after the
+        // lastEnqueuedDecodeEndTime or even a bit before that to accomodate files with imprecise timing information.
+        //
+        // There are many files out there where the frame times are not perfectly contiguous, therefore a tolerance is needed.
+        // For instance, most WebM files are muxed rounded to the millisecond (the default TimecodeScale of the format).
+        const MediaTime contiguousFrameTolerance = MediaTime(1, 1000);
+        if (trackBuffer.lastEnqueuedDecodeEndTime.isInvalid() || decodeTimestamp >= (trackBuffer.lastEnqueuedDecodeEndTime - contiguousFrameTolerance)) {
             DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
             trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, &sample));
         }
