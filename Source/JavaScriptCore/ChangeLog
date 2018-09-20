@@ -1,3 +1,24 @@
+2018-09-19  Michael Saboff  <msaboff@apple.com>
+
+        Add functions to measure memory footprint to JSC
+        https://bugs.webkit.org/show_bug.cgi?id=189768
+
+        Reviewed by Saam Barati.
+
+        Provide system memory metrics for the current process to aid in memory reduction measurement and
+        tuning using native JS tests.
+
+        * jsc.cpp:
+        (MemoryFootprint::now):
+        (MemoryFootprint::resetPeak):
+        (GlobalObject::finishCreation):
+        (JSCMemoryFootprint::JSCMemoryFootprint):
+        (JSCMemoryFootprint::createStructure):
+        (JSCMemoryFootprint::create):
+        (JSCMemoryFootprint::finishCreation):
+        (JSCMemoryFootprint::addProperty):
+        (functionResetMemoryPeak):
+
 2018-09-19  Saam barati  <sbarati@apple.com>
 
         CheckStructureOrEmpty should pass in a tempGPR to emitStructureCheck since it may jump over that code
