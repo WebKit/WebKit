@@ -3559,11 +3559,19 @@ void SpeculativeJIT::compile(Node* node)
     case CheckStructureOrEmpty: {
         SpeculateCellOperand cell(this, node->child1());
         GPRReg cellGPR = cell.gpr();
+
+        GPRReg tempGPR = InvalidGPRReg;
+        std::optional<GPRTemporary> temp;
+        if (node->structureSet().size() > 1) {
+            temp.emplace(this);
+            tempGPR = temp->gpr();
+        }
+
         MacroAssembler::Jump isEmpty;
         if (m_interpreter.forNode(node->child1()).m_type & SpecEmpty)
             isEmpty = m_jit.branchIfEmpty(cellGPR);
 
-        emitStructureCheck(node, cellGPR, InvalidGPRReg);
+        emitStructureCheck(node, cellGPR, tempGPR);
 
         if (isEmpty.isSet())
             isEmpty.link(&m_jit);
