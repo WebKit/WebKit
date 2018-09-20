@@ -1,3 +1,13 @@
+2018-09-19  Dean Jackson  <dino@apple.com>
+
+        Temporarily move fullscreen back to experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=189770
+        <rdar://problem/44619282>
+
+        Revert this change now that there is a commit to cherry-pick.
+
+        * Shared/WebPreferences.yaml:
+
 2018-09-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed crash fix after r236226.
