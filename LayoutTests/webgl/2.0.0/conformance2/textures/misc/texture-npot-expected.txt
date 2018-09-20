@@ -1,5 +1,67 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/texture-npot.html
-[ PASS ] All tests passed
+[ 1: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 2: PASS ] getError was expected value: NO_ERROR : gl.texImage2D with NPOT texture with level > 0 should succeed
+[ 3: PASS ] getError was expected value: NO_ERROR : gl.texImage2D with NPOT texture at level 0 should succeed
+[ 4: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.generateMipmap with NPOT texture should succeed
+[ 5: PASS ] NPOT texture with TEXTURE_WRAP set to REPEAT should draw
+[ 6: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 7: FAIL ] NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw at (0, 0) expected: 192,0,128,64 was 0,0,0,255
+[ 8: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 9: PASS ] NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw.
+[ 10: PASS ] getError was expected value: NO_ERROR : copyTexImage2D with NPOT texture with level > 0 should succeed.
+[ 11: PASS ] getError was expected value: NO_ERROR : gl.texImage2D and gl.generateMipmap with POT texture at level 0 should succeed
+[ 12: PASS ] POT texture with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw.
+[ 13: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 14: PASS ] getError was expected value: NO_ERROR : gl.texImage2D with NPOT texture with level > 0 should succeed
+[ 15: PASS ] getError was expected value: NO_ERROR : gl.texImage2D with NPOT texture at level 0 should succeed
+[ 16: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.generateMipmap with NPOT texture should succeed
+[ 17: PASS ] NPOT texture with TEXTURE_WRAP set to REPEAT should draw
+[ 18: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 19: FAIL ] NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw at (0, 0) expected: 192,0,128,255 was 0,0,0,255
+[ 20: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 21: PASS ] NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw.
+[ 22: PASS ] getError was expected value: NO_ERROR : copyTexImage2D with NPOT texture with level > 0 should succeed.
+[ 23: PASS ] getError was expected value: NO_ERROR : gl.texImage2D and gl.generateMipmap with POT texture at level 0 should succeed
+[ 24: PASS ] POT texture with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw.
+[ 25: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 26: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D with NPOT texture with level > 0 should succeed
+[ 27: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D with NPOT texture at level 0 should succeed
+[ 28: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.generateMipmap with NPOT texture should succeed
+[ 29: FAIL ] NPOT texture with TEXTURE_WRAP set to REPEAT should draw at (0, 0) expected: 192,192,192,255 was 0,0,0,255
+[ 30: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 31: FAIL ] NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw at (0, 0) expected: 192,192,192,255 was 0,0,0,255
+[ 32: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 33: FAIL ] NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw. at (0, 0) expected: 192,192,192,255 was 0,0,0,255
+[ 34: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : copyTexImage2D with NPOT texture with level > 0 should succeed.
+[ 35: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D and gl.generateMipmap with POT texture at level 0 should succeed
+[ 36: FAIL ] POT texture with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw. at (0, 0) expected: 192,192,192,255 was 0,0,0,255
+[ 37: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Should be no errors from setup.
+[ 38: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D with NPOT texture with level > 0 should succeed
+[ 39: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D with NPOT texture at level 0 should succeed
+[ 40: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.generateMipmap with NPOT texture should succeed
+[ 41: FAIL ] NPOT texture with TEXTURE_WRAP set to REPEAT should draw at (0, 0) expected: 0,0,0,64 was 0,0,0,255
+[ 42: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 43: FAIL ] NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw at (0, 0) expected: 0,0,0,64 was 0,0,0,255
+[ 44: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 45: FAIL ] NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw. at (0, 0) expected: 0,0,0,64 was 0,0,0,255
+[ 46: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : copyTexImage2D with NPOT texture with level > 0 should succeed.
+[ 47: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D and gl.generateMipmap with POT texture at level 0 should succeed
+[ 48: FAIL ] POT texture with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw. at (0, 0) expected: 0,0,0,64 was 0,0,0,255
+[ 49: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Should be no errors from setup.
+[ 50: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D with NPOT texture with level > 0 should succeed
+[ 51: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D with NPOT texture at level 0 should succeed
+[ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.generateMipmap with NPOT texture should succeed
+[ 53: FAIL ] NPOT texture with TEXTURE_WRAP set to REPEAT should draw at (0, 0) expected: 192,192,192,64 was 0,0,0,255
+[ 54: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 55: FAIL ] NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw at (0, 0) expected: 192,192,192,64 was 0,0,0,255
+[ 56: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 57: FAIL ] NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw. at (0, 0) expected: 192,192,192,64 was 0,0,0,255
+[ 58: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : copyTexImage2D with NPOT texture with level > 0 should succeed.
+[ 59: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.texImage2D and gl.generateMipmap with POT texture at level 0 should succeed
+[ 60: FAIL ] POT texture with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw. at (0, 0) expected: 192,192,192,64 was 0,0,0,255
+[ 61: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Should be no errors from setup.
+[ 62: PASS ] successfullyParsed is true
+[ FAIL ] 34 failures reported
 

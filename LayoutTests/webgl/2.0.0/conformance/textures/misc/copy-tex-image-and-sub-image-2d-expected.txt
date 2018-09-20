@@ -1,5 +1,508 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance/textures/misc/copy-tex-image-and-sub-image-2d.html
-[ PASS ] All tests passed
+[ 1: PASS ] getError was expected value: NO_ERROR : During Initialization
+[ 2: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = -2
+[ 3: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 4: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 5: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 6: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 7: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = -2
+[ 8: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 9: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 10: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 11: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 12: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = -2
+[ 13: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 14: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 15: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 16: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 17: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = -2
+[ 18: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 19: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 20: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 21: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 22: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = -2
+[ 23: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 24: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 25: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 26: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 27: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = -2
+[ 28: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 29: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 30: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 31: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 32: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = -2
+[ 33: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 34: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 35: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 36: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 37: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = -2
+[ 38: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 39: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 40: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 41: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 42: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = -2
+[ 43: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 44: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 45: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 46: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 47: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = -2
+[ 48: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 49: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 50: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 51: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 52: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = -1
+[ 53: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 54: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 55: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 56: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 57: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = -1
+[ 58: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 59: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 60: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 61: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 62: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = -1
+[ 63: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 64: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 65: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 66: PASS ] 1, 1 should render 255,0,0,255 (+/-1)
+[ 67: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = -1
+[ 68: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 69: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 70: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 71: PASS ] 1, 1 should render 0,255,0,255 (+/-1)
+[ 72: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = -1
+[ 73: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 74: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 75: PASS ] 0, 1 should render 0,0,255,255 (+/-1)
+[ 76: PASS ] 1, 1 should render 0,0,255,255 (+/-1)
+[ 77: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = -1
+[ 78: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 79: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 80: PASS ] 0, 1 should render 127,127,127,127 (+/-1)
+[ 81: PASS ] 1, 1 should render 127,127,127,127 (+/-1)
+[ 82: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = -1
+[ 83: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 84: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 85: PASS ] 0, 1 should render 255,0,0,255 (+/-1)
+[ 86: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 87: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = -1
+[ 88: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 89: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 90: PASS ] 0, 1 should render 0,255,0,255 (+/-1)
+[ 91: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 92: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = -1
+[ 93: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 94: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 95: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 96: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 97: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = -1
+[ 98: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 99: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 100: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 101: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 102: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = 0
+[ 103: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 104: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 105: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 106: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 107: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = 0
+[ 108: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 109: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 110: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 111: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 112: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = 0
+[ 113: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 114: PASS ] 1, 0 should render 0,0,255,255 (+/-1)
+[ 115: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 116: PASS ] 1, 1 should render 0,0,255,255 (+/-1)
+[ 117: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = 0
+[ 118: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 119: PASS ] 1, 0 should render 127,127,127,127 (+/-1)
+[ 120: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 121: PASS ] 1, 1 should render 127,127,127,127 (+/-1)
+[ 122: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = 0
+[ 123: PASS ] 0, 0 should render 255,0,0,255 (+/-1)
+[ 124: PASS ] 1, 0 should render 255,0,0,255 (+/-1)
+[ 125: PASS ] 0, 1 should render 255,0,0,255 (+/-1)
+[ 126: PASS ] 1, 1 should render 255,0,0,255 (+/-1)
+[ 127: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = 0
+[ 128: PASS ] 0, 0 should render 0,255,0,255 (+/-1)
+[ 129: PASS ] 1, 0 should render 0,255,0,255 (+/-1)
+[ 130: PASS ] 0, 1 should render 0,255,0,255 (+/-1)
+[ 131: PASS ] 1, 1 should render 0,255,0,255 (+/-1)
+[ 132: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = 0
+[ 133: PASS ] 0, 0 should render 0,0,255,255 (+/-1)
+[ 134: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 135: PASS ] 0, 1 should render 0,0,255,255 (+/-1)
+[ 136: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 137: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = 0
+[ 138: PASS ] 0, 0 should render 127,127,127,127 (+/-1)
+[ 139: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 140: PASS ] 0, 1 should render 127,127,127,127 (+/-1)
+[ 141: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 142: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = 0
+[ 143: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 144: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 145: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 146: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 147: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = 0
+[ 148: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 149: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 150: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 151: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 152: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = 1
+[ 153: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 154: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 155: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 156: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 157: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = 1
+[ 158: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 159: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 160: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 161: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 162: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = 1
+[ 163: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 164: PASS ] 1, 0 should render 255,0,0,255 (+/-1)
+[ 165: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 166: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 167: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = 1
+[ 168: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 169: PASS ] 1, 0 should render 0,255,0,255 (+/-1)
+[ 170: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 171: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 172: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = 1
+[ 173: PASS ] 0, 0 should render 0,0,255,255 (+/-1)
+[ 174: PASS ] 1, 0 should render 0,0,255,255 (+/-1)
+[ 175: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 176: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 177: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = 1
+[ 178: PASS ] 0, 0 should render 127,127,127,127 (+/-1)
+[ 179: PASS ] 1, 0 should render 127,127,127,127 (+/-1)
+[ 180: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 181: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 182: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = 1
+[ 183: PASS ] 0, 0 should render 255,0,0,255 (+/-1)
+[ 184: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 185: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 186: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 187: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = 1
+[ 188: PASS ] 0, 0 should render 0,255,0,255 (+/-1)
+[ 189: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 190: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 191: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 192: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = 1
+[ 193: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 194: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 195: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 196: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 197: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = 1
+[ 198: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 199: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 200: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 201: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 202: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = 2
+[ 203: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 204: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 205: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 206: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 207: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = 2
+[ 208: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 209: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 210: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 211: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 212: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = 2
+[ 213: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 214: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 215: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 216: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 217: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = 2
+[ 218: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 219: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 220: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 221: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 222: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = 2
+[ 223: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 224: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 225: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 226: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 227: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = 2
+[ 228: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 229: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 230: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 231: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 232: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = 2
+[ 233: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 234: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 235: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 236: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 237: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = 2
+[ 238: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 239: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 240: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 241: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 242: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = 2
+[ 243: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 244: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 245: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 246: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 247: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = 2
+[ 248: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 249: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 250: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 251: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 252: PASS ] getError was expected value: NO_ERROR : During Initialization
+[ 253: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = -2
+[ 254: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 255: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 256: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 257: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 258: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = -2
+[ 259: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 260: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 261: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 262: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 263: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = -2
+[ 264: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 265: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 266: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 267: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 268: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = -2
+[ 269: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 270: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 271: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 272: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 273: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = -2
+[ 274: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 275: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 276: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 277: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 278: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = -2
+[ 279: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 280: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 281: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 282: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 283: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = -2
+[ 284: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 285: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 286: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 287: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 288: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = -2
+[ 289: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 290: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 291: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 292: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 293: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = -2
+[ 294: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 295: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 296: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 297: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 298: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = -2
+[ 299: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 300: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 301: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 302: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 303: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = -1
+[ 304: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 305: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 306: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 307: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 308: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = -1
+[ 309: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 310: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 311: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 312: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 313: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = -1
+[ 314: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 315: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 316: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 317: PASS ] 1, 1 should render 255,0,0,255 (+/-1)
+[ 318: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = -1
+[ 319: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 320: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 321: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 322: PASS ] 1, 1 should render 0,255,0,255 (+/-1)
+[ 323: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = -1
+[ 324: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 325: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 326: PASS ] 0, 1 should render 0,0,255,255 (+/-1)
+[ 327: PASS ] 1, 1 should render 0,0,255,255 (+/-1)
+[ 328: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = -1
+[ 329: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 330: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 331: PASS ] 0, 1 should render 127,127,127,127 (+/-1)
+[ 332: PASS ] 1, 1 should render 127,127,127,127 (+/-1)
+[ 333: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = -1
+[ 334: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 335: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 336: PASS ] 0, 1 should render 255,0,0,255 (+/-1)
+[ 337: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 338: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = -1
+[ 339: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 340: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 341: PASS ] 0, 1 should render 0,255,0,255 (+/-1)
+[ 342: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 343: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = -1
+[ 344: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 345: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 346: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 347: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 348: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = -1
+[ 349: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 350: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 351: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 352: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 353: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = 0
+[ 354: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 355: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 356: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 357: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 358: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = 0
+[ 359: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 360: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 361: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 362: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 363: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = 0
+[ 364: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 365: PASS ] 1, 0 should render 0,0,255,255 (+/-1)
+[ 366: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 367: PASS ] 1, 1 should render 0,0,255,255 (+/-1)
+[ 368: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = 0
+[ 369: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 370: PASS ] 1, 0 should render 127,127,127,127 (+/-1)
+[ 371: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 372: PASS ] 1, 1 should render 127,127,127,127 (+/-1)
+[ 373: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = 0
+[ 374: PASS ] 0, 0 should render 255,0,0,255 (+/-1)
+[ 375: PASS ] 1, 0 should render 255,0,0,255 (+/-1)
+[ 376: PASS ] 0, 1 should render 255,0,0,255 (+/-1)
+[ 377: PASS ] 1, 1 should render 255,0,0,255 (+/-1)
+[ 378: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = 0
+[ 379: PASS ] 0, 0 should render 0,255,0,255 (+/-1)
+[ 380: PASS ] 1, 0 should render 0,255,0,255 (+/-1)
+[ 381: PASS ] 0, 1 should render 0,255,0,255 (+/-1)
+[ 382: PASS ] 1, 1 should render 0,255,0,255 (+/-1)
+[ 383: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = 0
+[ 384: PASS ] 0, 0 should render 0,0,255,255 (+/-1)
+[ 385: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 386: PASS ] 0, 1 should render 0,0,255,255 (+/-1)
+[ 387: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 388: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = 0
+[ 389: PASS ] 0, 0 should render 127,127,127,127 (+/-1)
+[ 390: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 391: PASS ] 0, 1 should render 127,127,127,127 (+/-1)
+[ 392: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 393: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = 0
+[ 394: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 395: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 396: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 397: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 398: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = 0
+[ 399: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 400: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 401: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 402: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 403: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = 1
+[ 404: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 405: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 406: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 407: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 408: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = 1
+[ 409: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 410: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 411: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 412: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 413: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = 1
+[ 414: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 415: PASS ] 1, 0 should render 255,0,0,255 (+/-1)
+[ 416: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 417: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 418: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = 1
+[ 419: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 420: PASS ] 1, 0 should render 0,255,0,255 (+/-1)
+[ 421: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 422: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 423: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = 1
+[ 424: PASS ] 0, 0 should render 0,0,255,255 (+/-1)
+[ 425: PASS ] 1, 0 should render 0,0,255,255 (+/-1)
+[ 426: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 427: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 428: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = 1
+[ 429: PASS ] 0, 0 should render 127,127,127,127 (+/-1)
+[ 430: PASS ] 1, 0 should render 127,127,127,127 (+/-1)
+[ 431: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 432: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 433: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = 1
+[ 434: PASS ] 0, 0 should render 255,0,0,255 (+/-1)
+[ 435: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 436: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 437: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 438: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = 1
+[ 439: PASS ] 0, 0 should render 0,255,0,255 (+/-1)
+[ 440: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 441: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 442: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 443: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = 1
+[ 444: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 445: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 446: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 447: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 448: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = 1
+[ 449: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 450: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 451: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 452: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 453: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -2, y = 2
+[ 454: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 455: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 456: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 457: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 458: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -2, y = 2
+[ 459: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 460: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 461: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 462: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 463: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = -1, y = 2
+[ 464: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 465: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 466: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 467: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 468: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = -1, y = 2
+[ 469: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 470: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 471: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 472: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 473: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 0, y = 2
+[ 474: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 475: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 476: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 477: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 478: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 0, y = 2
+[ 479: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 480: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 481: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 482: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 483: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 1, y = 2
+[ 484: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 485: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 486: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 487: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 488: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 1, y = 2
+[ 489: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 490: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 491: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 492: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 493: PASS ] getError was expected value: NO_ERROR : using copyTexImage2D: x = 2, y = 2
+[ 494: PASS ] 0, 0 should render 0,0,0,0 (+/-1)
+[ 495: PASS ] 1, 0 should render 0,0,0,0 (+/-1)
+[ 496: PASS ] 0, 1 should render 0,0,0,0 (+/-1)
+[ 497: PASS ] 1, 1 should render 0,0,0,0 (+/-1)
+[ 498: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage2D: x = 2, y = 2
+[ 499: FAIL ] 0, 0 should render 136,136,136,136 (+/-1) at (0, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 500: FAIL ] 1, 0 should render 136,136,136,136 (+/-1) at (1, 0) expected: 136,136,136,136 was 0,0,0,0
+[ 501: FAIL ] 0, 1 should render 136,136,136,136 (+/-1) at (0, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 502: FAIL ] 1, 1 should render 136,136,136,136 (+/-1) at (1, 1) expected: 136,136,136,136 was 0,0,0,0
+[ 503: PASS ] successfullyParsed is true
+[ FAIL ] 168 failures reported
 

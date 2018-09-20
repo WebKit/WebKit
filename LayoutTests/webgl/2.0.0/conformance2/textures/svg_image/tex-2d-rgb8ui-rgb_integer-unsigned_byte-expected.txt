@@ -1,5 +1,70 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/svg_image/tex-2d-rgb8ui-rgb_integer-unsigned_byte.html
-[ PASS ] All tests passed
+[ 1: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 2: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 3: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 4: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 5: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 6: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 7: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 8: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 10: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 11: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 12: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 13: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 14: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 15: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 16: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 17: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 18: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 19: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 20: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 21: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 22: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 23: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 24: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 25: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 26: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 27: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 28: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 29: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 30: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 31: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 32: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 33: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 34: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 35: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 36: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 37: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 38: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 39: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 40: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 41: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 42: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 43: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 44: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 45: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 46: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 47: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 48: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 49: FAIL ] shouldBe 0,255,0 at (4, 4) expected: 0,255,0 was 0,0,0
+[ 50: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 51: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 52: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 53: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 54: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 55: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 56: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 57: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 58: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 59: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 60: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 61: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 62: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 63: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 0,0,0
+[ 64: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
+[ 65: PASS ] successfullyParsed is true
+[ FAIL ] 64 failures reported
 

@@ -1,5 +1,16 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance/glsl/misc/shader-struct-scope.html
-[ PASS ] All tests passed
+[ 1: FAIL ] [unexpected vertex shader compile status] (expected: true) Two structs defined within non-overlapping scopes should be able to use the same name
+[ 2: FAIL ] [link failed] Two structs defined within non-overlapping scopes should be able to use the same name
+[ 3: FAIL ] [unexpected vertex shader compile status] (expected: true) A struct defined inside a scope overrides a struct defined in a outer scope with the same name
+[ 4: FAIL ] [link failed] A struct defined inside a scope overrides a struct defined in a outer scope with the same name
+[ 5: FAIL ] [unexpected vertex shader compile status] (expected: true) A struct can use the same name of another out-of-scope struct
+[ 6: FAIL ] [link failed] A struct can use the same name of another out-of-scope struct
+[ 7: PASS ] A struct can't be defined with the same name as another struct defined in the same scope
+[ 8: PASS ] Structs with appended underscored numbers don't cause link errors (ANGLE bug)
+[ 9: FAIL ] [unexpected vertex shader compile status] (expected: true) Variables of masked outer scope struct work with inner scope struct
+[ 10: FAIL ] [link failed] Variables of masked outer scope struct work with inner scope struct
+[ 11: PASS ] successfullyParsed is true
+[ FAIL ] 8 failures reported
 

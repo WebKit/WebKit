@@ -1,5 +1,344 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/state/gl-enable-enum-test.html
-[ PASS ] All tests passed
+[ 1: PASS ] context exists
+[ 2: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_ALPHA_TEST
+[ 3: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_AUTO_NORMAL
+[ 4: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_CLIP_PLANE0
+[ 5: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_CLIP_PLANE1
+[ 6: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_COLOR_LOGIC_OP
+[ 7: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_COLOR_MATERIAL
+[ 8: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_COLOR_SUM
+[ 9: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_COLOR_TABLE
+[ 10: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_FOG
+[ 11: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_HISTOGRAM
+[ 12: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_INDEX_LOGIC_OP
+[ 13: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_LIGHT0
+[ 14: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_LIGHT1
+[ 15: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_LIGHTING
+[ 16: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_LINE_SMOOTH
+[ 17: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_LINE_STIPPLE
+[ 18: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_COLOR_4
+[ 19: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_INDEX
+[ 20: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_NORMAL
+[ 21: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_TEXTURE_COORD_1
+[ 22: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_TEXTURE_COORD_2
+[ 23: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_TEXTURE_COORD_3
+[ 24: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_TEXTURE_COORD_4
+[ 25: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_VERTEX_3
+[ 26: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP1_VERTEX_4
+[ 27: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_COLOR_4
+[ 28: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_INDEX
+[ 29: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_NORMAL
+[ 30: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_TEXTURE_COORD_1
+[ 31: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_TEXTURE_COORD_2
+[ 32: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_TEXTURE_COORD_3
+[ 33: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_TEXTURE_COORD_4
+[ 34: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_VERTEX_3
+[ 35: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MAP2_VERTEX_4
+[ 36: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MINMAX
+[ 37: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_MULTISAMPLE
+[ 38: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_NORMALIZE
+[ 39: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_POINT_SMOOTH
+[ 40: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_POINT_SPRITE
+[ 41: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_POLYGON_OFFSET_LINE
+[ 42: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_POLYGON_OFFSET_POINT
+[ 43: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_POLYGON_SMOOTH
+[ 44: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_POLYGON_STIPPLE
+[ 45: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_POST_COLOR_MATRIX_COLOR_TABLE
+[ 46: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_POST_CONVOLUTION_COLOR_TABLE
+[ 47: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_RESCALE_NORMAL
+[ 48: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_SAMPLE_ALPHA_TO_ONE
+[ 49: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_TEXTURE_1D
+[ 50: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_TEXTURE_2D
+[ 51: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_TEXTURE_3D
+[ 52: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_TEXTURE_CUBE_MAP
+[ 53: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_TEXTURE_GEN_Q
+[ 54: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_TEXTURE_GEN_R
+[ 55: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_TEXTURE_GEN_S
+[ 56: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_TEXTURE_GEN_T
+[ 57: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_VERTEX_PROGRAM_POINT_SIZE
+[ 58: PASS ] getError was expected value: INVALID_ENUM : gl.enable must set INVALID_ENUM when passed GL_VERTEX_PROGRAM_TWO_SIDE
+[ 59: PASS ] context exists
+[ 60: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.BLEND
+[ 61: PASS ] gl.isEnabled(gl.BLEND) is true
+[ 62: PASS ] gl.getParameter(gl.BLEND) is true
+[ 63: PASS ] gl.isEnabled(gl.BLEND) is false
+[ 64: PASS ] gl.getParameter(gl.BLEND) is false
+[ 65: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_BLEND
+[ 66: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.CULL_FACE
+[ 67: PASS ] gl.isEnabled(gl.CULL_FACE) is true
+[ 68: PASS ] gl.getParameter(gl.CULL_FACE) is true
+[ 69: PASS ] gl.isEnabled(gl.CULL_FACE) is false
+[ 70: PASS ] gl.getParameter(gl.CULL_FACE) is false
+[ 71: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_CULL_FACE
+[ 72: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DEPTH_TEST
+[ 73: PASS ] gl.isEnabled(gl.DEPTH_TEST) is true
+[ 74: PASS ] gl.getParameter(gl.DEPTH_TEST) is true
+[ 75: PASS ] gl.isEnabled(gl.DEPTH_TEST) is false
+[ 76: PASS ] gl.getParameter(gl.DEPTH_TEST) is false
+[ 77: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DEPTH_TEST
+[ 78: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DITHER
+[ 79: PASS ] gl.isEnabled(gl.DITHER) is true
+[ 80: PASS ] gl.getParameter(gl.DITHER) is true
+[ 81: PASS ] gl.isEnabled(gl.DITHER) is false
+[ 82: PASS ] gl.getParameter(gl.DITHER) is false
+[ 83: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DITHER
+[ 84: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.POLYGON_OFFSET_FILL
+[ 85: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is true
+[ 86: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is true
+[ 87: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is false
+[ 88: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is false
+[ 89: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_POLYGON_OFFSET_FILL
+[ 90: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_ALPHA_TO_COVERAGE
+[ 91: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is true
+[ 92: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 93: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is false
+[ 94: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 95: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_ALPHA_TO_COVERAGE
+[ 96: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_COVERAGE
+[ 97: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is true
+[ 98: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 99: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is false
+[ 100: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 101: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_COVERAGE
+[ 102: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SCISSOR_TEST
+[ 103: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is true
+[ 104: PASS ] gl.getParameter(gl.SCISSOR_TEST) is true
+[ 105: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is false
+[ 106: PASS ] gl.getParameter(gl.SCISSOR_TEST) is false
+[ 107: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SCISSOR_TEST
+[ 108: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.STENCIL_TEST
+[ 109: PASS ] gl.isEnabled(gl.STENCIL_TEST) is true
+[ 110: PASS ] gl.getParameter(gl.STENCIL_TEST) is true
+[ 111: PASS ] gl.isEnabled(gl.STENCIL_TEST) is false
+[ 112: PASS ] gl.getParameter(gl.STENCIL_TEST) is false
+[ 113: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_STENCIL_TEST
+[ 114: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 115: PASS ] context exists
+[ 116: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.BLEND
+[ 117: PASS ] gl.isEnabled(gl.BLEND) is true
+[ 118: PASS ] gl.getParameter(gl.BLEND) is true
+[ 119: PASS ] gl.isEnabled(gl.BLEND) is false
+[ 120: PASS ] gl.getParameter(gl.BLEND) is false
+[ 121: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_BLEND
+[ 122: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.CULL_FACE
+[ 123: PASS ] gl.isEnabled(gl.CULL_FACE) is true
+[ 124: PASS ] gl.getParameter(gl.CULL_FACE) is true
+[ 125: PASS ] gl.isEnabled(gl.CULL_FACE) is false
+[ 126: PASS ] gl.getParameter(gl.CULL_FACE) is false
+[ 127: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_CULL_FACE
+[ 128: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DEPTH_TEST
+[ 129: PASS ] gl.isEnabled(gl.DEPTH_TEST) is true
+[ 130: PASS ] gl.getParameter(gl.DEPTH_TEST) is true
+[ 131: PASS ] gl.isEnabled(gl.DEPTH_TEST) is false
+[ 132: PASS ] gl.getParameter(gl.DEPTH_TEST) is false
+[ 133: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DEPTH_TEST
+[ 134: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DITHER
+[ 135: PASS ] gl.isEnabled(gl.DITHER) is true
+[ 136: PASS ] gl.getParameter(gl.DITHER) is true
+[ 137: PASS ] gl.isEnabled(gl.DITHER) is false
+[ 138: PASS ] gl.getParameter(gl.DITHER) is false
+[ 139: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DITHER
+[ 140: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.POLYGON_OFFSET_FILL
+[ 141: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is true
+[ 142: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is true
+[ 143: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is false
+[ 144: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is false
+[ 145: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_POLYGON_OFFSET_FILL
+[ 146: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_ALPHA_TO_COVERAGE
+[ 147: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is true
+[ 148: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 149: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is false
+[ 150: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 151: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_ALPHA_TO_COVERAGE
+[ 152: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_COVERAGE
+[ 153: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is true
+[ 154: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 155: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is false
+[ 156: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 157: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_COVERAGE
+[ 158: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SCISSOR_TEST
+[ 159: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is true
+[ 160: PASS ] gl.getParameter(gl.SCISSOR_TEST) is true
+[ 161: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is false
+[ 162: PASS ] gl.getParameter(gl.SCISSOR_TEST) is false
+[ 163: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SCISSOR_TEST
+[ 164: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.STENCIL_TEST
+[ 165: PASS ] gl.isEnabled(gl.STENCIL_TEST) is true
+[ 166: PASS ] gl.getParameter(gl.STENCIL_TEST) is true
+[ 167: PASS ] gl.isEnabled(gl.STENCIL_TEST) is false
+[ 168: PASS ] gl.getParameter(gl.STENCIL_TEST) is false
+[ 169: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_STENCIL_TEST
+[ 170: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 171: PASS ] context exists
+[ 172: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.BLEND
+[ 173: PASS ] gl.isEnabled(gl.BLEND) is true
+[ 174: PASS ] gl.getParameter(gl.BLEND) is true
+[ 175: PASS ] gl.isEnabled(gl.BLEND) is false
+[ 176: PASS ] gl.getParameter(gl.BLEND) is false
+[ 177: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_BLEND
+[ 178: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.CULL_FACE
+[ 179: PASS ] gl.isEnabled(gl.CULL_FACE) is true
+[ 180: PASS ] gl.getParameter(gl.CULL_FACE) is true
+[ 181: PASS ] gl.isEnabled(gl.CULL_FACE) is false
+[ 182: PASS ] gl.getParameter(gl.CULL_FACE) is false
+[ 183: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_CULL_FACE
+[ 184: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DEPTH_TEST
+[ 185: PASS ] gl.isEnabled(gl.DEPTH_TEST) is true
+[ 186: PASS ] gl.getParameter(gl.DEPTH_TEST) is true
+[ 187: PASS ] gl.isEnabled(gl.DEPTH_TEST) is false
+[ 188: PASS ] gl.getParameter(gl.DEPTH_TEST) is false
+[ 189: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DEPTH_TEST
+[ 190: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DITHER
+[ 191: PASS ] gl.isEnabled(gl.DITHER) is true
+[ 192: PASS ] gl.getParameter(gl.DITHER) is true
+[ 193: PASS ] gl.isEnabled(gl.DITHER) is false
+[ 194: PASS ] gl.getParameter(gl.DITHER) is false
+[ 195: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DITHER
+[ 196: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.POLYGON_OFFSET_FILL
+[ 197: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is true
+[ 198: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is true
+[ 199: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is false
+[ 200: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is false
+[ 201: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_POLYGON_OFFSET_FILL
+[ 202: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_ALPHA_TO_COVERAGE
+[ 203: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is true
+[ 204: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 205: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is false
+[ 206: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 207: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_ALPHA_TO_COVERAGE
+[ 208: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_COVERAGE
+[ 209: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is true
+[ 210: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 211: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is false
+[ 212: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 213: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_COVERAGE
+[ 214: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SCISSOR_TEST
+[ 215: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is true
+[ 216: PASS ] gl.getParameter(gl.SCISSOR_TEST) is true
+[ 217: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is false
+[ 218: PASS ] gl.getParameter(gl.SCISSOR_TEST) is false
+[ 219: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SCISSOR_TEST
+[ 220: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.STENCIL_TEST
+[ 221: PASS ] gl.isEnabled(gl.STENCIL_TEST) is true
+[ 222: PASS ] gl.getParameter(gl.STENCIL_TEST) is true
+[ 223: PASS ] gl.isEnabled(gl.STENCIL_TEST) is false
+[ 224: PASS ] gl.getParameter(gl.STENCIL_TEST) is false
+[ 225: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_STENCIL_TEST
+[ 226: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 227: PASS ] context exists
+[ 228: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.BLEND
+[ 229: PASS ] gl.isEnabled(gl.BLEND) is true
+[ 230: PASS ] gl.getParameter(gl.BLEND) is true
+[ 231: PASS ] gl.isEnabled(gl.BLEND) is false
+[ 232: PASS ] gl.getParameter(gl.BLEND) is false
+[ 233: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_BLEND
+[ 234: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.CULL_FACE
+[ 235: PASS ] gl.isEnabled(gl.CULL_FACE) is true
+[ 236: PASS ] gl.getParameter(gl.CULL_FACE) is true
+[ 237: PASS ] gl.isEnabled(gl.CULL_FACE) is false
+[ 238: PASS ] gl.getParameter(gl.CULL_FACE) is false
+[ 239: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_CULL_FACE
+[ 240: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DEPTH_TEST
+[ 241: PASS ] gl.isEnabled(gl.DEPTH_TEST) is true
+[ 242: PASS ] gl.getParameter(gl.DEPTH_TEST) is true
+[ 243: PASS ] gl.isEnabled(gl.DEPTH_TEST) is false
+[ 244: PASS ] gl.getParameter(gl.DEPTH_TEST) is false
+[ 245: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DEPTH_TEST
+[ 246: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DITHER
+[ 247: PASS ] gl.isEnabled(gl.DITHER) is true
+[ 248: PASS ] gl.getParameter(gl.DITHER) is true
+[ 249: PASS ] gl.isEnabled(gl.DITHER) is false
+[ 250: PASS ] gl.getParameter(gl.DITHER) is false
+[ 251: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DITHER
+[ 252: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.POLYGON_OFFSET_FILL
+[ 253: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is true
+[ 254: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is true
+[ 255: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is false
+[ 256: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is false
+[ 257: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_POLYGON_OFFSET_FILL
+[ 258: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_ALPHA_TO_COVERAGE
+[ 259: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is true
+[ 260: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 261: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is false
+[ 262: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 263: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_ALPHA_TO_COVERAGE
+[ 264: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_COVERAGE
+[ 265: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is true
+[ 266: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 267: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is false
+[ 268: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 269: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_COVERAGE
+[ 270: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SCISSOR_TEST
+[ 271: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is true
+[ 272: PASS ] gl.getParameter(gl.SCISSOR_TEST) is true
+[ 273: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is false
+[ 274: PASS ] gl.getParameter(gl.SCISSOR_TEST) is false
+[ 275: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SCISSOR_TEST
+[ 276: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.STENCIL_TEST
+[ 277: PASS ] gl.isEnabled(gl.STENCIL_TEST) is true
+[ 278: FAIL ] gl.getParameter(gl.STENCIL_TEST) should be true. Was false.
+[ 279: PASS ] gl.isEnabled(gl.STENCIL_TEST) is false
+[ 280: PASS ] gl.getParameter(gl.STENCIL_TEST) is false
+[ 281: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_STENCIL_TEST
+[ 282: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 283: PASS ] context exists
+[ 284: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.BLEND
+[ 285: PASS ] gl.isEnabled(gl.BLEND) is true
+[ 286: PASS ] gl.getParameter(gl.BLEND) is true
+[ 287: PASS ] gl.isEnabled(gl.BLEND) is false
+[ 288: PASS ] gl.getParameter(gl.BLEND) is false
+[ 289: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_BLEND
+[ 290: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.CULL_FACE
+[ 291: PASS ] gl.isEnabled(gl.CULL_FACE) is true
+[ 292: PASS ] gl.getParameter(gl.CULL_FACE) is true
+[ 293: PASS ] gl.isEnabled(gl.CULL_FACE) is false
+[ 294: PASS ] gl.getParameter(gl.CULL_FACE) is false
+[ 295: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_CULL_FACE
+[ 296: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DEPTH_TEST
+[ 297: PASS ] gl.isEnabled(gl.DEPTH_TEST) is true
+[ 298: PASS ] gl.getParameter(gl.DEPTH_TEST) is true
+[ 299: PASS ] gl.isEnabled(gl.DEPTH_TEST) is false
+[ 300: PASS ] gl.getParameter(gl.DEPTH_TEST) is false
+[ 301: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DEPTH_TEST
+[ 302: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.DITHER
+[ 303: PASS ] gl.isEnabled(gl.DITHER) is true
+[ 304: PASS ] gl.getParameter(gl.DITHER) is true
+[ 305: PASS ] gl.isEnabled(gl.DITHER) is false
+[ 306: PASS ] gl.getParameter(gl.DITHER) is false
+[ 307: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_DITHER
+[ 308: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.POLYGON_OFFSET_FILL
+[ 309: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is true
+[ 310: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is true
+[ 311: PASS ] gl.isEnabled(gl.POLYGON_OFFSET_FILL) is false
+[ 312: PASS ] gl.getParameter(gl.POLYGON_OFFSET_FILL) is false
+[ 313: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_POLYGON_OFFSET_FILL
+[ 314: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_ALPHA_TO_COVERAGE
+[ 315: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is true
+[ 316: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 317: PASS ] gl.isEnabled(gl.SAMPLE_ALPHA_TO_COVERAGE) is false
+[ 318: FAIL ] gl.getParameter(gl.SAMPLE_ALPHA_TO_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 319: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_ALPHA_TO_COVERAGE
+[ 320: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SAMPLE_COVERAGE
+[ 321: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is true
+[ 322: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be true (of type boolean). Was null (of type object).
+[ 323: PASS ] gl.isEnabled(gl.SAMPLE_COVERAGE) is false
+[ 324: FAIL ] gl.getParameter(gl.SAMPLE_COVERAGE) should be false (of type boolean). Was null (of type object).
+[ 325: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SAMPLE_COVERAGE
+[ 326: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.SCISSOR_TEST
+[ 327: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is true
+[ 328: PASS ] gl.getParameter(gl.SCISSOR_TEST) is true
+[ 329: PASS ] gl.isEnabled(gl.SCISSOR_TEST) is false
+[ 330: PASS ] gl.getParameter(gl.SCISSOR_TEST) is false
+[ 331: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_SCISSOR_TEST
+[ 332: PASS ] getError was expected value: NO_ERROR : gl.enable must succeed when passed gl.STENCIL_TEST
+[ 333: PASS ] gl.isEnabled(gl.STENCIL_TEST) is true
+[ 334: PASS ] gl.getParameter(gl.STENCIL_TEST) is true
+[ 335: PASS ] gl.isEnabled(gl.STENCIL_TEST) is false
+[ 336: PASS ] gl.getParameter(gl.STENCIL_TEST) is false
+[ 337: PASS ] getError was expected value: NO_ERROR : gl.isEnabled and gl.GetParameter must not set errors when passed GL_STENCIL_TEST
+[ 338: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 339: PASS ] successfullyParsed is true
+[ FAIL ] 31 failures reported
 

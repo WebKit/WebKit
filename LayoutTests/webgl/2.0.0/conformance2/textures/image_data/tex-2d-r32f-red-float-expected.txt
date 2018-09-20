@@ -1,5 +1,679 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-2d-r32f-red-float.html
-[ PASS ] All tests passed
+[ 1: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 2: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 3: PASS ] shouldBe 0,0,0
+[ 4: PASS ] shouldBe 0,0,0
+[ 5: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 6: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 7: PASS ] shouldBe 0,0,0
+[ 8: PASS ] shouldBe 0,0,0
+[ 9: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 10: PASS ] shouldBe 0,0,0
+[ 11: PASS ] shouldBe 0,0,0
+[ 12: PASS ] shouldBe 0,0,0
+[ 13: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 14: PASS ] shouldBe 0,0,0
+[ 15: PASS ] shouldBe 0,0,0
+[ 16: PASS ] shouldBe 0,0,0
+[ 17: PASS ] shouldBe 0,0,0
+[ 18: PASS ] shouldBe 0,0,0
+[ 19: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 20: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 21: PASS ] shouldBe 0,0,0
+[ 22: PASS ] shouldBe 0,0,0
+[ 23: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 24: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 25: PASS ] shouldBe 0,0,0
+[ 26: PASS ] shouldBe 0,0,0
+[ 27: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 28: PASS ] shouldBe 0,0,0
+[ 29: PASS ] shouldBe 0,0,0
+[ 30: PASS ] shouldBe 0,0,0
+[ 31: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 32: PASS ] shouldBe 0,0,0
+[ 33: PASS ] shouldBe 0,0,0
+[ 34: PASS ] shouldBe 0,0,0
+[ 35: PASS ] shouldBe 0,0,0
+[ 36: PASS ] shouldBe 0,0,0
+[ 37: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 38: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 39: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 40: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 41: PASS ] shouldBe 0,0,0
+[ 42: PASS ] shouldBe 0,0,0
+[ 43: PASS ] shouldBe 0,0,0
+[ 44: PASS ] shouldBe 0,0,0
+[ 45: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 46: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 47: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 48: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 49: PASS ] shouldBe 0,0,0
+[ 50: PASS ] shouldBe 0,0,0
+[ 51: PASS ] shouldBe 0,0,0
+[ 52: PASS ] shouldBe 0,0,0
+[ 53: PASS ] shouldBe 0,0,0
+[ 54: PASS ] shouldBe 0,0,0
+[ 55: PASS ] shouldBe 0,0,0
+[ 56: PASS ] shouldBe 0,0,0
+[ 57: PASS ] shouldBe 0,0,0
+[ 58: PASS ] shouldBe 0,0,0
+[ 59: PASS ] shouldBe 0,0,0
+[ 60: PASS ] shouldBe 0,0,0
+[ 61: PASS ] shouldBe 0,0,0
+[ 62: PASS ] shouldBe 0,0,0
+[ 63: PASS ] shouldBe 0,0,0
+[ 64: PASS ] shouldBe 0,0,0
+[ 65: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 66: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 67: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 68: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 69: PASS ] shouldBe 0,0,0
+[ 70: PASS ] shouldBe 0,0,0
+[ 71: PASS ] shouldBe 0,0,0
+[ 72: PASS ] shouldBe 0,0,0
+[ 73: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 74: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 75: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 76: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 77: PASS ] shouldBe 0,0,0
+[ 78: PASS ] shouldBe 0,0,0
+[ 79: PASS ] shouldBe 0,0,0
+[ 80: PASS ] shouldBe 0,0,0
+[ 81: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 82: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 83: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 84: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 85: PASS ] shouldBe 0,0,0
+[ 86: PASS ] shouldBe 0,0,0
+[ 87: PASS ] shouldBe 0,0,0
+[ 88: PASS ] shouldBe 0,0,0
+[ 89: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 90: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 91: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 92: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 93: PASS ] shouldBe 0,0,0
+[ 94: PASS ] shouldBe 0,0,0
+[ 95: PASS ] shouldBe 0,0,0
+[ 96: PASS ] shouldBe 0,0,0
+[ 97: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 98: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 99: PASS ] shouldBe 0,0,0
+[ 100: PASS ] shouldBe 0,0,0
+[ 101: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 102: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 103: PASS ] shouldBe 0,0,0
+[ 104: PASS ] shouldBe 0,0,0
+[ 105: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 106: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 107: PASS ] shouldBe 0,0,0
+[ 108: PASS ] shouldBe 0,0,0
+[ 109: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 110: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 111: PASS ] shouldBe 0,0,0
+[ 112: PASS ] shouldBe 0,0,0
+[ 113: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 114: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 115: PASS ] shouldBe 0,0,0
+[ 116: PASS ] shouldBe 0,0,0
+[ 117: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 118: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 119: PASS ] shouldBe 0,0,0
+[ 120: PASS ] shouldBe 0,0,0
+[ 121: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 122: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 123: PASS ] shouldBe 0,0,0
+[ 124: PASS ] shouldBe 0,0,0
+[ 125: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 126: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 127: PASS ] shouldBe 0,0,0
+[ 128: PASS ] shouldBe 0,0,0
+[ 129: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 130: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 131: PASS ] shouldBe 0,0,0
+[ 132: PASS ] shouldBe 0,0,0
+[ 133: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 134: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 135: PASS ] shouldBe 0,0,0
+[ 136: PASS ] shouldBe 0,0,0
+[ 137: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 138: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 139: PASS ] shouldBe 0,0,0
+[ 140: PASS ] shouldBe 0,0,0
+[ 141: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 142: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 143: PASS ] shouldBe 0,0,0
+[ 144: PASS ] shouldBe 0,0,0
+[ 145: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 146: PASS ] shouldBe 0,0,0
+[ 147: PASS ] shouldBe 0,0,0
+[ 148: PASS ] shouldBe 0,0,0
+[ 149: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 150: PASS ] shouldBe 0,0,0
+[ 151: PASS ] shouldBe 0,0,0
+[ 152: PASS ] shouldBe 0,0,0
+[ 153: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 154: PASS ] shouldBe 0,0,0
+[ 155: PASS ] shouldBe 0,0,0
+[ 156: PASS ] shouldBe 0,0,0
+[ 157: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 158: PASS ] shouldBe 0,0,0
+[ 159: PASS ] shouldBe 0,0,0
+[ 160: PASS ] shouldBe 0,0,0
+[ 161: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 162: PASS ] shouldBe 0,0,0
+[ 163: PASS ] shouldBe 0,0,0
+[ 164: PASS ] shouldBe 0,0,0
+[ 165: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 166: PASS ] shouldBe 0,0,0
+[ 167: PASS ] shouldBe 0,0,0
+[ 168: PASS ] shouldBe 0,0,0
+[ 169: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 170: PASS ] shouldBe 0,0,0
+[ 171: PASS ] shouldBe 0,0,0
+[ 172: PASS ] shouldBe 0,0,0
+[ 173: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 174: PASS ] shouldBe 0,0,0
+[ 175: PASS ] shouldBe 0,0,0
+[ 176: PASS ] shouldBe 0,0,0
+[ 177: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 178: PASS ] shouldBe 0,0,0
+[ 179: PASS ] shouldBe 0,0,0
+[ 180: PASS ] shouldBe 0,0,0
+[ 181: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 182: PASS ] shouldBe 0,0,0
+[ 183: PASS ] shouldBe 0,0,0
+[ 184: PASS ] shouldBe 0,0,0
+[ 185: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 186: PASS ] shouldBe 0,0,0
+[ 187: PASS ] shouldBe 0,0,0
+[ 188: PASS ] shouldBe 0,0,0
+[ 189: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 190: PASS ] shouldBe 0,0,0
+[ 191: PASS ] shouldBe 0,0,0
+[ 192: PASS ] shouldBe 0,0,0
+[ 193: PASS ] shouldBe 0,0,0
+[ 194: PASS ] shouldBe 0,0,0
+[ 195: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 196: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 197: PASS ] shouldBe 0,0,0
+[ 198: PASS ] shouldBe 0,0,0
+[ 199: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 200: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 201: PASS ] shouldBe 0,0,0
+[ 202: PASS ] shouldBe 0,0,0
+[ 203: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 204: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 205: PASS ] shouldBe 0,0,0
+[ 206: PASS ] shouldBe 0,0,0
+[ 207: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 208: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 209: PASS ] shouldBe 0,0,0
+[ 210: PASS ] shouldBe 0,0,0
+[ 211: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 212: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 213: PASS ] shouldBe 0,0,0
+[ 214: PASS ] shouldBe 0,0,0
+[ 215: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 216: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 217: PASS ] shouldBe 0,0,0
+[ 218: PASS ] shouldBe 0,0,0
+[ 219: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 220: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 221: PASS ] shouldBe 0,0,0
+[ 222: PASS ] shouldBe 0,0,0
+[ 223: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 224: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 225: PASS ] shouldBe 0,0,0
+[ 226: PASS ] shouldBe 0,0,0
+[ 227: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 228: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 229: PASS ] shouldBe 0,0,0
+[ 230: PASS ] shouldBe 0,0,0
+[ 231: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 232: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 233: PASS ] shouldBe 0,0,0
+[ 234: PASS ] shouldBe 0,0,0
+[ 235: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 236: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 237: PASS ] shouldBe 0,0,0
+[ 238: PASS ] shouldBe 0,0,0
+[ 239: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 240: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 241: PASS ] shouldBe 0,0,0
+[ 242: PASS ] shouldBe 0,0,0
+[ 243: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 244: PASS ] shouldBe 0,0,0
+[ 245: PASS ] shouldBe 0,0,0
+[ 246: PASS ] shouldBe 0,0,0
+[ 247: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 248: PASS ] shouldBe 0,0,0
+[ 249: PASS ] shouldBe 0,0,0
+[ 250: PASS ] shouldBe 0,0,0
+[ 251: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 252: PASS ] shouldBe 0,0,0
+[ 253: PASS ] shouldBe 0,0,0
+[ 254: PASS ] shouldBe 0,0,0
+[ 255: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 256: PASS ] shouldBe 0,0,0
+[ 257: PASS ] shouldBe 0,0,0
+[ 258: PASS ] shouldBe 0,0,0
+[ 259: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 260: PASS ] shouldBe 0,0,0
+[ 261: PASS ] shouldBe 0,0,0
+[ 262: PASS ] shouldBe 0,0,0
+[ 263: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 264: PASS ] shouldBe 0,0,0
+[ 265: PASS ] shouldBe 0,0,0
+[ 266: PASS ] shouldBe 0,0,0
+[ 267: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 268: PASS ] shouldBe 0,0,0
+[ 269: PASS ] shouldBe 0,0,0
+[ 270: PASS ] shouldBe 0,0,0
+[ 271: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 272: PASS ] shouldBe 0,0,0
+[ 273: PASS ] shouldBe 0,0,0
+[ 274: PASS ] shouldBe 0,0,0
+[ 275: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 276: PASS ] shouldBe 0,0,0
+[ 277: PASS ] shouldBe 0,0,0
+[ 278: PASS ] shouldBe 0,0,0
+[ 279: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 280: PASS ] shouldBe 0,0,0
+[ 281: PASS ] shouldBe 0,0,0
+[ 282: PASS ] shouldBe 0,0,0
+[ 283: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 284: PASS ] shouldBe 0,0,0
+[ 285: PASS ] shouldBe 0,0,0
+[ 286: PASS ] shouldBe 0,0,0
+[ 287: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 288: PASS ] shouldBe 0,0,0
+[ 289: PASS ] shouldBe 0,0,0
+[ 290: PASS ] shouldBe 0,0,0
+[ 291: PASS ] shouldBe 0,0,0
+[ 292: PASS ] shouldBe 0,0,0
+[ 293: PASS ] shouldBe 0,0,0
+[ 294: PASS ] shouldBe 0,0,0
+[ 295: PASS ] shouldBe 0,0,0
+[ 296: PASS ] shouldBe 0,0,0
+[ 297: PASS ] shouldBe 0,0,0
+[ 298: PASS ] shouldBe 0,0,0
+[ 299: PASS ] shouldBe 0,0,0
+[ 300: PASS ] shouldBe 0,0,0
+[ 301: PASS ] shouldBe 0,0,0
+[ 302: PASS ] shouldBe 0,0,0
+[ 303: PASS ] shouldBe 0,0,0
+[ 304: PASS ] shouldBe 0,0,0
+[ 305: PASS ] shouldBe 0,0,0
+[ 306: PASS ] shouldBe 0,0,0
+[ 307: PASS ] shouldBe 0,0,0
+[ 308: PASS ] shouldBe 0,0,0
+[ 309: PASS ] shouldBe 0,0,0
+[ 310: PASS ] shouldBe 0,0,0
+[ 311: PASS ] shouldBe 0,0,0
+[ 312: PASS ] shouldBe 0,0,0
+[ 313: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 314: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 315: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 316: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 317: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 318: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 319: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 320: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 321: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 322: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 323: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 324: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 325: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 326: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 327: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 328: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 329: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 330: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 331: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 332: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 333: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 334: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 335: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 336: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 337: PASS ] shouldBe 0,0,0
+[ 338: PASS ] shouldBe 0,0,0
+[ 339: PASS ] shouldBe 0,0,0
+[ 340: PASS ] shouldBe 0,0,0
+[ 341: PASS ] shouldBe 0,0,0
+[ 342: PASS ] shouldBe 0,0,0
+[ 343: PASS ] shouldBe 0,0,0
+[ 344: PASS ] shouldBe 0,0,0
+[ 345: PASS ] shouldBe 0,0,0
+[ 346: PASS ] shouldBe 0,0,0
+[ 347: PASS ] shouldBe 0,0,0
+[ 348: PASS ] shouldBe 0,0,0
+[ 349: PASS ] shouldBe 0,0,0
+[ 350: PASS ] shouldBe 0,0,0
+[ 351: PASS ] shouldBe 0,0,0
+[ 352: PASS ] shouldBe 0,0,0
+[ 353: PASS ] shouldBe 0,0,0
+[ 354: PASS ] shouldBe 0,0,0
+[ 355: PASS ] shouldBe 0,0,0
+[ 356: PASS ] shouldBe 0,0,0
+[ 357: PASS ] shouldBe 0,0,0
+[ 358: PASS ] shouldBe 0,0,0
+[ 359: PASS ] shouldBe 0,0,0
+[ 360: PASS ] shouldBe 0,0,0
+[ 361: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 362: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 363: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 364: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 365: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 366: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 367: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 368: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 369: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 370: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 371: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 372: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 373: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 374: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 375: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 376: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 377: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 378: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 379: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 380: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 381: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 382: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 383: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 384: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 385: PASS ] shouldBe 0,0,0
+[ 386: PASS ] shouldBe 0,0,0
+[ 387: PASS ] shouldBe 0,0,0
+[ 388: PASS ] shouldBe 0,0,0
+[ 389: PASS ] shouldBe 0,0,0
+[ 390: PASS ] shouldBe 0,0,0
+[ 391: PASS ] shouldBe 0,0,0
+[ 392: PASS ] shouldBe 0,0,0
+[ 393: PASS ] shouldBe 0,0,0
+[ 394: PASS ] shouldBe 0,0,0
+[ 395: PASS ] shouldBe 0,0,0
+[ 396: PASS ] shouldBe 0,0,0
+[ 397: PASS ] shouldBe 0,0,0
+[ 398: PASS ] shouldBe 0,0,0
+[ 399: PASS ] shouldBe 0,0,0
+[ 400: PASS ] shouldBe 0,0,0
+[ 401: PASS ] shouldBe 0,0,0
+[ 402: PASS ] shouldBe 0,0,0
+[ 403: PASS ] shouldBe 0,0,0
+[ 404: PASS ] shouldBe 0,0,0
+[ 405: PASS ] shouldBe 0,0,0
+[ 406: PASS ] shouldBe 0,0,0
+[ 407: PASS ] shouldBe 0,0,0
+[ 408: PASS ] shouldBe 0,0,0
+[ 409: PASS ] shouldBe 0,0,0
+[ 410: PASS ] shouldBe 0,0,0
+[ 411: PASS ] shouldBe 0,0,0
+[ 412: PASS ] shouldBe 0,0,0
+[ 413: PASS ] shouldBe 0,0,0
+[ 414: PASS ] shouldBe 0,0,0
+[ 415: PASS ] shouldBe 0,0,0
+[ 416: PASS ] shouldBe 0,0,0
+[ 417: PASS ] shouldBe 0,0,0
+[ 418: PASS ] shouldBe 0,0,0
+[ 419: PASS ] shouldBe 0,0,0
+[ 420: PASS ] shouldBe 0,0,0
+[ 421: PASS ] shouldBe 0,0,0
+[ 422: PASS ] shouldBe 0,0,0
+[ 423: PASS ] shouldBe 0,0,0
+[ 424: PASS ] shouldBe 0,0,0
+[ 425: PASS ] shouldBe 0,0,0
+[ 426: PASS ] shouldBe 0,0,0
+[ 427: PASS ] shouldBe 0,0,0
+[ 428: PASS ] shouldBe 0,0,0
+[ 429: PASS ] shouldBe 0,0,0
+[ 430: PASS ] shouldBe 0,0,0
+[ 431: PASS ] shouldBe 0,0,0
+[ 432: PASS ] shouldBe 0,0,0
+[ 433: PASS ] shouldBe 0,0,0
+[ 434: PASS ] shouldBe 0,0,0
+[ 435: PASS ] shouldBe 0,0,0
+[ 436: PASS ] shouldBe 0,0,0
+[ 437: PASS ] shouldBe 0,0,0
+[ 438: PASS ] shouldBe 0,0,0
+[ 439: PASS ] shouldBe 0,0,0
+[ 440: PASS ] shouldBe 0,0,0
+[ 441: PASS ] shouldBe 0,0,0
+[ 442: PASS ] shouldBe 0,0,0
+[ 443: PASS ] shouldBe 0,0,0
+[ 444: PASS ] shouldBe 0,0,0
+[ 445: PASS ] shouldBe 0,0,0
+[ 446: PASS ] shouldBe 0,0,0
+[ 447: PASS ] shouldBe 0,0,0
+[ 448: PASS ] shouldBe 0,0,0
+[ 449: PASS ] shouldBe 0,0,0
+[ 450: PASS ] shouldBe 0,0,0
+[ 451: PASS ] shouldBe 0,0,0
+[ 452: PASS ] shouldBe 0,0,0
+[ 453: PASS ] shouldBe 0,0,0
+[ 454: PASS ] shouldBe 0,0,0
+[ 455: PASS ] shouldBe 0,0,0
+[ 456: PASS ] shouldBe 0,0,0
+[ 457: PASS ] shouldBe 0,0,0
+[ 458: PASS ] shouldBe 0,0,0
+[ 459: PASS ] shouldBe 0,0,0
+[ 460: PASS ] shouldBe 0,0,0
+[ 461: PASS ] shouldBe 0,0,0
+[ 462: PASS ] shouldBe 0,0,0
+[ 463: PASS ] shouldBe 0,0,0
+[ 464: PASS ] shouldBe 0,0,0
+[ 465: PASS ] shouldBe 0,0,0
+[ 466: PASS ] shouldBe 0,0,0
+[ 467: PASS ] shouldBe 0,0,0
+[ 468: PASS ] shouldBe 0,0,0
+[ 469: PASS ] shouldBe 0,0,0
+[ 470: PASS ] shouldBe 0,0,0
+[ 471: PASS ] shouldBe 0,0,0
+[ 472: PASS ] shouldBe 0,0,0
+[ 473: PASS ] shouldBe 0,0,0
+[ 474: PASS ] shouldBe 0,0,0
+[ 475: PASS ] shouldBe 0,0,0
+[ 476: PASS ] shouldBe 0,0,0
+[ 477: PASS ] shouldBe 0,0,0
+[ 478: PASS ] shouldBe 0,0,0
+[ 479: PASS ] shouldBe 0,0,0
+[ 480: PASS ] shouldBe 0,0,0
+[ 481: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 482: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 483: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 484: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 485: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 486: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 487: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 488: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 489: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 490: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 491: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 492: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 493: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 494: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 495: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 496: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 497: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 498: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 499: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 500: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 501: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 502: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 503: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 504: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 505: PASS ] shouldBe 0,0,0
+[ 506: PASS ] shouldBe 0,0,0
+[ 507: PASS ] shouldBe 0,0,0
+[ 508: PASS ] shouldBe 0,0,0
+[ 509: PASS ] shouldBe 0,0,0
+[ 510: PASS ] shouldBe 0,0,0
+[ 511: PASS ] shouldBe 0,0,0
+[ 512: PASS ] shouldBe 0,0,0
+[ 513: PASS ] shouldBe 0,0,0
+[ 514: PASS ] shouldBe 0,0,0
+[ 515: PASS ] shouldBe 0,0,0
+[ 516: PASS ] shouldBe 0,0,0
+[ 517: PASS ] shouldBe 0,0,0
+[ 518: PASS ] shouldBe 0,0,0
+[ 519: PASS ] shouldBe 0,0,0
+[ 520: PASS ] shouldBe 0,0,0
+[ 521: PASS ] shouldBe 0,0,0
+[ 522: PASS ] shouldBe 0,0,0
+[ 523: PASS ] shouldBe 0,0,0
+[ 524: PASS ] shouldBe 0,0,0
+[ 525: PASS ] shouldBe 0,0,0
+[ 526: PASS ] shouldBe 0,0,0
+[ 527: PASS ] shouldBe 0,0,0
+[ 528: PASS ] shouldBe 0,0,0
+[ 529: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 530: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 531: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 532: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 533: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 534: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 535: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 536: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 537: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 538: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 539: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 540: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 541: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 542: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 543: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 544: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 545: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 546: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 547: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 548: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 549: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 550: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 551: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 552: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 553: PASS ] shouldBe 0,0,0
+[ 554: PASS ] shouldBe 0,0,0
+[ 555: PASS ] shouldBe 0,0,0
+[ 556: PASS ] shouldBe 0,0,0
+[ 557: PASS ] shouldBe 0,0,0
+[ 558: PASS ] shouldBe 0,0,0
+[ 559: PASS ] shouldBe 0,0,0
+[ 560: PASS ] shouldBe 0,0,0
+[ 561: PASS ] shouldBe 0,0,0
+[ 562: PASS ] shouldBe 0,0,0
+[ 563: PASS ] shouldBe 0,0,0
+[ 564: PASS ] shouldBe 0,0,0
+[ 565: PASS ] shouldBe 0,0,0
+[ 566: PASS ] shouldBe 0,0,0
+[ 567: PASS ] shouldBe 0,0,0
+[ 568: PASS ] shouldBe 0,0,0
+[ 569: PASS ] shouldBe 0,0,0
+[ 570: PASS ] shouldBe 0,0,0
+[ 571: PASS ] shouldBe 0,0,0
+[ 572: PASS ] shouldBe 0,0,0
+[ 573: PASS ] shouldBe 0,0,0
+[ 574: PASS ] shouldBe 0,0,0
+[ 575: PASS ] shouldBe 0,0,0
+[ 576: PASS ] shouldBe 0,0,0
+[ 577: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 578: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 579: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 580: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 581: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 582: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 583: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 584: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 585: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 586: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 587: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 588: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 589: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 590: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 591: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 592: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 593: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 594: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 595: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 596: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 597: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 598: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 599: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 600: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 601: PASS ] shouldBe 0,0,0
+[ 602: PASS ] shouldBe 0,0,0
+[ 603: PASS ] shouldBe 0,0,0
+[ 604: PASS ] shouldBe 0,0,0
+[ 605: PASS ] shouldBe 0,0,0
+[ 606: PASS ] shouldBe 0,0,0
+[ 607: PASS ] shouldBe 0,0,0
+[ 608: PASS ] shouldBe 0,0,0
+[ 609: PASS ] shouldBe 0,0,0
+[ 610: PASS ] shouldBe 0,0,0
+[ 611: PASS ] shouldBe 0,0,0
+[ 612: PASS ] shouldBe 0,0,0
+[ 613: PASS ] shouldBe 0,0,0
+[ 614: PASS ] shouldBe 0,0,0
+[ 615: PASS ] shouldBe 0,0,0
+[ 616: PASS ] shouldBe 0,0,0
+[ 617: PASS ] shouldBe 0,0,0
+[ 618: PASS ] shouldBe 0,0,0
+[ 619: PASS ] shouldBe 0,0,0
+[ 620: PASS ] shouldBe 0,0,0
+[ 621: PASS ] shouldBe 0,0,0
+[ 622: PASS ] shouldBe 0,0,0
+[ 623: PASS ] shouldBe 0,0,0
+[ 624: PASS ] shouldBe 0,0,0
+[ 625: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 626: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 627: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 628: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 629: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 630: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 631: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 632: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 633: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 634: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 635: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 636: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 637: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 638: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 639: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 640: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 641: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 642: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 643: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 644: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 645: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 646: FAIL ] shouldBe 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 647: FAIL ] shouldBe 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 648: FAIL ] shouldBe 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 649: PASS ] shouldBe 0,0,0
+[ 650: PASS ] shouldBe 0,0,0
+[ 651: PASS ] shouldBe 0,0,0
+[ 652: PASS ] shouldBe 0,0,0
+[ 653: PASS ] shouldBe 0,0,0
+[ 654: PASS ] shouldBe 0,0,0
+[ 655: PASS ] shouldBe 0,0,0
+[ 656: PASS ] shouldBe 0,0,0
+[ 657: PASS ] shouldBe 0,0,0
+[ 658: PASS ] shouldBe 0,0,0
+[ 659: PASS ] shouldBe 0,0,0
+[ 660: PASS ] shouldBe 0,0,0
+[ 661: PASS ] shouldBe 0,0,0
+[ 662: PASS ] shouldBe 0,0,0
+[ 663: PASS ] shouldBe 0,0,0
+[ 664: PASS ] shouldBe 0,0,0
+[ 665: PASS ] shouldBe 0,0,0
+[ 666: PASS ] shouldBe 0,0,0
+[ 667: PASS ] shouldBe 0,0,0
+[ 668: PASS ] shouldBe 0,0,0
+[ 669: PASS ] shouldBe 0,0,0
+[ 670: PASS ] shouldBe 0,0,0
+[ 671: PASS ] shouldBe 0,0,0
+[ 672: PASS ] shouldBe 0,0,0
+[ 673: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
+[ 674: PASS ] successfullyParsed is true
+[ FAIL ] 253 failures reported
 

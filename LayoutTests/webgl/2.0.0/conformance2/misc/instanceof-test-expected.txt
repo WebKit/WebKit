@@ -1,5 +1,35 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/misc/instanceof-test.html
-[ PASS ] All tests passed
+[ 1: PASS ] gl instanceof WebGL2RenderingContext is true
+[ 2: PASS ] gl.createBuffer() instanceof WebGLBuffer is true
+[ 3: PASS ] gl.createFramebuffer() instanceof WebGLFramebuffer is true
+[ 4: PASS ] gl.createProgram() instanceof WebGLProgram is true
+[ 5: PASS ] gl.createRenderbuffer() instanceof WebGLRenderbuffer is true
+[ 6: PASS ] gl.createShader(gl.VERTEX_SHADER) instanceof WebGLShader is true
+[ 7: PASS ] gl.createTexture() instanceof WebGLTexture is true
+[ 8: FAIL ] gl.createQuery() instanceof WebGLQuery should be true. Was false.
+[ 9: FAIL ] gl.createSampler() instanceof WebGLSampler should be true. Was false.
+[ 10: FAIL ] gl.createTransformFeedback() instanceof WebGLTransformFeedback should be true. Was false.
+[ 11: PASS ] gl.createVertexArray() instanceof WebGLVertexArrayObject is true
+[ 12: PASS ] gl.getUniformLocation(program, "color") instanceof WebGLUniformLocation is true
+[ 13: PASS ] gl.getActiveAttrib(program, 0) instanceof WebGLActiveInfo is true
+[ 14: PASS ] gl.getActiveUniform(program, 0) instanceof WebGLActiveInfo is true
+[ 15: PASS ] new WebGLRenderingContext threw an error
+[ 16: PASS ] new WebGLActiveInfo threw an error
+[ 17: PASS ] new WebGLBuffer threw an error
+[ 18: PASS ] new WebGLFramebuffer threw an error
+[ 19: PASS ] new WebGLProgram threw an error
+[ 20: PASS ] new WebGLRenderbuffer threw an error
+[ 21: PASS ] new WebGLShader threw an error
+[ 22: PASS ] new WebGLTexture threw an error
+[ 23: PASS ] new WebGLUniformLocation threw an error
+[ 24: PASS ] new WebGLShaderPrecisionFormat threw an error
+[ 25: PASS ] new WebGLQuery threw an error
+[ 26: PASS ] new WebGLSampler threw an error
+[ 27: PASS ] new WebGLSync threw an error
+[ 28: PASS ] new WebGLTransformFeedback threw an error
+[ 29: PASS ] new WebGLVertexArrayObject threw an error
+[ 30: PASS ] successfullyParsed is true
+[ FAIL ] 3 failures reported
 

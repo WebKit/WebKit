@@ -1,5 +1,57 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/blitframebuffer-srgb-and-linear-drawbuffers.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 3: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 4: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 5: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readpixels should succeed
+[ 6: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 7: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 8: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readpixels should succeed
+[ 10: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 11: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 12: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 13: PASS ] getError was expected value: NO_ERROR : readpixels should succeed
+[ 14: PASS ] All pixels comparision passed!
+[ 15: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 16: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 17: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 18: PASS ] getError was expected value: NO_ERROR : readpixels should succeed
+[ 19: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 20: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 21: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 22: PASS ] getError was expected value: NO_ERROR : readpixels should succeed
+[ 23: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 24: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 25: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 26: PASS ] getError was expected value: NO_ERROR : readpixels should succeed
+[ 27: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 28: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 29: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 30: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readpixels should succeed
+[ 31: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 32: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 33: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 34: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readpixels should succeed
+[ 35: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 36: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 37: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 38: PASS ] getError was expected value: NO_ERROR : readpixels should succeed
+[ 39: PASS ] All pixels comparision passed!
+[ 40: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 41: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 42: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 43: PASS ] getError was expected value: NO_ERROR : readpixels should succeed
+[ 44: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 45: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 46: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 47: PASS ] getError was expected value: NO_ERROR : readpixels should succeed
+[ 48: PASS ] getError was expected value: NO_ERROR : setup read framebuffer should succeed
+[ 49: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 50: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 51: PASS ] getError was expected value: NO_ERROR : readpixels should succeed
+[ 52: PASS ] successfullyParsed is true
+[ FAIL ] 4 failures reported
 

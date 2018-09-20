@@ -1,5 +1,15 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/blitframebuffer-multisampled-readbuffer.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : setup draw framebuffer should succeed
+[ 3: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 4: PASS ] getError was expected value: NO_ERROR : Blit from a multi-sampled srgb image to a srgb image should succeed
+[ 5: FAIL ] should be 254,184,69,255 at (0, 0) expected: 254,184,69,255 was 0,0,0,0
+[ 6: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : setup draw framebuffer should succeed
+[ 7: PASS ] getError was expected value: NO_ERROR : blitframebuffer should succeed
+[ 8: PASS ] getError was expected value: NO_ERROR : Blit from a multi-sampled srgb image to a srgb image should succeed
+[ 9: FAIL ] should be 254,184,69,255 at (0, 0) expected: 254,184,69,255 was 0,0,0,0
+[ 10: PASS ] successfullyParsed is true
+[ FAIL ] 3 failures reported
 

@@ -1,5 +1,10 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/clear-srgb-color-buffer.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] framebuffer complete!
+[ 3: FAIL ] at (0, 0) expected: 124,193,222,255 was 51,136,187,255
+[ 4: FAIL ] at (0, 0) expected: 124,193,222,255 was 51,136,187,255
+[ 5: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

@@ -1,5 +1,31 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/blitframebuffer-stencil-only.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : after program initialization
+[ 3: PASS ] gl.getProgramParameter(program, gl.LINK_STATUS) is true
+[ 4: PASS ] getError was expected value: NO_ERROR : query uniform location
+[ 5: PASS ] colorLoc is non-null.
+[ 6: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after buffer init
+[ 7: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36053. Was 36054.
+[ 8: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after buffer init
+[ 9: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36053. Was 36054.
+[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after drawQuad
+[ 11: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after drawQuad
+[ 12: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after drawQuad
+[ 13: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after drawQuad
+[ 14: PASS ] getError was expected value: NO_ERROR : after test
+[ 15: FAIL ] stencil test should be green at (0, 0) expected: 0,255,0,255 was 0,0,0,0
+[ 16: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after buffer init
+[ 17: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36053. Was 36054.
+[ 18: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after buffer init
+[ 19: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36053. Was 36054.
+[ 20: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after drawQuad
+[ 21: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after drawQuad
+[ 22: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after drawQuad
+[ 23: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : after drawQuad
+[ 24: PASS ] getError was expected value: NO_ERROR : after test
+[ 25: FAIL ] stencil test should be green at (0, 0) expected: 0,255,0,255 was 0,0,0,0
+[ 26: PASS ] successfullyParsed is true
+[ FAIL ] 18 failures reported
 

@@ -1,5 +1,300 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/misc/object-deletion-behaviour.html
-[ PASS ] All tests passed
+[ 1: PASS ] vertex shader loaded
+[ 2: PASS ] fragment shader loaded
+[ 3: PASS ] program is non-null.
+[ 4: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.attachShader(program, vertexShader)
+[ 5: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.attachShader(program, fragmentShader)
+[ 6: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.linkProgram(program)
+[ 7: PASS ] gl.getProgramParameter(program, gl.LINK_STATUS) is true
+[ 8: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.useProgram(program)
+[ 9: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteShader(vertexShader)
+[ 10: PASS ] gl.isShader(vertexShader) is true
+[ 11: PASS ] gl.getShaderParameter(vertexShader, gl.DELETE_STATUS) is true
+[ 12: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.detachShader(program, vertexShader)
+[ 13: PASS ] gl.isShader(vertexShader) is false
+[ 14: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteShader(fragmentShader)
+[ 15: PASS ] gl.isShader(fragmentShader) is true
+[ 16: PASS ] gl.getShaderParameter(fragmentShader, gl.DELETE_STATUS) is true
+[ 17: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteProgram(program)
+[ 18: PASS ] gl.isProgram(program) is true
+[ 19: PASS ] gl.getProgramParameter(program, gl.DELETE_STATUS) is true
+[ 20: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.useProgram(null)
+[ 21: PASS ] gl.isProgram(program) is false
+[ 22: PASS ] gl.isShader(fragmentShader) is false
+[ 23: PASS ] fbo is non-null.
+[ 24: PASS ] fbo2 is non-null.
+[ 25: PASS ] fbo3 is non-null.
+[ 26: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 27: PASS ] tex is non-null.
+[ 28: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, tex)
+[ 29: PASS ] gl.getParameter(gl.TEXTURE_BINDING_2D) is tex
+[ 30: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0)
+[ 31: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is tex
+[ 32: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.TEXTURE
+[ 33: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteTexture(tex)
+[ 34: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
+[ 35: PASS ] getError was expected value: INVALID_ENUM : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)
+[ 36: PASS ] gl.isTexture(tex) is false
+[ 37: PASS ] gl.getParameter(gl.TEXTURE_BINDING_2D) is null
+[ 38: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, tex)
+[ 39: PASS ] gl.getParameter(gl.TEXTURE_BINDING_2D) is null
+[ 40: PASS ] texCubeMap is non-null.
+[ 41: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap)
+[ 42: PASS ] gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP) is texCubeMap
+[ 43: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteTexture(texCubeMap)
+[ 44: PASS ] gl.isTexture(texCubeMap) is false
+[ 45: PASS ] gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP) is null
+[ 46: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap)
+[ 47: PASS ] gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP) is null
+[ 48: PASS ] t is non-null.
+[ 49: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, t)
+[ 50: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+[ 51: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteTexture(t)
+[ 52: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, t)
+[ 53: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+[ 54: PASS ] t2 is non-null.
+[ 55: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.activeTexture(gl.TEXTURE0)
+[ 56: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, t2)
+[ 57: PASS ] gl.getParameter(gl.TEXTURE_BINDING_2D) is t2
+[ 58: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.activeTexture(gl.TEXTURE1)
+[ 59: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, t2)
+[ 60: PASS ] gl.getParameter(gl.TEXTURE_BINDING_2D) is t2
+[ 61: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteTexture(t2)
+[ 62: PASS ] gl.getParameter(gl.TEXTURE_BINDING_2D) is null
+[ 63: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.activeTexture(gl.TEXTURE0)
+[ 64: PASS ] gl.getParameter(gl.TEXTURE_BINDING_2D) is null
+[ 65: PASS ] rbo is non-null.
+[ 66: PASS ] rbo2 is non-null.
+[ 67: PASS ] rbo3 is non-null.
+[ 68: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+[ 69: PASS ] gl.getParameter(gl.RENDERBUFFER_BINDING) is rbo
+[ 70: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo)
+[ 71: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is rbo
+[ 72: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteRenderbuffer(rbo)
+[ 73: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
+[ 74: PASS ] getError was expected value: INVALID_ENUM : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)
+[ 75: PASS ] gl.isRenderbuffer(rbo) is false
+[ 76: PASS ] gl.getParameter(gl.RENDERBUFFER_BINDING) is null
+[ 77: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+[ 78: PASS ] gl.getParameter(gl.RENDERBUFFER_BINDING) is null
+[ 79: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindRenderbuffer(gl.RENDERBUFFER, rbo2)
+[ 80: PASS ] gl.getParameter(gl.RENDERBUFFER_BINDING) is rbo2
+[ 81: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteRenderbuffer(rbo3)
+[ 82: PASS ] gl.getParameter(gl.RENDERBUFFER_BINDING) is rbo2
+[ 83: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+[ 84: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 16, 16)
+[ 85: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 86: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo)
+[ 87: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 88: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(1,0,0,1)
+[ 89: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 90: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 91: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,1,0,1)
+[ 92: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 93: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 94: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteRenderbuffer(rbo)
+[ 95: PASS ] backbuffer should be red
+[ 96: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [255,0,0,255], "backbuffer should be red")
+[ 97: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 98: PASS ] fbo should be green
+[ 99: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [0,255,0,255], "fbo should be green")
+[ 100: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,0,1,1)
+[ 101: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 102: PASS ] fbo should be blue
+[ 103: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [0,0,255,255], "fbo should be blue")
+[ 104: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 105: PASS ] backbuffer should be red
+[ 106: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [255,0,0,255], "backbuffer should be red")
+[ 107: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+[ 108: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 16, 16)
+[ 109: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 110: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo)
+[ 111: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindRenderbuffer(gl.RENDERBUFFER, rbo2)
+[ 112: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 16, 16)
+[ 113: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rbo2)
+[ 114: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, rbo2)
+[ 115: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is rbo2
+[ 116: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is rbo2
+[ 117: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 118: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteRenderbuffer(rbo2)
+[ 119: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
+[ 120: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
+[ 121: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 122: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is rbo
+[ 123: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteRenderbuffer(rbo)
+[ 124: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 125: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, tex)
+[ 126: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 127: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0)
+[ 128: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+[ 129: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 130: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,1,0,1)
+[ 131: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 132: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 133: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteTexture(tex)
+[ 134: PASS ] backbuffer should be red
+[ 135: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 1, 1, [255,0,0,255], "backbuffer should be red")
+[ 136: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 137: PASS ] fbo should be green
+[ 138: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 1, 1, [0,255,0,255], "fbo should be green")
+[ 139: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,0,1,1)
+[ 140: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 141: PASS ] fbo should be blue
+[ 142: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 1, 1, [0,0,255,255], "fbo should be blue")
+[ 143: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 144: PASS ] backbuffer should be red
+[ 145: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [255,0,0,255], "backbuffer should be red")
+[ 146: PASS ] rbo is non-null.
+[ 147: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+[ 148: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 16, 16)
+[ 149: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 150: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo)
+[ 151: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2)
+[ 152: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo)
+[ 153: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 154: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 155: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(1,0,0,1)
+[ 156: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 157: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 158: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,1,0,1)
+[ 159: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 160: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteRenderbuffer(rbo)
+[ 161: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 162: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2)
+[ 163: PASS ] fbo should be green
+[ 164: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [0,255,0,255], "fbo should be green")
+[ 165: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,0,1,1)
+[ 166: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 167: PASS ] fbo should be blue
+[ 168: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [0,0,255,255], "fbo should be blue")
+[ 169: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is rbo
+[ 170: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 171: PASS ] getError was expected value: INVALID_ENUM : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)
+[ 172: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+[ 173: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 174: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 175: PASS ] backbuffer should be red
+[ 176: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [255,0,0,255], "backbuffer should be red")
+[ 177: PASS ] tex is non-null.
+[ 178: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, tex)
+[ 179: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 180: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0)
+[ 181: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+[ 182: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2)
+[ 183: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0)
+[ 184: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 185: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,1,0,1)
+[ 186: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 187: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteTexture(tex)
+[ 188: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 189: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2)
+[ 190: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 191: PASS ] fbo should be green
+[ 192: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 1, 1, [0,255,0,255], "fbo should be green")
+[ 193: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,0,1,1)
+[ 194: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 195: PASS ] fbo should be blue
+[ 196: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 1, 1, [0,0,255,255], "fbo should be blue")
+[ 197: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is tex
+[ 198: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 199: PASS ] getError was expected value: INVALID_ENUM : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)
+[ 200: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 201: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 202: PASS ] backbuffer should be red
+[ 203: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [255,0,0,255], "backbuffer should be red")
+[ 204: PASS ] buffer is non-null.
+[ 205: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+[ 206: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is buffer
+[ 207: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(buffer)
+[ 208: PASS ] gl.isBuffer(buffer) is false
+[ 209: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 210: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+[ 211: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 212: PASS ] buffer2 is non-null.
+[ 213: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, buffer2)
+[ 214: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is buffer2
+[ 215: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, null)
+[ 216: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 217: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(buffer2)
+[ 218: PASS ] gl.isBuffer(buffer2) is false
+[ 219: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, buffer2)
+[ 220: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 221: PASS ] bufferElement is non-null.
+[ 222: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferElement)
+[ 223: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is bufferElement
+[ 224: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(bufferElement)
+[ 225: PASS ] gl.isBuffer(bufferElement) is false
+[ 226: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 227: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferElement)
+[ 228: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 229: PASS ] b is non-null.
+[ 230: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, b)
+[ 231: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bufferData(gl.ARRAY_BUFFER, 1, gl.STATIC_DRAW)
+[ 232: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(b)
+[ 233: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, b)
+[ 234: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.bufferData(gl.ARRAY_BUFFER, 1, gl.STATIC_DRAW)
+[ 235: PASS ] b1 is non-null.
+[ 236: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, b1);
+[ 237: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.enableVertexAttribArray(1);
+[ 238: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
+[ 239: PASS ] b2 is non-null.
+[ 240: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, b2);
+[ 241: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.enableVertexAttribArray(2);
+[ 242: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.vertexAttribPointer(2, 4, gl.FLOAT, false, 0, 0);
+[ 243: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.enableVertexAttribArray(3);
+[ 244: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.vertexAttribPointer(3, 4, gl.FLOAT, false, 0, 0);
+[ 245: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is b1
+[ 246: PASS ] gl.getVertexAttrib(2, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is b2
+[ 247: PASS ] gl.getVertexAttrib(3, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is b2
+[ 248: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(b2);
+[ 249: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is b1
+[ 250: PASS ] gl.getVertexAttrib(2, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is null
+[ 251: PASS ] gl.getVertexAttrib(3, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is null
+[ 252: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(b1);
+[ 253: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is null
+[ 254: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 255: PASS ] gl.getParameter(gl.FRAMEBUFFER_BINDING) is fbo
+[ 256: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteFramebuffer(fbo)
+[ 257: PASS ] gl.isFramebuffer(fbo) is false
+[ 258: PASS ] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+[ 259: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 260: PASS ] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+[ 261: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2)
+[ 262: PASS ] gl.getParameter(gl.FRAMEBUFFER_BINDING) is fbo2
+[ 263: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteFramebuffer(fbo3)
+[ 264: PASS ] gl.getParameter(gl.FRAMEBUFFER_BINDING) is fbo2
+[ 265: PASS ] fbo is non-null.
+[ 266: PASS ] rbo is non-null.
+[ 267: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 268: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+[ 269: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, 16, 16)
+[ 270: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo)
+[ 271: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 272: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(1,0,0,1)
+[ 273: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 274: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+[ 275: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,1,0,1)
+[ 276: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 277: PASS ] fbo should be green
+[ 278: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 16, 16, [0,255,0,255], "fbo should be green")
+[ 279: PASS ] outside fbo should be black
+[ 280: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 16, 16, 1, 1, [0,0,0,0], "outside fbo should be black")
+[ 281: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteFramebuffer(fbo)
+[ 282: PASS ] backbuffer should be red
+[ 283: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 300, 150, [255,0,0,255], "backbuffer should be red")
+[ 284: PASS ] outside backbuffer should be black
+[ 285: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 300, 0, 300, 300, [0,0,0,0], "outside backbuffer should be black")
+[ 286: PASS ] outside backbuffer should be black
+[ 287: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 150, 300, 300, [0,0,0,0], "outside backbuffer should be black")
+[ 288: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clearColor(0,1,0,1)
+[ 289: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.clear(gl.COLOR_BUFFER_BIT)
+[ 290: PASS ] fbo should be green
+[ 291: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 300, 150, [0,255,0,255], "fbo should be green")
+[ 292: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+[ 293: PASS ] fbo should be green
+[ 294: PASS ] getError was expected value: NO_ERROR : after evaluating: wtu.checkCanvasRect(gl, 0, 0, 300, 150, [0,255,0,255], "fbo should be green")
+[ 295: PASS ] successfullyParsed is true
+[ FAIL ] 9 failures reported
 

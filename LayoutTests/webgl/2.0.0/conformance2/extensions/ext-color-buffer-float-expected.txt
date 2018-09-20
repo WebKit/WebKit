@@ -1,5 +1,67 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/extensions/ext-color-buffer-float.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
+[ 3: PASS ] getError was expected value: NO_ERROR : floating-point texture allocation should succeed
+[ 4: FAIL ] floating-point R16F render target should not be supported without enabling EXT_color_buffer_float
+[ 5: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
+[ 6: PASS ] getError was expected value: NO_ERROR : floating-point texture allocation should succeed
+[ 7: FAIL ] floating-point RG16F render target should not be supported without enabling EXT_color_buffer_float
+[ 8: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
+[ 9: PASS ] getError was expected value: NO_ERROR : floating-point texture allocation should succeed
+[ 10: FAIL ] floating-point RGBA16F render target should not be supported without enabling EXT_color_buffer_float
+[ 11: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
+[ 12: PASS ] getError was expected value: NO_ERROR : floating-point texture allocation should succeed
+[ 13: FAIL ] floating-point R32F render target should not be supported without enabling EXT_color_buffer_float
+[ 14: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
+[ 15: PASS ] getError was expected value: NO_ERROR : floating-point texture allocation should succeed
+[ 16: FAIL ] floating-point RG32F render target should not be supported without enabling EXT_color_buffer_float
+[ 17: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
+[ 18: PASS ] getError was expected value: NO_ERROR : floating-point texture allocation should succeed
+[ 19: FAIL ] floating-point RGBA32F render target should not be supported without enabling EXT_color_buffer_float
+[ 20: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
+[ 21: PASS ] getError was expected value: NO_ERROR : floating-point texture allocation should succeed
+[ 22: FAIL ] floating-point R11F_G11F_B10F render target should not be supported without enabling EXT_color_buffer_float
+[ 23: PASS ] getError was expected value: INVALID_ENUM : floating-point renderbuffer allocation should fail if EXT_color_buffer_float is not enabled
+[ 24: PASS ] getError was expected value: INVALID_ENUM : floating-point renderbuffer allocation should fail if EXT_color_buffer_float is not enabled
+[ 25: PASS ] getError was expected value: INVALID_ENUM : floating-point renderbuffer allocation should fail if EXT_color_buffer_float is not enabled
+[ 26: PASS ] getError was expected value: INVALID_ENUM : floating-point renderbuffer allocation should fail if EXT_color_buffer_float is not enabled
+[ 27: PASS ] getError was expected value: INVALID_ENUM : floating-point renderbuffer allocation should fail if EXT_color_buffer_float is not enabled
+[ 28: PASS ] getError was expected value: INVALID_ENUM : floating-point renderbuffer allocation should fail if EXT_color_buffer_float is not enabled
+[ 29: PASS ] getError was expected value: INVALID_ENUM : floating-point renderbuffer allocation should fail if EXT_color_buffer_float is not enabled
+[ 30: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
+[ 31: PASS ] getError was expected value: NO_ERROR : RGB16F texture allocation should succeed
+[ 32: FAIL ] RGB16F render target should not be supported with or without enabling EXT_color_buffer_float
+[ 33: PASS ] getError was expected value: INVALID_ENUM : RGB16F renderbuffer allocation should fail with or without enabling EXT_color_buffer_float
+[ 34: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Setup framebuffer with texture should succeed.
+[ 35: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 36: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 37: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 38: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
+[ 39: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 40: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Setup framebuffer with texture should succeed.
+[ 41: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 42: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 43: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 44: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
+[ 45: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 46: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Setup framebuffer with texture should succeed.
+[ 47: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 48: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 49: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 50: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
+[ 51: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Setup framebuffer with texture should succeed.
+[ 53: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 54: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 55: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 56: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
+[ 57: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 58: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 59: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
+[ 60: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
+[ 61: PASS ] No EXT_color_buffer_float support -- this is legal
+[ 62: PASS ] successfullyParsed is true
+[ FAIL ] 17 failures reported
 

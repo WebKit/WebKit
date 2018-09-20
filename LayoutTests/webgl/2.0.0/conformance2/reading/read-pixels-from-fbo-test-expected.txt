@@ -1,5 +1,181 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/reading/read-pixels-from-fbo-test.html
-[ PASS ] All tests passed
+[ 1: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 2: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 3: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 4: PASS ] Color read back as expected
+[ 5: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 6: PASS ] Color read back as expected
+[ 7: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 8: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 10: FAIL ] Expected color = 250,0,0,0, was = 0,0,0,1
+[ 11: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338016
+[ 12: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 13: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 14: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 15: FAIL ] Expected color = -126,0,0,0, was = 0,0,0,1
+[ 16: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338176
+[ 17: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 18: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 19: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 20: FAIL ] Expected color = 30001,0,0,0, was = 0,0,0,1
+[ 21: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338176
+[ 22: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 23: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 24: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 25: FAIL ] Expected color = -14189,0,0,0, was = 0,0,0,1
+[ 26: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338176
+[ 27: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 28: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 29: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 30: FAIL ] Expected color = 126726,0,0,0, was = 0,0,0,1
+[ 31: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338176
+[ 32: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 33: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 34: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 35: FAIL ] Expected color = -126726,0,0,0, was = 0,0,0,1
+[ 36: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = 238569888
+[ 37: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 38: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 39: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 40: PASS ] Color read back as expected
+[ 41: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 42: PASS ] Color read back as expected
+[ 43: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 44: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 45: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 46: PASS ] Color read back as expected
+[ 47: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = 238569888
+[ 48: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 49: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 50: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 51: PASS ] Color read back as expected
+[ 52: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = 238569888
+[ 53: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 54: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 55: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 56: PASS ] Color read back as expected
+[ 57: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = 238569888
+[ 58: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 59: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 60: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 61: PASS ] Color read back as expected
+[ 62: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = 238569888
+[ 63: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 64: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 65: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 66: PASS ] Color read back as expected
+[ 67: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = 238569888
+[ 68: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 69: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 70: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 71: PASS ] Color read back as expected
+[ 72: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = 238569888
+[ 73: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 74: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 75: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 76: PASS ] Color read back as expected
+[ 77: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 78: PASS ] Color read back as expected
+[ 79: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 80: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 81: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should generate no error
+[ 82: FAIL ] Expected color = 127.5,178.5,51,0, was = 0,0,0,0
+[ 83: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should generate no error
+[ 84: FAIL ] Expected color = 127.5,178.5,51,0, was = 0,0,0,0
+[ 85: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 86: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 87: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should generate no error
+[ 88: FAIL ] Expected color = 127.5,178.5,51,0, was = 0,0,0,0
+[ 89: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should generate no error
+[ 90: FAIL ] Expected color = 127.5,178.5,51,0, was = 0,0,0,0
+[ 91: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 92: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 93: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 94: PASS ] Color read back as expected
+[ 95: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 96: PASS ] Color read back as expected
+[ 97: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 98: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 99: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 100: FAIL ] Expected color = 187.51696199784095,0,255,178.5, was = 128,0,255,178
+[ 101: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 102: FAIL ] Expected color = 187.51696199784095,0,255,178.5, was = 128,0,255,178
+[ 103: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 104: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 105: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 106: PASS ] Color read back as expected
+[ 107: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 108: PASS ] Color read back as expected
+[ 109: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 110: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 111: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 112: PASS ] Color read back as expected
+[ 113: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 114: PASS ] Color read back as expected
+[ 115: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 116: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 117: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 118: PASS ] Color read back as expected
+[ 119: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 120: PASS ] Color read back as expected
+[ 121: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 122: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 123: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 124: PASS ] Color read back as expected
+[ 125: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 126: PASS ] Color read back as expected
+[ 127: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 128: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 129: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 130: PASS ] Color read back as expected
+[ 131: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 132: PASS ] Color read back as expected
+[ 133: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 134: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 135: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 136: FAIL ] Expected color = 127,0,255,178, was = 0,0,0,0
+[ 137: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338177
+[ 138: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 139: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 140: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 141: FAIL ] Expected color = -55,56,80,127, was = 0,0,0,0
+[ 142: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338177
+[ 143: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 144: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 145: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 146: FAIL ] Expected color = 178,0,127,3, was = 0,0,0,0
+[ 147: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338177
+[ 148: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Setting up fbo should generate no error
+[ 149: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 150: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 151: FAIL ] Expected color = 14189,6735,0,19, was = 0,0,0,0
+[ 152: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338177
+[ 153: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 154: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 155: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 156: FAIL ] Expected color = 14189,-6735,0,19, was = 0,0,0,0
+[ 157: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338177
+[ 158: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 159: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 160: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 161: FAIL ] Expected color = 126726,6726,98765,2015, was = 0,0,0,0
+[ 162: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338177
+[ 163: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 164: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 165: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should generate no error
+[ 166: FAIL ] Expected color = 126726,-6726,-98765,2015, was = 0,0,0,0
+[ 167: FAIL ] Invalid IMPLEMENTATION_COLOR_READ_FORMAT = -445338177
+[ 168: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 169: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 170: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should generate no error
+[ 171: FAIL ] Expected color = 178.5,0,127.5,255, was = 0,0,0,0
+[ 172: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 173: PASS ] Color read back as expected
+[ 174: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should generate no error
+[ 175: FAIL ] Expected color = 178.5,0,127.5,255, was = 0,0,0,0
+[ 176: PASS ] successfullyParsed is true
+[ FAIL ] 66 failures reported
 

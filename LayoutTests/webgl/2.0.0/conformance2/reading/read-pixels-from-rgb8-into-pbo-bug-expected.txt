@@ -1,5 +1,8 @@
+CONSOLE MESSAGE: line 82: TypeError: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/reading/read-pixels-from-rgb8-into-pbo-bug.html
-[ PASS ] All tests passed
+[ 1: PASS ] context exists
+[ 2: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+[ FAIL ] 1 failures reported
 

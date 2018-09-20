@@ -1,5 +1,1254 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-copying-contents.html
-[ PASS ] All tests passed
+[ 1: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 2: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 3: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 4: FAIL ] The returned array buffer fails to match original data
+[ 5: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 6: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 7: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 8: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 9: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 10: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 11: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 12: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 13: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 14: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 15: FAIL ] The returned array buffer fails to match original data
+[ 16: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 17: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 18: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 19: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 20: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 21: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 22: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 23: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 24: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 25: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 26: PASS ] The returned array buffer matches original data
+[ 27: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 28: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 29: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 30: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 31: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 32: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 33: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 34: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 35: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : Copying should fail
+[ 36: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 37: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 38: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 39: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 40: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 41: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 42: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 43: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 44: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 45: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 46: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 47: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 48: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 49: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 50: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 51: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 52: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 53: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 54: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 55: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 56: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 57: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 58: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 59: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 60: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 61: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 62: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 63: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 64: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 65: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 66: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 67: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 68: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 69: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 70: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 71: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 72: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 73: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 74: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 75: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 76: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 77: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 78: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 79: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 80: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 81: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 82: FAIL ] The returned array buffer fails to match original data
+[ 83: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 84: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 85: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 86: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 87: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 88: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 89: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 90: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 91: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 92: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 93: FAIL ] The returned array buffer fails to match original data
+[ 94: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 95: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 96: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 97: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 98: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 99: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 100: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 101: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 102: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 103: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 104: FAIL ] The returned array buffer fails to match original data
+[ 105: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 106: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 107: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 108: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 109: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 110: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 111: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 112: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 113: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 114: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 115: PASS ] The returned array buffer matches original data
+[ 116: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 117: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 118: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 119: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 120: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 121: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 122: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 123: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 124: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 125: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 126: FAIL ] The returned array buffer fails to match original data
+[ 127: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 128: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 129: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 130: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 131: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 132: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 133: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 134: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 135: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 136: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 137: FAIL ] The returned array buffer fails to match original data
+[ 138: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 139: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 140: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 141: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 142: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 143: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 144: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 145: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 146: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 147: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 148: FAIL ] The returned array buffer fails to match original data
+[ 149: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 150: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 151: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 152: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 153: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 154: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 155: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 156: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 157: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 158: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 159: PASS ] The returned array buffer matches original data
+[ 160: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 161: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 162: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 163: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 164: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 165: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 166: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 167: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 168: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 169: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(TRANSFORM_FEEDBACK_BUFFER, 0, retBuffer) should work
+[ 170: FAIL ] The returned array buffer fails to match original data
+[ 171: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 172: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 173: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 174: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 175: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 176: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 177: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 178: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 179: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 180: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(TRANSFORM_FEEDBACK_BUFFER, 0, retBuffer) should work
+[ 181: PASS ] The returned array buffer matches original data
+[ 182: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 183: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 184: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 185: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 186: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 187: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 188: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 189: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 190: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 191: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 192: FAIL ] The returned array buffer fails to match original data
+[ 193: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 194: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 195: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 196: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 197: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 198: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 199: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 200: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 201: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 202: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 203: FAIL ] The returned array buffer fails to match original data
+[ 204: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 205: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 206: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 207: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 208: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 209: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 210: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 211: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 212: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 213: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 214: FAIL ] The returned array buffer fails to match original data
+[ 215: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 216: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 217: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 218: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 219: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 220: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 221: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 222: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 223: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 224: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 225: PASS ] The returned array buffer matches original data
+[ 226: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 227: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 228: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 229: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 230: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 231: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 232: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 233: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 234: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 235: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 236: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 237: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 238: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 239: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 240: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 241: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 242: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 243: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 244: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 245: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 246: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 247: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 248: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 249: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 250: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 251: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 252: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 253: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 254: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 255: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 256: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 257: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 258: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 259: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 260: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 261: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 262: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 263: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 264: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 265: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 266: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 267: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 268: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 269: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 270: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 271: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ELEMENT_ARRAY_BUFFER, 0, retBuffer) should work
+[ 272: FAIL ] The returned array buffer fails to match original data
+[ 273: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 274: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 275: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 276: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 277: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 278: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 279: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 280: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 281: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 282: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ELEMENT_ARRAY_BUFFER, 0, retBuffer) should work
+[ 283: FAIL ] The returned array buffer fails to match original data
+[ 284: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 285: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 286: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 287: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 288: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 289: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 290: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 291: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 292: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 293: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ELEMENT_ARRAY_BUFFER, 0, retBuffer) should work
+[ 294: PASS ] The returned array buffer matches original data
+[ 295: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 296: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 297: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 298: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 299: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 300: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 301: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 302: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 303: FAIL ] getError expected: INVALID_VALUE. Was INVALID_ENUM : Copying should fail
+[ 304: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 305: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 306: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 307: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 308: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 309: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 310: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 311: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 312: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 313: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 314: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 315: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 316: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 317: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 318: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 319: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 320: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 321: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 322: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 323: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 324: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 325: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 326: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 327: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 328: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 329: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 330: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 331: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 332: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 333: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 334: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 335: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 336: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 337: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 338: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 339: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 340: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 341: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 342: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 343: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 344: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 345: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 346: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 347: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 348: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 349: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 350: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 351: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 352: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 353: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 354: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 355: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 356: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 357: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 358: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 359: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 360: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 361: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 362: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 363: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 364: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 365: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 366: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 367: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 368: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 369: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 370: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 371: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 372: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 373: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 374: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 375: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 376: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 377: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 378: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 379: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 380: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 381: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 382: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 383: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 384: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 385: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 386: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 387: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 388: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 389: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 390: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 391: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 392: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 393: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 394: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 395: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 396: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 397: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 398: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 399: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 400: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 401: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 402: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 403: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 404: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 405: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 406: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 407: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 408: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 409: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 410: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 411: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 412: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 413: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 414: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 415: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 416: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 417: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 418: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 419: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 420: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 421: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 422: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 423: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 424: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 425: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 426: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 427: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 428: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 429: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 430: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 431: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 432: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 433: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 434: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 435: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 436: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 437: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 438: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 439: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 440: FAIL ] The returned array buffer fails to match original data
+[ 441: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 442: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 443: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 444: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 445: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 446: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 447: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 448: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 449: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 450: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 451: FAIL ] The returned array buffer fails to match original data
+[ 452: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 453: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 454: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 455: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 456: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 457: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 458: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 459: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 460: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 461: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 462: FAIL ] The returned array buffer fails to match original data
+[ 463: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 464: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 465: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 466: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 467: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 468: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 469: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 470: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 471: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 472: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 473: PASS ] The returned array buffer matches original data
+[ 474: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 475: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 476: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 477: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 478: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 479: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 480: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 481: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 482: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 483: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 484: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 485: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 486: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 487: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 488: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 489: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 490: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 491: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 492: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 493: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 494: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 495: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 496: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 497: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 498: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 499: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 500: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 501: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 502: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 503: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 504: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 505: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 506: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 507: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 508: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 509: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 510: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 511: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 512: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 513: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 514: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 515: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 516: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 517: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 518: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 519: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 520: FAIL ] The returned array buffer fails to match original data
+[ 521: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 522: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 523: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 524: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 525: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 526: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 527: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 528: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 529: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 530: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 531: FAIL ] The returned array buffer fails to match original data
+[ 532: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 533: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 534: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 535: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 536: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 537: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 538: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 539: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 540: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 541: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 542: PASS ] The returned array buffer matches original data
+[ 543: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 544: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 545: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 546: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 547: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 548: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 549: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 550: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 551: PASS ] getError was expected value: INVALID_VALUE : Copying should fail
+[ 552: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 553: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 554: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 555: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 556: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 557: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 558: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 559: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 560: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 561: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 562: FAIL ] The returned array buffer fails to match original data
+[ 563: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 564: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 565: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 566: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 567: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 568: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 569: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 570: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 571: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 572: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 573: FAIL ] The returned array buffer fails to match original data
+[ 574: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 575: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 576: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 577: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 578: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 579: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 580: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 581: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 582: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 583: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 584: FAIL ] The returned array buffer fails to match original data
+[ 585: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 586: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 587: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 588: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 589: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 590: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 591: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 592: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 593: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 594: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 595: PASS ] The returned array buffer matches original data
+[ 596: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 597: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 598: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 599: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 600: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 601: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 602: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 603: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 604: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 605: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(TRANSFORM_FEEDBACK_BUFFER, 0, retBuffer) should work
+[ 606: FAIL ] The returned array buffer fails to match original data
+[ 607: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 608: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 609: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 610: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 611: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 612: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 613: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 614: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 615: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 616: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(TRANSFORM_FEEDBACK_BUFFER, 0, retBuffer) should work
+[ 617: PASS ] The returned array buffer matches original data
+[ 618: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 619: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 620: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 621: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 622: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 623: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 624: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 625: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 626: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 627: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 628: FAIL ] The returned array buffer fails to match original data
+[ 629: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 630: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 631: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 632: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 633: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 634: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 635: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 636: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 637: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 638: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 639: FAIL ] The returned array buffer fails to match original data
+[ 640: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 641: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 642: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 643: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 644: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 645: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 646: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 647: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 648: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 649: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 650: FAIL ] The returned array buffer fails to match original data
+[ 651: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 652: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 653: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 654: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 655: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 656: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 657: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 658: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 659: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 660: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 661: PASS ] The returned array buffer matches original data
+[ 662: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 663: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 664: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 665: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 666: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 667: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 668: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 669: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 670: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 671: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 672: FAIL ] The returned array buffer fails to match original data
+[ 673: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 674: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 675: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 676: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 677: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 678: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 679: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 680: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 681: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 682: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 683: FAIL ] The returned array buffer fails to match original data
+[ 684: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 685: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 686: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 687: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 688: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 689: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 690: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 691: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 692: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 693: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 694: FAIL ] The returned array buffer fails to match original data
+[ 695: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 696: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 697: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 698: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 699: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 700: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 701: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 702: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 703: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 704: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 705: PASS ] The returned array buffer matches original data
+[ 706: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 707: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 708: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 709: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 710: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 711: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 712: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 713: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 714: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 715: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 716: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 717: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 718: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 719: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 720: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 721: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 722: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 723: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 724: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 725: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 726: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 727: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 728: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 729: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 730: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 731: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 732: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 733: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 734: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 735: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 736: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 737: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 738: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 739: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 740: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 741: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 742: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 743: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 744: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 745: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 746: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 747: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 748: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 749: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 750: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 751: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 752: FAIL ] The returned array buffer fails to match original data
+[ 753: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 754: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 755: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 756: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 757: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 758: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 759: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 760: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 761: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 762: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 763: FAIL ] The returned array buffer fails to match original data
+[ 764: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 765: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 766: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 767: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 768: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 769: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 770: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 771: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 772: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 773: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 774: FAIL ] The returned array buffer fails to match original data
+[ 775: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 776: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 777: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 778: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 779: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 780: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 781: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 782: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 783: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 784: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 785: PASS ] The returned array buffer matches original data
+[ 786: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 787: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 788: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 789: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 790: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 791: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 792: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 793: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 794: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 795: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 796: FAIL ] The returned array buffer fails to match original data
+[ 797: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 798: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 799: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 800: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 801: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 802: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 803: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 804: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 805: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 806: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 807: FAIL ] The returned array buffer fails to match original data
+[ 808: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 809: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 810: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 811: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 812: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 813: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 814: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 815: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 816: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 817: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 818: PASS ] The returned array buffer matches original data
+[ 819: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 820: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 821: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 822: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 823: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 824: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 825: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 826: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 827: PASS ] getError was expected value: INVALID_VALUE : Copying should fail
+[ 828: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 829: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 830: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 831: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 832: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 833: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 834: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 835: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 836: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 837: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(TRANSFORM_FEEDBACK_BUFFER, 0, retBuffer) should work
+[ 838: FAIL ] The returned array buffer fails to match original data
+[ 839: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 840: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 841: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 842: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 843: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 844: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 845: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 846: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 847: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 848: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(TRANSFORM_FEEDBACK_BUFFER, 0, retBuffer) should work
+[ 849: PASS ] The returned array buffer matches original data
+[ 850: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 851: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 852: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 853: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 854: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 855: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 856: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 857: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 858: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 859: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 860: FAIL ] The returned array buffer fails to match original data
+[ 861: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 862: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 863: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 864: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 865: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 866: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 867: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 868: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 869: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 870: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 871: FAIL ] The returned array buffer fails to match original data
+[ 872: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 873: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 874: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 875: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 876: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 877: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 878: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 879: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 880: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 881: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 882: FAIL ] The returned array buffer fails to match original data
+[ 883: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 884: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 885: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 886: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 887: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 888: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 889: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 890: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 891: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 892: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 893: PASS ] The returned array buffer matches original data
+[ 894: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 895: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 896: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 897: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 898: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 899: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 900: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 901: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 902: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 903: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 904: FAIL ] The returned array buffer fails to match original data
+[ 905: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 906: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 907: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 908: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 909: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 910: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 911: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 912: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 913: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 914: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 915: PASS ] The returned array buffer matches original data
+[ 916: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 917: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 918: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 919: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 920: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 921: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 922: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 923: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 924: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 925: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 926: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 927: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 928: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 929: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 930: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 931: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 932: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 933: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 934: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 935: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 936: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 937: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 938: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 939: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 940: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 941: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 942: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 943: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 944: FAIL ] The returned array buffer fails to match original data
+[ 945: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 946: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 947: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 948: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 949: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 950: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 951: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 952: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 953: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 954: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 955: PASS ] The returned array buffer matches original data
+[ 956: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 957: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 958: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 959: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 960: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 961: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 962: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 963: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 964: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 965: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 966: FAIL ] The returned array buffer fails to match original data
+[ 967: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 968: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 969: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 970: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 971: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 972: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 973: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 974: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 975: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 976: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 977: PASS ] The returned array buffer matches original data
+[ 978: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 979: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 980: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 981: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 982: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 983: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 984: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 985: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 986: FAIL ] getError expected: INVALID_VALUE. Was INVALID_ENUM : Copying should fail
+[ 987: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 988: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 989: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 990: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 991: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 992: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 993: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 994: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 995: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 996: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 997: FAIL ] The returned array buffer fails to match original data
+[ 998: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 999: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1000: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1001: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1002: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1003: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1004: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1005: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1006: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 1007: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 1008: PASS ] The returned array buffer matches original data
+[ 1009: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1010: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1011: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1012: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1013: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1014: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1015: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1016: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1017: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 1018: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 1019: FAIL ] The returned array buffer fails to match original data
+[ 1020: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1021: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1022: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1023: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1024: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1025: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1026: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1027: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1028: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 1029: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 1030: FAIL ] The returned array buffer fails to match original data
+[ 1031: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1032: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1033: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1034: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1035: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1036: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1037: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1038: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1039: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 1040: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 1041: FAIL ] The returned array buffer fails to match original data
+[ 1042: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1043: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1044: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1045: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1046: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1047: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1048: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1049: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1050: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 1051: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(ARRAY_BUFFER, 0, retBuffer) should work
+[ 1052: PASS ] The returned array buffer matches original data
+[ 1053: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1054: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1055: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1056: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1057: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1058: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1059: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1060: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1061: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 1062: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1063: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1064: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1065: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1066: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1067: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1068: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1069: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1070: PASS ] getError was expected value: INVALID_OPERATION : Copying should fail
+[ 1071: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1072: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1073: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1074: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1075: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1076: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1077: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1078: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1079: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : Copying should fail
+[ 1080: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1081: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1082: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1083: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1084: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1085: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1086: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1087: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1088: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Copying should fail
+[ 1089: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1090: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1091: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1092: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1093: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1094: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1095: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1096: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1097: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 1098: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 1099: FAIL ] The returned array buffer fails to match original data
+[ 1100: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1101: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1102: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1103: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1104: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1105: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1106: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1107: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1108: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 1109: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 1110: FAIL ] The returned array buffer fails to match original data
+[ 1111: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1112: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1113: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1114: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1115: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1116: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1117: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1118: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1119: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 1120: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 1121: FAIL ] The returned array buffer fails to match original data
+[ 1122: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1123: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1124: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1125: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1126: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1127: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1128: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1129: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1130: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 1131: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_PACK_BUFFER, 0, retBuffer) should work
+[ 1132: PASS ] The returned array buffer matches original data
+[ 1133: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1134: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1135: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1136: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1137: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1138: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1139: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1140: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1141: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 1142: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 1143: FAIL ] The returned array buffer fails to match original data
+[ 1144: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1145: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1146: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1147: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1148: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1149: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1150: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1151: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1152: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 1153: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 1154: FAIL ] The returned array buffer fails to match original data
+[ 1155: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1156: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1157: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1158: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1159: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1160: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1161: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1162: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1163: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 1164: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 1165: FAIL ] The returned array buffer fails to match original data
+[ 1166: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1167: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1168: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1169: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1170: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1171: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1172: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1173: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1174: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 1175: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(PIXEL_UNPACK_BUFFER, 0, retBuffer) should work
+[ 1176: PASS ] The returned array buffer matches original data
+[ 1177: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1178: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1179: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1180: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1181: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1182: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1183: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1184: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1185: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 1186: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(TRANSFORM_FEEDBACK_BUFFER, 0, retBuffer) should work
+[ 1187: FAIL ] The returned array buffer fails to match original data
+[ 1188: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1189: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1190: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1191: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1192: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1193: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1194: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1195: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1196: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 1197: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(TRANSFORM_FEEDBACK_BUFFER, 0, retBuffer) should work
+[ 1198: PASS ] The returned array buffer matches original data
+[ 1199: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1200: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1201: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1202: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1203: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1204: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1205: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1206: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1207: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Copying should work
+[ 1208: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 1209: FAIL ] The returned array buffer fails to match original data
+[ 1210: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1211: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1212: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1213: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1214: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1215: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1216: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1217: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1218: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : Copying should work
+[ 1219: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 1220: FAIL ] The returned array buffer fails to match original data
+[ 1221: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1222: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1223: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1224: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1225: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1226: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1227: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1228: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1229: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Copying should work
+[ 1230: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : gl.getBufferSubData(UNIFORM_BUFFER, 0, retBuffer) should work
+[ 1231: PASS ] The returned array buffer matches original data
+[ 1232: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1233: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1234: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1235: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1236: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1237: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1238: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1239: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1240: PASS ] getError was expected value: INVALID_VALUE : Copying should fail
+[ 1241: PASS ] gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+[ 1242: PASS ] gl.getParameter(gl.COPY_READ_BUFFER_BINDING) is null
+[ 1243: PASS ] gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING) is null
+[ 1244: PASS ] gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+[ 1245: PASS ] gl.getParameter(gl.PIXEL_PACK_BUFFER_BINDING) is null
+[ 1246: PASS ] gl.getParameter(gl.PIXEL_UNPACK_BUFFER_BINDING) is null
+[ 1247: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is null
+[ 1248: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
+[ 1249: PASS ] successfullyParsed is true
+[ FAIL ] 241 failures reported
 

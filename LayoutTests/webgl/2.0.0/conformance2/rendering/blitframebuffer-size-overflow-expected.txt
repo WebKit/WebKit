@@ -1,5 +1,15 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/blitframebuffer-size-overflow.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : Using max 32-bit integer as blitFramebuffer parameter should succeed.
+[ 3: PASS ] getError was expected value: NO_ERROR : Using blitFramebuffer parameters where calculated width/height matches max 32-bit integer should succeed.
+[ 4: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : Using source width/height greater than max 32-bit integer should fail.
+[ 5: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : Using source width/height greater than max 32-bit integer should fail.
+[ 6: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : Using destination width/height greater than max 32-bit integer should fail.
+[ 7: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : Using destination width/height greater than max 32-bit integer should fail.
+[ 8: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : Using both source and destination width/height greater than max 32-bit integer should fail.
+[ 9: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : Using minimum and maximum integers for all boundaries should fail.
+[ 10: PASS ] successfullyParsed is true
+[ FAIL ] 6 failures reported
 

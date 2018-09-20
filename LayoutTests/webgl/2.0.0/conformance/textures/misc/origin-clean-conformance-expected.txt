@@ -1,5 +1,18 @@
+Blocked access to external URL https://get.webgl.org/conformance-resources/opengl_logo.jpg
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance/textures/misc/origin-clean-conformance.html
-[ PASS ] All tests passed
+[ 1: FAIL ] img was loaded
+[ 2: PASS ] img domain (webgl.org:80) and page domain (:80) are not the same.
+[ 3: FAIL ] texImage2D with cross-origin image should throw exception.
+[ 4: FAIL ] texSubImage2D with cross-origin image should throw exception.
+[ 5: PASS ] readPixels should never throw exception -- not possible to dirty origin of WebGL canvas.
+[ 6: PASS ] should not throw exception by toDataURL for WebGL canvas, which should stay origin clean.
+[ 7: FAIL ] should throw exception by toDataURL for NON origin clean canvas.
+[ 8: FAIL ] texImage2D with NON origin clean canvas should throw exception.
+[ 9: FAIL ] texSubImage2D with NON origin clean canvas should throw exception.
+[ 10: PASS ] readPixels should never throw exception -- not possible to dirty origin of WebGL canvas.
+[ 11: PASS ] should not throw exception by toDataURL for WebGL canvas, which should stay origin clean.
+[ 12: PASS ] successfullyParsed is true
+[ FAIL ] 6 failures reported
 

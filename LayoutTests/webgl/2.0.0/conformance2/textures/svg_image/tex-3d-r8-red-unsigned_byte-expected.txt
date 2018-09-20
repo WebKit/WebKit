@@ -1,5 +1,19 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/svg_image/tex-3d-r8-red-unsigned_byte.html
-[ PASS ] All tests passed
+[ 1: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 2: PASS ] shouldBe 0,0,0
+[ 3: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 4: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 5: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 6: PASS ] shouldBe 0,0,0
+[ 7: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 8: PASS ] shouldBe 0,0,0
+[ 9: FAIL ] shouldBe 255,0,0 at (4, 24) expected: 255,0,0 was 0,0,0
+[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+[ 11: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 0,0,0
+[ 12: PASS ] shouldBe 0,0,0
+[ 13: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 14: PASS ] successfullyParsed is true
+[ FAIL ] 8 failures reported
 

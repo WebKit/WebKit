@@ -1,5 +1,18 @@
+CONSOLE MESSAGE: line 105: TypeError: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/query/query.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] gl.ANY_SAMPLES_PASSED is 0x8C2F
+[ 3: PASS ] gl.ANY_SAMPLES_PASSED_CONSERVATIVE is 0x8D6A
+[ 4: PASS ] gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN is 0x8C88
+[ 5: PASS ] getError was expected value: NO_ERROR : ANY_SAMPLES_PASSED query should succeed
+[ 6: PASS ] getError was expected value: NO_ERROR : ANY_SAMPLES_PASSED query should succeed
+[ 7: PASS ] getError was expected value: NO_ERROR : ANY_SAMPLES_PASSED query should succeed
+[ 8: PASS ] gl.getQuery(gl.ANY_SAMPLES_PASSED, gl.CURRENT_QUERY) is null
+[ 9: PASS ] gl.getQuery(gl.ANY_SAMPLES_PASSED_CONSERVATIVE, gl.CURRENT_QUERY) is null
+[ 10: PASS ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) is null
+[ 11: PASS ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) is null
+[ 12: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+[ FAIL ] 1 failures reported
 

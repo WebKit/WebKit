@@ -1,5 +1,76 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-copying-restrictions.html
-[ PASS ] All tests passed
+[ 1: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 2: PASS ] getError was expected value: NO_ERROR : copying from a gl.ARRAY_BUFFER buffer to a gl.ARRAY_BUFFER buffer should work.
+[ 3: PASS ] getError was expected value: NO_ERROR : copying from a gl.ARRAY_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should work.
+[ 4: PASS ] getError was expected value: NO_ERROR : copying from a gl.ARRAY_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should work.
+[ 5: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.ARRAY_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should fail.
+[ 6: PASS ] getError was expected value: NO_ERROR : copying from a gl.ARRAY_BUFFER buffer to a gl.PIXEL_PACK_BUFFER buffer should work.
+[ 7: PASS ] getError was expected value: NO_ERROR : copying from a gl.ARRAY_BUFFER buffer to a gl.PIXEL_UNPACK_BUFFER buffer should work.
+[ 8: PASS ] getError was expected value: NO_ERROR : copying from a gl.ARRAY_BUFFER buffer to a gl.TRANSFORM_FEEDBACK_BUFFER buffer should work.
+[ 9: PASS ] getError was expected value: NO_ERROR : copying from a gl.ARRAY_BUFFER buffer to a gl.UNIFORM_BUFFER buffer should work.
+[ 10: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_READ_BUFFER buffer to a gl.ARRAY_BUFFER buffer should work.
+[ 11: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_READ_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should work.
+[ 12: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_READ_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should work.
+[ 13: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.COPY_READ_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should fail.
+[ 14: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : copying from a gl.COPY_READ_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should work if all buffers were initially bound to ELEMENT_ARRAY_BUFFER.
+[ 15: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_READ_BUFFER buffer to a gl.PIXEL_PACK_BUFFER buffer should work.
+[ 16: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_READ_BUFFER buffer to a gl.PIXEL_UNPACK_BUFFER buffer should work.
+[ 17: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_READ_BUFFER buffer to a gl.TRANSFORM_FEEDBACK_BUFFER buffer should work.
+[ 18: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_READ_BUFFER buffer to a gl.UNIFORM_BUFFER buffer should work.
+[ 19: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.ARRAY_BUFFER buffer should work.
+[ 20: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should work.
+[ 21: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should work.
+[ 22: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should fail.
+[ 23: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should work if all buffers were initially bound to ELEMENT_ARRAY_BUFFER.
+[ 24: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.PIXEL_PACK_BUFFER buffer should work.
+[ 25: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.PIXEL_UNPACK_BUFFER buffer should work.
+[ 26: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.TRANSFORM_FEEDBACK_BUFFER buffer should work.
+[ 27: PASS ] getError was expected value: NO_ERROR : copying from a gl.COPY_WRITE_BUFFER buffer to a gl.UNIFORM_BUFFER buffer should work.
+[ 28: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.ARRAY_BUFFER buffer should fail.
+[ 29: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should fail.
+[ 30: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should work if all buffers were initially bound to ELEMENT_ARRAY_BUFFER.
+[ 31: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should fail.
+[ 32: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should work if all buffers were initially bound to ELEMENT_ARRAY_BUFFER.
+[ 33: PASS ] getError was expected value: NO_ERROR : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should work.
+[ 34: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.PIXEL_PACK_BUFFER buffer should fail.
+[ 35: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.PIXEL_UNPACK_BUFFER buffer should fail.
+[ 36: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.TRANSFORM_FEEDBACK_BUFFER buffer should fail.
+[ 37: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.ELEMENT_ARRAY_BUFFER buffer to a gl.UNIFORM_BUFFER buffer should fail.
+[ 38: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_PACK_BUFFER buffer to a gl.ARRAY_BUFFER buffer should work.
+[ 39: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_PACK_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should work.
+[ 40: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_PACK_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should work.
+[ 41: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.PIXEL_PACK_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should fail.
+[ 42: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_PACK_BUFFER buffer to a gl.PIXEL_PACK_BUFFER buffer should work.
+[ 43: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_PACK_BUFFER buffer to a gl.PIXEL_UNPACK_BUFFER buffer should work.
+[ 44: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_PACK_BUFFER buffer to a gl.TRANSFORM_FEEDBACK_BUFFER buffer should work.
+[ 45: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_PACK_BUFFER buffer to a gl.UNIFORM_BUFFER buffer should work.
+[ 46: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_UNPACK_BUFFER buffer to a gl.ARRAY_BUFFER buffer should work.
+[ 47: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_UNPACK_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should work.
+[ 48: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_UNPACK_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should work.
+[ 49: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.PIXEL_UNPACK_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should fail.
+[ 50: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_UNPACK_BUFFER buffer to a gl.PIXEL_PACK_BUFFER buffer should work.
+[ 51: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_UNPACK_BUFFER buffer to a gl.PIXEL_UNPACK_BUFFER buffer should work.
+[ 52: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_UNPACK_BUFFER buffer to a gl.TRANSFORM_FEEDBACK_BUFFER buffer should work.
+[ 53: PASS ] getError was expected value: NO_ERROR : copying from a gl.PIXEL_UNPACK_BUFFER buffer to a gl.UNIFORM_BUFFER buffer should work.
+[ 54: PASS ] getError was expected value: NO_ERROR : copying from a gl.TRANSFORM_FEEDBACK_BUFFER buffer to a gl.ARRAY_BUFFER buffer should work.
+[ 55: PASS ] getError was expected value: NO_ERROR : copying from a gl.TRANSFORM_FEEDBACK_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should work.
+[ 56: PASS ] getError was expected value: NO_ERROR : copying from a gl.TRANSFORM_FEEDBACK_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should work.
+[ 57: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.TRANSFORM_FEEDBACK_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should fail.
+[ 58: PASS ] getError was expected value: NO_ERROR : copying from a gl.TRANSFORM_FEEDBACK_BUFFER buffer to a gl.PIXEL_PACK_BUFFER buffer should work.
+[ 59: PASS ] getError was expected value: NO_ERROR : copying from a gl.TRANSFORM_FEEDBACK_BUFFER buffer to a gl.PIXEL_UNPACK_BUFFER buffer should work.
+[ 60: PASS ] getError was expected value: NO_ERROR : copying from a gl.TRANSFORM_FEEDBACK_BUFFER buffer to a gl.TRANSFORM_FEEDBACK_BUFFER buffer should work.
+[ 61: PASS ] getError was expected value: NO_ERROR : copying from a gl.TRANSFORM_FEEDBACK_BUFFER buffer to a gl.UNIFORM_BUFFER buffer should work.
+[ 62: PASS ] getError was expected value: NO_ERROR : copying from a gl.UNIFORM_BUFFER buffer to a gl.ARRAY_BUFFER buffer should work.
+[ 63: PASS ] getError was expected value: NO_ERROR : copying from a gl.UNIFORM_BUFFER buffer to a gl.COPY_READ_BUFFER buffer should work.
+[ 64: PASS ] getError was expected value: NO_ERROR : copying from a gl.UNIFORM_BUFFER buffer to a gl.COPY_WRITE_BUFFER buffer should work.
+[ 65: PASS ] getError was expected value: INVALID_OPERATION : copying from a gl.UNIFORM_BUFFER buffer to a gl.ELEMENT_ARRAY_BUFFER buffer should fail.
+[ 66: PASS ] getError was expected value: NO_ERROR : copying from a gl.UNIFORM_BUFFER buffer to a gl.PIXEL_PACK_BUFFER buffer should work.
+[ 67: PASS ] getError was expected value: NO_ERROR : copying from a gl.UNIFORM_BUFFER buffer to a gl.PIXEL_UNPACK_BUFFER buffer should work.
+[ 68: PASS ] getError was expected value: NO_ERROR : copying from a gl.UNIFORM_BUFFER buffer to a gl.TRANSFORM_FEEDBACK_BUFFER buffer should work.
+[ 69: PASS ] getError was expected value: NO_ERROR : copying from a gl.UNIFORM_BUFFER buffer to a gl.UNIFORM_BUFFER buffer should work.
+[ 70: PASS ] getError was expected value: INVALID_OPERATION : Copying gl.ARRAY_BUFFER bound to gl.COPY_READ_BUFFER to a buffer bound to gl.ELEMENT_ARRAY_BUFFER should fail.
+[ 71: PASS ] successfullyParsed is true
+[ FAIL ] 4 failures reported
 

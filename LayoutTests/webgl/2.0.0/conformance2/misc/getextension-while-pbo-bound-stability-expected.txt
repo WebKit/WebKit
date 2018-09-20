@@ -1,5 +1,10 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/misc/getextension-while-pbo-bound-stability.html
-[ PASS ] All tests passed
+[ 1: PASS ] getError was expected value: NO_ERROR : Late-enable of extension should succeed
+[ 2: FAIL ] Fail to maintain PIXEL_UNPACK_BUFFER binding when enabling extension EXT_color_buffer_float
+[ 3: PASS ] getError was expected value: NO_ERROR : Late-enable of extension should succeed
+[ 4: FAIL ] Fail to maintain PIXEL_UNPACK_BUFFER binding when enabling extension OES_texture_float_linear
+[ 5: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

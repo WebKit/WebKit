@@ -1,5 +1,276 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/attribs/gl-vertexattribipointer-offsets.html
-[ PASS ] All tests passed
+[ 1: PASS ] should be black
+[ 2: PASS ] should be black
+[ 3: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 4: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 5: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 6: PASS ] should be black
+[ 7: PASS ] should be black
+[ 8: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 9: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 10: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 11: PASS ] should be black
+[ 12: PASS ] should be black
+[ 13: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 14: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 15: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 16: PASS ] should be black
+[ 17: PASS ] should be black
+[ 18: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 19: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 20: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 21: PASS ] should be black
+[ 22: PASS ] should be black
+[ 23: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 24: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 25: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 26: PASS ] should be black
+[ 27: PASS ] should be black
+[ 28: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 29: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 30: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 31: PASS ] should be black
+[ 32: PASS ] should be black
+[ 33: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 34: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 35: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 36: PASS ] should be black
+[ 37: PASS ] should be black
+[ 38: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 39: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 40: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 41: PASS ] should be black
+[ 42: PASS ] should be black
+[ 43: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 44: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 45: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 46: PASS ] should be black
+[ 47: PASS ] should be black
+[ 48: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 49: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 50: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 51: PASS ] should be black
+[ 52: PASS ] should be black
+[ 53: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 54: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 55: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 56: PASS ] should be black
+[ 57: PASS ] should be black
+[ 58: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 59: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 60: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 61: PASS ] should be black
+[ 62: PASS ] should be black
+[ 63: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 64: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 65: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 66: PASS ] should be black
+[ 67: PASS ] should be black
+[ 68: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 69: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 70: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 71: PASS ] should be black
+[ 72: PASS ] should be black
+[ 73: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 74: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 75: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 76: PASS ] should be black
+[ 77: PASS ] should be black
+[ 78: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 79: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 80: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 81: PASS ] should be black
+[ 82: PASS ] should be black
+[ 83: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 84: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 85: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 86: PASS ] should be black
+[ 87: PASS ] should be black
+[ 88: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 89: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 90: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 91: PASS ] should be black
+[ 92: PASS ] should be black
+[ 93: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 94: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 95: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 96: PASS ] should be black
+[ 97: PASS ] should be black
+[ 98: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 99: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 100: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 101: PASS ] should be black
+[ 102: PASS ] should be black
+[ 103: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 104: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 105: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 106: PASS ] should be black
+[ 107: PASS ] should be black
+[ 108: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 109: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 110: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 111: PASS ] should be black
+[ 112: PASS ] should be black
+[ 113: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 114: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 115: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 116: PASS ] should be black
+[ 117: PASS ] should be black
+[ 118: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 119: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 120: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 121: PASS ] should be black
+[ 122: PASS ] should be black
+[ 123: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 124: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 125: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 126: PASS ] should be black
+[ 127: PASS ] should be black
+[ 128: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 129: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 130: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 131: PASS ] should be black
+[ 132: PASS ] should be black
+[ 133: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 134: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 135: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 136: PASS ] should be black
+[ 137: PASS ] should be black
+[ 138: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 139: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 140: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 141: PASS ] should be black
+[ 142: PASS ] should be black
+[ 143: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 144: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 145: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 146: PASS ] should be black
+[ 147: PASS ] should be black
+[ 148: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 149: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 150: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 151: PASS ] should be black
+[ 152: PASS ] should be black
+[ 153: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 154: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 155: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 156: PASS ] should be black
+[ 157: PASS ] should be black
+[ 158: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 159: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 160: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 161: PASS ] should be black
+[ 162: PASS ] should be black
+[ 163: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 164: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 165: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 166: PASS ] should be black
+[ 167: PASS ] should be black
+[ 168: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 169: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 170: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 171: PASS ] should be black
+[ 172: PASS ] should be black
+[ 173: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 174: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 175: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 176: PASS ] should be black
+[ 177: PASS ] should be black
+[ 178: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 179: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 180: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 181: PASS ] should be black
+[ 182: PASS ] should be black
+[ 183: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 184: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 185: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 186: PASS ] should be black
+[ 187: PASS ] should be black
+[ 188: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 189: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 190: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 191: PASS ] should be black
+[ 192: PASS ] should be black
+[ 193: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 194: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 195: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 196: PASS ] should be black
+[ 197: PASS ] should be black
+[ 198: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 199: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 200: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 201: PASS ] should be black
+[ 202: PASS ] should be black
+[ 203: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 204: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 205: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 206: PASS ] should be black
+[ 207: PASS ] should be black
+[ 208: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 209: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 210: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 211: PASS ] should be black
+[ 212: PASS ] should be black
+[ 213: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 214: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 215: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 216: PASS ] should be black
+[ 217: PASS ] should be black
+[ 218: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 219: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 220: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 221: PASS ] should be black
+[ 222: PASS ] should be black
+[ 223: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 224: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 225: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 226: PASS ] should be black
+[ 227: PASS ] should be black
+[ 228: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 229: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 230: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 231: PASS ] should be black
+[ 232: PASS ] should be black
+[ 233: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 234: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 235: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 236: PASS ] should be black
+[ 237: PASS ] should be black
+[ 238: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 239: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 240: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 241: PASS ] should be black
+[ 242: PASS ] should be black
+[ 243: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 244: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 245: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 246: PASS ] should be black
+[ 247: PASS ] should be black
+[ 248: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 249: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 250: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 251: PASS ] should be black
+[ 252: PASS ] should be black
+[ 253: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 254: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 255: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 256: PASS ] should be black
+[ 257: PASS ] should be black
+[ 258: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 259: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 260: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 261: PASS ] should be black
+[ 262: PASS ] should be black
+[ 263: FAIL ] should be green at (26, 40) expected: 0,255,0,255 was 0,0,0,0
+[ 264: FAIL ] should be green at (26, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 265: FAIL ] should be green at (40, 27) expected: 0,255,0,255 was 0,0,0,0
+[ 266: PASS ] should be black
+[ 267: PASS ] should be black
+[ 268: FAIL ] should be red at (26, 40) expected: 255,0,0,255 was 0,0,0,0
+[ 269: FAIL ] should be red at (26, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 270: FAIL ] should be red at (40, 27) expected: 255,0,0,255 was 0,0,0,0
+[ 271: PASS ] successfullyParsed is true
+[ FAIL ] 162 failures reported
 

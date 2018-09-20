@@ -1,5 +1,17 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/context/context-attributes-depth-stencil-antialias-obeyed.html
-[ PASS ] All tests passed
+[ 1: FAIL ] antialias = true is not obeyed
+[ 2: FAIL ] antialias = true is not obeyed
+[ 3: FAIL ] stencil = true is not obeyed
+[ 4: FAIL ] stencil = true is not obeyed
+[ 5: FAIL ] antialias = true is not obeyed
+[ 6: FAIL ] stencil = true is not obeyed
+[ 7: FAIL ] stencil = true is not obeyed
+[ 8: FAIL ] antialias = true is not obeyed
+[ 9: PASS ] Context created with the correct antialias, depth, and stencil.
+[ 10: FAIL ] antialias = true is not obeyed
+[ 11: PASS ] Context created with the correct antialias, depth, and stencil.
+[ 12: PASS ] successfullyParsed is true
+[ FAIL ] 9 failures reported
 

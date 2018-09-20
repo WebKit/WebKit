@@ -1,5 +1,12 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/state/gl-getstring.html
-[ PASS ] All tests passed
+[ 1: PASS ] context exists
+[ 2: PASS ] getParameter(gl.VERSION) correctly started with WebGL 2.0
+[ 3: FAIL ] getParameter(gl.SHADING_LANGUAGE_VERSION) did not start with WebGL GLSL ES 3.00
+[ 4: PASS ] gl.getParameter(gl.VENDOR) is non-null.
+[ 5: PASS ] gl.getParameter(gl.RENDERER) is non-null.
+[ 6: PASS ] gl.getError() is gl.NO_ERROR
+[ 7: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
 

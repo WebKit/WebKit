@@ -1,5 +1,8 @@
+CONSOLE MESSAGE: line 109: TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/active-3d-texture-bug.html
-[ PASS ] All tests passed
+[ 1: PASS ] Created WebGL2 context successfully
+[ 2: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+[ FAIL ] 1 failures reported
 

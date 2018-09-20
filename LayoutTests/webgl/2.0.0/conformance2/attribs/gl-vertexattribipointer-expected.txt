@@ -1,5 +1,938 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/attribs/gl-vertexattribipointer.html
-[ PASS ] All tests passed
+[ 1: PASS ] context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : vertexAttribIPointer should succeed if no buffer is bound and offset is zero
+[ 3: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : vertexAttribIPointer should fail if no buffer is bound and offset is non-zero
+[ 4: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : vertexAttribIPointer should not support FLOAT
+[ 5: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 0) should succeed
+[ 6: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 0) should succeed
+[ 7: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 0) should succeed
+[ 8: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 0) should succeed
+[ 9: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 0) should succeed
+[ 10: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 0) should succeed
+[ 11: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 255, 0) should succeed at stride limit
+[ 12: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 256, 0) should fail over stride limit
+[ 13: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 1) should succeed
+[ 14: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 1) should succeed
+[ 15: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 1) should succeed
+[ 16: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 1) should succeed
+[ 17: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 1) should succeed
+[ 18: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 1) should succeed
+[ 19: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 0) should succeed
+[ 20: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 0) should succeed
+[ 21: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 0) should succeed
+[ 22: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 0) should succeed
+[ 23: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 0) should succeed
+[ 24: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 0) should succeed
+[ 25: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 255, 0) should succeed at stride limit
+[ 26: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 256, 0) should fail over stride limit
+[ 27: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 1) should succeed
+[ 28: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 1) should succeed
+[ 29: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 1) should succeed
+[ 30: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 1) should succeed
+[ 31: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 1) should succeed
+[ 32: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 1) should succeed
+[ 33: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 2) should succeed
+[ 34: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 2) should succeed
+[ 35: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 2) should succeed
+[ 36: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 2) should succeed
+[ 37: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 2) should succeed
+[ 38: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 2) should succeed
+[ 39: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 2) should succeed
+[ 40: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 2) should succeed
+[ 41: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 0, 2) should succeed
+[ 42: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 1, 2) should succeed
+[ 43: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 2) should succeed
+[ 44: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.BYTE, 2, 2) should succeed
+[ 45: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 0) should succeed
+[ 46: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 0) should succeed
+[ 47: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 0) should succeed
+[ 48: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 0) should succeed
+[ 49: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 0) should succeed
+[ 50: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 0) should succeed
+[ 51: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 255, 0) should succeed at stride limit
+[ 52: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 256, 0) should fail over stride limit
+[ 53: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 1) should succeed
+[ 54: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 1) should succeed
+[ 55: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 1) should succeed
+[ 56: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 1) should succeed
+[ 57: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 1) should succeed
+[ 58: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 1) should succeed
+[ 59: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 0) should succeed
+[ 60: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 0) should succeed
+[ 61: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 0) should succeed
+[ 62: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 0) should succeed
+[ 63: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 0) should succeed
+[ 64: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 0) should succeed
+[ 65: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 255, 0) should succeed at stride limit
+[ 66: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 256, 0) should fail over stride limit
+[ 67: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 1) should succeed
+[ 68: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 1) should succeed
+[ 69: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 1) should succeed
+[ 70: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 1) should succeed
+[ 71: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 1) should succeed
+[ 72: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 1) should succeed
+[ 73: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 2) should succeed
+[ 74: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 2) should succeed
+[ 75: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 2) should succeed
+[ 76: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 2) should succeed
+[ 77: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 2) should succeed
+[ 78: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 2) should succeed
+[ 79: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 2) should succeed
+[ 80: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 2) should succeed
+[ 81: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 0, 2) should succeed
+[ 82: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 1, 2) should succeed
+[ 83: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 2) should succeed
+[ 84: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.BYTE, 2, 2) should succeed
+[ 85: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 0) should succeed
+[ 86: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 0) should succeed
+[ 87: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 0) should succeed
+[ 88: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 0) should succeed
+[ 89: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 0) should succeed
+[ 90: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 0) should succeed
+[ 91: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 255, 0) should succeed at stride limit
+[ 92: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 256, 0) should fail over stride limit
+[ 93: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 1) should succeed
+[ 94: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 1) should succeed
+[ 95: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 1) should succeed
+[ 96: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 1) should succeed
+[ 97: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 1) should succeed
+[ 98: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 1) should succeed
+[ 99: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 0) should succeed
+[ 100: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 0) should succeed
+[ 101: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 0) should succeed
+[ 102: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 0) should succeed
+[ 103: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 0) should succeed
+[ 104: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 0) should succeed
+[ 105: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 255, 0) should succeed at stride limit
+[ 106: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 256, 0) should fail over stride limit
+[ 107: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 1) should succeed
+[ 108: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 1) should succeed
+[ 109: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 1) should succeed
+[ 110: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 1) should succeed
+[ 111: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 1) should succeed
+[ 112: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 1) should succeed
+[ 113: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 2) should succeed
+[ 114: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 2) should succeed
+[ 115: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 2) should succeed
+[ 116: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 2) should succeed
+[ 117: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 2) should succeed
+[ 118: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 2) should succeed
+[ 119: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 2) should succeed
+[ 120: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 2) should succeed
+[ 121: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 0, 2) should succeed
+[ 122: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 1, 2) should succeed
+[ 123: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 2) should succeed
+[ 124: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.BYTE, 2, 2) should succeed
+[ 125: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 0) should succeed
+[ 126: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 0) should succeed
+[ 127: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 0) should succeed
+[ 128: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 0) should succeed
+[ 129: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 0) should succeed
+[ 130: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 0) should succeed
+[ 131: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 255, 0) should succeed at stride limit
+[ 132: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 256, 0) should fail over stride limit
+[ 133: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 1) should succeed
+[ 134: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 1) should succeed
+[ 135: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 1) should succeed
+[ 136: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 1) should succeed
+[ 137: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 1) should succeed
+[ 138: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 1) should succeed
+[ 139: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 0) should succeed
+[ 140: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 0) should succeed
+[ 141: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 0) should succeed
+[ 142: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 0) should succeed
+[ 143: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 0) should succeed
+[ 144: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 0) should succeed
+[ 145: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 255, 0) should succeed at stride limit
+[ 146: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 256, 0) should fail over stride limit
+[ 147: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 1) should succeed
+[ 148: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 1) should succeed
+[ 149: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 1) should succeed
+[ 150: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 1) should succeed
+[ 151: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 1) should succeed
+[ 152: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 1) should succeed
+[ 153: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 2) should succeed
+[ 154: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 2) should succeed
+[ 155: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 2) should succeed
+[ 156: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 2) should succeed
+[ 157: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 2) should succeed
+[ 158: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 2) should succeed
+[ 159: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 2) should succeed
+[ 160: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 2) should succeed
+[ 161: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 0, 2) should succeed
+[ 162: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 1, 2) should succeed
+[ 163: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 2) should succeed
+[ 164: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.BYTE, 2, 2) should succeed
+[ 165: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 166: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 167: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 168: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 169: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 170: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 171: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 255, 0) should succeed at stride limit
+[ 172: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 256, 0) should fail over stride limit
+[ 173: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 174: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 175: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 176: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 177: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 178: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 179: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 180: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 181: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 182: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 183: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 184: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 185: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 255, 0) should succeed at stride limit
+[ 186: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 256, 0) should fail over stride limit
+[ 187: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 188: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 189: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 190: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 191: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 192: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 193: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 194: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 195: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 196: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 197: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 198: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 199: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 200: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 201: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 202: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 203: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 204: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 205: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 206: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 207: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 208: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 209: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 210: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 211: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 255, 0) should succeed at stride limit
+[ 212: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 256, 0) should fail over stride limit
+[ 213: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 214: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 215: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 216: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 217: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 218: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 219: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 220: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 221: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 222: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 223: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 224: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 225: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 255, 0) should succeed at stride limit
+[ 226: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 256, 0) should fail over stride limit
+[ 227: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 228: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 229: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 230: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 231: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 232: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 233: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 234: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 235: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 236: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 237: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 238: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 239: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 240: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 241: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 242: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 243: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 244: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 245: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 246: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 247: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 248: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 249: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 250: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 251: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 255, 0) should succeed at stride limit
+[ 252: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 256, 0) should fail over stride limit
+[ 253: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 254: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 255: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 256: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 257: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 258: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 259: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 260: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 261: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 262: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 263: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 264: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 265: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 255, 0) should succeed at stride limit
+[ 266: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 256, 0) should fail over stride limit
+[ 267: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 268: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 269: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 270: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 271: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 272: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 273: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 274: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 275: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 276: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 277: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 278: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 279: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 280: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 281: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 282: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 283: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 284: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 285: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 286: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 287: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 288: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 289: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 290: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 291: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 255, 0) should succeed at stride limit
+[ 292: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 256, 0) should fail over stride limit
+[ 293: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 294: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 295: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 296: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 297: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 298: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 299: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 300: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 301: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 0) should succeed
+[ 302: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 0) should succeed
+[ 303: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 304: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 0) should succeed
+[ 305: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 255, 0) should succeed at stride limit
+[ 306: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 256, 0) should fail over stride limit
+[ 307: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 308: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 309: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 1) should succeed
+[ 310: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 1) should succeed
+[ 311: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 312: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 1) should succeed
+[ 313: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 314: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 315: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 316: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 317: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 318: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 319: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 320: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 321: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 0, 2) should succeed
+[ 322: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 1, 2) should succeed
+[ 323: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 324: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_BYTE, 2, 2) should succeed
+[ 325: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 0, 0) should succeed
+[ 326: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 0) should fail because stride is bad
+[ 327: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 0) should fail because stride is bad
+[ 328: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 2, 0) should succeed
+[ 329: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 3, 0) should fail because stride is bad
+[ 330: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 4, 0) should succeed
+[ 331: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 254, 0) should succeed at stride limit
+[ 332: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 256, 0) should fail over stride limit
+[ 333: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 0, 1) should fail because offset is bad
+[ 334: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 1) should fail because stride is bad
+[ 335: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 1) should fail because stride is bad
+[ 336: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 2, 1) should fail because offset is bad
+[ 337: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 3, 1) should fail because stride is bad
+[ 338: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 4, 1) should fail because offset is bad
+[ 339: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 0, 1) should fail because offset is bad
+[ 340: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 1) should fail because stride is bad
+[ 341: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 1) should fail because stride is bad
+[ 342: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 2, 1) should fail because offset is bad
+[ 343: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 3, 1) should fail because stride is bad
+[ 344: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 4, 1) should fail because offset is bad
+[ 345: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 0, 2) should succeed
+[ 346: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 2) should fail because stride is bad
+[ 347: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 2) should fail because stride is bad
+[ 348: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 2, 2) should succeed
+[ 349: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 3, 2) should fail because stride is bad
+[ 350: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 4, 2) should succeed
+[ 351: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 0, 3) should fail because offset is bad
+[ 352: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 3) should fail because stride is bad
+[ 353: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 3) should fail because stride is bad
+[ 354: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 2, 3) should fail because offset is bad
+[ 355: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 3, 3) should fail because stride is bad
+[ 356: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 4, 3) should fail because offset is bad
+[ 357: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 0, 4) should succeed
+[ 358: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 4) should fail because stride is bad
+[ 359: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 1, 4) should fail because stride is bad
+[ 360: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 2, 4) should succeed
+[ 361: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 3, 4) should fail because stride is bad
+[ 362: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.SHORT, 4, 4) should succeed
+[ 363: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 0, 0) should succeed
+[ 364: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 0) should fail because stride is bad
+[ 365: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 0) should fail because stride is bad
+[ 366: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 2, 0) should succeed
+[ 367: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 3, 0) should fail because stride is bad
+[ 368: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 4, 0) should succeed
+[ 369: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 254, 0) should succeed at stride limit
+[ 370: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 256, 0) should fail over stride limit
+[ 371: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 0, 1) should fail because offset is bad
+[ 372: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 1) should fail because stride is bad
+[ 373: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 1) should fail because stride is bad
+[ 374: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 2, 1) should fail because offset is bad
+[ 375: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 3, 1) should fail because stride is bad
+[ 376: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 4, 1) should fail because offset is bad
+[ 377: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 0, 1) should fail because offset is bad
+[ 378: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 1) should fail because stride is bad
+[ 379: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 1) should fail because stride is bad
+[ 380: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 2, 1) should fail because offset is bad
+[ 381: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 3, 1) should fail because stride is bad
+[ 382: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 4, 1) should fail because offset is bad
+[ 383: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 0, 2) should succeed
+[ 384: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 2) should fail because stride is bad
+[ 385: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 2) should fail because stride is bad
+[ 386: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 2, 2) should succeed
+[ 387: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 3, 2) should fail because stride is bad
+[ 388: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 4, 2) should succeed
+[ 389: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 0, 3) should fail because offset is bad
+[ 390: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 3) should fail because stride is bad
+[ 391: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 3) should fail because stride is bad
+[ 392: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 2, 3) should fail because offset is bad
+[ 393: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 3, 3) should fail because stride is bad
+[ 394: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 4, 3) should fail because offset is bad
+[ 395: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 0, 4) should succeed
+[ 396: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 4) should fail because stride is bad
+[ 397: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 1, 4) should fail because stride is bad
+[ 398: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 2, 4) should succeed
+[ 399: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 3, 4) should fail because stride is bad
+[ 400: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.SHORT, 4, 4) should succeed
+[ 401: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 0, 0) should succeed
+[ 402: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 0) should fail because stride is bad
+[ 403: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 0) should fail because stride is bad
+[ 404: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 2, 0) should succeed
+[ 405: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 3, 0) should fail because stride is bad
+[ 406: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 4, 0) should succeed
+[ 407: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 254, 0) should succeed at stride limit
+[ 408: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 256, 0) should fail over stride limit
+[ 409: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 0, 1) should fail because offset is bad
+[ 410: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 1) should fail because stride is bad
+[ 411: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 1) should fail because stride is bad
+[ 412: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 2, 1) should fail because offset is bad
+[ 413: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 3, 1) should fail because stride is bad
+[ 414: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 4, 1) should fail because offset is bad
+[ 415: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 0, 1) should fail because offset is bad
+[ 416: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 1) should fail because stride is bad
+[ 417: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 1) should fail because stride is bad
+[ 418: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 2, 1) should fail because offset is bad
+[ 419: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 3, 1) should fail because stride is bad
+[ 420: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 4, 1) should fail because offset is bad
+[ 421: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 0, 2) should succeed
+[ 422: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 2) should fail because stride is bad
+[ 423: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 2) should fail because stride is bad
+[ 424: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 2, 2) should succeed
+[ 425: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 3, 2) should fail because stride is bad
+[ 426: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 4, 2) should succeed
+[ 427: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 0, 3) should fail because offset is bad
+[ 428: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 3) should fail because stride is bad
+[ 429: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 3) should fail because stride is bad
+[ 430: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 2, 3) should fail because offset is bad
+[ 431: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 3, 3) should fail because stride is bad
+[ 432: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 4, 3) should fail because offset is bad
+[ 433: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 0, 4) should succeed
+[ 434: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 4) should fail because stride is bad
+[ 435: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 1, 4) should fail because stride is bad
+[ 436: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 2, 4) should succeed
+[ 437: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 3, 4) should fail because stride is bad
+[ 438: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.SHORT, 4, 4) should succeed
+[ 439: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 0, 0) should succeed
+[ 440: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 0) should fail because stride is bad
+[ 441: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 0) should fail because stride is bad
+[ 442: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 2, 0) should succeed
+[ 443: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 3, 0) should fail because stride is bad
+[ 444: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 4, 0) should succeed
+[ 445: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 254, 0) should succeed at stride limit
+[ 446: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 256, 0) should fail over stride limit
+[ 447: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 0, 1) should fail because offset is bad
+[ 448: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 1) should fail because stride is bad
+[ 449: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 1) should fail because stride is bad
+[ 450: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 2, 1) should fail because offset is bad
+[ 451: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 3, 1) should fail because stride is bad
+[ 452: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 4, 1) should fail because offset is bad
+[ 453: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 0, 1) should fail because offset is bad
+[ 454: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 1) should fail because stride is bad
+[ 455: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 1) should fail because stride is bad
+[ 456: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 2, 1) should fail because offset is bad
+[ 457: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 3, 1) should fail because stride is bad
+[ 458: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 4, 1) should fail because offset is bad
+[ 459: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 0, 2) should succeed
+[ 460: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 2) should fail because stride is bad
+[ 461: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 2) should fail because stride is bad
+[ 462: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 2, 2) should succeed
+[ 463: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 3, 2) should fail because stride is bad
+[ 464: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 4, 2) should succeed
+[ 465: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 0, 3) should fail because offset is bad
+[ 466: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 3) should fail because stride is bad
+[ 467: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 3) should fail because stride is bad
+[ 468: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 2, 3) should fail because offset is bad
+[ 469: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 3, 3) should fail because stride is bad
+[ 470: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 4, 3) should fail because offset is bad
+[ 471: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 0, 4) should succeed
+[ 472: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 4) should fail because stride is bad
+[ 473: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 1, 4) should fail because stride is bad
+[ 474: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 2, 4) should succeed
+[ 475: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 3, 4) should fail because stride is bad
+[ 476: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.SHORT, 4, 4) should succeed
+[ 477: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 0, 0) should succeed
+[ 478: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 0) should fail because stride is bad
+[ 479: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 0) should fail because stride is bad
+[ 480: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 2, 0) should succeed
+[ 481: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 3, 0) should fail because stride is bad
+[ 482: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 4, 0) should succeed
+[ 483: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 254, 0) should succeed at stride limit
+[ 484: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 256, 0) should fail over stride limit
+[ 485: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 0, 1) should fail because offset is bad
+[ 486: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 487: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 488: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 2, 1) should fail because offset is bad
+[ 489: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 3, 1) should fail because stride is bad
+[ 490: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 4, 1) should fail because offset is bad
+[ 491: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 0, 1) should fail because offset is bad
+[ 492: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 493: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 494: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 2, 1) should fail because offset is bad
+[ 495: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 3, 1) should fail because stride is bad
+[ 496: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 4, 1) should fail because offset is bad
+[ 497: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 0, 2) should succeed
+[ 498: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 2) should fail because stride is bad
+[ 499: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 2) should fail because stride is bad
+[ 500: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 2, 2) should succeed
+[ 501: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 3, 2) should fail because stride is bad
+[ 502: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 4, 2) should succeed
+[ 503: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 0, 3) should fail because offset is bad
+[ 504: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 3) should fail because stride is bad
+[ 505: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 3) should fail because stride is bad
+[ 506: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 2, 3) should fail because offset is bad
+[ 507: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 3, 3) should fail because stride is bad
+[ 508: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 4, 3) should fail because offset is bad
+[ 509: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 0, 4) should succeed
+[ 510: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 4) should fail because stride is bad
+[ 511: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 1, 4) should fail because stride is bad
+[ 512: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 2, 4) should succeed
+[ 513: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 3, 4) should fail because stride is bad
+[ 514: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_SHORT, 4, 4) should succeed
+[ 515: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 0, 0) should succeed
+[ 516: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 0) should fail because stride is bad
+[ 517: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 0) should fail because stride is bad
+[ 518: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 2, 0) should succeed
+[ 519: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 3, 0) should fail because stride is bad
+[ 520: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 4, 0) should succeed
+[ 521: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 254, 0) should succeed at stride limit
+[ 522: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 256, 0) should fail over stride limit
+[ 523: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 0, 1) should fail because offset is bad
+[ 524: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 525: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 526: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 2, 1) should fail because offset is bad
+[ 527: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 3, 1) should fail because stride is bad
+[ 528: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 4, 1) should fail because offset is bad
+[ 529: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 0, 1) should fail because offset is bad
+[ 530: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 531: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 532: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 2, 1) should fail because offset is bad
+[ 533: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 3, 1) should fail because stride is bad
+[ 534: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 4, 1) should fail because offset is bad
+[ 535: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 0, 2) should succeed
+[ 536: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 2) should fail because stride is bad
+[ 537: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 2) should fail because stride is bad
+[ 538: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 2, 2) should succeed
+[ 539: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 3, 2) should fail because stride is bad
+[ 540: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 4, 2) should succeed
+[ 541: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 0, 3) should fail because offset is bad
+[ 542: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 3) should fail because stride is bad
+[ 543: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 3) should fail because stride is bad
+[ 544: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 2, 3) should fail because offset is bad
+[ 545: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 3, 3) should fail because stride is bad
+[ 546: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 4, 3) should fail because offset is bad
+[ 547: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 0, 4) should succeed
+[ 548: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 4) should fail because stride is bad
+[ 549: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 1, 4) should fail because stride is bad
+[ 550: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 2, 4) should succeed
+[ 551: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 3, 4) should fail because stride is bad
+[ 552: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_SHORT, 4, 4) should succeed
+[ 553: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 0, 0) should succeed
+[ 554: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 0) should fail because stride is bad
+[ 555: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 0) should fail because stride is bad
+[ 556: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 2, 0) should succeed
+[ 557: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 3, 0) should fail because stride is bad
+[ 558: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 4, 0) should succeed
+[ 559: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 254, 0) should succeed at stride limit
+[ 560: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 256, 0) should fail over stride limit
+[ 561: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 0, 1) should fail because offset is bad
+[ 562: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 563: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 564: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 2, 1) should fail because offset is bad
+[ 565: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 3, 1) should fail because stride is bad
+[ 566: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 4, 1) should fail because offset is bad
+[ 567: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 0, 1) should fail because offset is bad
+[ 568: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 569: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 570: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 2, 1) should fail because offset is bad
+[ 571: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 3, 1) should fail because stride is bad
+[ 572: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 4, 1) should fail because offset is bad
+[ 573: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 0, 2) should succeed
+[ 574: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 2) should fail because stride is bad
+[ 575: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 2) should fail because stride is bad
+[ 576: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 2, 2) should succeed
+[ 577: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 3, 2) should fail because stride is bad
+[ 578: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 4, 2) should succeed
+[ 579: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 0, 3) should fail because offset is bad
+[ 580: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 3) should fail because stride is bad
+[ 581: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 3) should fail because stride is bad
+[ 582: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 2, 3) should fail because offset is bad
+[ 583: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 3, 3) should fail because stride is bad
+[ 584: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 4, 3) should fail because offset is bad
+[ 585: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 0, 4) should succeed
+[ 586: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 4) should fail because stride is bad
+[ 587: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 1, 4) should fail because stride is bad
+[ 588: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 2, 4) should succeed
+[ 589: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 3, 4) should fail because stride is bad
+[ 590: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_SHORT, 4, 4) should succeed
+[ 591: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 0, 0) should succeed
+[ 592: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 0) should fail because stride is bad
+[ 593: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 0) should fail because stride is bad
+[ 594: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 2, 0) should succeed
+[ 595: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 3, 0) should fail because stride is bad
+[ 596: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 4, 0) should succeed
+[ 597: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 254, 0) should succeed at stride limit
+[ 598: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 256, 0) should fail over stride limit
+[ 599: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 0, 1) should fail because offset is bad
+[ 600: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 601: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 602: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 2, 1) should fail because offset is bad
+[ 603: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 3, 1) should fail because stride is bad
+[ 604: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 4, 1) should fail because offset is bad
+[ 605: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 0, 1) should fail because offset is bad
+[ 606: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 607: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 1) should fail because stride is bad
+[ 608: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 2, 1) should fail because offset is bad
+[ 609: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 3, 1) should fail because stride is bad
+[ 610: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 4, 1) should fail because offset is bad
+[ 611: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 0, 2) should succeed
+[ 612: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 2) should fail because stride is bad
+[ 613: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 2) should fail because stride is bad
+[ 614: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 2, 2) should succeed
+[ 615: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 3, 2) should fail because stride is bad
+[ 616: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 4, 2) should succeed
+[ 617: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 0, 3) should fail because offset is bad
+[ 618: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 3) should fail because stride is bad
+[ 619: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 3) should fail because stride is bad
+[ 620: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 2, 3) should fail because offset is bad
+[ 621: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 3, 3) should fail because stride is bad
+[ 622: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 4, 3) should fail because offset is bad
+[ 623: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 0, 4) should succeed
+[ 624: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 4) should fail because stride is bad
+[ 625: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 1, 4) should fail because stride is bad
+[ 626: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 2, 4) should succeed
+[ 627: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 3, 4) should fail because stride is bad
+[ 628: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_SHORT, 4, 4) should succeed
+[ 629: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 0, 0) should succeed
+[ 630: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 1, 0) should fail because stride is bad
+[ 631: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 3, 0) should fail because stride is bad
+[ 632: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 4, 0) should succeed
+[ 633: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 5, 0) should fail because stride is bad
+[ 634: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 8, 0) should succeed
+[ 635: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 252, 0) should succeed at stride limit
+[ 636: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 256, 0) should fail over stride limit
+[ 637: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 0, 1) should fail because offset is bad
+[ 638: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 1, 1) should fail because stride is bad
+[ 639: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 3, 1) should fail because stride is bad
+[ 640: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 4, 1) should fail because offset is bad
+[ 641: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 5, 1) should fail because stride is bad
+[ 642: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 8, 1) should fail because offset is bad
+[ 643: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 0, 3) should fail because offset is bad
+[ 644: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 1, 3) should fail because stride is bad
+[ 645: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 3, 3) should fail because stride is bad
+[ 646: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 4, 3) should fail because offset is bad
+[ 647: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 5, 3) should fail because stride is bad
+[ 648: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 8, 3) should fail because offset is bad
+[ 649: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 0, 4) should succeed
+[ 650: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 1, 4) should fail because stride is bad
+[ 651: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 3, 4) should fail because stride is bad
+[ 652: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 4, 4) should succeed
+[ 653: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 5, 4) should fail because stride is bad
+[ 654: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 8, 4) should succeed
+[ 655: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 0, 5) should fail because offset is bad
+[ 656: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 1, 5) should fail because stride is bad
+[ 657: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 3, 5) should fail because stride is bad
+[ 658: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 4, 5) should fail because offset is bad
+[ 659: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 5, 5) should fail because stride is bad
+[ 660: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 8, 5) should fail because offset is bad
+[ 661: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 0, 8) should succeed
+[ 662: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 1, 8) should fail because stride is bad
+[ 663: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 3, 8) should fail because stride is bad
+[ 664: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 4, 8) should succeed
+[ 665: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 5, 8) should fail because stride is bad
+[ 666: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.INT, 8, 8) should succeed
+[ 667: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 0, 0) should succeed
+[ 668: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 1, 0) should fail because stride is bad
+[ 669: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 3, 0) should fail because stride is bad
+[ 670: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 4, 0) should succeed
+[ 671: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 5, 0) should fail because stride is bad
+[ 672: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 8, 0) should succeed
+[ 673: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 252, 0) should succeed at stride limit
+[ 674: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 256, 0) should fail over stride limit
+[ 675: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 0, 1) should fail because offset is bad
+[ 676: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 1, 1) should fail because stride is bad
+[ 677: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 3, 1) should fail because stride is bad
+[ 678: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 4, 1) should fail because offset is bad
+[ 679: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 5, 1) should fail because stride is bad
+[ 680: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 8, 1) should fail because offset is bad
+[ 681: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 0, 3) should fail because offset is bad
+[ 682: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 1, 3) should fail because stride is bad
+[ 683: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 3, 3) should fail because stride is bad
+[ 684: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 4, 3) should fail because offset is bad
+[ 685: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 5, 3) should fail because stride is bad
+[ 686: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 8, 3) should fail because offset is bad
+[ 687: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 0, 4) should succeed
+[ 688: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 1, 4) should fail because stride is bad
+[ 689: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 3, 4) should fail because stride is bad
+[ 690: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 4, 4) should succeed
+[ 691: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 5, 4) should fail because stride is bad
+[ 692: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 8, 4) should succeed
+[ 693: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 0, 5) should fail because offset is bad
+[ 694: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 1, 5) should fail because stride is bad
+[ 695: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 3, 5) should fail because stride is bad
+[ 696: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 4, 5) should fail because offset is bad
+[ 697: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 5, 5) should fail because stride is bad
+[ 698: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 8, 5) should fail because offset is bad
+[ 699: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 0, 8) should succeed
+[ 700: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 1, 8) should fail because stride is bad
+[ 701: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 3, 8) should fail because stride is bad
+[ 702: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 4, 8) should succeed
+[ 703: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 5, 8) should fail because stride is bad
+[ 704: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.INT, 8, 8) should succeed
+[ 705: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 0, 0) should succeed
+[ 706: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 1, 0) should fail because stride is bad
+[ 707: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 3, 0) should fail because stride is bad
+[ 708: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 4, 0) should succeed
+[ 709: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 5, 0) should fail because stride is bad
+[ 710: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 8, 0) should succeed
+[ 711: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 252, 0) should succeed at stride limit
+[ 712: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 256, 0) should fail over stride limit
+[ 713: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 0, 1) should fail because offset is bad
+[ 714: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 1, 1) should fail because stride is bad
+[ 715: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 3, 1) should fail because stride is bad
+[ 716: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 4, 1) should fail because offset is bad
+[ 717: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 5, 1) should fail because stride is bad
+[ 718: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 8, 1) should fail because offset is bad
+[ 719: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 0, 3) should fail because offset is bad
+[ 720: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 1, 3) should fail because stride is bad
+[ 721: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 3, 3) should fail because stride is bad
+[ 722: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 4, 3) should fail because offset is bad
+[ 723: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 5, 3) should fail because stride is bad
+[ 724: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 8, 3) should fail because offset is bad
+[ 725: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 0, 4) should succeed
+[ 726: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 1, 4) should fail because stride is bad
+[ 727: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 3, 4) should fail because stride is bad
+[ 728: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 4, 4) should succeed
+[ 729: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 5, 4) should fail because stride is bad
+[ 730: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 8, 4) should succeed
+[ 731: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 0, 5) should fail because offset is bad
+[ 732: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 1, 5) should fail because stride is bad
+[ 733: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 3, 5) should fail because stride is bad
+[ 734: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 4, 5) should fail because offset is bad
+[ 735: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 5, 5) should fail because stride is bad
+[ 736: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 8, 5) should fail because offset is bad
+[ 737: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 0, 8) should succeed
+[ 738: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 1, 8) should fail because stride is bad
+[ 739: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 3, 8) should fail because stride is bad
+[ 740: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 4, 8) should succeed
+[ 741: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 5, 8) should fail because stride is bad
+[ 742: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.INT, 8, 8) should succeed
+[ 743: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 0, 0) should succeed
+[ 744: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 1, 0) should fail because stride is bad
+[ 745: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 3, 0) should fail because stride is bad
+[ 746: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 4, 0) should succeed
+[ 747: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 5, 0) should fail because stride is bad
+[ 748: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 8, 0) should succeed
+[ 749: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 252, 0) should succeed at stride limit
+[ 750: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 256, 0) should fail over stride limit
+[ 751: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 0, 1) should fail because offset is bad
+[ 752: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 1, 1) should fail because stride is bad
+[ 753: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 3, 1) should fail because stride is bad
+[ 754: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 4, 1) should fail because offset is bad
+[ 755: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 5, 1) should fail because stride is bad
+[ 756: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 8, 1) should fail because offset is bad
+[ 757: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 0, 3) should fail because offset is bad
+[ 758: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 1, 3) should fail because stride is bad
+[ 759: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 3, 3) should fail because stride is bad
+[ 760: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 4, 3) should fail because offset is bad
+[ 761: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 5, 3) should fail because stride is bad
+[ 762: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 8, 3) should fail because offset is bad
+[ 763: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 0, 4) should succeed
+[ 764: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 1, 4) should fail because stride is bad
+[ 765: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 3, 4) should fail because stride is bad
+[ 766: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 4, 4) should succeed
+[ 767: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 5, 4) should fail because stride is bad
+[ 768: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 8, 4) should succeed
+[ 769: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 0, 5) should fail because offset is bad
+[ 770: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 1, 5) should fail because stride is bad
+[ 771: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 3, 5) should fail because stride is bad
+[ 772: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 4, 5) should fail because offset is bad
+[ 773: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 5, 5) should fail because stride is bad
+[ 774: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 8, 5) should fail because offset is bad
+[ 775: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 0, 8) should succeed
+[ 776: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 1, 8) should fail because stride is bad
+[ 777: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 3, 8) should fail because stride is bad
+[ 778: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 4, 8) should succeed
+[ 779: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 5, 8) should fail because stride is bad
+[ 780: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.INT, 8, 8) should succeed
+[ 781: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 0, 0) should succeed
+[ 782: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 1, 0) should fail because stride is bad
+[ 783: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 3, 0) should fail because stride is bad
+[ 784: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 4, 0) should succeed
+[ 785: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 5, 0) should fail because stride is bad
+[ 786: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 8, 0) should succeed
+[ 787: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 252, 0) should succeed at stride limit
+[ 788: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 256, 0) should fail over stride limit
+[ 789: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 0, 1) should fail because offset is bad
+[ 790: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 1, 1) should fail because stride is bad
+[ 791: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 3, 1) should fail because stride is bad
+[ 792: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 4, 1) should fail because offset is bad
+[ 793: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 5, 1) should fail because stride is bad
+[ 794: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 8, 1) should fail because offset is bad
+[ 795: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 0, 3) should fail because offset is bad
+[ 796: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 1, 3) should fail because stride is bad
+[ 797: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 3, 3) should fail because stride is bad
+[ 798: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 4, 3) should fail because offset is bad
+[ 799: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 5, 3) should fail because stride is bad
+[ 800: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 8, 3) should fail because offset is bad
+[ 801: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 0, 4) should succeed
+[ 802: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 1, 4) should fail because stride is bad
+[ 803: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 3, 4) should fail because stride is bad
+[ 804: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 4, 4) should succeed
+[ 805: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 5, 4) should fail because stride is bad
+[ 806: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 8, 4) should succeed
+[ 807: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 0, 5) should fail because offset is bad
+[ 808: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 1, 5) should fail because stride is bad
+[ 809: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 3, 5) should fail because stride is bad
+[ 810: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 4, 5) should fail because offset is bad
+[ 811: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 5, 5) should fail because stride is bad
+[ 812: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 8, 5) should fail because offset is bad
+[ 813: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 0, 8) should succeed
+[ 814: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 1, 8) should fail because stride is bad
+[ 815: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 3, 8) should fail because stride is bad
+[ 816: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 4, 8) should succeed
+[ 817: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 5, 8) should fail because stride is bad
+[ 818: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 1, gl.UNSIGNED_INT, 8, 8) should succeed
+[ 819: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 0, 0) should succeed
+[ 820: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 1, 0) should fail because stride is bad
+[ 821: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 3, 0) should fail because stride is bad
+[ 822: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 4, 0) should succeed
+[ 823: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 5, 0) should fail because stride is bad
+[ 824: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 8, 0) should succeed
+[ 825: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 252, 0) should succeed at stride limit
+[ 826: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 256, 0) should fail over stride limit
+[ 827: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 0, 1) should fail because offset is bad
+[ 828: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 1, 1) should fail because stride is bad
+[ 829: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 3, 1) should fail because stride is bad
+[ 830: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 4, 1) should fail because offset is bad
+[ 831: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 5, 1) should fail because stride is bad
+[ 832: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 8, 1) should fail because offset is bad
+[ 833: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 0, 3) should fail because offset is bad
+[ 834: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 1, 3) should fail because stride is bad
+[ 835: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 3, 3) should fail because stride is bad
+[ 836: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 4, 3) should fail because offset is bad
+[ 837: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 5, 3) should fail because stride is bad
+[ 838: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 8, 3) should fail because offset is bad
+[ 839: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 0, 4) should succeed
+[ 840: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 1, 4) should fail because stride is bad
+[ 841: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 3, 4) should fail because stride is bad
+[ 842: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 4, 4) should succeed
+[ 843: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 5, 4) should fail because stride is bad
+[ 844: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 8, 4) should succeed
+[ 845: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 0, 5) should fail because offset is bad
+[ 846: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 1, 5) should fail because stride is bad
+[ 847: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 3, 5) should fail because stride is bad
+[ 848: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 4, 5) should fail because offset is bad
+[ 849: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 5, 5) should fail because stride is bad
+[ 850: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 8, 5) should fail because offset is bad
+[ 851: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 0, 8) should succeed
+[ 852: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 1, 8) should fail because stride is bad
+[ 853: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 3, 8) should fail because stride is bad
+[ 854: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 4, 8) should succeed
+[ 855: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 5, 8) should fail because stride is bad
+[ 856: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 2, gl.UNSIGNED_INT, 8, 8) should succeed
+[ 857: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 0, 0) should succeed
+[ 858: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 1, 0) should fail because stride is bad
+[ 859: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 3, 0) should fail because stride is bad
+[ 860: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 4, 0) should succeed
+[ 861: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 5, 0) should fail because stride is bad
+[ 862: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 8, 0) should succeed
+[ 863: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 252, 0) should succeed at stride limit
+[ 864: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 256, 0) should fail over stride limit
+[ 865: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 0, 1) should fail because offset is bad
+[ 866: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 1, 1) should fail because stride is bad
+[ 867: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 3, 1) should fail because stride is bad
+[ 868: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 4, 1) should fail because offset is bad
+[ 869: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 5, 1) should fail because stride is bad
+[ 870: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 8, 1) should fail because offset is bad
+[ 871: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 0, 3) should fail because offset is bad
+[ 872: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 1, 3) should fail because stride is bad
+[ 873: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 3, 3) should fail because stride is bad
+[ 874: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 4, 3) should fail because offset is bad
+[ 875: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 5, 3) should fail because stride is bad
+[ 876: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 8, 3) should fail because offset is bad
+[ 877: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 0, 4) should succeed
+[ 878: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 1, 4) should fail because stride is bad
+[ 879: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 3, 4) should fail because stride is bad
+[ 880: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 4, 4) should succeed
+[ 881: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 5, 4) should fail because stride is bad
+[ 882: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 8, 4) should succeed
+[ 883: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 0, 5) should fail because offset is bad
+[ 884: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 1, 5) should fail because stride is bad
+[ 885: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 3, 5) should fail because stride is bad
+[ 886: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 4, 5) should fail because offset is bad
+[ 887: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 5, 5) should fail because stride is bad
+[ 888: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 8, 5) should fail because offset is bad
+[ 889: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 0, 8) should succeed
+[ 890: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 1, 8) should fail because stride is bad
+[ 891: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 3, 8) should fail because stride is bad
+[ 892: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 4, 8) should succeed
+[ 893: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 5, 8) should fail because stride is bad
+[ 894: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 3, gl.UNSIGNED_INT, 8, 8) should succeed
+[ 895: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 0, 0) should succeed
+[ 896: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 1, 0) should fail because stride is bad
+[ 897: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 3, 0) should fail because stride is bad
+[ 898: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 4, 0) should succeed
+[ 899: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 5, 0) should fail because stride is bad
+[ 900: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 8, 0) should succeed
+[ 901: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 252, 0) should succeed at stride limit
+[ 902: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 256, 0) should fail over stride limit
+[ 903: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 0, 1) should fail because offset is bad
+[ 904: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 1, 1) should fail because stride is bad
+[ 905: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 3, 1) should fail because stride is bad
+[ 906: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 4, 1) should fail because offset is bad
+[ 907: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 5, 1) should fail because stride is bad
+[ 908: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 8, 1) should fail because offset is bad
+[ 909: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 0, 3) should fail because offset is bad
+[ 910: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 1, 3) should fail because stride is bad
+[ 911: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 3, 3) should fail because stride is bad
+[ 912: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 4, 3) should fail because offset is bad
+[ 913: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 5, 3) should fail because stride is bad
+[ 914: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 8, 3) should fail because offset is bad
+[ 915: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 0, 4) should succeed
+[ 916: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 1, 4) should fail because stride is bad
+[ 917: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 3, 4) should fail because stride is bad
+[ 918: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 4, 4) should succeed
+[ 919: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 5, 4) should fail because stride is bad
+[ 920: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 8, 4) should succeed
+[ 921: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 0, 5) should fail because offset is bad
+[ 922: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 1, 5) should fail because stride is bad
+[ 923: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 3, 5) should fail because stride is bad
+[ 924: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 4, 5) should fail because offset is bad
+[ 925: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 5, 5) should fail because stride is bad
+[ 926: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 8, 5) should fail because offset is bad
+[ 927: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 0, 8) should succeed
+[ 928: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 1, 8) should fail because stride is bad
+[ 929: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 3, 8) should fail because stride is bad
+[ 930: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 4, 8) should succeed
+[ 931: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 5, 8) should fail because stride is bad
+[ 932: PASS ] getError was expected value: NO_ERROR : gl.vertexAttribIPointer(0, 4, gl.UNSIGNED_INT, 8, 8) should succeed
+[ 933: PASS ] successfullyParsed is true
+[ FAIL ] 466 failures reported
 

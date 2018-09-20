@@ -1,5 +1,12 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002.html
-[ PASS ] All tests passed
+[ 1: FAIL ] only found 0 of 2 required built-in uniforms: gl_DepthRange.near,gl_DepthRange.far,gl_DepthRange.diff
+[ 2: PASS ] images are the same
+[ 3: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 4: FAIL ] only found 0 of 2 required built-in uniforms: gl_DepthRange.near,gl_DepthRange.far,gl_DepthRange.diff
+[ 5: PASS ] images are the same
+[ 6: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 7: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

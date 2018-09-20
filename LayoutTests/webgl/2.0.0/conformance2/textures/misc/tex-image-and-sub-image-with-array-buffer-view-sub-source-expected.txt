@@ -1,5 +1,118 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-and-sub-image-with-array-buffer-view-sub-source.html
-[ PASS ] All tests passed
+[ 1: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 2: PASS ] getError was expected value: NO_ERROR : texImage2D succeeds with correct buffer and srcOffset
+[ 3: PASS ] getError was expected value: NO_ERROR : no error
+[ 4: FAIL ] Element 1: expected 1, got 0
+[ 5: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 6: PASS ] getError was expected value: NO_ERROR : texSubImage2D succeeds with correct buffer and srcOffset
+[ 7: PASS ] getError was expected value: NO_ERROR : no error
+[ 8: FAIL ] Element 1: expected 1, got 0
+[ 9: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
+[ 10: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 11: PASS ] getError was expected value: NO_ERROR : no error
+[ 12: FAIL ] Element 1: expected 1, got 0
+[ 13: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 14: PASS ] getError was expected value: NO_ERROR : texSubImage3D succeeds with correct buffer and srcOffset
+[ 15: PASS ] getError was expected value: NO_ERROR : no error
+[ 16: FAIL ] Element 1: expected 1, got 0
+[ 17: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 18: PASS ] getError was expected value: NO_ERROR : texImage2D succeeds with correct buffer and srcOffset
+[ 19: PASS ] getError was expected value: NO_ERROR : no error
+[ 20: FAIL ] Element 1: expected 1, got 0
+[ 21: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 22: PASS ] getError was expected value: NO_ERROR : texSubImage2D succeeds with correct buffer and srcOffset
+[ 23: PASS ] getError was expected value: NO_ERROR : no error
+[ 24: FAIL ] Element 1: expected 1, got 0
+[ 25: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
+[ 26: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 27: PASS ] getError was expected value: NO_ERROR : no error
+[ 28: FAIL ] Element 1: expected 1, got 0
+[ 29: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 30: PASS ] getError was expected value: NO_ERROR : texSubImage3D succeeds with correct buffer and srcOffset
+[ 31: PASS ] getError was expected value: NO_ERROR : no error
+[ 32: FAIL ] Element 1: expected 1, got 0
+[ 33: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 34: PASS ] getError was expected value: NO_ERROR : texImage2D succeeds with correct buffer and srcOffset
+[ 35: PASS ] getError was expected value: NO_ERROR : no error
+[ 36: FAIL ] Element 1: expected 1, got 0
+[ 37: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 38: PASS ] getError was expected value: NO_ERROR : texSubImage2D succeeds with correct buffer and srcOffset
+[ 39: PASS ] getError was expected value: NO_ERROR : no error
+[ 40: FAIL ] Element 1: expected 1, got 0
+[ 41: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
+[ 42: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 43: PASS ] getError was expected value: NO_ERROR : no error
+[ 44: FAIL ] Element 1: expected 1, got 0
+[ 45: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 46: PASS ] getError was expected value: NO_ERROR : texSubImage3D succeeds with correct buffer and srcOffset
+[ 47: PASS ] getError was expected value: NO_ERROR : no error
+[ 48: FAIL ] Element 1: expected 1, got 0
+[ 49: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 50: PASS ] getError was expected value: NO_ERROR : texImage2D succeeds with correct buffer and srcOffset
+[ 51: PASS ] getError was expected value: NO_ERROR : no error
+[ 52: FAIL ] Element 1: expected 1, got 0
+[ 53: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 54: PASS ] getError was expected value: NO_ERROR : texSubImage2D succeeds with correct buffer and srcOffset
+[ 55: PASS ] getError was expected value: NO_ERROR : no error
+[ 56: FAIL ] Element 1: expected 1, got 0
+[ 57: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
+[ 58: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 59: PASS ] getError was expected value: NO_ERROR : no error
+[ 60: FAIL ] Element 1: expected 1, got 0
+[ 61: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 62: PASS ] getError was expected value: NO_ERROR : texSubImage3D succeeds with correct buffer and srcOffset
+[ 63: PASS ] getError was expected value: NO_ERROR : no error
+[ 64: FAIL ] Element 1: expected 1, got 0
+[ 65: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 66: PASS ] getError was expected value: NO_ERROR : texImage2D succeeds with correct buffer and srcOffset
+[ 67: PASS ] getError was expected value: NO_ERROR : no error
+[ 68: FAIL ] Element 1: expected 1, got 0
+[ 69: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 70: PASS ] getError was expected value: NO_ERROR : texSubImage2D succeeds with correct buffer and srcOffset
+[ 71: PASS ] getError was expected value: NO_ERROR : no error
+[ 72: FAIL ] Element 1: expected 1, got 0
+[ 73: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
+[ 74: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 75: PASS ] getError was expected value: NO_ERROR : no error
+[ 76: FAIL ] Element 1: expected 1, got 0
+[ 77: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 78: PASS ] getError was expected value: NO_ERROR : texSubImage3D succeeds with correct buffer and srcOffset
+[ 79: PASS ] getError was expected value: NO_ERROR : no error
+[ 80: FAIL ] Element 1: expected 1, got 0
+[ 81: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 82: PASS ] getError was expected value: NO_ERROR : texImage2D succeeds with correct buffer and srcOffset
+[ 83: PASS ] getError was expected value: NO_ERROR : no error
+[ 84: FAIL ] Element 1: expected 1, got 0
+[ 85: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 86: PASS ] getError was expected value: NO_ERROR : texSubImage2D succeeds with correct buffer and srcOffset
+[ 87: PASS ] getError was expected value: NO_ERROR : no error
+[ 88: FAIL ] Element 1: expected 1, got 0
+[ 89: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
+[ 90: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 91: PASS ] getError was expected value: NO_ERROR : no error
+[ 92: FAIL ] Element 1: expected 1, got 0
+[ 93: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 94: PASS ] getError was expected value: NO_ERROR : texSubImage3D succeeds with correct buffer and srcOffset
+[ 95: PASS ] getError was expected value: NO_ERROR : no error
+[ 96: FAIL ] Element 1: expected 1, got 0
+[ 97: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 98: PASS ] getError was expected value: NO_ERROR : texImage2D succeeds with correct buffer and srcOffset
+[ 99: PASS ] getError was expected value: NO_ERROR : no error
+[ 100: FAIL ] Element 1: expected 1.0000000591389835, got 0
+[ 101: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 102: PASS ] getError was expected value: NO_ERROR : texSubImage2D succeeds with correct buffer and srcOffset
+[ 103: PASS ] getError was expected value: NO_ERROR : no error
+[ 104: FAIL ] Element 1: expected 1.0000000591389835, got 0
+[ 105: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
+[ 106: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 107: PASS ] getError was expected value: NO_ERROR : no error
+[ 108: FAIL ] Element 1: expected 1.0000000591389835, got 0
+[ 109: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
+[ 110: PASS ] getError was expected value: NO_ERROR : texSubImage3D succeeds with correct buffer and srcOffset
+[ 111: PASS ] getError was expected value: NO_ERROR : no error
+[ 112: FAIL ] Element 1: expected 1.0000000591389835, got 0
+[ 113: PASS ] successfullyParsed is true
+[ FAIL ] 56 failures reported
 

@@ -1,5 +1,599 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3d-rgba16f-rgba-half_float.html
-[ PASS ] All tests passed
+[ 1: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 2: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 3: FAIL ] should be 255,0,0 at (8, 0) expected: 255,0,0 was 0,0,0
+[ 4: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 5: FAIL ] should be 0,255,0 at (24, 0) expected: 0,255,0 was 0,0,0
+[ 6: FAIL ] should be 255,0,0 at (0, 8) expected: 255,0,0 was 0,0,0
+[ 7: FAIL ] should be 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
+[ 8: FAIL ] should be 0,255,0 at (16, 8) expected: 0,255,0 was 0,0,0
+[ 9: FAIL ] should be 0,255,0 at (24, 8) expected: 0,255,0 was 0,0,0
+[ 10: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 11: FAIL ] should be 0,0,255 at (8, 16) expected: 0,0,255 was 0,0,0
+[ 12: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 13: FAIL ] should be 0,255,255 at (24, 16) expected: 0,255,255 was 0,0,0
+[ 14: FAIL ] should be 0,0,255 at (0, 24) expected: 0,0,255 was 0,0,0
+[ 15: FAIL ] should be 0,0,255 at (8, 24) expected: 0,0,255 was 0,0,0
+[ 16: FAIL ] should be 0,255,255 at (16, 24) expected: 0,255,255 was 0,0,0
+[ 17: FAIL ] should be 0,255,255 at (24, 24) expected: 0,255,255 was 0,0,0
+[ 18: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 19: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 20: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 21: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 22: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 23: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 24: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 25: FAIL ] should be 0,0,255 at (16, 0) expected: 0,0,255 was 0,0,0
+[ 26: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 27: FAIL ] should be 0,0,255 at (16, 16) expected: 0,0,255 was 0,0,0
+[ 28: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 29: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 30: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 31: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 32: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 33: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 34: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 35: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 36: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 37: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 38: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 39: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 40: PASS ] should be 0,0,0
+[ 41: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 42: PASS ] should be 0,0,0
+[ 43: FAIL ] should be 255,0,0 at (0, 8) expected: 255,0,0 was 0,0,0
+[ 44: PASS ] should be 0,0,0
+[ 45: FAIL ] should be 0,255,0 at (16, 8) expected: 0,255,0 was 0,0,0
+[ 46: PASS ] should be 0,0,0
+[ 47: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 48: PASS ] should be 0,0,0
+[ 49: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 50: PASS ] should be 0,0,0
+[ 51: FAIL ] should be 0,0,255 at (0, 24) expected: 0,0,255 was 0,0,0
+[ 52: PASS ] should be 0,0,0
+[ 53: FAIL ] should be 0,255,255 at (16, 24) expected: 0,255,255 was 0,0,0
+[ 54: PASS ] should be 0,0,0
+[ 55: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 56: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 57: PASS ] should be 0,0,0
+[ 58: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 59: PASS ] should be 0,0,0
+[ 60: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 61: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 62: PASS ] should be 0,0,0
+[ 63: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 64: PASS ] should be 0,0,0
+[ 65: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 66: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 67: PASS ] should be 0,0,0
+[ 68: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 69: PASS ] should be 0,0,0
+[ 70: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 71: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 72: PASS ] should be 0,0,0
+[ 73: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 74: PASS ] should be 0,0,0
+[ 75: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 76: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 77: FAIL ] should be 0,0,255 at (8, 0) expected: 0,0,255 was 0,0,0
+[ 78: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 79: FAIL ] should be 0,255,255 at (24, 0) expected: 0,255,255 was 0,0,0
+[ 80: FAIL ] should be 0,0,255 at (0, 8) expected: 0,0,255 was 0,0,0
+[ 81: FAIL ] should be 0,0,255 at (8, 8) expected: 0,0,255 was 0,0,0
+[ 82: FAIL ] should be 0,255,255 at (16, 8) expected: 0,255,255 was 0,0,0
+[ 83: FAIL ] should be 0,255,255 at (24, 8) expected: 0,255,255 was 0,0,0
+[ 84: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 85: FAIL ] should be 255,0,0 at (8, 16) expected: 255,0,0 was 0,0,0
+[ 86: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 87: FAIL ] should be 0,255,0 at (24, 16) expected: 0,255,0 was 0,0,0
+[ 88: FAIL ] should be 255,0,0 at (0, 24) expected: 255,0,0 was 0,0,0
+[ 89: FAIL ] should be 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
+[ 90: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
+[ 91: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
+[ 92: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 93: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 94: FAIL ] should be 0,0,255 at (16, 0) expected: 0,0,255 was 0,0,0
+[ 95: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 96: FAIL ] should be 0,0,255 at (16, 16) expected: 0,0,255 was 0,0,0
+[ 97: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 98: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 99: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 100: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 101: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 102: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 103: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 104: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 105: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 106: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 107: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 108: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 109: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 110: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 111: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 112: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 113: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 114: PASS ] should be 0,0,0
+[ 115: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 116: PASS ] should be 0,0,0
+[ 117: FAIL ] should be 0,0,255 at (0, 8) expected: 0,0,255 was 0,0,0
+[ 118: PASS ] should be 0,0,0
+[ 119: FAIL ] should be 0,255,255 at (16, 8) expected: 0,255,255 was 0,0,0
+[ 120: PASS ] should be 0,0,0
+[ 121: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 122: PASS ] should be 0,0,0
+[ 123: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 124: PASS ] should be 0,0,0
+[ 125: FAIL ] should be 255,0,0 at (0, 24) expected: 255,0,0 was 0,0,0
+[ 126: PASS ] should be 0,0,0
+[ 127: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
+[ 128: PASS ] should be 0,0,0
+[ 129: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 130: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 131: PASS ] should be 0,0,0
+[ 132: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 133: PASS ] should be 0,0,0
+[ 134: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 135: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 136: PASS ] should be 0,0,0
+[ 137: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 138: PASS ] should be 0,0,0
+[ 139: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 140: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 141: PASS ] should be 0,0,0
+[ 142: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 143: PASS ] should be 0,0,0
+[ 144: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 145: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 146: PASS ] should be 0,0,0
+[ 147: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 148: PASS ] should be 0,0,0
+[ 149: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 150: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 151: FAIL ] should be 255,0,0 at (8, 0) expected: 255,0,0 was 0,0,0
+[ 152: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 153: FAIL ] should be 0,255,0 at (24, 0) expected: 0,255,0 was 0,0,0
+[ 154: FAIL ] should be 255,0,0 at (0, 8) expected: 255,0,0 was 0,0,0
+[ 155: FAIL ] should be 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
+[ 156: FAIL ] should be 0,255,0 at (16, 8) expected: 0,255,0 was 0,0,0
+[ 157: FAIL ] should be 0,255,0 at (24, 8) expected: 0,255,0 was 0,0,0
+[ 158: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 159: FAIL ] should be 0,0,255 at (8, 16) expected: 0,0,255 was 0,0,0
+[ 160: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 161: FAIL ] should be 0,255,255 at (24, 16) expected: 0,255,255 was 0,0,0
+[ 162: FAIL ] should be 0,0,255 at (0, 24) expected: 0,0,255 was 0,0,0
+[ 163: FAIL ] should be 0,0,255 at (8, 24) expected: 0,0,255 was 0,0,0
+[ 164: FAIL ] should be 0,255,255 at (16, 24) expected: 0,255,255 was 0,0,0
+[ 165: FAIL ] should be 0,255,255 at (24, 24) expected: 0,255,255 was 0,0,0
+[ 166: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 167: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 168: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 169: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 170: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 171: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 172: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 173: FAIL ] should be 0,0,255 at (16, 0) expected: 0,0,255 was 0,0,0
+[ 174: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 175: FAIL ] should be 0,0,255 at (16, 16) expected: 0,0,255 was 0,0,0
+[ 176: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 177: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 178: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 179: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 180: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 181: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 182: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 183: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 184: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 185: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 186: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 187: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 188: PASS ] should be 0,0,0
+[ 189: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 190: PASS ] should be 0,0,0
+[ 191: FAIL ] should be 255,0,0 at (0, 8) expected: 255,0,0 was 0,0,0
+[ 192: PASS ] should be 0,0,0
+[ 193: FAIL ] should be 0,255,0 at (16, 8) expected: 0,255,0 was 0,0,0
+[ 194: PASS ] should be 0,0,0
+[ 195: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 196: PASS ] should be 0,0,0
+[ 197: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 198: PASS ] should be 0,0,0
+[ 199: FAIL ] should be 0,0,255 at (0, 24) expected: 0,0,255 was 0,0,0
+[ 200: PASS ] should be 0,0,0
+[ 201: FAIL ] should be 0,255,255 at (16, 24) expected: 0,255,255 was 0,0,0
+[ 202: PASS ] should be 0,0,0
+[ 203: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 204: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 205: PASS ] should be 0,0,0
+[ 206: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 207: PASS ] should be 0,0,0
+[ 208: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 209: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 210: PASS ] should be 0,0,0
+[ 211: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 212: PASS ] should be 0,0,0
+[ 213: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 214: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 215: PASS ] should be 0,0,0
+[ 216: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 217: PASS ] should be 0,0,0
+[ 218: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 219: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 220: PASS ] should be 0,0,0
+[ 221: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 222: PASS ] should be 0,0,0
+[ 223: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 224: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 225: FAIL ] should be 0,0,255 at (8, 0) expected: 0,0,255 was 0,0,0
+[ 226: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 227: FAIL ] should be 0,255,255 at (24, 0) expected: 0,255,255 was 0,0,0
+[ 228: FAIL ] should be 0,0,255 at (0, 8) expected: 0,0,255 was 0,0,0
+[ 229: FAIL ] should be 0,0,255 at (8, 8) expected: 0,0,255 was 0,0,0
+[ 230: FAIL ] should be 0,255,255 at (16, 8) expected: 0,255,255 was 0,0,0
+[ 231: FAIL ] should be 0,255,255 at (24, 8) expected: 0,255,255 was 0,0,0
+[ 232: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 233: FAIL ] should be 255,0,0 at (8, 16) expected: 255,0,0 was 0,0,0
+[ 234: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 235: FAIL ] should be 0,255,0 at (24, 16) expected: 0,255,0 was 0,0,0
+[ 236: FAIL ] should be 255,0,0 at (0, 24) expected: 255,0,0 was 0,0,0
+[ 237: FAIL ] should be 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
+[ 238: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
+[ 239: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
+[ 240: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 241: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 242: FAIL ] should be 0,0,255 at (16, 0) expected: 0,0,255 was 0,0,0
+[ 243: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 244: FAIL ] should be 0,0,255 at (16, 16) expected: 0,0,255 was 0,0,0
+[ 245: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 246: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 247: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 248: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 249: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 250: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 251: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 252: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 253: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 254: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 255: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 256: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 257: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 258: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 259: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 260: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 261: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 262: PASS ] should be 0,0,0
+[ 263: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 264: PASS ] should be 0,0,0
+[ 265: FAIL ] should be 0,0,255 at (0, 8) expected: 0,0,255 was 0,0,0
+[ 266: PASS ] should be 0,0,0
+[ 267: FAIL ] should be 0,255,255 at (16, 8) expected: 0,255,255 was 0,0,0
+[ 268: PASS ] should be 0,0,0
+[ 269: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 270: PASS ] should be 0,0,0
+[ 271: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 272: PASS ] should be 0,0,0
+[ 273: FAIL ] should be 255,0,0 at (0, 24) expected: 255,0,0 was 0,0,0
+[ 274: PASS ] should be 0,0,0
+[ 275: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
+[ 276: PASS ] should be 0,0,0
+[ 277: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 278: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 279: PASS ] should be 0,0,0
+[ 280: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 281: PASS ] should be 0,0,0
+[ 282: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 283: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 284: PASS ] should be 0,0,0
+[ 285: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 286: PASS ] should be 0,0,0
+[ 287: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 288: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 289: PASS ] should be 0,0,0
+[ 290: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 291: PASS ] should be 0,0,0
+[ 292: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 293: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 294: PASS ] should be 0,0,0
+[ 295: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 296: PASS ] should be 0,0,0
+[ 297: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 298: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 299: FAIL ] should be 255,0,0 at (8, 0) expected: 255,0,0 was 0,0,0
+[ 300: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 301: FAIL ] should be 0,255,0 at (24, 0) expected: 0,255,0 was 0,0,0
+[ 302: FAIL ] should be 255,0,0 at (0, 8) expected: 255,0,0 was 0,0,0
+[ 303: FAIL ] should be 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
+[ 304: FAIL ] should be 0,255,0 at (16, 8) expected: 0,255,0 was 0,0,0
+[ 305: FAIL ] should be 0,255,0 at (24, 8) expected: 0,255,0 was 0,0,0
+[ 306: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 307: FAIL ] should be 0,0,255 at (8, 16) expected: 0,0,255 was 0,0,0
+[ 308: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 309: FAIL ] should be 0,255,255 at (24, 16) expected: 0,255,255 was 0,0,0
+[ 310: FAIL ] should be 0,0,255 at (0, 24) expected: 0,0,255 was 0,0,0
+[ 311: FAIL ] should be 0,0,255 at (8, 24) expected: 0,0,255 was 0,0,0
+[ 312: FAIL ] should be 0,255,255 at (16, 24) expected: 0,255,255 was 0,0,0
+[ 313: FAIL ] should be 0,255,255 at (24, 24) expected: 0,255,255 was 0,0,0
+[ 314: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 315: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 316: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 317: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 318: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 319: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 320: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 321: FAIL ] should be 0,0,255 at (16, 0) expected: 0,0,255 was 0,0,0
+[ 322: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 323: FAIL ] should be 0,0,255 at (16, 16) expected: 0,0,255 was 0,0,0
+[ 324: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 325: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 326: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 327: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 328: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 329: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 330: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 331: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 332: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 333: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 334: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 335: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 336: PASS ] should be 0,0,0
+[ 337: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 338: PASS ] should be 0,0,0
+[ 339: FAIL ] should be 255,0,0 at (0, 8) expected: 255,0,0 was 0,0,0
+[ 340: PASS ] should be 0,0,0
+[ 341: FAIL ] should be 0,255,0 at (16, 8) expected: 0,255,0 was 0,0,0
+[ 342: PASS ] should be 0,0,0
+[ 343: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 344: PASS ] should be 0,0,0
+[ 345: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 346: PASS ] should be 0,0,0
+[ 347: FAIL ] should be 0,0,255 at (0, 24) expected: 0,0,255 was 0,0,0
+[ 348: PASS ] should be 0,0,0
+[ 349: FAIL ] should be 0,255,255 at (16, 24) expected: 0,255,255 was 0,0,0
+[ 350: PASS ] should be 0,0,0
+[ 351: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 352: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 353: PASS ] should be 0,0,0
+[ 354: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 355: PASS ] should be 0,0,0
+[ 356: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 357: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 358: PASS ] should be 0,0,0
+[ 359: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 360: PASS ] should be 0,0,0
+[ 361: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 362: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 363: PASS ] should be 0,0,0
+[ 364: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 365: PASS ] should be 0,0,0
+[ 366: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 367: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 368: PASS ] should be 0,0,0
+[ 369: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 370: PASS ] should be 0,0,0
+[ 371: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 372: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 373: FAIL ] should be 0,0,255 at (8, 0) expected: 0,0,255 was 0,0,0
+[ 374: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 375: FAIL ] should be 0,255,255 at (24, 0) expected: 0,255,255 was 0,0,0
+[ 376: FAIL ] should be 0,0,255 at (0, 8) expected: 0,0,255 was 0,0,0
+[ 377: FAIL ] should be 0,0,255 at (8, 8) expected: 0,0,255 was 0,0,0
+[ 378: FAIL ] should be 0,255,255 at (16, 8) expected: 0,255,255 was 0,0,0
+[ 379: FAIL ] should be 0,255,255 at (24, 8) expected: 0,255,255 was 0,0,0
+[ 380: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 381: FAIL ] should be 255,0,0 at (8, 16) expected: 255,0,0 was 0,0,0
+[ 382: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 383: FAIL ] should be 0,255,0 at (24, 16) expected: 0,255,0 was 0,0,0
+[ 384: FAIL ] should be 255,0,0 at (0, 24) expected: 255,0,0 was 0,0,0
+[ 385: FAIL ] should be 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
+[ 386: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
+[ 387: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
+[ 388: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 389: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 390: FAIL ] should be 0,0,255 at (16, 0) expected: 0,0,255 was 0,0,0
+[ 391: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 392: FAIL ] should be 0,0,255 at (16, 16) expected: 0,0,255 was 0,0,0
+[ 393: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 394: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 395: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 396: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 397: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 398: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 399: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 400: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 401: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 402: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 403: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 404: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 405: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 406: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 407: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 408: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 409: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 410: PASS ] should be 0,0,0
+[ 411: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 412: PASS ] should be 0,0,0
+[ 413: FAIL ] should be 0,0,255 at (0, 8) expected: 0,0,255 was 0,0,0
+[ 414: PASS ] should be 0,0,0
+[ 415: FAIL ] should be 0,255,255 at (16, 8) expected: 0,255,255 was 0,0,0
+[ 416: PASS ] should be 0,0,0
+[ 417: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 418: PASS ] should be 0,0,0
+[ 419: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 420: PASS ] should be 0,0,0
+[ 421: FAIL ] should be 255,0,0 at (0, 24) expected: 255,0,0 was 0,0,0
+[ 422: PASS ] should be 0,0,0
+[ 423: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
+[ 424: PASS ] should be 0,0,0
+[ 425: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 426: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 427: PASS ] should be 0,0,0
+[ 428: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 429: PASS ] should be 0,0,0
+[ 430: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 431: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 432: PASS ] should be 0,0,0
+[ 433: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 434: PASS ] should be 0,0,0
+[ 435: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 436: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 437: PASS ] should be 0,0,0
+[ 438: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 439: PASS ] should be 0,0,0
+[ 440: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 441: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 442: PASS ] should be 0,0,0
+[ 443: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 444: PASS ] should be 0,0,0
+[ 445: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 446: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 447: FAIL ] should be 255,0,0 at (8, 0) expected: 255,0,0 was 0,0,0
+[ 448: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 449: FAIL ] should be 0,255,0 at (24, 0) expected: 0,255,0 was 0,0,0
+[ 450: FAIL ] should be 255,0,0 at (0, 8) expected: 255,0,0 was 0,0,0
+[ 451: FAIL ] should be 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
+[ 452: FAIL ] should be 0,255,0 at (16, 8) expected: 0,255,0 was 0,0,0
+[ 453: FAIL ] should be 0,255,0 at (24, 8) expected: 0,255,0 was 0,0,0
+[ 454: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 455: FAIL ] should be 0,0,255 at (8, 16) expected: 0,0,255 was 0,0,0
+[ 456: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 457: FAIL ] should be 0,255,255 at (24, 16) expected: 0,255,255 was 0,0,0
+[ 458: FAIL ] should be 0,0,255 at (0, 24) expected: 0,0,255 was 0,0,0
+[ 459: FAIL ] should be 0,0,255 at (8, 24) expected: 0,0,255 was 0,0,0
+[ 460: FAIL ] should be 0,255,255 at (16, 24) expected: 0,255,255 was 0,0,0
+[ 461: FAIL ] should be 0,255,255 at (24, 24) expected: 0,255,255 was 0,0,0
+[ 462: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 463: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 464: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 465: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 466: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 467: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 468: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 469: FAIL ] should be 0,0,255 at (16, 0) expected: 0,0,255 was 0,0,0
+[ 470: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 471: FAIL ] should be 0,0,255 at (16, 16) expected: 0,0,255 was 0,0,0
+[ 472: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 473: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 474: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 475: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 476: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 477: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 478: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 479: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 480: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 481: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 482: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 483: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 484: PASS ] should be 0,0,0
+[ 485: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 486: PASS ] should be 0,0,0
+[ 487: FAIL ] should be 255,0,0 at (0, 8) expected: 255,0,0 was 0,0,0
+[ 488: PASS ] should be 0,0,0
+[ 489: FAIL ] should be 0,255,0 at (16, 8) expected: 0,255,0 was 0,0,0
+[ 490: PASS ] should be 0,0,0
+[ 491: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 492: PASS ] should be 0,0,0
+[ 493: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 494: PASS ] should be 0,0,0
+[ 495: FAIL ] should be 0,0,255 at (0, 24) expected: 0,0,255 was 0,0,0
+[ 496: PASS ] should be 0,0,0
+[ 497: FAIL ] should be 0,255,255 at (16, 24) expected: 0,255,255 was 0,0,0
+[ 498: PASS ] should be 0,0,0
+[ 499: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 500: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 501: PASS ] should be 0,0,0
+[ 502: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 503: PASS ] should be 0,0,0
+[ 504: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 505: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 506: PASS ] should be 0,0,0
+[ 507: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 508: PASS ] should be 0,0,0
+[ 509: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 510: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 511: PASS ] should be 0,0,0
+[ 512: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 513: PASS ] should be 0,0,0
+[ 514: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 515: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 516: PASS ] should be 0,0,0
+[ 517: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 518: PASS ] should be 0,0,0
+[ 519: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 520: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 521: FAIL ] should be 0,0,255 at (8, 0) expected: 0,0,255 was 0,0,0
+[ 522: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 523: FAIL ] should be 0,255,255 at (24, 0) expected: 0,255,255 was 0,0,0
+[ 524: FAIL ] should be 0,0,255 at (0, 8) expected: 0,0,255 was 0,0,0
+[ 525: FAIL ] should be 0,0,255 at (8, 8) expected: 0,0,255 was 0,0,0
+[ 526: FAIL ] should be 0,255,255 at (16, 8) expected: 0,255,255 was 0,0,0
+[ 527: FAIL ] should be 0,255,255 at (24, 8) expected: 0,255,255 was 0,0,0
+[ 528: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 529: FAIL ] should be 255,0,0 at (8, 16) expected: 255,0,0 was 0,0,0
+[ 530: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 531: FAIL ] should be 0,255,0 at (24, 16) expected: 0,255,0 was 0,0,0
+[ 532: FAIL ] should be 255,0,0 at (0, 24) expected: 255,0,0 was 0,0,0
+[ 533: FAIL ] should be 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
+[ 534: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
+[ 535: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
+[ 536: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 537: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 538: FAIL ] should be 0,0,255 at (16, 0) expected: 0,0,255 was 0,0,0
+[ 539: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 540: FAIL ] should be 0,0,255 at (16, 16) expected: 0,0,255 was 0,0,0
+[ 541: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 542: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 543: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
+[ 544: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 545: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
+[ 546: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 547: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 548: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 549: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 550: FAIL ] should be 0,255,255 at (16, 16) expected: 0,255,255 was 0,0,0
+[ 551: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 552: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 553: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
+[ 554: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 555: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 556: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 557: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 558: PASS ] should be 0,0,0
+[ 559: FAIL ] should be 0,255,255 at (16, 0) expected: 0,255,255 was 0,0,0
+[ 560: PASS ] should be 0,0,0
+[ 561: FAIL ] should be 0,0,255 at (0, 8) expected: 0,0,255 was 0,0,0
+[ 562: PASS ] should be 0,0,0
+[ 563: FAIL ] should be 0,255,255 at (16, 8) expected: 0,255,255 was 0,0,0
+[ 564: PASS ] should be 0,0,0
+[ 565: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 566: PASS ] should be 0,0,0
+[ 567: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
+[ 568: PASS ] should be 0,0,0
+[ 569: FAIL ] should be 255,0,0 at (0, 24) expected: 255,0,0 was 0,0,0
+[ 570: PASS ] should be 0,0,0
+[ 571: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
+[ 572: PASS ] should be 0,0,0
+[ 573: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 574: FAIL ] should be 0,0,255 at (0, 0) expected: 0,0,255 was 0,0,0
+[ 575: PASS ] should be 0,0,0
+[ 576: FAIL ] should be 0,0,255 at (0, 16) expected: 0,0,255 was 0,0,0
+[ 577: PASS ] should be 0,0,0
+[ 578: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 579: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 580: PASS ] should be 0,0,0
+[ 581: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
+[ 582: PASS ] should be 0,0,0
+[ 583: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 584: FAIL ] should be 0,255,255 at (0, 0) expected: 0,255,255 was 0,0,0
+[ 585: PASS ] should be 0,0,0
+[ 586: FAIL ] should be 0,255,255 at (0, 16) expected: 0,255,255 was 0,0,0
+[ 587: PASS ] should be 0,0,0
+[ 588: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 589: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
+[ 590: PASS ] should be 0,0,0
+[ 591: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
+[ 592: PASS ] should be 0,0,0
+[ 593: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 594: PASS ] successfullyParsed is true
+[ FAIL ] 464 failures reported
 

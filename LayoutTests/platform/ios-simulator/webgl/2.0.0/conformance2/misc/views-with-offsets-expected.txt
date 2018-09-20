@@ -1,0 +1,56 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
+[ 1: FAIL ] Does not support texImage2D with offsets into views.
+[ 2: FAIL ] Does not support texSubImage2D with offsets into views.
+[ 3: PASS ] getError was expected value: NO_ERROR :
+[ 4: PASS ] getError was expected value: NO_ERROR :
+[ 5: FAIL ] Should be [0, 1, 1, 2], was [0, 0, 0, 0].
+[ 6: PASS ] getError was expected value: NO_ERROR :
+[ 7: PASS ] getError was expected value: NO_ERROR :
+[ 8: FAIL ] Should be [1, 1, 2, 3], was [0, 0, 0, 0].
+[ 9: PASS ] getError was expected value: NO_ERROR :
+[ 10: PASS ] getError was expected value: NO_ERROR :
+[ 11: FAIL ] Should be [1, 2, 3, 5], was [0, 0, 0, 0].
+[ 12: PASS ] getError was expected value: NO_ERROR :
+[ 13: PASS ] getError was expected value: NO_ERROR :
+[ 14: FAIL ] Should be [2, 3, 5, 8], was [0, 0, 0, 0].
+[ 15: PASS ] getError was expected value: NO_ERROR :
+[ 16: PASS ] getError was expected value: NO_ERROR :
+[ 17: FAIL ] Should be [3, 5, 8, 13], was [0, 0, 0, 0].
+[ 18: PASS ] getError was expected value: NO_ERROR :
+[ 19: PASS ] getError was expected value: NO_ERROR :
+[ 20: FAIL ] Should be [5, 8, 13, 21], was [0, 0, 0, 0].
+[ 21: PASS ] getError was expected value: NO_ERROR :
+[ 22: PASS ] getError was expected value: NO_ERROR :
+[ 23: FAIL ] Should be [8, 13, 21, 34], was [0, 0, 0, 0].
+[ 24: PASS ] getError was expected value: NO_ERROR :
+[ 25: PASS ] getError was expected value: NO_ERROR :
+[ 26: FAIL ] Should be [13, 21, 34, 55], was [0, 0, 0, 0].
+[ 27: PASS ] getError was expected value: NO_ERROR :
+[ 28: PASS ] getError was expected value: NO_ERROR :
+[ 29: FAIL ] Should be [21, 34, 55, 89], was [0, 0, 0, 0].
+[ 30: PASS ] getError was expected value: NO_ERROR :
+[ 31: PASS ] getError was expected value: NO_ERROR :
+[ 32: FAIL ] Should be [34, 55, 89, 144], was [0, 0, 0, 0].
+[ 33: PASS ] getError was expected value: NO_ERROR :
+[ 34: PASS ] getError was expected value: NO_ERROR :
+[ 35: FAIL ] Should be [55, 89, 144, 233], was [0, 0, 0, 0].
+[ 36: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 37: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 38: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 39: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 40: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 41: PASS ] getError was expected value: NO_ERROR :
+[ 42: PASS ] getError was expected value: NO_ERROR :
+[ 43: FAIL ] Should be 65504, was 0.
+[ 44: PASS ] getError was expected value: NO_ERROR :
+[ 45: PASS ] getError was expected value: NO_ERROR :
+[ 46: FAIL ] Should be 2047, was 0.
+[ 47: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 48: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 49: FAIL ] Does not support texSubImage3D with offsets into views.
+[ 50: FAIL ] Does not support doReadPixels with offsets into views.
+[ 51: PASS ] successfullyParsed is true
+[ FAIL ] 24 failures reported
+

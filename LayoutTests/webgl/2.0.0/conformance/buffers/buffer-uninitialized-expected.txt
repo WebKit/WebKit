@@ -1,5 +1,207 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/buffers/buffer-uninitialized.html
-[ PASS ] All tests passed
+[ 1: PASS ] program != null is true
+[ 2: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 3: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 4: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 5: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 6: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 7: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 8: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 9: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 10: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 11: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 12: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 13: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 14: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 15: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 16: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 17: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 18: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 19: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 20: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 21: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 22: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 23: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 24: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 25: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 26: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 27: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 28: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 29: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 30: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 31: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 32: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 33: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 34: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 35: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 36: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 37: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 38: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 39: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 40: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 41: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 42: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 43: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 44: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 45: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 46: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 47: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 48: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 49: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 50: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 51: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 52: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 53: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 54: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 55: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 56: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 57: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 58: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 59: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 60: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 61: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 62: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 63: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 64: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 65: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 66: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 67: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 68: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 69: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 70: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 71: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 72: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 73: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 74: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 75: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 76: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 77: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 78: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 79: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 80: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 81: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 82: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 83: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 84: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 85: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 86: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 87: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 88: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 89: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 90: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 91: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 92: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 93: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 94: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 95: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 96: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 97: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 98: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 99: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 100: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 101: FAIL ] buffer should be initialized to zero at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 102: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 103: PASS ] buffer should be initialized to zero
+[ 104: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 105: PASS ] buffer should be initialized to zero
+[ 106: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 107: PASS ] buffer should be initialized to zero
+[ 108: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 109: PASS ] buffer should be initialized to zero
+[ 110: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 111: PASS ] buffer should be initialized to zero
+[ 112: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 113: PASS ] buffer should be initialized to zero
+[ 114: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 115: PASS ] buffer should be initialized to zero
+[ 116: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 117: PASS ] buffer should be initialized to zero
+[ 118: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 119: PASS ] buffer should be initialized to zero
+[ 120: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 121: PASS ] buffer should be initialized to zero
+[ 122: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 123: PASS ] buffer should be initialized to zero
+[ 124: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 125: PASS ] buffer should be initialized to zero
+[ 126: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 127: PASS ] buffer should be initialized to zero
+[ 128: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 129: PASS ] buffer should be initialized to zero
+[ 130: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 131: PASS ] buffer should be initialized to zero
+[ 132: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 133: PASS ] buffer should be initialized to zero
+[ 134: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 135: PASS ] buffer should be initialized to zero
+[ 136: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 137: PASS ] buffer should be initialized to zero
+[ 138: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 139: PASS ] buffer should be initialized to zero
+[ 140: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 141: PASS ] buffer should be initialized to zero
+[ 142: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 143: PASS ] buffer should be initialized to zero
+[ 144: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 145: PASS ] buffer should be initialized to zero
+[ 146: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 147: PASS ] buffer should be initialized to zero
+[ 148: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 149: PASS ] buffer should be initialized to zero
+[ 150: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 151: PASS ] buffer should be initialized to zero
+[ 152: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 153: PASS ] buffer should be initialized to zero
+[ 154: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 155: PASS ] buffer should be initialized to zero
+[ 156: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 157: PASS ] buffer should be initialized to zero
+[ 158: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 159: PASS ] buffer should be initialized to zero
+[ 160: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 161: PASS ] buffer should be initialized to zero
+[ 162: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 163: PASS ] buffer should be initialized to zero
+[ 164: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 165: PASS ] buffer should be initialized to zero
+[ 166: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 167: PASS ] buffer should be initialized to zero
+[ 168: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 169: PASS ] buffer should be initialized to zero
+[ 170: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 171: PASS ] buffer should be initialized to zero
+[ 172: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 173: PASS ] buffer should be initialized to zero
+[ 174: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 175: PASS ] buffer should be initialized to zero
+[ 176: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 177: PASS ] buffer should be initialized to zero
+[ 178: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 179: PASS ] buffer should be initialized to zero
+[ 180: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 181: PASS ] buffer should be initialized to zero
+[ 182: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 183: PASS ] buffer should be initialized to zero
+[ 184: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 185: PASS ] buffer should be initialized to zero
+[ 186: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 187: PASS ] buffer should be initialized to zero
+[ 188: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 189: PASS ] buffer should be initialized to zero
+[ 190: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 191: PASS ] buffer should be initialized to zero
+[ 192: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 193: PASS ] buffer should be initialized to zero
+[ 194: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 195: PASS ] buffer should be initialized to zero
+[ 196: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 197: PASS ] buffer should be initialized to zero
+[ 198: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 199: PASS ] buffer should be initialized to zero
+[ 200: PASS ] getError was expected value: NO_ERROR : no error should result from setup
+[ 201: PASS ] buffer should be initialized to zero
+[ 202: PASS ] successfullyParsed is true
+[ FAIL ] 50 failures reported
 

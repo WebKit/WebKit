@@ -1,5 +1,518 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/canvas_sub_rectangle/tex-3d-r8ui-red_integer-unsigned_byte.html
-[ PASS ] All tests passed
+[ 1: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 2: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 3: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 4: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 5: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 6: PASS ] shouldBe 0,0,0
+[ 7: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 8: PASS ] shouldBe 0,0,0
+[ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 10: PASS ] shouldBe 0,0,0
+[ 11: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 12: PASS ] shouldBe 0,0,0
+[ 13: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 14: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 15: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 16: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 17: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 18: PASS ] shouldBe 0,0,0
+[ 19: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 20: PASS ] shouldBe 0,0,0
+[ 21: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 22: PASS ] shouldBe 0,0,0
+[ 23: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 24: PASS ] shouldBe 0,0,0
+[ 25: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 26: PASS ] shouldBe 0,0,0
+[ 27: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 28: PASS ] shouldBe 0,0,0
+[ 29: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 30: PASS ] shouldBe 0,0,0
+[ 31: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 32: PASS ] shouldBe 0,0,0
+[ 33: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 34: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 35: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 36: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 37: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 38: PASS ] shouldBe 0,0,0
+[ 39: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 40: PASS ] shouldBe 0,0,0
+[ 41: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 42: PASS ] shouldBe 0,0,0
+[ 43: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 44: PASS ] shouldBe 0,0,0
+[ 45: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 46: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 47: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 48: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 49: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 50: PASS ] shouldBe 0,0,0
+[ 51: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 52: PASS ] shouldBe 0,0,0
+[ 53: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 54: PASS ] shouldBe 0,0,0
+[ 55: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 56: PASS ] shouldBe 0,0,0
+[ 57: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 58: PASS ] shouldBe 0,0,0
+[ 59: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 60: PASS ] shouldBe 0,0,0
+[ 61: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 62: PASS ] shouldBe 0,0,0
+[ 63: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 64: PASS ] shouldBe 0,0,0
+[ 65: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 66: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 67: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 68: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 69: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 70: PASS ] shouldBe 0,0,0
+[ 71: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 72: PASS ] shouldBe 0,0,0
+[ 73: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 74: PASS ] shouldBe 0,0,0
+[ 75: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 76: PASS ] shouldBe 0,0,0
+[ 77: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 78: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 79: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 80: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 81: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 82: PASS ] shouldBe 0,0,0
+[ 83: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 84: PASS ] shouldBe 0,0,0
+[ 85: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 86: PASS ] shouldBe 0,0,0
+[ 87: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 88: PASS ] shouldBe 0,0,0
+[ 89: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 90: PASS ] shouldBe 0,0,0
+[ 91: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 92: PASS ] shouldBe 0,0,0
+[ 93: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 94: PASS ] shouldBe 0,0,0
+[ 95: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 96: PASS ] shouldBe 0,0,0
+[ 97: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 98: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 99: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 100: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 101: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 102: PASS ] shouldBe 0,0,0
+[ 103: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 104: PASS ] shouldBe 0,0,0
+[ 105: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 106: PASS ] shouldBe 0,0,0
+[ 107: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 108: PASS ] shouldBe 0,0,0
+[ 109: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 110: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 111: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 112: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 113: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 114: PASS ] shouldBe 0,0,0
+[ 115: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 116: PASS ] shouldBe 0,0,0
+[ 117: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 118: PASS ] shouldBe 0,0,0
+[ 119: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 120: PASS ] shouldBe 0,0,0
+[ 121: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 122: PASS ] shouldBe 0,0,0
+[ 123: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 124: PASS ] shouldBe 0,0,0
+[ 125: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 126: PASS ] shouldBe 0,0,0
+[ 127: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 128: PASS ] shouldBe 0,0,0
+[ 129: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 130: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 131: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 132: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 133: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 134: PASS ] shouldBe 0,0,0
+[ 135: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 136: PASS ] shouldBe 0,0,0
+[ 137: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 138: PASS ] shouldBe 0,0,0
+[ 139: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 140: PASS ] shouldBe 0,0,0
+[ 141: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 142: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 143: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 144: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 145: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 146: PASS ] shouldBe 0,0,0
+[ 147: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 148: PASS ] shouldBe 0,0,0
+[ 149: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 150: PASS ] shouldBe 0,0,0
+[ 151: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 152: PASS ] shouldBe 0,0,0
+[ 153: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 154: PASS ] shouldBe 0,0,0
+[ 155: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 156: PASS ] shouldBe 0,0,0
+[ 157: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 158: PASS ] shouldBe 0,0,0
+[ 159: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 160: PASS ] shouldBe 0,0,0
+[ 161: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 162: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 163: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 164: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 165: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 166: PASS ] shouldBe 0,0,0
+[ 167: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 168: PASS ] shouldBe 0,0,0
+[ 169: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 170: PASS ] shouldBe 0,0,0
+[ 171: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 172: PASS ] shouldBe 0,0,0
+[ 173: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 174: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 175: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 176: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 177: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 178: PASS ] shouldBe 0,0,0
+[ 179: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 180: PASS ] shouldBe 0,0,0
+[ 181: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 182: PASS ] shouldBe 0,0,0
+[ 183: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 184: PASS ] shouldBe 0,0,0
+[ 185: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 186: PASS ] shouldBe 0,0,0
+[ 187: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 188: PASS ] shouldBe 0,0,0
+[ 189: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 190: PASS ] shouldBe 0,0,0
+[ 191: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 192: PASS ] shouldBe 0,0,0
+[ 193: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 194: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 195: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 196: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 197: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 198: PASS ] shouldBe 0,0,0
+[ 199: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 200: PASS ] shouldBe 0,0,0
+[ 201: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 202: PASS ] shouldBe 0,0,0
+[ 203: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 204: PASS ] shouldBe 0,0,0
+[ 205: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 206: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 207: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 208: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 209: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 210: PASS ] shouldBe 0,0,0
+[ 211: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 212: PASS ] shouldBe 0,0,0
+[ 213: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 214: PASS ] shouldBe 0,0,0
+[ 215: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 216: PASS ] shouldBe 0,0,0
+[ 217: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 218: PASS ] shouldBe 0,0,0
+[ 219: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 220: PASS ] shouldBe 0,0,0
+[ 221: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 222: PASS ] shouldBe 0,0,0
+[ 223: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 224: PASS ] shouldBe 0,0,0
+[ 225: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 226: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 227: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 228: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 229: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 230: PASS ] shouldBe 0,0,0
+[ 231: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 232: PASS ] shouldBe 0,0,0
+[ 233: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 234: PASS ] shouldBe 0,0,0
+[ 235: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 236: PASS ] shouldBe 0,0,0
+[ 237: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 238: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 239: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 240: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 241: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 242: PASS ] shouldBe 0,0,0
+[ 243: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 244: PASS ] shouldBe 0,0,0
+[ 245: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 246: PASS ] shouldBe 0,0,0
+[ 247: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 248: PASS ] shouldBe 0,0,0
+[ 249: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 250: PASS ] shouldBe 0,0,0
+[ 251: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 252: PASS ] shouldBe 0,0,0
+[ 253: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 254: PASS ] shouldBe 0,0,0
+[ 255: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 256: PASS ] shouldBe 0,0,0
+[ 257: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 258: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 259: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 260: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 261: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 262: PASS ] shouldBe 0,0,0
+[ 263: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 264: PASS ] shouldBe 0,0,0
+[ 265: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 266: PASS ] shouldBe 0,0,0
+[ 267: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 268: PASS ] shouldBe 0,0,0
+[ 269: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 270: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 271: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 272: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 273: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 274: PASS ] shouldBe 0,0,0
+[ 275: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 276: PASS ] shouldBe 0,0,0
+[ 277: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 278: PASS ] shouldBe 0,0,0
+[ 279: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 280: PASS ] shouldBe 0,0,0
+[ 281: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 282: PASS ] shouldBe 0,0,0
+[ 283: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 284: PASS ] shouldBe 0,0,0
+[ 285: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 286: PASS ] shouldBe 0,0,0
+[ 287: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 288: PASS ] shouldBe 0,0,0
+[ 289: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 290: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 291: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 292: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 293: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 294: PASS ] shouldBe 0,0,0
+[ 295: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 296: PASS ] shouldBe 0,0,0
+[ 297: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 298: PASS ] shouldBe 0,0,0
+[ 299: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 300: PASS ] shouldBe 0,0,0
+[ 301: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 302: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 303: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 304: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 305: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 306: PASS ] shouldBe 0,0,0
+[ 307: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 308: PASS ] shouldBe 0,0,0
+[ 309: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 310: PASS ] shouldBe 0,0,0
+[ 311: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 312: PASS ] shouldBe 0,0,0
+[ 313: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 314: PASS ] shouldBe 0,0,0
+[ 315: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 316: PASS ] shouldBe 0,0,0
+[ 317: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 318: PASS ] shouldBe 0,0,0
+[ 319: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 320: PASS ] shouldBe 0,0,0
+[ 321: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 322: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 323: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 324: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 325: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 326: PASS ] shouldBe 0,0,0
+[ 327: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 328: PASS ] shouldBe 0,0,0
+[ 329: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 330: PASS ] shouldBe 0,0,0
+[ 331: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 332: PASS ] shouldBe 0,0,0
+[ 333: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 334: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 335: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 336: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 337: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 338: PASS ] shouldBe 0,0,0
+[ 339: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 340: PASS ] shouldBe 0,0,0
+[ 341: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 342: PASS ] shouldBe 0,0,0
+[ 343: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 344: PASS ] shouldBe 0,0,0
+[ 345: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 346: PASS ] shouldBe 0,0,0
+[ 347: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 348: PASS ] shouldBe 0,0,0
+[ 349: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 350: PASS ] shouldBe 0,0,0
+[ 351: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 352: PASS ] shouldBe 0,0,0
+[ 353: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 354: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 355: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 356: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 357: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 358: PASS ] shouldBe 0,0,0
+[ 359: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 360: PASS ] shouldBe 0,0,0
+[ 361: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 362: PASS ] shouldBe 0,0,0
+[ 363: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 364: PASS ] shouldBe 0,0,0
+[ 365: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 366: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 367: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 368: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 369: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 370: PASS ] shouldBe 0,0,0
+[ 371: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 372: PASS ] shouldBe 0,0,0
+[ 373: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 374: PASS ] shouldBe 0,0,0
+[ 375: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 376: PASS ] shouldBe 0,0,0
+[ 377: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 378: PASS ] shouldBe 0,0,0
+[ 379: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 380: PASS ] shouldBe 0,0,0
+[ 381: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 382: PASS ] shouldBe 0,0,0
+[ 383: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 384: PASS ] shouldBe 0,0,0
+[ 385: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 386: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 387: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 388: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 389: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 390: PASS ] shouldBe 0,0,0
+[ 391: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 392: PASS ] shouldBe 0,0,0
+[ 393: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 394: PASS ] shouldBe 0,0,0
+[ 395: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 396: PASS ] shouldBe 0,0,0
+[ 397: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 398: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 399: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 400: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 401: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 402: PASS ] shouldBe 0,0,0
+[ 403: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 404: PASS ] shouldBe 0,0,0
+[ 405: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 406: PASS ] shouldBe 0,0,0
+[ 407: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 408: PASS ] shouldBe 0,0,0
+[ 409: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 410: PASS ] shouldBe 0,0,0
+[ 411: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 412: PASS ] shouldBe 0,0,0
+[ 413: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 414: PASS ] shouldBe 0,0,0
+[ 415: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 416: PASS ] shouldBe 0,0,0
+[ 417: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 418: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 419: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 420: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 421: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 422: PASS ] shouldBe 0,0,0
+[ 423: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 424: PASS ] shouldBe 0,0,0
+[ 425: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 426: PASS ] shouldBe 0,0,0
+[ 427: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 428: PASS ] shouldBe 0,0,0
+[ 429: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 430: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 431: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 432: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 433: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 434: PASS ] shouldBe 0,0,0
+[ 435: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 436: PASS ] shouldBe 0,0,0
+[ 437: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 438: PASS ] shouldBe 0,0,0
+[ 439: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 440: PASS ] shouldBe 0,0,0
+[ 441: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 442: PASS ] shouldBe 0,0,0
+[ 443: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 444: PASS ] shouldBe 0,0,0
+[ 445: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 446: PASS ] shouldBe 0,0,0
+[ 447: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 448: PASS ] shouldBe 0,0,0
+[ 449: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 450: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 451: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 452: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 453: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 454: PASS ] shouldBe 0,0,0
+[ 455: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 456: PASS ] shouldBe 0,0,0
+[ 457: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 458: PASS ] shouldBe 0,0,0
+[ 459: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 460: PASS ] shouldBe 0,0,0
+[ 461: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 462: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 463: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 464: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 465: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 466: PASS ] shouldBe 0,0,0
+[ 467: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 468: PASS ] shouldBe 0,0,0
+[ 469: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 470: PASS ] shouldBe 0,0,0
+[ 471: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 472: PASS ] shouldBe 0,0,0
+[ 473: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 474: PASS ] shouldBe 0,0,0
+[ 475: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 476: PASS ] shouldBe 0,0,0
+[ 477: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 478: PASS ] shouldBe 0,0,0
+[ 479: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 480: PASS ] shouldBe 0,0,0
+[ 481: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 482: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 483: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 484: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 485: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 486: PASS ] shouldBe 0,0,0
+[ 487: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 488: PASS ] shouldBe 0,0,0
+[ 489: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 490: PASS ] shouldBe 0,0,0
+[ 491: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 492: PASS ] shouldBe 0,0,0
+[ 493: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 494: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 495: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 496: FAIL ] shouldBe 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
+[ 497: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 498: PASS ] shouldBe 0,0,0
+[ 499: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 500: PASS ] shouldBe 0,0,0
+[ 501: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 502: PASS ] shouldBe 0,0,0
+[ 503: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 504: PASS ] shouldBe 0,0,0
+[ 505: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 506: PASS ] shouldBe 0,0,0
+[ 507: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 508: PASS ] shouldBe 0,0,0
+[ 509: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 510: PASS ] shouldBe 0,0,0
+[ 511: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 512: PASS ] shouldBe 0,0,0
+[ 513: PASS ] successfullyParsed is true
+[ FAIL ] 320 failures reported
 

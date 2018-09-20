@@ -1,5 +1,415 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/blitframebuffer-filter-srgb.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 3: FAIL ] pixel at [1, 0] should be (0,0,255,71), but the actual color is (0,0,255,16)
+[ 4: FAIL ] pixel at [0, 1] should be (137,137,137,255), but the actual color is (64,64,64,255)
+[ 5: FAIL ] pixel at [1, 1] should be (137,137,255,152), but the actual color is (64,64,255,80)
+[ 6: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 7: FAIL ] pixel at [1, 0] should be (0,0,255,71), but the actual color is (0,0,255,16)
+[ 8: FAIL ] pixel at [2, 0] should be (0,255,71,71), but the actual color is (0,255,16,16)
+[ 9: FAIL ] pixel at [3, 0] should be (255,71,71,71), but the actual color is (255,16,16,16)
+[ 10: FAIL ] pixel at [4, 0] should be (71,71,71,255), but the actual color is (16,16,16,255)
+[ 11: FAIL ] pixel at [5, 0] should be (71,71,255,99), but the actual color is (16,16,255,32)
+[ 12: FAIL ] pixel at [6, 0] should be (71,255,99,99), but the actual color is (16,255,32,32)
+[ 13: FAIL ] pixel at [7, 0] should be (255,99,99,99), but the actual color is (255,32,32,32)
+[ 14: FAIL ] pixel at [0, 1] should be (137,137,137,255), but the actual color is (64,64,64,255)
+[ 15: FAIL ] pixel at [1, 1] should be (137,137,255,152), but the actual color is (64,64,255,80)
+[ 16: FAIL ] pixel at [2, 1] should be (137,255,152,152), but the actual color is (64,255,80,80)
+[ 17: FAIL ] pixel at [3, 1] should be (255,152,152,152), but the actual color is (255,80,80,80)
+[ 18: FAIL ] pixel at [4, 1] should be (152,152,152,255), but the actual color is (80,80,80,255)
+[ 19: FAIL ] pixel at [5, 1] should be (152,152,255,165), but the actual color is (80,80,255,96)
+[ 20: FAIL ] pixel at [6, 1] should be (152,255,165,165), but the actual color is (80,255,96,96)
+[ 21: FAIL ] pixel at [7, 1] should be (255,165,165,165), but the actual color is (255,96,96,96)
+[ 22: FAIL ] pixel at [0, 2] should be (188,188,188,255), but the actual color is (128,128,128,255)
+[ 23: FAIL ] pixel at [1, 2] should be (188,188,255,198), but the actual color is (128,128,255,144)
+[ 24: FAIL ] pixel at [2, 2] should be (188,255,198,198), but the actual color is (128,255,144,144)
+[ 25: FAIL ] pixel at [3, 2] should be (255,198,198,198), but the actual color is (255,144,144,144)
+[ 26: FAIL ] pixel at [4, 2] should be (198,198,198,255), but the actual color is (144,144,144,255)
+[ 27: FAIL ] pixel at [5, 2] should be (198,198,255,208), but the actual color is (144,144,255,160)
+[ 28: FAIL ] pixel at [6, 2] should be (198,255,208,208), but the actual color is (144,255,160,160)
+[ 29: FAIL ] pixel at [7, 2] should be (255,208,208,208), but the actual color is (255,160,160,160)
+[ 30: FAIL ] pixel at [0, 3] should be (225,225,225,255), but the actual color is (192,192,192,255)
+[ 31: FAIL ] pixel at [1, 3] should be (225,225,255,233), but the actual color is (192,192,255,208)
+[ 32: FAIL ] pixel at [2, 3] should be (225,255,233,233), but the actual color is (192,255,208,208)
+[ 33: FAIL ] pixel at [3, 3] should be (255,233,233,233), but the actual color is (255,208,208,208)
+[ 34: FAIL ] pixel at [4, 3] should be (233,233,233,255), but the actual color is (208,208,208,255)
+[ 35: FAIL ] pixel at [5, 3] should be (233,233,255,241), but the actual color is (208,208,255,224)
+[ 36: FAIL ] pixel at [6, 3] should be (233,255,241,241), but the actual color is (208,255,224,224)
+[ 37: FAIL ] pixel at [7, 3] should be (255,241,241,241), but the actual color is (255,224,224,224)
+[ 38: PASS ] pixel at [0, 4] is (0,0,0,0). It is correct!
+[ 39: PASS ] pixel at [1, 4] is (0,0,0,0). It is correct!
+[ 40: PASS ] pixel at [2, 4] is (0,0,0,0). It is correct!
+[ 41: PASS ] pixel at [3, 4] is (0,0,0,0). It is correct!
+[ 42: PASS ] pixel at [4, 4] is (0,0,0,0). It is correct!
+[ 43: PASS ] pixel at [5, 4] is (0,0,0,0). It is correct!
+[ 44: PASS ] pixel at [6, 4] is (0,0,0,0). It is correct!
+[ 45: PASS ] pixel at [7, 4] is (0,0,0,0). It is correct!
+[ 46: PASS ] pixel at [0, 5] is (0,0,0,0). It is correct!
+[ 47: PASS ] pixel at [1, 5] is (0,0,0,0). It is correct!
+[ 48: PASS ] pixel at [2, 5] is (0,0,0,0). It is correct!
+[ 49: PASS ] pixel at [3, 5] is (0,0,0,0). It is correct!
+[ 50: PASS ] pixel at [4, 5] is (0,0,0,0). It is correct!
+[ 51: PASS ] pixel at [5, 5] is (0,0,0,0). It is correct!
+[ 52: PASS ] pixel at [6, 5] is (0,0,0,0). It is correct!
+[ 53: PASS ] pixel at [7, 5] is (0,0,0,0). It is correct!
+[ 54: PASS ] pixel at [0, 6] is (0,0,0,0). It is correct!
+[ 55: PASS ] pixel at [1, 6] is (0,0,0,0). It is correct!
+[ 56: PASS ] pixel at [2, 6] is (0,0,0,0). It is correct!
+[ 57: PASS ] pixel at [3, 6] is (0,0,0,0). It is correct!
+[ 58: PASS ] pixel at [4, 6] is (0,0,0,0). It is correct!
+[ 59: PASS ] pixel at [5, 6] is (0,0,0,0). It is correct!
+[ 60: PASS ] pixel at [6, 6] is (0,0,0,0). It is correct!
+[ 61: PASS ] pixel at [7, 6] is (0,0,0,0). It is correct!
+[ 62: PASS ] pixel at [0, 7] is (0,0,0,0). It is correct!
+[ 63: PASS ] pixel at [1, 7] is (0,0,0,0). It is correct!
+[ 64: PASS ] pixel at [2, 7] is (0,0,0,0). It is correct!
+[ 65: PASS ] pixel at [3, 7] is (0,0,0,0). It is correct!
+[ 66: PASS ] pixel at [4, 7] is (0,0,0,0). It is correct!
+[ 67: PASS ] pixel at [5, 7] is (0,0,0,0). It is correct!
+[ 68: PASS ] pixel at [6, 7] is (0,0,0,0). It is correct!
+[ 69: PASS ] pixel at [7, 7] is (0,0,0,0). It is correct!
+[ 70: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 71: FAIL ] pixel at [1, 0] should be (0,0,255,1), but the actual color is (0,0,255,16)
+[ 72: FAIL ] pixel at [0, 1] should be (13,13,13,255), but the actual color is (64,64,64,255)
+[ 73: FAIL ] pixel at [1, 1] should be (13,13,255,20), but the actual color is (64,64,255,80)
+[ 74: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 75: FAIL ] pixel at [1, 0] should be (0,0,255,1), but the actual color is (0,0,255,16)
+[ 76: FAIL ] pixel at [2, 0] should be (0,255,1,1), but the actual color is (0,255,16,16)
+[ 77: FAIL ] pixel at [3, 0] should be (255,1,1,1), but the actual color is (255,16,16,16)
+[ 78: FAIL ] pixel at [4, 0] should be (1,1,1,255), but the actual color is (16,16,16,255)
+[ 79: FAIL ] pixel at [5, 0] should be (1,1,255,4), but the actual color is (16,16,255,32)
+[ 80: FAIL ] pixel at [6, 0] should be (1,255,4,4), but the actual color is (16,255,32,32)
+[ 81: FAIL ] pixel at [7, 0] should be (255,4,4,4), but the actual color is (255,32,32,32)
+[ 82: FAIL ] pixel at [0, 1] should be (13,13,13,255), but the actual color is (64,64,64,255)
+[ 83: FAIL ] pixel at [1, 1] should be (13,13,255,20), but the actual color is (64,64,255,80)
+[ 84: FAIL ] pixel at [2, 1] should be (13,255,20,20), but the actual color is (64,255,80,80)
+[ 85: FAIL ] pixel at [3, 1] should be (255,20,20,20), but the actual color is (255,80,80,80)
+[ 86: FAIL ] pixel at [4, 1] should be (20,20,20,255), but the actual color is (80,80,80,255)
+[ 87: FAIL ] pixel at [5, 1] should be (20,20,255,30), but the actual color is (80,80,255,96)
+[ 88: FAIL ] pixel at [6, 1] should be (20,255,30,30), but the actual color is (80,255,96,96)
+[ 89: FAIL ] pixel at [7, 1] should be (255,30,30,30), but the actual color is (255,96,96,96)
+[ 90: FAIL ] pixel at [0, 2] should be (55,55,55,255), but the actual color is (128,128,128,255)
+[ 91: FAIL ] pixel at [1, 2] should be (55,55,255,71), but the actual color is (128,128,255,144)
+[ 92: FAIL ] pixel at [2, 2] should be (55,255,71,71), but the actual color is (128,255,144,144)
+[ 93: FAIL ] pixel at [3, 2] should be (255,71,71,71), but the actual color is (255,144,144,144)
+[ 94: FAIL ] pixel at [4, 2] should be (71,71,71,255), but the actual color is (144,144,144,255)
+[ 95: FAIL ] pixel at [5, 2] should be (71,71,255,90), but the actual color is (144,144,255,160)
+[ 96: FAIL ] pixel at [6, 2] should be (71,255,90,90), but the actual color is (144,255,160,160)
+[ 97: FAIL ] pixel at [7, 2] should be (255,90,90,90), but the actual color is (255,160,160,160)
+[ 98: FAIL ] pixel at [0, 3] should be (134,134,134,255), but the actual color is (192,192,192,255)
+[ 99: FAIL ] pixel at [1, 3] should be (134,134,255,161), but the actual color is (192,192,255,208)
+[ 100: FAIL ] pixel at [2, 3] should be (134,255,161,161), but the actual color is (192,255,208,208)
+[ 101: FAIL ] pixel at [3, 3] should be (255,161,161,161), but the actual color is (255,208,208,208)
+[ 102: FAIL ] pixel at [4, 3] should be (161,161,161,255), but the actual color is (208,208,208,255)
+[ 103: FAIL ] pixel at [5, 3] should be (161,161,255,190), but the actual color is (208,208,255,224)
+[ 104: FAIL ] pixel at [6, 3] should be (161,255,190,190), but the actual color is (208,255,224,224)
+[ 105: FAIL ] pixel at [7, 3] should be (255,190,190,190), but the actual color is (255,224,224,224)
+[ 106: PASS ] pixel at [0, 4] is (0,0,0,0). It is correct!
+[ 107: PASS ] pixel at [1, 4] is (0,0,0,0). It is correct!
+[ 108: PASS ] pixel at [2, 4] is (0,0,0,0). It is correct!
+[ 109: PASS ] pixel at [3, 4] is (0,0,0,0). It is correct!
+[ 110: PASS ] pixel at [4, 4] is (0,0,0,0). It is correct!
+[ 111: PASS ] pixel at [5, 4] is (0,0,0,0). It is correct!
+[ 112: PASS ] pixel at [6, 4] is (0,0,0,0). It is correct!
+[ 113: PASS ] pixel at [7, 4] is (0,0,0,0). It is correct!
+[ 114: PASS ] pixel at [0, 5] is (0,0,0,0). It is correct!
+[ 115: PASS ] pixel at [1, 5] is (0,0,0,0). It is correct!
+[ 116: PASS ] pixel at [2, 5] is (0,0,0,0). It is correct!
+[ 117: PASS ] pixel at [3, 5] is (0,0,0,0). It is correct!
+[ 118: PASS ] pixel at [4, 5] is (0,0,0,0). It is correct!
+[ 119: PASS ] pixel at [5, 5] is (0,0,0,0). It is correct!
+[ 120: PASS ] pixel at [6, 5] is (0,0,0,0). It is correct!
+[ 121: PASS ] pixel at [7, 5] is (0,0,0,0). It is correct!
+[ 122: PASS ] pixel at [0, 6] is (0,0,0,0). It is correct!
+[ 123: PASS ] pixel at [1, 6] is (0,0,0,0). It is correct!
+[ 124: PASS ] pixel at [2, 6] is (0,0,0,0). It is correct!
+[ 125: PASS ] pixel at [3, 6] is (0,0,0,0). It is correct!
+[ 126: PASS ] pixel at [4, 6] is (0,0,0,0). It is correct!
+[ 127: PASS ] pixel at [5, 6] is (0,0,0,0). It is correct!
+[ 128: PASS ] pixel at [6, 6] is (0,0,0,0). It is correct!
+[ 129: PASS ] pixel at [7, 6] is (0,0,0,0). It is correct!
+[ 130: PASS ] pixel at [0, 7] is (0,0,0,0). It is correct!
+[ 131: PASS ] pixel at [1, 7] is (0,0,0,0). It is correct!
+[ 132: PASS ] pixel at [2, 7] is (0,0,0,0). It is correct!
+[ 133: PASS ] pixel at [3, 7] is (0,0,0,0). It is correct!
+[ 134: PASS ] pixel at [4, 7] is (0,0,0,0). It is correct!
+[ 135: PASS ] pixel at [5, 7] is (0,0,0,0). It is correct!
+[ 136: PASS ] pixel at [6, 7] is (0,0,0,0). It is correct!
+[ 137: PASS ] pixel at [7, 7] is (0,0,0,0). It is correct!
+[ 138: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 139: PASS ] pixel at [1, 0] is (0,0,255,16). It is correct!
+[ 140: PASS ] pixel at [0, 1] is (64,64,64,255). It is correct!
+[ 141: PASS ] pixel at [1, 1] is (64,64,255,80). It is correct!
+[ 142: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 143: PASS ] pixel at [1, 0] is (0,0,255,16). It is correct!
+[ 144: PASS ] pixel at [2, 0] is (0,255,16,16). It is correct!
+[ 145: PASS ] pixel at [3, 0] is (255,16,16,16). It is correct!
+[ 146: PASS ] pixel at [4, 0] is (16,16,16,255). It is correct!
+[ 147: PASS ] pixel at [5, 0] is (16,16,255,32). It is correct!
+[ 148: PASS ] pixel at [6, 0] is (16,255,32,32). It is correct!
+[ 149: PASS ] pixel at [7, 0] is (255,32,32,32). It is correct!
+[ 150: PASS ] pixel at [0, 1] is (64,64,64,255). It is correct!
+[ 151: PASS ] pixel at [1, 1] is (64,64,255,80). It is correct!
+[ 152: PASS ] pixel at [2, 1] is (64,255,80,80). It is correct!
+[ 153: PASS ] pixel at [3, 1] is (255,80,80,80). It is correct!
+[ 154: PASS ] pixel at [4, 1] is (80,80,80,255). It is correct!
+[ 155: PASS ] pixel at [5, 1] is (80,80,255,96). It is correct!
+[ 156: PASS ] pixel at [6, 1] is (80,255,96,96). It is correct!
+[ 157: PASS ] pixel at [7, 1] is (255,96,96,96). It is correct!
+[ 158: PASS ] pixel at [0, 2] is (128,128,128,255). It is correct!
+[ 159: PASS ] pixel at [1, 2] is (128,128,255,144). It is correct!
+[ 160: PASS ] pixel at [2, 2] is (128,255,144,144). It is correct!
+[ 161: PASS ] pixel at [3, 2] is (255,144,144,144). It is correct!
+[ 162: PASS ] pixel at [4, 2] is (144,144,144,255). It is correct!
+[ 163: PASS ] pixel at [5, 2] is (144,144,255,160). It is correct!
+[ 164: PASS ] pixel at [6, 2] is (144,255,160,160). It is correct!
+[ 165: PASS ] pixel at [7, 2] is (255,160,160,160). It is correct!
+[ 166: PASS ] pixel at [0, 3] is (192,192,192,255). It is correct!
+[ 167: PASS ] pixel at [1, 3] is (192,192,255,208). It is correct!
+[ 168: PASS ] pixel at [2, 3] is (192,255,208,208). It is correct!
+[ 169: PASS ] pixel at [3, 3] is (255,208,208,208). It is correct!
+[ 170: PASS ] pixel at [4, 3] is (208,208,208,255). It is correct!
+[ 171: PASS ] pixel at [5, 3] is (208,208,255,224). It is correct!
+[ 172: PASS ] pixel at [6, 3] is (208,255,224,224). It is correct!
+[ 173: PASS ] pixel at [7, 3] is (255,224,224,224). It is correct!
+[ 174: PASS ] pixel at [0, 4] is (0,0,0,0). It is correct!
+[ 175: PASS ] pixel at [1, 4] is (0,0,0,0). It is correct!
+[ 176: PASS ] pixel at [2, 4] is (0,0,0,0). It is correct!
+[ 177: PASS ] pixel at [3, 4] is (0,0,0,0). It is correct!
+[ 178: PASS ] pixel at [4, 4] is (0,0,0,0). It is correct!
+[ 179: PASS ] pixel at [5, 4] is (0,0,0,0). It is correct!
+[ 180: PASS ] pixel at [6, 4] is (0,0,0,0). It is correct!
+[ 181: PASS ] pixel at [7, 4] is (0,0,0,0). It is correct!
+[ 182: PASS ] pixel at [0, 5] is (0,0,0,0). It is correct!
+[ 183: PASS ] pixel at [1, 5] is (0,0,0,0). It is correct!
+[ 184: PASS ] pixel at [2, 5] is (0,0,0,0). It is correct!
+[ 185: PASS ] pixel at [3, 5] is (0,0,0,0). It is correct!
+[ 186: PASS ] pixel at [4, 5] is (0,0,0,0). It is correct!
+[ 187: PASS ] pixel at [5, 5] is (0,0,0,0). It is correct!
+[ 188: PASS ] pixel at [6, 5] is (0,0,0,0). It is correct!
+[ 189: PASS ] pixel at [7, 5] is (0,0,0,0). It is correct!
+[ 190: PASS ] pixel at [0, 6] is (0,0,0,0). It is correct!
+[ 191: PASS ] pixel at [1, 6] is (0,0,0,0). It is correct!
+[ 192: PASS ] pixel at [2, 6] is (0,0,0,0). It is correct!
+[ 193: PASS ] pixel at [3, 6] is (0,0,0,0). It is correct!
+[ 194: PASS ] pixel at [4, 6] is (0,0,0,0). It is correct!
+[ 195: PASS ] pixel at [5, 6] is (0,0,0,0). It is correct!
+[ 196: PASS ] pixel at [6, 6] is (0,0,0,0). It is correct!
+[ 197: PASS ] pixel at [7, 6] is (0,0,0,0). It is correct!
+[ 198: PASS ] pixel at [0, 7] is (0,0,0,0). It is correct!
+[ 199: PASS ] pixel at [1, 7] is (0,0,0,0). It is correct!
+[ 200: PASS ] pixel at [2, 7] is (0,0,0,0). It is correct!
+[ 201: PASS ] pixel at [3, 7] is (0,0,0,0). It is correct!
+[ 202: PASS ] pixel at [4, 7] is (0,0,0,0). It is correct!
+[ 203: PASS ] pixel at [5, 7] is (0,0,0,0). It is correct!
+[ 204: PASS ] pixel at [6, 7] is (0,0,0,0). It is correct!
+[ 205: PASS ] pixel at [7, 7] is (0,0,0,0). It is correct!
+[ 206: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 207: FAIL ] pixel at [1, 0] should be (0,0,255,71), but the actual color is (0,0,255,16)
+[ 208: FAIL ] pixel at [0, 1] should be (137,137,137,255), but the actual color is (64,64,64,255)
+[ 209: FAIL ] pixel at [1, 1] should be (137,137,255,152), but the actual color is (64,64,255,80)
+[ 210: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 211: FAIL ] pixel at [1, 0] should be (0,0,255,71), but the actual color is (0,0,255,16)
+[ 212: FAIL ] pixel at [2, 0] should be (0,255,71,71), but the actual color is (0,255,16,16)
+[ 213: FAIL ] pixel at [3, 0] should be (255,71,71,71), but the actual color is (255,16,16,16)
+[ 214: FAIL ] pixel at [4, 0] should be (71,71,71,255), but the actual color is (16,16,16,255)
+[ 215: FAIL ] pixel at [5, 0] should be (71,71,255,99), but the actual color is (16,16,255,32)
+[ 216: FAIL ] pixel at [6, 0] should be (71,255,99,99), but the actual color is (16,255,32,32)
+[ 217: FAIL ] pixel at [7, 0] should be (255,99,99,99), but the actual color is (255,32,32,32)
+[ 218: FAIL ] pixel at [0, 1] should be (137,137,137,255), but the actual color is (64,64,64,255)
+[ 219: FAIL ] pixel at [1, 1] should be (137,137,255,152), but the actual color is (64,64,255,80)
+[ 220: FAIL ] pixel at [2, 1] should be (137,255,152,152), but the actual color is (64,255,80,80)
+[ 221: FAIL ] pixel at [3, 1] should be (255,152,152,152), but the actual color is (255,80,80,80)
+[ 222: FAIL ] pixel at [4, 1] should be (152,152,152,255), but the actual color is (80,80,80,255)
+[ 223: FAIL ] pixel at [5, 1] should be (152,152,255,165), but the actual color is (80,80,255,96)
+[ 224: FAIL ] pixel at [6, 1] should be (152,255,165,165), but the actual color is (80,255,96,96)
+[ 225: FAIL ] pixel at [7, 1] should be (255,165,165,165), but the actual color is (255,96,96,96)
+[ 226: FAIL ] pixel at [0, 2] should be (188,188,188,255), but the actual color is (128,128,128,255)
+[ 227: FAIL ] pixel at [1, 2] should be (188,188,255,198), but the actual color is (128,128,255,144)
+[ 228: FAIL ] pixel at [2, 2] should be (188,255,198,198), but the actual color is (128,255,144,144)
+[ 229: FAIL ] pixel at [3, 2] should be (255,198,198,198), but the actual color is (255,144,144,144)
+[ 230: FAIL ] pixel at [4, 2] should be (198,198,198,255), but the actual color is (144,144,144,255)
+[ 231: FAIL ] pixel at [5, 2] should be (198,198,255,208), but the actual color is (144,144,255,160)
+[ 232: FAIL ] pixel at [6, 2] should be (198,255,208,208), but the actual color is (144,255,160,160)
+[ 233: FAIL ] pixel at [7, 2] should be (255,208,208,208), but the actual color is (255,160,160,160)
+[ 234: FAIL ] pixel at [0, 3] should be (225,225,225,255), but the actual color is (192,192,192,255)
+[ 235: FAIL ] pixel at [1, 3] should be (225,225,255,233), but the actual color is (192,192,255,208)
+[ 236: FAIL ] pixel at [2, 3] should be (225,255,233,233), but the actual color is (192,255,208,208)
+[ 237: FAIL ] pixel at [3, 3] should be (255,233,233,233), but the actual color is (255,208,208,208)
+[ 238: FAIL ] pixel at [4, 3] should be (233,233,233,255), but the actual color is (208,208,208,255)
+[ 239: FAIL ] pixel at [5, 3] should be (233,233,255,241), but the actual color is (208,208,255,224)
+[ 240: FAIL ] pixel at [6, 3] should be (233,255,241,241), but the actual color is (208,255,224,224)
+[ 241: FAIL ] pixel at [7, 3] should be (255,241,241,241), but the actual color is (255,224,224,224)
+[ 242: PASS ] pixel at [0, 4] is (0,0,0,0). It is correct!
+[ 243: PASS ] pixel at [1, 4] is (0,0,0,0). It is correct!
+[ 244: PASS ] pixel at [2, 4] is (0,0,0,0). It is correct!
+[ 245: PASS ] pixel at [3, 4] is (0,0,0,0). It is correct!
+[ 246: PASS ] pixel at [4, 4] is (0,0,0,0). It is correct!
+[ 247: PASS ] pixel at [5, 4] is (0,0,0,0). It is correct!
+[ 248: PASS ] pixel at [6, 4] is (0,0,0,0). It is correct!
+[ 249: PASS ] pixel at [7, 4] is (0,0,0,0). It is correct!
+[ 250: PASS ] pixel at [0, 5] is (0,0,0,0). It is correct!
+[ 251: PASS ] pixel at [1, 5] is (0,0,0,0). It is correct!
+[ 252: PASS ] pixel at [2, 5] is (0,0,0,0). It is correct!
+[ 253: PASS ] pixel at [3, 5] is (0,0,0,0). It is correct!
+[ 254: PASS ] pixel at [4, 5] is (0,0,0,0). It is correct!
+[ 255: PASS ] pixel at [5, 5] is (0,0,0,0). It is correct!
+[ 256: PASS ] pixel at [6, 5] is (0,0,0,0). It is correct!
+[ 257: PASS ] pixel at [7, 5] is (0,0,0,0). It is correct!
+[ 258: PASS ] pixel at [0, 6] is (0,0,0,0). It is correct!
+[ 259: PASS ] pixel at [1, 6] is (0,0,0,0). It is correct!
+[ 260: PASS ] pixel at [2, 6] is (0,0,0,0). It is correct!
+[ 261: PASS ] pixel at [3, 6] is (0,0,0,0). It is correct!
+[ 262: PASS ] pixel at [4, 6] is (0,0,0,0). It is correct!
+[ 263: PASS ] pixel at [5, 6] is (0,0,0,0). It is correct!
+[ 264: PASS ] pixel at [6, 6] is (0,0,0,0). It is correct!
+[ 265: PASS ] pixel at [7, 6] is (0,0,0,0). It is correct!
+[ 266: PASS ] pixel at [0, 7] is (0,0,0,0). It is correct!
+[ 267: PASS ] pixel at [1, 7] is (0,0,0,0). It is correct!
+[ 268: PASS ] pixel at [2, 7] is (0,0,0,0). It is correct!
+[ 269: PASS ] pixel at [3, 7] is (0,0,0,0). It is correct!
+[ 270: PASS ] pixel at [4, 7] is (0,0,0,0). It is correct!
+[ 271: PASS ] pixel at [5, 7] is (0,0,0,0). It is correct!
+[ 272: PASS ] pixel at [6, 7] is (0,0,0,0). It is correct!
+[ 273: PASS ] pixel at [7, 7] is (0,0,0,0). It is correct!
+[ 274: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 275: FAIL ] pixel at [1, 0] should be (0,0,255,1), but the actual color is (0,0,255,16)
+[ 276: FAIL ] pixel at [0, 1] should be (13,13,13,255), but the actual color is (64,64,64,255)
+[ 277: FAIL ] pixel at [1, 1] should be (13,13,255,20), but the actual color is (64,64,255,80)
+[ 278: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 279: FAIL ] pixel at [1, 0] should be (0,0,255,1), but the actual color is (0,0,255,16)
+[ 280: FAIL ] pixel at [2, 0] should be (0,255,1,1), but the actual color is (0,255,16,16)
+[ 281: FAIL ] pixel at [3, 0] should be (255,1,1,1), but the actual color is (255,16,16,16)
+[ 282: FAIL ] pixel at [4, 0] should be (1,1,1,255), but the actual color is (16,16,16,255)
+[ 283: FAIL ] pixel at [5, 0] should be (1,1,255,4), but the actual color is (16,16,255,32)
+[ 284: FAIL ] pixel at [6, 0] should be (1,255,4,4), but the actual color is (16,255,32,32)
+[ 285: FAIL ] pixel at [7, 0] should be (255,4,4,4), but the actual color is (255,32,32,32)
+[ 286: FAIL ] pixel at [0, 1] should be (13,13,13,255), but the actual color is (64,64,64,255)
+[ 287: FAIL ] pixel at [1, 1] should be (13,13,255,20), but the actual color is (64,64,255,80)
+[ 288: FAIL ] pixel at [2, 1] should be (13,255,20,20), but the actual color is (64,255,80,80)
+[ 289: FAIL ] pixel at [3, 1] should be (255,20,20,20), but the actual color is (255,80,80,80)
+[ 290: FAIL ] pixel at [4, 1] should be (20,20,20,255), but the actual color is (80,80,80,255)
+[ 291: FAIL ] pixel at [5, 1] should be (20,20,255,30), but the actual color is (80,80,255,96)
+[ 292: FAIL ] pixel at [6, 1] should be (20,255,30,30), but the actual color is (80,255,96,96)
+[ 293: FAIL ] pixel at [7, 1] should be (255,30,30,30), but the actual color is (255,96,96,96)
+[ 294: FAIL ] pixel at [0, 2] should be (55,55,55,255), but the actual color is (128,128,128,255)
+[ 295: FAIL ] pixel at [1, 2] should be (55,55,255,71), but the actual color is (128,128,255,144)
+[ 296: FAIL ] pixel at [2, 2] should be (55,255,71,71), but the actual color is (128,255,144,144)
+[ 297: FAIL ] pixel at [3, 2] should be (255,71,71,71), but the actual color is (255,144,144,144)
+[ 298: FAIL ] pixel at [4, 2] should be (71,71,71,255), but the actual color is (144,144,144,255)
+[ 299: FAIL ] pixel at [5, 2] should be (71,71,255,90), but the actual color is (144,144,255,160)
+[ 300: FAIL ] pixel at [6, 2] should be (71,255,90,90), but the actual color is (144,255,160,160)
+[ 301: FAIL ] pixel at [7, 2] should be (255,90,90,90), but the actual color is (255,160,160,160)
+[ 302: FAIL ] pixel at [0, 3] should be (134,134,134,255), but the actual color is (192,192,192,255)
+[ 303: FAIL ] pixel at [1, 3] should be (134,134,255,161), but the actual color is (192,192,255,208)
+[ 304: FAIL ] pixel at [2, 3] should be (134,255,161,161), but the actual color is (192,255,208,208)
+[ 305: FAIL ] pixel at [3, 3] should be (255,161,161,161), but the actual color is (255,208,208,208)
+[ 306: FAIL ] pixel at [4, 3] should be (161,161,161,255), but the actual color is (208,208,208,255)
+[ 307: FAIL ] pixel at [5, 3] should be (161,161,255,190), but the actual color is (208,208,255,224)
+[ 308: FAIL ] pixel at [6, 3] should be (161,255,190,190), but the actual color is (208,255,224,224)
+[ 309: FAIL ] pixel at [7, 3] should be (255,190,190,190), but the actual color is (255,224,224,224)
+[ 310: PASS ] pixel at [0, 4] is (0,0,0,0). It is correct!
+[ 311: PASS ] pixel at [1, 4] is (0,0,0,0). It is correct!
+[ 312: PASS ] pixel at [2, 4] is (0,0,0,0). It is correct!
+[ 313: PASS ] pixel at [3, 4] is (0,0,0,0). It is correct!
+[ 314: PASS ] pixel at [4, 4] is (0,0,0,0). It is correct!
+[ 315: PASS ] pixel at [5, 4] is (0,0,0,0). It is correct!
+[ 316: PASS ] pixel at [6, 4] is (0,0,0,0). It is correct!
+[ 317: PASS ] pixel at [7, 4] is (0,0,0,0). It is correct!
+[ 318: PASS ] pixel at [0, 5] is (0,0,0,0). It is correct!
+[ 319: PASS ] pixel at [1, 5] is (0,0,0,0). It is correct!
+[ 320: PASS ] pixel at [2, 5] is (0,0,0,0). It is correct!
+[ 321: PASS ] pixel at [3, 5] is (0,0,0,0). It is correct!
+[ 322: PASS ] pixel at [4, 5] is (0,0,0,0). It is correct!
+[ 323: PASS ] pixel at [5, 5] is (0,0,0,0). It is correct!
+[ 324: PASS ] pixel at [6, 5] is (0,0,0,0). It is correct!
+[ 325: PASS ] pixel at [7, 5] is (0,0,0,0). It is correct!
+[ 326: PASS ] pixel at [0, 6] is (0,0,0,0). It is correct!
+[ 327: PASS ] pixel at [1, 6] is (0,0,0,0). It is correct!
+[ 328: PASS ] pixel at [2, 6] is (0,0,0,0). It is correct!
+[ 329: PASS ] pixel at [3, 6] is (0,0,0,0). It is correct!
+[ 330: PASS ] pixel at [4, 6] is (0,0,0,0). It is correct!
+[ 331: PASS ] pixel at [5, 6] is (0,0,0,0). It is correct!
+[ 332: PASS ] pixel at [6, 6] is (0,0,0,0). It is correct!
+[ 333: PASS ] pixel at [7, 6] is (0,0,0,0). It is correct!
+[ 334: PASS ] pixel at [0, 7] is (0,0,0,0). It is correct!
+[ 335: PASS ] pixel at [1, 7] is (0,0,0,0). It is correct!
+[ 336: PASS ] pixel at [2, 7] is (0,0,0,0). It is correct!
+[ 337: PASS ] pixel at [3, 7] is (0,0,0,0). It is correct!
+[ 338: PASS ] pixel at [4, 7] is (0,0,0,0). It is correct!
+[ 339: PASS ] pixel at [5, 7] is (0,0,0,0). It is correct!
+[ 340: PASS ] pixel at [6, 7] is (0,0,0,0). It is correct!
+[ 341: PASS ] pixel at [7, 7] is (0,0,0,0). It is correct!
+[ 342: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 343: PASS ] pixel at [1, 0] is (0,0,255,16). It is correct!
+[ 344: PASS ] pixel at [0, 1] is (64,64,64,255). It is correct!
+[ 345: PASS ] pixel at [1, 1] is (64,64,255,80). It is correct!
+[ 346: PASS ] pixel at [0, 0] is (0,0,0,255). It is correct!
+[ 347: PASS ] pixel at [1, 0] is (0,0,255,16). It is correct!
+[ 348: PASS ] pixel at [2, 0] is (0,255,16,16). It is correct!
+[ 349: PASS ] pixel at [3, 0] is (255,16,16,16). It is correct!
+[ 350: PASS ] pixel at [4, 0] is (16,16,16,255). It is correct!
+[ 351: PASS ] pixel at [5, 0] is (16,16,255,32). It is correct!
+[ 352: PASS ] pixel at [6, 0] is (16,255,32,32). It is correct!
+[ 353: PASS ] pixel at [7, 0] is (255,32,32,32). It is correct!
+[ 354: PASS ] pixel at [0, 1] is (64,64,64,255). It is correct!
+[ 355: PASS ] pixel at [1, 1] is (64,64,255,80). It is correct!
+[ 356: PASS ] pixel at [2, 1] is (64,255,80,80). It is correct!
+[ 357: PASS ] pixel at [3, 1] is (255,80,80,80). It is correct!
+[ 358: PASS ] pixel at [4, 1] is (80,80,80,255). It is correct!
+[ 359: PASS ] pixel at [5, 1] is (80,80,255,96). It is correct!
+[ 360: PASS ] pixel at [6, 1] is (80,255,96,96). It is correct!
+[ 361: PASS ] pixel at [7, 1] is (255,96,96,96). It is correct!
+[ 362: PASS ] pixel at [0, 2] is (128,128,128,255). It is correct!
+[ 363: PASS ] pixel at [1, 2] is (128,128,255,144). It is correct!
+[ 364: PASS ] pixel at [2, 2] is (128,255,144,144). It is correct!
+[ 365: PASS ] pixel at [3, 2] is (255,144,144,144). It is correct!
+[ 366: PASS ] pixel at [4, 2] is (144,144,144,255). It is correct!
+[ 367: PASS ] pixel at [5, 2] is (144,144,255,160). It is correct!
+[ 368: PASS ] pixel at [6, 2] is (144,255,160,160). It is correct!
+[ 369: PASS ] pixel at [7, 2] is (255,160,160,160). It is correct!
+[ 370: PASS ] pixel at [0, 3] is (192,192,192,255). It is correct!
+[ 371: PASS ] pixel at [1, 3] is (192,192,255,208). It is correct!
+[ 372: PASS ] pixel at [2, 3] is (192,255,208,208). It is correct!
+[ 373: PASS ] pixel at [3, 3] is (255,208,208,208). It is correct!
+[ 374: PASS ] pixel at [4, 3] is (208,208,208,255). It is correct!
+[ 375: PASS ] pixel at [5, 3] is (208,208,255,224). It is correct!
+[ 376: PASS ] pixel at [6, 3] is (208,255,224,224). It is correct!
+[ 377: PASS ] pixel at [7, 3] is (255,224,224,224). It is correct!
+[ 378: PASS ] pixel at [0, 4] is (0,0,0,0). It is correct!
+[ 379: PASS ] pixel at [1, 4] is (0,0,0,0). It is correct!
+[ 380: PASS ] pixel at [2, 4] is (0,0,0,0). It is correct!
+[ 381: PASS ] pixel at [3, 4] is (0,0,0,0). It is correct!
+[ 382: PASS ] pixel at [4, 4] is (0,0,0,0). It is correct!
+[ 383: PASS ] pixel at [5, 4] is (0,0,0,0). It is correct!
+[ 384: PASS ] pixel at [6, 4] is (0,0,0,0). It is correct!
+[ 385: PASS ] pixel at [7, 4] is (0,0,0,0). It is correct!
+[ 386: PASS ] pixel at [0, 5] is (0,0,0,0). It is correct!
+[ 387: PASS ] pixel at [1, 5] is (0,0,0,0). It is correct!
+[ 388: PASS ] pixel at [2, 5] is (0,0,0,0). It is correct!
+[ 389: PASS ] pixel at [3, 5] is (0,0,0,0). It is correct!
+[ 390: PASS ] pixel at [4, 5] is (0,0,0,0). It is correct!
+[ 391: PASS ] pixel at [5, 5] is (0,0,0,0). It is correct!
+[ 392: PASS ] pixel at [6, 5] is (0,0,0,0). It is correct!
+[ 393: PASS ] pixel at [7, 5] is (0,0,0,0). It is correct!
+[ 394: PASS ] pixel at [0, 6] is (0,0,0,0). It is correct!
+[ 395: PASS ] pixel at [1, 6] is (0,0,0,0). It is correct!
+[ 396: PASS ] pixel at [2, 6] is (0,0,0,0). It is correct!
+[ 397: PASS ] pixel at [3, 6] is (0,0,0,0). It is correct!
+[ 398: PASS ] pixel at [4, 6] is (0,0,0,0). It is correct!
+[ 399: PASS ] pixel at [5, 6] is (0,0,0,0). It is correct!
+[ 400: PASS ] pixel at [6, 6] is (0,0,0,0). It is correct!
+[ 401: PASS ] pixel at [7, 6] is (0,0,0,0). It is correct!
+[ 402: PASS ] pixel at [0, 7] is (0,0,0,0). It is correct!
+[ 403: PASS ] pixel at [1, 7] is (0,0,0,0). It is correct!
+[ 404: PASS ] pixel at [2, 7] is (0,0,0,0). It is correct!
+[ 405: PASS ] pixel at [3, 7] is (0,0,0,0). It is correct!
+[ 406: PASS ] pixel at [4, 7] is (0,0,0,0). It is correct!
+[ 407: PASS ] pixel at [5, 7] is (0,0,0,0). It is correct!
+[ 408: PASS ] pixel at [6, 7] is (0,0,0,0). It is correct!
+[ 409: PASS ] pixel at [7, 7] is (0,0,0,0). It is correct!
+[ 410: PASS ] successfullyParsed is true
+[ FAIL ] 136 failures reported
 

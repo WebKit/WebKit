@@ -1,5 +1,56 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/misc/expando-loss.html
-[ PASS ] All tests passed
+[ 1: PASS ] getParameter(TEXTURE_BINDING_2D) returns instance that was bound.
+[ 2: FAIL ] getParameter(TEXTURE_BINDING_2D): Expect basic expando to survive despite GC.
+[ 3: FAIL ] getParameter(TEXTURE_BINDING_2D): Expect subobject expando to survive despite GC.
+[ 4: PASS ] getParameter(FRAMEBUFFER_BINDING) returns instance that was bound.
+[ 5: FAIL ] getParameter(FRAMEBUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 6: FAIL ] getParameter(FRAMEBUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 7: PASS ] getParameter(RENDERBUFFER_BINDING) returns instance that was bound.
+[ 8: FAIL ] getParameter(RENDERBUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 9: FAIL ] getParameter(RENDERBUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 10: PASS ] getParameter(ELEMENT_ARRAY_BUFFER_BINDING) returns instance that was bound.
+[ 11: FAIL ] getParameter(ELEMENT_ARRAY_BUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 12: FAIL ] getParameter(ELEMENT_ARRAY_BUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 13: PASS ] getParameter(ARRAY_BUFFER_BINDING) returns instance that was bound.
+[ 14: FAIL ] getParameter(ARRAY_BUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 15: FAIL ] getParameter(ARRAY_BUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 16: PASS ] getParameter(TEXTURE_BINDING_CUBE_MAP) returns instance that was bound.
+[ 17: FAIL ] getParameter(TEXTURE_BINDING_CUBE_MAP): Expect basic expando to survive despite GC.
+[ 18: FAIL ] getParameter(TEXTURE_BINDING_CUBE_MAP): Expect subobject expando to survive despite GC.
+[ 19: PASS ] getParameter(gl.CURRENT_PROGRAM) return instance set with useProgram
+[ 20: PASS ] Vertex shader instance found in getAttachedShaders
+[ 21: PASS ] Fragment shader instance found in getAttachedShaders
+[ 22: FAIL ] Current program: Expect basic expando to survive despite GC.
+[ 23: FAIL ] Current program: Expect subobject expando to survive despite GC.
+[ 24: PASS ] [object WebGLProgram] is an instance of WebGLProgram
+[ 25: FAIL ] Shader[0]: Expect basic expando to survive despite GC.
+[ 26: FAIL ] Shader[0]: Expect subobject expando to survive despite GC.
+[ 27: PASS ] [object WebGLShader] is an instance of WebGLShader
+[ 28: FAIL ] Shader[1]: Expect basic expando to survive despite GC.
+[ 29: FAIL ] Shader[1]: Expect subobject expando to survive despite GC.
+[ 30: PASS ] [object WebGLShader] is an instance of WebGLShader
+[ 31: PASS ] getVertexAttrib(VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) return instance set with vertexAttribPointer
+[ 32: FAIL ] Vertex Attribute Buffer: Expect basic expando to survive despite GC.
+[ 33: FAIL ] Vertex Attribute Buffer: Expect subobject expando to survive despite GC.
+[ 34: PASS ] [object WebGLBuffer] is an instance of WebGLBuffer
+[ 35: PASS ] getFramebufferAttachmentParameter(COLOR_ATTACHMENT0) returns instance set with framebufferRenderbuffer
+[ 36: PASS ] getFramebufferAttachmentParameter(DEPTH_ATTACHMENT) returns instance set with framebufferRenderbuffer
+[ 37: PASS ] getFramebufferAttachmentParameter(STENCIL_ATTACHMENT) returns instance set with framebufferRenderbuffer
+[ 38: PASS ] getFramebufferAttachmentParameter(DEPTH_STENCIL_ATTACHMENT) returns instance set with framebufferRenderbuffer
+[ 39: FAIL ] COLOR_ATTACHMENT0: Expect basic expando to survive despite GC.
+[ 40: FAIL ] COLOR_ATTACHMENT0: Expect subobject expando to survive despite GC.
+[ 41: PASS ] [object WebGLRenderbuffer] is an instance of WebGLRenderbuffer
+[ 42: FAIL ] DEPTH_ATTACHMENT: Expect basic expando to survive despite GC.
+[ 43: FAIL ] DEPTH_ATTACHMENT: Expect subobject expando to survive despite GC.
+[ 44: PASS ] [object WebGLRenderbuffer] is an instance of WebGLRenderbuffer
+[ 45: FAIL ] STENCIL_ATTACHMENT: Expect basic expando to survive despite GC.
+[ 46: FAIL ] STENCIL_ATTACHMENT: Expect subobject expando to survive despite GC.
+[ 47: PASS ] [object WebGLRenderbuffer] is an instance of WebGLRenderbuffer
+[ 48: FAIL ] DEPTH_STENCIL_ATTACHMENT: Expect basic expando to survive despite GC.
+[ 49: FAIL ] DEPTH_STENCIL_ATTACHMENT: Expect subobject expando to survive despite GC.
+[ 50: PASS ] [object WebGLRenderbuffer] is an instance of WebGLRenderbuffer
+[ 51: PASS ] successfullyParsed is true
+[ FAIL ] 28 failures reported
 

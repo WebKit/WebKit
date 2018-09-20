@@ -1,5 +1,163 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/samplers/samplers.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] gl.SAMPLER_BINDING is 0x8919
+[ 3: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is null
+[ 4: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : SAMPLER_BINDING query should succeed
+[ 5: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is s1
+[ 6: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is s2
+[ 7: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is s2
+[ 8: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is s1
+[ 9: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is s1
+[ 10: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is null
+[ 11: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is null
+[ 12: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : binding a deleted Sampler object
+[ 13: PASS ] gl.getParameter(gl.SAMPLER_BINDING) is null
+[ 14: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : there should be no errors
+[ 15: PASS ] getError was expected value: NO_ERROR : createSampler should not set an error
+[ 16: FAIL ] s1 should be non-null. Was null
+[ 17: FAIL ] gl.isSampler(s1) should be true. Was false.
+[ 18: FAIL ] gl.isSampler(s1) should be true. Was false.
+[ 19: FAIL ] gl.isSampler(s1) should be true. Was false.
+[ 20: PASS ] gl.isSampler(s1) is false
+[ 21: PASS ] gl.isSampler(null) is false
+[ 22: FAIL ] gl.getSamplerParameter(s, 10242) should be 10497. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 23: PASS ] getError was expected value: NO_ERROR :
+[ 24: FAIL ] gl.getSamplerParameter(s, 10243) should be 10497. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 25: PASS ] getError was expected value: NO_ERROR :
+[ 26: FAIL ] gl.getSamplerParameter(s, 32882) should be 10497. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 27: PASS ] getError was expected value: NO_ERROR :
+[ 28: FAIL ] gl.getSamplerParameter(s, 10241) should be 9986. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 29: PASS ] getError was expected value: NO_ERROR :
+[ 30: FAIL ] gl.getSamplerParameter(s, 10240) should be 9729. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 31: PASS ] getError was expected value: NO_ERROR :
+[ 32: FAIL ] gl.getSamplerParameter(s, 34892) should be 0. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 33: PASS ] getError was expected value: NO_ERROR :
+[ 34: FAIL ] gl.getSamplerParameter(s, 34893) should be 515. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 35: PASS ] getError was expected value: NO_ERROR :
+[ 36: FAIL ] gl.getSamplerParameter(s, 33082) should be -1000. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 37: PASS ] getError was expected value: NO_ERROR :
+[ 38: FAIL ] gl.getSamplerParameter(s, 33083) should be 1000. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 39: PASS ] getError was expected value: NO_ERROR :
+[ 40: FAIL ] gl.samplerParameteri(s, 10242, 10497) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 41: FAIL ] gl.getSamplerParameter(s, 10242) should be 10497. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 42: PASS ] getError was expected value: NO_ERROR :
+[ 43: FAIL ] gl.samplerParameteri(s, 10242, 33648) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 44: FAIL ] gl.getSamplerParameter(s, 10242) should be 33648. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 45: PASS ] getError was expected value: NO_ERROR :
+[ 46: FAIL ] gl.samplerParameteri(s, 10242, 33071) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 47: FAIL ] gl.getSamplerParameter(s, 10242) should be 33071. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 48: PASS ] getError was expected value: NO_ERROR :
+[ 49: FAIL ] gl.samplerParameteri(s, 10243, 10497) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 50: FAIL ] gl.getSamplerParameter(s, 10243) should be 10497. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 51: PASS ] getError was expected value: NO_ERROR :
+[ 52: FAIL ] gl.samplerParameteri(s, 10243, 33648) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 53: FAIL ] gl.getSamplerParameter(s, 10243) should be 33648. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 54: PASS ] getError was expected value: NO_ERROR :
+[ 55: FAIL ] gl.samplerParameteri(s, 10243, 33071) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 56: FAIL ] gl.getSamplerParameter(s, 10243) should be 33071. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 57: PASS ] getError was expected value: NO_ERROR :
+[ 58: FAIL ] gl.samplerParameteri(s, 32882, 10497) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 59: FAIL ] gl.getSamplerParameter(s, 32882) should be 10497. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 60: PASS ] getError was expected value: NO_ERROR :
+[ 61: FAIL ] gl.samplerParameteri(s, 32882, 33648) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 62: FAIL ] gl.getSamplerParameter(s, 32882) should be 33648. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 63: PASS ] getError was expected value: NO_ERROR :
+[ 64: FAIL ] gl.samplerParameteri(s, 32882, 33071) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 65: FAIL ] gl.getSamplerParameter(s, 32882) should be 33071. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 66: PASS ] getError was expected value: NO_ERROR :
+[ 67: FAIL ] gl.samplerParameteri(s, 10241, 9728) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 68: FAIL ] gl.getSamplerParameter(s, 10241) should be 9728. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 69: PASS ] getError was expected value: NO_ERROR :
+[ 70: FAIL ] gl.samplerParameteri(s, 10241, 9729) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 71: FAIL ] gl.getSamplerParameter(s, 10241) should be 9729. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 72: PASS ] getError was expected value: NO_ERROR :
+[ 73: FAIL ] gl.samplerParameteri(s, 10241, 9984) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 74: FAIL ] gl.getSamplerParameter(s, 10241) should be 9984. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 75: PASS ] getError was expected value: NO_ERROR :
+[ 76: FAIL ] gl.samplerParameteri(s, 10241, 9986) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 77: FAIL ] gl.getSamplerParameter(s, 10241) should be 9986. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 78: PASS ] getError was expected value: NO_ERROR :
+[ 79: FAIL ] gl.samplerParameteri(s, 10241, 9985) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 80: FAIL ] gl.getSamplerParameter(s, 10241) should be 9985. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 81: PASS ] getError was expected value: NO_ERROR :
+[ 82: FAIL ] gl.samplerParameteri(s, 10241, 9987) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 83: FAIL ] gl.getSamplerParameter(s, 10241) should be 9987. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 84: PASS ] getError was expected value: NO_ERROR :
+[ 85: FAIL ] gl.samplerParameteri(s, 10240, 9728) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 86: FAIL ] gl.getSamplerParameter(s, 10240) should be 9728. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 87: PASS ] getError was expected value: NO_ERROR :
+[ 88: FAIL ] gl.samplerParameteri(s, 10240, 9729) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 89: FAIL ] gl.getSamplerParameter(s, 10240) should be 9729. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 90: PASS ] getError was expected value: NO_ERROR :
+[ 91: FAIL ] gl.samplerParameteri(s, 34892, 0) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 92: FAIL ] gl.getSamplerParameter(s, 34892) should be 0. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 93: PASS ] getError was expected value: NO_ERROR :
+[ 94: FAIL ] gl.samplerParameteri(s, 34892, 34894) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 95: FAIL ] gl.getSamplerParameter(s, 34892) should be 34894. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 96: PASS ] getError was expected value: NO_ERROR :
+[ 97: FAIL ] gl.samplerParameteri(s, 34893, 515) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 98: FAIL ] gl.getSamplerParameter(s, 34893) should be 515. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 99: PASS ] getError was expected value: NO_ERROR :
+[ 100: FAIL ] gl.samplerParameteri(s, 34893, 518) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 101: FAIL ] gl.getSamplerParameter(s, 34893) should be 518. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 102: PASS ] getError was expected value: NO_ERROR :
+[ 103: FAIL ] gl.samplerParameteri(s, 34893, 513) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 104: FAIL ] gl.getSamplerParameter(s, 34893) should be 513. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 105: PASS ] getError was expected value: NO_ERROR :
+[ 106: FAIL ] gl.samplerParameteri(s, 34893, 516) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 107: FAIL ] gl.getSamplerParameter(s, 34893) should be 516. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 108: PASS ] getError was expected value: NO_ERROR :
+[ 109: FAIL ] gl.samplerParameteri(s, 34893, 514) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 110: FAIL ] gl.getSamplerParameter(s, 34893) should be 514. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 111: PASS ] getError was expected value: NO_ERROR :
+[ 112: FAIL ] gl.samplerParameteri(s, 34893, 517) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 113: FAIL ] gl.getSamplerParameter(s, 34893) should be 517. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 114: PASS ] getError was expected value: NO_ERROR :
+[ 115: FAIL ] gl.samplerParameteri(s, 34893, 519) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 116: FAIL ] gl.getSamplerParameter(s, 34893) should be 519. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 117: PASS ] getError was expected value: NO_ERROR :
+[ 118: FAIL ] gl.samplerParameteri(s, 34893, 512) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 119: FAIL ] gl.getSamplerParameter(s, 34893) should be 512. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 120: PASS ] getError was expected value: NO_ERROR :
+[ 121: FAIL ] gl.samplerParameterf(s, 33082, -500) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 122: FAIL ] gl.getSamplerParameter(s, 33082) should be -500. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 123: PASS ] getError was expected value: NO_ERROR :
+[ 124: FAIL ] gl.samplerParameterf(s, 33082, 0) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 125: FAIL ] gl.getSamplerParameter(s, 33082) should be 0. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 126: PASS ] getError was expected value: NO_ERROR :
+[ 127: FAIL ] gl.samplerParameterf(s, 33082, 10) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 128: FAIL ] gl.getSamplerParameter(s, 33082) should be 10. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 129: PASS ] getError was expected value: NO_ERROR :
+[ 130: FAIL ] gl.samplerParameterf(s, 33083, 500) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 131: FAIL ] gl.getSamplerParameter(s, 33083) should be 500. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 132: PASS ] getError was expected value: NO_ERROR :
+[ 133: FAIL ] gl.samplerParameterf(s, 33083, 0) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 134: FAIL ] gl.getSamplerParameter(s, 33083) should be 0. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 135: PASS ] getError was expected value: NO_ERROR :
+[ 136: FAIL ] gl.samplerParameterf(s, 33083, 10) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 137: FAIL ] gl.getSamplerParameter(s, 33083) should be 10. Threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 138: PASS ] getError was expected value: NO_ERROR :
+[ 139: FAIL ] gl.getSamplerParameter(s, 37167) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 140: FAIL ] gl.samplerParameteri(s, 37167, null) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 141: FAIL ] gl.samplerParameterf(s, 37167, null) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 142: FAIL ] gl.getSamplerParameter(s, 33084) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 143: FAIL ] gl.samplerParameteri(s, 33084, null) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 144: FAIL ] gl.samplerParameterf(s, 33084, null) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 145: FAIL ] gl.getSamplerParameter(s, 33085) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 146: FAIL ] gl.samplerParameteri(s, 33085, null) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 147: FAIL ] gl.samplerParameterf(s, 33085, null) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 148: FAIL ] gl.getSamplerParameter(s, 10242) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 149: FAIL ] gl.samplerParameteri(s, 10242, 33069) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 150: FAIL ] gl.samplerParameterf(s, 10242, 33069) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 151: FAIL ] gl.getSamplerParameter(s, 10243) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 152: FAIL ] gl.samplerParameteri(s, 10243, 33069) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 153: FAIL ] gl.samplerParameterf(s, 10243, 33069) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 154: FAIL ] gl.getSamplerParameter(s, 10240) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 155: FAIL ] gl.samplerParameteri(s, 10240, 9985) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameteri must be an instance of WebGLSampler
+[ 156: FAIL ] gl.samplerParameterf(s, 10240, 9985) threw exception TypeError: Argument 1 ('sampler') to WebGL2RenderingContext.samplerParameterf must be an instance of WebGLSampler
+[ 157: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 158: PASS ] successfullyParsed is true
+[ FAIL ] 100 failures reported
 

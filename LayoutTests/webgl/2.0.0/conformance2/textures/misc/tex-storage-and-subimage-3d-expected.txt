@@ -1,5 +1,84 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-storage-and-subimage-3d.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: FAIL ] getError expected: INVALID_VALUE. Was INVALID_ENUM : texStorage3D should fail for zero width
+[ 3: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero height
+[ 4: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero depth
+[ 5: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for negative height
+[ 6: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero levels
+[ 7: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texStorage3D should fail for target TEXTURE_2D
+[ 8: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texStorage3D should fail for target TEXTURE_CUBE_MAP
+[ 9: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : texStorage3D should fail when no texture is bound
+[ 10: PASS ] getError was expected value: INVALID_ENUM : texStorage3D should fail for bad internalformat RGBA
+[ 11: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texSubImage3D should generate INVALID_ENUM if passed TEXTURE_2D target
+[ 12: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail if texStorage3D has not succeeded
+[ 13: PASS ] getError was expected value: NO_ERROR : texStorage3D should succeed with a good sized internalformat
+[ 14: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texStorage3D should fail on immutable-format texture
+[ 15: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable texture as long as the format is compatible
+[ 16: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail for too-high level
+[ 17: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texSubImage3D should fail for dimension out of range
+[ 18: FAIL ] getError expected: INVALID_VALUE. Was INVALID_ENUM : texStorage3D should fail for zero width
+[ 19: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero height
+[ 20: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero depth
+[ 21: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for negative height
+[ 22: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero levels
+[ 23: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texStorage3D should fail for too many levels
+[ 24: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texStorage3D should fail for target TEXTURE_2D
+[ 25: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texStorage3D should fail for target TEXTURE_CUBE_MAP
+[ 26: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : texStorage3D should fail when no texture is bound
+[ 27: PASS ] getError was expected value: INVALID_ENUM : texStorage3D should fail for bad internalformat RGB
+[ 28: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texSubImage3D should generate INVALID_ENUM if passed TEXTURE_2D target
+[ 29: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail if texStorage3D has not succeeded
+[ 30: PASS ] getError was expected value: NO_ERROR : texStorage3D should succeed with a good sized internalformat
+[ 31: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texStorage3D should fail on immutable-format texture
+[ 32: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable texture as long as the format is compatible
+[ 33: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable texture as long as the format is compatible
+[ 34: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable texture as long as the format is compatible
+[ 35: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail for too-high level
+[ 36: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texSubImage3D should fail for dimension out of range
+[ 37: FAIL ] getError expected: INVALID_VALUE. Was INVALID_ENUM : texStorage3D should fail for zero width
+[ 38: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero height
+[ 39: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero depth
+[ 40: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for negative height
+[ 41: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texStorage3D should fail for zero levels
+[ 42: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texStorage3D should fail for too many levels
+[ 43: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texStorage3D should fail for target TEXTURE_2D
+[ 44: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texStorage3D should fail for target TEXTURE_CUBE_MAP
+[ 45: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : texStorage3D should fail when no texture is bound
+[ 46: PASS ] getError was expected value: INVALID_ENUM : texStorage3D should fail for bad internalformat RGBA
+[ 47: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : texSubImage3D should generate INVALID_ENUM if passed TEXTURE_2D target
+[ 48: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail if texStorage3D has not succeeded
+[ 49: PASS ] getError was expected value: NO_ERROR : texStorage3D should succeed with a good sized internalformat
+[ 50: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texStorage3D should fail on immutable-format texture
+[ 51: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable texture as long as the format is compatible
+[ 52: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable texture as long as the format is compatible
+[ 53: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable texture as long as the format is compatible
+[ 54: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail for too-high level
+[ 55: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : texSubImage3D should fail for dimension out of range
+[ 56: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 57: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 58: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 59: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 60: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 61: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 62: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 63: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 64: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 65: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 66: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 67: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 68: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 69: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 70: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 71: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 72: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 73: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 74: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 75: PASS ] getError was expected value: NO_ERROR : levels=levels
+[ 76: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : levels=levels+1
+[ 77: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : levels=levels
+[ 78: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 79: PASS ] successfullyParsed is true
+[ FAIL ] 53 failures reported
 

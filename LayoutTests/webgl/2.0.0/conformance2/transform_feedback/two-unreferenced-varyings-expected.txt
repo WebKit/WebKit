@@ -1,5 +1,10 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/transform_feedback/two-unreferenced-varyings.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : Init transform feedback should succeed
+[ 3: PASS ] getError was expected value: NO_ERROR : Draw with transform feedback should succeed
+[ 4: FAIL ] buffer should match expected values
+[ 5: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
 

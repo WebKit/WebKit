@@ -1,5 +1,11 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/rendering-sampling-feedback-loop.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] Set up program succeeded
+[ 3: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Rendering to a texture where it samples from should geneates INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 4: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Rendering to a texture where it samples from should geneates INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 5: PASS ] getError was expected value: NO_ERROR : Rendering to a texture where it samples from should geneates INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 6: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

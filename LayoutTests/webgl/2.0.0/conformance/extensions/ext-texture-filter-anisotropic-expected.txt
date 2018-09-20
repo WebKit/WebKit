@@ -1,5 +1,26 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/extensions/ext-texture-filter-anisotropic.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: INVALID_ENUM : MAX_TEXTURE_MAX_ANISOTROPY_EXT should not be queryable if extension is disabled
+[ 3: PASS ] getError was expected value: INVALID_ENUM : TEXTURE_MAX_ANISOTROPY_EXT should not be queryable if extension is disabled
+[ 4: PASS ] getError was expected value: INVALID_ENUM : TEXTURE_MAX_ANISOTROPY_EXT should not be settable if extension is disabled
+[ 5: PASS ] getError was expected value: INVALID_ENUM : TEXTURE_MAX_ANISOTROPY_EXT should not be settable if extension is disabled
+[ 6: PASS ] Successfully enabled EXT_texture_filter_anisotropic extension
+[ 7: PASS ] EXT_texture_filter_anisotropic listed as supported and getExtension succeeded
+[ 8: PASS ] ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT is 0x84FF
+[ 9: PASS ] getError was expected value: NO_ERROR : MAX_TEXTURE_MAX_ANISOTROPY_EXT query should succeed if extension is enabled
+[ 10: PASS ] Minimum value of MAX_TEXTURE_MAX_ANISOTROPY_EXT is 2.0
+[ 11: PASS ] ext.TEXTURE_MAX_ANISOTROPY_EXT is 0x84FE
+[ 12: PASS ] getError was expected value: NO_ERROR : TEXTURE_MAX_ANISOTROPY_EXT query should succeed if extension is enabled
+[ 13: PASS ] Initial value of TEXTURE_MAX_ANISOTROPY_EXT is 1.0
+[ 14: PASS ] getError was expected value: INVALID_VALUE : texParameterf TEXTURE_MAX_ANISOTROPY_EXT set to < 1 should be an invalid value
+[ 15: PASS ] getError was expected value: INVALID_VALUE : texParameteri TEXTURE_MAX_ANISOTROPY_EXT set to < 1 should be an invalid value
+[ 16: PASS ] getError was expected value: NO_ERROR : texParameterf TEXTURE_MAX_ANISOTROPY_EXT set to >= 2 should succeed
+[ 17: PASS ] getError was expected value: NO_ERROR : texParameteri TEXTURE_MAX_ANISOTROPY_EXT set to >= 2 should succeed
+[ 18: PASS ] Set value of TEXTURE_MAX_ANISOTROPY_EXT matches expecation
+[ 19: PASS ] getError was expected value: NO_ERROR : texParameterf TEXTURE_MAX_ANISOTROPY_EXT set to 1.5 should succeed
+[ 20: FAIL ] Set value of TEXTURE_MAX_ANISOTROPY_EXT should be: 1.5 , returned value was: 2
+[ 21: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
 

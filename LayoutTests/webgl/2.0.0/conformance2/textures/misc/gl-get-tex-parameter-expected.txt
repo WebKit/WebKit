@@ -1,5 +1,320 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/gl-get-tex-parameter.html
-[ PASS ] All tests passed
+[ 1: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 2: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_S"]) is gl["REPEAT"]
+[ 3: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_S"]) is gl["REPEAT"]
+[ 4: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_S"]) is gl["REPEAT"]
+[ 5: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_S"]) is gl["REPEAT"]
+[ 6: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_S"]) should be 10497 (of type number). Was null (of type object).
+[ 7: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_S"]) should be 10497 (of type number). Was null (of type object).
+[ 8: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_S"]) should be 10497 (of type number). Was null (of type object).
+[ 9: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_S"]) should be 10497 (of type number). Was null (of type object).
+[ 10: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_T"]) is gl["REPEAT"]
+[ 11: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_T"]) is gl["REPEAT"]
+[ 12: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_T"]) is gl["REPEAT"]
+[ 13: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_T"]) is gl["REPEAT"]
+[ 14: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_T"]) should be 10497 (of type number). Was null (of type object).
+[ 15: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_T"]) should be 10497 (of type number). Was null (of type object).
+[ 16: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_T"]) should be 10497 (of type number). Was null (of type object).
+[ 17: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_T"]) should be 10497 (of type number). Was null (of type object).
+[ 18: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAG_FILTER"]) is gl["LINEAR"]
+[ 19: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAG_FILTER"]) is gl["LINEAR"]
+[ 20: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAG_FILTER"]) is gl["LINEAR"]
+[ 21: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAG_FILTER"]) is gl["LINEAR"]
+[ 22: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAG_FILTER"]) should be 9729 (of type number). Was null (of type object).
+[ 23: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAG_FILTER"]) should be 9729 (of type number). Was null (of type object).
+[ 24: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAG_FILTER"]) should be 9729 (of type number). Was null (of type object).
+[ 25: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAG_FILTER"]) should be 9729 (of type number). Was null (of type object).
+[ 26: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_FILTER"]) is gl["NEAREST_MIPMAP_LINEAR"]
+[ 27: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_FILTER"]) is gl["NEAREST_MIPMAP_LINEAR"]
+[ 28: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_FILTER"]) is gl["NEAREST_MIPMAP_LINEAR"]
+[ 29: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_FILTER"]) is gl["NEAREST_MIPMAP_LINEAR"]
+[ 30: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_FILTER"]) should be 9986 (of type number). Was null (of type object).
+[ 31: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_FILTER"]) should be 9986 (of type number). Was null (of type object).
+[ 32: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_FILTER"]) should be 9986 (of type number). Was null (of type object).
+[ 33: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_FILTER"]) should be 9986 (of type number). Was null (of type object).
+[ 34: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_R"]) should be 10497 (of type number). Was null (of type object).
+[ 35: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_R"]) should be 10497 (of type number). Was null (of type object).
+[ 36: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_R"]) should be 10497 (of type number). Was null (of type object).
+[ 37: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_R"]) should be 10497 (of type number). Was null (of type object).
+[ 38: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_R"]) should be 10497 (of type number). Was null (of type object).
+[ 39: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_R"]) should be 10497 (of type number). Was null (of type object).
+[ 40: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_R"]) should be 10497 (of type number). Was null (of type object).
+[ 41: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_R"]) should be 10497 (of type number). Was null (of type object).
+[ 42: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_FUNC"]) should be 515 (of type number). Was null (of type object).
+[ 43: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_FUNC"]) should be 515 (of type number). Was null (of type object).
+[ 44: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_FUNC"]) should be 515 (of type number). Was null (of type object).
+[ 45: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_FUNC"]) should be 515 (of type number). Was null (of type object).
+[ 46: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_FUNC"]) should be 515 (of type number). Was null (of type object).
+[ 47: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_FUNC"]) should be 515 (of type number). Was null (of type object).
+[ 48: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_FUNC"]) should be 515 (of type number). Was null (of type object).
+[ 49: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_FUNC"]) should be 515 (of type number). Was null (of type object).
+[ 50: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 51: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 52: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 53: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 54: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 55: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 56: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 57: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 58: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_BASE_LEVEL"]) should be 0 (of type number). Was null (of type object).
+[ 59: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_BASE_LEVEL"]) should be 0 (of type number). Was null (of type object).
+[ 60: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_BASE_LEVEL"]) should be 0 (of type number). Was null (of type object).
+[ 61: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_BASE_LEVEL"]) should be 0 (of type number). Was null (of type object).
+[ 62: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_BASE_LEVEL"]) should be 0 (of type number). Was null (of type object).
+[ 63: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_BASE_LEVEL"]) should be 0 (of type number). Was null (of type object).
+[ 64: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_BASE_LEVEL"]) should be 0 (of type number). Was null (of type object).
+[ 65: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_BASE_LEVEL"]) should be 0 (of type number). Was null (of type object).
+[ 66: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LEVEL"]) should be 1000 (of type number). Was null (of type object).
+[ 67: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LEVEL"]) should be 1000 (of type number). Was null (of type object).
+[ 68: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LEVEL"]) should be 1000 (of type number). Was null (of type object).
+[ 69: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LEVEL"]) should be 1000 (of type number). Was null (of type object).
+[ 70: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LEVEL"]) should be 1000 (of type number). Was null (of type object).
+[ 71: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LEVEL"]) should be 1000 (of type number). Was null (of type object).
+[ 72: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LEVEL"]) should be 1000 (of type number). Was null (of type object).
+[ 73: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LEVEL"]) should be 1000 (of type number). Was null (of type object).
+[ 74: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_LOD"]) should be -1000 (of type number). Was null (of type object).
+[ 75: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_LOD"]) should be -1000 (of type number). Was null (of type object).
+[ 76: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_LOD"]) should be -1000 (of type number). Was null (of type object).
+[ 77: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_LOD"]) should be -1000 (of type number). Was null (of type object).
+[ 78: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_LOD"]) should be -1000 (of type number). Was null (of type object).
+[ 79: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_LOD"]) should be -1000 (of type number). Was null (of type object).
+[ 80: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_LOD"]) should be -1000 (of type number). Was null (of type object).
+[ 81: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_LOD"]) should be -1000 (of type number). Was null (of type object).
+[ 82: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LOD"]) should be 1000 (of type number). Was null (of type object).
+[ 83: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LOD"]) should be 1000 (of type number). Was null (of type object).
+[ 84: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LOD"]) should be 1000 (of type number). Was null (of type object).
+[ 85: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LOD"]) should be 1000 (of type number). Was null (of type object).
+[ 86: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LOD"]) should be 1000 (of type number). Was null (of type object).
+[ 87: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LOD"]) should be 1000 (of type number). Was null (of type object).
+[ 88: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LOD"]) should be 1000 (of type number). Was null (of type object).
+[ 89: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LOD"]) should be 1000 (of type number). Was null (of type object).
+[ 90: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 91: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 92: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 93: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 94: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 95: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 96: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 97: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 98: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 99: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 100: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 101: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 102: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 103: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 104: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 105: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 106: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_S"]) is gl["CLAMP_TO_EDGE"]
+[ 107: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_S"]) is gl["CLAMP_TO_EDGE"]
+[ 108: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_S"]) is gl["CLAMP_TO_EDGE"]
+[ 109: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_S"]) is gl["CLAMP_TO_EDGE"]
+[ 110: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_S"]) should be 33071 (of type number). Was null (of type object).
+[ 111: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_S"]) should be 33071 (of type number). Was null (of type object).
+[ 112: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_S"]) should be 33071 (of type number). Was null (of type object).
+[ 113: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_S"]) should be 33071 (of type number). Was null (of type object).
+[ 114: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_T"]) is gl["MIRRORED_REPEAT"]
+[ 115: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_T"]) is gl["MIRRORED_REPEAT"]
+[ 116: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_T"]) is gl["MIRRORED_REPEAT"]
+[ 117: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_T"]) is gl["MIRRORED_REPEAT"]
+[ 118: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_T"]) should be 33648 (of type number). Was null (of type object).
+[ 119: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_T"]) should be 33648 (of type number). Was null (of type object).
+[ 120: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_T"]) should be 33648 (of type number). Was null (of type object).
+[ 121: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_T"]) should be 33648 (of type number). Was null (of type object).
+[ 122: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAG_FILTER"]) is gl["NEAREST"]
+[ 123: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAG_FILTER"]) is gl["NEAREST"]
+[ 124: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAG_FILTER"]) is gl["NEAREST"]
+[ 125: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAG_FILTER"]) is gl["NEAREST"]
+[ 126: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAG_FILTER"]) should be 9728 (of type number). Was null (of type object).
+[ 127: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAG_FILTER"]) should be 9728 (of type number). Was null (of type object).
+[ 128: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAG_FILTER"]) should be 9728 (of type number). Was null (of type object).
+[ 129: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAG_FILTER"]) should be 9728 (of type number). Was null (of type object).
+[ 130: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_FILTER"]) is gl["LINEAR_MIPMAP_LINEAR"]
+[ 131: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_FILTER"]) is gl["LINEAR_MIPMAP_LINEAR"]
+[ 132: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_FILTER"]) is gl["LINEAR_MIPMAP_LINEAR"]
+[ 133: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_FILTER"]) is gl["LINEAR_MIPMAP_LINEAR"]
+[ 134: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_FILTER"]) should be 9987 (of type number). Was null (of type object).
+[ 135: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_FILTER"]) should be 9987 (of type number). Was null (of type object).
+[ 136: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_FILTER"]) should be 9987 (of type number). Was null (of type object).
+[ 137: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_FILTER"]) should be 9987 (of type number). Was null (of type object).
+[ 138: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 139: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 140: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 141: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 142: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 143: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 144: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 145: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 146: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 147: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 148: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 149: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 150: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 151: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 152: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 153: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 154: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 155: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 156: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 157: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 158: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 159: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 160: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 161: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 162: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 163: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 164: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 165: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 166: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 167: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 168: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 169: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 170: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 171: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 172: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 173: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 174: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 175: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 176: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 177: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 178: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 179: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 180: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 181: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 182: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 183: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 184: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 185: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 186: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 187: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 188: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 189: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 190: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 191: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 192: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 193: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 194: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 195: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 196: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 197: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 198: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 199: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 200: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 201: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 202: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 203: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 204: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 205: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 206: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 207: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 208: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 209: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 210: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_S"]) is gl["CLAMP_TO_EDGE"]
+[ 211: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_S"]) is gl["REPEAT"]
+[ 212: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_S"]) is gl["CLAMP_TO_EDGE"]
+[ 213: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_S"]) is gl["REPEAT"]
+[ 214: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_S"]) should be 33071 (of type number). Was null (of type object).
+[ 215: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_S"]) should be 10497 (of type number). Was null (of type object).
+[ 216: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_S"]) should be 33071 (of type number). Was null (of type object).
+[ 217: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_S"]) should be 10497 (of type number). Was null (of type object).
+[ 218: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_T"]) is gl["MIRRORED_REPEAT"]
+[ 219: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_T"]) is gl["REPEAT"]
+[ 220: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_T"]) is gl["MIRRORED_REPEAT"]
+[ 221: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_T"]) is gl["REPEAT"]
+[ 222: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_T"]) should be 33648 (of type number). Was null (of type object).
+[ 223: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_T"]) should be 10497 (of type number). Was null (of type object).
+[ 224: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_T"]) should be 33648 (of type number). Was null (of type object).
+[ 225: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_T"]) should be 10497 (of type number). Was null (of type object).
+[ 226: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAG_FILTER"]) is gl["NEAREST"]
+[ 227: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAG_FILTER"]) is gl["LINEAR"]
+[ 228: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAG_FILTER"]) is gl["NEAREST"]
+[ 229: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAG_FILTER"]) is gl["LINEAR"]
+[ 230: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAG_FILTER"]) should be 9728 (of type number). Was null (of type object).
+[ 231: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAG_FILTER"]) should be 9729 (of type number). Was null (of type object).
+[ 232: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAG_FILTER"]) should be 9728 (of type number). Was null (of type object).
+[ 233: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAG_FILTER"]) should be 9729 (of type number). Was null (of type object).
+[ 234: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_FILTER"]) is gl["LINEAR_MIPMAP_LINEAR"]
+[ 235: PASS ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_FILTER"]) is gl["NEAREST"]
+[ 236: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_FILTER"]) is gl["LINEAR_MIPMAP_LINEAR"]
+[ 237: PASS ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_FILTER"]) is gl["NEAREST"]
+[ 238: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_FILTER"]) should be 9987 (of type number). Was null (of type object).
+[ 239: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_FILTER"]) should be 9728 (of type number). Was null (of type object).
+[ 240: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_FILTER"]) should be 9987 (of type number). Was null (of type object).
+[ 241: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_FILTER"]) should be 9728 (of type number). Was null (of type object).
+[ 242: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 243: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_WRAP_R"]) should be 33648 (of type number). Was null (of type object).
+[ 244: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 245: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_WRAP_R"]) should be 33648 (of type number). Was null (of type object).
+[ 246: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 247: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_WRAP_R"]) should be 33648 (of type number). Was null (of type object).
+[ 248: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_R"]) should be 33071 (of type number). Was null (of type object).
+[ 249: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_WRAP_R"]) should be 33648 (of type number). Was null (of type object).
+[ 250: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 251: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_FUNC"]) should be 513 (of type number). Was null (of type object).
+[ 252: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 253: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_FUNC"]) should be 513 (of type number). Was null (of type object).
+[ 254: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 255: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_FUNC"]) should be 513 (of type number). Was null (of type object).
+[ 256: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_FUNC"]) should be 516 (of type number). Was null (of type object).
+[ 257: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_FUNC"]) should be 513 (of type number). Was null (of type object).
+[ 258: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 259: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 260: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 261: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 262: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 263: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 264: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_MODE"]) should be 34894 (of type number). Was null (of type object).
+[ 265: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_COMPARE_MODE"]) should be 0 (of type number). Was null (of type object).
+[ 266: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 267: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_BASE_LEVEL"]) should be 99 (of type number). Was null (of type object).
+[ 268: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 269: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_BASE_LEVEL"]) should be 99 (of type number). Was null (of type object).
+[ 270: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 271: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_BASE_LEVEL"]) should be 99 (of type number). Was null (of type object).
+[ 272: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_BASE_LEVEL"]) should be 100 (of type number). Was null (of type object).
+[ 273: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_BASE_LEVEL"]) should be 99 (of type number). Was null (of type object).
+[ 274: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 275: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LEVEL"]) should be 300 (of type number). Was null (of type object).
+[ 276: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 277: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LEVEL"]) should be 300 (of type number). Was null (of type object).
+[ 278: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 279: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LEVEL"]) should be 300 (of type number). Was null (of type object).
+[ 280: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LEVEL"]) should be 800 (of type number). Was null (of type object).
+[ 281: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LEVEL"]) should be 300 (of type number). Was null (of type object).
+[ 282: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 283: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MIN_LOD"]) should be -999 (of type number). Was null (of type object).
+[ 284: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 285: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MIN_LOD"]) should be -999 (of type number). Was null (of type object).
+[ 286: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 287: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MIN_LOD"]) should be -999 (of type number). Was null (of type object).
+[ 288: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_LOD"]) should be -500 (of type number). Was null (of type object).
+[ 289: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MIN_LOD"]) should be -999 (of type number). Was null (of type object).
+[ 290: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 291: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_MAX_LOD"]) should be 999 (of type number). Was null (of type object).
+[ 292: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 293: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_MAX_LOD"]) should be 999 (of type number). Was null (of type object).
+[ 294: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 295: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_MAX_LOD"]) should be 999 (of type number). Was null (of type object).
+[ 296: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LOD"]) should be 500 (of type number). Was null (of type object).
+[ 297: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_MAX_LOD"]) should be 999 (of type number). Was null (of type object).
+[ 298: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 299: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 300: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 301: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 302: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 303: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 304: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 305: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_LEVELS"]) should be 0 (of type number). Was null (of type object).
+[ 306: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 307: FAIL ] gl.getTexParameter(gl["TEXTURE_2D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 308: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 309: FAIL ] gl.getTexParameter(gl["TEXTURE_CUBE_MAP"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 310: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 311: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 312: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 313: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
+[ 314: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 315: PASS ] successfullyParsed is true
+[ FAIL ] 266 failures reported
 

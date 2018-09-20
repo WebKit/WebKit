@@ -1,5 +1,11 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/transform_feedback/unwritten-output-defaults-to-zero.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : Set up program should succeed
+[ 3: FAIL ] buffer should match expected values
+[ 4: PASS ] getError was expected value: NO_ERROR : Set up program should succeed
+[ 5: PASS ] buffer should match expected values
+[ 6: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
 
