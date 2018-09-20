@@ -34,6 +34,7 @@
     void regularOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static void enabledAtRuntimeOperationStatic(long testParam);
 
     [EnabledForWorld=specificWorld] void enabledInSpecificWorld(long testParam);
 

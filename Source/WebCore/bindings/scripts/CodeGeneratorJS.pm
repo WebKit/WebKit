@@ -3641,7 +3641,7 @@ sub ToMethodName
 
 sub GenerateRuntimeEnableConditionalStringForExposed
 {
-    my ($interface, $context, $conjuncts) = @_;
+    my ($interface, $context, $conjuncts, $globalObjectIsParam) = @_;
 
     assert("Must specify value for Exposed.") if $context->extendedAttributes->{Exposed} eq "VALUE_IS_MISSING";
 
@@ -3655,10 +3655,12 @@ sub GenerateRuntimeEnableConditionalStringForExposed
         $exposed = @$exposed[0];
     }
 
+    my $globalObjectPtr = $globalObjectIsParam ? "&globalObject" : "globalObject()";
+
     if ($exposed eq "Window") {
-        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()");
+        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isDocument()");
     } elsif ($exposed eq "Worker") {
-        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()");
+        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isWorkerGlobalScope()");
     } else {
         assert("Unrecognized value '" . Dumper($context->extendedAttributes->{Exposed}) . "' for the Exposed extended attribute on '" . ref($context) . "'.");
     }
@@ -3671,15 +3673,17 @@ sub GenerateRuntimeEnableConditionalStringForExposed
 # (e.g. IDLInterface, IDLAttribute, IDLOperation, IDLIterable, etc.)
 sub GenerateRuntimeEnableConditionalString
 {
-    my ($interface, $context) = @_;
+    my ($interface, $context, $globalObjectIsParam) = @_;
 
     my @conjuncts;
+    my $globalObjectPtr = $globalObjectIsParam ? "&globalObject" : "globalObject()";
     
     if ($context->extendedAttributes->{SecureContext}) {
         AddToImplIncludes("ScriptExecutionContext.h");
 
         if ($context->extendedAttributes->{ContextHasServiceWorkerScheme}) {
-            push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() || jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->hasServiceWorkerScheme())");
+            push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isSecureContext()"
+                . "|| jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->hasServiceWorkerScheme())");
         } else {
             push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
         }
@@ -3687,7 +3691,7 @@ sub GenerateRuntimeEnableConditionalString
         if ($context->extendedAttributes->{ContextHasServiceWorkerScheme}) {
             AddToImplIncludes("ScriptExecutionContext.h");
 
-            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->hasServiceWorkerScheme()");
+            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->hasServiceWorkerScheme()");
         }
     }
 
@@ -3713,7 +3717,7 @@ sub GenerateRuntimeEnableConditionalString
 
         my @flags = split(/&/, $context->extendedAttributes->{EnabledBySetting});
         foreach my $flag (@flags) {
-            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings()." . ToMethodName($flag) . "Enabled()");
+            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settings()." . ToMethodName($flag) . "Enabled()");
         }
     }
 
@@ -7185,6 +7189,43 @@ sub ConstructorHasProperties
     return 0;
 }
 
+sub GetRuntimeEnabledStaticProperties
+{
+    my ($interface) = @_;
+
+    my @runtimeEnabledProperties = ();
+
+    my @attributes = @{$interface->attributes};
+    push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
+
+    foreach my $attribute (@attributes) {
+        next if AttributeShouldBeOnInstance($interface, $attribute) != 0;
+        next if not $attribute->isStatic;
+
+        if (NeedsRuntimeCheck($interface, $attribute)) {
+            push(@runtimeEnabledProperties, $attribute);
+        }
+    }
+
+    my @operations = @{$interface->operations};
+    push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
+    push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
+    push(@operations, @{$interface->serializable->operations}) if $interface->serializable;
+    foreach my $operation (@operations) {
+        next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
+        next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
+        next if OperationShouldBeOnInstance($interface, $operation) != 0;
+        next if $operation->name eq "[Symbol.Iterator]";
+        next if not $operation->isStatic;
+
+        if (NeedsRuntimeCheck($interface, $operation)) {
+            push(@runtimeEnabledProperties, $operation);
+        }
+    }
+
+    return @runtimeEnabledProperties;
+}
+
 sub GenerateConstructorHelperMethods
 {
     my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor) = @_;
@@ -7243,6 +7284,21 @@ sub GenerateConstructorHelperMethods
         $classForThis = "nullptr";
     }
     push(@$outputArray, "    reifyStaticProperties(vm, ${classForThis}, ${className}ConstructorTableValues, *this);\n") if ConstructorHasProperties($interface);
+
+    my @runtimeEnabledProperties = GetRuntimeEnabledStaticProperties($interface);
+
+    foreach my $operationOrAttribute (@runtimeEnabledProperties) {
+        my $conditionalString = $codeGenerator->GenerateConditionalString($operationOrAttribute);
+        push(@$outputArray, "#if ${conditionalString}\n") if $conditionalString;
+        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operationOrAttribute, "true");
+        my $name = $operationOrAttribute->name;
+        push(@$outputArray, "    if (!${runtimeEnableConditionalString}) {\n");
+        push(@$outputArray, "        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
+        push(@$outputArray, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
+        push(@$outputArray, "        JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);\n");
+        push(@$outputArray, "    }\n");
+        push(@$outputArray, "#endif\n") if $conditionalString;
+    }
 
     push(@$outputArray, "}\n\n");
 

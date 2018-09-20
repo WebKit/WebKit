@@ -110,6 +110,8 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature&TestFeature1] attribute DOMString enabledAtRuntimeAttribute;
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static void enabledAtRuntimeOperationStatic(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static attribute DOMString enabledAtRuntimeAttributeStatic;
 
     [EnabledForWorld=someWorld, EnabledAtRuntime=TestFeature] void enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
     [EnabledForWorld=someWorld] void worldSpecificMethod(long testParam);
@@ -273,7 +275,7 @@ enum TestConfidence { "high", "kinda-low" };
 
     [CachedAttribute] readonly attribute any cachedAttribute1;
     [CachedAttribute] readonly attribute any cachedAttribute2;
-    
+
     attribute any anyAttribute;
     attribute object objectAttribute;
 
@@ -397,7 +399,7 @@ enum TestConfidence { "high", "kinda-low" };
 
     readonly attribute Promise<void> testReadOnlyVoidPromiseAttribute;
     readonly attribute Promise<TestNode> testReadOnlyPromiseAttribute;
-    
+
     // Promise function
     Promise<void> testPromiseFunction();
     Promise<void> testPromiseFunctionWithFloatArgument(float a);
@@ -431,7 +433,7 @@ enum TestConfidence { "high", "kinda-low" };
     serializer = {create, readOnlyStringAttr, enumAttr, longAttr};
 
     void bufferSourceParameter(BufferSource data);
-    
+
     legacycaller void legacyCallerNamed(long param);
     legacycaller long (DOMString param);
     legacycaller void ();
