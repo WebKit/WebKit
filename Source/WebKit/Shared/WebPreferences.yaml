@@ -1253,6 +1253,15 @@ EncryptedMediaAPIEnabled:
   category: experimental
   condition: ENABLE(ENCRYPTED_MEDIA)
 
+FullScreenEnabled:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(FULLSCREEN_API)
+  hidden: EXPERIMENTAL_FULLSCREEN_API_HIDDEN
+  humanReadableName: "Fullscreen API"
+  humanReadableDescription: "Fullscreen API"
+  category: experimental
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They
@@ -1325,15 +1334,6 @@ WebGLCompressedTextureASTCSupportEnabled:
   humanReadableDescription: "Support for ASTC compressed texture formats in WebGL"
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
-
-FullScreenEnabled:
-  type: bool
-  defaultValue: false
-  condition: ENABLE(FULLSCREEN_API)
-  hidden: EXPERIMENTAL_FULLSCREEN_API_HIDDEN
-  humanReadableName: "Fullscreen API"
-  humanReadableDescription: "Fullscreen API"
-  category: internal
 
 AriaReflectionEnabled:
   type: bool

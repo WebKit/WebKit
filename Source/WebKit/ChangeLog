@@ -1,3 +1,15 @@
+2018-09-19  Dean Jackson  <dino@grorg.org>
+
+        Temporarily move fullscreen back to experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=189770
+        <rdar://problem/44619282>
+
+        Reviewed by Simon Fraser.
+
+        Make fullscreen an experimental feature again.
+
+        * Shared/WebPreferences.yaml:
+
 2018-09-19  Dawei Fenton  <realdawei@apple.com>
 
         Unreviewed, rolling out r236229.
