@@ -1,3 +1,26 @@
+2018-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix crash under FontCache::purgeInactiveFontData() when a memory warning fires
+        https://bugs.webkit.org/show_bug.cgi?id=189722
+        rdar://problem/44182860
+
+        Reviewed by Myles C. Maxfield.
+        
+        Hashing of FontPlatformData for cachedFonts() is somewhat broken because CFEqual() on CTFont
+        can return false when the fonts are actually the same, and have the same CFHash(). This 
+        can result in multiple entries in cachedFonts() with the same Font.
+        
+        Then in FontCache::purgeInactiveFontData(), the loop that appends fonts to fontsToDelete
+        gets the value by reference, and WTFMoves it into fontsToDelete. This nulls out all
+        the entries sharing the same value, leaving null entries in the hash table.
+        We later crash at font->hasOneRef() when using one of those null entries.
+        
+        Fix by making a copy of the RefPtr<Font> in the loop, so the WTFMove doesn't nuke
+        the hash table entries. The entries will get removed at cachedFonts().remove() lower down.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontData):
+
 2018-09-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Provide a way to query accelerated animations for internal testing
