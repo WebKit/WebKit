@@ -1,3 +1,15 @@
+=================
+WebKitGTK+ 2.22.1
+=================
+
+What's new in WebKitGTK+ 2.22.1?
+
+  - Fix printing in landscape.
+  - Fix the build in several platforms: s390x, ppc64le, armv7hl.
+  - Fix the build with a11y disabled.
+  - Fix the build with video disabled.
+  - Fix several crashes and rendering issues.
+
 ==================
 WebKitGTK+ 2.22.0
 ==================
