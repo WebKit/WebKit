@@ -27,6 +27,8 @@
 
 #include "APIData.h"
 #include "APIString.h"
+#include "AuthenticationChallengeProxy.h"
+#include "AuthenticationDecisionListener.h"
 #include "PluginModuleInfo.h"
 #include "ProcessTerminationReason.h"
 #include "SameDocumentNavigationType.h"
@@ -85,8 +87,7 @@ public:
 
     virtual void renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones) { }
 
-    virtual bool canAuthenticateAgainstProtectionSpace(WebKit::WebPageProxy&, WebKit::WebProtectionSpace*) { return false; }
-    virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy&) { }
+    virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy& challenge) { challenge.listener().performDefaultHandling(); }
 
     // FIXME: These function should not be part of this client.
     virtual bool processDidTerminate(WebKit::WebPageProxy&, WebKit::ProcessTerminationReason) { return false; }

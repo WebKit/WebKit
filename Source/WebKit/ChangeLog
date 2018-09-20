@@ -1,3 +1,16 @@
+2018-09-19  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(236154) C API clients not using WKPageSetPageNavigationClient couldn't complete HTTPS requests
+        https://bugs.webkit.org/show_bug.cgi?id=189771
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didReceiveAuthenticationChallenge):
+        Perform default behavior if there's an authentication challenge but we're using the default navigation client.
+        I wish we had infrastructure to test this but WebKitTestRunner uses WKPageSetNavigationClient
+        and we don't have the ability to do networking from API tests.  This is a growing problem I intend to solve.
+
 2018-09-19  Woodrow Wang  <woodrow_wang@apple.com>
 
         Clear persistent storage between tests for resourceLoadStatistics
