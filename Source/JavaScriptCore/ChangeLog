@@ -1,3 +1,22 @@
+2018-09-19  Saam barati  <sbarati@apple.com>
+
+        AI rule for MultiPutByOffset executes its effects in the wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=189757
+        <rdar://problem/43535257>
+
+        Reviewed by Michael Saboff.
+
+        The AI rule for MultiPutByOffset was executing effects in the wrong order.
+        It first executed the transition effects and the effects on the base, and
+        then executed the filtering effects on the value being stored. However, you
+        can end up with the wrong type when the base and the value being stored
+        are the same. E.g, in a program like `o.f = o`. These effects need to happen
+        in the opposite order, modeling what happens in the runtime executing of
+        MultiPutByOffset.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2018-09-17  Saam barati  <sbarati@apple.com>
 
         We must convert ProfileType to CheckStructureOrEmpty instead of CheckStructure
