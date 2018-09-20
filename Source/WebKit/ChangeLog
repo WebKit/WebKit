@@ -1,3 +1,16 @@
+2018-09-19  Dawei Fenton  <realdawei@apple.com>
+
+        Unreviewed, rolling out r236229.
+
+        caused API timouts on mac and ios
+
+        Reverted changeset:
+
+        "Clear persistent storage between tests for
+        resourceLoadStatistics"
+        https://bugs.webkit.org/show_bug.cgi?id=189684
+        https://trac.webkit.org/changeset/236229
+
 2018-09-19  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(236154) C API clients not using WKPageSetPageNavigationClient couldn't complete HTTPS requests
