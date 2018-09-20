@@ -1,5 +1,14 @@
 2018-09-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, remove accidentally-committed debugging changes from flatpakutils script
+
+        Aaaaaah maybe this is why changes are supposed to be reviewed.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args):
+
+2018-09-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, manually rollout our switch to master runtime
 
         Phil wants html5-codecs, which aren't available yet here. Let's switch back to 3.28 in the
