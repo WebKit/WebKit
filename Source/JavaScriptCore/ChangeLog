@@ -1,3 +1,15 @@
+2018-09-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r236235.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Add functions to measure memory footprint to JSC"
+        https://bugs.webkit.org/show_bug.cgi?id=189768
+        https://trac.webkit.org/changeset/236235
+
 2018-09-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] JITMathIC.h: error: missing 'template' keyword prior to dependent template name 'retagged'
