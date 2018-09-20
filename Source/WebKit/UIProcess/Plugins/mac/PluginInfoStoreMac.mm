@@ -93,7 +93,15 @@ bool PluginInfoStore::shouldAllowPluginToRunUnsandboxed(const String& pluginBund
         || pluginBundleIdentifier == "com.google.o1dbrowserplugin"_s
         || pluginBundleIdentifier == "com.apple.NPSafeInput"_s
         || pluginBundleIdentifier == "com.apple.BocomSubmitCtrl"_s
-        || pluginBundleIdentifier == "com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier"_s;
+        || pluginBundleIdentifier == "com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier"_s
+        || pluginBundleIdentifier == "com.cfca.npSecEditCtl.MAC.BOC.plugin"_s
+        || pluginBundleIdentifier == "cfca.com.npCryptoKit.MAC.BOC"_s
+        || pluginBundleIdentifier == "cfca.com.npP11CertEnroll.MAC.BOC"_s
+        || pluginBundleIdentifier == "cfca.com.npCryptoKit.UnionPay.MAC"_s
+        || pluginBundleIdentifier == "cfca.com.npP11CertEnroll.MAC.UnionPay"_s
+        || pluginBundleIdentifier == "Bocom.netsignplugin"_s
+        || pluginBundleIdentifier == "cfca.com.npP11CertEnroll.MAC.CGB"_s
+        || pluginBundleIdentifier == "cfca.com.npCryptoKit.CGB.MAC"_s;
 }
 
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
