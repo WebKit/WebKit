@@ -75,6 +75,7 @@ public:
     WEBCORE_EXPORT void resumeAnimations();
     WEBCORE_EXPORT bool animationsAreSuspended();
     WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
+    WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForElement(Element&) const;    
 
 private:
     DocumentTimeline(Document&, Seconds);

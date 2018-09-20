@@ -31,10 +31,13 @@
 #include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
+#include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
 #include "Microtasks.h"
 #include "Page.h"
 #include "RenderElement.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 
 static const Seconds defaultAnimationInterval { 15_ms };
 static const Seconds throttledAnimationInterval { 30_ms };
@@ -483,6 +486,17 @@ void DocumentTimeline::performEventDispatchTask()
     std::stable_sort(pendingAnimationEvents.begin(), pendingAnimationEvents.end(), compareAnimationPlaybackEvents);
     for (auto& pendingEvent : pendingAnimationEvents)
         pendingEvent->target()->dispatchEvent(pendingEvent);
+}
+
+Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElement(Element& element) const
+{
+    auto* renderer = element.renderer();
+    if (renderer && renderer->isComposited()) {
+        auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
+        if (auto* graphicsLayer = compositedRenderer->layer()->backing()->graphicsLayer())
+            return graphicsLayer->acceleratedAnimationsForTesting();
+    }
+    return { };
 }
 
 } // namespace WebCore

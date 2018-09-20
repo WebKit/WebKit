@@ -200,6 +200,13 @@ public:
     ExceptionOr<bool> pauseTransitionAtTimeOnElement(const String& propertyName, double pauseTime, Element&);
     ExceptionOr<bool> pauseTransitionAtTimeOnPseudoElement(const String& property, double pauseTime, Element&, const String& pseudoId);
 
+    // Web Animations testing.
+    struct AcceleratedAnimation {
+        String property;
+        double speed;
+    };
+    Vector<AcceleratedAnimation> acceleratedAnimationsForElement(Element&);
+
     // For animations testing, we need a way to get at pseudo elements.
     ExceptionOr<RefPtr<Element>> pseudoElement(Element&, const String&);
 

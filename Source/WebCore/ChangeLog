@@ -1,3 +1,27 @@
+2018-09-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Provide a way to query accelerated animations for internal testing
+        https://bugs.webkit.org/show_bug.cgi?id=189762
+
+        Reviewed by Dean Jackson.
+
+        Expose a new internals.acceleratedAnimationsForElement(element) method to allow layout tests to query the current list
+        of accelerated animations for a given element. Currently only the animated property and animation speed are exposed, which
+        will allow us to identify missing, running and paused accelerated animations.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::acceleratedAnimationsForElement const):
+        * animation/DocumentTimeline.h:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::acceleratedAnimationsForTesting const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::acceleratedAnimationsForElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Improve node statistics for rare data

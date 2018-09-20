@@ -4216,6 +4216,43 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
     return m_layer->backingStoreBytesPerPixel() * size().width() * m_layer->contentsScale() * size().height() * m_layer->contentsScale();
 }
 
+static String animatedPropertyIDAsString(AnimatedPropertyID property)
+{
+    if (property == AnimatedPropertyTransform)
+        return "transform";
+    if (property == AnimatedPropertyOpacity)
+        return "opacity";
+    if (property == AnimatedPropertyBackgroundColor)
+        return "background-color";
+    if (property == AnimatedPropertyFilter)
+        return "filter";
+    if (property == AnimatedPropertyInvalid)
+        return "invalid";
+#if ENABLE(FILTERS_LEVEL_2)
+    if (property == AnimatedPropertyWebkitBackdropFilter)
+        return "backdrop-filter";
+#endif
+    return "";
+}
+
+Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesting() const
+{
+    Vector<std::pair<String, double>> animations;
+
+    if (hasAnimations()) {
+        for (auto it : m_animations->runningAnimations) {
+            auto& propertyAnimations = it.value;
+            size_t numAnimations = propertyAnimations.size();
+            for (size_t i = 0; i < numAnimations; ++i) {
+                const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
+                animations.append({ animatedPropertyIDAsString(currAnimation.m_property), currAnimation.m_animation->speed() });
+            }
+        }
+    }
+
+    return animations;
+}
+
 } // namespace WebCore
 
 #endif
