@@ -1,3 +1,9 @@
+2018-09-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed. Fix the Streams API watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2018-09-19  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebProcessProxy::suspendedPageWasDestroyed(WebKit::SuspendedPageProxy&)
