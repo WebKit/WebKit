@@ -1,3 +1,13 @@
+2018-09-20  Dawei Fenton  <realdawei@apple.com>
+
+        WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance
+        https://bugs.webkit.org/show_bug.cgi?id=189641
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Mark tests as Failure Slow.
+        * platform/mac/TestExpectations:
+
 2018-09-20  Frederic Wang  <fwang@igalia.com>
 
         Synchronize CSSOM View test suite against upstream WPT
