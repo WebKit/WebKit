@@ -338,16 +338,18 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     if (FAILED(response->URL(&responseURLBSTR.GetBSTR())))
         return;
     wstring responseURL(responseURLBSTR, responseURLBSTR.length());
-
-    // FIXME: We should do real relative URL resolution here.
-    int lastSlash = responseURL.rfind('/');
-    if (lastSlash != -1)
-        responseURL = responseURL.substr(0, lastSlash);
-
     wstring wURL = jsStringRefToWString(url);
-    wstring wAbsoluteURL = responseURL + TEXT("/") + wURL;
-    auto jsAbsoluteURL = adopt(JSStringCreateWithCharacters(wAbsoluteURL.data(), wAbsoluteURL.length()));
 
+    DWORD bufferSize = responseURL.size() + wURL.size() + 1;
+    std::vector<wchar_t> buffer(bufferSize);
+    auto result = UrlCombine(responseURL.data(), wURL.data(), buffer.data(), &bufferSize, 0);
+    if (result == E_POINTER) {
+        buffer.resize(bufferSize);
+        result = UrlCombine(responseURL.data(), wURL.data(), buffer.data(), &bufferSize, 0);
+        ASSERT(result  == S_OK);
+    }
+
+    auto jsAbsoluteURL = adopt(JSStringCreateWithCharacters(buffer.data(), bufferSize));
     WorkQueue::singleton().queue(new LoadItem(jsAbsoluteURL.get(), target));
 }
 

@@ -1,3 +1,15 @@
+2018-09-20  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win] TestRunner::queueLoad() fails to generate correct url for some urls.
+        https://bugs.webkit.org/show_bug.cgi?id=189679
+
+        Reviewed by Fujii Hironori.
+
+        Replace the implementation with correct API call.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::queueLoad): Call UrlCombineW.
+
 2018-09-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] fails to build on ARM arches complaining about undefined reference to `epoxy_eglMakeCurrent'

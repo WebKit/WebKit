@@ -944,7 +944,6 @@ http/tests/xmlhttprequest/access-control-preflight-credential-sync.html [ Pass F
 http/tests/xmlhttprequest/access-control-preflight-not-successful.html [ Failure ]
 http/tests/xmlhttprequest/auth-reject-protection-space.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
-http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
 http/tests/xmlhttprequest/cache-override.html [ Pass Failure ]
 http/tests/xmlhttprequest/cookies.html [ Pass Failure ]
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Failure ]
@@ -1488,8 +1487,6 @@ webkit.org/b/182128 fast/dom/navigator-detached-no-crash.html [ Pass Failure ]
 # Neither this port nor the mac port support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ Skip ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Failure ]
-
-webkit.org/b/42435 fast/dom/navigation-type-back-forward.html [ Failure ]
 
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]
 
