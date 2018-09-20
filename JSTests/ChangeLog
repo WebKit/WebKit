@@ -1,3 +1,34 @@
+2018-09-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Optimize Array#indexOf in C++ runtime
+        https://bugs.webkit.org/show_bug.cgi?id=189507
+
+        Reviewed by Saam Barati.
+
+        * stress/array-indexof-array-prototype-trap.js: Added.
+        (shouldBe):
+        (AncestorArray.prototype.get 2):
+        (AncestorArray):
+        * stress/array-indexof-have-a-bad-time-c-runtime.js: Added.
+        (shouldBe):
+        * stress/array-indexof-hole-nan.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * stress/array-indexof-infinity.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * stress/array-indexof-negative-zero.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * stress/array-indexof-own-getter.js: Added.
+        (shouldBe):
+        (throw.new.Error.get array):
+        (get array):
+        * stress/array-indexof-prototype-trap.js: Added.
+        (shouldBe):
+        (DerivedArray.prototype.get 2):
+        (DerivedArray):
+
 2018-09-19  Saam barati  <sbarati@apple.com>
 
         AI rule for MultiPutByOffset executes its effects in the wrong order

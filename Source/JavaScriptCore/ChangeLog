@@ -1,3 +1,38 @@
+2018-09-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Optimize Array#indexOf in C++ runtime
+        https://bugs.webkit.org/show_bug.cgi?id=189507
+
+        Reviewed by Saam Barati.
+
+        C++ Array#indexOf runtime function takes so much time in babylon benchmark in
+        web-tooling-benchmark. While our DFG and FTL has Array#indexOf optimization
+        and actually it is working well, C++ Array#indexOf is called significant amount
+        of time before tiering up, and it takes 6.74% of jsc main thread samples according
+        to perf command in Linux. This is because C++ Array#indexOf is too generic and
+        misses the chance to optimize JSArray cases.
+
+        This patch adds JSArray fast path for Array#indexOf. If we know that indexed
+        access to the given JSArray is non-observable and indexing type is good for the fast
+        path, we go to the fast path. This makes sampling of Array#indexOf 3.83% in
+        babylon web-tooling-benchmark.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncIndexOf):
+        * runtime/JSArray.h:
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::canDoFastIndexedAccess):
+        (JSC::toLength):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::JSValue):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::isArrayPrototypeIndexedAccessFastAndNonObservable):
+        (JSC::JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObservable):
+        * runtime/MathCommon.h:
+        (JSC::canBeStrictInt32):
+        (JSC::canBeInt32):
+
 2018-09-19  Michael Saboff  <msaboff@apple.com>
 
         Add functions to measure memory footprint to JSC

@@ -101,6 +101,7 @@ public:
     JSArray* fastSlice(ExecState&, unsigned startIndex, unsigned count);
 
     bool canFastCopy(VM&, JSArray* otherArray);
+    bool canDoFastIndexedAccess(VM&);
     // This function returns NonArray if the indexing types are not compatable for copying.
     IndexingType mergeIndexingTypeForCopying(IndexingType other);
     bool appendMemcpy(ExecState*, VM&, unsigned startIndex, JSArray* otherArray);

@@ -1156,23 +1156,84 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 15.4.4.14
-    JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
-    if (UNLIKELY(!thisObj))
-        return encodedJSValue();
-    unsigned length = toLength(exec, thisObj);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
+    if (UNLIKELY(!thisObject))
+        return { };
+    unsigned length = toLength(exec, thisObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     unsigned index = argumentClampedIndexFromStartOrEnd(exec, 1, length);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     JSValue searchElement = exec->argument(0);
+
+    if (isJSArray(thisObject)) {
+        JSArray* array = asArray(thisObject);
+        if (array->canDoFastIndexedAccess(vm)) {
+            switch (array->indexingType()) {
+            case ALL_INT32_INDEXING_TYPES: {
+                if (!searchElement.isNumber())
+                    return JSValue::encode(jsNumber(-1));
+                JSValue searchInt32;
+                if (searchElement.isInt32())
+                    searchInt32 = searchElement;
+                else {
+                    double searchNumber = searchElement.asNumber();
+                    if (!canBeInt32(searchNumber))
+                        return JSValue::encode(jsNumber(-1));
+                    searchInt32 = jsNumber(static_cast<int32_t>(searchNumber));
+                }
+                auto& butterfly = *array->butterfly();
+                auto data = butterfly.contiguous().data();
+                for (; index < length; ++index) {
+                    // Array#indexOf uses `===` semantics (not HashMap isEqual semantics).
+                    // And the hole never matches against Int32 value.
+                    if (searchInt32 == data[index].get())
+                        return JSValue::encode(jsNumber(index));
+                }
+                return JSValue::encode(jsNumber(-1));
+            }
+            case ALL_CONTIGUOUS_INDEXING_TYPES: {
+                auto& butterfly = *array->butterfly();
+                auto data = butterfly.contiguous().data();
+                for (; index < length; ++index) {
+                    JSValue value = data[index].get();
+                    if (!value)
+                        continue;
+                    bool isEqual = JSValue::strictEqual(exec, searchElement, value);
+                    RETURN_IF_EXCEPTION(scope, { });
+                    if (isEqual)
+                        return JSValue::encode(jsNumber(index));
+                }
+                return JSValue::encode(jsNumber(-1));
+            }
+            case ALL_DOUBLE_INDEXING_TYPES: {
+                if (!searchElement.isNumber())
+                    return JSValue::encode(jsNumber(-1));
+                double searchNumber = searchElement.asNumber();
+                auto& butterfly = *array->butterfly();
+                auto data = butterfly.contiguousDouble().data();
+                for (; index < length; ++index) {
+                    // Array#indexOf uses `===` semantics (not HashMap isEqual semantics).
+                    // And the hole never matches since it is NaN.
+                    if (data[index] == searchNumber)
+                        return JSValue::encode(jsNumber(index));
+                }
+                return JSValue::encode(jsNumber(-1));
+            }
+            default:
+                break;
+            }
+        }
+    }
+
     for (; index < length; ++index) {
-        JSValue e = getProperty(exec, thisObj, index);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        JSValue e = getProperty(exec, thisObject, index);
+        RETURN_IF_EXCEPTION(scope, { });
         if (!e)
             continue;
         bool isEqual = JSValue::strictEqual(exec, searchElement, e);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        RETURN_IF_EXCEPTION(scope, { });
         if (isEqual)
             return JSValue::encode(jsNumber(index));
     }

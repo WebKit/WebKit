@@ -178,6 +178,19 @@ inline std::optional<double> safeReciprocalForDivByConst(double constant)
     return reciprocal;
 }
 
+ALWAYS_INLINE bool canBeStrictInt32(double value)
+{
+    // Note: while this behavior is undefined for NaN and inf, the subsequent statement will catch these cases.
+    const int32_t asInt32 = static_cast<int32_t>(value);
+    return !(asInt32 != value || (!asInt32 && std::signbit(value))); // true for -0.0
+}
+
+ALWAYS_INLINE bool canBeInt32(double value)
+{
+    // Note: Strictly speaking this is an undefined behavior.
+    return static_cast<int32_t>(value) == value;
+}
+
 extern "C" {
 double JIT_OPERATION jsRound(double value) REFERENCED_FROM_ASM WTF_INTERNAL;
 

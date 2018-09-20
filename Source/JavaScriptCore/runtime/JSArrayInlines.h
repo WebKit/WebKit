@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "ArrayPrototype.h"
 #include "Error.h"
 #include "JSArray.h"
 #include "JSCellInlines.h"
@@ -70,11 +71,31 @@ inline bool JSArray::canFastCopy(VM& vm, JSArray* otherArray)
     return true;
 }
 
+inline bool JSArray::canDoFastIndexedAccess(VM& vm)
+{
+    JSGlobalObject* globalObject = this->globalObject();
+    if (!globalObject->isArrayPrototypeIndexedAccessFastAndNonObservable())
+        return false;
+
+    Structure* structure = this->structure(vm);
+    // This is the fast case. Many arrays will be an original array.
+    if (globalObject->isOriginalArrayStructure(structure))
+        return true;
+
+    if (structure->mayInterceptIndexedAccesses())
+        return false;
+
+    if (getPrototypeDirect(vm) != globalObject->arrayPrototype())
+        return false;
+
+    return true;
+}
+
 ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (isJSArray(obj))
+    if (LIKELY(isJSArray(obj)))
         return jsCast<JSArray*>(obj)->length();
 
     JSValue lengthValue = obj->get(exec, vm.propertyNames->length);

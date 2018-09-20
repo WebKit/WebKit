@@ -52,6 +52,11 @@ ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSane()
         && objectPrototypeIsSane();
 }
 
+ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIndexedAccessFastAndNonObservable()
+{
+    // We're fast if we don't have any indexed properties on the prototype.
+    return !isHavingABadTime() && arrayPrototypeChainIsSane();
+}
 
 ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObservable()
 {
@@ -63,7 +68,7 @@ ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObs
     // carefully set up watchpoints to have correct ordering while JS code is
     // executing concurrently.
 
-    return arrayIteratorProtocolWatchpoint().isStillValid() && !isHavingABadTime() && arrayPrototypeChainIsSane();
+    return arrayIteratorProtocolWatchpoint().isStillValid() && isArrayPrototypeIndexedAccessFastAndNonObservable();
 }
 
 // We're non-observable if the iteration protocol hasn't changed.
