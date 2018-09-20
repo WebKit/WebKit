@@ -88,3 +88,9 @@
     display: block;
     margin-top: 8px;
 }
+
+@media (prefers-dark-interface) {
+    .new-tab.tab.content-view {
+        background-color: var(--background-color-content);
+    }
+}

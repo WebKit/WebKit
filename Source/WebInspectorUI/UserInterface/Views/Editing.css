@@ -51,3 +51,14 @@
 .editing br {
     display: none;
 }
+
+@media (prefers-dark-interface) {
+    .editing {
+        background-color: var(--background-color-secondary);
+        outline-color: var(--text-color-tertiary) !important;
+    }
+
+    .editing, .editing * {
+        color: var(--text-color-active) !important;
+    }
+}

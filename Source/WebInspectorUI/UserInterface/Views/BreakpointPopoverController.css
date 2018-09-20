@@ -89,3 +89,17 @@ body[dir=rtl] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover
     margin-right: 0;
     margin-left: var(--edit-breakpoint-popover-option-margin-end);
 }
+
+@media (prefers-dark-interface) {
+    .popover .edit-breakpoint-popover-content > label.toggle {
+        color: unset;
+    }
+
+    .popover .edit-breakpoint-popover-content > table > tr > th {
+        color: var(--text-color-secondary);
+    }
+
+    .edit-breakpoint-popover-condition {
+        background: var(--background-color-code);
+    }
+}

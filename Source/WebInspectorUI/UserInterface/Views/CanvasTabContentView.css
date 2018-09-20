@@ -42,3 +42,20 @@
 .content-view.tab.canvas .navigation-bar > .item .shader-program > .icon {
     content: image-set(url(../Images/DocumentGL.png) 1x, url(../Images/DocumentGL@2x.png) 2x);
 }
+
+@media (prefers-dark-interface) {
+    .content-view.tab.canvas .navigation-bar > .item .canvas-overview .icon {
+        filter: invert(88%);
+    }
+
+    .content-view.tab.canvas .navigation-bar > .item .canvas.canvas-2d .icon,
+    .content-view.tab.canvas .navigation-bar > .item .canvas.webgl .icon,
+    .content-view.tab.canvas .navigation-bar > .item .recording > .icon {
+        filter: invert();
+    }
+
+    .content-view.canvas > .preview > img,
+    .content-view.canvas .preview-container > canvas {
+        background-color: white;
+    }
+}

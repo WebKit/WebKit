@@ -115,3 +115,9 @@ body[dir=rtl] .scope-bar > li.multiple > .arrows {
 .scope-bar > li.selected:active {
     background-color: var(--selected-background-color-active);
 }
+
+@media (prefers-dark-interface) {
+    .scope-bar > li {
+        color: var(--text-color);
+    }
+}

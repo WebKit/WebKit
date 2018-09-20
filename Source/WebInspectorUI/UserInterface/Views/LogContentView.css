@@ -241,3 +241,80 @@ body[dir=rtl] .log-scope-bar > li.unread::before {
         /* Accessible label alternative for icon indicating console input/output/warning/error, etc. */
         alt: attr(data-labelprefix);
 }
+
+@media (prefers-dark-interface) {
+    .console-messages {
+        background-color: var(--background-color-code);
+    }
+
+    .console-item {
+        border-top-color: var(--console-message-separator);
+    }
+
+    .console-messages {
+        --background-color-selected: hsl(233, 30%, 30%);
+        --border-color-selected: hsl(224, 30%, 35%);
+        --border-color-error: hsla(20, 100%, 50%, 0.12);
+        --border-color-warning: hsla(40, 100%, 50%, 0.12);
+    }
+
+    .console-messages:focus .console-item.selected {
+        background-color: var(--background-color-selected);
+        border-color: var(--border-color-selected);
+    }
+
+    .console-messages:focus .console-item.selected + .console-item {
+        border-color: var(--border-color-selected);
+    }
+
+    .console-session:first-of-type .console-session-header {
+        color: var(--text-color-tertiary);
+    }
+
+    .console-session:not(:first-of-type) .console-session-header {
+        color: unset;
+        background-color: unset;
+    }
+
+    .console-messages a {
+        color: var(--selected-secondary-text-color);
+        cursor: pointer;
+    }
+
+    .console-messages a:hover {
+        color: var(--selected-secondary-text-color-active);
+    }
+
+    .console-messages:focus .console-item.selected::after {
+        background: hsl(210, 100%, 75%);
+    }
+
+    .console-error-level {
+        background-color: var(--error-background-color);
+        border-color: var(--border-color-error);
+    }
+
+    .console-error-level:not(.filtered-out, .filtered-out-by-search), .console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+        border-top-color: var(--border-color-error);
+    }
+
+    .console-warning-level {
+        background-color: var(--warning-background-color);
+        border-color: var(--border-color-warning);
+    }
+
+    .console-warning-level:not(.filtered-out, .filtered-out-by-search), .console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+        border-top-color: var(--border-color-warning);
+    }
+
+    .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted {
+        color: var(--search-highlight-text-color);
+        background-color: var(--search-highlight-background-color);
+        border-bottom-color: var(--search-highlight-underline-color);
+    }
+
+    .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected {
+        color: var(--search-highlight-text-color-active);
+        background-color: var(--search-highlight-background-color-active);
+    }
+}

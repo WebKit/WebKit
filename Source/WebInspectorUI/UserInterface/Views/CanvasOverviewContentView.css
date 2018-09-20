@@ -186,3 +186,40 @@
 .popover-content > .tree-outline .item.recording:hover > .icon {
     filter: invert();
 }
+
+@media (prefers-dark-interface) {
+    .content-view.canvas-overview {
+        background-color: unset;
+    }
+
+    .content-view.canvas-overview .content-view.canvas {
+        background-color: var(--background-color-secondary);
+    }
+
+    .content-view.canvas-overview .content-view.canvas.is-recording {
+        --recording-color: hsl(0, 100%, 39%);
+        border-color: var(--recording-color);
+    }
+
+    .content-view.canvas-overview .content-view.canvas.is-recording > header {
+        background-color: var(--recording-color);
+    }
+
+    .content-view.canvas-overview .content-view.canvas > header > .titles > .title {
+        color: var(--text-color);
+    }
+
+    .content-view.canvas-overview .content-view.canvas > header > .titles > .subtitle,
+    .content-view.canvas-overview .content-view.canvas > footer .memory-cost {
+        color: var(--text-color-secondary);
+    }
+
+    .content-view.canvas-overview .content-view.canvas > footer > .recordings::before {
+        filter: invert();
+    }
+
+    .content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .subtitle {
+        color: unset;
+        opacity: 0.5
+    }
+}

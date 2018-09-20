@@ -54,3 +54,17 @@
     height: 24px;
     margin: 0 auto;
 }
+
+@media (prefers-dark-interface) {
+    .progress-view > .titles > .title {
+        color: var(--text-color-secondary);
+    }
+
+    .progress-view > .titles > .subtitle {
+        color: var(--text-color-tertiary);
+    }
+
+    .indeterminate-progress-spinner {
+        filter: invert();
+    }
+}

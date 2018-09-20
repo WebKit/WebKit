@@ -61,3 +61,23 @@ body.window-inactive .toolbar .item.button {
 body.window-inactive .toolbar .item.button.disabled {
     opacity: 0.35 !important;
 }
+
+@media (prefers-dark-interface) {
+    .toolbar .item.button {
+        color: var(--color-button);
+    }
+
+    .toolbar .item.button:not(.disabled):active {
+        color: var(--color-button-active);
+        background-image: none;
+        background: var(--button-background-color-pressed);
+    }
+
+    .toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) {
+        color: var(--glyph-color-active);
+    }
+
+    .toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated) {
+        color: var(--glyph-color-active-pressed);
+    }
+}

@@ -61,3 +61,11 @@ body[dir=rtl] .popover .xhr-breakpoint-content > .editor-wrapper > .editor {
     width: calc(100% - 2px);
     overflow: hidden;
 }
+
+@media (prefers-dark-interface) {
+    .popover .xhr-breakpoint-content > .editor-wrapper > .editor {
+        -webkit-appearance: unset;
+        border-color: var(--text-color-quaternary);
+        background: var(--background-color-code);
+    }
+}

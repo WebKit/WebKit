@@ -75,3 +75,13 @@
     background-color: var(--selected-background-color);
     color: white;
 }
+
+@media (prefers-dark-interface) {
+    .completion-suggestions {
+        background-color: var(--overlay-background);
+    }
+
+    .completion-suggestions-container > .item {
+        color: var(--text-color);
+    }
+}

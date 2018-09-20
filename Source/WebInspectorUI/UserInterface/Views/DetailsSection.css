@@ -332,3 +332,35 @@ body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to
         border-width: 0.5px !important;
     }
 }
+
+@media (prefers-dark-interface) {
+    .details-section > .header {
+        color: var(--text-color);
+    }
+
+    .details-section > .header > label {
+        color: var(--text-color-secondary);
+    }
+
+    .details-section .details-section,
+    .details-section .details-section > .header,
+    .details-section.computed-style-properties:not(.collapsed) > .header{
+        background-color: var(--background-color);
+    }
+
+    .details-section .details-section:not(.collapsed) > .header {
+        border-bottom-color: var(--border-color-secondary);
+    }
+
+    .details-section > .content > .group > .row.simple > .label {
+        color: var(--text-color-secondary);
+    }
+
+    .details-section > .content > .group:nth-child(even) {
+        background-color: unset;
+    }
+
+    .details-section > .content > .group > .row:matches(.empty, .text) {
+        color: var(--text-color-secondary);
+    }
+}

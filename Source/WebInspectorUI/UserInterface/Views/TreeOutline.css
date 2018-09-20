@@ -254,3 +254,9 @@ body[dir=rtl] .tree-outline .item .status {
 .tree-outline .item .alternate-subtitle::before {
     content: " — ";
 }
+
+@media (prefers-dark-interface) {
+    .tree-outline .item .subtitle {
+        color: var(--text-color-secondary);
+    }
+}

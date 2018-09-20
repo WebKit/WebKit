@@ -143,3 +143,13 @@ body[dir=rtl] .content-view.settings > .settings-view > .container > .editor-gro
     margin-left: var(--settings-input-number-margin-end);
     margin-right: var(--settings-input-number-margin-start);
 }
+
+@media (prefers-dark-interface) {
+    .content-view.settings .navigation-bar {
+        background-color: var(--background-color-content);
+    }
+
+    .content-view.settings .navigation-bar .item.radio.button.text-only.selected {
+        color: var(--glyph-color-active);
+    }
+}

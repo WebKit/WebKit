@@ -118,3 +118,9 @@
 .inline-swatch-variable-popover .CodeMirror pre {
     padding: 0 3px;
 }
+
+@media (prefers-dark-interface) {
+    .inline-swatch {
+        background: var(--background-color);
+    }
+}

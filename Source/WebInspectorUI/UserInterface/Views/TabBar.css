@@ -357,3 +357,63 @@ body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
     z-index: 2;
     pointer-events: none;
 }
+
+@media (prefers-dark-interface) {
+    .tab-bar {
+        background-image: none;
+        background-color: hsl(0, 0%, 23%);
+
+        --tab-item-border-color: hsl(0, 0%, 36%);
+
+        /* FIXME: <https://webkit.org/b/189769> Dark Mode: use semantic color names */
+        --tab-item-dark-border-color: var(--tab-item-border-color);
+        --tab-item-medium-border-color: var(--tab-item-border-color);
+        --tab-item-light-border-color: var(--tab-item-border-color);
+        --tab-item-extra-light-border-color: var(--tab-item-border-color);
+    }
+
+    .tab-bar > .item {
+        background-image: none;
+        background-color: hsl(0, 0%, 17%);
+    }
+
+    .tab-bar > .item > .title {
+        color: white !important;
+    }
+
+    .tab-bar > .item:not(.disabled).selected {
+        background-image: none;
+        background-color: hsl(0, 0%, 21%);
+        border-top-color: hsl(0, 0%, 37%);
+    }
+
+    .tab-bar:not(.animating) > .item:not(.selected):hover {
+        background-color: hsl(0, 0%, 15%);
+    }
+
+    .tab-bar > .item > .close,
+    .tab-bar > .item > .icon {
+        filter: var(--filter-invert);
+    }
+
+    body.window-inactive .tab-bar {
+        --tab-item-border-color: hsl(0, 0%, 34%);
+        border-bottom-color: var(--tab-item-border-color);
+
+        background-image: none !important;
+        background-color: hsl(0, 0%, 17%) !important;
+    }
+
+    body.window-inactive .tab-bar > .item {
+        background-image: none !important;
+        background-color: hsl(0, 0%, 17%) !important;
+    }
+
+    body.window-inactive .tab-bar > .item.selected {
+        background-color: var(--background-color) !important;
+    }
+
+    body.window-inactive .tab-bar > .item > .title {
+        color: hsl(0, 0%, 58%) !important;
+    }
+}

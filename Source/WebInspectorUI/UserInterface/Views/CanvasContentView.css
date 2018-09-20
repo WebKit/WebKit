@@ -54,3 +54,9 @@
     filter: grayscale();
     opacity: 0.5;
 }
+
+@media (prefers-dark-interface) {
+    .content-view.canvas:not(.tab) {
+        background-color: unset;
+    }
+}

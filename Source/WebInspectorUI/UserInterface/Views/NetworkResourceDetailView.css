@@ -85,3 +85,22 @@
     -webkit-user-select: text;
     white-space: nowrap;
 }
+
+@media (prefers-dark-interface) {
+    .network-resource-detail {
+        background-color: var(--background-color);
+    }
+
+    .network-resource-detail .item.close > .glyph {
+        background-color: hsla(0, 0%, 100%, 0.2);
+    }
+
+    .network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected {
+        background-color: unset;
+        color: var(--glyph-color-active);
+    }
+
+    .resource-headers .value {
+        color: var(--text-color);
+    }
+}

@@ -131,6 +131,15 @@
 }
 
 @media (prefers-dark-interface) {
+    .text-editor > .CodeMirror .execution-line {
+        background-color: hsla(89, 100%, 51%, 0.25) !important;
+    }
+
+    .text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext),
+    .text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext) + .CodeMirror-widget {
+        background-color: hsl(99, 85%, 30%);
+    }
+
     .text-editor > .CodeMirror .execution-line.primary .CodeMirror-linenumber::after {
         filter: brightness(0.9) saturate(2.8);
     }

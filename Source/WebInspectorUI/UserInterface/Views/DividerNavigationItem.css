@@ -37,3 +37,10 @@
         width: 0.5px;
     }
 }
+
+@media (prefers-dark-interface) {
+    .navigation-bar .item.divider {
+        --divider-background: hsl(0, 0%, 40%);
+        background-image: linear-gradient(var(--divider-background), var(--divider-background));
+    }
+}

@@ -222,3 +222,75 @@ body.latest-mac.window-inactive .toolbar .dashboard-container {
         display: none;
     }
 }
+
+@media (prefers-dark-interface) {
+    body .toolbar {
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 25%), hsl(0, 0%, 22%));
+        box-shadow: none;
+    }
+
+    body.window-inactive .toolbar {
+        background-color: var(--background-color);
+    }
+
+    body.latest-mac .toolbar .item.button,
+    body.latest-mac .toolbar .search-bar > input[type="search"] {
+        background-image: none;
+        background-color: var(--button-background-color);
+        border-color: var(--button-background-color);
+        border-top-color: hsla(0, 100%, 100%, 0.2);
+        box-shadow: none;
+    }
+
+    body.latest-mac .toolbar .search-bar > input[type="search"] {
+        color: var(--text-color);
+    }
+
+    body.latest-mac .toolbar .search-bar > input[type="search"]:focus {
+        color: var(--text-color-active);
+
+        /* FIXME: Use native outline for the default theme as well. */
+        box-shadow: unset;
+        transition: unset;
+        outline: -webkit-focus-ring-color auto 5px;
+        outline-offset: -3px;
+    }
+
+    body.latest-mac .toolbar .search-bar > input[type="search"]::placeholder {
+        color: var(--text-color-secondary);
+    }
+
+    body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"]::placeholder {
+        color: var(--text-color-tertiary);
+    }
+
+    body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"]::-webkit-search-results-button {
+        /* Setting `color` has no effect on the magnifying glass icon. */
+        opacity: 0.5;
+    }
+
+    body.latest-mac .toolbar .dashboard-container {
+        background-image: none;
+        background-color: var(--dashboard-background-color);
+        border-color: var(--dashboard-background-color);
+        border-top-color: hsla(0, 100%, 100%, 0.1);
+        box-shadow: none;
+    }
+
+    body.latest-mac .toolbar .item.button:active {
+        background-image: none;
+        border-top-color: hsla(0, 100%, 100%, 0.2);
+        box-shadow: none;
+    }
+
+    body.latest-mac.window-inactive .toolbar .item.button,
+    body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"],
+    body.latest-mac.window-inactive .toolbar .dashboard-container {
+        opacity: 1;
+        color: var(--glyph-color);
+        border-color: transparent;
+        border-top-color: hsla(0, 100%, 100%, 0.1);
+        background-image: none;
+        background: var(--button-background-color-inactive);
+    }
+}

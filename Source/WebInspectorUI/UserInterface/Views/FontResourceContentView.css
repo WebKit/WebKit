@@ -108,3 +108,30 @@ body[dir=rtl] .content-view.resource.font .preview > .line > .metric {
     vertical-align: bottom;
     background-color: lightgrey;
 }
+
+@media (prefers-dark-interface) {
+    .content-view.resource.font .preview > .line {
+        border-left-color: var(--text-color-quaternary);
+        border-right-color: var(--text-color-quaternary);
+    }
+
+    .content-view.resource.font .metric.top {
+        background-color: var(--text-color-quaternary);
+    }
+
+    .content-view.resource.font .metric.baseline {
+        background-color: hsl(195, 100%, 37%);
+    }
+
+    .content-view.resource.font .metric.middle {
+        background-color: hsl(120, 100%, 35%);
+    }
+
+    .content-view.resource.font .metric.xheight {
+        background-color: hsl(350, 100%, 40%);
+    }
+
+    .content-view.resource.font .metric.bottom {
+        background-color: var(--text-color-quaternary);
+    }
+}

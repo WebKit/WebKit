@@ -165,3 +165,9 @@ body[dir=rtl] .network-table .cell.name > .status {
 .waterfall .block.response {
     background-color: var(--network-response-color);
 }
+
+@media (prefers-dark-interface) {
+    .network-table .cell.domain > .lock {
+        filter: var(--filter-invert);
+    }
+}

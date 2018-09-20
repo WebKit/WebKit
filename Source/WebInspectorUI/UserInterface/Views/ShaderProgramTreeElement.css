@@ -40,3 +40,9 @@
 .item.shader-program.disabled > * {
     opacity: 0.5;
 }
+
+@media (prefers-dark-interface) {
+    .item.shader-program .status > img {
+        filter: invert();
+    }
+}

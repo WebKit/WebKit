@@ -54,3 +54,9 @@
 .data-grid.timeline td.graph-column .timeline-record-bar {
     top: 2px;
 }
+
+@media (prefers-dark-interface) {
+    .data-grid th:matches(.sort-ascending, .sort-descending) {
+        background: var(--background-color-selected);
+    }
+}

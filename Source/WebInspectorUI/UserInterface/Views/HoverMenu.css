@@ -65,3 +65,9 @@
 .hover-menu.visible > img {
     pointer-events: all;
 }
+
+@media (prefers-dark-interface) {
+    .hover-menu > svg > :matches(path, rect) {
+        stroke: hsla(0, 0%, 100%, 0.3);
+    }
+}

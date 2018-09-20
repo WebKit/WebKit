@@ -86,3 +86,18 @@
     position: absolute;
     z-index: 10;
 }
+
+@media (prefers-dark-interface) {
+    .content-view:not(.tab).recording {
+        background-color: unset;
+    }
+
+    .content-view:not(.tab).recording > header > .slider-container {
+        background-color: unset;
+        border-color: var(--border-color-secondary);
+    }
+
+    .content-view:not(.tab).recording > header > .slider-container > input[type=range] {
+        background: none;
+    }
+}

@@ -1,3 +1,385 @@
+2018-09-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: move DarkMode.css rules into appropriate CSS files
+        https://bugs.webkit.org/show_bug.cgi?id=189673
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/BezierEditor.css:
+        (@media (prefers-dark-interface)):
+        (.bezier-editor > .bezier-preview-timing):
+        (.bezier-editor > .bezier-container .bezier-curve):
+        (.bezier-editor > .bezier-container .linear-curve):
+        (.bezier-editor > .bezier-preview):
+        (.bezier-editor > .bezier-preview > div):
+        (.bezier-editor > .bezier-container .control-handle):
+        (.bezier-editor > .bezier-container .control-line):
+        * UserInterface/Views/BreakpointActionView.css:
+        (@media (prefers-dark-interface)):
+        (.breakpoint-action-block-body):
+        (.breakpoint-action-block-body > .description):
+        (.breakpoint-action-append-button,):
+        (.breakpoint-action-eval-editor):
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (@media (prefers-dark-interface)):
+        (.popover .edit-breakpoint-popover-content > label.toggle):
+        (.popover .edit-breakpoint-popover-content > table > tr > th):
+        (.edit-breakpoint-popover-condition):
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (@media (prefers-dark-interface)):
+        (.navigation-bar .item.button):
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (@media (prefers-dark-interface)):
+        (.toolbar .item.button):
+        (.toolbar .item.button:not(.disabled):active):
+        (.toolbar .item.button:not(.disabled):matches(:focus, .activate.activated)):
+        (.toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated)):
+        * UserInterface/Views/CallFrameView.css:
+        (@media (prefers-dark-interface)):
+        (.call-frame .subtitle,):
+        (.call-frame:hover .subtitle .source-link,):
+        (.call-frame .separator):
+        * UserInterface/Views/CanvasContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.canvas:not(.tab)):
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.canvas-overview):
+        (.content-view.canvas-overview .content-view.canvas):
+        (.content-view.canvas-overview .content-view.canvas.is-recording):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header):
+        (.content-view.canvas-overview .content-view.canvas > header > .titles > .title):
+        (.content-view.canvas-overview .content-view.canvas > header > .titles > .subtitle,):
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings::before):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .subtitle):
+        * UserInterface/Views/CanvasTabContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.tab.canvas .navigation-bar > .item .canvas-overview .icon):
+        (.content-view.tab.canvas .navigation-bar > .item .canvas.canvas-2d .icon,):
+        (.content-view.canvas > .preview > img,):
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (@media (prefers-dark-interface)):
+        (.CodeMirror-cursor):
+        (.CodeMirror .CodeMirror-gutters):
+        (.cm-s-default .cm-link):
+        (.CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket):
+        * UserInterface/Views/CompletionSuggestionsView.css:
+        (@media (prefers-dark-interface)):
+        (.completion-suggestions):
+        (.completion-suggestions-container > .item):
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (@media (prefers-dark-interface)):
+        (.computed-style-properties.details-section):
+        (.details-section.style-box-model:not(.collapsed) > :matches(.header, .content)):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (@media (prefers-dark-interface)):
+        (.console-message .syntax-highlighted):
+        (.console-warning-level .console-message-text):
+        (.console-error-level .console-message-text):
+        (.console-user-command > .console-message-text):
+        (.console-message .repeat-count):
+        * UserInterface/Views/ConsolePrompt.css:
+        (@media (prefers-dark-interface)):
+        (.console-prompt):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css:
+        (@media (prefers-dark-interface)):
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:hover):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (@media (prefers-dark-interface)):
+        (.tree-outline.dom):
+        (.tree-outline.dom li.elements-drag-over .selection-area):
+        (.tree-outline.dom li.selected .selection-area):
+        (.tree-outline.dom:focus li.selected .selection-area):
+        (.tree-outline.dom li.selected + ol.children.expanded):
+        (.tree-outline.dom .shadow):
+        (.tree-outline.dom li.parent.shadow + ol.children.expanded,):
+        (.showing-find-banner .tree-outline.dom .search-highlight):
+        * UserInterface/Views/DarkMode.css: Removed.
+        * UserInterface/Views/DataGrid.css:
+        (@media (prefers-dark-interface)):
+        (.data-grid th):
+        (.data-grid td .subtitle):
+        (.data-grid:matches(:focus, .force-focus) tr.selected td .subtitle):
+        (body:not(.window-inactive, .window-docked-inactive) .data-grid:matches(:focus, .force-focus) tr.editable.selected .cell-content > input):
+        (.data-grid tr.editable .cell-content > input):
+        (.data-grid td.spanning):
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (@media (prefers-dark-interface)):
+        (.toolbar .dashboard.debugger):
+        (.dashboard.debugger .navigation-bar .item.button > .glyph):
+        (.dashboard.debugger > .location .function-name):
+        (.dashboard.debugger > .location .go-to-link):
+        (.dashboard.debugger > .divider):
+        * UserInterface/Views/DefaultDashboardView.css:
+        (@media (prefers-dark-interface)):
+        (.toolbar .dashboard.default > .item > div):
+        (.toolbar .dashboard.default > .item.enabled > div):
+        (.toolbar .dashboard.default > .item.enabled:hover):
+        (.toolbar .dashboard.default > .item.enabled:hover > div):
+        (.toolbar .dashboard.default > .resourcesCount > img,):
+        (body.latest-mac .toolbar .dashboard .item.button):
+        (.dashboard-container .advance-arrow):
+        * UserInterface/Views/DetailsSection.css:
+        (@media (prefers-dark-interface)):
+        (.details-section > .header):
+        (.details-section > .header > label):
+        (.details-section .details-section,):
+        (.details-section .details-section:not(.collapsed) > .header):
+        (.details-section > .content > .group > .row.simple > .label):
+        (.details-section > .content > .group:nth-child(even)):
+        (.details-section > .content > .group > .row:matches(.empty, .text)):
+        * UserInterface/Views/DividerNavigationItem.css:
+        (@media (prefers-dark-interface)):
+        (.navigation-bar .item.divider):
+        * UserInterface/Views/Editing.css:
+        (@media (prefers-dark-interface)):
+        (.editing):
+        (.editing, .editing *):
+        * UserInterface/Views/FindBanner.css:
+        (@media (prefers-dark-interface)):
+        (.find-banner > input[type="search"]):
+        (.find-banner.console-find-banner > input[type=search]:not(:placeholder-shown)):
+        * UserInterface/Views/FontResourceContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.resource.font .preview > .line):
+        (.content-view.resource.font .metric.top):
+        (.content-view.resource.font .metric.baseline):
+        (.content-view.resource.font .metric.middle):
+        (.content-view.resource.font .metric.xheight):
+        (.content-view.resource.font .metric.bottom):
+        * UserInterface/Views/FormattedValue.css:
+        (@media (prefers-dark-interface)):
+        (.formatted-object,):
+        (.formatted-null,):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (@media (prefers-dark-interface)):
+        (.sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        * UserInterface/Views/HoverMenu.css:
+        (@media (prefers-dark-interface)):
+        (.hover-menu > svg > :matches(path, rect)):
+        * UserInterface/Views/ImageResourceContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.resource.image):
+        * UserInterface/Views/InlineSwatch.css:
+        (@media (prefers-dark-interface)):
+        (.inline-swatch):
+        * UserInterface/Views/LogContentView.css:
+        (@media (prefers-dark-interface)):
+        (.console-messages):
+        (.console-item):
+        (.console-messages:focus .console-item.selected):
+        (.console-messages:focus .console-item.selected + .console-item):
+        (.console-session:first-of-type .console-session-header):
+        (.console-session:not(:first-of-type) .console-session-header):
+        (.console-messages a):
+        (.console-messages a:hover):
+        (.console-messages:focus .console-item.selected::after):
+        (.console-error-level):
+        (.console-error-level:not(.filtered-out, .filtered-out-by-search), .console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item):
+        (.console-warning-level):
+        (.console-warning-level:not(.filtered-out, .filtered-out-by-search), .console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item):
+        (.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted):
+        (.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected):
+        * UserInterface/Views/Main.css:
+        (#main):
+        (@media (prefers-dark-interface)):
+        (.go-to-arrow):
+        (.resource-link,):
+        (.expand-list-button):
+        (:matches(img, canvas).show-grid):
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (@media (prefers-dark-interface)):
+        (.network-resource-detail):
+        (.network-resource-detail .item.close > .glyph):
+        (.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected):
+        (.resource-headers .value):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (@media (prefers-dark-interface)):
+        (.network-table .cell.domain > .lock):
+        * UserInterface/Views/NewTabContentView.css:
+        (@media (prefers-dark-interface)):
+        (.new-tab.tab.content-view):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (@media (prefers-dark-interface)):
+        (.object-tree-property .getter,):
+        (.item.object-tree-property.prototype-property):
+        (.object-tree-property.prototype-property:hover,):
+        (.object-tree-property .value.error):
+        * UserInterface/Views/ObjectTreeView.css:
+        (@media (prefers-dark-interface)):
+        (.object-tree,):
+        (.object-preview .name):
+        (.object-preview > .size):
+        * UserInterface/Views/OpenResourceDialog.css:
+        (@media (prefers-dark-interface)):
+        (.open-resource-dialog):
+        (.open-resource-dialog > .field > input):
+        (.open-resource-dialog > .field > input::placeholder):
+        (.open-resource-dialog > .tree-outline .item.selected):
+        (.open-resource-dialog > .field::before):
+        * UserInterface/Views/ProgressView.css:
+        (@media (prefers-dark-interface)):
+        (.progress-view > .titles > .title):
+        (.progress-view > .titles > .subtitle):
+        (.indeterminate-progress-spinner):
+        * UserInterface/Views/QuickConsole.css:
+        (@media (prefers-dark-interface)):
+        (.quick-console):
+        (.CodeMirror .jump-to-symbol-highlight,):
+        (.quick-console.showing-log):
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (@media (prefers-dark-interface)):
+        (.item.action:not(.initial-state)::before):
+        (.tree-outline .item.action.visual:not(.selected, .invalid)):
+        (.item.action:not(.initial-state) > .icon):
+        (.tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon):
+        * UserInterface/Views/RecordingContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view:not(.tab).recording):
+        (.content-view:not(.tab).recording > header > .slider-container):
+        (.content-view:not(.tab).recording > header > .slider-container > input[type=range]):
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.css:
+        (@media (prefers-dark-interface)):
+        (.sidebar > .panel.details.recording-state > .content > .data-grid tr.modified):
+        * UserInterface/Views/ResourceHeadersContentView.css:
+        (@media (prefers-dark-interface)):
+        (.resource-headers .value):
+        * UserInterface/Views/ResourceSizesContentView.css:
+        (@media (prefers-dark-interface)):
+        (.resource-sizes > .content .label):
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (@media (prefers-dark-interface)):
+        (.popover.waterfall-popover):
+        (.resource-timing-breakdown > table > tr.header:not(.total-row) > td):
+        (.resource-timing-breakdown > table > tr > td.label,):
+        (.resource-timing-breakdown > table hr):
+        * UserInterface/Views/ScopeBar.css:
+        (@media (prefers-dark-interface)):
+        (.scope-bar > li):
+        * UserInterface/Views/SearchBar.css:
+        (@media (prefers-dark-interface)):
+        (:matches(.search-bar, .filter-bar) > input[type="search"],):
+        (:matches(.search-bar, .filter-bar) > input[type="search"]::placeholder):
+        (:matches(.search-bar, .filter-bar) > input[type="search"]:focus):
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (@media all):
+        * UserInterface/Views/SettingsTabContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.settings .navigation-bar):
+        (.content-view.settings .navigation-bar .item.radio.button.text-only.selected):
+        * UserInterface/Views/ShaderProgramContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.shader-program > .text-editor.shader):
+        (.content-view.shader-program > .text-editor.shader > .type-title):
+        * UserInterface/Views/ShaderProgramTreeElement.css:
+        (@media (prefers-dark-interface)):
+        (.item.shader-program .status > img):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (@media (prefers-dark-interface)):
+        (.source-code.text-editor > .CodeMirror .error):
+        (.source-code.text-editor > .CodeMirror .warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget):
+        (.source-code.text-editor > .CodeMirror .issue-widget.warning,):
+        (.source-code.text-editor > .CodeMirror .issue-widget.error,):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (@media (prefers-dark-interface)):
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .value):
+        (.spreadsheet-style-declaration-editor :matches(.name, .value).editing):
+        (.spreadsheet-style-declaration-editor .property.has-warning):
+        (.spreadsheet-style-declaration-editor .property.has-warning .warning):
+        (.spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) .content > *):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (@media (prefers-dark-interface)):
+        (.spreadsheet-css-declaration):
+        (.spreadsheet-css-declaration.locked):
+        (.spreadsheet-css-declaration .selector.style-attribute):
+        (.spreadsheet-css-declaration .selector:focus,):
+        (.spreadsheet-css-declaration.locked .origin::after):
+        (.spreadsheet-css-declaration .origin .go-to-link,):
+        (.spreadsheet-css-declaration .media-label):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css:
+        (@media (prefers-dark-interface)):
+        (.spreadsheet-style-panel .section-header):
+        (.spreadsheet-style-panel .section-header .node-link:hover):
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (@media (prefers-dark-interface)):
+        (.syntax-highlighted,):
+        (.cm-s-default,):
+        (.cm-s-default .cm-attribute):
+        (.cm-s-default .cm-m-xml.cm-attribute,):
+        (.cm-s-default .cm-meta):
+        (.cm-s-default .cm-variable-3):
+        (.cm-s-default .cm-builtin):
+        * UserInterface/Views/TabBar.css:
+        (@media (prefers-dark-interface)):
+        (.tab-bar):
+        (.tab-bar > .item):
+        (.tab-bar > .item > .title):
+        (.tab-bar > .item:not(.disabled).selected):
+        (.tab-bar:not(.animating) > .item:not(.selected):hover):
+        (.tab-bar > .item > .close,):
+        (body.window-inactive .tab-bar):
+        (body.window-inactive .tab-bar > .item):
+        (body.window-inactive .tab-bar > .item.selected):
+        (body.window-inactive .tab-bar > .item > .title):
+        * UserInterface/Views/Table.css:
+        (@media (prefers-dark-interface)):
+        (.table,):
+        (.table > .header > .sortable:active):
+        (.table > .header > :matches(.sort-ascending, .sort-descending)):
+        (.table > .header > :matches(.sort-ascending, .sort-descending)::after):
+        * UserInterface/Views/TextEditor.css:
+        (@media (prefers-dark-interface)):
+        (.text-editor > .CodeMirror .execution-line):
+        (.text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext),):
+        * UserInterface/Views/TimelineDataGrid.css:
+        (@media (prefers-dark-interface)):
+        (.data-grid th:matches(.sort-ascending, .sort-descending)):
+        * UserInterface/Views/TimelineIcons.css:
+        (@media (prefers-dark-interface)):
+        (.time-icon .icon):
+        * UserInterface/Views/TimelineOverview.css:
+        (@media (prefers-dark-interface)):
+        (.timeline-overview > .navigation-bar.timelines):
+        (.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even)):
+        (.timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),):
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows):
+        * UserInterface/Views/Toolbar.css:
+        (@media (prefers-dark-interface)):
+        (body .toolbar):
+        (body.window-inactive .toolbar):
+        (body.latest-mac .toolbar .item.button,):
+        (body.latest-mac .toolbar .search-bar > input[type="search"]):
+        (body.latest-mac .toolbar .search-bar > input[type="search"]:focus):
+        (body.latest-mac .toolbar .search-bar > input[type="search"]::placeholder):
+        (body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"]::placeholder):
+        (body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"]::-webkit-search-results-button):
+        (body.latest-mac .toolbar .dashboard-container):
+        (body.latest-mac .toolbar .item.button:active):
+        (body.latest-mac.window-inactive .toolbar .item.button,):
+        * UserInterface/Views/TreeOutline.css:
+        (@media (prefers-dark-interface)):
+        (.tree-outline .item .subtitle):
+        * UserInterface/Views/Variables.css:
+        (@media (prefers-dark-interface)):
+        (:root):
+        (body.window-inactive):
+        (body.window-inactive *):
+        * UserInterface/Views/WebSocketContentView.css:
+        (@media (prefers-dark-interface)):
+        (.web-socket.content-view .data-grid table.data tr.revealed):
+        (.web-socket.content-view .data-grid.variable-height-rows table.data tr.outgoing):
+        (.web-socket.content-view .data-grid.variable-height-rows table.data tr.non-text-frame):
+        * UserInterface/Views/XHRBreakpointPopover.css:
+        (@media (prefers-dark-interface)):
+        (.popover .xhr-breakpoint-content > .editor-wrapper > .editor):
+
 2018-09-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: generate CSSKeywordCompletions from backend values

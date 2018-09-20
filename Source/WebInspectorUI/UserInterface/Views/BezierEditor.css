@@ -149,3 +149,33 @@ body[dir=ltr] .bezier-editor > .number-input-container > input {
 body[dir=rtl] .bezier-editor > .number-input-container > input {
     padding-right: var(--bezier-editor-number-input-padding-start);
 }
+
+@media (prefers-dark-interface) {
+    .bezier-editor > .bezier-preview-timing {
+        border-top-color: var(--text-color-tertiary);
+    }
+
+    .bezier-editor > .bezier-container .bezier-curve {
+        stroke: white;
+    }
+
+    .bezier-editor > .bezier-container .linear-curve {
+        stroke: var(--text-color-tertiary);
+    }
+
+    .bezier-editor > .bezier-preview {
+        border-bottom-color: var(--text-color-tertiary);
+    }
+
+    .bezier-editor > .bezier-preview > div {
+        background-color: var(--selected-background-color-active);
+    }
+
+    .bezier-editor > .bezier-container .control-handle {
+        fill: var(--selected-background-color-active);
+    }
+
+    .bezier-editor > .bezier-container .control-line {
+        stroke: var(--selected-background-color-active);
+    }
+}

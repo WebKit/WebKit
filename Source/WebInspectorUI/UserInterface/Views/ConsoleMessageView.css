@@ -280,3 +280,25 @@
 .console-top-level-message .object-tree .object-tree {
     display: inline-block;
 }
+
+@media (prefers-dark-interface) {
+    .console-message .syntax-highlighted {
+        background-color: unset;
+    }
+
+    .console-warning-level .console-message-text {
+        color: hsl(53, 80%, 55%);
+    }
+
+    .console-error-level .console-message-text {
+        color: hsl(10, 100%, 70%);
+    }
+
+    .console-user-command > .console-message-text {
+        color: hsl(209, 100%, 70%);
+    }
+
+    .console-message .repeat-count {
+        background-color: hsl(218, 70%, 48%);
+    }
+}

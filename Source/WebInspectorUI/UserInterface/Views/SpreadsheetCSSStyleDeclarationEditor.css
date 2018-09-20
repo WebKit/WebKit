@@ -150,3 +150,26 @@
 .spreadsheet-style-declaration-editor .property:not(.disabled) .token-comment {
     color: var(--syntax-highlight-comment-color);
 }
+
+@media (prefers-dark-interface) {
+    .spreadsheet-style-declaration-editor .property:not(.disabled) .value {
+        color: rgb(227, 227, 227)
+    }
+
+    .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
+        outline-color: var(--background-color-secondary) !important;
+    }
+
+    .spreadsheet-style-declaration-editor .property.has-warning {
+        background-color: hsl(2, 50%, 25%);
+    }
+
+    .spreadsheet-style-declaration-editor .property.has-warning .warning {
+        filter: invert(100%) hue-rotate(150deg);
+    }
+
+    .spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) .content > * {
+        text-decoration: line-through;
+        -webkit-text-decoration-color: hsla(0, 0%, var(--text-color), 0.6);
+    }
+}

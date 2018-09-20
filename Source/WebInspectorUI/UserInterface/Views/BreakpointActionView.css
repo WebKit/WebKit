@@ -111,3 +111,24 @@ body[dir=rtl] .breakpoint-action-block-body > .description {
     width: 336px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content.wide width */
     overflow: hidden;
 }
+
+@media (prefers-dark-interface) {
+    .breakpoint-action-block-body {
+        border-color: var(--text-color-quaternary);
+        background-color: unset;
+        box-shadow: unset;
+    }
+
+    .breakpoint-action-block-body > .description {
+        color: var(--text-color-secondary);
+    }
+
+    .breakpoint-action-append-button,
+    .breakpoint-action-remove-button {
+        filter: invert();
+    }
+
+    .breakpoint-action-eval-editor {
+        background: var(--background-color-code);
+    }
+}

@@ -315,4 +315,14 @@ body[dir=rtl] .find-banner.console-find-banner > input[type="search"]::-webkit-t
     .find-banner > button.segmented > .glyph {
         filter: invert();
     }
+
+    .find-banner > input[type="search"] {
+        background-color: var(--background-color-alternate);
+        border-color: var(--background-color-selected);
+    }
+
+    .find-banner.console-find-banner > input[type=search]:not(:placeholder-shown) {
+        color: unset;
+        background-color: unset;
+    }
 }

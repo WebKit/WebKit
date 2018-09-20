@@ -79,3 +79,19 @@ body[dir=rtl] .web-socket.content-view .icon {
     background-color: hsl(50, 100%, 90%);
     color: hsl(3, 96%, 27%);
 }
+
+@media (prefers-dark-interface) {
+    .web-socket.content-view .data-grid table.data tr.revealed {
+        border-bottom-color: hsla(0, 0%, var(--foreground-lightness), 0.1);
+    }
+
+    .web-socket.content-view .data-grid.variable-height-rows table.data tr.outgoing {
+        background-color: var(--green-highlight-background-color);
+        color: var(--green-highlight-text-color);
+    }
+
+    .web-socket.content-view .data-grid.variable-height-rows table.data tr.non-text-frame {
+        background-color: var(--yellow-highlight-background-color);
+        color: var(--yellow-highlight-text-color);
+    }
+}

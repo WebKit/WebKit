@@ -71,3 +71,22 @@
     top: 1px;
     height: 14px;
 }
+
+@media (prefers-dark-interface) {
+    .popover.waterfall-popover {
+        --popover-background-color: var(--panel-background-color);
+    }
+
+    .resource-timing-breakdown > table > tr.header:not(.total-row) > td {
+        color: var(--text-color);
+    }
+
+    .resource-timing-breakdown > table > tr > td.label,
+    .resource-timing-breakdown > table > tr > td.time {
+        color: var(--text-color-secondary);
+    }
+
+    .resource-timing-breakdown > table hr {
+        border-color: var(--text-color-quaternary);
+    }
+}

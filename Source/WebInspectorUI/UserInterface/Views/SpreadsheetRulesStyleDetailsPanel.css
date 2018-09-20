@@ -141,3 +141,14 @@
 .style-spreadsheet .declarations:hover input[type="checkbox"] {
     visibility: visible;
 }
+
+@media (prefers-dark-interface) {
+    .spreadsheet-style-panel .section-header {
+        color: var(--text-color-secondary);
+        border-bottom: 0.5px solid hsla(0, 0%, var(--background-color), 0.2);
+    }
+
+    .spreadsheet-style-panel .section-header .node-link:hover {
+        color: var(--text-color);
+    }
+}

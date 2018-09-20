@@ -132,3 +132,18 @@
 .object-tree-property :matches(.formatted-string, .formatted-regexp) {
     white-space: nowrap;
 }
+
+@media (prefers-dark-interface) {
+    .object-tree,
+    .object-preview {
+        color: var(--text-color);
+    }
+
+    .object-preview .name {
+        color: var(--syntax-highlight-boolean-color);
+    }
+
+    .object-preview > .size {
+        color: var(--console-secondary-text-color);
+    }
+}

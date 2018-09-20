@@ -116,3 +116,9 @@
 .heap-snapshot-record .icon {
     content: url(../Images/HeapSnapshot.svg);
 }
+
+@media (prefers-dark-interface) {
+    .time-icon .icon {
+        filter: invert();
+    }
+}

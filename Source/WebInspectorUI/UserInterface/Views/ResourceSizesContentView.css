@@ -116,3 +116,9 @@
     height: 10px;
     -webkit-margin-start: 3px;
 }
+
+@media (prefers-dark-interface) {
+    .resource-sizes > .content .label {
+        color: var(--text-color-secondary);
+    }
+}

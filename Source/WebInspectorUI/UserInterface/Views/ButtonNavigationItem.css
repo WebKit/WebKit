@@ -72,3 +72,9 @@
 .navigation-bar .item.button.disabled > .glyph {
     color: var(--glyph-color-disabled);
 }
+
+@media (prefers-dark-interface) {
+    .navigation-bar .item.button {
+        color: var(--text-color-secondary);
+    }
+}

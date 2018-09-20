@@ -77,3 +77,20 @@
     left: -1px;
     right: -2px;
 }
+
+@media (prefers-dark-interface) {
+    .formatted-object,
+    .formatted-node,
+    .formatted-error,
+    .formatted-map,
+    .formatted-set,
+    .formatted-weakmap,
+    .formatted-weakset {
+        color: var(--text-color);
+    }
+
+    .formatted-null,
+    .formatted-undefined {
+        color: var(--text-color-secondary);
+    }
+}

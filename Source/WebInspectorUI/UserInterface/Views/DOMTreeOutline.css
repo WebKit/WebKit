@@ -306,3 +306,41 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
 .highlight .selection-area {
     animation: "dom-tree-outline-highlight-fadeout" 2s;
 }
+
+@media (prefers-dark-interface) {
+    .tree-outline.dom {
+        color: var(--text-color);
+    }
+
+    .tree-outline.dom li.elements-drag-over .selection-area {
+        border-top-color: var(--selected-background-color);
+    }
+
+    .tree-outline.dom li.selected .selection-area {
+        background-color: var(--background-color-selected);
+    }
+
+    .tree-outline.dom:focus li.selected .selection-area {
+        background-color: var(--selected-background-color);
+    }
+
+    .tree-outline.dom li.selected + ol.children.expanded {
+        border-color: hsl(0, 0%, 27%);
+    }
+
+    .tree-outline.dom .shadow {
+        color: var(--text-color);
+    }
+
+    /* FIXME: extract this as a variable. It's slightly different from var(background-color-secondary),
+    but close enough for now. It needs to use partial translucency so that the selection area shines through. */
+    .tree-outline.dom li.parent.shadow + ol.children.expanded,
+    .tree-outline.dom li.parent.shadow::after {
+        background-color: hsla(0, 0%, 90%, 0.1);
+    }
+
+    .showing-find-banner .tree-outline.dom .search-highlight {
+        /* FIXME: This should use a variable. */
+        background-color: hsla(53, 83%, 53%, 0.8);
+    }
+}

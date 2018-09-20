@@ -213,3 +213,17 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .class-list-conta
 .sidebar > .panel.details.css-style > .content.filter-in-progress .filter-property-non-matching {
     opacity: 0.5;
 }
+
+@media (prefers-dark-interface) {
+    .sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label {
+        color: var(--text-color-secondary);
+    }
+
+    .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
+        filter: var(--filter-invert);
+    }
+
+    .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle{
+        color: var(--text-color);
+    }
+}

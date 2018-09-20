@@ -138,3 +138,135 @@ body.window-inactive * {
     --border-color: hsl(0, 0%, 85%);
     --border-color-dark: hsl(0, 0%, 72%);
 }
+
+@media (prefers-dark-interface) {
+
+    :root {
+        color: var(--text-color);
+
+        --text-color: hsl(0, 0%, 88%);
+        --text-color-active: white;
+        --text-color-secondary: hsl(0, 0%, 65%);
+
+        /* Disabled text/glyphs */
+        --text-color-tertiary: hsl(0, 0%, 50%);
+
+        /* Dividers, separators, background fills */
+        --text-color-quaternary: hsl(0, 0%, 33%);
+
+        /* Deprecated */
+        --text-color-gray-dark: hsl(0, 0%, 75%);
+        --text-color-gray-medium: var(--text-color-secondary);
+
+        --background-color: hsl(0, 0%, 24%);
+        --background-color-secondary: hsl(0, 0%, 27%);
+        --background-color-tertiary: hsl(0, 0%, 31%);
+
+        --background-color-content: hsl(0, 0%, 21%);
+        --background-color-code: hsl(0, 0%, 21%);
+
+        --background-color-alternate: hsla(0, 0%, var(--foreground-lightness), 0.05);
+        --background-color-selected: hsla(0, 0%, var(--foreground-lightness), 0.1);
+
+        --color-button: hsl(0, 0%, 99%);
+        --color-button-active: var(--text-color-active);
+
+        --selected-foreground-color: var(--text-color-active);
+        --selected-secondary-text-color: hsla(0, 0%, var(--foreground-lightness), 0.7);
+        --selected-secondary-text-color-active: hsla(0, 0%, var(--foreground-lightness), 0.85);
+        --selected-background-color: hsl(219, 80%, 43%);
+        --selected-background-color-unfocused: hsla(0, 0%, var(--foreground-lightness), 0.15);
+        --selected-background-color-active: hsl(218, 85%, 62%);
+        --selected-background-color-hover: hsla(212, 92%, 54%, 0.5);
+        --selected-background-color-highlight: hsla(0, 0%, 100%, 0.3);
+
+        --glyph-color: hsl(0, 0%, 80%);
+        --glyph-color-pressed: hsl(0, 0%, 100%);
+        --glyph-color-disabled: hsla(0, 0%, 80%, 0.4);
+        --glyph-color-active: hsl(212, 100%, 71%);
+        --glyph-color-active-pressed: hsl(212, 92%, 74%);
+        --glyph-color-inactive: hsl(0, 0%, 36%);
+
+        --border-color: hsl(0, 0%, 33%);
+        --border-color-dark: hsl(0, 0%, 37%); /* non-semantic variable names */
+
+        --border-color-secondary: hsl(0, 0%, 27%);
+
+        --button-background-color: hsl(0, 0%, 43%);
+        --button-background-color-hover: var(--button-background-color);
+        --button-background-color-pressed: hsl(0, 0%, 55%);
+        --button-background-color-inactive: hsl(0, 0%, 28%);
+
+        --dashboard-background-color: hsl(0, 0%, 36%);
+
+        --panel-background-color: hsl(0, 0%, 24%);
+        --panel-background-color-light: hsl(0, 0%, 29%);
+
+        --error-text-color: hsl(0, 86%, 65%);
+
+        --green-highlight-background-color: hsl(120, 15%, 28%);
+        --green-highlight-text-color: hsl(80, 75%, 80%);
+
+        --yellow-highlight-background-color: hsl(13, 20%, 26%);
+        --yellow-highlight-text-color: hsl(50, 96%, 87%);
+
+        --value-changed-highlight: var(--green-highlight-background-color);
+        --value-visual-highlight: var(--yellow-highlight-background-color);
+
+        --syntax-highlight-number-color: hsl(276, 100%, 85%);
+        --syntax-highlight-boolean-color: hsl(299, 71%, 80%);
+        --syntax-highlight-string-color: hsl(28, 84%, 63%);
+        --syntax-highlight-link-color: hsl(223, 100%, 77%);
+        --syntax-highlight-regexp-color: hsl(20, 100%, 64%);
+        --syntax-highlight-symbol-color: hsl(172, 45%, 65%);
+        --syntax-highlight-comment-color: hsl(119, 40%, 72%);
+        --syntax-highlight-regex-group-color: var(--text-color-gray-medium);
+
+        --console-secondary-text-color: hsla(0, 0%, 100%, 0.45);
+
+        --warning-background-color: hsla(21, 100%, 51%, 0.12);
+        --error-background-color: hsla(0, 100%, 50%, 0.15);
+
+        --network-header-color: hsl(204, 52%, 55%);
+        --network-system-color: hsl(79, 95%, 50%);
+        --network-pseudo-header-color: hsl(312, 55%, 61%);
+        --network-error-color: hsl(0, 54%, 55%);
+
+        --even-zebra-stripe-row-background-color: var(--background-color);
+        --odd-zebra-stripe-row-background-color: var(--background-color-secondary);
+        --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 100%, 0.03) 50%, hsla(0, 0%, 100%, 0.03)) top left / 100% 40px;
+
+        --search-highlight-text-color: hsl(60, 100%, 50%);
+        --search-highlight-text-color-active: hsl(0, 0%, 0%);
+        --search-highlight-background-color: hsla(53, 83%, 53%, 0.2);
+        --search-highlight-background-color-active: hsl(60, 100%, 50%);
+        --search-highlight-underline-color: hsla(60, 100%, 50%, 0.5);
+
+        /* Invert colors yet preserve the hue */
+        --filter-invert: invert(100%) hue-rotate(180deg);
+
+        --foreground-lightness: 100%;
+
+        /* TODO: Use the same variable for the default theme */
+        --overlay-background: hsla(0, 0%, 24%, 0.9);
+
+        --console-message-separator: var(--text-color-quaternary);
+    }
+
+    body.window-inactive {
+        --selected-background-color: hsla(212, 92%, 64%, 0.5);
+
+        --glyph-color-active: var(--selected-background-color);
+        --glyph-color: hsl(0, 0%, 52%);
+        --glyph-color-disabled: hsla(0, 0%, 52%, 0.4);
+    }
+
+    body.window-inactive * {
+        /* These properties are duplicated so that they have higher specificity than WebKit's stylesheet.
+        Otherwise, the variable definition inside 'body.window-inactive *' in OpenSource overrides with a lighter color.
+        When merging to open source, we should guard the existing .window-inactive style with
+        '@media not all' to avoid applying the definition too broadly. */
+        --border-color: hsl(0, 0%, 33%);
+        --border-color-dark: hsl(0, 0%, 37%); /* non-semantic variable names */
+    }
+}

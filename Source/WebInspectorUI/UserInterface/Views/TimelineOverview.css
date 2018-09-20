@@ -233,3 +233,18 @@ body[dir=ltr] .timeline-overview > .scroll-container > .scroll-width-sizer {
 body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer {
     right: 0;
 }
+
+@media (prefers-dark-interface) {
+    .timeline-overview > .navigation-bar.timelines {
+        background-color: var(--background-color);
+    }
+
+    .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
+        background: var(--background-color-alternate);
+    }
+
+    .timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),
+    .timeline-overview > .tree-outline.timelines .item:not(.selected):not(:first-child) {
+        border-top-color: hsla(0, 0%, var(--foreground-lightness), 0.09);
+    }
+}

@@ -42,3 +42,9 @@
 .sidebar > .panel.details.recording-state > .content > .data-grid .inline-swatch {
     vertical-align: -1px;
 }
+
+@media (prefers-dark-interface) {
+    .sidebar > .panel.details.recording-state > .content > .data-grid tr.modified {
+        color: var(--green-highlight-text-color);
+    }
+}

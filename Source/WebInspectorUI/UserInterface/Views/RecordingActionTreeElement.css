@@ -219,3 +219,23 @@ body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.init
     height: 12px;
     margin-top: 2px;
 }
+
+@media (prefers-dark-interface) {
+    .item.action:not(.initial-state)::before {
+        color: unset;
+        opacity: 0.4;
+    }
+
+    .tree-outline .item.action.visual:not(.selected, .invalid) {
+        color: var(--green-highlight-text-color);
+    }
+
+    .item.action:not(.initial-state) > .icon {
+        filter: invert();
+    }
+
+    .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon {
+        filter: invert();
+        opacity: 0.8;
+    }
+}

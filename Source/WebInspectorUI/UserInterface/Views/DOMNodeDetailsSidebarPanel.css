@@ -60,3 +60,9 @@ body[dir=rtl] .sidebar > .panel.dom-node-details .details-section.dom-node-event
     opacity: 0;
     -webkit-appearance: none;
 }
+
+@media (prefers-dark-interface) {
+    .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:hover {
+        filter: brightness(1.25);
+    }
+}

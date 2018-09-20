@@ -52,3 +52,20 @@
 .search-bar > input[type="search"]:not(:placeholder-shown) {
     background-color: white;
 }
+
+@media (prefers-dark-interface) {
+    :matches(.search-bar, .filter-bar) > input[type="search"],
+    .search-bar > input[type="search"]:not(:placeholder-shown) {
+        border-color: var(--background-color-selected);
+        background-color: var(--background-color-alternate);
+    }
+
+    :matches(.search-bar, .filter-bar) > input[type="search"]::placeholder {
+        color: var(--text-color-secondary);
+    }
+
+    :matches(.search-bar, .filter-bar) > input[type="search"]:focus {
+        background-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
+        color: var(--text-color-active);
+    }
+}

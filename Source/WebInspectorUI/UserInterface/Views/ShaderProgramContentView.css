@@ -60,3 +60,14 @@ body[dir=rtl] .content-view.shader-program > .text-editor.shader + .text-editor.
 .content-view.shader-program > .text-editor.shader > .CodeMirror {
     top: 18px;
 }
+
+@media (prefers-dark-interface) {
+    .content-view.shader-program > .text-editor.shader {
+        --border-start-style: 1px solid var(--text-color-quaternary);
+    }
+
+    .content-view.shader-program > .text-editor.shader > .type-title {
+        background-color: var(--background-color);
+        border-bottom-color: var(--text-color-quaternary);
+    }
+}

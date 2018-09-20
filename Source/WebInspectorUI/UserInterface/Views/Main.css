@@ -380,3 +380,24 @@ body[dir=rtl] .go-to-arrow {
     background-size: 20px 20px;
     background-position: 10px 10px, 10px 0px, 0 0, 0 10px;
 }
+
+@media (prefers-dark-interface) {
+    .go-to-arrow {
+        filter: invert();
+    }
+
+    .resource-link,
+    .go-to-link {
+        color: var(--text-color-secondary);
+    }
+
+    .expand-list-button {
+        color: inherit;
+    }
+
+    :matches(img, canvas).show-grid {
+        background-color: white;
+        --checkerboard-dark-square: hsl(0, 0%, 80%);
+        background-image: linear-gradient(315deg, transparent 75%, var(--checkerboard-dark-square) 75%), linear-gradient(45deg, transparent 75%, var(--checkerboard-dark-square) 75%), linear-gradient(315deg, var(--checkerboard-dark-square) 25%, transparent 25%), linear-gradient(45deg, var(--checkerboard-dark-square) 25%, transparent 25%);
+    }
+}

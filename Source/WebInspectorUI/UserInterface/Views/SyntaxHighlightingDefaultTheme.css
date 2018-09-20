@@ -124,3 +124,37 @@
 .cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-attribute {
     color: rgb(201, 192, 166);
 }
+
+@media (prefers-dark-interface) {
+    .syntax-highlighted,
+    .cm-s-default,
+    .CodeMirror {
+        color: var(--text-color);
+    }
+
+    .cm-s-default,
+    .CodeMirror {
+        background-color: var(--background-color-code);
+    }
+
+    .cm-s-default .cm-attribute {
+        color: hsl(222, 100%, 72%);
+    }
+
+    .cm-s-default .cm-m-xml.cm-attribute,
+    .syntax-highlighted .html-attribute-name {
+        color: hsl(27, 100%, 80%);
+    }
+
+    .cm-s-default .cm-meta {
+        color: hsl(0, 0%, 60%);
+    }
+
+    .cm-s-default .cm-variable-3 {
+        color: hsl(160, 69%, 64%);
+    }
+
+    .cm-s-default .cm-builtin {
+        color: hsl(218, 64%, 76%);
+    }
+}
