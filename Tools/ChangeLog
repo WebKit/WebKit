@@ -1,3 +1,22 @@
+2018-09-20  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WPE][GTK] webkit-flatpak intercepts --help for other commands
+        https://bugs.webkit.org/show_bug.cgi?id=189058
+
+        The approach of run_in_sandbox_if_available is that we basically have the
+        same set of arguments to setup the sandbox (ie. port name, build type, etc...)
+        and we can pass those args first to setup the flatpak launcher object
+        and then to the underlying script. That doesn't work well with the `--help` argument
+        as once processed it 1. prints the help (which make no sense to the user of the calling script)
+        2. exits the app - The solution is to just make sure that `--help` is not used when using
+        flatpakutils from any script that is not `webkit-flatpak` itself.
+
+        Reviewed by Michael Catanzaro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+        (run_in_sandbox_if_available):
+
 2018-09-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed. Add W3C imported tests to the MSEEME watchlist.

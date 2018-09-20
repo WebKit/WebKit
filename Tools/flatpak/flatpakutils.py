@@ -463,10 +463,10 @@ def disable_signals(signals=[signal.SIGINT]):
 class WebkitFlatpak:
 
     @staticmethod
-    def load_from_args(args=None):
+    def load_from_args(args=None, add_help=True):
         self = WebkitFlatpak()
 
-        parser = argparse.ArgumentParser(prog="webkit-flatpak")
+        parser = argparse.ArgumentParser(prog="webkit-flatpak", add_help=add_help)
         general = parser.add_argument_group("General")
         general.add_argument('--verbose', action='store_true',
                              help='Show debug message')
@@ -856,7 +856,7 @@ def run_in_sandbox_if_available(args):
     if not check_flatpak(verbose=False):
         return None
 
-    flatpak_runner = WebkitFlatpak.load_from_args(args)
+    flatpak_runner = WebkitFlatpak.load_from_args(args, add_help=False)
     if not flatpak_runner.clean_args():
         return None
 
