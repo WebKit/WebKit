@@ -1130,6 +1130,12 @@ SourceBufferChangeTypeEnabled:
   defaultValue: true
   condition: ENABLE(MEDIA_SOURCE)
 
+EncryptedMediaAPIEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(ENCRYPTED_MEDIA)
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all experimental features. They
@@ -1243,15 +1249,6 @@ ServerTimingEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: serverTimingEnabled
-
-EncryptedMediaAPIEnabled:
-  type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "Modern Encrypted Media API"
-  humanReadableDescription: "Enable Modern Encrypted Media API"
-  webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
-  condition: ENABLE(ENCRYPTED_MEDIA)
 
 # For internal features:
 # The type should be boolean.
