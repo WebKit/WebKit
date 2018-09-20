@@ -1,3 +1,60 @@
+2018-09-20  Frederic Wang  <fwang@igalia.com>
+
+        Synchronize CSSOM View test suite against upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=189787
+
+        Reviewed by Antonio Gomes.
+
+        * web-platform-tests/css/cssom-view/META.yml: Added.
+        * web-platform-tests/css/cssom-view/OWNERS: Removed.
+        * web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl-expected.html: Added.
+        * web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl.html: Added.
+        * web-platform-tests/css/cssom-view/cssom-view-window-screen-interface-expected.txt:
+        * web-platform-tests/css/cssom-view/cssom-view-window-screen-interface.html:
+        * web-platform-tests/css/cssom-view/dom-element-scroll-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/dom-element-scroll.html: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-mixed-font-sizes-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-mixed-font-sizes.html: Added.
+        * web-platform-tests/css/cssom-view/interfaces-expected.txt:
+        * web-platform-tests/css/cssom-view/interfaces.html:
+        * web-platform-tests/css/cssom-view/media-query-list-interface-expected.txt: Removed.
+        * web-platform-tests/css/cssom-view/media-query-list-interface.xht: Removed.
+        * web-platform-tests/css/cssom-view/resources/w3c-import.log:
+        * web-platform-tests/css/cssom-view/scroll-behavior-default-css-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-default-css.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-element-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-element.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-scrollintoview-nested-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-scrollintoview-nested.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-subframe-root-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-subframe-window-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-rl-writing-mode-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-rl-writing-mode.html: Added.
+        * web-platform-tests/css/cssom-view/support/scroll-behavior.js: Added.
+        (observeScrolling):
+        (waitForScrollEnd):
+        (scrollNode):
+        (scrollWindow):
+        * web-platform-tests/css/cssom-view/support/support/w3c-import.log:
+        * web-platform-tests/css/cssom-view/support/w3c-import.log:
+        * web-platform-tests/css/cssom-view/table-client-props-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/table-client-props.html: Added.
+        * web-platform-tests/css/cssom-view/table-offset-props-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/table-offset-props.html: Added.
+        * web-platform-tests/css/cssom-view/table-scroll-props-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/table-scroll-props.html: Added.
+        * web-platform-tests/css/cssom-view/w3c-import.log:
+        * web-platform-tests/css/cssom-view/window-interface-expected.txt: Removed.
+        * web-platform-tests/css/cssom-view/window-interface.xht: Removed.
+
 2018-09-19  YUHAN WU  <yuhan_wu@apple.com>
 
         MediaStream-MediaElement-srcObject.https.html expects video duration for a MediaStream to be Infinity and is currently NaN

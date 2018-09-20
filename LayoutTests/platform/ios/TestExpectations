@@ -2657,6 +2657,9 @@ webkit.org/b/163755 imported/w3c/web-platform-tests/css/css-shapes [ Skip ]
 
 webkit.org/b/5991 imported/w3c/web-platform-tests/css/cssom-view/scrolling-quirks-vs-nonquirks.html [ Failure ]
 
+webkit.org/b/149264 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.html [ Failure ]
+webkit.org/b/149264 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html [ Failure ]
+
 # Variation fonts are not implemented earlier than iOS 11.
 fast/text/variations [ Pass Failure ImageOnlyFailure ]
 animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]

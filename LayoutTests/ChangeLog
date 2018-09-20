@@ -1,3 +1,13 @@
+2018-09-20  Frederic Wang  <fwang@igalia.com>
+
+        Synchronize CSSOM View test suite against upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=189787
+
+        Reviewed by Antonio Gomes.
+
+        * tests-options.json: Mark smooth scrolling tests as slow.
+        * ios/TestExpectations: Mark as failing since frames are not scrollable on iOS.
+
 2018-09-20  Justin Michaud  <justin_michaud@apple.com>
 
         Implement CSS Custom Properties and Values Skeleton

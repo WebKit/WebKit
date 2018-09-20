@@ -422,6 +422,30 @@
     "imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-default-css.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-element.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-scrollintoview-nested.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html": [
         "slow"
     ],

@@ -1,0 +1,4 @@
+
+PASS Instant scrolling of an element with default scroll-behavior 
+FAIL Smooth scrolling of an element with default scroll-behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+

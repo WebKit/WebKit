@@ -1,0 +1,11 @@
+
+FAIL scrollIntoView({block: "start", inline: "start"}) assert_approx_equals: scrollX expected -200 +/- 0.5 but got -100
+FAIL scrollIntoView({block: "start", inline: "center"}) assert_approx_equals: scrollX expected -200 +/- 0.5 but got -143
+FAIL scrollIntoView({block: "start", inline: "end"}) assert_approx_equals: scrollX expected -200 +/- 0.5 but got -185
+FAIL scrollIntoView({block: "center", inline: "start"}) assert_approx_equals: scrollX expected -157.5 +/- 0.5 but got -100
+FAIL scrollIntoView({block: "center", inline: "center"}) assert_approx_equals: scrollX expected -157.5 +/- 0.5 but got -143
+FAIL scrollIntoView({block: "center", inline: "end"}) assert_approx_equals: scrollX expected -157.5 +/- 0.5 but got -185
+FAIL scrollIntoView({block: "end", inline: "start"}) assert_approx_equals: scrollX expected -115 +/- 0.5 but got -100
+FAIL scrollIntoView({block: "end", inline: "center"}) assert_approx_equals: scrollX expected -115 +/- 0.5 but got -143
+FAIL scrollIntoView({block: "end", inline: "end"}) assert_approx_equals: scrollX expected -115 +/- 0.5 but got -185
+
