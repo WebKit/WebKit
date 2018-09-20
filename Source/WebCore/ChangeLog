@@ -1,5 +1,40 @@
 2018-09-20  Justin Michaud  <justin_michaud@apple.com>
 
+        Implement CSS Custom Properties and Values Skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=189694
+
+        Reviewed by Simon Fraser.
+
+        Add feature flag, CSS.registerProperty binding and registered property set in Document.h
+        for the css custom properties and values api.
+
+        Test: css-properties-values-api/registerProperty.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSRegisteredCustomProperty.h: Added.
+        * css/DOMCSSCustomPropertyDescriptor.h: Added.
+        * css/DOMCSSCustomPropertyDescriptor.idl: Added.
+        * css/DOMCSSNamespace.h:
+        * css/DOMCSSRegisterCustomProperty.cpp: Added.
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        (WebCore::DOMCSSRegisterCustomProperty::from):
+        (WebCore::DOMCSSRegisterCustomProperty::supplementName):
+        * css/DOMCSSRegisterCustomProperty.h: Added.
+        * css/DOMCSSRegisterCustomProperty.idl: Added.
+        * css/parser/CSSParserContext.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::registerCSSProperty):
+        * dom/Document.h:
+        * features.json:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCSSCustomPropertiesAndValuesEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssCustomPropertiesAndValuesEnabled const):
+
+2018-09-20  Justin Michaud  <justin_michaud@apple.com>
+
         JS bindings generator should support EnabledAtRuntime for static methods
         https://bugs.webkit.org/show_bug.cgi?id=189729
 

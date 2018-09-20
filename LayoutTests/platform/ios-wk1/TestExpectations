@@ -1973,3 +1973,6 @@ http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
 webkit.org/b/189594 imported/w3c/web-platform-tests/css/css-animations/pending-style-changes-001.html [ Pass Failure ]
+
+# Not supported on WK1
+css-custom-properties-api [ Skip ]

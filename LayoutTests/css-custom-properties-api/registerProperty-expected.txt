@@ -1,0 +1,5 @@
+
+PASS registerProperty requires a Dictionary type 
+PASS registerProperty requires a name matching <custom-property-name> 
+PASS registerProperty only allows omitting initialValue is syntax is '*' 
+

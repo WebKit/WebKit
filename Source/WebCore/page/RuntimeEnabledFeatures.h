@@ -285,6 +285,9 @@ public:
     void setWebAPIStatisticsEnabled(bool isEnabled) { m_webAPIStatisticsEnabled = isEnabled; }
     bool webAPIStatisticsEnabled() const { return m_webAPIStatisticsEnabled; }
 
+    void setCSSCustomPropertiesAndValuesEnabled(bool isEnabled) { m_CSSCustomPropertiesAndValuesEnabled = isEnabled; }
+    bool cssCustomPropertiesAndValuesEnabled() const { return m_CSSCustomPropertiesAndValuesEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -429,6 +432,8 @@ private:
     bool m_attrStyleEnabled { false };
 
     bool m_webAPIStatisticsEnabled { false };
+
+    bool m_CSSCustomPropertiesAndValuesEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

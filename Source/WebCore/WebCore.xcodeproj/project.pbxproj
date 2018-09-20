@@ -1344,6 +1344,9 @@
 		4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */; };
 		4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6FA6F20C39E48C00087011 /* SmartReplace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BDA3FFE2151B6F500FD6604 /* DOMCSSCustomPropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */; };
+		4BDA3FFF2151B6F500FD6604 /* DOMCSSRegisterCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF92151B6F300FD6604 /* DOMCSSRegisterCustomProperty.h */; };
+		4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4E19592A0A39DACC00220FE5 /* MediaQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959240A39DACC00220FE5 /* MediaQuery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7840,6 +7843,12 @@
 		4B6FA6F20C39E48C00087011 /* SmartReplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartReplace.h; sourceTree = "<group>"; };
 		4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplaceCF.cpp; sourceTree = "<group>"; };
 		4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorDeleteAction.h; sourceTree = "<group>"; };
+		4BDA3FF52151B6F000FD6604 /* DOMCSSRegisterCustomProperty.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMCSSRegisterCustomProperty.idl; sourceTree = "<group>"; };
+		4BDA3FF72151B6F100FD6604 /* DOMCSSRegisterCustomProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCSSRegisterCustomProperty.cpp; sourceTree = "<group>"; };
+		4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSCustomPropertyDescriptor.h; sourceTree = "<group>"; };
+		4BDA3FF92151B6F300FD6604 /* DOMCSSRegisterCustomProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSRegisterCustomProperty.h; sourceTree = "<group>"; };
+		4BDA3FFA2151B6F300FD6604 /* DOMCSSCustomPropertyDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMCSSCustomPropertyDescriptor.idl; sourceTree = "<group>"; };
+		4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSRegisteredCustomProperty.h; sourceTree = "<group>"; };
 		4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFeatureNames.cpp; sourceTree = "<group>"; };
 		4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaFeatureNames.h; sourceTree = "<group>"; };
 		4E1959230A39DACC00220FE5 /* MediaQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQuery.cpp; sourceTree = "<group>"; };
@@ -23951,8 +23960,8 @@
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,
-				CDC48AC72149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.h */,
 				CDC48AC82149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.cpp */,
+				CDC48AC72149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.h */,
 				526724F21CB2FDF60075974D /* TextTrackRepresentationCocoa.h */,
 				526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */,
 				2D3EF4441917915C00034184 /* WebActionDisablingCALayerDelegate.h */,
@@ -24730,8 +24739,8 @@
 		CD669D651D232DF4004D1866 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				417F7AEA2139BF6400FBA7EC /* MediaSessionManagerCocoa.mm */,
 				417F7AED2139BF6500FBA7EC /* MediaSessionManagerCocoa.h */,
+				417F7AEA2139BF6400FBA7EC /* MediaSessionManagerCocoa.mm */,
 				417F7AEB2139BF6400FBA7EC /* WebAudioBufferList.cpp */,
 				417F7AEC2139BF6500FBA7EC /* WebAudioBufferList.h */,
 			);
@@ -25677,6 +25686,7 @@
 				9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */,
 				BC5A12DD0DC0414800C9AFAD /* CSSReflectValue.cpp */,
 				BC5A12DE0DC0414800C9AFAD /* CSSReflectValue.h */,
+				4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */,
 				BC7D8FF11BD1A47900FFE540 /* CSSRevertValue.cpp */,
 				BC7D8FF21BD1A47900FFE540 /* CSSRevertValue.h */,
 				A80E6CDC0A1989CA007FB8C5 /* CSSRule.cpp */,
@@ -25746,9 +25756,14 @@
 				A8D0651C0A23C1FE005E7203 /* DeprecatedCSSOMValueList.idl */,
 				4A4F48A716B0DFC000EDBB29 /* DocumentRuleSets.cpp */,
 				4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */,
+				4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */,
+				4BDA3FFA2151B6F300FD6604 /* DOMCSSCustomPropertyDescriptor.idl */,
 				FD677735195CAB200072E0D3 /* DOMCSSNamespace.cpp */,
 				FC9A0F72164094CF003D6B8D /* DOMCSSNamespace.h */,
 				FC9A0F73164094CF003D6B8D /* DOMCSSNamespace.idl */,
+				4BDA3FF72151B6F100FD6604 /* DOMCSSRegisterCustomProperty.cpp */,
+				4BDA3FF92151B6F300FD6604 /* DOMCSSRegisterCustomProperty.h */,
+				4BDA3FF52151B6F000FD6604 /* DOMCSSRegisterCustomProperty.idl */,
 				836ACEC41ECA6654004BD012 /* DOMMatrix.cpp */,
 				836ACEC51ECA6654004BD012 /* DOMMatrix.h */,
 				836ACEC61ECA6654004BD012 /* DOMMatrix.idl */,
@@ -27671,6 +27686,7 @@
 				FE271F672082DBE500A952D4 /* CSSPtrTag.h in Headers */,
 				9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */,
 				BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */,
+				4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */,
 				BC7D8FF41BD1A47900FFE540 /* CSSRevertValue.h in Headers */,
 				A80E6D0D0A1989CA007FB8C5 /* CSSRule.h in Headers */,
 				A80E6CF20A1989CA007FB8C5 /* CSSRuleList.h in Headers */,
@@ -27830,7 +27846,9 @@
 				41380C271F3436AC00155FDA /* DOMCache.h in Headers */,
 				41FABD2D1F4DFE4A006A6C97 /* DOMCacheEngine.h in Headers */,
 				41380C291F3436AC00155FDA /* DOMCacheStorage.h in Headers */,
+				4BDA3FFE2151B6F500FD6604 /* DOMCSSCustomPropertyDescriptor.h in Headers */,
 				FC9A0F75164094CF003D6B8D /* DOMCSSNamespace.h in Headers */,
+				4BDA3FFF2151B6F500FD6604 /* DOMCSSRegisterCustomProperty.h in Headers */,
 				7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */,
 				BC60D6E90D28D83400B9918F /* DOMException.h in Headers */,
 				8399470C1F50B63E00E9D86B /* DOMFileSystem.h in Headers */,
@@ -29472,6 +29490,7 @@
 				2D9BF7061DBFBB24007A7D99 /* MediaEncryptedEvent.h in Headers */,
 				2D9BF7081DBFBB24007A7D99 /* MediaEncryptedEventInit.h in Headers */,
 				41B28B151F8501D300FB52AC /* MediaEndpointConfiguration.h in Headers */,
+				CDC48AC92149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.h in Headers */,
 				E44613AD0CD6331000FADA75 /* MediaError.h in Headers */,
 				4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */,
 				07A6D1EC1491137700051D0C /* MediaFragmentURIParser.h in Headers */,
@@ -30286,7 +30305,6 @@
 				517A534F1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.h in Headers */,
 				517A53291F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.h in Headers */,
 				51F175691F3EBC8300C74950 /* ServiceWorkerRegistrationOptions.h in Headers */,
-				CDC48AC92149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.h in Headers */,
 				51BCCE301F8F179E006BA0ED /* ServiceWorkerThread.h in Headers */,
 				4112B5431F9F9CA000E67875 /* ServiceWorkerThreadProxy.h in Headers */,
 				515E37F61FAA940200D7F22A /* ServiceWorkerTypes.h in Headers */,

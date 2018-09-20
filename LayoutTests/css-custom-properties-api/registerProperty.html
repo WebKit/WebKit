@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSCustomPropertiesAndValuesEnabled=true ] -->
+<!-- https://chromium.googlesource.com/chromium/src/+/01ce431409e3a019858677626a983c55168da6dc/third_party/WebKit/LayoutTests/custom-properties/register-property.html -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+// Tests for error checking during property registration
+test(function() {
+    assert_throws(new TypeError(), () => CSS.registerProperty());
+    assert_throws(new TypeError(), () => CSS.registerProperty(undefined));
+    assert_throws(new TypeError(), () => CSS.registerProperty(true));
+    assert_throws(new TypeError(), () => CSS.registerProperty(2));
+    assert_throws(new TypeError(), () => CSS.registerProperty("css"));
+    assert_throws(new TypeError(), () => CSS.registerProperty(null));
+}, "registerProperty requires a Dictionary type");
+test(function() {
+    // Valid property names, shouldn't throw
+    CSS.registerProperty({name: '--name1', inherits: false});
+    CSS.registerProperty({name: '--name2, no need for escapes', inherits: false});
+    CSS.registerProperty({name: ['--name', 3], inherits: false});
+    // Invalid property names
+    assert_throws(new TypeError(), () => CSS.registerProperty({}));
+    assert_throws(new TypeError(), () => CSS.registerProperty({name: '--no-inherits'}));
+    //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: 'no-leading-dash', inherits: false}));
+    //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: '', inherits: false}));
+    //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: '\\--name', inherits: false}));
+}, "registerProperty requires a name matching <custom-property-name>");
+test(function() {
+    CSS.registerProperty({name: '--syntax-test-1', inherits: false, syntax: '*'});
+    CSS.registerProperty({name: '--syntax-test-2', inherits: false, syntax: ' * '});
+    /*assert_throws(new SyntaxError(),
+        () => CSS.registerProperty({name: '--syntax-test-3', syntax: 'length'}));*/
+}, "registerProperty only allows omitting initialValue is syntax is '*'");
+</script>

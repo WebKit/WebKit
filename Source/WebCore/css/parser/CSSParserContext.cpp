@@ -26,6 +26,9 @@
 #include "config.h"
 #include "CSSParserContext.h"
 
+#include "Document.h"
+#include "Page.h"
+#include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

@@ -8216,4 +8216,9 @@ String Document::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const 
     return page->chrome().client().signedPublicKeyAndChallengeString(keySizeIndex, challengeString, url);
 }
 
+bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
+{
+    return m_CSSRegisteredPropertySet.add(prop.name, std::make_unique<CSSRegisteredCustomProperty>(WTFMove(prop))).isNewEntry;
+}
+
 } // namespace WebCore

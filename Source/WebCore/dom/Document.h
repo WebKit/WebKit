@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "CSSRegisteredCustomProperty.h"
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DisabledAdaptations.h"
@@ -1491,6 +1492,8 @@ public:
     void updateMainArticleElementAfterLayout();
     bool hasMainArticleElement() const { return !!m_mainArticleElement; }
 
+    bool registerCSSProperty(CSSRegisteredCustomProperty&&);
+
     void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
     bool isRunningUserScripts() const { return m_isRunningUserScripts; }
 
@@ -2022,6 +2025,8 @@ private:
 #endif
     
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
+
+    HashMap<String, std::unique_ptr<CSSRegisteredCustomProperty>> m_CSSRegisteredPropertySet;
 
     bool m_isRunningUserScripts { false };
 };

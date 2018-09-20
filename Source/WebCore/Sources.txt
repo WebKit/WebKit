@@ -620,6 +620,7 @@ css/CSSValuePool.cpp
 css/CSSVariableData.cpp
 css/CSSVariableReferenceValue.cpp
 css/DOMCSSNamespace.cpp
+css/DOMCSSRegisterCustomProperty.cpp
 css/DOMMatrix.cpp
 css/DOMMatrixReadOnly.cpp
 css/DeprecatedCSSOMPrimitiveValue.cpp
@@ -2513,6 +2514,8 @@ JSDocumentTimeline.cpp
 JSDocumentTimelineOptions.cpp
 JSDOMApplicationCache.cpp
 JSDOMCSSNamespace.cpp
+JSDOMCSSRegisterCustomProperty.cpp
+JSDOMCSSCustomPropertyDescriptor.cpp
 JSDOMCache.cpp
 JSDOMCacheStorage.cpp
 JSDOMException.cpp

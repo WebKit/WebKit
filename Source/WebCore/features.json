@@ -50,6 +50,16 @@
         "description": "Allows content to specify colors outside of the sRGB Color Space."
     },
     {
+        "name": "CSS Custom Properties And Values",
+        "status": {
+            "status": "Under Development"
+        },
+        "url": "https://drafts.css-houdini.org/css-properties-values-api/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=189692",
+        "keywords": ["CSSCustomPropertiesAndValues", "custom properties", "css"],
+        "description": "An API for registering new CSS properties. Properties registered using this API are provided with a parse syntax that defines a type, inheritance behaviour, and an initial value."
+    },
+    {
         "name": "CSS Font Display",
         "status": {
             "status": "In Development",

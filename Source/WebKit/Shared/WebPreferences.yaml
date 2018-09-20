@@ -1350,3 +1350,11 @@ WebAPIStatisticsEnabled:
   humanReadableDescription: "Enable Web API Statistics"
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
+
+CSSCustomPropertiesAndValuesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Custom Properties and Values API"
+  humanReadableDescription: "Enable CSS Custom Properties and Values API"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental

@@ -451,7 +451,9 @@ JS_BINDING_IDLS = \
 	$(WebCore)/css/DeprecatedCSSOMRect.idl \
 	$(WebCore)/css/DeprecatedCSSOMValue.idl \
     $(WebCore)/css/DeprecatedCSSOMValueList.idl \
+    $(WebCore)/css/DOMCSSCustomPropertyDescriptor.idl \
     $(WebCore)/css/DOMCSSNamespace.idl \
+    $(WebCore)/css/DOMCSSRegisterCustomProperty.idl \
     $(WebCore)/css/ElementCSSInlineStyle.idl \
     $(WebCore)/css/FontFace.idl \
     $(WebCore)/css/FontFaceSet.idl \

@@ -525,6 +525,9 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSStyleSheet.idl
     css/CSSSupportsRule.idl
     css/CSSUnknownRule.idl
+    css/DOMCSSCustomPropertyDescriptor.idl
+    css/DOMCSSNamespace.idl
+    css/DOMCSSRegisterCustomProperty.idl
     css/DOMMatrix.idl
     css/DOMMatrix2DInit.idl
     css/DOMMatrixInit.idl
@@ -535,7 +538,6 @@ set(WebCore_NON_SVG_IDL_FILES
     css/DeprecatedCSSOMRect.idl
     css/DeprecatedCSSOMValue.idl
     css/DeprecatedCSSOMValueList.idl
-    css/DOMCSSNamespace.idl
     css/ElementCSSInlineStyle.idl
     css/FontFace.idl
     css/FontFaceSet.idl

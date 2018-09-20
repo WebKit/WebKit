@@ -1,3 +1,16 @@
+2018-09-20  Justin Michaud  <justin_michaud@apple.com>
+
+        Implement CSS Custom Properties and Values Skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=189694
+
+        Reviewed by Simon Fraser.
+
+        Add feature flag for CSS custom properties and values api
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2018-09-19  Dean Jackson  <dino@apple.com>
 
         Temporarily move fullscreen back to experimental features

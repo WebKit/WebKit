@@ -1,3 +1,17 @@
+2018-09-20  Justin Michaud  <justin_michaud@apple.com>
+
+        Implement CSS Custom Properties and Values Skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=189694
+
+        Reviewed by Simon Fraser.
+
+        Add test to check that the CSS.registerProperty method exists.
+
+        * css-custom-properties-api/registerProperty-expected.txt: Added.
+        * css-custom-properties-api/registerProperty.html: Added.
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2018-09-20  Dawei Fenton  <realdawei@apple.com>
 
         WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance

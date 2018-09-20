@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include "Supplementable.h"
+
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -36,7 +38,7 @@ namespace WebCore {
 
 class Document;
 
-class DOMCSSNamespace final : public RefCounted<DOMCSSNamespace> {
+class DOMCSSNamespace final : public RefCounted<DOMCSSNamespace>, public Supplementable<DOMCSSNamespace> {
 public:
     static bool supports(Document&, const String& property, const String& value);
     static bool supports(Document&, const String& conditionText);
