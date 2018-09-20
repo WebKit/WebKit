@@ -41,6 +41,10 @@ namespace WebCore {
 
 namespace {
     const uint32_t kCencMaxBoxSize = 64 * KB;
+    // ContentEncKeyID has this EBML code [47][E2] in WebM,
+    // as per spec the size of the ContentEncKeyID is encoded on 16 bits.
+    // https://matroska.org/technical/specs/index.html#ContentEncKeyID/
+    const uint32_t kWebMMaxContentEncKeyIDSize = 64 * KB; // 2^16
 }
 
 static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffer& buffer)
@@ -139,18 +143,25 @@ static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer& buffer)
 
 static RefPtr<SharedBuffer> sanitizeWebM(const SharedBuffer& buffer)
 {
-    // 1. Format
-    // https://w3c.github.io/encrypted-media/format-registry/initdata/webm.html#format
-    notImplemented();
+    // Check if the buffer is a valid WebM initData.
+    // The WebM initData is the ContentEncKeyID, so should be less than kWebMMaxContentEncKeyIDSize.
+    if (buffer.isEmpty() || buffer.size() > kWebMMaxContentEncKeyIDSize)
+        return nullptr;
+
     return buffer.copy();
 }
 
-static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBuffer&)
+static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBuffer& buffer)
 {
+    Vector<Ref<SharedBuffer>> keyIDs;
+    RefPtr<SharedBuffer> sanitazedBuffer = sanitizeWebM(buffer);
+    if (!sanitazedBuffer)
+        return std::nullopt;
+
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/webm.html#format
-    notImplemented();
-    return std::nullopt;
+    keyIDs.append(sanitazedBuffer.releaseNonNull());
+    return keyIDs;
 }
 
 InitDataRegistry& InitDataRegistry::shared()
