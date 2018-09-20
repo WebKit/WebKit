@@ -170,14 +170,14 @@ table.queue-grid td.logo img.logo {
     clip-path: circle(72px at center);
 }
 
-table.queue-grid tr.platform.ios-simulator-11 img.logo {
+table.queue-grid tr.platform.ios-simulator-12 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: -webkit-image-set(url(../Images/IOS11Simulator@2x.png) 2x, url(../Images/IOS11Simulator.png) 1x);
+    content: -webkit-image-set(url(../Images/IOS12Simulator@2x.png) 2x, url(../Images/IOS12Simulator.png) 1x);
 }
 
-table.queue-grid tr.platform.ios-11 img.logo {
+table.queue-grid tr.platform.ios-12 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: -webkit-image-set(url(../Images/IOS11@2x.png) 2x, url(../Images/IOS11.png) 1x);
+    content: -webkit-image-set(url(../Images/IOS12@2x.png) 2x, url(../Images/IOS12.png) 1x);
 }
 
 table.queue-grid tr.platform.macos-sierra img.logo {

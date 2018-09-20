@@ -37,15 +37,15 @@
                     { "name": "bot698", "platform": "mac-sierra" },
                     { "name": "bot699", "platform": "mac-sierra" },
 
-                    { "name": "bot673", "platform": "ios-11" },
-                    { "name": "bot626", "platform": "ios-simulator-11" },
-                    { "name": "bot618", "platform": "ios-simulator-11" },
-                    { "name": "bot620", "platform": "ios-simulator-11" },
-                    { "name": "bot621", "platform": "ios-simulator-11" },
-                    { "name": "bot651", "platform": "ios-simulator-11" },
-                    { "name": "bot652", "platform": "ios-simulator-11" },
-                    { "name": "bot653", "platform": "ios-simulator-11" },
-                    { "name": "bot654", "platform": "ios-simulator-11" },
+                    { "name": "bot673", "platform": "ios-12" },
+                    { "name": "bot626", "platform": "ios-simulator-12" },
+                    { "name": "bot618", "platform": "ios-simulator-12" },
+                    { "name": "bot620", "platform": "ios-simulator-12" },
+                    { "name": "bot621", "platform": "ios-simulator-12" },
+                    { "name": "bot651", "platform": "ios-simulator-12" },
+                    { "name": "bot652", "platform": "ios-simulator-12" },
+                    { "name": "bot653", "platform": "ios-simulator-12" },
+                    { "name": "bot654", "platform": "ios-simulator-12" },
 
                     { "name": "bot516", "platform": "win" },
                     { "name": "bot514", "platform": "win" },
@@ -189,31 +189,31 @@
                       "slavenames": ["bot632"]
                     },
                     {
-                      "name": "Apple iOS 11 Release (Build)", "type": "Build", "builddir": "ios-11-release",
-                      "platform": "ios-11", "configuration": "release", "architectures": ["arm64"],
+                      "name": "Apple iOS 12 Release (Build)", "type": "Build", "builddir": "ios-12-release",
+                      "platform": "ios-12", "configuration": "release", "architectures": ["arm64"],
                       "slavenames": ["bot673"]
                     },
                     {
-                      "name": "Apple iOS 11 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-11-release",
-                      "platform": "ios-simulator-11", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-11-release-tests-wk2"],
+                      "name": "Apple iOS 12 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-12-release",
+                      "platform": "ios-simulator-12", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-12-release-tests-wk2"],
                       "slavenames": ["bot618", "bot620"]
                     },
                     {
-                      "name": "Apple iOS 11 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-11-debug",
-                      "platform": "ios-simulator-11", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-11-debug-tests-wk2"],
+                      "name": "Apple iOS 12 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-12-debug",
+                      "platform": "ios-simulator-12", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-12-debug-tests-wk2"],
                       "slavenames": ["bot626", "bot621"]
                     },
                     {
-                      "name": "Apple iOS 11 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-11-release-tests-wk2",
-                      "platform": "ios-simulator-11", "configuration": "release", "architectures": ["x86_64"],
+                      "name": "Apple iOS 12 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-12-release-tests-wk2",
+                      "platform": "ios-simulator-12", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot651", "bot652"]
                     },
                     {
-                      "name": "Apple iOS 11 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-11-debug-tests-wk2",
-                      "platform": "ios-simulator-11", "configuration": "debug", "architectures": ["x86_64"],
+                      "name": "Apple iOS 12 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-12-debug-tests-wk2",
+                      "platform": "ios-simulator-12", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot653", "bot654"]
                     },
@@ -391,11 +391,11 @@
                     { "type": "PlatformSpecificScheduler", "platform": "mac-sierra", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Sierra Release (Build)", "Apple Sierra Debug (Build)", "Apple Sierra Release (32-bit Build)"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-11", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple iOS 11 Release (Build)"]
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-12", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple iOS 12 Release (Build)"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-11", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple iOS 11 Simulator Release (Build)", "Apple iOS 11 Simulator Debug (Build)"]
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-12", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple iOS 12 Simulator Release (Build)", "Apple iOS 12 Simulator Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
@@ -442,11 +442,11 @@
                     { "type": "Triggerable", "name": "sierra-release-tests-test262",
                       "builderNames": ["Apple Sierra Release Test262 (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-11-release-tests-wk2",
-                      "builderNames": ["Apple iOS 11 Simulator Release WK2 (Tests)"]
+                    { "type": "Triggerable", "name": "ios-simulator-12-release-tests-wk2",
+                      "builderNames": ["Apple iOS 12 Simulator Release WK2 (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-11-debug-tests-wk2",
-                      "builderNames": ["Apple iOS 11 Simulator Debug WK2 (Tests)"]
+                    { "type": "Triggerable", "name": "ios-simulator-12-debug-tests-wk2",
+                      "builderNames": ["Apple iOS 12 Simulator Debug WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Apple Win 7 Release (Tests)"]
