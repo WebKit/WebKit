@@ -1,3 +1,19 @@
+2018-09-20  Zalan Bujtas  <zalan@apple.com>
+
+        Release assert under RenderView::pageOrViewLogicalHeight
+        https://bugs.webkit.org/show_bug.cgi?id=189798
+        <rdar://problem/43659749>
+
+        Reviewed by Simon Fraser.
+
+        Only the mainframe's render view is sized to the page while printing.
+        Use the matching check (see RenderView::layout) when accessing m_pageLogicalSize.
+
+        Test: printing/crash-while-formatting-subframe-for-printing.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pageOrViewLogicalHeight const):
+
 2018-09-20  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r196265): WKWebView fires mouseover, mouseenter, and mouseleave events even when it's in a background window
