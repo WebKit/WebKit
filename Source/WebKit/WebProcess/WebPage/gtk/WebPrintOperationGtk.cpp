@@ -134,7 +134,16 @@ public:
                 break;
             }
         } else if (surfaceType == CAIRO_SURFACE_TYPE_PDF)
-            cairo_pdf_surface_set_size(surface, width, height);
+            switch (gtk_page_setup_get_orientation(m_pageSetup.get())) {
+            case GTK_PAGE_ORIENTATION_PORTRAIT:
+            case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
+                cairo_pdf_surface_set_size(surface, width, height);
+                break;
+            case GTK_PAGE_ORIENTATION_LANDSCAPE:
+            case GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE:
+                cairo_pdf_surface_set_size(surface, height, width);
+                break;
+            }
     }
 
     void endPage(cairo_t* cr) override

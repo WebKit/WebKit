@@ -1,3 +1,15 @@
+2018-09-20  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Always prints in portrait when landscape is requested
+        https://bugs.webkit.org/show_bug.cgi?id=189543
+
+        Reviewed by Michael Catanzaro.
+
+        We have to change the surface size based on the requested orientation.
+        Otherwise only portrait will be printed as it's hardcoded.
+
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+
 2018-09-19  Dean Jackson  <dino@grorg.org>
 
         Temporarily move fullscreen back to experimental features
