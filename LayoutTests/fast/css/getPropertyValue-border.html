@@ -27,6 +27,7 @@
     <div id="border7" class="test" style="border-left: 2px solid red; border-top: 3px solid green; border-right: 4px solid blue; border-bottom: 5px solid purple;">7</div>
     <div id="border8" class="test" style="border-left: 2px dashed red; border-top: 3px solid green; border-right: 5px dotted blue; border-bottom: 5px groove purple;">8</div>
     <div id="border9" class="test" style="border-left: 5px solid red; border-top: 5px solid green; border-right: 5px solid blue;">9</div>
+    <div id="border10" class="test" style="border-left: 5px solid green; border-top: 5px solid green; border-right: 5px solid green; border-bottom: 5px solid green; border-image: initial">10</div>
   <p id="description"></p>
   <div id="console"></div>
   <script>
@@ -36,30 +37,58 @@
     shouldBe('div1.style.getPropertyValue("border")', "'5px solid green'");
 
     var div2 = document.getElementById("border2");
-    shouldBe('div2.style.getPropertyValue("border")', "'5px solid'");
+    shouldBe('div2.style.getPropertyValue("border")', "''");
+    shouldBe('div2.style.getPropertyValue("border-color")', "'green blue purple red'");
+    shouldBe('div2.style.getPropertyValue("border-style")', "'solid'");
+    shouldBe('div2.style.getPropertyValue("border-width")', "'5px'");
 
     var div3 = document.getElementById("border3");
-    shouldBe('div3.style.getPropertyValue("border")', "'5px green'");
-    debug("    NOTE: '5px green' is an illegal CSS value for 'border'.");
+    shouldBe('div3.style.getPropertyValue("border")', "''");
+    shouldBe('div3.style.getPropertyValue("border-color")', "'green'");
+    shouldBe('div3.style.getPropertyValue("border-style")', "'solid dotted groove dashed'");
+    shouldBe('div3.style.getPropertyValue("border-width")', "'5px'");
 
     var div4 = document.getElementById("border4");
-    shouldBe('div4.style.getPropertyValue("border")', "'solid green'");
+    shouldBe('div4.style.getPropertyValue("border")', "''");
+    shouldBe('div4.style.getPropertyValue("border-color")', "'green'");
+    shouldBe('div4.style.getPropertyValue("border-style")', "'solid'");
+    shouldBe('div4.style.getPropertyValue("border-width")', "'5px 5px 5px 4px'");
 
     var div5 = document.getElementById("border5");
-    shouldBe('div5.style.getPropertyValue("border")', "'green'");
-    debug("    NOTE: 'green' is an illegal CSS value for 'border'.");
+    shouldBe('div5.style.getPropertyValue("border")', "''");
+    shouldBe('div5.style.getPropertyValue("border-color")', "'green'");
+    shouldBe('div5.style.getPropertyValue("border-style")', "'solid dotted groove dashed'");
+    shouldBe('div5.style.getPropertyValue("border-width")', "'3px 4px 5px 2px'");
 
     var div6 = document.getElementById("border6");
-    shouldBe('div6.style.getPropertyValue("border")', "'5px'");
+    shouldBe('div6.style.getPropertyValue("border")', "''");
+    shouldBe('div6.style.getPropertyValue("border-color")', "'green blue purple red'");
+    shouldBe('div6.style.getPropertyValue("border-style")', "'solid dotted groove dashed'");
+    shouldBe('div6.style.getPropertyValue("border-width")', "'5px'");
 
     var div7 = document.getElementById("border7");
-    shouldBe('div7.style.getPropertyValue("border")', "'solid'");
+    shouldBe('div7.style.getPropertyValue("border")', "''");
+    shouldBe('div7.style.getPropertyValue("border-color")', "'green blue purple red'");
+    shouldBe('div7.style.getPropertyValue("border-style")', "'solid'");
+    shouldBe('div7.style.getPropertyValue("border-width")', "'3px 4px 5px 2px'");
 
     var div8 = document.getElementById("border8");
-    shouldBeEqualToString('div8.style.getPropertyValue("border")', "");
+    shouldBe('div8.style.getPropertyValue("border")', "''");
+    shouldBe('div8.style.getPropertyValue("border-color")', "'green blue purple red'");
+    shouldBe('div8.style.getPropertyValue("border-style")', "'solid dotted groove dashed'");
+    shouldBe('div8.style.getPropertyValue("border-width")', "'3px 5px 5px 2px'");
 
     var div9 = document.getElementById("border9");
-    shouldBeEqualToString('div9.style.getPropertyValue("border")', "");
+    shouldBe('div9.style.getPropertyValue("border")', "''");
+    shouldBe('div9.style.getPropertyValue("border-color")', "''");
+    shouldBe('div9.style.getPropertyValue("border-style")', "''");
+    shouldBe('div9.style.getPropertyValue("border-width")', "''");
+
+    var div10 = document.getElementById("border10");
+    shouldBe('div10.style.getPropertyValue("border")', "'5px solid green'");
+    shouldBe('div10.style.getPropertyValue("border-color")', "'green'");
+    shouldBe('div10.style.getPropertyValue("border-style")', "'solid'");
+    shouldBe('div10.style.getPropertyValue("border-width")', "'5px'");
   </script>
   <script src="../../resources/js-test-post.js"></script>
  </body>

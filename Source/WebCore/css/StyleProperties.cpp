@@ -148,7 +148,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyBackground:
         return getLayeredShorthandValue(backgroundShorthand());
     case CSSPropertyBorder:
-        return borderPropertyValue(OmitUncommonValues);
+        return borderPropertyValue();
     case CSSPropertyBorderTop:
         return getShorthandValue(borderTopShorthand());
     case CSSPropertyBorderRight:
@@ -619,22 +619,18 @@ String StyleProperties::getAlignmentShorthandValue(const StylePropertyShorthand&
     return value;
 }
 
-String StyleProperties::borderPropertyValue(CommonValueMode valueMode) const
+String StyleProperties::borderPropertyValue() const
 {
     const StylePropertyShorthand properties[3] = { borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand() };
     String commonValue;
     StringBuilder result;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
         String value = getCommonValue(properties[i]);
-        if (value.isNull()) {
-            if (valueMode == ReturnNullOnUncommonValues)
-                return String();
-            ASSERT(valueMode == OmitUncommonValues);
-            continue;
-        }
+        if (value.isNull())
+            return String();
         if (!i)
             commonValue = value;
-        else if (!commonValue.isNull() && commonValue != value)
+        else if (commonValue != value)
             commonValue = String();
         if (value == "initial")
             continue;
@@ -644,7 +640,7 @@ String StyleProperties::borderPropertyValue(CommonValueMode valueMode) const
     }
     if (isInitialOrInherit(commonValue))
         return commonValue;
-    return result.isEmpty() ? String() : result.toString();
+    return result.toString();
 }
 
 RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) const
@@ -954,7 +950,7 @@ String StyleProperties::asText() const
                 // FIXME: Deal with cases where only some of border-(top|right|bottom|left) are specified.
                 ASSERT(CSSPropertyBorder - firstCSSProperty < shorthandPropertyAppeared.size());
                 if (!shorthandPropertyAppeared[CSSPropertyBorder - firstCSSProperty]) {
-                    value = borderPropertyValue(ReturnNullOnUncommonValues);
+                    value = borderPropertyValue();
                     if (value.isNull())
                         shorthandPropertyAppeared.set(CSSPropertyBorder - firstCSSProperty);
                     else
