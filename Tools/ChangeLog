@@ -1,5 +1,11 @@
 2018-09-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        Unreviewed. Add W3C imported tests to the MSEEME watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2018-09-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         Unreviewed. Fix the Streams API watchlist.
 
         * Scripts/webkitpy/common/config/watchlist:

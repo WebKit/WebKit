@@ -304,6 +304,8 @@
         "MSEEME": {
             "filename": r"Source/WebCore/Modules/encryptedmedia/"
                         r"|Source/WebCore/Modules/mediasource/"
+                        r"|LayoutTests/imported/w3c/web-platform-tests/encrypted-media/"
+                        r"|LayoutTests/imported/w3c/web-platform-tests/media-source/"
                         r"|LayoutTests/media/encrypted-media/"
                         r"|LayoutTests/media/media-source/",
         },
