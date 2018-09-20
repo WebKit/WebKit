@@ -144,7 +144,7 @@ public:
         };
 
         auto replaceCall = [&] () {
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) && !COMPILER(CLANG)
             ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation().retagged<JSInternalPtrTag>(), callReplacement);
 #else
             ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation().template retagged<JSInternalPtrTag>(), callReplacement);

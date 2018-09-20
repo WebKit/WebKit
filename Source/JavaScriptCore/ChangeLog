@@ -1,3 +1,15 @@
+2018-09-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] JITMathIC.h: error: missing 'template' keyword prior to dependent template name 'retagged'
+        https://bugs.webkit.org/show_bug.cgi?id=189730
+
+        Reviewed by Saam Barati.
+
+        Clang for Windows can't compile the workaround for MSVC quirk in generateOutOfLine.
+
+        * jit/JITMathIC.h:
+        (generateOutOfLine): Append "&& !COMPILER(CLANG)" to "#if COMPILER(MSVC)".
+
 2018-09-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Array#indexOf in C++ runtime
