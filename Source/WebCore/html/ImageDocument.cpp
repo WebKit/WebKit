@@ -233,9 +233,9 @@ void ImageDocument::createDocumentStructure()
     
     auto imageElement = ImageDocumentElement::create(*this);
     if (m_shouldShrinkImage)
-        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; margin:auto;");
+        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; margin:auto; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);");
     else
-        imageElement->setAttribute(styleAttr, "-webkit-user-select:none;");
+        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);");
     imageElement->setLoadManually(true);
     imageElement->setSrc(url().string());
     imageElement->cachedImage()->setResponse(loader()->response());
@@ -244,7 +244,7 @@ void ImageDocument::createDocumentStructure()
     if (m_shouldShrinkImage) {
 #if PLATFORM(IOS)
         // Set the viewport to be in device pixels (rather than the default of 980).
-        processViewport("width=device-width"_s, ViewportArguments::ImageDocument);
+        processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::ImageDocument);
 #else
         auto listener = ImageEventListener::create(*this);
         if (RefPtr<DOMWindow> window = this->domWindow())
@@ -273,7 +273,8 @@ void ImageDocument::imageUpdated()
 #if PLATFORM(IOS)
         FloatSize screenSize = page()->chrome().screenSize();
         if (imageSize.width() > screenSize.width())
-            processViewport(String::format("width=%u", static_cast<unsigned>(imageSize.width().toInt())), ViewportArguments::ImageDocument);
+            processViewport(String::format("width=%u,viewport-fit=cover", static_cast<unsigned>(imageSize.width().toInt())), ViewportArguments::ImageDocument);
+
         if (page())
             page()->chrome().client().imageOrMediaDocumentSizeChanged(IntSize(imageSize.width(), imageSize.height()));
 #else

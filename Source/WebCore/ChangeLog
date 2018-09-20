@@ -1,3 +1,19 @@
+2018-09-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Adopt safe-area-insets on ImageDocument
+        https://bugs.webkit.org/show_bug.cgi?id=189774
+
+        Reviewed by Tim Horton.
+        rdar://problem/44624432
+
+        By having the safe-area insets on the image, we ensure that they only
+        grow the document if there is not enough space. This also ensures the image
+        does not have parts under UI elements.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        (WebCore::ImageDocument::imageUpdated):
+
 2018-09-20  Zalan Bujtas  <zalan@apple.com>
 
         Release assert under RenderView::pageOrViewLogicalHeight
