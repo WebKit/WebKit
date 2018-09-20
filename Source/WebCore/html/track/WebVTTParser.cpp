@@ -51,6 +51,7 @@ const double secondsPerMinute = 60;
 const double secondsPerMillisecond = 0.001;
 const char* fileIdentifier = "WEBVTT";
 const unsigned fileIdentifierLength = 6;
+const unsigned regionIdentifierLength = 6;
 
 bool WebVTTParser::parseFloatPercentageValue(VTTScanner& valueScanner, float& percentage)
 {
@@ -101,8 +102,7 @@ void WebVTTParser::getNewCues(Vector<RefPtr<WebVTTCueData>>& outputCues)
 
 void WebVTTParser::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
 {
-    outputRegions = m_regionList;
-    m_regionList.clear();
+    outputRegions = WTFMove(m_regionList);
 }
 
 void WebVTTParser::parseFileHeader(String&& data)
@@ -166,20 +166,12 @@ void WebVTTParser::parse()
             break;
 
         case Header:
-            collectMetadataHeader(*line);
+            // Steps 11 - 14 - Collect WebVTT block
+            m_state = collectWebVTTBlock(*line);
+            break;
 
-            if (line->isEmpty()) {
-                // Steps 10-14 - Allow a header (comment area) under the WEBVTT line.
-                if (m_client && m_regionList.size())
-                    m_client->newRegionsParsed();
-                m_state = Id;
-                break;
-            }
-            // Step 15 - Break out of header loop if the line could be a timestamp line.
-            if (line->contains("-->"))
-                m_state = recoverCue(*line);
-
-            // Step 16 - Line is not the empty string and does not contain "-->".
+        case Region:
+            m_state = collectRegionSettings(*line);
             break;
 
         case Id:
@@ -249,28 +241,89 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
     return true;
 }
 
-void WebVTTParser::collectMetadataHeader(const String& line)
+WebVTTParser::ParseState WebVTTParser::collectRegionSettings(const String& line)
 {
-    // WebVTT header parsing (WebVTT parser algorithm step 12)
-    static NeverDestroyed<const AtomicString> regionHeaderName("Region", AtomicString::ConstructFromLiteral);
-
-    // Step 12.4 If line contains the character ":" (A U+003A COLON), then set metadata's
-    // name to the substring of line before the first ":" character and
-    // metadata's value to the substring after this character.
-    size_t colonPosition = line.find(':');
-    if (colonPosition == notFound)
-        return;
-
-    String headerName = line.substring(0, colonPosition);
-
-    // Step 12.5 If metadata's name equals "Region":
-    if (headerName == regionHeaderName) {
-        String headerValue = line.substring(colonPosition + 1, line.length() - 1);
-        // Steps 12.5.1 - 12.5.11 Region creation: Let region be a new text track region [...]
-        createNewRegion(headerValue);
-    }
+    // End of region block
+    if (checkAndStoreRegion(line))
+        return checkAndRecoverCue(line);
+    
+    m_currentRegion->setRegionSettings(line);
+    return Region;
 }
 
+WebVTTParser::ParseState WebVTTParser::collectWebVTTBlock(const String& line)
+{
+    // collect a WebVTT block parsing. (WebVTT parser algorithm step 14)
+    
+    if (checkAndCreateRegion(line))
+        return Region;
+    
+    // Handle cue block.
+    ParseState state = checkAndRecoverCue(line);
+    if (state != Header) {
+        if (m_client && !m_regionList.isEmpty())
+            m_client->newRegionsParsed();
+        if (!m_previousLine.isEmpty() && !m_previousLine.contains("-->"))
+            m_currentId = m_previousLine;
+        
+        return state;
+    }
+    
+    // store previous line for cue id.
+    // length is more than 1 line clear m_previousLine and ignore line.
+    if (m_previousLine.isEmpty())
+        m_previousLine = line;
+    else
+        m_previousLine = emptyString();
+
+    return state;
+}
+
+WebVTTParser::ParseState WebVTTParser::checkAndRecoverCue(const String& line)
+{
+    // parse cue timings and settings
+    if (line.contains("-->")) {
+        ParseState state = recoverCue(line);
+        if (state != BadCue)
+            return state;
+    }
+    return Header;
+}
+
+bool WebVTTParser::checkAndCreateRegion(const String& line)
+{
+    if (m_previousLine.contains("-->"))
+        return false;
+    // line starts with the substring "REGION" and remaining characters
+    // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
+    // (tab) characters expected other than these charecters it is invalid.
+    if (line.startsWith("REGION") && line.substring(regionIdentifierLength).isAllSpecialCharacters<isASpace>()) {
+        m_currentRegion = VTTRegion::create(*m_scriptExecutionContext);
+        return true;
+    }
+    return false;
+}
+
+bool WebVTTParser::checkAndStoreRegion(const String& line)
+{
+    if (!line.isEmpty() && !line.contains("-->"))
+        return false;
+    
+    if (!m_currentRegion->id().isEmpty()) {
+        // If the text track list of regions regions contains a region
+        // with the same region identifier value as region, remove that region.
+        for (auto region : m_regionList) {
+            if (region->id() == m_currentRegion->id()) {
+                m_regionList.removeFirst(region);
+                break;
+            }
+        }
+        m_regionList.append(m_currentRegion);
+    }
+    m_currentRegion = nullptr;
+    return true;
+}
+    
 WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 {
     if (line.contains("-->"))
@@ -420,27 +473,6 @@ void WebVTTParser::resetCueValues()
     m_currentStartTime = MediaTime::zeroTime();
     m_currentEndTime = MediaTime::zeroTime();
     m_currentContent.clear();
-}
-
-void WebVTTParser::createNewRegion(const String& headerValue)
-{
-    if (headerValue.isEmpty())
-        return;
-
-    // Steps 12.5.1 - 12.5.9 - Construct and initialize a WebVTT Region object.
-    RefPtr<VTTRegion> region = VTTRegion::create(*m_scriptExecutionContext);
-    region->setRegionSettings(headerValue);
-
-    // Step 12.5.10 If the text track list of regions regions contains a region
-    // with the same region identifier value as region, remove that region.
-    for (size_t i = 0; i < m_regionList.size(); ++i)
-        if (m_regionList[i]->id() == region->id()) {
-            m_regionList.remove(i);
-            break;
-        }
-
-    // Step 12.5.11
-    m_regionList.append(region);
 }
 
 bool WebVTTParser::collectTimeStamp(const String& line, MediaTime& timeStamp)

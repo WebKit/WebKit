@@ -103,6 +103,7 @@ public:
         Id,
         TimingsAndSettings,
         CueText,
+        Region,
         BadCue,
         Finished
     };
@@ -116,6 +117,14 @@ public:
             || tagName == uTag
             || tagName == rubyTag
             || tagName == rtTag;
+    }
+
+    static inline bool isASpace(UChar c)
+    {
+        // WebVTT space characters are U+0020 SPACE, U+0009 CHARACTER
+        // TABULATION (tab), U+000A LINE FEED (LF), U+000C FORM FEED (FF), and
+        // U+000D CARRIAGE RETURN (CR).
+        return c == ' ' || c == '\t' || c == '\n' || c == '\f' || c == '\r';
     }
 
     static inline bool isValidSettingDelimiter(UChar c)
@@ -157,12 +166,14 @@ private:
     ParseState collectCueText(const String&);
     ParseState recoverCue(const String&);
     ParseState ignoreBadCue(const String&);
-
+    ParseState collectRegionSettings(const String&);
+    ParseState collectWebVTTBlock(const String&);
+    ParseState checkAndRecoverCue(const String& line);
+    bool checkAndCreateRegion(const String& line);
+    bool checkAndStoreRegion(const String& line);
+    
     void createNewCue();
     void resetCueValues();
-
-    void collectMetadataHeader(const String&);
-    void createNewRegion(const String& headerValue);
 
     static bool collectTimeStamp(VTTScanner& input, MediaTime& timeStamp);
 
@@ -172,8 +183,10 @@ private:
     MediaTime m_currentStartTime;
     MediaTime m_currentEndTime;
     StringBuilder m_currentContent;
+    String m_previousLine;
     String m_currentSettings;
-
+    RefPtr<VTTRegion> m_currentRegion;
+    
     WebVTTParserClient* m_client;
 
     Vector<RefPtr<WebVTTCueData>> m_cuelist;

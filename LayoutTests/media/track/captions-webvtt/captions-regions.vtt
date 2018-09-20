@@ -1,5 +1,11 @@
 WEBVTT FILE
-Region: id=fred width=50% height=2 regionanchor=50%,100% viewportanchor=10%,40%
+
+REGION
+id=fred
+width=50%
+height=2
+regionanchor=50%,100%
+viewportanchor=10%,40%
 
 1
 00:00:00.000 --> 00:00:01.500 region:fred

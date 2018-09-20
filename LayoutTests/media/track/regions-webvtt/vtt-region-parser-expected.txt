@@ -1,7 +1,7 @@
 Tests proper parsing of various regions present in WebVTT header area.
 
 
-EXPECTED (video.textTracks[0].regions.length == '5') OK
+EXPECTED (video.textTracks[0].regions.length == '4') OK
 
 EXPECTED (region.id == 'region_without_settings') OK
 
@@ -22,8 +22,6 @@ EXPECTED (Math.round(region.viewportAnchorY * 1000) == '32440') OK
 
 EXPECTED (region.id == 'not_unique_id') OK
 EXPECTED (region.width == '67') OK
-
-EXPECTED (region.id == '') OK
 
 END OF TEST
 

@@ -1,3 +1,15 @@
+2018-09-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] Update the parser according to the new region syntax.
+        https://bugs.webkit.org/show_bug.cgi?id=189767
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/captions-regions.vtt:
+        * media/track/captions-webvtt/header-regions.vtt:
+        * media/track/regions-webvtt/vtt-region-parser-expected.txt:
+        * media/track/regions-webvtt/vtt-region-parser.html:
+
 2018-09-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS Sierra] Layout Test http/wpt/cache-storage/cache-put-keys.https.any.worker.html is a flaky failure

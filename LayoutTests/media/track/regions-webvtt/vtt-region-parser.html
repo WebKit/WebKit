@@ -16,7 +16,7 @@
             }
 
             findMediaElement();
-            testExpected("video.textTracks[0].regions.length", 5);
+            testExpected("video.textTracks[0].regions.length", 4);
 
             consoleWrite("");
             region = video.textTracks[0].regions[0];
@@ -45,10 +45,6 @@
             region = video.textTracks[0].regions[3];
             testExpected("region.id", "not_unique_id");
             testExpected("region.width", 67);
-
-            consoleWrite("");
-            region = video.textTracks[0].regions[4];
-            testExpected("region.id", "");
 
             consoleWrite("");
             endTest();

@@ -1,3 +1,29 @@
+2018-09-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] Update the parser according to the new region syntax.
+        https://bugs.webkit.org/show_bug.cgi?id=189767
+
+        Reviewed by Eric Carlson.
+
+        The majority of the code added in this patch is adopted from the Chromium project, which has added
+        support for the new region syntax. The complete parser specification can be found at
+        https://w3c.github.io/webvtt/#file-parsing. One small difference in behavior is that the new parser
+        will not add regions with empty id.
+
+        No new tests, covered by existing tests.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::getNewRegions):
+        (WebCore::WebVTTParser::parse):
+        (WebCore::WebVTTParser::collectRegionSettings):
+        (WebCore::WebVTTParser::collectWebVTTBlock):
+        (WebCore::WebVTTParser::checkAndRecoverCue):
+        (WebCore::WebVTTParser::checkAndCreateRegion):
+        (WebCore::WebVTTParser::checkAndStoreRegion):
+        (WebCore::WebVTTParser::collectMetadataHeader): Deleted.
+        (WebCore::WebVTTParser::createNewRegion): Deleted.
+        * html/track/WebVTTParser.h:
+
 2018-09-20  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer][MSE] Add a default sample duration
