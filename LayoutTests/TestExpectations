@@ -959,6 +959,7 @@ webkit.org/b/189641 webgl/2.0.0/conformance/rendering/clipping-wide-points.html 
 webkit.org/b/189641 webgl/2.0.0/conformance/textures/misc/copy-tex-image-2d-formats.html [ Failure ] 
 webkit.org/b/189641 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Failure Slow ]
 webkit.org/b/189641 webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit.html [ Failure ]
+webkit.org/b/189641 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Slow ]
 
 [ Debug ] fast/workers/worker-cloneport.html [ Slow ]
 
