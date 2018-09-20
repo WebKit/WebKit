@@ -949,6 +949,14 @@ webkit.org/b/139639 [ Debug ] cssom/non-subpixel-scroll-top-left-values.html [ S
 
 webkit.org/b/139640 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 
+webkit.org/b/189641 webgl/2.0.0/conformance/buffers/buffer-uninitialized.html [ Failure ]
+webkit.org/b/189641 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Failure ] 
+webkit.org/b/189641 webgl/2.0.0/conformance/renderbuffers/feedback-loop.html [ Failure ] 
+webkit.org/b/189641 webgl/2.0.0/conformance/rendering/clipping-wide-points.html [ Failure ] 
+webkit.org/b/189641 webgl/2.0.0/conformance/textures/misc/copy-tex-image-2d-formats.html [ Failure ] 
+webkit.org/b/189641 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Failure ] 
+webkit.org/b/189641 webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit.html [ Failure ]
+
 [ Debug ] fast/workers/worker-cloneport.html [ Slow ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
@@ -2064,7 +2072,7 @@ webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pa
 webkit.org/b/186574 media/video-buffering-allowed.html [ Pass Failure ]
 
 ### WebL Conformance Suite 2.0.0 tests that do not yet have support as of webkit.org/b/189686. Enable as support is implemented. ###
-webkit.org/b/189686 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Slow ]
+
 
 # Skip entire deqp suite; these will likely never be run as part of the normal LayoutTests.
 webgl/2.0.0/deqp [ Skip ]

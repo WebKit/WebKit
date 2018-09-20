@@ -1,3 +1,12 @@
+2018-09-20  Dawei Fenton  <realdawei@apple.com>
+
+        WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance
+        https://bugs.webkit.org/show_bug.cgi?id=189641
+
+        Unreviewed, marked tests as failing.
+
+        * TestExpectations:
+
 2018-09-20  Daniel Bates  <dabates@apple.com>
 
         [iOS] Support testing more hardware special keys
