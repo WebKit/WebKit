@@ -177,6 +177,10 @@ static void webKitSettingsConstructed(GObject* object)
     WebPreferences* prefs = settings->priv->preferences.get();
     prefs->setShouldRespectImageOrientation(true);
 
+    bool mediaStreamEnabled = prefs->mediaStreamEnabled();
+    prefs->setMediaDevicesEnabled(mediaStreamEnabled);
+    prefs->setPeerConnectionEnabled(mediaStreamEnabled);
+
     settings->priv->screenDpi = WebCore::screenDPI();
     WebCore::setScreenDPIObserverHandler([settings]() {
         auto newScreenDpi = WebCore::screenDPI();

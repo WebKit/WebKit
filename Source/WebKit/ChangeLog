@@ -1,3 +1,17 @@
+2018-09-20  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK][WPE] Make sure MediaDeviceEnabled and PeerConnectionEnabled are always synced with enable-media-stream
+        https://bugs.webkit.org/show_bug.cgi?id=188704
+
+        By default m_isMediaDevicesEnabled and m_isScreenCaptureEnabled are false but
+        m_isMediaStreamEnabled is true meaning that in the WPE minibrowser getUserMedia
+        was disabled even if we explicitly set `"enable-media-stream", TRUE`.
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsConstructed):
+
 2018-09-20  Justin Michaud  <justin_michaud@apple.com>
 
         Implement CSS Custom Properties and Values Skeleton
