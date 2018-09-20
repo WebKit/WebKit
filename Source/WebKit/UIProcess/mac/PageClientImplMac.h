@@ -79,6 +79,7 @@ private:
     LayerOrView *acceleratedCompositingRootLayer() const override;
 
     void processDidExit() override;
+    void processWillSwap() override;
     void pageClosed() override;
     void didRelaunchProcess() override;
     void preferencesDidChange() override;

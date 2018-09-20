@@ -1460,9 +1460,6 @@ void WebViewImpl::processDidExit()
 
     notifyInputContextAboutDiscardedComposition();
 
-    if (m_layerHostingView)
-        setAcceleratedCompositingRootLayer(nil);
-
     updateRemoteAccessibilityRegistration(false);
     flushPendingMouseEventCallbacks();
 

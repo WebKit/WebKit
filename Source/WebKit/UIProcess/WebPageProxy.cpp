@@ -56,8 +56,8 @@
 #include "AuthenticationDecisionListener.h"
 #include "DataReference.h"
 #include "DownloadProxy.h"
+#include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
-#include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
 #include "FrameInfoData.h"
 #include "LoadParameters.h"
@@ -3430,6 +3430,24 @@ void WebPageProxy::didFinishProgress()
     m_pageLoadState.commitChanges();
 }
 
+void WebPageProxy::didCompletePageTransition(bool isInitialEmptyDocument)
+{
+    // Attach drawing area for the initial empty document only if this is not a process swap.
+    if (isInitialEmptyDocument && m_suspendedPage)
+        return;
+
+#if PLATFORM(MAC)
+    if (!m_drawingArea)
+        return;
+
+    // Drawing area for the suspended page will be torn down when the attach completes.
+    m_drawingArea->attachInWebProcess();
+#else
+    if (m_suspendedPage)
+        m_suspendedPage->tearDownDrawingAreaInWebProcess();
+#endif
+}
+
 void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
 {
     auto transaction = m_pageLoadState.transaction();
@@ -6137,7 +6155,11 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     m_editorState = EditorState();
 
-    pageClient().processDidExit();
+    if (terminationReason == ProcessTerminationReason::NavigationSwap)
+        pageClient().processWillSwap();
+    else
+        pageClient().processDidExit();
+
     pageClient().clearAllEditCommands();
 
     auto resetStateReason = terminationReason == ProcessTerminationReason::NavigationSwap ? ResetStateReason::NavigationSwap : ResetStateReason::WebProcessExited;
@@ -6278,6 +6300,10 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);
+
+    // We have completed the page transition and can tear down the layers in the suspended process.
+    if (m_suspendedPage)
+        m_suspendedPage->tearDownDrawingAreaInWebProcess();
 }
 
 void WebPageProxy::exitAcceleratedCompositingMode()

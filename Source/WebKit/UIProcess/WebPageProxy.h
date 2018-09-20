@@ -1427,6 +1427,7 @@ private:
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
+    void didCompletePageTransition(bool isInitialEmptyDocument);
     void setNetworkRequestsInProgress(bool);
 
     void hasInsecureContent(WebCore::HasInsecureContent&);

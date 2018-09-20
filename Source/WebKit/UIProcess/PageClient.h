@@ -184,6 +184,7 @@ public:
     virtual LayerHostingMode viewLayerHostingMode() { return LayerHostingMode::InProcess; }
 
     virtual void processDidExit() = 0;
+    virtual void processWillSwap() { processDidExit(); }
     virtual void didRelaunchProcess() = 0;
     virtual void pageClosed() = 0;
 

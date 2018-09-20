@@ -253,9 +253,16 @@ ColorSpaceData PageClientImpl::colorSpace()
     return m_impl->colorSpace();
 }
 
+void PageClientImpl::processWillSwap()
+{
+    // FIXME: It didn't really exit.
+    m_impl->processDidExit();
+}
+
 void PageClientImpl::processDidExit()
 {
     m_impl->processDidExit();
+    m_impl->setAcceleratedCompositingRootLayer(nil);
 }
 
 void PageClientImpl::pageClosed()

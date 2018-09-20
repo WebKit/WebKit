@@ -65,6 +65,7 @@ private:
     bool isViewVisibleOrOccluded() override;
     bool isVisuallyIdle() override;
     void processDidExit() override;
+    void processWillSwap() override;
     void didRelaunchProcess() override;
     void pageClosed() override;
     void preferencesDidChange() override;
