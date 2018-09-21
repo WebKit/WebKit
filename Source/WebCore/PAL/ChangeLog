@@ -1,5 +1,11 @@
 2018-09-21  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed Sierra Build Fix; ensure AVVideoPerformanceMetrics are defined on Sierra.
+
+        * pal/spi/mac/AVFoundationSPI.h:
+
+2018-09-21  Jer Noble  <jer.noble@apple.com>
+
         Move AVVideoPerformanceMetrics into AVFoundationSPI.h
         https://bugs.webkit.org/show_bug.cgi?id=189842
 
