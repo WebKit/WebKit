@@ -154,13 +154,13 @@ static RefPtr<SharedBuffer> sanitizeWebM(const SharedBuffer& buffer)
 static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBuffer& buffer)
 {
     Vector<Ref<SharedBuffer>> keyIDs;
-    RefPtr<SharedBuffer> sanitazedBuffer = sanitizeWebM(buffer);
-    if (!sanitazedBuffer)
+    RefPtr<SharedBuffer> sanitizedBuffer = sanitizeWebM(buffer);
+    if (!sanitizedBuffer)
         return std::nullopt;
 
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/webm.html#format
-    keyIDs.append(sanitazedBuffer.releaseNonNull());
+    keyIDs.append(sanitizedBuffer.releaseNonNull());
     return keyIDs;
 }
 
