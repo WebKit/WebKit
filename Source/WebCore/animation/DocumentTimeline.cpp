@@ -141,7 +141,7 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
 
 std::optional<Seconds> DocumentTimeline::currentTime()
 {
-    if (m_paused || m_isSuspended || !m_document || !m_document->domWindow())
+    if (m_paused || !m_document || !m_document->domWindow())
         return AnimationTimeline::currentTime();
 
     if (auto* mainDocumentTimeline = m_document->existingTimeline()) {
@@ -216,9 +216,11 @@ void DocumentTimeline::scheduleInvalidationTaskIfNeeded()
 void DocumentTimeline::performInvalidationTask()
 {
     // Now that the timing model has changed we can see if there are DOM events to dispatch for declarative animations.
-    for (auto& animation : animations()) {
-        if (is<DeclarativeAnimation>(animation))
-            downcast<DeclarativeAnimation>(*animation).invalidateDOMEvents();
+    if (!m_isSuspended) {
+        for (auto& animation : animations()) {
+            if (is<DeclarativeAnimation>(animation))
+                downcast<DeclarativeAnimation>(*animation).invalidateDOMEvents();
+        }
     }
 
     applyPendingAcceleratedAnimations();

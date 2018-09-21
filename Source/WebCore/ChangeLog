@@ -1,3 +1,19 @@
+2018-09-21  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r235962-r235963): Layout Test animations/suspend-resume-animation-events.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=189607
+        <rdar://problem/44652315>
+
+        Reviewed by Dean Jackson.
+
+        There is no reason we shouldn't return the document timeline's time when suspended as otherwise animations may
+        report an unresolved current time when suspended which would wreak havoc when invalidating what DOM events to
+        dispatch for CSS Animations and Transitions. We also shouldn't be invalidation DOM events when suspended.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::currentTime):
+        (WebCore::DocumentTimeline::DocumentTimeline::performInvalidationTask):
+
 2018-09-21  Mike Gorse  <mgorse@suse.com>
 
         Build tools should work when the /usr/bin/python is python3
