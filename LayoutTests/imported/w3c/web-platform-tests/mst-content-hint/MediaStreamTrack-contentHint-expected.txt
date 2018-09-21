@@ -1,0 +1,9 @@
+
+FAIL Tracks have empty default content hint assert_equals: expected (undefined) undefined but got (string) ""
+PASS Accepts valid audio contentHints 
+FAIL Audio tracks ignore invalid/video contentHints assert_equals: Audio tracks should ignore video-only contentHints. expected "speech" but got "motion"
+PASS Accepts valid video contentHints 
+FAIL Video tracks ignore invalid/audio contentHints assert_equals: Video tracks should ignore audio-only contentHints. expected "motion" but got "speech"
+FAIL Cloned video tracks have separate contentHints assert_equals: expected (string) "motion" but got (undefined) undefined
+FAIL Cloned audio tracks have separate contentHints assert_equals: expected (string) "speech" but got (undefined) undefined
+
