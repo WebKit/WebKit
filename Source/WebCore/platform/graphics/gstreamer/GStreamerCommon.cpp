@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+const char* webkitGstMapInfoQuarkString = "webkit-gst-map-info";
+
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate* staticPadTemplate, const gchar* name, GstPad* target)
 {
     GstPad* pad;
@@ -141,6 +143,26 @@ bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)
 }
 #endif
 
+GstBuffer* createGstBuffer(GstBuffer* buffer)
+{
+    gsize bufferSize = gst_buffer_get_size(buffer);
+    GstBuffer* newBuffer = gst_buffer_new_and_alloc(bufferSize);
+
+    if (!newBuffer)
+        return 0;
+
+    gst_buffer_copy_into(newBuffer, buffer, static_cast<GstBufferCopyFlags>(GST_BUFFER_COPY_METADATA), 0, bufferSize);
+    return newBuffer;
+}
+
+GstBuffer* createGstBufferForData(const char* data, int length)
+{
+    GstBuffer* buffer = gst_buffer_new_and_alloc(length);
+
+    gst_buffer_fill(buffer, 0, data, length);
+
+    return buffer;
+}
 
 const char* capsMediaType(const GstCaps* caps)
 {
@@ -181,6 +203,38 @@ bool areEncryptedCaps(const GstCaps* caps)
     UNUSED_PARAM(caps);
     return false;
 #endif
+}
+
+char* getGstBufferDataPointer(GstBuffer* buffer)
+{
+    GstMiniObject* miniObject = reinterpret_cast<GstMiniObject*>(buffer);
+    GstMapInfo* mapInfo = static_cast<GstMapInfo*>(gst_mini_object_get_qdata(miniObject, g_quark_from_static_string(webkitGstMapInfoQuarkString)));
+    return reinterpret_cast<char*>(mapInfo->data);
+}
+
+void mapGstBuffer(GstBuffer* buffer, uint32_t flags)
+{
+    GstMapInfo* mapInfo = static_cast<GstMapInfo*>(fastMalloc(sizeof(GstMapInfo)));
+    if (!gst_buffer_map(buffer, mapInfo, static_cast<GstMapFlags>(flags))) {
+        fastFree(mapInfo);
+        gst_buffer_unref(buffer);
+        return;
+    }
+
+    GstMiniObject* miniObject = reinterpret_cast<GstMiniObject*>(buffer);
+    gst_mini_object_set_qdata(miniObject, g_quark_from_static_string(webkitGstMapInfoQuarkString), mapInfo, nullptr);
+}
+
+void unmapGstBuffer(GstBuffer* buffer)
+{
+    GstMiniObject* miniObject = reinterpret_cast<GstMiniObject*>(buffer);
+    GstMapInfo* mapInfo = static_cast<GstMapInfo*>(gst_mini_object_steal_qdata(miniObject, g_quark_from_static_string(webkitGstMapInfoQuarkString)));
+
+    if (!mapInfo)
+        return;
+
+    gst_buffer_unmap(buffer, mapInfo);
+    fastFree(mapInfo);
 }
 
 Vector<String> extractGStreamerOptionsFromCommandLine()

@@ -103,6 +103,7 @@ struct _WebKitWebSrcPrivate {
     uint64_t minimumBlocksize;
 
     RefPtr<MainThreadNotifier<MainThreadSourceNotification>> notifier;
+    GRefPtr<GstBuffer> buffer;
 };
 
 enum {
@@ -364,6 +365,11 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
     }
 
     bool wasSeeking = std::exchange(priv->isSeeking, false);
+
+    if (priv->buffer) {
+        unmapGstBuffer(priv->buffer.get());
+        priv->buffer.clear();
+    }
 
     priv->paused = false;
 
@@ -885,8 +891,16 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
     WebKitWebSrcPrivate* priv = src->priv;
 
+    GST_LOG_OBJECT(src, "Have %lld bytes of data", priv->buffer ? static_cast<long long>(gst_buffer_get_size(priv->buffer.get())) : length);
+
+    ASSERT(!priv->buffer || data == getGstBufferDataPointer(priv->buffer.get()));
+
+    if (priv->buffer)
+        unmapGstBuffer(priv->buffer.get());
+
     if (priv->isSeeking) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring data");
+        priv->buffer.clear();
         return;
     }
 
@@ -895,6 +909,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
         if (priv->offset + length <= priv->requestedOffset) {
             // Discard all the buffers coming before the requested seek position.
             priv->offset += length;
+            priv->buffer.clear();
             return;
         }
 
@@ -902,11 +917,20 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
             guint64 offset = priv->requestedOffset - priv->offset;
             data += offset;
             length -= offset;
+            if (priv->buffer)
+                gst_buffer_resize(priv->buffer.get(), offset, -1);
             priv->offset = priv->requestedOffset;
         }
 
         priv->requestedOffset = 0;
     }
+
+    // Ports using the GStreamer backend but not the soup implementation of ResourceHandle
+    // won't be using buffers provided by this client, the buffer is created here in that case.
+    if (!priv->buffer)
+        priv->buffer = adoptGRef(createGstBufferForData(data, length));
+    else
+        gst_buffer_set_size(priv->buffer.get(), static_cast<gssize>(length));
 
     checkUpdateBlocksize(length);
 
@@ -932,7 +956,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
         uint64_t subBufferOffset = startingOffset + currentOffset;
         uint64_t currentOffsetSize = std::min(blockSize, bufferSize - currentOffset);
 
-        GstBuffer* subBuffer = gst_buffer_new_wrapped(g_memdup(data + currentOffset, currentOffsetSize), currentOffsetSize);
+        GstBuffer* subBuffer = gst_buffer_copy_region(priv->buffer.get(), GST_BUFFER_COPY_ALL, currentOffset, currentOffsetSize);
         if (UNLIKELY(!subBuffer)) {
             GST_ELEMENT_ERROR(src, CORE, FAILED, ("Failed to allocate sub-buffer"), (nullptr));
             break;
@@ -961,6 +985,8 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
             break;
         }
     }
+
+    priv->buffer.clear();
 }
 
 void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error)
