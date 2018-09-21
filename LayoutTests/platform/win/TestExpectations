@@ -4181,3 +4181,5 @@ webkit.org/b/189194 http/tests/security/basic-auth-subresource.html [ Failure ]
 webkit.org/b/189550 fast/text/variations/ipc2.html [ Skip ]
 
 webkit.org/b/189834 css-custom-properties-api/registerProperty.html [ Failure ]
+
+webkit.org/b/189836 webanimations/accelerated-animation-suspension.html [ Skip ]

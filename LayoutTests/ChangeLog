@@ -1,5 +1,14 @@
 2018-09-21  Per Arne Vollan  <pvollan@apple.com>
 
+        Layout Test webanimations/accelerated-animation-suspension.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=189836
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2018-09-21  Per Arne Vollan  <pvollan@apple.com>
+
         Layout Test css-custom-properties-api/registerProperty.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=189834
 
