@@ -1,3 +1,14 @@
+2018-09-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r236237): Web Inspector: DarkMode: white background in Elements and Timelines
+        https://bugs.webkit.org/show_bug.cgi?id=189852
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/Main.css:
+        (body):
+        (#main):
+
 2018-09-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: remove unnecessary WI.Platform.version checks

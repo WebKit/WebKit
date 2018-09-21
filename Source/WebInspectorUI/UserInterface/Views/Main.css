@@ -49,7 +49,7 @@ body {
 
     -webkit-font-smoothing: subpixel-antialiased;
 
-    background-color: white;
+    background-color: var(--background-color-content);
 }
 
 body.docked.bottom {
@@ -133,7 +133,7 @@ input[type=range]::-webkit-slider-runnable-track {
     display: flex;
     flex-direction: column;
 
-    background-color: white;
+    background-color: var(--background-color-content);
 
     /* The position and z-index are needed to make negative z-index work in the DOM tree. */
     z-index: 0;
