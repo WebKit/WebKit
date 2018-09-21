@@ -46,6 +46,9 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
+#include "JSPromise.h"
+#include "JSPromiseDeferred.h"
+#include "JSRetainPtr.h"
 #include "JSString.h"
 #include "JSValueRef.h"
 #include "ObjectConstructor.h"
@@ -272,6 +275,30 @@ JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSV
         result = 0;
     
     return toRef(result);
+}
+
+JSObjectRef JSObjectMakeDeferredPromise(JSContextRef ctx, JSObjectRef* resolve, JSObjectRef* reject, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
+    JSLockHolder locker(exec);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto* globalObject = exec->lexicalGlobalObject();
+    JSPromiseDeferred::DeferredData data = JSPromiseDeferred::createDeferredData(exec, globalObject, globalObject->promiseConstructor());
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    if (resolve)
+        *resolve = toRef(data.resolve);
+    if (reject)
+        *reject = toRef(data.reject);
+    return toRef(data.promise);
 }
 
 JSValueRef JSObjectGetPrototype(JSContextRef ctx, JSObjectRef object)

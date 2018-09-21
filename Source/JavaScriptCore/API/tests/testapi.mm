@@ -27,13 +27,13 @@
 #import "JSExportMacros.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 
-#undef NS_AVAILABLE
-#define NS_AVAILABLE(_mac, _ios)
-
 #import "CurrentThisInsideBlockGetterTest.h"
 #import "DFGWorklist.h"
 #import "DateTests.h"
+#import "JSCast.h"
 #import "JSExportTests.h"
+#import "JSValuePrivate.h"
+#import "JSVirtualMachineInternal.h"
 #import "JSVirtualMachinePrivate.h"
 #import "JSWrapperMapTests.h"
 #import "Regress141275.h"
@@ -556,8 +556,6 @@ static void runJITThreadLimitTests()
 
 static void testObjectiveCAPIMain()
 {
-    runJITThreadLimitTests();
-
     @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
@@ -1653,11 +1651,182 @@ static void checkNegativeNSIntegers()
     checkResult(@"Negative number maintained its original value", [[result toString] isEqualToString:@"-1"]);
 }
 
+enum class Resolution {
+    ResolveEager,
+    RejectEager,
+    ResolveLate,
+    RejectLate,
+};
+
+static void promiseWithExecutor(Resolution resolution)
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        __block JSValue *resolveCallback;
+        __block JSValue *rejectCallback;
+        JSValue *promise = [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *resolve, JSValue *reject) {
+            if (resolution == Resolution::ResolveEager)
+                [resolve callWithArguments:@[@YES]];
+            if (resolution == Resolution::RejectEager)
+                [reject callWithArguments:@[@YES]];
+            resolveCallback = resolve;
+            rejectCallback = reject;
+        }];
+
+        __block bool valueWasResolvedTrue = false;
+        __block bool valueWasRejectedTrue = false;
+        [promise invokeMethod:@"then" withArguments:@[
+            ^(JSValue *value) { valueWasResolvedTrue = [value isBoolean] && [value toBool]; },
+            ^(JSValue *value) { valueWasRejectedTrue = [value isBoolean] && [value toBool]; },
+        ]];
+
+        switch (resolution) {
+        case Resolution::ResolveEager:
+            checkResult(@"ResolveEager should have set resolve early.", valueWasResolvedTrue && !valueWasRejectedTrue);
+            break;
+        case Resolution::RejectEager:
+            checkResult(@"RejectEager should have set reject early.", !valueWasResolvedTrue && valueWasRejectedTrue);
+            break;
+        default:
+            checkResult(@"Resolve/RejectLate should have not have set anything early.", !valueWasResolvedTrue && !valueWasRejectedTrue);
+            break;
+        }
+
+        valueWasResolvedTrue = false;
+        valueWasRejectedTrue = false;
+
+        // Run script to make sure reactions don't happen again
+        [context evaluateScript:@"{ };"];
+
+        if (resolution == Resolution::ResolveLate)
+            [resolveCallback callWithArguments:@[@YES]];
+        if (resolution == Resolution::RejectLate)
+            [rejectCallback callWithArguments:@[@YES]];
+
+        switch (resolution) {
+        case Resolution::ResolveLate:
+            checkResult(@"ResolveLate should have set resolve late.", valueWasResolvedTrue && !valueWasRejectedTrue);
+            break;
+        case Resolution::RejectLate:
+            checkResult(@"RejectLate should have set reject late.", !valueWasResolvedTrue && valueWasRejectedTrue);
+            break;
+        default:
+            checkResult(@"Resolve/RejectEarly should have not have set anything late.", !valueWasResolvedTrue && !valueWasRejectedTrue);
+            break;
+        }
+    }
+}
+
+static void promiseRejectOnJSException()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        JSValue *promise = [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *, JSValue *) {
+            context.exception = [JSValue valueWithNewErrorFromMessage:@"dope" inContext:context];
+        }];
+        checkResult(@"Exception set in callback should not propagate", !context.exception);
+
+        __block bool reasonWasObject = false;
+        [promise invokeMethod:@"catch" withArguments:@[^(JSValue *reason) { reasonWasObject = [reason isObject]; }]];
+
+        checkResult(@"Setting an exception in executor causes the promise to be rejected", reasonWasObject);
+
+        promise = [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *, JSValue *) {
+            [context evaluateScript:@"throw new Error('dope');"];
+        }];
+        checkResult(@"Exception thrown in callback should not propagate", !context.exception);
+
+        reasonWasObject = false;
+        [promise invokeMethod:@"catch" withArguments:@[^(JSValue *reason) { reasonWasObject = [reason isObject]; }]];
+
+        checkResult(@"Running code that throws an exception in the executor causes the promise to be rejected", reasonWasObject);
+    }
+}
+
+static void promiseCreateResolved()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        JSValue *promise = [JSValue valueWithNewPromiseResolvedWithResult:[NSNull null] inContext:context];
+        __block bool calledWithNull = false;
+        [promise invokeMethod:@"then" withArguments:@[
+            ^(JSValue *result) { calledWithNull = [result isNull]; }
+        ]];
+
+        checkResult(@"ResolvedPromise should actually resolve the promise", calledWithNull);
+    }
+}
+
+static void promiseCreateRejected()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        JSValue *promise = [JSValue valueWithNewPromiseRejectedWithReason:[NSNull null] inContext:context];
+        __block bool calledWithNull = false;
+        [promise invokeMethod:@"then" withArguments:@[
+            [NSNull null],
+            ^(JSValue *result) { calledWithNull = [result isNull]; }
+        ]];
+
+        checkResult(@"RejectedPromise should actually reject the promise", calledWithNull);
+    }
+}
+
+static void parallelPromiseResolveTest()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        __block RefPtr<Thread> thread;
+
+        Atomic<bool> shouldResolveSoon { false };
+        Atomic<bool> startedThread { false };
+        auto* shouldResolveSoonPtr = &shouldResolveSoon;
+        auto* startedThreadPtr = &startedThread;
+
+        JSValue *promise = [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *resolve, JSValue *) {
+            thread = Thread::create("async thread", ^() {
+                startedThreadPtr->store(true);
+                while (!shouldResolveSoonPtr->load()) { }
+                [resolve callWithArguments:@[[NSNull null]]];
+            });
+
+        }];
+
+        shouldResolveSoon.store(true);
+        while (!startedThread.load())
+            [context evaluateScript:@"for (let i = 0; i < 10000; i++) { }"];
+
+        thread->waitForCompletion();
+
+        __block bool calledWithNull = false;
+        [promise invokeMethod:@"then" withArguments:@[
+            ^(JSValue *result) { calledWithNull = [result isNull]; }
+        ]];
+
+        checkResult(@"Promise should be resolved", calledWithNull);
+    }
+}
 
 void testObjectiveCAPI()
 {
     NSLog(@"Testing Objective-C API");
     checkNegativeNSIntegers();
+    runJITThreadLimitTests();
+
+    promiseWithExecutor(Resolution::ResolveEager);
+    promiseWithExecutor(Resolution::RejectEager);
+    promiseWithExecutor(Resolution::ResolveLate);
+    promiseWithExecutor(Resolution::RejectLate);
+    promiseRejectOnJSException();
+    promiseCreateResolved();
+    promiseCreateRejected();
+    parallelPromiseResolveTest();
+
     testObjectiveCAPIMain();
 }
 

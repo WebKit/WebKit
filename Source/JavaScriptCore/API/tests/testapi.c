@@ -70,7 +70,7 @@
 void testObjectiveCAPI(void);
 #endif
 
-int testCAPIViaCpp(void);
+int testCAPIViaCpp(const char* filter);
 
 bool assertTrue(bool value, const char* message);
 
@@ -1380,18 +1380,17 @@ int main(int argc, char* argv[])
     SetErrorMode(0);
 #endif
 
-    testCompareAndSwap();
-    startMultithreadedMultiVMExecutionTest();
-
 #if JSC_OBJC_API_ENABLED
     testObjectiveCAPI();
 #endif
-    RELEASE_ASSERT(!testCAPIViaCpp());
 
-    const char *scriptPath = "testapi.js";
-    if (argc > 1) {
-        scriptPath = argv[1];
-    }
+    const char* filter = argc > 1 ? argv[1] : NULL;
+    RELEASE_ASSERT(!testCAPIViaCpp(filter));
+    if (filter)
+        return 0;
+
+    testCompareAndSwap();
+    startMultithreadedMultiVMExecutionTest();
     
     // Test garbage collection with a fresh context
     context = JSGlobalContextCreateInGroup(NULL, NULL);
@@ -1980,6 +1979,7 @@ int main(int argc, char* argv[])
     JSObjectMakeConstructor(context, nullClass, 0);
     JSClassRelease(nullClass);
 
+    const char* scriptPath = "testapi.js";
     char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);
     if (!scriptUTF8) {
         printf("FAIL: Test script could not be loaded.\n");

@@ -73,6 +73,11 @@ bool isMainThread()
 {
     return mainThread == &Thread::current();
 }
+
+bool isMainThreadIfInitialized()
+{
+    return isMainThread();
+}
 #endif
 
 #if PLATFORM(COCOA)
