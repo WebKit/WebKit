@@ -1,3 +1,14 @@
+2018-09-21  Youenn Fablet  <youenn@apple.com>
+
+        Whitelist two additional plugins
+        https://bugs.webkit.org/show_bug.cgi?id=189832
+        <rdar://problem/44628127>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldAllowPluginToRunUnsandboxed):
+
 2018-09-21  Woodrow Wang  <woodrow_wang@apple.com>
 
         Clear persistent storage between tests for resourceLoadStatistics
