@@ -42,7 +42,7 @@ input_file = open(input_path)
 http_header_name_to_id = { }
 http_header_names = []
 
-for line in input_file.xreadlines():
+for line in input_file:
     http_header_name = line.strip()
     if not http_header_name or http_header_name[:2] == '//':
         continue

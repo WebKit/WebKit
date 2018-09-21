@@ -1,3 +1,13 @@
+2018-09-21  Mike Gorse  <mgorse@suse.com>
+
+        Build tools should work when the /usr/bin/python is python3
+        https://bugs.webkit.org/show_bug.cgi?id=156674
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/copy-user-interface-resources.pl: Use $PYTHON if set
+        in the environment.
+
 2018-09-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: remove Visual Style CSS details sidebar panel

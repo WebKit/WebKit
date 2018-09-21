@@ -29,10 +29,16 @@ import logging
 import string
 from string import Template
 
-from cpp_generator import CppGenerator
-from generator import Generator, ucfirst
-from objc_generator import ObjCGenerator
-from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
+try:
+    from .cpp_generator import CppGenerator
+    from .generator import Generator, ucfirst
+    from .objc_generator import ObjCGenerator
+    from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
+except ValueError:
+    from cpp_generator import CppGenerator
+    from generator import Generator, ucfirst
+    from objc_generator import ObjCGenerator
+    from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
@@ -45,7 +51,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         return '%sEventDispatchers.mm' % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(self.should_generate_events_for_domain, Generator.domains_to_generate(self))
+        return list(filter(self.should_generate_events_for_domain, Generator.domains_to_generate(self)))
 
     def generate_output(self):
         secondary_headers = [
@@ -62,7 +68,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         sections = []
         sections.append(self.generate_license())
         sections.append(Template(ObjCTemplates.ImplementationPrelude).substitute(None, **header_args))
-        sections.extend(map(self._generate_event_dispatcher_implementations, domains))
+        sections.extend(list(map(self._generate_event_dispatcher_implementations, domains)))
         sections.append(Template(ObjCTemplates.ImplementationPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
@@ -100,7 +106,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         lines.append('    const FrontendRouter& router = _controller->frontendRouter();')
         lines.append('')
 
-        required_pointer_parameters = filter(lambda parameter: not parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), event.event_parameters)
+        required_pointer_parameters = [parameter for parameter in event.event_parameters if not parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type)]
         for parameter in required_pointer_parameters:
             var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
             lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(%s, @"%s");' % (var_name, var_name))
@@ -108,7 +114,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
                 lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
 
-        optional_pointer_parameters = filter(lambda parameter: parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), event.event_parameters)
+        optional_pointer_parameters = [parameter for parameter in event.event_parameters if parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type)]
         for parameter in optional_pointer_parameters:
             var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
             lines.append('    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(%s, @"%s");' % (var_name, var_name))

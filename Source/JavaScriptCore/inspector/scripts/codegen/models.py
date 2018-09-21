@@ -35,7 +35,7 @@ def ucfirst(str):
 
 
 def find_duplicates(l):
-    return [key for key, count in collections.Counter(l).items() if count > 1]
+    return [key for key, count in list(collections.Counter(l).items()) if count > 1]
 
 
 _FRAMEWORK_CONFIG_MAP = {

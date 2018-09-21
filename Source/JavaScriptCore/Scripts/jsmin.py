@@ -79,10 +79,13 @@ class JavascriptMinify(object):
         def write(char):
             # all of this is to support literal regular expressions.
             # sigh
-            if char in 'return':
+            if str(char) in 'return':
                 self.return_buf += char
                 self.is_return = self.return_buf == 'return'
-            self.outs.write(char)
+            if sys.version_info.major == 2:
+                self.outs.write(char)
+            else:
+                self.outs.write(str(char))
             if self.is_return:
                 self.return_buf = ''
 
@@ -118,8 +121,8 @@ class JavascriptMinify(object):
                 write(previous)
         elif not previous:
             return
-        elif previous >= '!':
-            if previous in "'\"":
+        elif str(previous) >= "!":
+            if str(previous) in "'\"":
                 in_quote = previous
             write(previous)
             previous_non_space = previous
@@ -166,7 +169,7 @@ class JavascriptMinify(object):
                     if numslashes % 2 == 0:
                         in_quote = ''
                         write(''.join(quote_buf))
-            elif next1 in '\r\n':
+            elif str(next1) in '\r\n':
                 if previous_non_space in newlineend_strings \
                     or previous_non_space > '~':
                     while 1:
@@ -179,7 +182,7 @@ class JavascriptMinify(object):
                                 or next2 > '~' or next2 == '/':
                                 do_newline = True
                             break
-            elif next1 < '!' and not in_re:
+            elif str(next1) < '!' and not in_re:
                 if (previous_non_space in space_strings \
                     or previous_non_space > '~') \
                     and (next2 in space_strings or next2 > '~'):
@@ -217,14 +220,14 @@ class JavascriptMinify(object):
                     do_newline = False
 
                 write(next1)
-                if not in_re and next1 in "'\"`":
+                if not in_re and str(next1) in "'\"`":
                     in_quote = next1
                     quote_buf = []
 
             previous = next1
             next1 = next2
 
-            if previous >= '!':
+            if str(previous) >= '!':
                 previous_non_space = previous
 
             if previous == '\\':

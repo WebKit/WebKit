@@ -31,6 +31,7 @@ import fnmatch
 import logging
 import optparse
 import os
+import sys
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.ERROR)
 log = logging.getLogger('global')
@@ -46,6 +47,12 @@ def concatenated_output_filename(builtins_files, framework_name, generate_only_w
     return os.path.basename(builtins_files[0]) + '-result'
 
 
+def do_open(file, mode):
+    if sys.version_info.major == 2:
+        return open(file, mode)
+    else:
+        return open(file, mode, encoding="UTF-8")
+
 def generate_bindings_for_builtins_files(builtins_files=[],
                                          output_path=None,
                                          concatenate_output=False,
@@ -59,7 +66,7 @@ def generate_bindings_for_builtins_files(builtins_files=[],
     model = BuiltinsCollection(framework_name=framework_name)
 
     for filepath in builtins_files:
-        with open(filepath, "r") as file:
+        with do_open(filepath, "r") as file:
             file_text = file.read()
             file_name = os.path.basename(filepath)
 
@@ -146,7 +153,7 @@ if __name__ == '__main__':
         for filepath in os.listdir(arg_options.input_directory):
             input_filepaths.append(os.path.join(arg_options.input_directory, filepath))
 
-    input_filepaths = sorted(filter(lambda name: fnmatch.fnmatch(name, '*.js'), input_filepaths))
+    input_filepaths = sorted([name for name in input_filepaths if fnmatch.fnmatch(name, '*.js')])
 
     options = {
         'output_path': arg_options.output_directory,
@@ -159,7 +166,7 @@ if __name__ == '__main__':
 
     log.debug("Generating code for builtins.")
     log.debug("Parsed options:")
-    for option, value in options.items():
+    for option, value in list(options.items()):
         log.debug("    %s: %s" % (option, value))
     log.debug("")
     log.debug("Input files:")

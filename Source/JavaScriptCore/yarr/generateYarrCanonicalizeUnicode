@@ -31,7 +31,6 @@ import optparse
 import os
 import re
 import sys
-from sets import Set
 
 header = """/*
 * Copyright (C) 2016 Apple Inc. All rights reserved.
@@ -80,7 +79,7 @@ def openOrExit(path, mode):
             os.makedirs(dirname)
         return open(path, mode)
     except IOError as e:
-        print "I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror)
+        print("I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror))
         exit(1)
 
 class Canonicalize:
@@ -93,7 +92,7 @@ class Canonicalize:
         self.canonicalGroups[mapping].append(code)
         
     def readCaseFolding(self, file):
-        codesSeen = Set()
+        codesSeen = set()
         for line in file:
             line = line.split('#', 1)[0]
             line = line.rstrip()
@@ -154,8 +153,8 @@ class Canonicalize:
         
         for i in range(len(characterSets)):
             characters = ""
-            set = characterSets[i]
-            for ch in set:
+            cur_set = characterSets[i]
+            for ch in cur_set:
                 characters = characters + "0x{character:04x}, ".format(character=ch)
             file.write("const UChar32 unicodeCharacterSet{index:d}[] = {{ {characters}0 }};\n".format(index=i, characters=characters))
 
@@ -189,7 +188,7 @@ if __name__ == "__main__":
     caseFoldingTxtPath = args[0]
     canonicalizeHPath = args[1]
     caseFoldingTxtFile = openOrExit(caseFoldingTxtPath, "r")
-    canonicalizeHFile = openOrExit(canonicalizeHPath, "wb")
+    canonicalizeHFile = openOrExit(canonicalizeHPath, "w")
 
     canonicalize = Canonicalize()
     canonicalize.readCaseFolding(caseFoldingTxtFile)

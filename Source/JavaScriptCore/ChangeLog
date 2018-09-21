@@ -1,3 +1,112 @@
+2018-09-21  Mike Gorse  <mgorse@suse.com>
+
+        Build tools should work when the /usr/bin/python is python3
+        https://bugs.webkit.org/show_bug.cgi?id=156674
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/cssmin.py:
+        * Scripts/generate-js-builtins.py:
+        (do_open):
+        (generate_bindings_for_builtins_files):
+        * Scripts/generateIntlCanonicalizeLanguage.py:
+        * Scripts/jsmin.py:
+        (JavascriptMinify.minify.write):
+        (JavascriptMinify):
+        (JavascriptMinify.minify):
+        * Scripts/make-js-file-arrays.py:
+        (chunk):
+        (main):
+        * Scripts/wkbuiltins/__init__.py:
+        * Scripts/wkbuiltins/builtins_generate_combined_header.py:
+        (generate_section_for_global_private_code_name_macro):
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_header.py:
+        (BuiltinsInternalsWrapperHeaderGenerator.__init__):
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.__init__):
+        * Scripts/wkbuiltins/builtins_model.py:
+        (BuiltinFunction.__lt__):
+        (BuiltinsCollection.copyrights):
+        (BuiltinsCollection._parse_functions):
+        * disassembler/udis86/ud_opcode.py:
+        (UdOpcodeTables.pprint.printWalk):
+        * generate-bytecode-files:
+        * inspector/scripts/codegen/__init__.py:
+        * inspector/scripts/codegen/cpp_generator.py:
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator.domains_to_generate):
+        (CppBackendDispatcherHeaderGenerator.generate_output):
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.domains_to_generate):
+        (CppBackendDispatcherImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator.domains_to_generate):
+        (CppFrontendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator.domains_to_generate):
+        (CppFrontendDispatcherImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator.generate_output):
+        (CppProtocolTypesHeaderGenerator._generate_forward_declarations):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator.generate_output):
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain):
+        (CppProtocolTypesImplementationGenerator._generate_enum_mapping_and_conversion_methods):
+        (CppProtocolTypesImplementationGenerator._generate_open_field_names):
+        (CppProtocolTypesImplementationGenerator._generate_builders_for_domain):
+        (CppProtocolTypesImplementationGenerator._generate_assertion_for_object_declaration):
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.should_generate_domain):
+        (JSBackendCommandsGenerator.domains_to_generate):
+        (JSBackendCommandsGenerator.generate_output):
+        (JSBackendCommandsGenerator.generate_domain):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator.domains_to_generate):
+        (ObjCBackendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator.domains_to_generate):
+        (ObjCBackendDispatcherImplementationGenerator.generate_output):
+        (ObjCBackendDispatcherImplementationGenerator._generate_success_block_for_command):
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator.domains_to_generate):
+        (ObjCFrontendDispatcherImplementationGenerator.generate_output):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator.generate_output):
+        (ObjCHeaderGenerator._generate_type_interface):
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        (ObjCInternalHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        (ObjCProtocolTypeConversionsHeaderGenerator.domains_to_generate):
+        (ObjCProtocolTypeConversionsHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        (ObjCProtocolTypeConversionsImplementationGenerator.domains_to_generate):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.domains_to_generate):
+        (ObjCProtocolTypesImplementationGenerator.generate_output):
+        (ObjCProtocolTypesImplementationGenerator.generate_type_implementation):
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_required_members):
+        * inspector/scripts/codegen/generator.py:
+        (Generator.non_supplemental_domains):
+        (Generator.open_fields):
+        (Generator.calculate_types_requiring_shape_assertions):
+        (Generator._traverse_and_assign_enum_values):
+        (Generator.stylized_name_for_enum_value):
+        * inspector/scripts/codegen/models.py:
+        (find_duplicates):
+        * inspector/scripts/codegen/objc_generator.py:
+        * wasm/generateWasm.py:
+        (opcodeIterator):
+        * yarr/generateYarrCanonicalizeUnicode:
+        * yarr/generateYarrUnicodePropertyTables.py:
+        * yarr/hasher.py:
+        (stringHash):
+
 2018-09-21  Tomas Popela  <tpopela@redhat.com>
 
         [ARM] Build broken on armv7hl after r235517

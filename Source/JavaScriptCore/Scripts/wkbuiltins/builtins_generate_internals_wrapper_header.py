@@ -36,7 +36,7 @@ log = logging.getLogger('global')
 class BuiltinsInternalsWrapperHeaderGenerator(BuiltinsGenerator):
     def __init__(self, model):
         BuiltinsGenerator.__init__(self, model)
-        self.internals = filter(lambda object: 'internal' in object.annotations, model.objects)
+        self.internals = [object for object in model.objects if 'internal' in object.annotations]
 
     def output_filename(self):
         return "%sJSBuiltinInternals.h" % self.model().framework.setting('namespace')

@@ -29,10 +29,16 @@ import logging
 import string
 from string import Template
 
-from cpp_generator import CppGenerator
-from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
-from generator import Generator, ucfirst
-from models import ObjectType, ArrayType
+try:
+    from .cpp_generator import CppGenerator
+    from .cpp_generator_templates import CppGeneratorTemplates as CppTemplates
+    from .generator import Generator, ucfirst
+    from .models import ObjectType, ArrayType
+except ValueError:
+    from cpp_generator import CppGenerator
+    from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
+    from generator import Generator, ucfirst
+    from models import ObjectType, ArrayType
 
 log = logging.getLogger('global')
 
@@ -45,7 +51,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         return "%sBackendDispatchers.cpp" % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(lambda domain: len(self.commands_for_domain(domain)) > 0, Generator.domains_to_generate(self))
+        return [domain for domain in Generator.domains_to_generate(self) if len(self.commands_for_domain(domain)) > 0]
 
     def generate_output(self):
         secondary_includes = self._generate_secondary_header_includes()
@@ -65,7 +71,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         sections.append(self.generate_license())
         sections.append(Template(CppTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.append("\n".join(map(self._generate_handler_class_destructor_for_domain, self.domains_to_generate())))
-        sections.extend(map(self._generate_dispatcher_implementations_for_domain, self.domains_to_generate()))
+        sections.extend(list(map(self._generate_dispatcher_implementations_for_domain, self.domains_to_generate())))
         sections.append(Template(CppTemplates.ImplementationPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
 

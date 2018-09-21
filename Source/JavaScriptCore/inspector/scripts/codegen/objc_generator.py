@@ -24,8 +24,12 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-from generator import Generator, ucfirst
-from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
+try:
+    from .generator import Generator, ucfirst
+    from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
+except ValueError:
+    from generator import Generator, ucfirst
+    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 
 log = logging.getLogger('global')
 
@@ -50,7 +54,7 @@ _OBJC_IDENTIFIER_RENAME_MAP = {
     'id': 'identifier',  # Page.Frame.id, Runtime.ExecutionContextDescription.id, Debugger.BreakpointAction.id
 }
 
-_OBJC_IDENTIFIER_REVERSE_RENAME_MAP = dict((v, k) for k, v in _OBJC_IDENTIFIER_RENAME_MAP.iteritems())
+_OBJC_IDENTIFIER_REVERSE_RENAME_MAP = dict((v, k) for k, v in _OBJC_IDENTIFIER_RENAME_MAP.items())
 
 
 class ObjCTypeCategory:

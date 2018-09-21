@@ -189,7 +189,7 @@ if __name__ == "__main__":
     intlCanonHPath = args[1]
 
     registryFile = openOrExit(registryPath, "r")
-    intlCanonHFile = openOrExit(intlCanonHPath, "wb")
+    intlCanonHFile = openOrExit(intlCanonHPath, "w")
 
     intlCanonHFile.write(header)
 

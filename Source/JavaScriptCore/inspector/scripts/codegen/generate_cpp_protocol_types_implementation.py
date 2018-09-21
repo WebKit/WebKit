@@ -30,10 +30,16 @@ import string
 from string import Template
 from operator import methodcaller
 
-from cpp_generator import CppGenerator
-from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
-from generator import Generator, ucfirst
-from models import AliasedType, ArrayType, EnumType, ObjectType
+try:
+    from .cpp_generator import CppGenerator
+    from .cpp_generator_templates import CppGeneratorTemplates as CppTemplates
+    from .generator import Generator, ucfirst
+    from .models import AliasedType, ArrayType, EnumType, ObjectType
+except ValueError:
+    from cpp_generator import CppGenerator
+    from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
+    from generator import Generator, ucfirst
+    from models import AliasedType, ArrayType, EnumType, ObjectType
 
 log = logging.getLogger('global')
 
@@ -65,8 +71,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         sections.append('namespace Protocol {')
         sections.extend(self._generate_enum_mapping_and_conversion_methods(domains))
         sections.append(self._generate_open_field_names())
-        builder_sections = map(self._generate_builders_for_domain, domains)
-        sections.extend(filter(lambda section: len(section) > 0, builder_sections))
+        builder_sections = list(map(self._generate_builders_for_domain, domains))
+        sections.extend([section for section in builder_sections if len(section) > 0])
         sections.append('} // namespace Protocol')
         sections.append(Template(CppTemplates.ImplementationPostlude).substitute(None, **header_args))
 
@@ -128,8 +134,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
 
         type_declarations = self.type_declarations_for_domain(domain)
         declaration_types = [decl.type for decl in type_declarations]
-        object_types = filter(lambda _type: isinstance(_type, ObjectType), declaration_types)
-        enum_types = filter(lambda _type: isinstance(_type, EnumType), declaration_types)
+        object_types = [_type for _type in declaration_types if isinstance(_type, ObjectType)]
+        enum_types = [_type for _type in declaration_types if isinstance(_type, EnumType)]
         if len(object_types) + len(enum_types) == 0:
             return ''
 
@@ -156,8 +162,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         sections = []
         sections.append('namespace %s {' % self.helpers_namespace())
         sections.extend(self._generate_enum_mapping())
-        enum_parser_sections = map(self._generate_enum_conversion_methods_for_domain, domains)
-        sections.extend(filter(lambda section: len(section) > 0, enum_parser_sections))
+        enum_parser_sections = list(map(self._generate_enum_conversion_methods_for_domain, domains))
+        sections.extend([section for section in enum_parser_sections if len(section) > 0])
         if len(sections) == 1:
             return []  # No declarations to emit, just the namespace.
 
@@ -168,7 +174,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines = []
         for domain in self.domains_to_generate():
             type_declarations = self.type_declarations_for_domain(domain)
-            for type_declaration in filter(lambda decl: Generator.type_has_open_fields(decl.type), type_declarations):
+            for type_declaration in [decl for decl in type_declarations if Generator.type_has_open_fields(decl.type)]:
                 open_members = Generator.open_fields(type_declaration)
                 for type_member in sorted(open_members, key=lambda member: member.member_name):
                     field_name = '::'.join(['Inspector', 'Protocol', domain.domain_name, ucfirst(type_declaration.type_name), ucfirst(type_member.member_name)])
@@ -179,7 +185,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
     def _generate_builders_for_domain(self, domain):
         sections = []
         type_declarations = self.type_declarations_for_domain(domain)
-        declarations_to_generate = filter(lambda decl: self.type_needs_shape_assertions(decl.type), type_declarations)
+        declarations_to_generate = [decl for decl in type_declarations if self.type_needs_shape_assertions(decl.type)]
 
         for type_declaration in declarations_to_generate:
             for type_member in type_declaration.type_members:
@@ -200,8 +206,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         return Template(CppTemplates.ProtocolObjectRuntimeCast).substitute(None, **args)
 
     def _generate_assertion_for_object_declaration(self, object_declaration):
-        required_members = filter(lambda member: not member.is_optional, object_declaration.type_members)
-        optional_members = filter(lambda member: member.is_optional, object_declaration.type_members)
+        required_members = [member for member in object_declaration.type_members if not member.is_optional]
+        optional_members = [member for member in object_declaration.type_members if member.is_optional]
         should_count_properties = not Generator.type_has_open_fields(object_declaration.type)
         lines = []
 

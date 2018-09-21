@@ -29,10 +29,16 @@ import logging
 import string
 from string import Template
 
-from generator import Generator
-from models import EnumType, Frameworks, Platforms
-from objc_generator import ObjCGenerator
-from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
+try:
+    from .generator import Generator
+    from .models import EnumType, Frameworks, Platforms
+    from .objc_generator import ObjCGenerator
+    from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
+except ValueError:
+    from generator import Generator
+    from models import EnumType, Frameworks, Platforms
+    from objc_generator import ObjCGenerator
+    from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
@@ -51,7 +57,7 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
         return '%sTypeConversions.h' % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(self.should_generate_types_for_domain, Generator.domains_to_generate(self))
+        return list(filter(self.should_generate_types_for_domain, Generator.domains_to_generate(self)))
 
     def generate_output(self):
         headers = [
@@ -70,7 +76,7 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderPrelude).substitute(None, **header_args))
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderStandard).substitute(None))
         sections.append(self._generate_enum_conversion_for_platforms())
-        sections.extend(map(self._generate_enum_conversion_functions, domains))
+        sections.extend(list(map(self._generate_enum_conversion_functions, domains)))
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 

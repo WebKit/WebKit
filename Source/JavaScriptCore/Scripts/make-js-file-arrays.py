@@ -25,7 +25,11 @@ from __future__ import print_function
 import io
 import os
 from optparse import OptionParser
-from StringIO import StringIO
+import sys
+if sys.version_info.major == 2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 from jsmin import JavascriptMinify
 
 
@@ -37,7 +41,7 @@ def stringifyCodepoint(code):
 
 
 def chunk(list, chunkSize):
-    for i in xrange(0, len(list), chunkSize):
+    for i in range(0, len(list), chunkSize):
         yield list[i:i + chunkSize]
 
 
@@ -85,7 +89,7 @@ def main():
         print('extern const char {0:s}JavaScript[{1:d}];'.format(variableName, size), file=headerFile)
         print('const char {0:s}JavaScript[{1:d}] = {{'.format(variableName, size), file=sourceFile)
 
-        codepoints = map(ord, characters)
+        codepoints = list(map(ord, characters))
         for codepointChunk in chunk(codepoints, 16):
             print('    {0:s},'.format(','.join(map(stringifyCodepoint, codepointChunk))), file=sourceFile)
 

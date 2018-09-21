@@ -1,3 +1,12 @@
+2018-09-21  Mike Gorse  <mgorse@suse.com>
+
+        Build tools should work when the /usr/bin/python is python3
+        https://bugs.webkit.org/show_bug.cgi?id=156674
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/WebKitCommon.cmake: Allow python 3.
+
 2018-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update GTK+ library versions after r235362.

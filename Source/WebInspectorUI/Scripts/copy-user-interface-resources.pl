@@ -176,6 +176,8 @@ my $eslintLicense = readLicenseFile(File::Spec->catfile($eslintPath, 'LICENSE'))
 my $threejsLicense = readLicenseFile(File::Spec->catfile($threejsPath, 'LICENSE'));
 make_path($protocolDir, $targetResourcePath);
 
+$python = $ENV{"PYTHON"} if defined($ENV{"PYTHON"});
+
 # Copy over dynamically loaded files from other frameworks, even if we aren't combining resources.
 copy(File::Spec->catfile($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'}, 'InspectorBackendCommands.js'), File::Spec->catfile($protocolDir, 'InspectorBackendCommands.js')) or die "Copy of InspectorBackendCommands.js failed: $!";
 

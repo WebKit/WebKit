@@ -28,10 +28,16 @@ import logging
 import string
 from string import Template
 
-from generator import Generator
-from models import EnumType, ObjectType, ArrayType, AliasedType, PrimitiveType, Frameworks
-from objc_generator import ObjCGenerator
-from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
+try:
+    from .generator import Generator
+    from .models import EnumType, ObjectType, ArrayType, AliasedType, PrimitiveType, Frameworks
+    from .objc_generator import ObjCGenerator
+    from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
+except ValueError:
+    from generator import Generator
+    from models import EnumType, ObjectType, ArrayType, AliasedType, PrimitiveType, Frameworks
+    from objc_generator import ObjCGenerator
+    from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
@@ -50,7 +56,7 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
         return '%sTypeConversions.mm' % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(self.should_generate_types_for_domain, Generator.domains_to_generate(self))
+        return list(filter(self.should_generate_types_for_domain, Generator.domains_to_generate(self)))
 
     def generate_output(self):
         secondary_headers = [

@@ -550,10 +550,10 @@ class UdOpcodeTables(object):
             entries = tbl.entries()
             for k, e in entries:
                 if isinstance(e, UdOpcodeTable):
-                    self.log("%s    |-<%02x> %s" % (indent, k, e))
+                    self.log("%s    |-<%02x> %s" % (indent, int(k), e))
                     printWalk(e, indent + "    |")
                 elif isinstance(e, UdInsnDef):
-                    self.log("%s    |-<%02x> %s" % (indent, k, e))
+                    self.log("%s    |-<%02x> %s" % (indent, int(k), e))
         printWalk(self.root)
 
 

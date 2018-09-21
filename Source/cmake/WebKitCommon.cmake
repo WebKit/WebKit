@@ -21,9 +21,6 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     find_package(PerlModules COMPONENTS JSON::PP REQUIRED)
 
     find_package(PythonInterp 2.7.0 REQUIRED)
-    if (PYTHON_VERSION_MAJOR GREATER 2)
-        message(FATAL_ERROR "Python 2 is required, but Python ${PYTHON_VERSION_MAJOR} was found.")
-    endif ()
 
     # We cannot check for RUBY_FOUND because it is set only when the full package is installed and
     # the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro

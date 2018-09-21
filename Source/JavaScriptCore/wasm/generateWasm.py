@@ -71,7 +71,7 @@ class Wasm:
         # We need to do this because python is dumb and won't let me use self in the lambda, which is ridiculous.
         if ret == None:
             ret = lambda op: {"name": op, "opcode": self.opcodes[op]}
-        for op in self.opcodes.iterkeys():
+        for op in self.opcodes.keys():
             if filter(self.opcodes[op]):
                 yield ret(op)
 

@@ -158,7 +158,7 @@ extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;""" % function
 
         lines = []
         lines.append("#define %(macroPrefix)s_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(macro) \\" % args)
-        functions = filter(lambda function: function.is_global_private, self.model().all_functions())
+        functions = [function for function in self.model().all_functions() if function.is_global_private]
         functions.sort(key=lambda x: x.function_name)
         for function in functions:
             function_args = {

@@ -30,10 +30,16 @@ import re
 import string
 from string import Template
 
-from cpp_generator import CppGenerator
-from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
-from generator import Generator, ucfirst
-from models import EnumType
+try:
+    from .cpp_generator import CppGenerator
+    from .cpp_generator_templates import CppGeneratorTemplates as CppTemplates
+    from .generator import Generator, ucfirst
+    from .models import EnumType
+except ValueError:
+    from cpp_generator import CppGenerator
+    from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
+    from generator import Generator, ucfirst
+    from models import EnumType
 
 log = logging.getLogger('global')
 
@@ -46,7 +52,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         return "%sBackendDispatchers.h" % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(lambda domain: len(self.commands_for_domain(domain)) > 0, Generator.domains_to_generate(self))
+        return [domain for domain in Generator.domains_to_generate(self) if len(self.commands_for_domain(domain)) > 0]
 
     def generate_output(self):
         typedefs = [('String', 'ErrorString')]
@@ -62,8 +68,8 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         sections.append(Template(CppTemplates.HeaderPrelude).substitute(None, **header_args))
         if self.model().framework.setting('alternate_dispatchers', False):
             sections.append(self._generate_alternate_handler_forward_declarations_for_domains(domains))
-        sections.extend(map(self._generate_handler_declarations_for_domain, domains))
-        sections.extend(map(self._generate_dispatcher_declarations_for_domain, domains))
+        sections.extend(list(map(self._generate_handler_declarations_for_domain, domains)))
+        sections.extend(list(map(self._generate_dispatcher_declarations_for_domain, domains)))
         sections.append(Template(CppTemplates.HeaderPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
 
@@ -198,7 +204,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         commands = self.commands_for_domain(domain)
         if len(commands) > 0:
             declarations.append('private:')
-        declarations.extend(map(self._generate_dispatcher_declaration_for_command, commands))
+        declarations.extend(list(map(self._generate_dispatcher_declaration_for_command, commands)))
 
         declaration_args = {
             'domainName': domain.domain_name,
