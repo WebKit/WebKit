@@ -1,5 +1,23 @@
 2018-09-21  Youenn Fablet  <youenn@apple.com>
 
+        Use biplanar CVPixelBuffer for black frames sent to libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=189837
+
+        Reviewed by Eric Carlson.
+
+        Covered by webrtc/video-mute.html.
+
+        Add support to call CVPixelBufferGetBytesPerRowOfPlane.
+        Make createBlackPixelBuffer use a biplanar CVPixelBuffer as this is better supported in libwebrtc.
+        It is also what is being used in iOS for capture.
+
+        * platform/cocoa/CoreVideoSoftLink.cpp:
+        * platform/cocoa/CoreVideoSoftLink.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::createBlackPixelBuffer):
+
+2018-09-21  Youenn Fablet  <youenn@apple.com>
+
         Add RTCCodecStats support
         https://bugs.webkit.org/show_bug.cgi?id=189792
         <rdar://problem/32370668>

@@ -66,20 +66,25 @@ RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(rtc::scoped_r
 
 RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height)
 {
-    // FIXME: change to biplanar format type.
+    OSType format = preferedPixelBufferFormat();
+    ASSERT(format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
+
     CVPixelBufferRef pixelBuffer = nullptr;
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8Planar, nullptr, &pixelBuffer);
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, format, nullptr, &pixelBuffer);
     ASSERT_UNUSED(status, status == noErr);
 
     status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     ASSERT(status == noErr);
-    void* data = CVPixelBufferGetBaseAddress(pixelBuffer);
 
-    size_t yLength = width * height;
-    memset(data, 0, yLength);
+    auto* yPlane = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+    size_t yStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+    for (unsigned i = 0; i < height; ++i)
+        memset(&yPlane[i * yStride], 0, width);
 
-    auto totalSize = CVPixelBufferGetDataSize(pixelBuffer);
-    memset(static_cast<uint8_t*>(data) + yLength, 128, totalSize - yLength);
+    auto* uvPlane = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
+    size_t uvStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
+    for (unsigned i = 0; i < height / 2; ++i)
+        memset(&uvPlane[i * uvStride], 128, width);
 
     status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     ASSERT(!status);
