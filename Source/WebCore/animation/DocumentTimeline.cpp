@@ -216,11 +216,9 @@ void DocumentTimeline::scheduleInvalidationTaskIfNeeded()
 void DocumentTimeline::performInvalidationTask()
 {
     // Now that the timing model has changed we can see if there are DOM events to dispatch for declarative animations.
-    if (!m_isSuspended) {
-        for (auto& animation : animations()) {
-            if (is<DeclarativeAnimation>(animation))
-                downcast<DeclarativeAnimation>(*animation).invalidateDOMEvents();
-        }
+    for (auto& animation : animations()) {
+        if (is<DeclarativeAnimation>(animation))
+            downcast<DeclarativeAnimation>(*animation).invalidateDOMEvents();
     }
 
     applyPendingAcceleratedAnimations();
