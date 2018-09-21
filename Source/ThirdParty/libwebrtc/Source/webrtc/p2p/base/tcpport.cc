@@ -351,11 +351,21 @@ TCPConnection::TCPConnection(TCPPort* port,
                         << ", port() Network:" << port->Network()->ToString();
     const std::vector<rtc::InterfaceAddress>& desired_addresses =
         port_->Network()->GetIPs();
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+    RTC_DCHECK(socket->GetLocalAddress().IsLoopbackIP() ||
+               (std::find_if(desired_addresses.begin(), desired_addresses.end(),
+                            [this](const rtc::InterfaceAddress& addr) {
+                              return socket_->GetLocalAddress().ipaddr() ==
+                                     addr;
+                            }) != desired_addresses.end()));
+#else
     RTC_DCHECK(std::find_if(desired_addresses.begin(), desired_addresses.end(),
                             [this](const rtc::InterfaceAddress& addr) {
                               return socket_->GetLocalAddress().ipaddr() ==
                                      addr;
                             }) != desired_addresses.end());
+#endif
     ConnectSocketSignals(socket);
   }
 }

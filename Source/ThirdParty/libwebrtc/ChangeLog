@@ -1,3 +1,16 @@
+2018-09-21  Thibault Saunier  <tsaunier@igalia.com>
+
+        [libwebrtc] Allow IP mismatch for local connections on localhost
+        https://bugs.webkit.org/show_bug.cgi?id=189828
+
+        Reviewed by Alejandro G. Castro.
+
+        The rest of the code allows it, but there was an unecessary assert
+
+        See Bug 187302
+
+        * Source/webrtc/p2p/base/tcpport.cc:
+
 2018-09-18  Youenn Fablet  <youenn@apple.com>
 
         Implement RTCRtpReceiver getContributingSources/getSynchronizationSources
