@@ -1,3 +1,15 @@
+2018-09-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] fails to build on ARM arches complaining about undefined reference to `epoxy_eglMakeCurrent'
+        https://bugs.webkit.org/show_bug.cgi?id=189556
+
+        Reviewed by Konstantin Tokarev.
+
+        This is only a speculative build fix as I didn't attempt to reproduce. Explicitly link to
+        libepoxy.
+
+        * wpe/backends/CMakeLists.txt:
+
 2018-09-18  Chris Dumez  <cdumez@apple.com>
 
         "DidFirstVisuallyNonEmptyLayout" callback does not get called when restoring a page from PageCache
