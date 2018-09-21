@@ -234,15 +234,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
     _createExperimentalSettingsView()
     {
-        if (!(window.CanvasAgent || window.CSSAgent || window.NetworkAgent || window.LayerTreeAgent))
+        if (!(window.CanvasAgent || window.NetworkAgent || window.LayerTreeAgent))
             return;
 
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
-
-        if (window.CSSAgent) {
-            let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles Sidebar:"));
-            stylesGroup.addSetting(WI.settings.experimentalLegacyStyleEditor, WI.UIString("Legacy Style Editor"));
-        }
 
         if (window.LayerTreeAgent) {
             experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
@@ -275,7 +270,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             });
         }
 
-        listenForChange(WI.settings.experimentalLegacyStyleEditor);
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableSourcesTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);

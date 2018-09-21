@@ -1,3 +1,92 @@
+2018-09-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: remove Legacy Style Editor
+        https://bugs.webkit.org/show_bug.cgi?id=189808
+
+        Reviewed by Joseph Pecoraro.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
+        * inspector/css/css-property-expected.txt:
+        * inspector/css/css-property.html:
+        * inspector/css/modify-css-property.html:
+        * inspector/css/shadow-scoped-style.html:
+        Update tests for functionality that has been deleted.
+
+        * inspector/unit-tests/test-harness-expect-functions-expected.txt:
+        * inspector/unit-tests/test-harness-expect-functions.html:
+        The changes to `WI.CSSRule` now make it small enough that `InspectorTest` will print it as
+        JSON instead of an object instance. Change the test to use different objects so this doesn't
+        happen.
+
+        * inspector/unit-tests/text-utilities-expected.txt: Removed.
+        * inspector/unit-tests/text-utilities.html: Removed.
+        * inspector/css/generate-css-rule-string-expected.txt: Removed.
+        * inspector/css/generate-css-rule-string.html: Removed.
+        Remove tests for functionality that has been deleted.
+
+        * inspector/codemirror/prettyprinting-css-rules.html: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/add-whitespace-after-colon-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/add-whitespace-after-colon.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/add-whitespace-after-comma-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/add-whitespace-after-comma.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/add-whitespace-between-rules-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/add-whitespace-between-rules.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/add-whitespace-between-values-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/add-whitespace-between-values.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/css-variables-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/css-variables.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/do-not-add-whitespace-before-prefixed-property-value-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/do-not-add-whitespace-before-prefixed-property-value.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/do-not-append-semicolon-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/do-not-append-semicolon.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/invalid-property-is-not-removed-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/invalid-property-is-not-removed.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/keep-prefixed-value-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/keep-prefixed-value.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-newline-between-values-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-newline-between-values.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-colon-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-colon.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-comment-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-comment.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-invalid-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-invalid-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-prefixed-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-prefixed-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-semicolon-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/remove-whitespace-before-semicolon.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-comment-followed-by-comment-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-comment-followed-by-comment.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-comment-followed-by-invalid-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-comment-followed-by-invalid-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-comment-followed-by-prefixed-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-comment-followed-by-prefixed-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-comment-followed-by-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-comment-followed-by-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-invalid-property-followed-by-comment-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-invalid-property-followed-by-comment.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-invalid-property-followed-by-invalid-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-invalid-property-followed-by-invalid-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-invalid-property-followed-by-prefixed-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-invalid-property-followed-by-prefixed-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-invalid-property-followed-by-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-invalid-property-followed-by-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-followed-by-comment-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-followed-by-comment.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-followed-by-invalid-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-followed-by-invalid-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-followed-by-prefixed-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-followed-by-prefixed-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-followed-by-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-followed-by-property.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-without-semicolon-followed-by-comment-and-property-expected.css: Removed.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/split-property-without-semicolon-followed-by-comment-and-property.css: Removed.
+        Remove all tests for the "css-rule" CodeMirror mode since it's been removed.
+
 2018-09-21  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r235962-r235963): Layout Test animations/suspend-resume-animation-events.html is a flaky failure

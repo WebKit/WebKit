@@ -80,12 +80,8 @@ WI.CSSRule = class CSSRule extends WI.Object
         this._selectorText = selectorText;
         this._selectors = selectors;
         this._matchedSelectorIndices = matchedSelectorIndices;
-        this._mostSpecificSelector = null;
         this._style = style;
         this._mediaList = mediaList;
-
-        this._matchedSelectors = null;
-        this._matchedSelectorText = null;
 
         if (this._style)
             this._style.ownerRule = this;
@@ -133,36 +129,6 @@ WI.CSSRule = class CSSRule extends WI.Object
         return this._matchedSelectorIndices;
     }
 
-    get matchedSelectors()
-    {
-        if (this._matchedSelectors)
-            return this._matchedSelectors;
-
-        this._matchedSelectors = this._selectors.filter(function(element, index) {
-            return this._matchedSelectorIndices.includes(index);
-        }, this);
-
-        return this._matchedSelectors;
-    }
-
-    get matchedSelectorText()
-    {
-        if ("_matchedSelectorText" in this)
-            return this._matchedSelectorText;
-
-        this._matchedSelectorText = this.matchedSelectors.map(function(x) { return x.text; }).join(", ");
-
-        return this._matchedSelectorText;
-    }
-
-    hasMatchedPseudoElementSelector()
-    {
-        if (this.nodeStyles && this.nodeStyles.node && this.nodeStyles.node.isPseudoElement())
-            return true;
-
-        return this.matchedSelectors.some((selector) => selector.isPseudoElementSelector());
-    }
-
     get style()
     {
         return this._style;
@@ -173,42 +139,12 @@ WI.CSSRule = class CSSRule extends WI.Object
         return this._mediaList;
     }
 
-    get mediaText()
-    {
-        if (!this._mediaList.length)
-            return "";
-
-        let mediaText = "";
-        for (let media of this._mediaList)
-            mediaText += media.text;
-
-        return mediaText;
-    }
-
     isEqualTo(rule)
     {
         if (!rule)
             return false;
 
         return Object.shallowEqual(this._id, rule.id);
-    }
-
-    get mostSpecificSelector()
-    {
-        if (!this._mostSpecificSelector)
-            this._mostSpecificSelector = this._determineMostSpecificSelector();
-
-        return this._mostSpecificSelector;
-    }
-
-    selectorIsGreater(otherSelector)
-    {
-        var mostSpecificSelector = this.mostSpecificSelector;
-
-        if (!mostSpecificSelector)
-            return false;
-
-        return mostSpecificSelector.isGreaterThan(otherSelector);
     }
 
     // Protected
@@ -219,26 +155,6 @@ WI.CSSRule = class CSSRule extends WI.Object
     }
 
     // Private
-
-    _determineMostSpecificSelector()
-    {
-        if (!this._selectors || !this._selectors.length)
-            return null;
-
-        var selectors = this.matchedSelectors;
-
-        if (!selectors.length)
-            selectors = this._selectors;
-
-        var specificSelector = selectors[0];
-
-        for (var selector of selectors) {
-            if (selector.isGreaterThan(specificSelector))
-                specificSelector = selector;
-        }
-
-        return specificSelector;
-    }
 
     _selectorRejected(error)
     {

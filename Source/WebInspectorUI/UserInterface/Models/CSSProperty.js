@@ -150,19 +150,9 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             this.text = this._text.slice(2, -2).trim();
     }
 
-    get synthesizedText()
-    {
-        var name = this.name;
-        if (!name)
-            return "";
-
-        var priority = this.priority;
-        return name + ": " + this.value.trim() + (priority ? " !" + priority : "") + ";";
-    }
-
     get text()
     {
-        return this._text || this.synthesizedText;
+        return this._text;
     }
 
     set text(newText)

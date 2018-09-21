@@ -11,10 +11,27 @@ function test()
         return true;
     }
 
+    function generateCSSRuleString(style) {
+        let styleText = style.selectorText + " {\n";
+        for (let property of style.properties) {
+            if (property.anonymous)
+                continue;
+
+            styleText += "    " + property.text.trim();
+
+            if (!styleText.endsWith(";"))
+                styleText += ";";
+
+            styleText += "\n";
+        }
+        styleText += "}";
+        return styleText;
+    }
+
     function dumpStyleDeclarations(styles) {
         InspectorTest.log("STYLES:");
         for (let style of styles)
-            InspectorTest.log(style.generateCSSRuleString());
+            InspectorTest.log(generateCSSRuleString(style));
     }
 
     let documentNode;

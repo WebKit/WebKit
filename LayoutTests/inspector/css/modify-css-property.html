@@ -114,14 +114,14 @@ function test() {
 
             styleDeclaration.locked = true;
             getProperty("width").rawValue = "64px";
-            InspectorTest.expectEqual(styleDeclaration.text, `\nwidth: 64px;`, `Style declaration text should update immediately.`);
+            InspectorTest.expectEqual(styleDeclaration.text, `width: 64px;`, `Style declaration text should update immediately.`);
 
             // WI.CSSStyleDeclaration.Event.PropertiesChanged event should not fire when the style declaration is locked.
             InspectorTest.evaluateInPage(`makeNarrow()`);
 
             styleDeclaration.locked = false;
             getProperty("width").rawValue = "128px";
-            InspectorTest.expectEqual(styleDeclaration.text, `\nwidth: 64px;`, `Style declaration text should stay "width: 64px".`);
+            InspectorTest.expectEqual(styleDeclaration.text, `width: 64px;`, `Style declaration text should stay "width: 64px".`);
 
             InspectorTest.evaluateInPage(`makeWide()`);
         }

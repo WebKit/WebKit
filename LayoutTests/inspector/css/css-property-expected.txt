@@ -47,7 +47,7 @@ PASS: "background-repeat-x" has the text "background-repeat-x: repeat;".
 PASS: "background-repeat-x" has the _text (private) "background-repeat-x: repeat;".
 PASS: "background-repeat-invalid" has the text "background-repeat-invalid: repeat;".
 PASS: "background-repeat-invalid" has the _text (private) "background-repeat-invalid: repeat;".
-PASS: "background-repeat-y" has the text "background-repeat-y: repeat;".
+PASS: "background-repeat-y" has the text "".
 PASS: "background-repeat-y" has the _text (private) "".
 
 -- Running test case: CSSProperty.prototype.remove

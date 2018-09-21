@@ -201,9 +201,3 @@ function createCodeMirrorSpringTextMarkers(codeMirror, range, callback)
     const springRegex = /(spring\([^)]+\))/g;
     return createCodeMirrorTextMarkers("Spring", springRegex, null, codeMirror, range, callback);
 }
-
-function createCodeMirrorVariableTextMarkers(codeMirror, range, callback)
-{
-    const variableRegex = /var\((--[\w-]+)\)/g;
-    return createCodeMirrorTextMarkers("Variable", variableRegex, null, codeMirror, range, callback);
-}

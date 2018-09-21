@@ -285,24 +285,6 @@
     <None Include="..\UserInterface\CSSStyleDeclaration.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\CSSStyleDeclarationSection.css">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\CSSStyleDeclarationSection.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\CSSStyleDeclarationTextEditor.css">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\CSSStyleDeclarationTextEditor.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\CSSStyleDetailsSidebarPanel.css">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\CSSStyleDetailsSidebarPanel.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\CSSStyleManager.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -838,12 +820,6 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\Revision.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\RulesStyleDetailsPanel.css">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\RulesStyleDetailsPanel.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\RuntimeObserver.js">

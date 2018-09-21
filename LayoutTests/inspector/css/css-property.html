@@ -187,7 +187,7 @@ function test() {
                         InspectorTest.expectEqual(property._text, "background-repeat-x: repeat;", `"${property.name}" has the _text (private) "background-repeat-x: repeat;".`);
                         break;
                     case "background-repeat-y":
-                        InspectorTest.expectEqual(property.text, "background-repeat-y: repeat;", `"${property.name}" has the text "background-repeat-y: repeat;".`);
+                        InspectorTest.expectEqual(property.text, "", `"${property.name}" has the text "".`);
                         InspectorTest.expectEqual(property._text, "", `"${property.name}" has the _text (private) "".`);
                         break;
                     case "background-repeat-invalid":

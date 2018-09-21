@@ -27,13 +27,6 @@ WI.RulesStyleDetailsSidebarPanel = class RulesStyleDetailsSidebarPanel extends W
 {
     constructor()
     {
-        let rulesStyleDetailsPanelConstructor;
-
-        if (WI.settings.experimentalLegacyStyleEditor.value)
-            rulesStyleDetailsPanelConstructor = WI.RulesStyleDetailsPanel;
-        else
-            rulesStyleDetailsPanelConstructor = WI.SpreadsheetRulesStyleDetailsPanel;
-
-        super("style-rules", WI.UIString("Styles"), rulesStyleDetailsPanelConstructor);
+        super("style-rules", WI.UIString("Styles"), WI.SpreadsheetRulesStyleDetailsPanel);
     }
 };

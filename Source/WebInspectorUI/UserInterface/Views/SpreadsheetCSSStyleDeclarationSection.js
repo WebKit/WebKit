@@ -154,11 +154,6 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         return false;
     }
 
-    cssStyleDeclarationTextEditorStartEditingRuleSelector()
-    {
-        this.startEditingRuleSelector();
-    }
-
     // SpreadsheetSelectorField delegate
 
     spreadsheetSelectorFieldDidChange(direction)
@@ -194,6 +189,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     }
 
     // SpreadsheetCSSStyleDeclarationEditor delegate
+
+    spreadsheetCSSStyleDeclarationEditorStartEditingRuleSelector()
+    {
+        this.startEditingRuleSelector();
+    }
 
     spreadsheetCSSStyleDeclarationEditorStartEditingAdjacentRule(propertiesEditor, delta)
     {

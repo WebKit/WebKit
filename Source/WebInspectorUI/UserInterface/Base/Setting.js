@@ -121,7 +121,6 @@ WI.settings = {
     // Experimental
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableSourcesTab: new WI.Setting("experimental-enable-sources-bar", false),
-    experimentalLegacyStyleEditor: new WI.Setting("experimental-legacy-style-editor", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
     experimentalEnableAccessibilityAuditTab: new WI.Setting("experimental-enable-accessibility-audit-tab", false),
     experimentalRecordingHasVisualEffect: new WI.Setting("experimental-recording-has-visual-effect", false),

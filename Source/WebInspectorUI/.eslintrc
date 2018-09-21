@@ -154,7 +154,6 @@
         "createCodeMirrorCubicBezierTextMarkers": true,
         "createCodeMirrorGradientTextMarkers": true,
         "createCodeMirrorSpringTextMarkers": true,
-        "createCodeMirrorVariableTextMarkers": true,
     },
     "rules": {
         "array-bracket-spacing": [2, "never"],

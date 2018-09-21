@@ -341,7 +341,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         console.assert(movedFromIndex !== -1, "Property doesn't exist, focusing on a selector as a fallback.");
         if (movedFromIndex === -1) {
             if (this._style.selectorEditable)
-                this._delegate.cssStyleDeclarationTextEditorStartEditingRuleSelector();
+                this._delegate.spreadsheetCSSStyleDeclarationEditorStartEditingRuleSelector();
 
             return;
         }
@@ -368,7 +368,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             } else {
                 // Move from the first property's name to the rule's selector.
                 if (this._style.selectorEditable)
-                    this._delegate.cssStyleDeclarationTextEditorStartEditingRuleSelector();
+                    this._delegate.spreadsheetCSSStyleDeclarationEditorStartEditingRuleSelector();
                 else {
                     const delta = -1;
                     this._delegate.spreadsheetCSSStyleDeclarationEditorStartEditingAdjacentRule(this, delta);

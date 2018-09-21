@@ -58,8 +58,8 @@ function test()
 
     let object1 = {a: 1, b: 2};
     let object2 = {a: 1, b: 2};
-    let customObject1 = new WI.CSSStyleDeclaration;
-    let customObject2 = new WI.CSSRule;
+    let customObject1 = new WI.SourceCode;
+    let customObject2 = new WI.Resource("foo.bar");
     let expectEqualTestCase = {
         functionName: "expectEqual",
         passingInputs: [

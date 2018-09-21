@@ -32,8 +32,6 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         const label = WI.UIString("Styles \u2014 Rules");
         super(delegate, className, identifier, label);
 
-        this.element.classList.add("spreadsheet-style-panel");
-
         // Make the styles sidebar always left-to-right since CSS is strictly an LTR language.
         this.element.dir = "ltr";
 

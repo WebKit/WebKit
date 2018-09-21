@@ -98,7 +98,7 @@ FAIL: expectNotNull(null)
 Expected to PASS
 PASS: expectEqual(true, true)
 PASS: expectEqual({"a":1,"b":2}, {"a":1,"b":2})
-PASS: expectEqual(CSSStyleDeclaration instance #1, CSSStyleDeclaration instance #1)
+PASS: expectEqual(SourceCode instance #1, SourceCode instance #1)
 PASS: expectEqual(1.23, 1.23)
 PASS: expectEqual("abc", "abc")
 PASS: expectEqual(null, null)
@@ -110,9 +110,9 @@ FAIL: expectEqual(true, false)
 FAIL: expectEqual({"a":1,"b":2}, {"a":1,"b":2})
     Expected: {"a":1,"b":2}
     Actual: {"a":1,"b":2}
-FAIL: expectEqual(CSSStyleDeclaration instance #1, CSSRule instance #2)
-    Expected: CSSRule instance #2
-    Actual: CSSStyleDeclaration instance #1
+FAIL: expectEqual(SourceCode instance #1, Resource instance #2)
+    Expected: Resource instance #2
+    Actual: SourceCode instance #1
 FAIL: expectEqual(1.23, 4.56)
     Expected: 4.56
     Actual: 1.23
@@ -136,7 +136,7 @@ FAIL: expectEqual([], [])
 Expected to PASS
 PASS: expectNotEqual(true, false)
 PASS: expectNotEqual({"a":1,"b":2}, {"a":1,"b":2})
-PASS: expectNotEqual(CSSStyleDeclaration instance #1, CSSRule instance #2)
+PASS: expectNotEqual(SourceCode instance #1, Resource instance #2)
 PASS: expectNotEqual(1.23, 4.56)
 PASS: expectNotEqual("abc", "def")
 PASS: expectNotEqual(null, undefined)
@@ -150,9 +150,9 @@ FAIL: expectNotEqual(true, true)
 FAIL: expectNotEqual({"a":1,"b":2}, {"a":1,"b":2})
     Expected: not {"a":1,"b":2}
     Actual: {"a":1,"b":2}
-FAIL: expectNotEqual(CSSStyleDeclaration instance #1, CSSStyleDeclaration instance #1)
-    Expected: not CSSStyleDeclaration instance #1
-    Actual: CSSStyleDeclaration instance #1
+FAIL: expectNotEqual(SourceCode instance #1, SourceCode instance #1)
+    Expected: not SourceCode instance #1
+    Actual: SourceCode instance #1
 FAIL: expectNotEqual(1.23, 1.23)
     Expected: not 1.23
     Actual: 1.23

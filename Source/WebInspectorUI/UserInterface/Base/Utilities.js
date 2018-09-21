@@ -920,22 +920,6 @@ Object.defineProperty(String.prototype, "removeWordBreakCharacters",
     }
 });
 
-Object.defineProperty(String.prototype, "getMatchingIndexes",
-{
-    value(needle)
-    {
-        var indexesOfNeedle = [];
-        var index = this.indexOf(needle);
-
-        while (index >= 0) {
-            indexesOfNeedle.push(index);
-            index = this.indexOf(needle, index + 1);
-        }
-
-        return indexesOfNeedle;
-    }
-});
-
 Object.defineProperty(String.prototype, "levenshteinDistance",
 {
     value(s)

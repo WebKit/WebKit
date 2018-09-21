@@ -222,13 +222,6 @@ WI.CSSCompletions = class CSSCompletions
         return foundIndex;
     }
 
-    keySet()
-    {
-        if (!this._keySet)
-            this._keySet = this._values.keySet();
-        return this._keySet;
-    }
-
     next(str, prefix)
     {
         return this._closest(str, prefix, 1);
@@ -272,27 +265,6 @@ WI.CSSCompletions = class CSSCompletions
     isValidPropertyName(name)
     {
         return this._values.includes(name);
-    }
-
-    propertyRequiresWebkitPrefix(name)
-    {
-        return this._values.includes("-webkit-" + name) && !this._values.includes(name);
-    }
-
-    getClosestPropertyName(name)
-    {
-        var bestMatches = [{distance: Infinity, name: null}];
-
-        for (var property of this._values) {
-            var distance = name.levenshteinDistance(property);
-
-            if (distance < bestMatches[0].distance)
-                bestMatches = [{distance, name: property}];
-            else if (distance === bestMatches[0].distance)
-                bestMatches.push({distance, name: property});
-        }
-
-        return bestMatches.length < 3 ? bestMatches[0].name : false;
     }
 };
 

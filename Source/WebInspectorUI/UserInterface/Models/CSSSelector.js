@@ -40,21 +40,6 @@ WI.CSSSelector = class CSSSelector
     get specificity() { return this._specificity; }
     get dynamic() { return this._dynamic; }
 
-    isGreaterThan(selector)
-    {
-        if (!selector || !selector.specificity)
-            return true;
-
-        for (var i = 0; i < this._specificity.length; ++i) {
-            if (this._specificity[i] === selector.specificity[i])
-                continue;
-
-            return this._specificity[i] > selector.specificity[i];
-        }
-
-        return false;
-    }
-
     isPseudoElementSelector()
     {
         return WI.CSSStyleManager.PseudoElementNames.some((name) => this._text.includes(`:${name}`));

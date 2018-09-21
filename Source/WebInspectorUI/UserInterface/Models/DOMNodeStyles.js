@@ -396,51 +396,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._markAsNeedsRefresh();
     }
 
-    changeRule(rule, selector, text)
-    {
-        if (!rule)
-            return;
-
-        selector = selector || "";
-
-        function changeCompleted()
-        {
-            DOMAgent.markUndoableState();
-            this.refresh();
-        }
-
-        function styleChanged(error, stylePayload)
-        {
-            if (error)
-                return;
-
-            changeCompleted.call(this);
-        }
-
-        function changeText(styleId)
-        {
-            if (!text || !text.length) {
-                changeCompleted.call(this);
-                return;
-            }
-
-            CSSAgent.setStyleText(styleId, text, styleChanged.bind(this));
-        }
-
-        function ruleSelectorChanged(error, rulePayload)
-        {
-            if (error)
-                return;
-
-            changeText.call(this, rulePayload.style.styleId);
-        }
-
-        this._needsRefresh = true;
-        this._ignoreNextContentDidChangeForStyleSheet = rule.ownerStyleSheet;
-
-        CSSAgent.setRuleSelector(rule.id, selector, ruleSelectorChanged.bind(this));
-    }
-
     changeRuleSelector(rule, selector)
     {
         selector = selector || "";

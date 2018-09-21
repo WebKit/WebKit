@@ -345,12 +345,6 @@
     <None Include="..\UserInterface\CSSProperty.js" />
     <None Include="..\UserInterface\CSSRule.js" />
     <None Include="..\UserInterface\CSSStyleDeclaration.js" />
-    <None Include="..\UserInterface\CSSStyleDeclarationSection.css" />
-    <None Include="..\UserInterface\CSSStyleDeclarationSection.js" />
-    <None Include="..\UserInterface\CSSStyleDeclarationTextEditor.css" />
-    <None Include="..\UserInterface\CSSStyleDeclarationTextEditor.js" />
-    <None Include="..\UserInterface\CSSStyleDetailsSidebarPanel.css" />
-    <None Include="..\UserInterface\CSSStyleDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\CSSStyleManager.js" />
     <None Include="..\UserInterface\CSSStyleSheet.js" />
     <None Include="..\UserInterface\DashboardManager.js" />
@@ -748,8 +742,6 @@
     <None Include="..\UserInterface\ResourceTreeElement.css" />
     <None Include="..\UserInterface\ResourceTreeElement.js" />
     <None Include="..\UserInterface\Revision.js" />
-    <None Include="..\UserInterface\RulesStyleDetailsPanel.css" />
-    <None Include="..\UserInterface\RulesStyleDetailsPanel.js" />
     <None Include="..\UserInterface\RuntimeObserver.js" />
     <None Include="..\UserInterface\ScopeBar.css" />
     <None Include="..\UserInterface\ScopeBar.js" />

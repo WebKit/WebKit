@@ -44,9 +44,6 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._pendingProperties = [];
         this._propertyNameMap = {};
 
-        this._initialText = text;
-        this._hasModifiedInitialText = false;
-
         this._allProperties = [];
         this._allVisibleProperties = null;
 
@@ -209,34 +206,18 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         if (this._text === text)
             return;
 
-        let trimmedText = WI.CSSStyleDeclaration.PrefixWhitespace + text.trim();
+        let trimmedText = text.trim();
         if (this._text === trimmedText)
             return;
 
-        if (trimmedText === WI.CSSStyleDeclaration.PrefixWhitespace || this._type === WI.CSSStyleDeclaration.Type.Inline)
+        if (!trimmedText.length || this._type === WI.CSSStyleDeclaration.Type.Inline)
             text = trimmedText;
-
-        let modified = text !== this._initialText;
-        if (modified !== this._hasModifiedInitialText) {
-            this._hasModifiedInitialText = modified;
-            this.dispatchEventToListeners(WI.CSSStyleDeclaration.Event.InitialTextModified);
-        }
 
         // Update text immediately when it was modified via the styles sidebar.
         if (this._locked)
             this._text = text;
 
         this._nodeStyles.changeStyleText(this, text);
-    }
-
-    resetText()
-    {
-        this.text = this._initialText;
-    }
-
-    get modified()
-    {
-        return this._hasModifiedInitialText;
     }
 
     get properties()
@@ -333,42 +314,6 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return newProperty;
     }
 
-    generateCSSRuleString()
-    {
-        let indentString = WI.indentString();
-        let styleText = "";
-        let mediaList = this.mediaList;
-        let mediaQueriesCount = mediaList.length;
-        for (let i = mediaQueriesCount - 1; i >= 0; --i)
-            styleText += indentString.repeat(mediaQueriesCount - i - 1) + "@media " + mediaList[i].text + " {\n";
-
-        styleText += indentString.repeat(mediaQueriesCount) + this.selectorText + " {\n";
-
-        for (let property of this._properties) {
-            if (property.anonymous)
-                continue;
-
-            styleText += indentString.repeat(mediaQueriesCount + 1) + property.text.trim();
-
-            if (!styleText.endsWith(";"))
-                styleText += ";";
-
-            styleText += "\n";
-        }
-
-        for (let i = mediaQueriesCount; i > 0; --i)
-            styleText += indentString.repeat(i) + "}\n";
-
-        styleText += "}";
-
-        return styleText;
-    }
-
-    isInspectorRule()
-    {
-        return this._ownerRule && this._ownerRule.type === WI.CSSStyleSheet.Type.Inspector;
-    }
-
     hasProperties()
     {
         return !!this._properties.length;
@@ -447,7 +392,6 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
 WI.CSSStyleDeclaration.Event = {
     PropertiesChanged: "css-style-declaration-properties-changed",
-    InitialTextModified: "css-style-declaration-initial-text-modified"
 };
 
 WI.CSSStyleDeclaration.Type = {
@@ -456,5 +400,3 @@ WI.CSSStyleDeclaration.Type = {
     Attribute: "css-style-declaration-type-attribute",
     Computed: "css-style-declaration-type-computed"
 };
-
-WI.CSSStyleDeclaration.PrefixWhitespace = "\n";

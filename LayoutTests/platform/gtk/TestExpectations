@@ -2101,7 +2101,6 @@ webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Sl
 
 webkit.org/b/149916 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Slow ]
 webkit.org/b/149916 inspector/codemirror/prettyprinting-css.html [ Pass Slow ]
-webkit.org/b/149916 inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
 webkit.org/b/149916 inspector/codemirror/prettyprinting-javascript.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/clearMessages.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/command-line-api.html [ Pass Slow ]
@@ -2112,7 +2111,6 @@ webkit.org/b/149916 inspector/console/messageRepeatCountUpdated.html [ Pass Slow
 webkit.org/b/149916 inspector/console/messagesCleared.html [ Pass Slow ]
 webkit.org/b/149916 inspector/controller/runtime-controller.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/createStyleSheet.html [ Pass Slow ]
-webkit.org/b/149916 inspector/css/generate-css-rule-string.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/getAllStyleSheets.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/get-system-fonts.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/manager-preferredInspectorStyleSheetForFrame.html [ Pass Slow ]

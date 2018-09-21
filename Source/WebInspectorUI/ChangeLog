@@ -1,3 +1,114 @@
+2018-09-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: remove Legacy Style Editor
+        https://bugs.webkit.org/show_bug.cgi?id=189808
+
+        Reviewed by Joseph Pecoraro.
+
+        The Legacy Style Editor has been hidden behind an "experimental" setting for almost a year.
+        It's time that we remove it, especially since the new Style Editor is at a similar, if not
+        more advanced, state.
+
+        * .eslintrc:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        * Localizations/en.lproj/localizedStrings.js:
+        * Tools/PrettyPrinting/index.html:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Base/Setting.js:
+
+        * UserInterface/Base/TextUtilities.js: Removed.
+        * UserInterface/Base/Utilities.js:
+
+        * UserInterface/Views/RulesStyleDetailsPanel.css: Removed.
+        * UserInterface/Views/RulesStyleDetailsPanel.js: Removed.
+        * UserInterface/Views/CSSStyleDeclarationSection.css: Removed.
+        * UserInterface/Views/CSSStyleDeclarationSection.js: Removed.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css: Removed.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js: Removed.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.get text):
+        (WI.CSSProperty.prototype.get synthesizedText): Deleted.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration):
+        (WI.CSSStyleDeclaration.prototype.set text):
+        (WI.CSSStyleDeclaration.prototype.resetText): Deleted.
+        (WI.CSSStyleDeclaration.prototype.get modified): Deleted.
+        (WI.CSSStyleDeclaration.prototype.generateCSSRuleString): Deleted.
+        (WI.CSSStyleDeclaration.prototype.isInspectorRule): Deleted.
+
+        * UserInterface/Models/CSSSelector.js:
+        (WI.CSSSelector.prototype.isGreaterThan): Deleted.
+
+        * UserInterface/Models/CSSRule.js:
+        (WI.CSSRule.prototype.update):
+        (WI.CSSRule.prototype.get matchedSelectors): Deleted.
+        (WI.CSSRule.prototype.get matchedSelectorText): Deleted.
+        (WI.CSSRule.prototype.hasMatchedPseudoElementSelector): Deleted.
+        (WI.CSSRule.prototype.get mediaText): Deleted.
+        (WI.CSSRule.prototype.get mostSpecificSelector): Deleted.
+        (WI.CSSRule.prototype.selectorIsGreater): Deleted.
+        (WI.CSSRule.prototype._determineMostSpecificSelector): Deleted.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype.changeRule.changeCompleted): Deleted.
+        (WI.DOMNodeStyles.prototype.changeRule.styleChanged): Deleted.
+        (WI.DOMNodeStyles.prototype.changeRule.changeText): Deleted.
+        (WI.DOMNodeStyles.prototype.changeRule.ruleSelectorChanged): Deleted.
+        (WI.DOMNodeStyles.prototype.changeRule): Deleted.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.prototype.isValidPropertyName):
+        (WI.CSSCompletions):
+        (WI.CSSCompletions.prototype.keySet): Deleted.
+        (WI.CSSCompletions.prototype.propertyRequiresWebkitPrefix): Deleted.
+        (WI.CSSCompletions.prototype.getClosestPropertyName): Deleted.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorStartEditingAdjacentRule): Deleted.
+
+        * UserInterface/Views/RulesStyleDetailsSidebarPanel.js:
+        (WI.RulesStyleDetailsSidebarPanel):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyFocusMoved):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorStartEditingRuleSelector): Added.
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.cssStyleDeclarationTextEditorStartEditingRuleSelector): Deleted.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules): Added.
+        (.sidebar > .panel.details.css-style > .content > .rules .section-header): Added.
+        (.sidebar > .panel.details.css-style > .content > .rules .section-header .node-link): Added.
+        (.sidebar > .panel.details.css-style > .content > .rules .section-header .node-link:hover): Added.
+        (.sidebar > .panel.details.css-style > .content > .rules > .message-text-view): Added.
+        (.sidebar > .panel.details.css-style > .content > .rules:not(.filter-non-matching) > .message-text-view): Added.
+        (@media (prefers-dark-interface)):
+        (.sidebar > .panel.details.css-style > .content > .rules .section-header): Added.
+        (.sidebar > .panel.details.css-style > .content > .rules .section-header .node-link:hover): Added.
+        (.spreadsheet-style-panel .section-header): Deleted.
+        (.spreadsheet-style-panel .section-header .node-link): Deleted.
+        (.spreadsheet-style-panel .section-header .node-link:hover): Deleted.
+        (.spreadsheet-style-panel .section-header): Deleted.
+        (.spreadsheet-style-panel .section-header .node-link:hover): Deleted.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        (extendedCSSRuleStartState): Removed.
+        * UserInterface/Views/CodeMirrorFormatters.js:
+        Remove "css-rule" CodeMirror mode.
+
+        * UserInterface/Views/CodeMirrorTextMarkers.js:
+        (createCodeMirrorVariableTextMarkers): Deleted.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2018-09-21  Mike Gorse  <mgorse@suse.com>
 
         Build tools should work when the /usr/bin/python is python3
