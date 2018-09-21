@@ -49,17 +49,14 @@ WI.Platform = {
         WI.Platform.version.base = 10;
         WI.Platform.version.release = parseInt(osVersionMatch[2]);
         switch (osVersionMatch[2]) {
+        case "14":
+            WI.Platform.version.name = "mojave";
+            break;
         case "13":
             WI.Platform.version.name = "high-sierra";
             break;
         case "12":
             WI.Platform.version.name = "sierra";
-            break;
-        case "11":
-            WI.Platform.version.name = "el-capitan";
-            break;
-        case "10":
-            WI.Platform.version.name = "yosemite";
             break;
         default:
             WI.Platform.version.name = "unknown-mac";

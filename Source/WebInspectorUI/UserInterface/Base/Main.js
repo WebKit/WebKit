@@ -1745,21 +1745,9 @@ WI._moveWindowMouseDown = function(event)
     event[WI.Popover.EventPreventDismissSymbol] = true;
 
     if (WI.Platform.name === "mac") {
-        // New Mac releases can start a window drag.
-        if (WI.Platform.version.release >= 11) {
-            InspectorFrontendHost.startWindowDrag();
-            event.preventDefault();
-            return;
-        }
-
-        // Ignore dragging on the top of the toolbar on Mac if the system handles it.
-        if (WI.Platform.version.release === 10) {
-            const windowDragHandledTitleBarHeight = 22;
-            if (event.pageY < windowDragHandledTitleBarHeight) {
-                event.preventDefault();
-                return;
-            }
-        }
+        InspectorFrontendHost.startWindowDrag();
+        event.preventDefault();
+        return;
     }
 
     var lastScreenX = event.screenX;
