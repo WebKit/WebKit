@@ -291,6 +291,8 @@ void DocumentTimeline::animationResolutionTimerFired()
 
 void DocumentTimeline::updateAnimations()
 {
+    m_numberOfAnimationTimelineInvalidationsForTesting++;
+
     for (const auto& animation : animations())
         animation->runPendingTasks();
 
@@ -497,6 +499,11 @@ Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElem
             return graphicsLayer->acceleratedAnimationsForTesting();
     }
     return { };
+}
+
+unsigned DocumentTimeline::numberOfAnimationTimelineInvalidationsForTesting() const
+{
+    return m_numberOfAnimationTimelineInvalidationsForTesting;
 }
 
 } // namespace WebCore

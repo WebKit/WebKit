@@ -206,6 +206,7 @@ public:
         double speed;
     };
     Vector<AcceleratedAnimation> acceleratedAnimationsForElement(Element&);
+    unsigned numberOfAnimationTimelineInvalidations() const;
 
     // For animations testing, we need a way to get at pseudo elements.
     ExceptionOr<RefPtr<Element>> pseudoElement(Element&, const String&);

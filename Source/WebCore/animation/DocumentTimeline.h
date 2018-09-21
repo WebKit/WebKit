@@ -76,6 +76,7 @@ public:
     WEBCORE_EXPORT bool animationsAreSuspended();
     WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
     WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForElement(Element&) const;    
+    WEBCORE_EXPORT unsigned numberOfAnimationTimelineInvalidationsForTesting() const;
 
 private:
     DocumentTimeline(Document&, Seconds);
@@ -101,6 +102,7 @@ private:
     Timer m_animationScheduleTimer;
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     Vector<Ref<AnimationPlaybackEvent>> m_pendingAnimationEvents;
+    unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };
 
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     void animationResolutionTimerFired();

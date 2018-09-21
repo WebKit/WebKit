@@ -1199,8 +1199,11 @@ void KeyframeEffectReadOnly::updateAcceleratedAnimationState()
     if (!m_shouldRunAccelerated)
         return;
 
-    if (!renderer())
+    if (!renderer()) {
+        if (isRunningAccelerated())
+            addPendingAcceleratedAction(AcceleratedAction::Stop);
         return;
+    }
 
     auto localTime = animation()->currentTime();
 
@@ -1225,6 +1228,10 @@ void KeyframeEffectReadOnly::updateAcceleratedAnimationState()
     if (playState == WebAnimation::PlayState::Finished) {
         if (isRunningAccelerated())
             addPendingAcceleratedAction(AcceleratedAction::Stop);
+        else {
+            m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
+            m_pendingAcceleratedActions.clear();
+        }
         return;
     }
 
@@ -1237,6 +1244,8 @@ void KeyframeEffectReadOnly::updateAcceleratedAnimationState()
 
 void KeyframeEffectReadOnly::addPendingAcceleratedAction(AcceleratedAction action)
 {
+    if (action == AcceleratedAction::Stop)
+        m_pendingAcceleratedActions.clear();
     m_pendingAcceleratedActions.append(action);
     if (action != AcceleratedAction::Seek)
         m_lastRecordedAcceleratedAction = action;
@@ -1269,7 +1278,8 @@ void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
 
     auto* renderer = this->renderer();
     if (!renderer || !renderer->isComposited()) {
-        animation()->acceleratedStateDidChange();
+        if (m_lastRecordedAcceleratedAction != AcceleratedAction::Stop || m_pendingAcceleratedActions.last() != AcceleratedAction::Stop)
+            animation()->acceleratedStateDidChange();
         return;
     }
 
