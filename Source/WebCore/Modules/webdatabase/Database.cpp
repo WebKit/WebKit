@@ -90,6 +90,7 @@ namespace WebCore {
 
 static const char versionKey[] = "WebKitDatabaseVersionKey";
 static const char unqualifiedInfoTableName[] = "__WebKitDatabaseInfoTable__";
+const unsigned long long quotaIncreaseSize = 5 * 1024 * 1024;
 
 static const char* fullyQualifiedInfoTableName()
 {
@@ -191,7 +192,7 @@ static inline DatabaseGUID guidForOriginAndName(const String& origin, const Stri
     }).iterator->value;
 }
 
-Database::Database(DatabaseContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize)
+Database::Database(DatabaseContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned long long estimatedSize)
     : m_scriptExecutionContext(*context.scriptExecutionContext())
     , m_contextThreadSecurityOrigin(m_scriptExecutionContext->securityOrigin()->isolatedCopy())
     , m_databaseThreadSecurityOrigin(m_scriptExecutionContext->securityOrigin()->isolatedCopy())
@@ -617,9 +618,15 @@ String Database::displayName() const
     return m_displayName.isolatedCopy();
 }
 
-unsigned Database::estimatedSize() const
+unsigned long long Database::estimatedSize() const
 {
     return m_estimatedSize;
+}
+
+void Database::setEstimatedSize(unsigned long long estimatedSize)
+{
+    m_estimatedSize = estimatedSize;
+    DatabaseTracker::singleton().setDatabaseDetails(securityOrigin(), m_name, m_displayName, m_estimatedSize);
 }
 
 String Database::fileName() const
@@ -788,6 +795,11 @@ bool Database::didExceedQuota()
     ASSERT(databaseContext().scriptExecutionContext()->isContextThread());
     auto& tracker = DatabaseTracker::singleton();
     auto oldQuota = tracker.quota(securityOrigin());
+    if (estimatedSize() <= oldQuota) {
+        // The expected usage provided by the page is now smaller than the actual database size so we bump the expected usage to
+        // oldQuota + 5MB so that the client actually increases the quota.
+        setEstimatedSize(oldQuota + quotaIncreaseSize);
+    }
     databaseContext().databaseExceededQuota(stringIdentifier(), details());
     return tracker.quota(securityOrigin()) > oldQuota;
 }

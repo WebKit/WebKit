@@ -1,0 +1,68 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+description("Check that a quota increase is granted, even if the provided expected size is too low.");
+jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.clearAllDatabases();
+    testRunner.dumpDatabaseCallbacks(); 
+    testRunner.databaseDefaultQuota = 5 * 1024 * 1024;
+    testRunner.databaseMaxQuota = 50 * 1024 * 1024;
+}
+
+let db;
+
+const dataSize = 8 * 1024 * 1024; // 8 MB.
+let largeData = "";
+for (let i = 0; i < dataSize; i++)
+    largeData += "x";
+
+let isFirstAttempt = true;
+
+function writeData()
+{
+    db.transaction((tx) => {
+        let id = 1;
+        tx.executeSql('INSERT INTO foo (id, text) VALUES (?, ?)', [id, largeData]);
+    }, (error) => {
+        if (isFirstAttempt && error.code == SQLError.QUOTA_ERR) {
+            isFirstAttempt = false;
+            setTimeout(writeData, 0);
+            return;
+        }
+        testFailed("Failed to write data: " + error.code + ": " + error.message);
+        finishJSTest();
+    }, () => {
+        testPassed("Successfully wrote data");
+        finishJSTest();
+    });
+}
+
+function runTest() {
+    try {
+        db = openDatabase('ExpandedQuotaTransaction', '', '', 6 * 1024 * 1024);
+    } catch (err) {
+        testFailed("Failed to open the database");
+        finishJSTest();
+        return;
+    }
+
+    db.transaction((tx) => {
+        tx.executeSql('CREATE TABLE foo (id unique, text)');
+    }, (error) => {
+        testFailed("Failed to create table: " + error.code + ": " + error.message);
+        finishJSTest();
+    }, () => {
+       writeData();
+    });
+}
+
+onload = runTest;
+</script>
+</body>
+</html>

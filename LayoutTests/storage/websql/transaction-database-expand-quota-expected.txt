@@ -1,0 +1,14 @@
+UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{file, , 0} database:ExpandedQuotaTransaction
+UI DELEGATE DATABASE CALLBACK: increased quota to 6291456
+UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{file, , 0} database:ExpandedQuotaTransaction
+UI DELEGATE DATABASE CALLBACK: increased quota to 11534336
+Check that a quota increase is granted, even if the provided expected size is too low.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully wrote data
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

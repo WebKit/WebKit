@@ -1,3 +1,29 @@
+2018-09-21  Chris Dumez  <cdumez@apple.com>
+
+        WebSQL: User cannot grant quota increase if the JS provides an expected usage value that is too low
+        https://bugs.webkit.org/show_bug.cgi?id=189801
+        <rdar://problem/43592498>
+
+        Reviewed by Youenn Fablet.
+
+        User was unable to grant a quota increase for WebSQL if the JS provided an expected usage value that
+        is too low. This is because WebKit was passing this provided expectedUsage value to the client for
+        the purpose of quota increase, even when this expectedUsage value does not make any sense (i.e. it
+        is lower than the current database size). As a result, the client would grant a quota that is equal
+        to the previous quota and the JS would not be able to insert any data.
+
+        In order to address the issue, when the current quota is exceeded and Database::didExceedQuota()
+        is called, we now make sure that the expectedUsage value is greater than the current quota. If it
+        is not, we provide `current quota + 5MB` as expected usage to the client. This way, the client will
+        grant a quota that is actually increased (provided that the user accepts).
+
+        Test: storage/websql/transaction-database-expand-quota.html
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::setEstimatedSize):
+        (WebCore::Database::didExceedQuota):
+        * Modules/webdatabase/Database.h:
+
 2018-09-21  Youenn Fablet  <youenn@apple.com>
 
         Use biplanar CVPixelBuffer for black frames sent to libwebrtc

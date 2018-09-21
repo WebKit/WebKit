@@ -1,3 +1,16 @@
+2018-09-21  Chris Dumez  <cdumez@apple.com>
+
+        WebSQL: User cannot grant quota increase if the JS provides an expected usage value that is too low
+        https://bugs.webkit.org/show_bug.cgi?id=189801
+        <rdar://problem/43592498>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * storage/websql/transaction-database-expand-quota-expected.txt: Added.
+        * storage/websql/transaction-database-expand-quota.html: Added.
+
 2018-09-21  Youenn Fablet  <youenn@apple.com>
 
         Add RTCCodecStats support
