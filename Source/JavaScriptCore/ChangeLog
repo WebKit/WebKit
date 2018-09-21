@@ -1,3 +1,15 @@
+2018-09-21  Tomas Popela  <tpopela@redhat.com>
+
+        [ARM] Build broken on armv7hl after r235517
+        https://bugs.webkit.org/show_bug.cgi?id=189831
+
+        Reviewed by Yusuke Suzuki.
+
+        Add missing implementation of patchebleBranch8() for traditional ARM.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::patchableBranch8):
+
 2018-09-19  Saam barati  <sbarati@apple.com>
 
         CheckStructureOrEmpty should pass in a tempGPR to emitStructureCheck since it may jump over that code

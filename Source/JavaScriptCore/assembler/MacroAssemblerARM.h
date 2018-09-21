@@ -981,6 +981,13 @@ public:
         return PatchableJump(m_assembler.jmp(ARMAssembler::AL, 1));
     }
 
+    PatchableJump patchableBranch8(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        TrustedImm32 imm8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, imm);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, dataTempRegister);
+        return patchableBranch32(cond, dataTempRegister, imm8);
+    }
+
     PatchableJump patchableBranch32(RelationalCondition cond, RegisterID reg, TrustedImm32 imm)
     {
         internalCompare32(reg, imm);
