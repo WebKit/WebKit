@@ -94,6 +94,7 @@ typedef struct _CARenderContext CARenderContext;
 - (CGSize)size;
 - (void *)regionBeingDrawn;
 - (void)reloadValueForKeyPath:(NSString *)keyPath;
+- (void)setCornerRadius:(CGFloat)cornerRadius;
 @property BOOL allowsGroupBlending;
 @property BOOL allowsHitTesting;
 @property BOOL canDrawConcurrently;
@@ -101,6 +102,7 @@ typedef struct _CARenderContext CARenderContext;
 @property BOOL hitTestsAsOpaque;
 @property BOOL needsLayoutOnGeometryChange;
 @property BOOL shadowPathIsBounds;
+@property BOOL continuousCorners;
 @end
 
 #if ENABLE(FILTERS_LEVEL_2)
