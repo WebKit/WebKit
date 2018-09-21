@@ -1,3 +1,90 @@
+2018-09-21  Keith Miller  <keith_miller@apple.com>
+
+        Add Promise SPI
+        https://bugs.webkit.org/show_bug.cgi?id=189809
+
+        Reviewed by Saam Barati.
+
+        The Patch adds new SPI to create promises. It's mostly SPI because
+        I want to see how internal users react to it before we make it
+        public.
+
+        This patch adds a couple of new Obj-C SPI methods. The first
+        creates a new promise using the same API that JS does where the
+        user provides an executor callback. If an exception is raised
+        in/to that callback the promise is automagically rejected. The
+        other methods create a pre-resolved or rejected promise as this
+        appears to be a common way to initialize a promise.
+
+        I was also considering adding a second version of executor API
+        where it would catch specific Obj-C exceptions. This would work by
+        taking a Class paramter and checking isKindOfClass: on the
+        exception. I decided against this as nothing else in our API
+        handles Obj-C exceptions. I'm pretty sure the VM will end up in a
+        corrupt state if an Obj-C exception unwinds through JS frames.
+
+        This patch adds a new C function that will create a "deferred"
+        promise. A deferred promise is a style of creating promise/futures
+        where the resolve and reject functions are passed as outputs of a
+        function. I went with this style for the C SPI because we don't have
+        any concept of forwarding exceptions in the C API.
+
+        In order to make the C API work I refactored a bit of the promise code
+        so that we can call a static method on JSDeferredPromise and just get
+        the components without allocating an extra cell wrapper.
+
+        * API/JSContext.mm:
+        (+[JSContext currentCallee]):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeDeferredPromise):
+        * API/JSObjectRefPrivate.h:
+        * API/JSValue.mm:
+        (+[JSValue valueWithNewPromiseInContext:fromExecutor:]):
+        (+[JSValue valueWithNewPromiseResolvedWithResult:inContext:]):
+        (+[JSValue valueWithNewPromiseRejectedWithReason:inContext:]):
+        * API/JSValuePrivate.h: Added.
+        * API/JSVirtualMachine.mm:
+        * API/JSVirtualMachinePrivate.h:
+        * API/tests/testapi.c:
+        (main):
+        * API/tests/testapi.cpp:
+        (APIContext::operator JSC::ExecState*):
+        (TestAPI::failed const):
+        (TestAPI::check):
+        (TestAPI::basicSymbol):
+        (TestAPI::symbolsTypeof):
+        (TestAPI::symbolsGetPropertyForKey):
+        (TestAPI::symbolsSetPropertyForKey):
+        (TestAPI::symbolsHasPropertyForKey):
+        (TestAPI::symbolsDeletePropertyForKey):
+        (TestAPI::promiseResolveTrue):
+        (TestAPI::promiseRejectTrue):
+        (testCAPIViaCpp):
+        (TestAPI::run): Deleted.
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+        (promiseWithExecutor):
+        (promiseRejectOnJSException):
+        (promiseCreateResolved):
+        (promiseCreateRejected):
+        (parallelPromiseResolveTest):
+        (testObjectiveCAPI):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSInternalPromiseDeferred.cpp:
+        (JSC::JSInternalPromiseDeferred::create):
+        * runtime/JSPromise.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::createDeferredData):
+        (JSC::JSPromiseDeferred::create):
+        (JSC::JSPromiseDeferred::finishCreation):
+        (JSC::newPromiseCapability): Deleted.
+        * runtime/JSPromiseDeferred.h:
+        (JSC::JSPromiseDeferred::promise const):
+        (JSC::JSPromiseDeferred::resolve const):
+        (JSC::JSPromiseDeferred::reject const):
+
 2018-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236359.

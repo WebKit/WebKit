@@ -122,7 +122,7 @@ namespace StringWrapperCFAllocator {
 
 RetainPtr<CFStringRef> StringImpl::createCFString()
 {
-    if (!m_length || !isMainThread()) {
+    if (!m_length || !isMainThreadIfInitialized()) {
         if (is8Bit())
             return adoptCF(CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(characters8()), m_length, kCFStringEncodingISOLatin1, false));
         return adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(characters16()), m_length));

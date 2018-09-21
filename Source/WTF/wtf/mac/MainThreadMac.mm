@@ -60,9 +60,9 @@ namespace WTF {
 
 static JSWTFMainThreadCaller* staticMainThreadCaller;
 static bool isTimerPosted; // This is only accessed on the main thread.
-static bool mainThreadEstablishedAsPthreadMain;
-static pthread_t mainThreadPthread;
-static NSThread* mainThreadNSThread;
+static bool mainThreadEstablishedAsPthreadMain { false };
+static pthread_t mainThreadPthread { nullptr };
+static NSThread* mainThreadNSThread { nullptr };
 
 #if USE(WEB_THREAD)
 static Thread* sApplicationUIThread;
@@ -162,6 +162,11 @@ bool isMainThread()
     return (isWebThread() || pthread_main_np()) && webThreadIsUninitializedOrLockedOrDisabled();
 }
 
+bool isMainThreadIfInitialized()
+{
+    return isMainThread();
+}
+
 bool isUIThread()
 {
     return pthread_main_np();
@@ -212,6 +217,14 @@ bool isMainThread()
     ASSERT(mainThreadPthread);
     return pthread_equal(pthread_self(), mainThreadPthread);
 }
+
+bool isMainThreadIfInitialized()
+{
+    if (mainThreadEstablishedAsPthreadMain)
+        return pthread_main_np();
+    return pthread_equal(pthread_self(), mainThreadPthread);
+}
+
 #endif // USE(WEB_THREAD)
 
 } // namespace WTF

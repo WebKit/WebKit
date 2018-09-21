@@ -114,7 +114,7 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
     Structure* promiseStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->promiseStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSPromise* promise = JSPromise::create(vm, promiseStructure);
-    promise->initialize(exec, globalObject, exec->argument(0));
+    promise->initialize(exec, globalObject,  exec->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(promise);

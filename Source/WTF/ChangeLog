@@ -1,3 +1,22 @@
+2018-09-21  Keith Miller  <keith_miller@apple.com>
+
+        Add Promise SPI
+        https://bugs.webkit.org/show_bug.cgi?id=189809
+
+        Reviewed by Saam Barati.
+
+        Fix issue where creating a JSContextRef off the main thread before
+        creating initializing the main thread would cause an assertion
+        failure.
+
+        * wtf/MainThread.cpp:
+        (WTF::isMainThreadIfInitialized):
+        * wtf/MainThread.h:
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::isMainThreadIfInitialized):
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringImpl::createCFString):
+
 2018-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236359.
