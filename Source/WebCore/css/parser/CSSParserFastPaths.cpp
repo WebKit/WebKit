@@ -604,9 +604,9 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyOverflowWrap: // normal | break-word
     case CSSPropertyWordWrap:
         return valueID == CSSValueNormal || valueID == CSSValueBreakWord;
-    case CSSPropertyOverflowX: // visible | hidden | scroll | auto | overlay
+    case CSSPropertyOverflowX: // visible | hidden | scroll | auto | overlay (overlay is a synonym for auto)
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueScroll || valueID == CSSValueAuto || valueID == CSSValueOverlay;
-    case CSSPropertyOverflowY: // visible | hidden | scroll | auto | overlay | -webkit-paged-x | -webkit-paged-y
+    case CSSPropertyOverflowY: // visible | hidden | scroll | auto | overlay | -webkit-paged-x | -webkit-paged-y (overlay is a synonym for auto)
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueScroll || valueID == CSSValueAuto || valueID == CSSValueOverlay || valueID == CSSValueWebkitPagedX || valueID == CSSValueWebkitPagedY;
     case CSSPropertyBreakAfter:
     case CSSPropertyBreakBefore:

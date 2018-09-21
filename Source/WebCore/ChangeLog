@@ -1,3 +1,40 @@
+2018-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Make "overflow: overlay" a synonym for "overflow: auto"
+        https://bugs.webkit.org/show_bug.cgi?id=189811
+
+        Reviewed by Zalan Bujtas.
+        
+        The "overlay" value for overflow was added for an internal Safari feature, and only has
+        an effect (allow the scrollbar to overlap the content) with legacy scrollbars on macOS.
+        It's little used on the web.
+
+        To simplify code in rendering, just make "overflow: overlay" behave like "overflow: auto".
+        It's still parsed, but turns into an "auto" value internally, and will be returned from getComputedStyle
+        as "auto".
+
+        Test: fast/css/getComputedStyle/getComputedStyle-overflow.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator Overflow const):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/StyleResolver.cpp:
+        (WebCore::isScrollableOverflow):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::nodeRespondingToScrollWheelEvents):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasVerticalScrollbarWithAutoBehavior const):
+        (WebCore::RenderBox::hasHorizontalScrollbarWithAutoBehavior const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::styleDefinesAutomaticScrollbar):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::isScrollableOverflow):
+        * rendering/style/RenderStyleConstants.h:
+
 2018-09-21  Youenn Fablet  <youenn@apple.com>
 
         Centralize which CVPixelBuffer format is being used

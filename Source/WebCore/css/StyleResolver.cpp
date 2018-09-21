@@ -744,7 +744,7 @@ static bool doesNotInheritTextDecoration(const RenderStyle& style, const Element
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 static bool isScrollableOverflow(Overflow overflow)
 {
-    return overflow == Overflow::Scroll || overflow == Overflow::Auto || overflow == Overflow::Overlay;
+    return overflow == Overflow::Scroll || overflow == Overflow::Auto;
 }
 #endif
 

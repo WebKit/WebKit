@@ -256,7 +256,6 @@ enum class Overflow : uint8_t {
     Hidden,
     Scroll,
     Auto,
-    Overlay,
     PagedX,
     PagedY
 };

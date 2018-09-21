@@ -1,3 +1,18 @@
+2018-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Make "overflow: overlay" a synonym for "overflow: auto"
+        https://bugs.webkit.org/show_bug.cgi?id=189811
+
+        Reviewed by Zalan Bujtas.
+        
+        Add a modern CSS parsing/computed style test for overflow, superseding
+        fast/css/overflow-property.html.
+
+        * fast/css/getComputedStyle/getComputedStyle-overflow-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-overflow.html: Added.
+        * fast/css/overflow-property-expected.txt: Removed.
+        * fast/css/overflow-property.html: Removed.
+
 2018-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Tests checking document GC in case of ActiveDOMObjects are flaky

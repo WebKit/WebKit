@@ -937,13 +937,13 @@ void RenderBox::panScroll(const IntPoint& source)
 bool RenderBox::hasVerticalScrollbarWithAutoBehavior() const
 {
     bool overflowScrollActsLikeAuto = style().overflowY() == Overflow::Scroll && !style().hasPseudoStyle(PseudoId::Scrollbar) && ScrollbarTheme::theme().usesOverlayScrollbars();
-    return hasOverflowClip() && (style().overflowY() == Overflow::Auto || style().overflowY() == Overflow::Overlay || overflowScrollActsLikeAuto);
+    return hasOverflowClip() && (style().overflowY() == Overflow::Auto || overflowScrollActsLikeAuto);
 }
 
 bool RenderBox::hasHorizontalScrollbarWithAutoBehavior() const
 {
     bool overflowScrollActsLikeAuto = style().overflowX() == Overflow::Scroll && !style().hasPseudoStyle(PseudoId::Scrollbar) && ScrollbarTheme::theme().usesOverlayScrollbars();
-    return hasOverflowClip() && (style().overflowX() == Overflow::Auto || style().overflowX() == Overflow::Overlay || overflowScrollActsLikeAuto);
+    return hasOverflowClip() && (style().overflowX() == Overflow::Auto || overflowScrollActsLikeAuto);
 }
 
 bool RenderBox::needsPreferredWidthsRecalculation() const

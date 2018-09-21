@@ -468,8 +468,8 @@ Node* Frame::nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLocatio
             auto& style = renderer->style();
 
             if (renderer->hasOverflowClip()
-                && (style.overflowY() == Overflow::Auto || style.overflowY() == Overflow::Scroll || style.overflowY() == Overflow::Overlay
-                || style.overflowX() == Overflow::Auto || style.overflowX() == Overflow::Scroll || style.overflowX() == Overflow::Overlay)) {
+                && (style.overflowY() == Overflow::Auto || style.overflowY() == Overflow::Scroll
+                || style.overflowX() == Overflow::Auto || style.overflowX() == Overflow::Scroll)) {
                 scrollingAncestor = node;
             }
         }

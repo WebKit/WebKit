@@ -1,3 +1,16 @@
+2018-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Make "overflow: overlay" a synonym for "overflow: auto"
+        https://bugs.webkit.org/show_bug.cgi?id=189811
+
+        Reviewed by Zalan Bujtas.
+        
+        Remove "overlay" from the overflow values.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WI.VisualStyleDetailsPanel.prototype._populateDisplaySection):
+
 2018-09-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: hide Accessibility Audit Tab setting

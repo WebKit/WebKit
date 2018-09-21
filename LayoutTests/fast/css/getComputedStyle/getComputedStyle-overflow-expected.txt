@@ -1,0 +1,113 @@
+Test computed style on the overflow property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Shorthand tests
+
+PASS computedStyle.getPropertyValue('overflow-x') is "scroll"
+PASS computedStyle.getPropertyValue('overflow-y') is "scroll"
+PASS computedStyle.getPropertyValue('overflow') is "scroll"
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "auto"
+PASS computedStyle.getPropertyValue('overflow') is "auto"
+
+PASS computedStyle.getPropertyValue('overflow-x') is "visible"
+PASS computedStyle.getPropertyValue('overflow-y') is "visible"
+PASS computedStyle.getPropertyValue('overflow') is "visible"
+
+PASS computedStyle.getPropertyValue('overflow-x') is "hidden"
+PASS computedStyle.getPropertyValue('overflow-y') is "hidden"
+PASS computedStyle.getPropertyValue('overflow') is "hidden"
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "auto"
+PASS computedStyle.getPropertyValue('overflow') is "auto"
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "auto"
+PASS computedStyle.getPropertyValue('overflow') is "auto"
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "auto"
+PASS computedStyle.getPropertyValue('overflow') is "auto"
+
+Paged tests
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "-webkit-paged-x"
+PASS computedStyle.getPropertyValue('overflow') is "-webkit-paged-x"
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "-webkit-paged-y"
+PASS computedStyle.getPropertyValue('overflow') is "-webkit-paged-y"
+
+Longhand tests
+
+PASS computedStyle.getPropertyValue('overflow-x') is "scroll"
+PASS computedStyle.getPropertyValue('overflow-y') is "scroll"
+PASS computedStyle.getPropertyValue('overflow') is "scroll"
+PASS e.style.overflowX is "scroll"
+PASS e.style.overflowY is "scroll"
+PASS e.style.overflow is "scroll"
+
+PASS computedStyle.getPropertyValue('overflow-x') is "scroll"
+PASS computedStyle.getPropertyValue('overflow-y') is "auto"
+PASS computedStyle.getPropertyValue('overflow') is "auto"
+PASS e.style.overflowX is "scroll"
+PASS e.style.overflowY is "auto"
+PASS e.style.overflow is ""
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "scroll"
+PASS computedStyle.getPropertyValue('overflow') is "auto"
+PASS e.style.overflowX is "auto"
+PASS e.style.overflowY is "scroll"
+PASS e.style.overflow is ""
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "hidden"
+PASS computedStyle.getPropertyValue('overflow') is "auto"
+PASS e.style.overflowX is "visible"
+PASS e.style.overflowY is "hidden"
+PASS e.style.overflow is ""
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "hidden"
+PASS computedStyle.getPropertyValue('overflow') is "auto"
+PASS e.style.overflowX is "overlay"
+PASS e.style.overflowY is "hidden"
+PASS e.style.overflow is ""
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "-webkit-paged-y"
+PASS computedStyle.getPropertyValue('overflow') is "-webkit-paged-y"
+PASS e.style.overflowX is "visible"
+PASS e.style.overflowY is "-webkit-paged-y"
+PASS e.style.overflow is ""
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "-webkit-paged-x"
+PASS computedStyle.getPropertyValue('overflow') is "-webkit-paged-x"
+PASS e.style.overflowX is "auto"
+PASS e.style.overflowY is "-webkit-paged-x"
+PASS e.style.overflow is ""
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "-webkit-paged-x"
+PASS computedStyle.getPropertyValue('overflow') is "-webkit-paged-x"
+PASS e.style.overflowX is "auto"
+PASS e.style.overflowY is "-webkit-paged-x"
+PASS e.style.overflow is ""
+
+PASS computedStyle.getPropertyValue('overflow-x') is "auto"
+PASS computedStyle.getPropertyValue('overflow-y') is "-webkit-paged-x"
+PASS computedStyle.getPropertyValue('overflow') is "-webkit-paged-x"
+PASS e.style.overflowX is "auto"
+PASS e.style.overflowY is "-webkit-paged-x"
+PASS e.style.overflow is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -551,7 +551,6 @@ no-close-quote
 no-open-quote
 nowrap
 open-quote
-overlay
 overline
 portrait
 pre
@@ -1153,7 +1152,7 @@ on-demand
 // normal
 multiply
 screen
-// overlay
+overlay
 darken
 lighten
 color-dodge

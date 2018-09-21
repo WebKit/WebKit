@@ -3032,8 +3032,7 @@
                 "visible",
                 "hidden",
                 "scroll",
-                "auto",
-                "overlay"
+                "auto"
             ],
             "specification": {
                 "category": "css-overflow",
@@ -3046,7 +3045,6 @@
                 "hidden",
                 "scroll",
                 "auto",
-                "overlay",
                 "-webkit-paged-x",
                 "-webkit-paged-y"
             ],

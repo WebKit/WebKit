@@ -902,7 +902,7 @@ static bool checkIfDescendantClippingContextNeedsUpdate(const RenderLayer& layer
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 static bool isScrollableOverflow(Overflow overflow)
 {
-    return overflow == Overflow::Scroll || overflow == Overflow::Auto || overflow == Overflow::Overlay;
+    return overflow == Overflow::Scroll || overflow == Overflow::Auto;
 }
 
 static bool styleHasTouchScrolling(const RenderStyle& style)

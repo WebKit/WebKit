@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test computed style on the overflow property.")
+
+var testContainer = document.createElement("div");
+testContainer.contentEditable = true;
+document.body.appendChild(testContainer);
+
+testContainer.innerHTML = '<div id="test">hello</div>';
+
+e = document.getElementById('test');
+computedStyle = window.getComputedStyle(e, null);
+
+debug('Shorthand tests');
+
+const tests = [
+    // value, expected
+    [ 'scroll', 'scroll'],
+    [ 'auto', 'auto' ],
+    [ 'visible', 'visible' ],
+    [ 'hidden', 'hidden' ],
+    [ 'overlay', 'auto' ],
+
+    [ 'hidden visible', 'auto' ], // WebKit doesn't support different values of overflow on different axes.
+    [ 'hidden hidden', 'auto' ], // WebKit doesn't support different values of overflow on different axes, and thus only accepts a single value for overflow.
+];
+
+for (let test of tests) {
+    e.style.overflow = 'auto';
+    e.style.overflow = test[0];
+    debug('');
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow-x')", test[1]);
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow-y')", test[1]);
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow')", test[1]);
+}
+
+debug('');
+debug('Paged tests');
+
+const pagedTests = [
+    // shorthand, expected-x, expected-y, expected-shorthand
+    [ '-webkit-paged-x', 'auto', '-webkit-paged-x', '-webkit-paged-x' ],
+    [ '-webkit-paged-y', 'auto', '-webkit-paged-y', '-webkit-paged-y' ],
+];
+
+for (let test of pagedTests) {
+    e.style.overflow = 'auto';
+    e.style.overflow = test[0];
+    debug('');
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow-x')", test[1]);
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow-y')", test[2]);
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow')", test[3]);
+}
+
+debug('');
+debug('Longhand tests');
+
+const longhandTests = [
+    // x-value, y-value, computed-x-expected, computed-y-expected, computed-shorthand-expected, inline-x-expected, inline-y-expected, inline-shorthand-expected
+    [ 'scroll', 'scroll',
+        'scroll', 'scroll', 'scroll',
+        'scroll', 'scroll', 'scroll'],
+
+    [ 'scroll', 'auto',
+        'scroll', 'auto', 'auto',
+        'scroll', 'auto', ''],
+
+    [ 'auto', 'scroll',
+        'auto', 'scroll', 'auto',
+        'auto', 'scroll', ''],
+
+    [ 'visible', 'hidden',
+        'auto', 'hidden', 'auto',
+        'visible', 'hidden', ''],
+
+    [ 'overlay', 'hidden',
+        'auto','hidden', 'auto',
+        'overlay', 'hidden', ''],
+
+    [ 'visible', '-webkit-paged-y',
+        'auto', '-webkit-paged-y', '-webkit-paged-y',
+        'visible', '-webkit-paged-y', ''],
+
+    [ 'auto', '-webkit-paged-x',
+        'auto', '-webkit-paged-x', '-webkit-paged-x',
+        'auto', '-webkit-paged-x', ''],
+
+    [ '-webkit-paged-x', '-webkit-paged-x',
+        'auto', '-webkit-paged-x', '-webkit-paged-x',
+        'auto', '-webkit-paged-x', ''],
+
+    [ '-webkit-paged-y', '-webkit-paged-x',
+        'auto', '-webkit-paged-x', '-webkit-paged-x',
+        'auto', '-webkit-paged-x', ''],
+];
+
+for (let test of longhandTests) {
+    e.style.overflow = 'auto';
+    e.style.overflowX = test[0];
+    e.style.overflowY = test[1];
+    debug('');
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow-x')", test[2]);
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow-y')", test[3]);
+    shouldBeEqualToString("computedStyle.getPropertyValue('overflow')", test[4]);
+
+    shouldBeEqualToString("e.style.overflowX", test[5]);
+    shouldBeEqualToString("e.style.overflowY", test[6]);
+    shouldBeEqualToString("e.style.overflow", test[7]);
+}
+
+document.body.removeChild(testContainer);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

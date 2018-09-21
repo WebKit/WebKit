@@ -3472,7 +3472,7 @@ static bool styleDefinesAutomaticScrollbar(const RenderStyle& style, ScrollbarOr
 {
     Overflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
     bool overflowScrollActsLikeAuto = overflow == Overflow::Scroll && !style.hasPseudoStyle(PseudoId::Scrollbar) && ScrollbarTheme::theme().usesOverlayScrollbars();
-    return overflow == Overflow::Auto || overflow == Overflow::Overlay || overflowScrollActsLikeAuto;
+    return overflow == Overflow::Auto || overflowScrollActsLikeAuto;
 }
 
 void RenderLayer::updateScrollbarsAfterLayout()
