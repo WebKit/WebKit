@@ -52,8 +52,8 @@ extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
     macro(from, builtinConstructorFrom, 1) \
 
 #define JSC_FOREACH_BUILTIN_CODE(macro) \
-    macro(builtinConstructorOfCode, of, static_cast<const char*>(nullptr), s_builtinConstructorOfCodeLength) \
     macro(builtinConstructorFromCode, from, static_cast<const char*>(nullptr), s_builtinConstructorFromCodeLength) \
+    macro(builtinConstructorOfCode, of, static_cast<const char*>(nullptr), s_builtinConstructorOfCodeLength) \
 
 #define JSC_FOREACH_BUILTIN_FUNCTION_NAME(macro) \
     macro(from) \
@@ -112,24 +112,6 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #include "VM.h"
 
 namespace JSC {
-
-const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinConstructorOfCodeLength = 294;
-static const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_builtinConstructorOfCode =
-    "(function ()\n" \
-    "{\n" \
-    "    \"use strict\";\n" \
-    "\n" \
-    "    var length = arguments.length;\n" \
-    "    //\n" \
-    "    var array = typeof this === 'function' ? new this(length) : new @Array(length);\n" \
-    "    for (var k = 0; k < length; ++k)\n" \
-    "        @putByValDirect(array, k, arguments[k]);\n" \
-    "    array.length = length;\n" \
-    "    return array;\n" \
-    "})\n" \
-;
 
 const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_builtinConstructorFromCodeLength = 2046;
@@ -206,6 +188,24 @@ const char* s_builtinConstructorFromCode =
     "\n" \
     "    result.length = arrayLikeLength;\n" \
     "    return result;\n" \
+    "})\n" \
+;
+
+const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+const int s_builtinConstructorOfCodeLength = 294;
+static const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
+const char* s_builtinConstructorOfCode =
+    "(function ()\n" \
+    "{\n" \
+    "    \"use strict\";\n" \
+    "\n" \
+    "    var length = arguments.length;\n" \
+    "    //\n" \
+    "    var array = typeof this === 'function' ? new this(length) : new @Array(length);\n" \
+    "    for (var k = 0; k < length; ++k)\n" \
+    "        @putByValDirect(array, k, arguments[k]);\n" \
+    "    array.length = length;\n" \
+    "    return array;\n" \
     "})\n" \
 ;
 
