@@ -1,3 +1,18 @@
+2018-09-21  Megan Gardner  <megan_gardner@apple.com>
+
+        [iOS] Layout test fast/gradients/conic-gradient-alpha.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=189802
+
+        Unreviewed test gardening
+
+        It is more difficult to squish the alpha channel than the other channels using an SVG filters.
+        Thus the cropping bars need to be slightly wider to cover the imperfections in the filter.
+        Made the bars even more slightly wider, since apparenlty they weren't quite wide enough for iOS.
+
+        * fast/gradients/conic-gradient-alpha-expected.html:
+        * fast/gradients/conic-gradient-alpha.html:
+        * platform/ios-12/TestExpectations:
+
 2018-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Make "overflow: overlay" a synonym for "overflow: auto"
