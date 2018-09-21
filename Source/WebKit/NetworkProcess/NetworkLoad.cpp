@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkLoad.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "DownloadProxyMessages.h"
 #include "NetworkProcess.h"

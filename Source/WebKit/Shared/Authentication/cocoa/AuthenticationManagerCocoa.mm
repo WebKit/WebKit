@@ -28,6 +28,7 @@
 
 #if HAVE(SEC_KEY_PROXY)
 
+#import "AuthenticationChallengeDisposition.h"
 #import "ClientCertificateAuthenticationXPCConstants.h"
 #import "Connection.h"
 #import <pal/spi/cocoa/NSXPCConnectionSPI.h>
@@ -96,7 +97,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
         if (persistence > static_cast<uint64_t>(NSURLCredentialPersistenceSynchronizable))
             return;
 
-        weakThis->useCredentialForChallenge(challengeID, WebCore::Credential(adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:certificates persistence:(NSURLCredentialPersistence)persistence]).get()));
+        weakThis->completeAuthenticationChallenge(challengeID, AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:certificates persistence:(NSURLCredentialPersistence)persistence]).get()));
     });
 }
 

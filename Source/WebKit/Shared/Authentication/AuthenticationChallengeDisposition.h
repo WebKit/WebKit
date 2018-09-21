@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKAuthenticationDecisionListener.h"
+#pragma once
 
-#include "AuthenticationChallengeDisposition.h"
-#include "AuthenticationDecisionListener.h"
-#include "WKAPICast.h"
-#include "WebCredential.h"
+#include <wtf/EnumTraits.h>
 
-using namespace WebKit;
+namespace WebKit {
 
-WKTypeID WKAuthenticationDecisionListenerGetTypeID()
-{
-    return toAPI(AuthenticationDecisionListener::APIType);
-}
+enum class AuthenticationChallengeDisposition {
+    UseCredential,
+    PerformDefaultHandling,
+    Cancel,
+    RejectProtectionSpaceAndContinue
+};
 
-void WKAuthenticationDecisionListenerUseCredential(WKAuthenticationDecisionListenerRef authenticationListener, WKCredentialRef credential)
-{
-    toImpl(authenticationListener)->completeChallenge(AuthenticationChallengeDisposition::UseCredential, credential ? toImpl(credential)->credential() : WebCore::Credential());
-}
+} // namespace WebKit
 
-void WKAuthenticationDecisionListenerCancel(WKAuthenticationDecisionListenerRef authenticationListener)
-{
-    toImpl(authenticationListener)->completeChallenge(AuthenticationChallengeDisposition::Cancel);
-}
+namespace WTF {
 
-void WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue(WKAuthenticationDecisionListenerRef authenticationListener)
-{
-    toImpl(authenticationListener)->completeChallenge(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
-}
+template<> struct EnumTraits<WebKit::AuthenticationChallengeDisposition> {
+    using values = EnumValues<
+        WebKit::AuthenticationChallengeDisposition,
+        WebKit::AuthenticationChallengeDisposition::UseCredential,
+        WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling,
+        WebKit::AuthenticationChallengeDisposition::Cancel,
+        WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue
+    >;
+};
+
+} // namespace WTF

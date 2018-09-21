@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "WebCredential.h"
@@ -98,11 +99,11 @@ void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageI
     auto& protectionSpace = challenge->core().protectionSpace();
     if (protectionSpace.authenticationScheme() == WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested && processPool().allowsAnySSLCertificateForServiceWorker()) {
         auto credential = WebCore::Credential("accept server trust"_s, emptyString(), WebCore::CredentialPersistenceNone);
-        challenge->listener().useCredential(credential);
+        challenge->listener().completeChallenge(AuthenticationChallengeDisposition::UseCredential, credential);
         return;
     }
     notImplemented();
-    challenge->listener().performDefaultHandling();
+    challenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
 }
 
 void ServiceWorkerProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)

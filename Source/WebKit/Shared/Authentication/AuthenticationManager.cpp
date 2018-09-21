@@ -134,101 +134,15 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender
     download.send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
 }
 
-void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential)
+void AuthenticationManager::completeAuthenticationChallenge(uint64_t challengeID, AuthenticationChallengeDisposition disposition, WebCore::Credential&& credential)
 {
     ASSERT(RunLoop::isMain());
 
-    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
-        useCredentialForSingleChallenge(coalescedChallengeID, credential);
-}
-
-void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID, const Credential& credential)
-{
-    auto challenge = m_challenges.take(challengeID);
-    ASSERT(!challenge.challenge.isNull());
-
-    auto completionHandler = WTFMove(challenge.completionHandler);
-
-    if (completionHandler)
-        completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
-    else
-        ASSERT_NOT_REACHED();
-}
-
-void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t challengeID)
-{
-    ASSERT(RunLoop::isMain());
-
-    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
-        continueWithoutCredentialForSingleChallenge(coalescedChallengeID);
-}
-
-void AuthenticationManager::continueWithoutCredentialForSingleChallenge(uint64_t challengeID)
-{
-    auto challenge = m_challenges.take(challengeID);
-    ASSERT(!challenge.challenge.isNull());
-
-    if (challenge.completionHandler)
-        challenge.completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential());
-    else
-        ASSERT_NOT_REACHED();
-}
-
-void AuthenticationManager::cancelChallenge(uint64_t challengeID)
-{
-    ASSERT(RunLoop::isMain());
-
-    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
-        cancelSingleChallenge(coalescedChallengeID);
-}
-
-void AuthenticationManager::cancelSingleChallenge(uint64_t challengeID)
-{
-    auto challenge = m_challenges.take(challengeID);
-    ASSERT(!challenge.challenge.isNull());
-
-    if (challenge.completionHandler)
-        challenge.completionHandler(AuthenticationChallengeDisposition::Cancel, Credential());
-    else
-        ASSERT_NOT_REACHED();
-}
-
-void AuthenticationManager::performDefaultHandling(uint64_t challengeID)
-{
-    ASSERT(RunLoop::isMain());
-
-    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
-        performDefaultHandlingForSingleChallenge(coalescedChallengeID);
-}
-
-void AuthenticationManager::performDefaultHandlingForSingleChallenge(uint64_t challengeID)
-{
-    auto challenge = m_challenges.take(challengeID);
-    ASSERT(!challenge.challenge.isNull());
-
-    if (challenge.completionHandler)
-        challenge.completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
-    else
-        ASSERT_NOT_REACHED();
-}
-
-void AuthenticationManager::rejectProtectionSpaceAndContinue(uint64_t challengeID)
-{
-    ASSERT(RunLoop::isMain());
-
-    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
-        rejectProtectionSpaceAndContinueForSingleChallenge(coalescedChallengeID);
-}
-
-void AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge(uint64_t challengeID)
-{
-    auto challenge = m_challenges.take(challengeID);
-    ASSERT(!challenge.challenge.isNull());
-
-    if (challenge.completionHandler)
-        challenge.completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue, { });
-    else
-        ASSERT_NOT_REACHED();
+    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID)) {
+        auto challenge = m_challenges.take(coalescedChallengeID);
+        ASSERT(!challenge.challenge.isNull());
+        challenge.completionHandler(disposition, credential);
+    }
 }
 
 } // namespace WebKit

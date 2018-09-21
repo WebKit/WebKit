@@ -49,6 +49,7 @@
 #include "APIUIClient.h"
 #include "APIWebsitePolicies.h"
 #include "APIWindowFeatures.h"
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "LegacySessionStateCoding.h"
@@ -2149,9 +2150,9 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
         void didReceiveAuthenticationChallenge(WebPageProxy& page, AuthenticationChallengeProxy& authenticationChallenge) override
         {
             if (m_client.canAuthenticateAgainstProtectionSpace && !m_client.canAuthenticateAgainstProtectionSpace(toAPI(&page), toAPI(WebProtectionSpace::create(authenticationChallenge.core().protectionSpace()).ptr()), m_client.base.clientInfo))
-                return authenticationChallenge.listener().rejectProtectionSpaceAndContinue();
+                return authenticationChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
             if (!m_client.didReceiveAuthenticationChallenge)
-                return authenticationChallenge.listener().performDefaultHandling();
+                return authenticationChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling);
             m_client.didReceiveAuthenticationChallenge(toAPI(&page), toAPI(&authenticationChallenge), m_client.base.clientInfo);
         }
 

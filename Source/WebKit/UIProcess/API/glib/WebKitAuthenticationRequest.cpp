@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitAuthenticationRequest.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationDecisionListener.h"
 #include "WebCredential.h"
 #include "WebKitAuthenticationRequestPrivate.h"
@@ -315,10 +316,7 @@ void webkit_authentication_request_authenticate(WebKitAuthenticationRequest* req
 {
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
-    if (credential)
-        request->priv->authenticationChallenge->listener().useCredential(webkitCredentialGetCredential(credential));
-    else
-        request->priv->authenticationChallenge->listener().useCredential(std::nullopt);
+    request->priv->authenticationChallenge->listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential, credential ? webkitCredentialGetCredential(credential) : WebCore::Credential());
 
     request->priv->handledRequest = true;
 }
@@ -336,7 +334,7 @@ void webkit_authentication_request_cancel(WebKitAuthenticationRequest* request)
 {
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
-    request->priv->authenticationChallenge->listener().cancel();
+    request->priv->authenticationChallenge->listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::Cancel);
 
     g_signal_emit(request, signals[CANCELLED], 0);
 }

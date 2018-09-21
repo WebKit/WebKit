@@ -21,9 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> AuthenticationManager {
-    void UseCredentialForChallenge(uint64_t challengeID, WebCore::Credential credential);
-    void ContinueWithoutCredentialForChallenge(uint64_t challengeID);
-    void CancelChallenge(uint64_t challengeID);
-    void PerformDefaultHandling(uint64_t challengeID);
-    void RejectProtectionSpaceAndContinue(uint64_t challengeID);
+    void CompleteAuthenticationChallenge(uint64_t challengeID, enum WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential credential);
 }

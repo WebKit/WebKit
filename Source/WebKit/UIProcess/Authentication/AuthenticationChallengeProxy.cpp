@@ -44,33 +44,15 @@ namespace WebKit {
 
 AuthenticationChallengeProxy::AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID, Ref<IPC::Connection>&& connection, WeakPtr<SecKeyProxyStore>&& secKeyProxyStore)
     : m_coreAuthenticationChallenge(WTFMove(authenticationChallenge))
-    , m_listener(AuthenticationDecisionListener::create([challengeID, connection = WTFMove(connection), secKeyProxyStore = WTFMove(secKeyProxyStore)](AuthenticationChallengeDisposition disposition, std::optional<WebCore::Credential>&& credential) {
-        switch (disposition) {
-        case AuthenticationChallengeDisposition::Cancel:
-            connection->send(Messages::AuthenticationManager::CancelChallenge(challengeID), 0);
-            break;
-        case AuthenticationChallengeDisposition::PerformDefaultHandling:
-            connection->send(Messages::AuthenticationManager::PerformDefaultHandling(challengeID), 0);
-            break;
-        case AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue:
-            connection->send(Messages::AuthenticationManager::RejectProtectionSpaceAndContinue(challengeID), 0);
-            break;
-        case AuthenticationChallengeDisposition::UseCredential:
-            if (!credential) {
-                connection->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(challengeID), 0);
-                break;
-            }
-            
+    , m_listener(AuthenticationDecisionListener::create([challengeID, connection = WTFMove(connection), secKeyProxyStore = WTFMove(secKeyProxyStore)](AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
 #if HAVE(SEC_KEY_PROXY)
-            if (secKeyProxyStore) {
-                secKeyProxyStore->initialize(*credential);
-                sendClientCertificateCredentialOverXpc(connection, *secKeyProxyStore, challengeID, *credential);
-                break;
-            }
-#endif
-
-            connection->send(Messages::AuthenticationManager::UseCredentialForChallenge(challengeID, *credential), 0);
+        if (secKeyProxyStore) {
+            secKeyProxyStore->initialize(credential);
+            sendClientCertificateCredentialOverXpc(connection, *secKeyProxyStore, challengeID, credential);
+            return;
         }
+#endif
+        connection->send(Messages::AuthenticationManager::CompleteAuthenticationChallenge(challengeID, disposition, credential), 0);
     }))
 {
 }

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuthenticationDecisionListener.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationManager.h"
 #include "AuthenticationManagerMessages.h"
@@ -36,7 +37,7 @@
 
 namespace WebKit {
 
-AuthenticationDecisionListener::AuthenticationDecisionListener(CompletionHandler<void(AuthenticationChallengeDisposition, std::optional<WebCore::Credential>&&)>&& completionHandler)
+AuthenticationDecisionListener::AuthenticationDecisionListener(CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
 {
 }
@@ -44,31 +45,13 @@ AuthenticationDecisionListener::AuthenticationDecisionListener(CompletionHandler
 AuthenticationDecisionListener::~AuthenticationDecisionListener()
 {
     if (m_completionHandler)
-        m_completionHandler(AuthenticationChallengeDisposition::Cancel, std::nullopt);
+        m_completionHandler(AuthenticationChallengeDisposition::Cancel, { });
 }
 
-void AuthenticationDecisionListener::useCredential(std::optional<WebCore::Credential>&& credential)
+void AuthenticationDecisionListener::completeChallenge(AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
 {
     if (m_completionHandler)
-        m_completionHandler(AuthenticationChallengeDisposition::UseCredential, WTFMove(credential));
+        m_completionHandler(disposition, credential);
 }
 
-void AuthenticationDecisionListener::cancel()
-{
-    if (m_completionHandler)
-        m_completionHandler(AuthenticationChallengeDisposition::Cancel, std::nullopt);
-}
-
-void AuthenticationDecisionListener::performDefaultHandling()
-{
-    if (m_completionHandler)
-        m_completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, std::nullopt);
-}
-
-void AuthenticationDecisionListener::rejectProtectionSpaceAndContinue()
-{
-    if (m_completionHandler)
-        m_completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue, std::nullopt);
-}
-    
 } // namespace WebKit

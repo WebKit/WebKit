@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Download.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "Connection.h"
 #include "DataReference.h"

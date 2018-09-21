@@ -1,3 +1,58 @@
+2018-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Simply authentication code even more!
+        https://bugs.webkit.org/show_bug.cgi?id=189719
+
+        Reviewed by Andy Estes.
+
+        Just when you thought it couldn't get simpler and more elegant, it can!
+
+        * NetworkProcess/Downloads/Download.cpp:
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        * NetworkProcess/NetworkLoad.cpp:
+        * NetworkProcess/PingLoad.cpp:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * Shared/Authentication/AuthenticationChallengeDisposition.h: Added.
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::completeAuthenticationChallenge):
+        (WebKit::AuthenticationManager::useCredentialForChallenge): Deleted.
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge): Deleted.
+        (WebKit::AuthenticationManager::continueWithoutCredentialForChallenge): Deleted.
+        (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge): Deleted.
+        (WebKit::AuthenticationManager::cancelChallenge): Deleted.
+        (WebKit::AuthenticationManager::cancelSingleChallenge): Deleted.
+        (WebKit::AuthenticationManager::performDefaultHandling): Deleted.
+        (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge): Deleted.
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinue): Deleted.
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge): Deleted.
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/AuthenticationManager.messages.in:
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::initializeConnection):
+        * UIProcess/API/C/WKAuthenticationDecisionListener.cpp:
+        (WKAuthenticationDecisionListenerUseCredential):
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm:
+        (-[WKNSURLAuthenticationChallengeSender continueWithoutCredentialForAuthenticationChallenge:]):
+        * UIProcess/API/glib/WebKitAuthenticationRequest.cpp:
+        (webkit_authentication_request_authenticate):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::AuthenticationChallengeProxy):
+        * UIProcess/Authentication/AuthenticationDecisionListener.cpp:
+        (WebKit::AuthenticationDecisionListener::AuthenticationDecisionListener):
+        (WebKit::AuthenticationDecisionListener::~AuthenticationDecisionListener):
+        (WebKit::AuthenticationDecisionListener::useCredential):
+        (WebKit::AuthenticationDecisionListener::cancel):
+        (WebKit::AuthenticationDecisionListener::performDefaultHandling):
+        (WebKit::AuthenticationDecisionListener::rejectProtectionSpaceAndContinue):
+        * UIProcess/Authentication/AuthenticationDecisionListener.h:
+        (WebKit::AuthenticationDecisionListener::create):
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didReceiveAuthenticationChallenge):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-09-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(Mojave): Resuming a WK2 download crashes

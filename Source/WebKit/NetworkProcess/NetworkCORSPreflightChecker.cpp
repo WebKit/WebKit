@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkCORSPreflightChecker.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "Logging.h"
 #include "NetworkLoadParameters.h"

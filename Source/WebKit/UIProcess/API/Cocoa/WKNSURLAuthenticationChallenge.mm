@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationDecisionListener.h"
 #import "WebCertificateInfo.h"
 #import "WebCredential.h"
@@ -70,35 +71,35 @@ static void checkChallenge(NSURLAuthenticationChallenge *challenge)
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener().cancel();
+    webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::Cancel);
 }
 
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener().useCredential(std::nullopt);
+    webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential);
 }
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener().useCredential(WebCore::Credential(credential));
+    webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(credential));
 }
 
 - (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener().performDefaultHandling();
+    webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling);
 }
 
 - (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener().rejectProtectionSpaceAndContinue();
+    webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
 }
 
 @end

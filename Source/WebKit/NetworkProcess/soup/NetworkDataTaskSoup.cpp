@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkDataTaskSoup.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "Download.h"

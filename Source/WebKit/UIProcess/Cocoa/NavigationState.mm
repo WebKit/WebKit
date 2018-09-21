@@ -34,6 +34,7 @@
 #import "APIString.h"
 #import "APIURL.h"
 #import "APIWebsiteDataStore.h"
+#import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationDecisionListener.h"
 #import "CompletionHandlerCallChecker.h"
 #import "Logging.h"
@@ -849,43 +850,36 @@ void NavigationState::NavigationClient::renderingProgressDidChange(WebPageProxy&
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView renderingProgressDidChange:renderingProgressEvents(layoutMilestones)];
 }
 
+static AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition disposition)
+{
+    switch (disposition) {
+    case NSURLSessionAuthChallengeUseCredential:
+        return AuthenticationChallengeDisposition::UseCredential;
+    case NSURLSessionAuthChallengePerformDefaultHandling:
+        return AuthenticationChallengeDisposition::PerformDefaultHandling;
+    case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
+        return AuthenticationChallengeDisposition::Cancel;
+    case NSURLSessionAuthChallengeRejectProtectionSpace:
+        return AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue;
+    }
+    [NSException raise:NSInvalidArgumentException format:@"Invalid NSURLSessionAuthChallengeDisposition (%ld)", (long)disposition];
+}
+    
 void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy& authenticationChallenge)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler)
-        return authenticationChallenge.listener().performDefaultHandling();
+        return authenticationChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling);
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     if (!navigationDelegate)
-        return authenticationChallenge.listener().performDefaultHandling();
+        return authenticationChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling);
 
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:didReceiveAuthenticationChallenge:completionHandler:));
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:BlockPtr<void(NSURLSessionAuthChallengeDisposition, NSURLCredential *)>::fromCallable([challenge = makeRef(authenticationChallenge), checker = WTFMove(checker)](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
-
-        switch (disposition) {
-        case NSURLSessionAuthChallengeUseCredential:
-            if (credential)
-                challenge->listener().useCredential(Credential(credential));
-            else
-                challenge->listener().useCredential(std::nullopt);
-            break;
-        case NSURLSessionAuthChallengePerformDefaultHandling:
-            challenge->listener().performDefaultHandling();
-            break;
-
-        case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
-            challenge->listener().cancel();
-            break;
-
-        case NSURLSessionAuthChallengeRejectProtectionSpace:
-            challenge->listener().rejectProtectionSpaceAndContinue();
-            break;
-
-        default:
-            [NSException raise:NSInvalidArgumentException format:@"Invalid NSURLSessionAuthChallengeDisposition (%ld)", (long)disposition];
-        }
+        challenge->listener().completeChallenge(toAuthenticationChallengeDisposition(disposition), Credential(credential));
     }).get()];
 }
 

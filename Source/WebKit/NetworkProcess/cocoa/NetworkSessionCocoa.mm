@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetworkSessionCocoa.h"
 
+#import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationManager.h"
 #import "DataReference.h"
 #import "Download.h"

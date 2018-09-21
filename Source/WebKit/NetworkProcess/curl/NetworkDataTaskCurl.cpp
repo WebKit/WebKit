@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkDataTaskCurl.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "NetworkSessionCurl.h"
 #include <WebCore/AuthenticationChallenge.h>

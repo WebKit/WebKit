@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetworkDataTaskCocoa.h"
 
+#import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationManager.h"
 #import "Download.h"
 #import "DownloadProxyMessages.h"
