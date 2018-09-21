@@ -1,3 +1,41 @@
+2018-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Extending the lifetime of a NetworkProcessProxy / StorageProcessProxy may cause it to have a stale WebProcessPool pointer
+        https://bugs.webkit.org/show_bug.cgi?id=189851
+
+        Reviewed by Alex Christensen.
+
+        Extending the lifetime of a NetworkProcessProxy / StorageProcessProxy may cause it to have a stale WebProcessPool pointer:
+        - NetworkProcessProxy::m_processPool
+        - StorageProcessProxy::m_processPool
+
+        Those data members are C++ references because it is expected that the WebProcessPool owns the NetworkProcessProxy and
+        StorageProcessProxy. However, since NetworkProcessProxy / StorageProcessProxy are refcounted, it has happened that code
+        extends the lifetime of those past their process pool, leading to stale prrocess pool usage. The fix for these crashes
+        so far as been to ref the WebProcessPool instead of the NetworkProcessProxy / StorageProcessProxy. However, given how
+        error-prone this is, this patch updates NetworkProcessProxy / StorageProcessProxy so that they forward their refcounting
+        to the WebProcessPool.
+
+        * UIProcess/ChildProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::ref):
+        (WebKit::NetworkProcessProxy::deref):
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::NetworkProcessProxy::create): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::ref):
+        (WebKit::StorageProcessProxy::deref):
+        (WebKit::StorageProcessProxy::create): Deleted.
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+
 2018-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Use a Variant for FormDataElement

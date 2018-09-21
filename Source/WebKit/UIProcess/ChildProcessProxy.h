@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-class ChildProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client, public ThreadSafeRefCounted<ChildProcessProxy> {
+class ChildProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(ChildProcessProxy);
 
 protected:
