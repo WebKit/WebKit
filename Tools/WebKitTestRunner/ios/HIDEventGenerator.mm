@@ -27,9 +27,9 @@
 #import "HIDEventGenerator.h"
 
 #import "GeneratedTouchesDebugWindow.h"
-#import "IOKitSPI.h"
 #import "UIKitTestSPI.h"
 #import <mach/mach_time.h>
+#import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Optional.h>

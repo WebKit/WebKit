@@ -1,3 +1,20 @@
+2018-09-20  Daniel Bates  <dabates@apple.com>
+
+        Move IOKitSPI.h from TestRunnerShared to PAL
+        https://bugs.webkit.org/show_bug.cgi?id=189804
+
+        Reviewed by Wenson Hsieh.
+
+        Towards fixing <https://bugs.webkit.org/show_bug.cgi?id=189604> move the IOKit SPI forward
+        declarations to PAL so that they can be shared by WebKit, DumpRenderTree and WebKitTestRunner.
+
+        No functionality changed. So, no new tests.
+
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.mm:
+        * TestRunnerShared/spi/UIKitTestSPI.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+
 2018-09-20  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Metal code generation

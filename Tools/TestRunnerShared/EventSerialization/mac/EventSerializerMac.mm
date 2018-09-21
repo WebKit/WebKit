@@ -29,9 +29,9 @@
 #if PLATFORM(MAC)
 
 #import "CoreGraphicsTestSPI.h"
-#import "IOKitSPI.h"
 #import <algorithm>
 #import <mach/mach_time.h>
+#import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/RetainPtr.h>
 
 #define MOUSE_EVENT_TYPES \

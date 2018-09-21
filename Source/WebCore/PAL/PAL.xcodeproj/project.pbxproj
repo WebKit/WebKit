@@ -146,6 +146,7 @@
 		A3AB6E651F3D217F009C14B1 /* SystemSleepListenerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */; };
 		A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */; };
 		A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C66CDB1F462D6A009E6EE9 /* SessionID.h */; };
+		CE5673872151A7B9002F92D7 /* IOKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE5673862151A7B9002F92D7 /* IOKitSPI.h */; };
 		E5D45D122106A07400D2B738 /* NSColorWellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D45D112106A07400D2B738 /* NSColorWellSPI.h */; };
 		E5D45D142106A18700D2B738 /* NSPopoverColorWellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */; };
 		F442915E1FA52473002CC93E /* NSFileSizeFormatterSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F442915D1FA52473002CC93E /* NSFileSizeFormatterSPI.h */; };
@@ -300,6 +301,7 @@
 		A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionID.cpp; sourceTree = "<group>"; };
 		A3C66CDB1F462D6A009E6EE9 /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
 		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
+		CE5673862151A7B9002F92D7 /* IOKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
 		E5D45D112106A07400D2B738 /* NSColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorWellSPI.h; sourceTree = "<group>"; };
 		E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverColorWellSPI.h; sourceTree = "<group>"; };
 		F442915D1FA52473002CC93E /* NSFileSizeFormatterSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSFileSizeFormatterSPI.h; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 				0C2DA1241F3BEB4900DBC317 /* CoreTextSPI.h */,
 				0C2DA1251F3BEB4900DBC317 /* DataDetectorsCoreSPI.h */,
 				57F12517205787C8001AB8A6 /* DeviceIdentitySPI.h */,
+				CE5673862151A7B9002F92D7 /* IOKitSPI.h */,
 				0C2DA1261F3BEB4900DBC317 /* IOPMLibSPI.h */,
 				0C2DA1271F3BEB4900DBC317 /* IOPSLibSPI.h */,
 				0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */,
@@ -656,6 +659,7 @@
 				A10265891F56747A00B4C844 /* HIToolboxSPI.h in Headers */,
 				A39DE74E1F7C443D007BCB00 /* HysteresisActivity.h in Headers */,
 				0C2DA11F1F3BE9E000DBC317 /* ImageIOSPI.h in Headers */,
+				CE5673872151A7B9002F92D7 /* IOKitSPI.h in Headers */,
 				0C2DA1421F3BEB4900DBC317 /* IOPMLibSPI.h in Headers */,
 				0C2DA1431F3BEB4900DBC317 /* IOPSLibSPI.h in Headers */,
 				0C2DA1441F3BEB4900DBC317 /* IOReturnSPI.h in Headers */,

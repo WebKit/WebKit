@@ -221,7 +221,6 @@
 		0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CrashReporterInfo.mm; path = cocoa/CrashReporterInfo.mm; sourceTree = "<group>"; };
 		0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDEventGenerator.h; sourceTree = "<group>"; };
 		0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIDEventGenerator.mm; sourceTree = "<group>"; };
-		0FEBF85B1BB62A370028722D /* IOKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IOKitSPI.h; path = ../TestRunnerShared/spi/IOKitSPI.h; sourceTree = "<group>"; };
 		1A3326051B75396500F89F62 /* TestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestOptions.h; sourceTree = "<group>"; };
 		1CA211C71BCA107300B2101F /* FontWithFeatures.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontWithFeatures.otf; sourceTree = "<group>"; };
 		1CA211C81BCA107300B2101F /* FontWithFeatures.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontWithFeatures.ttf; sourceTree = "<group>"; };
@@ -591,7 +590,6 @@
 			isa = PBXGroup;
 			children = (
 				2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */,
-				0FEBF85B1BB62A370028722D /* IOKitSPI.h */,
 				31268EB91EF06A3B001963E2 /* UIKitTestSPI.h */,
 			);
 			name = spi;

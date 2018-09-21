@@ -25,8 +25,6 @@
 
 #pragma once
 
-#import <wtf/Platform.h>
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <IOKit/hid/IOHIDEvent.h>

@@ -43,7 +43,7 @@
 
 #else
 
-#import "IOKitSPI.h"
+#import <pal/spi/cocoa/IOKitSPI.h>
 
 @interface UIApplication ()
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
