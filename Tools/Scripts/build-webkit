@@ -344,24 +344,24 @@ if (isAppleWinWebKit() || isWinCairo()) {
         if (exitStatus($result)) {
             exit exitStatus($result);
         }
+    }
 
-        # Build ImageDiff for host
-        my @command = File::Spec->catfile(getcwd(), "/Tools/Scripts/build-imagediff");
-        chdirWebKit();
-        if (!-e $command[0]) {
-          die "build-imagediff script not found";
-        }
+    # Build ImageDiff for host
+    my @command = File::Spec->catfile(getcwd(), "/Tools/Scripts/build-imagediff");
+    chdirWebKit();
+    if (!-e $command[0]) {
+        die "build-imagediff script not found";
+    }
 
-        if ($clean) {
-          push @command, " --clean";
-        }
-        push @command, argumentsForConfiguration();
-        push @command, @ARGV;
-        @command = extractNonMacOSHostConfiguration(\@command);
-        $result = system(@command);
-        if (exitStatus($result)) {
-            exit exitStatus($result);
-        }
+    if ($clean) {
+        push @command, " --clean";
+    }
+    push @command, argumentsForConfiguration();
+    push @command, @ARGV;
+    @command = extractNonMacOSHostConfiguration(\@command);
+    $result = system(@command);
+    if (exitStatus($result)) {
+        exit exitStatus($result);
     }
 }
 

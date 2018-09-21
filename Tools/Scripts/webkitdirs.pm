@@ -488,7 +488,7 @@ sub argumentsForConfiguration()
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--ios-device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
     push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/);
-    push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
+    push(@args, '--32-bit') if ($architecture eq "x86" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();

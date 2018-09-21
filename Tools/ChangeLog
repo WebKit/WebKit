@@ -1,3 +1,17 @@
+2018-09-21  Jonathan Bedard  <jbedard@apple.com>
+
+        Bring up queues for iOS 12 (Build fix)
+        https://bugs.webkit.org/show_bug.cgi?id=189683
+
+        Unreviewed build fix.
+
+        We should not build ImageDiff as x86 by default since 32 bit projects are
+        deprecated in Xcode. ImageDiff should only be built once.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+
 2018-09-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Built RPM of WPE webkit fails to install with "nothing provides libWPEToolingBackends.so()"
