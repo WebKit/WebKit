@@ -156,6 +156,15 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #endif // !PLATFORM(IOS)
+
+@interface AVVideoPerformanceMetrics : NSObject
+@property (nonatomic, readonly) unsigned long totalNumberOfVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfDroppedVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfCorruptedVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfNonDisplayCompositedVideoFrames;
+@property (nonatomic, readonly) double totalFrameDelay;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
@@ -227,8 +236,15 @@ NS_ASSUME_NONNULL_END
 
 #if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 110000)) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
 #import <AVFoundation/AVQueuedSampleBufferRendering.h>
+#elif __has_include(<AVFoundation/AVSampleBufferDisplayLayer_Private.h>)
+#import <AVFoundation/AVSampleBufferDisplayLayer_Private.h>
 #elif __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
+NS_ASSUME_NONNULL_BEGIN
+@interface AVSampleBufferDisplayLayer (VideoPerformanceMetrics)
+- (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+@end
+NS_ASSUME_NONNULL_END
 #else
 
 NS_ASSUME_NONNULL_BEGIN
@@ -245,10 +261,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isReadyForMoreMediaData;
 - (void)requestMediaDataWhenReadyOnQueue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
 - (void)stopRequestingMediaData;
+- (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
 @end
-
 NS_ASSUME_NONNULL_END
-
 #endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 
 #if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 110000)) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
