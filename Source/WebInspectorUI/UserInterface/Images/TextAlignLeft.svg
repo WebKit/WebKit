@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
-<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
-    <line stroke="currentColor" x1="0.5" y1="3" x2="14.5" y2="3"/>
-    <line stroke="currentColor" x1="0.5" y1="5.5" x2="9.5" y2="5.5"/>
-    <line stroke="currentColor" x1="0.5" y1="8" x2="14.5" y2="8"/>
-    <line stroke="currentColor" x1="0.5" y1="10.5" x2="9.5" y2="10.5"/>
-    <line stroke="currentColor" x1="0.5" y1="13" x2="14.5" y2="13"/>
-</svg>

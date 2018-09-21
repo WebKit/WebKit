@@ -1,5 +1,90 @@
 2018-09-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: remove Visual Style CSS details sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=189807
+
+        Reviewed by Joseph Pecoraro.
+
+        The Visual Style CSS details sidebar panel has been hidden behind an "experimental" setting
+        for almost a year.  It's time that we remove it.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * UserInterface/Images/AnimationPlayStatePaused.svg: Removed.
+        * UserInterface/Images/AnimationPlayStateRunning.svg: Removed.
+        * UserInterface/Images/ClearBoth.svg: Removed.
+        * UserInterface/Images/ClearLeft.svg: Removed.
+        * UserInterface/Images/ClearRight.svg: Removed.
+        * UserInterface/Images/FloatLeft.svg: Removed.
+        * UserInterface/Images/FloatRight.svg: Removed.
+        * UserInterface/Images/FontStyleItalic.svg: Removed.
+        * UserInterface/Images/FontStyleNormal.svg: Removed.
+        * UserInterface/Images/ListStylePositionInside.svg: Removed.
+        * UserInterface/Images/ListStylePositionOutside.svg: Removed.
+        * UserInterface/Images/TextAlignCenter.svg: Removed.
+        * UserInterface/Images/TextAlignJustify.svg: Removed.
+        * UserInterface/Images/TextAlignLeft.svg: Removed.
+        * UserInterface/Images/TextAlignRight.svg: Removed.
+        * UserInterface/Images/TextDecorationLineThrough.svg: Removed.
+        * UserInterface/Images/TextDecorationOverline.svg: Removed.
+        * UserInterface/Images/TextDecorationUnderline.svg: Removed.
+        * UserInterface/Images/TextTransformCapitalize.svg: Removed.
+        * UserInterface/Images/TextTransformLowercase.svg: Removed.
+        * UserInterface/Images/TextTransformUppercase.svg: Removed.
+        * UserInterface/Images/VisualStyleNone.svg: Removed.
+        * UserInterface/Images/VisualStylePropertyLinked.svg: Removed.
+        * UserInterface/Images/VisualStylePropertyUnlinked.svg: Removed.
+
+        * UserInterface/Views/VisualStyleBackgroundPicker.css: Removed.
+        * UserInterface/Views/VisualStyleBackgroundPicker.js: Removed.
+        * UserInterface/Views/VisualStyleBasicInput.js: Removed.
+        * UserInterface/Views/VisualStyleColorPicker.css: Removed.
+        * UserInterface/Views/VisualStyleColorPicker.js: Removed.
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css: Removed.
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js: Removed.
+        * UserInterface/Views/VisualStyleDetailsPanel.css: Removed.
+        * UserInterface/Views/VisualStyleDetailsPanel.js: Removed.
+        * UserInterface/Views/VisualStyleDetailsSidebarPanel.js: Removed.
+        * UserInterface/Views/VisualStyleFontFamilyListEditor.js: Removed.
+        * UserInterface/Views/VisualStyleFontFamilyTreeElement.js: Removed.
+        * UserInterface/Views/VisualStyleKeywordCheckbox.css: Removed.
+        * UserInterface/Views/VisualStyleKeywordCheckbox.js: Removed.
+        * UserInterface/Views/VisualStyleKeywordIconList.css: Removed.
+        * UserInterface/Views/VisualStyleKeywordIconList.js: Removed.
+        * UserInterface/Views/VisualStyleKeywordPicker.js: Removed.
+        * UserInterface/Views/VisualStyleNumberInputBox.css: Removed.
+        * UserInterface/Views/VisualStyleNumberInputBox.js: Removed.
+        * UserInterface/Views/VisualStylePropertyCombiner.js: Removed.
+        * UserInterface/Views/VisualStylePropertyEditor.css: Removed.
+        * UserInterface/Views/VisualStylePropertyEditor.js: Removed.
+        * UserInterface/Views/VisualStylePropertyEditorLink.css: Removed.
+        * UserInterface/Views/VisualStylePropertyEditorLink.js: Removed.
+        * UserInterface/Views/VisualStylePropertyNameInput.js: Removed.
+        * UserInterface/Views/VisualStyleRelativeNumberSlider.css: Removed.
+        * UserInterface/Views/VisualStyleRelativeNumberSlider.js: Removed.
+        * UserInterface/Views/VisualStyleSelectorSection.css: Removed.
+        * UserInterface/Views/VisualStyleSelectorSection.js: Removed.
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css: Removed.
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js: Removed.
+        * UserInterface/Views/VisualStyleTabbedPropertiesRow.css: Removed.
+        * UserInterface/Views/VisualStyleTabbedPropertiesRow.js: Removed.
+        * UserInterface/Views/VisualStyleTimingEditor.css: Removed.
+        * UserInterface/Views/VisualStyleTimingEditor.js: Removed.
+        * UserInterface/Views/VisualStyleURLInput.js: Removed.
+        * UserInterface/Views/VisualStyleUnitSlider.css: Removed.
+        * UserInterface/Views/VisualStyleUnitSlider.js: Removed.
+
+        * UserInterface/Controllers/VisualStyleCompletionsController.js: Removed.
+
+2018-09-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Styles Redesign: rework Computed panel to use Spreadsheet classes
         https://bugs.webkit.org/show_bug.cgi?id=183627
 

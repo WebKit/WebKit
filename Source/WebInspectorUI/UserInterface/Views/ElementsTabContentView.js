@@ -33,9 +33,6 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         if (window.LayerTreeAgent && !WI.settings.experimentalEnableLayersTab.value)
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
-        if (WI.settings.experimentalLegacyVisualSidebar.value)
-            detailsSidebarPanelConstructors.push(WI.VisualStyleDetailsSidebarPanel);
-
         super(identifier || "elements", "elements", tabBarItem, null, detailsSidebarPanelConstructors, true);
 
         WI.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
