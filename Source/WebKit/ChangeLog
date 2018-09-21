@@ -1,3 +1,30 @@
+2018-09-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r236291. rdar://problem/44660342
+
+    Allow additional plug-ins to run unsandboxed
+    https://bugs.webkit.org/show_bug.cgi?id=189791
+    <rdar://problem/44628127>
+    
+    Reviewed by Brent Fulgham.
+    
+    * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+    (WebKit::PluginInfoStore::shouldAllowPluginToRunUnsandboxed):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@236291 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-09-20  Youenn Fablet  <youenn@apple.com>
+
+            Allow additional plug-ins to run unsandboxed
+            https://bugs.webkit.org/show_bug.cgi?id=189791
+            <rdar://problem/44628127>
+
+            Reviewed by Brent Fulgham.
+
+            * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+            (WebKit::PluginInfoStore::shouldAllowPluginToRunUnsandboxed):
+
 2018-09-19  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r235752. rdar://problem/44576797
