@@ -37,6 +37,7 @@
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceCenterMac.h"
 #import "RealtimeMediaSourceSettings.h"
+#import "RealtimeVideoUtilities.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVCaptureInput.h>
 #import <AVFoundation/AVCaptureOutput.h>
@@ -112,12 +113,6 @@ using namespace PAL;
 @end
 
 namespace WebCore {
-
-#if PLATFORM(MAC)
-const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8Planar;
-#else
-const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
-#endif
 
 static dispatch_queue_t globaVideoCaptureSerialQueue()
 {
@@ -340,7 +335,7 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
                 [device() setActiveFormat:avPreset->format.get()];
 #if PLATFORM(MAC)
                 auto settingsDictionary = @{
-                    (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat),
+                    (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(preferedPixelBufferFormat()),
                     (__bridge NSString *)kCVPixelBufferWidthKey: @(avPreset->size.width()),
                     (__bridge NSString *)kCVPixelBufferHeightKey: @(avPreset->size.height())
                 };
@@ -449,7 +444,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     [session() addInput:videoIn.get()];
 
     m_videoOutput = adoptNS([allocAVCaptureVideoDataOutputInstance() init]);
-    auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:videoCaptureFormat], kCVPixelBufferPixelFormatTypeKey, nil]);
+    auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:preferedPixelBufferFormat()], kCVPixelBufferPixelFormatTypeKey, nil]);
 
     [m_videoOutput setVideoSettings:settingsDictionary.get()];
     [m_videoOutput setAlwaysDiscardsLateVideoFrames:YES];
@@ -554,7 +549,7 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
             m_pixelBufferResizer = nullptr;
 
         if (!m_pixelBufferResizer)
-            m_pixelBufferResizer = std::make_unique<PixelBufferResizer>(m_requestedSize, videoCaptureFormat);
+            m_pixelBufferResizer = std::make_unique<PixelBufferResizer>(m_requestedSize, preferedPixelBufferFormat());
     } else
         m_pixelBufferResizer = nullptr;
 

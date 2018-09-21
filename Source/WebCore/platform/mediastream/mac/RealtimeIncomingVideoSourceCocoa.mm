@@ -66,6 +66,7 @@ RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(rtc::scoped_r
 
 RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height)
 {
+    // FIXME: change to biplanar format type.
     CVPixelBufferRef pixelBuffer = nullptr;
     auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8Planar, nullptr, &pixelBuffer);
     ASSERT_UNUSED(status, status == noErr);

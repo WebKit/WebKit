@@ -1,3 +1,28 @@
+2018-09-21  Youenn Fablet  <youenn@apple.com>
+
+        Centralize which CVPixelBuffer format is being used
+        https://bugs.webkit.org/show_bug.cgi?id=189772
+
+        Reviewed by Eric Carlson.
+
+        Get the format type from a single point.
+        This changes the video capture and mock realtime video sources on Mac to use a biplanar format. 
+        No observable change of behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setSizeAndFrameRateWithPreset):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        (WebCore::AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::updateSampleBuffer):
+        (WebCore::MockRealtimeVideoSourceMac::setSizeAndFrameRateWithPreset):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::createBlackPixelBuffer):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated):
+        * platform/mediastream/mac/RealtimeVideoUtilities.h: Added.
+
 2018-09-21  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r235962-r235963): Layout Test animations/suspend-resume-animation-events.html is a flaky failure

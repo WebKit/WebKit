@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "RealtimeIncomingVideoSourceCocoa.h"
+#include "RealtimeVideoUtilities.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
@@ -126,7 +127,7 @@ void RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated(MediaStreamTrackPriva
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
     RetainPtr<CVPixelBufferRef> convertedBuffer = pixelBuffer;
-    if (pixelFormatType != kCVPixelFormatType_420YpCbCr8Planar && pixelFormatType != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
+    if (pixelFormatType != preferedPixelBufferFormat())
         convertedBuffer = convertToYUV(pixelBuffer);
 
     if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0)

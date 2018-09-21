@@ -7379,6 +7379,7 @@
 		41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageRecord.h; sourceTree = "<group>"; };
 		41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageConnection.h; sourceTree = "<group>"; };
 		41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageProvider.h; sourceTree = "<group>"; };
+		41D1938F2152C561006F14CA /* RealtimeVideoUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeVideoUtilities.h; sourceTree = "<group>"; };
 		41D1A046213EDDEB0063FB6B /* RTCRtpSenderBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpSenderBackend.h; sourceTree = "<group>"; };
 		41D1A048213EDDEB0063FB6B /* RTCRtpReceiverBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpReceiverBackend.h; sourceTree = "<group>"; };
 		41D1A049213EDDFD0063FB6B /* LibWebRTCUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCUtils.cpp; path = libwebrtc/LibWebRTCUtils.cpp; sourceTree = "<group>"; };
@@ -15372,6 +15373,7 @@
 				5CDD833B1E4324BB00621B83 /* RealtimeOutgoingVideoSourceCocoa.cpp */,
 				5CDD833C1E4324BB00621B83 /* RealtimeOutgoingVideoSourceCocoa.h */,
 				419242472127B7CC00634FCF /* RealtimeOutgoingVideoSourceCocoa.mm */,
+				41D1938F2152C561006F14CA /* RealtimeVideoUtilities.h */,
 				070A9F5E1FFECC70003DF649 /* ScreenDisplayCaptureSourceMac.h */,
 				070A9F601FFECC71003DF649 /* ScreenDisplayCaptureSourceMac.mm */,
 				07D6373E1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h */,

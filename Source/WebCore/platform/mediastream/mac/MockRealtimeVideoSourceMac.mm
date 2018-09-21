@@ -40,6 +40,7 @@
 #import "PixelBufferResizer.h"
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceSettings.h"
+#import "RealtimeVideoUtilities.h"
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <objc/runtime.h>
@@ -50,11 +51,6 @@
 namespace WebCore {
 using namespace PAL;
 
-#if PLATFORM(MAC)
-const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8Planar;
-#else
-const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
-#endif
 static const int videoSampleRate = 90000;
 
 CaptureSourceOrError MockRealtimeVideoSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
@@ -154,7 +150,7 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     else {
         if (!m_pixelBufferConformer) {
             m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{
-                (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat)
+                (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(preferedPixelBufferFormat())
             });
         }
 
@@ -210,7 +206,7 @@ void MockRealtimeVideoSourceMac::setSizeAndFrameRateWithPreset(IntSize requested
             m_pixelBufferResizer = nullptr;
 
         if (!m_pixelBufferResizer)
-            m_pixelBufferResizer = std::make_unique<PixelBufferResizer>(requestedSize, videoCaptureFormat);
+            m_pixelBufferResizer = std::make_unique<PixelBufferResizer>(requestedSize, preferedPixelBufferFormat());
     } else
         m_pixelBufferResizer = nullptr;
 }
