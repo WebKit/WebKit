@@ -438,7 +438,6 @@ WI.contentLoaded = function()
     let productionTabClasses = [
         WI.ElementsTabContentView,
         WI.NetworkTabContentView,
-        WI.SourcesTabContentView,
         WI.DebuggerTabContentView,
         WI.ResourcesTabContentView,
         WI.TimelineTabContentView,
@@ -966,23 +965,6 @@ WI.isShowingResourcesTab = function()
     return this.tabBrowser.selectedTabContentView instanceof WI.ResourcesTabContentView;
 };
 
-WI.isShowingSourcesTab = function()
-{
-    return this.tabBrowser.selectedTabContentView instanceof WI.SourcesTabContentView;
-};
-
-WI.showSourcesTab = function(options = {})
-{
-    let tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.SourcesTabContentView);
-    if (!tabContentView)
-        tabContentView = new WI.SourcesTabContentView;
-
-    if (options.breakpointToSelect instanceof WI.Breakpoint)
-        tabContentView.revealAndSelectBreakpoint(options.breakpointToSelect);
-
-    this.tabBrowser.showTabForContentView(tabContentView);
-};
-
 WI.showStorageTab = function()
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.StorageTabContentView);
@@ -1368,10 +1350,7 @@ WI._dragOver = function(event)
 
 WI._debuggerDidPause = function(event)
 {
-    if (WI.settings.experimentalEnableSourcesTab.value)
-        this.showSourcesTab();
-    else
-        this.showDebuggerTab({showScopeChainSidebar: WI.settings.showScopeChainOnPause.value});
+    this.showDebuggerTab({showScopeChainSidebar: WI.settings.showScopeChainOnPause.value});
 
     this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
 

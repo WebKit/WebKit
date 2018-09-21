@@ -1,3 +1,32 @@
+2018-09-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: remove setting for Sources tab
+        https://bugs.webkit.org/show_bug.cgi?id=189817
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI._debuggerDidPause):
+        (WI.isShowingSourcesTab): Removed.
+        (WI.showSourcesTab): Removed.
+
+        * UserInterface/Views/SourcesSidebarPanel.css: Removed.
+        * UserInterface/Views/SourcesSidebarPanel.js: Removed.
+        * UserInterface/Views/SourcesTabContentView.js: Removed.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForURL):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+
 2018-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Make "overflow: overlay" a synonym for "overflow: auto"

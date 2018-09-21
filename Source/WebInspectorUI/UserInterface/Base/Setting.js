@@ -120,7 +120,6 @@ WI.settings = {
 
     // Experimental
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
-    experimentalEnableSourcesTab: new WI.Setting("experimental-enable-sources-bar", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
     experimentalRecordingHasVisualEffect: new WI.Setting("experimental-recording-has-visual-effect", false),
 
