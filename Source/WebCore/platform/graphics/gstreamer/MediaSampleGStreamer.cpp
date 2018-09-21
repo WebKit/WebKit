@@ -50,6 +50,14 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
         m_dts = createMediaTime(GST_BUFFER_DTS_OR_PTS(buffer));
     if (GST_BUFFER_DURATION_IS_VALID(buffer))
         m_duration = createMediaTime(GST_BUFFER_DURATION(buffer));
+    else {
+        // Unfortunately, sometimes samples don't provide a duration. This can never happen in MP4 because of the way
+        // the format is laid out, but it's pretty common in WebM.
+        // The good part is that durations don't matter for playback, just for buffered ranges and coded frame deletion.
+        // We want to pick something small enough to not cause unwanted frame deletion, but big enough to never be
+        // mistaken for a rounding artifact.
+        m_duration = createMediaTime(16666667); // 1/60 seconds
+    }
 
     m_size = gst_buffer_get_size(buffer);
     m_sample = sample;

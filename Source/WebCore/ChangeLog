@@ -1,5 +1,18 @@
 2018-09-20  Alicia Boya García  <aboya@igalia.com>
 
+        [GStreamer][MSE] Add a default sample duration
+        https://bugs.webkit.org/show_bug.cgi?id=189788
+
+        Some WebM files don't provide sample durations, so we need to provide
+        a safe default in order for them to be playable.
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::MediaSampleGStreamer):
+
+2018-09-20  Alicia Boya García  <aboya@igalia.com>
+
         [MSE] Use some tolerance when deciding whether a frame should be appended to the decode queue
         https://bugs.webkit.org/show_bug.cgi?id=189782
 
