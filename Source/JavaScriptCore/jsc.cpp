@@ -127,24 +127,6 @@
 #include <arm/arch.h>
 #endif
 
-#if __has_include(<WebKitAdditions/MemoryFootprint.h>)
-#include <WebKitAdditions/MemoryFootprint.h>
-#else
-struct MemoryFootprint {
-    uint64_t current;
-    uint64_t peak;
-    
-    static MemoryFootprint now()
-    {
-        return { 0L, 0L };
-    }
-    
-    static void resetPeak()
-    {
-    }
-};
-#endif
-
 #if !defined(PATH_MAX)
 #define PATH_MAX 4096
 #endif
@@ -285,8 +267,6 @@ static EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionForceGCSlowPaths(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionCreateMemoryFootprint(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionResetMemoryPeak(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionAddressOf(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
@@ -504,8 +484,6 @@ protected:
         addFunction(vm, "edenGC", functionEdenGC, 0);
         addFunction(vm, "forceGCSlowPaths", functionForceGCSlowPaths, 0);
         addFunction(vm, "gcHeapSize", functionHeapSize, 0);
-        addFunction(vm, "MemoryFootprint", functionCreateMemoryFootprint, 0);
-        addFunction(vm, "resetMemoryPeak", functionResetMemoryPeak, 0);
         addFunction(vm, "addressOf", functionAddressOf, 1);
         addFunction(vm, "version", functionVersion, 1);
         addFunction(vm, "run", functionRun, 1);
@@ -1199,66 +1177,6 @@ EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState* exec)
     VM& vm = exec->vm();
     JSLockHolder lock(vm);
     return JSValue::encode(jsNumber(vm.heap.size()));
-}
-
-class JSCMemoryFootprint : public JSDestructibleObject {
-    using Base = JSDestructibleObject;
-public:
-    JSCMemoryFootprint(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    { }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
-
-    static JSCMemoryFootprint* create(VM& vm, JSGlobalObject* globalObject)
-    {
-        Structure* structure = createStructure(vm, globalObject, jsNull());
-        JSCMemoryFootprint* footprint = new (NotNull, allocateCell<JSCMemoryFootprint>(vm.heap, sizeof(JSCMemoryFootprint))) JSCMemoryFootprint(vm, structure);
-        footprint->finishCreation(vm);
-        return footprint;
-    }
-
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-
-        auto addProperty = [&] (VM& vm, const char* name, JSValue value) {
-            JSCMemoryFootprint::addProperty(vm, name, value);
-        };
-
-        MemoryFootprint footprint = MemoryFootprint::now();
-
-        // Report sizes in KBytes so that values up to GB are still integers.
-        addProperty(vm, "current", jsNumber(footprint.current / 1024));
-        addProperty(vm, "peak", jsNumber(footprint.peak / 1024));
-    }
-
-    DECLARE_INFO;
-
-private:
-    void addProperty(VM& vm, const char* name, JSValue value)
-    {
-        Identifier identifier = Identifier::fromString(&vm, name);
-        putDirect(vm, identifier, value);
-    }
-};
-
-const ClassInfo JSCMemoryFootprint::s_info = { "MemoryFootprint", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCMemoryFootprint) };
-
-EncodedJSValue JSC_HOST_CALL functionCreateMemoryFootprint(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    JSLockHolder lock(vm);
-    return JSValue::encode(JSCMemoryFootprint::create(vm, exec->lexicalGlobalObject()));
-}
-
-EncodedJSValue JSC_HOST_CALL functionResetMemoryPeak(ExecState*)
-{
-    MemoryFootprint::resetPeak();
-    return JSValue::encode(jsUndefined());
 }
 
 // This function is not generally very helpful in 64-bit code as the tag and payload
