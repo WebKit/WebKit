@@ -112,8 +112,8 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 
     if (originalRequest().httpBody()) {
         for (const auto& element : originalRequest().httpBody()->elements()) {
-            if (element.m_type == FormDataElement::Type::EncodedBlob)
-                m_fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(connection, element.m_url));
+            if (auto* blobData = WTF::get_if<FormDataElement::EncodedBlobData>(element.data))
+                m_fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(connection, blobData->url));
         }
     }
 

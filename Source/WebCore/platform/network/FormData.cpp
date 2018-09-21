@@ -53,9 +53,9 @@ inline FormData::FormData(const FormData& data)
     // We shouldn't be copying FormData that hasn't already removed its generated files
     // but just in case, make sure the new FormData is ready to generate its own files.
     for (auto& element : m_elements) {
-        if (element.m_type == FormDataElement::Type::EncodedFile) {
-            element.m_generatedFilename = String();
-            element.m_ownsGeneratedFile = false;
+        if (auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data)) {
+            fileData->generatedFilename = { };
+            fileData->ownsGeneratedFile = false;
         }
     }
 }
@@ -88,6 +88,13 @@ Ref<FormData> FormData::create(const CString& string)
 Ref<FormData> FormData::create(const Vector<char>& vector)
 {
     return create(vector.data(), vector.size());
+}
+
+Ref<FormData> FormData::create(Vector<char>&& vector)
+{
+    auto data = create();
+    data->m_elements.append(WTFMove(vector));
+    return data;
 }
 
 Ref<FormData> FormData::create(const Vector<uint8_t>& vector)
@@ -132,41 +139,49 @@ Ref<FormData> FormData::isolatedCopy() const
 
 uint64_t FormDataElement::lengthInBytes() const
 {
-    switch (m_type) {
-    case Type::Data:
-        return m_data.size();
-    case Type::EncodedFile: {
-        if (m_fileLength != BlobDataItem::toEndOfFile)
-            return m_fileLength;
-        long long fileSize;
-        if (FileSystem::getFileSize(m_shouldGenerateFile ? m_generatedFilename : m_filename, fileSize))
-            return fileSize;
-        return 0;
-    }
-    case Type::EncodedBlob:
-        return ThreadableBlobRegistry::blobSize(m_url);
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
+    return switchOn(data,
+        [] (const Vector<char>& bytes) {
+            return static_cast<uint64_t>(bytes.size());
+        }, [] (const FormDataElement::EncodedFileData& fileData) {
+            if (fileData.fileLength != BlobDataItem::toEndOfFile)
+                return static_cast<uint64_t>(fileData.fileLength);
+            long long fileSize;
+            if (FileSystem::getFileSize(fileData.shouldGenerateFile ? fileData.generatedFilename : fileData.filename, fileSize))
+                return static_cast<uint64_t>(fileSize);
+            return static_cast<uint64_t>(0);
+        }, [] (const FormDataElement::EncodedBlobData& blobData) {
+            return ThreadableBlobRegistry::blobSize(blobData.url);
+        }
+    );
 }
 
 FormDataElement FormDataElement::isolatedCopy() const
 {
-    switch (m_type) {
-    case Type::Data:
-        return FormDataElement(m_data);
-    case Type::EncodedFile:
-        return FormDataElement(m_filename.isolatedCopy(), m_fileStart, m_fileLength, m_expectedFileModificationTime, m_shouldGenerateFile);
-    case Type::EncodedBlob:
-        return FormDataElement(m_url.isolatedCopy());
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
+    return switchOn(data,
+        [] (const Vector<char>& bytes) {
+            Vector<char> copy;
+            copy.append(bytes.data(), bytes.size());
+            return FormDataElement(WTFMove(copy));
+        }, [] (const FormDataElement::EncodedFileData& fileData) {
+            return FormDataElement(fileData.isolatedCopy());
+        }, [] (const FormDataElement::EncodedBlobData& blobData) {
+            return FormDataElement(blobData.url.isolatedCopy());
+        }
+    );
 }
 
 void FormData::appendData(const void* data, size_t size)
 {
-    memcpy(expandDataStore(size), data, size);
+    m_lengthInBytes = std::nullopt;
+    if (!m_elements.isEmpty()) {
+        if (auto* vector = WTF::get_if<Vector<char>>(m_elements.last().data)) {
+            vector->append(reinterpret_cast<const char*>(data), size);
+            return;
+        }
+    }
+    Vector<char> vector;
+    vector.append(reinterpret_cast<const char*>(data), size);
+    m_elements.append(WTFMove(vector));
 }
 
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
@@ -279,28 +294,13 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
     appendData(encodedData.data(), encodedData.size());
 }
 
-char* FormData::expandDataStore(size_t size)
-{
-    m_lengthInBytes = std::nullopt;
-    if (m_elements.isEmpty() || m_elements.last().m_type != FormDataElement::Type::Data)
-        m_elements.append({ });
-
-    auto& lastElement = m_elements.last();
-    size_t oldSize = lastElement.m_data.size();
-
-    auto newSize = Checked<size_t>(oldSize) + size;
-
-    lastElement.m_data.grow(newSize.unsafeGet());
-    return lastElement.m_data.data() + oldSize;
-}
-
 Vector<char> FormData::flatten() const
 {
     // Concatenate all the byte arrays, but omit any files.
     Vector<char> data;
     for (auto& element : m_elements) {
-        if (element.m_type == FormDataElement::Type::Data)
-            data.append(element.m_data.data(), static_cast<size_t>(element.m_data.size()));
+        if (auto* vector = WTF::get_if<Vector<char>>(element.data))
+            data.append(vector->data(), vector->size());
     }
     return data;
 }
@@ -340,7 +340,7 @@ Ref<FormData> FormData::resolveBlobReferences()
     // First check if any blobs needs to be resolved, or we can take the fast path.
     bool hasBlob = false;
     for (auto& element : m_elements) {
-        if (element.m_type == FormDataElement::Type::EncodedBlob) {
+        if (WTF::holds_alternative<FormDataElement::EncodedBlobData>(element.data)) {
             hasBlob = true;
             break;
         }
@@ -355,14 +355,15 @@ Ref<FormData> FormData::resolveBlobReferences()
     newFormData->setIdentifier(identifier());
 
     for (auto& element : m_elements) {
-        if (element.m_type == FormDataElement::Type::Data)
-            newFormData->appendData(element.m_data.data(), element.m_data.size());
-        else if (element.m_type == FormDataElement::Type::EncodedFile)
-            newFormData->appendFileRange(element.m_filename, element.m_fileStart, element.m_fileLength, element.m_expectedFileModificationTime, element.m_shouldGenerateFile);
-        else if (element.m_type == FormDataElement::Type::EncodedBlob)
-            appendBlobResolved(newFormData.ptr(), element.m_url);
-        else
-            ASSERT_NOT_REACHED();
+        switchOn(element.data,
+            [&] (const Vector<char>& bytes) {
+                newFormData->appendData(bytes.data(), bytes.size());
+            }, [&] (const FormDataElement::EncodedFileData& fileData) {
+                newFormData->appendFileRange(fileData.filename, fileData.fileStart, fileData.fileLength, fileData.expectedFileModificationTime, fileData.shouldGenerateFile);
+            }, [&] (const FormDataElement::EncodedBlobData& blobData) {
+                appendBlobResolved(newFormData.ptr(), blobData.url);
+            }
+        );
     }
     return newFormData;
 }
@@ -374,14 +375,16 @@ void FormData::generateFiles(Document* document)
         return;
 
     for (auto& element : m_elements) {
-        if (element.m_type == FormDataElement::Type::EncodedFile && element.m_shouldGenerateFile) {
-            ASSERT(!element.m_ownsGeneratedFile);
-            ASSERT(element.m_generatedFilename.isEmpty());
-            if (!element.m_generatedFilename.isEmpty())
-                continue;
-            element.m_generatedFilename = page->chrome().client().generateReplacementFile(element.m_filename);
-            if (!element.m_generatedFilename.isEmpty())
-                element.m_ownsGeneratedFile = true;
+        if (auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data)) {
+            if (fileData->shouldGenerateFile) {
+                ASSERT(!fileData->ownsGeneratedFile);
+                ASSERT(fileData->generatedFilename.isEmpty());
+                if (!fileData->generatedFilename.isEmpty())
+                    continue;
+                fileData->generatedFilename = page->chrome().client().generateReplacementFile(fileData->filename);
+                if (!fileData->generatedFilename.isEmpty())
+                    fileData->ownsGeneratedFile = true;
+            }
         }
     }
 }
@@ -389,8 +392,10 @@ void FormData::generateFiles(Document* document)
 bool FormData::hasGeneratedFiles() const
 {
     for (auto& element : m_elements) {
-        if (element.m_type == FormDataElement::Type::EncodedFile && !element.m_generatedFilename.isEmpty())
-            return true;
+        if (auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data)) {
+            if (!fileData->generatedFilename.isEmpty())
+                return true;
+        }
     }
     return false;
 }
@@ -398,9 +403,11 @@ bool FormData::hasGeneratedFiles() const
 bool FormData::hasOwnedGeneratedFiles() const
 {
     for (auto& element : m_elements) {
-        if (element.m_type == FormDataElement::Type::EncodedFile && element.m_ownsGeneratedFile) {
-            ASSERT(!element.m_generatedFilename.isEmpty());
-            return true;
+        if (auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data)) {
+            if (fileData->ownsGeneratedFile) {
+                ASSERT(!fileData->generatedFilename.isEmpty());
+                return true;
+            }
         }
     }
     return false;
@@ -409,14 +416,16 @@ bool FormData::hasOwnedGeneratedFiles() const
 void FormData::removeGeneratedFilesIfNeeded()
 {
     for (auto& element : m_elements) {
-        if (element.m_type == FormDataElement::Type::EncodedFile && element.m_ownsGeneratedFile) {
-            ASSERT(!element.m_generatedFilename.isEmpty());
-            ASSERT(element.m_shouldGenerateFile);
-            String directory = FileSystem::directoryName(element.m_generatedFilename);
-            FileSystem::deleteFile(element.m_generatedFilename);
-            FileSystem::deleteEmptyDirectory(directory);
-            element.m_generatedFilename = String();
-            element.m_ownsGeneratedFile = false;
+        if (auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data)) {
+            if (fileData->ownsGeneratedFile) {
+                ASSERT(!fileData->generatedFilename.isEmpty());
+                ASSERT(fileData->shouldGenerateFile);
+                String directory = FileSystem::directoryName(fileData->generatedFilename);
+                FileSystem::deleteFile(fileData->generatedFilename);
+                FileSystem::deleteEmptyDirectory(directory);
+                fileData->generatedFilename = String();
+                fileData->ownsGeneratedFile = false;
+            }
         }
     }
 }
@@ -435,7 +444,7 @@ uint64_t FormData::lengthInBytes() const
 RefPtr<SharedBuffer> FormData::asSharedBuffer() const
 {
     for (auto& element : m_elements) {
-        if (element.m_type != FormDataElement::Type::Data)
+        if (!WTF::holds_alternative<Vector<char>>(element.data))
             return nullptr;
     }
     return SharedBuffer::create(flatten());
@@ -446,8 +455,9 @@ URL FormData::asBlobURL() const
     if (m_elements.size() != 1)
         return { };
 
-    ASSERT(m_elements.first().m_type == FormDataElement::Type::EncodedBlob || m_elements.first().m_url.isNull());
-    return m_elements.first().m_url;
+    if (auto* blobData = WTF::get_if<FormDataElement::EncodedBlobData>(m_elements.first().data))
+        return blobData->url;
+    return { };
 }
 
 } // namespace WebCore

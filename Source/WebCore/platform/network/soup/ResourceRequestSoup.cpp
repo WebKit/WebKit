@@ -74,29 +74,27 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage) const
     soup_message_body_set_accumulate(soupMessage->request_body, FALSE);
     uint64_t bodySize = 0;
     for (const auto& element : formData->elements()) {
-        switch (element.m_type) {
-        case FormDataElement::Type::Data:
-            bodySize += element.m_data.size();
-            soup_message_body_append(soupMessage->request_body, SOUP_MEMORY_TEMPORARY, element.m_data.data(), element.m_data.size());
-            break;
-        case FormDataElement::Type::EncodedFile:
-            if (RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(element.m_filename)) {
-                if (buffer->isEmpty())
-                    break;
-
-                GUniquePtr<SoupBuffer> soupBuffer(buffer->createSoupBuffer());
-                bodySize += buffer->size();
-                if (soupBuffer->length)
-                    soup_message_body_append_buffer(soupMessage->request_body, soupBuffer.get());
+        return switchOn(element.data,
+            [&] (const Vector<char>& bytes) {
+                bodySize += bytes.size();
+                soup_message_body_append(soupMessage->request_body, SOUP_MEMORY_TEMPORARY, bytes.data(), bytes.size());
+            }, [&] (const FormDataElement::EncodedFileData& fileData) {
+                if (RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(fileData.filename)) {
+                    if (buffer->isEmpty())
+                        return;
+                    
+                    GUniquePtr<SoupBuffer> soupBuffer(buffer->createSoupBuffer());
+                    bodySize += buffer->size();
+                    if (soupBuffer->length)
+                        soup_message_body_append_buffer(soupMessage->request_body, soupBuffer.get());
+                }
+            }, [&] (const FormDataElement::EncodedBlobData& blob) {
+                if (auto* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(blob.url)) {
+                    for (const auto& item : blobData->items())
+                        bodySize += appendEncodedBlobItemToSoupMessageBody(soupMessage, item);
+                }
             }
-            break;
-        case FormDataElement::Type::EncodedBlob:
-            if (auto* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(element.m_url)) {
-                for (const auto& item : blobData->items())
-                    bodySize += appendEncodedBlobItemToSoupMessageBody(soupMessage, item);
-            }
-            break;
-        }
+        );
     }
 
     ASSERT(bodySize == static_cast<uint64_t>(soupMessage->request_body->length));

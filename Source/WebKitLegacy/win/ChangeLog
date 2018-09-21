@@ -1,3 +1,13 @@
+2018-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Use a Variant for FormDataElement
+        https://bugs.webkit.org/show_bug.cgi?id=189777
+
+        Reviewed by Chris Dumez.
+
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::setHTTPBody):
+
 2018-09-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang][WebKitLegacy] error: cannot pass object of non-trivial type through variadic function

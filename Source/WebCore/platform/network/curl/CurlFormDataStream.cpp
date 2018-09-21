@@ -103,21 +103,8 @@ void CurlFormDataStream::computeContentLength()
 
     m_isContentLengthUpdated = true;
 
-    for (const auto& element : m_formData->elements()) {
-        if (element.m_type == FormDataElement::Type::EncodedFile) {
-            long long fileSize;
-            if (FileSystem::getFileSize(element.m_filename, fileSize)) {
-                if (fileSize > maxCurlOffT) {
-                    // File size is too big for specifying it to curl
-                    m_shouldUseChunkTransfer = true;
-                }
-
-                m_totalSize += fileSize;
-            } else
-                m_shouldUseChunkTransfer = true;
-        } else
-            m_totalSize += element.m_data.size();
-    }
+    for (const auto& element : m_formData->elements())
+        m_totalSize += element.lengthInBytes();
 }
 
 std::optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
@@ -134,14 +121,19 @@ std::optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
     while ((m_elementPosition < totalElementSize) && (totalReadBytes < size)) {
         const auto& element = m_formData->elements().at(m_elementPosition);
 
-        std::optional<size_t> readBytes;
         size_t bufferSize = size - totalReadBytes;
         char* bufferPosition = buffer + totalReadBytes;
 
-        if (element.m_type == FormDataElement::Type::EncodedFile)
-            readBytes = readFromFile(element, bufferPosition, bufferSize);
-        else
-            readBytes = readFromData(element, bufferPosition, bufferSize);
+        std::optional<size_t> readBytes = switchOn(element.data,
+            [&] (const Vector<char>& bytes) {
+                return readFromData(bytes, bufferPosition, bufferSize);
+            }, [&] (const FormDataElement::EncodedFileData& fileData) {
+                return readFromFile(fileData, bufferPosition, bufferSize);
+            }, [] (const FormDataElement::EncodedBlobData& blobData) {
+                ASSERT_NOT_REACHED();
+                return std::nullopt;
+            }
+        );
 
         if (!readBytes)
             return std::nullopt;
@@ -154,20 +146,20 @@ std::optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
     return totalReadBytes;
 }
 
-std::optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement& element, char* buffer, size_t size)
+std::optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::EncodedFileData& fileData, char* buffer, size_t size)
 {
     if (m_fileHandle == FileSystem::invalidPlatformFileHandle)
-        m_fileHandle = FileSystem::openFile(element.m_filename, FileSystem::FileOpenMode::Read);
+        m_fileHandle = FileSystem::openFile(fileData.filename, FileSystem::FileOpenMode::Read);
 
     if (!FileSystem::isHandleValid(m_fileHandle)) {
-        LOG(Network, "Curl - Failed while trying to open %s for upload\n", element.m_filename.utf8().data());
+        LOG(Network, "Curl - Failed while trying to open %s for upload\n", fileData.filename.utf8().data());
         m_fileHandle = FileSystem::invalidPlatformFileHandle;
         return std::nullopt;
     }
 
     auto readBytes = FileSystem::readFromFile(m_fileHandle, buffer, size);
     if (readBytes < 0) {
-        LOG(Network, "Curl - Failed while trying to read %s for upload\n", element.m_filename.utf8().data());
+        LOG(Network, "Curl - Failed while trying to read %s for upload\n", fileData.filename.utf8().data());
         FileSystem::closeFile(m_fileHandle);
         m_fileHandle = FileSystem::invalidPlatformFileHandle;
         return std::nullopt;
@@ -182,10 +174,10 @@ std::optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement& el
     return readBytes;
 }
 
-std::optional<size_t> CurlFormDataStream::readFromData(const FormDataElement& element, char* buffer, size_t size)
+std::optional<size_t> CurlFormDataStream::readFromData(const Vector<char>& data, char* buffer, size_t size)
 {
-    size_t elementSize = element.m_data.size() - m_dataOffset;
-    const char* elementBuffer = element.m_data.data() + m_dataOffset;
+    size_t elementSize = data.size() - m_dataOffset;
+    const char* elementBuffer = data.data() + m_dataOffset;
 
     size_t readBytes = elementSize > size ? size : elementSize;
     memcpy(buffer, elementBuffer, readBytes);

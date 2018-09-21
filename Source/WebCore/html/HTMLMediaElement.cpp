@@ -1484,7 +1484,7 @@ void HTMLMediaElement::selectMediaResource()
 
             // 2. End the synchronous section, continuing the remaining steps in parallel.
             // 3. Run the resource fetch algorithm with the assigned media provider object.
-            WTF::visit(WTF::makeVisitor(
+            switchOn(m_mediaProvider.value(),
 #if ENABLE(MEDIA_STREAM)
                 [this](RefPtr<MediaStream> stream) { m_mediaStreamSrcObject = stream; },
 #endif
@@ -1492,7 +1492,7 @@ void HTMLMediaElement::selectMediaResource()
                 [this](RefPtr<MediaSource> source) { m_mediaSource = source; },
 #endif
                 [this](RefPtr<Blob> blob) { m_blob = blob; }
-            ), m_mediaProvider.value());
+            );
 
             ContentType contentType;
             loadResource(URL(), contentType, String());

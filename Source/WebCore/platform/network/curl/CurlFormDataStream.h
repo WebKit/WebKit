@@ -51,8 +51,8 @@ public:
 private:
     void computeContentLength();
 
-    std::optional<size_t> readFromFile(const FormDataElement&, char*, size_t);
-    std::optional<size_t> readFromData(const FormDataElement&, char*, size_t);
+    std::optional<size_t> readFromFile(const FormDataElement::EncodedFileData&, char*, size_t);
+    std::optional<size_t> readFromData(const Vector<char>&, char*, size_t);
 
     RefPtr<FormData> m_formData;
 

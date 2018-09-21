@@ -59,6 +59,7 @@ struct HTTPBody {
             Blob,
         };
 
+        // FIXME: This should be a Variant. It's also unclear why we don't just use FormDataElement here.
         Type type = Type::Data;
 
         // Data.

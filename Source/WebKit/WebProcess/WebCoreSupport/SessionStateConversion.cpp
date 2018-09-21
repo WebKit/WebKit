@@ -42,25 +42,21 @@ static HTTPBody toHTTPBody(const FormData& formData)
     for (const auto& formDataElement : formData.elements()) {
         HTTPBody::Element element;
 
-        switch (formDataElement.m_type) {
-        case FormDataElement::Type::Data:
-            element.type = HTTPBody::Element::Type::Data;
-            element.data = formDataElement.m_data;
-            break;
-
-        case FormDataElement::Type::EncodedFile:
-            element.filePath = formDataElement.m_filename;
-            element.fileStart = formDataElement.m_fileStart;
-            if (formDataElement.m_fileLength != BlobDataItem::toEndOfFile)
-                element.fileLength = formDataElement.m_fileLength;
-            if (formDataElement.m_expectedFileModificationTime != FileSystem::invalidFileTime())
-                element.expectedFileModificationTime = formDataElement.m_expectedFileModificationTime;
-            break;
-
-        case FormDataElement::Type::EncodedBlob:
-            element.blobURLString = formDataElement.m_url.string();
-            break;
-        }
+        switchOn(formDataElement.data,
+            [&] (const Vector<char>& bytes) {
+                element.type = HTTPBody::Element::Type::Data;
+                element.data = bytes;
+            }, [&] (const FormDataElement::EncodedFileData& fileData) {
+                element.filePath = fileData.filename;
+                element.fileStart = fileData.fileStart;
+                if (fileData.fileLength != BlobDataItem::toEndOfFile)
+                    element.fileLength = fileData.fileLength;
+                if (fileData.expectedFileModificationTime != FileSystem::invalidFileTime())
+                    element.expectedFileModificationTime = fileData.expectedFileModificationTime;
+            }, [&] (const FormDataElement::EncodedBlobData& blobData) {
+                element.blobURLString = blobData.url.string();
+            }
+        );
 
         httpBody.elements.append(WTFMove(element));
     }

@@ -41,7 +41,7 @@ public:
 
     void encode(Encoder& encoder) const
     {
-        WTF::visit(WTF::makeVisitor(
+        switchOn(m_data,
             [encoder = &encoder] (const Ref<const WebCore::SharedBuffer>& buffer) mutable {
                 uint64_t bufferSize = buffer->size();
                 encoder->reserve(bufferSize + sizeof(uint64_t));
@@ -53,7 +53,8 @@ public:
                 encoder->reserve(bufferSize + sizeof(uint64_t));
                 *encoder << bufferSize;
                 encoder->encodeFixedLengthData(pair.first, pair.second, 1);
-            }), m_data);
+            }
+        );
     }
 
 private:

@@ -1,5 +1,19 @@
 2018-09-21  Alex Christensen  <achristensen@webkit.org>
 
+        Use a Variant for FormDataElement
+        https://bugs.webkit.org/show_bug.cgi?id=189777
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * Shared/SessionState.h:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toHTTPBody):
+
+2018-09-21  Alex Christensen  <achristensen@webkit.org>
+
         Simply authentication code even more!
         https://bugs.webkit.org/show_bug.cgi?id=189719
 
