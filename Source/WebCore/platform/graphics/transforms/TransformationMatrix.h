@@ -28,6 +28,7 @@
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "IntPoint.h"
+#include <array>
 #include <string.h> //for memcpy
 #include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
@@ -404,8 +405,8 @@ public:
     // Returns the matrix without 3D components.
     TransformationMatrix to2dTransform() const;
     
-    typedef float FloatMatrix4[16];
-    void toColumnMajorFloatArray(FloatMatrix4& result) const;
+    using FloatMatrix4 = std::array<float, 16>;
+    FloatMatrix4 toColumnMajorFloatArray() const;
 
     // A local-space layer is implicitly defined at the z = 0 plane, with its front side
     // facing the positive z-axis (i.e. a camera looking along the negative z-axis sees

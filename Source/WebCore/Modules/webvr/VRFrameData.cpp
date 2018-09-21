@@ -38,9 +38,8 @@ VRFrameData::VRFrameData()
 
 static Ref<Float32Array> matrixToArray(const TransformationMatrix& matrix)
 {
-    TransformationMatrix::FloatMatrix4 columnMajorMatrix;
-    matrix.toColumnMajorFloatArray(columnMajorMatrix);
-    return Float32Array::create(columnMajorMatrix, 16).releaseNonNull();
+    auto columnMajorMatrix = matrix.toColumnMajorFloatArray();
+    return Float32Array::create(columnMajorMatrix.data(), 16).releaseNonNull();
 }
 
 Ref<Float32Array> VRFrameData::leftProjectionMatrix() const

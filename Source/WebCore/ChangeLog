@@ -1,5 +1,27 @@
 2018-09-21  Zan Dobersek  <zdobersek@igalia.com>
 
+        TransformationMatrix::toColumnMajorFloatArray() should return a std::array<> object
+        https://bugs.webkit.org/show_bug.cgi?id=189823
+
+        Reviewed by Michael Catanzaro.
+
+        Alias the TransformationMatrix::FloatMatrix4 type to
+        std::array<float, 16>. Instead of filling out the array object that's
+        passed in through a reference parameter, return the std::array<>
+        object from the function.
+
+        * Modules/webvr/VRFrameData.cpp:
+        (WebCore::matrixToArray):
+        * Modules/webvr/VRStageParameters.cpp:
+        (WebCore::VRStageParameters::sittingToStandingTransform const):
+        * platform/graphics/texmap/TextureMapperShaderProgram.cpp:
+        (WebCore::TextureMapperShaderProgram::setMatrix):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::toColumnMajorFloatArray const):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
+2018-09-21  Zan Dobersek  <zdobersek@igalia.com>
+
         FloatQuad point getters should return const references
         https://bugs.webkit.org/show_bug.cgi?id=189821
 

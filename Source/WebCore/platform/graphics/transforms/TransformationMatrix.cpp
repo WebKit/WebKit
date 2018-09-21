@@ -1724,24 +1724,13 @@ TransformationMatrix TransformationMatrix::to2dTransform() const
                                 m_matrix[3][0], m_matrix[3][1], 0, m_matrix[3][3]);
 }
 
-void TransformationMatrix::toColumnMajorFloatArray(FloatMatrix4& result) const
+auto TransformationMatrix::toColumnMajorFloatArray() const -> FloatMatrix4
 {
-    result[0] = m11();
-    result[1] = m12();
-    result[2] = m13();
-    result[3] = m14();
-    result[4] = m21();
-    result[5] = m22();
-    result[6] = m23();
-    result[7] = m24();
-    result[8] = m31();
-    result[9] = m32();
-    result[10] = m33();
-    result[11] = m34();
-    result[12] = m41();
-    result[13] = m42();
-    result[14] = m43();
-    result[15] = m44();
+    return { {
+        float(m11()), float(m12()), float(m13()), float(m14()),
+        float(m21()), float(m22()), float(m23()), float(m24()),
+        float(m31()), float(m32()), float(m33()), float(m34()),
+        float(m41()), float(m42()), float(m43()), float(m44()) } };
 }
 
 bool TransformationMatrix::isBackFaceVisible() const
