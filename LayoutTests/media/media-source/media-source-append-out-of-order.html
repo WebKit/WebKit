@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest()
+    {
+        findMediaElement();
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        var videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+    }
+    
+    function syncSampleRun(start, end) {
+        const samples = [];
+        for (let time = start; time < end; time++)
+            samples.push(makeASample(time, time, 1, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+        return concatenateSamples(samples);
+    }
+
+    function formatRanges(buffered) {
+        function rangesToArray(ranges) {
+            const ret = [];
+            for (let i = 0; i < ranges.length; i++) {
+                ret.push({start: ranges.start(i), end: ranges.end(i)});
+            }
+            return ret;
+        }
+
+        return rangesToArray(buffered)
+            .map(range => `[${range.start}, ${range.end})`)
+            .join(' ');
+    }
+
+    function sourceOpen()
+    {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples10_20, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples10_20()
+    {
+        testExpected('sourceBuffer.buffered.length', 0);
+
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples0_10, false, true);
+        run('sourceBuffer.appendBuffer(syncSampleRun(10, 20))');
+    }
+
+    function loadSamples0_10() {
+        testExpected('formatRanges(sourceBuffer.buffered)', '[10, 20)');
+
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples30_40, false, true);
+        run('sourceBuffer.appendBuffer(syncSampleRun(0, 10))');
+    }
+
+    function loadSamples30_40() {
+        testExpected('formatRanges(sourceBuffer.buffered)', '[0, 20)');
+
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples20_30, false, true);
+        run('sourceBuffer.appendBuffer(syncSampleRun(30, 40))');
+    }
+
+    function loadSamples20_30() {
+        testExpected('formatRanges(sourceBuffer.buffered)', '[0, 20) [30, 40)');
+
+        waitForEventOn(sourceBuffer, 'updateend', loadedAllSamples, false, true);
+        run('sourceBuffer.appendBuffer(syncSampleRun(20, 30))');
+    }
+
+    function loadedAllSamples()
+    {
+        testExpected('formatRanges(sourceBuffer.buffered)', '[0, 40)');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>
