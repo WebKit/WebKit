@@ -25,12 +25,6 @@
 "use strict";
 
 class EBufferBuilder extends Visitor {
-    constructor(program)
-    {
-        super();
-        this._program = program;
-    }
-    
     _createEPtr(type)
     {
         if (type.size == null)

@@ -53,7 +53,7 @@ let prepare = (() => {
         resolveNamesInFunctions(program, nameResolver);
         resolveTypeDefsInFunctions(program);
         checkTypesWithArguments(program);
-        
+
         check(program);
         checkLiteralTypes(program);
         resolveProperties(program);
@@ -67,6 +67,7 @@ let prepare = (() => {
         checkProgramWrapped(program);
         checkTypesWithArguments(program);
         findHighZombies(program);
+        allocateAtEntryPoints(program);
         program.visit(new StructLayoutBuilder());
         lateCheckAndLayoutBuffers(program);
         if (shouldInline)

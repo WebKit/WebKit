@@ -33,7 +33,12 @@ class FuncDef extends Func {
     }
 
     get body() { return this._body; }
-    
+
+    set body(newBody)
+    {
+        this._body = newBody;
+    }
+
     rewrite(rewriter)
     {
         this._returnType = this._returnType.visit(rewriter);

@@ -233,7 +233,10 @@ class Rewriter {
     
     visitReturn(node)
     {
-        return new Return(node.origin, Node.visit(node.value, this));
+        const returnStatement = new Return(node.origin, Node.visit(node.value, this));
+        if (node.func)
+            returnStatement.func = node.func;
+        return returnStatement;
     }
     
     visitContinue(node)

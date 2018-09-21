@@ -8081,6 +8081,152 @@ tests.inliningDoesntProduceAliasingIssues = () => {
     checkInt(program, callFunction(program, "foo", []), 20);
 }
 
+tests.returnReferenceToParameter = () => {
+    let program = doPrep(`
+        test int foo(bool condition)
+        {
+            return *bar(condition, 1, 2);
+        }
+
+        thread int* bar(bool condition, int a, int b)
+        {
+            return condition ? &a : &b;
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", [ makeBool(program, true) ]), 1);
+    checkInt(program, callFunction(program, "foo", [ makeBool(program, false) ]), 2);
+}
+
+tests.returnReferenceToParameterWithDifferentFunctions = () => {
+    let program = doPrep(`
+        test int foo()
+        {
+            return *bar(10) + *baz(20);
+        }
+
+        thread int* bar(int x)
+        {
+            return &x;
+        }
+
+        thread int* baz(int y)
+        {
+            return &y;
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", []), 30);
+}
+
+tests.returnReferenceToSameParameter = () => {
+    let program = doPrep(`
+        test int foo()
+        {
+            return plus(bar(5), bar(7));
+        }
+
+        int plus(thread int* x, thread int* y)
+        {
+            return *x + *y;
+        }
+
+        thread int* bar(int x)
+        {
+            return &x;
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", []), 10);
+}
+
+tests.returnReferenceToLocalVariable = () => {
+    let program = doPrep(`
+        test int foo()
+        {
+            return *bar();
+        }
+
+        thread int* bar()
+        {
+            int a = 42;
+            return &a;
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", []), 42);
+}
+
+tests.returnReferenceToLocalVariableWithNesting = () => {
+    let program = doPrep(`
+        test int foo()
+        {
+            return *bar() + *baz();
+        }
+
+        thread int* bar()
+        {
+            int a = 20;
+            return &a;
+        }
+
+        thread int* baz()
+        {
+            int a = 22;
+            return &a;
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", []), 42);
+}
+
+tests.convertPtrToArrayRef = () => {
+    let program = doPrep(`
+        test int foo()
+        {
+            return bar()[0];
+        }
+
+        thread int[] bar()
+        {
+            int x = 42;
+            return @(&x);
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", []), 42);
+}
+
+tests.convertLocalVariableToArrayRef = () => {
+    let program = doPrep(`
+        test int foo()
+        {
+            return bar()[0];
+        }
+
+        thread int[] bar()
+        {
+            int x = 42;
+            return @x;
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", []), 42);
+}
+
+tests.referenceTakenToLocalVariableInEntryPointShouldntMoveAnything = () => {
+    let program = doPrep(`
+        test int foo()
+        {
+            int a = 42;
+            thread int* b = &a;
+            return *b;
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", []), 42);
+};
+
 okToTest = true;
 
 let testFilter = /.*/; // run everything by default

@@ -36,7 +36,14 @@ class CallExpression extends Expression {
     }
     
     get name() { return this._name; }
+
     get argumentList() { return this._argumentList; }
+
+    set argumentList(newValue)
+    {
+        this._argumentList = newValue;
+    }
+
     get isCast() { return this._isCast; }
     get returnType() { return this._returnType; }
     

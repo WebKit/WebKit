@@ -1,3 +1,43 @@
+2018-09-21  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Local variables should be statically allocated
+        https://bugs.webkit.org/show_bug.cgi?id=188402
+
+        Reviewed by Myles C. Maxfield.
+
+        An additional preparation stage is now performed so that all local
+        variables and function parameters are allocated in a single struct at
+        entry points. A pointer to this struct is then passed for function
+        calls.
+
+        * WebGPUShadingLanguageRI/All.js: Update dependencies.
+        * WebGPUShadingLanguageRI/AllocateAtEntryPoints.js: Added new stage.
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.prototype.set argumentList): Add setter because
+        allocateAtEntryPoints needs to change this.
+        * WebGPUShadingLanguageRI/EBufferBuilder.js: Remove a redundant
+        constructor that wasn't used anywhere.
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.set parameters): Add setter.
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef.prototype.set body): Ditto.
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare): Add call to allocateAtEntryPoints. This call cannot
+        happen any earlier because it depends on having types for call
+        arguments.
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitReturn): Resolve issue where the return
+        statement's function wasn't copied. A null check is required as the
+        Rewriter might be used before this property is set.
+        * WebGPUShadingLanguageRI/SPIRV.html: Update dependencies.
+        * WebGPUShadingLanguageRI/SynthesizeStructAccessors.js: Abstracted logic
+        into a separate function so that allocateAtEntryPoints can create the
+        accessors for the struct type it introduces.
+        * WebGPUShadingLanguageRI/Test.html: Update dependencies.
+        * WebGPUShadingLanguageRI/Test.js: Add new tests to verify the static
+        allocation transform works safely.
+        * WebGPUShadingLanguageRI/index.html: Update dependencies.
+
 2018-09-21  Jonathan Bedard  <jbedard@apple.com>
 
         Bring up queues for iOS 12 (Build fix)

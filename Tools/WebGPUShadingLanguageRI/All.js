@@ -37,6 +37,7 @@ load("PropertyAccessExpression.js");
 load("NativeType.js");
 
 load("AddressSpace.js");
+load("AllocateAtEntryPoints.js");
 load("AnonymousVariable.js");
 load("ArrayRefType.js");
 load("ArrayType.js");
