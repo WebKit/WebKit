@@ -39,8 +39,22 @@ function synthesizeStructAccessors(program)
                     implementationData.type.visit(visitor);
                 };
 
+                nativeFunc.visitImplementationData = (implementationData, visitor) => {
+                    // Visiting the type first ensures that the struct layout builder figures out the field's
+                    // offset.
+                    implementationData.type.visit(visitor);
+                };
+
                 nativeFunc.implementation = (argumentList, node) => {
                     return implementation(argumentList, field.offset, type.size, field.type.size);
+                };
+
+                nativeFunc.implementationData = {
+                    structType: type,
+                    name: field.name,
+                    type: field.type,
+                    offset: field.offset,
+                    size: field.type.size
                 };
             }
             

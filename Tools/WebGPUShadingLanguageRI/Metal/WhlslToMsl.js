@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,27 +20,22 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-"use strict";
 
-class MakeArrayRefExpression extends Expression {
-    constructor(origin, lValue)
-    {
-        super(origin);
-        this._lValue = lValue;
+// Main wrapper for the compiler. Clients should use this function to compile WHLSL.
+function whlslToMsl(src)
+{
+    let parsedProgram;
+    try {
+        parsedProgram = prepare("/internal/test", 0, src);
+    } catch (e) {
+        return new MSLCompileResult(null, e, null, null);
     }
 
-    get type()
-    {
-        return typeOf(this.lValue).arrayRefType;
-    }
+    if (!(parsedProgram instanceof Program))
+        return new MSLCompileResult(null, new Error("Compilation failed"), null, null);
 
-    get lValue() { return this._lValue; }
-
-    toString()
-    {
-        return "@" + (this.numElements ? "<<" + this.numElements + ">>" : "") + "(" + this.lValue + ")";
-    }
+    const compiler = new MSLBackend(parsedProgram);
+    return compiler.compile();
 }
-

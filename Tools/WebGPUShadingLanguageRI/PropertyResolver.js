@@ -168,6 +168,8 @@ class PropertyResolver extends Visitor {
         super.visitMakePtrExpression(node);
         if (!node.lValue.isLValue)
             throw new WTypeError(node.origin.originString, "Not an lvalue: " + node.lValue);
+        if (node.lValue.unifyNode instanceof DereferenceExpression)
+            node.become(new IdentityExpression(node.lValue.unifyNode.ptr));
     }
     
     visitMakeArrayRefExpression(node)

@@ -48,6 +48,11 @@ class ArrayType extends Type {
         return this.numElements.value;
     }
 
+    get arrayRefType()
+    {
+        return new ArrayRefType(this.origin, "thread", this.elementType);
+    }
+
     toString()
     {
         return this.elementType + "[" + this.numElements + "]";

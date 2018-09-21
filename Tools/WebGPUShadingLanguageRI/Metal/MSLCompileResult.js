@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,27 +20,41 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-"use strict";
 
-class MakeArrayRefExpression extends Expression {
-    constructor(origin, lValue)
+class MSLCompileResult {
+
+    constructor(src, err, mangledNameMap, functionSources)
     {
-        super(origin);
-        this._lValue = lValue;
+        this._metalShaderLanguageSource = src;
+        this._error = err;
+        this._originalFunctionNameToMangledNames = mangledNameMap;
+        this._functionSources = functionSources;
     }
 
-    get type()
+    get metalShaderLanguageSource()
     {
-        return typeOf(this.lValue).arrayRefType;
+        return this._metalShaderLanguageSource;
     }
 
-    get lValue() { return this._lValue; }
-
-    toString()
+    get error()
     {
-        return "@" + (this.numElements ? "<<" + this.numElements + ">>" : "") + "(" + this.lValue + ")";
+        return this._error;
+    }
+
+    get originalFunctionNameToMangledNames()
+    {
+        return this._originalFunctionNameToMangledNames;
+    }
+
+    get functionSources()
+    {
+        return this._functionSources;
+    }
+
+    get didSucceed()
+    {
+        return !this.error;
     }
 }
-

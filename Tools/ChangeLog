@@ -1,3 +1,50 @@
+2018-09-20  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Metal code generation
+        https://bugs.webkit.org/show_bug.cgi?id=187735
+
+        Reviewed by Myles C. Maxfield.
+
+        Adds support for generating Metal Shading Language from WHLSL. Clients
+        should include the file MetalCodegenAll.js and then call whlslToMsl
+        with their program source code to compile to Metal.
+
+        * WebGPUShadingLanguageRI/ArrayType.js:
+        (ArrayType.prototype.get arrayRefType): Adds the arrayRefType method to
+        all types to find the type of that expression when it is used in a
+        MakeArrayRefExpression.
+        * WebGPUShadingLanguageRI/MakeArrayRefExpression.js:
+        (MakeArrayRefExpression):
+        (MakeArrayRefExpression.prototype.get type): Uses the new arrayRefType
+        getter on all types to find the type of the expression.
+        * WebGPUShadingLanguageRI/Metal/MSLBackend.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLCodegenAll.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLCompileResult.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLConstexprEmitter.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLFunctionDeclaration.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLFunctionDefinition.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLFunctionForwardDeclaration.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLNameMangler.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLNativeFunctionCall.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLStatementEmitter.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLTypeAttributes.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLTypeAttributesMap.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLTypeUnifier.js: Added.
+        * WebGPUShadingLanguageRI/Metal/TypeOf.js: Added.
+        * WebGPUShadingLanguageRI/Metal/WhlslToMsl.js: Added.
+        * WebGPUShadingLanguageRI/PropertyResolver.js:
+        * WebGPUShadingLanguageRI/SynthesizeStructAccessors.js:
+        * WebGPUShadingLanguageRI/Test.js: Added awkward tests for the compiler
+        to generate code for.
+        (tests.incrementAndDecrement):
+        (tests.returnIntLiteralUint):
+        (tests.returnIntLiteralFloat):
+        (tests.nestedSubscriptWithArraysInStructs):
+        (tests.nestedSubscript):
+        (tests.lotsOfLocalVariables):
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.get arrayRefType): See above.
+
 2018-09-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Bring up queues for iOS 12

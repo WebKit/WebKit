@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,27 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-"use strict";
 
-class MakeArrayRefExpression extends Expression {
-    constructor(origin, lValue)
-    {
-        super(origin);
-        this._lValue = lValue;
-    }
-
-    get type()
-    {
-        return typeOf(this.lValue).arrayRefType;
-    }
-
-    get lValue() { return this._lValue; }
-
-    toString()
-    {
-        return "@" + (this.numElements ? "<<" + this.numElements + ">>" : "") + "(" + this.lValue + ")";
-    }
-}
-
+load("MSLBackend.js");
+load("MSLCompileResult.js");
+load("MSLConstexprEmitter.js");
+load("MSLFunctionDeclaration.js");
+load("MSLFunctionDefinition.js");
+load("MSLFunctionForwardDeclaration.js");
+load("MSLNameMangler.js");
+load("MSLNativeFunctionCall.js");
+load("MSLStatementEmitter.js");
+load("MSLTypeAttributesMap.js");
+load("MSLTypeAttributes.js");
+load("MSLTypeUnifier.js");
+load("TypeOf.js");
+load("WhlslToMsl.js");

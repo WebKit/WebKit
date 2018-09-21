@@ -437,6 +437,27 @@ tests.intSimpleMath = function() {
     checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, -2)]), -3);
 }
 
+tests.incrementAndDecrement = function() {
+    let program = doPrep(`
+    test int foo1() { int x = 0; return x++; }
+    test int foo2() { int x = 0; x++; return x; }
+    test int foo3() { int x = 0; return ++x; }
+    test int foo4() { int x = 0; ++x; return x; }
+    test int foo5() { int x = 0; return x--; }
+    test int foo6() { int x = 0; x--; return x; }
+    test int foo7() { int x = 0; return --x; }
+    test int foo8() { int x = 0; --x; return x; }
+    `);
+    checkInt(program, callFunction(program, "foo1", []), 0);
+    checkInt(program, callFunction(program, "foo2", []), 1);
+    checkInt(program, callFunction(program, "foo3", []), 1);
+    checkInt(program, callFunction(program, "foo4", []), 1);
+    checkInt(program, callFunction(program, "foo5", []), 0);
+    checkInt(program, callFunction(program, "foo6", []), -1);
+    checkInt(program, callFunction(program, "foo7", []), -1);
+    checkInt(program, callFunction(program, "foo8", []), -1);
+}
+
 tests.uintSimpleMath = function() {
     let program = doPrep("test uint foo(uint x, uint y) { return x + y; }");
     checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), 12);
@@ -2351,6 +2372,149 @@ tests.nestedSubscriptLValueEmulationSimple = function()
     `);
     checkInt(program, callFunction(program, "testSetValuesAndSum", []), 1575);
     checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", []), 5565);
+}
+
+tests.nestedSubscriptWithArraysInStructs = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int[7] array;
+        }
+        int sum(Foo foo)
+        {
+            int result = 0;
+            for (uint i = 0; i < foo.array.length; i++)
+                result += foo.array[i];
+            return result;
+        }
+        struct Bar {
+            Foo[6] array;
+        }
+        int sum(Bar bar)
+        {
+            int result = 0;
+            for (uint i = 0; i < bar.array.length; i++)
+                result += sum(bar.array[i]);
+            return result;
+        }
+        struct Baz {
+            Bar[5] array;
+        }
+        int sum(Baz baz)
+        {
+            int result = 0;
+            for (uint i = 0; i < baz.array.length; i++)
+                result += sum(baz.array[i]);
+            return result;
+        }
+        void setValues(thread Baz* baz)
+        {
+            for (uint i = 0; i < baz->array.length; i++) {
+                for (uint j = 0; j < baz->array[i].array.length; j++) {
+                    for (uint k = 0; k < baz->array[i].array[j].array.length; k++)
+                        baz->array[i].array[j].array[k] = int(i + j + k);
+                }
+            }
+        }
+        test int testSetValuesAndSum()
+        {
+            Baz baz;
+            setValues(&baz);
+            return sum(baz);
+        }
+        test int testSetValuesMutateValuesAndSum()
+        {
+            Baz baz;
+            setValues(&baz);
+            for (uint i = baz.array.length; i--;) {
+                for (uint j = baz.array[i].array.length; j--;) {
+                    for (uint k = baz.array[i].array[j].array.length; k--;)
+                        baz.array[i].array[j].array[k] = baz.array[i].array[j].array[k] * int(k);
+                }
+            }
+            return sum(baz);
+        }
+    `);
+    checkInt(program, callFunction(program, "testSetValuesAndSum", []), 1575);
+    checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", []), 5565);
+}
+
+tests.nestedSubscript = function()
+{
+    let program = doPrep(`
+        int sum(int[7] array)
+        {
+            int result = 0;
+            for (uint i = array.length; i--;)
+                result += array[i];
+            return result;
+        }
+        int sum(int[6][7] array)
+        {
+            int result = 0;
+            for (uint i = array.length; i--;)
+                result += sum(array[i]);
+            return result;
+        }
+        int sum(int[5][6][7] array)
+        {
+            int result = 0;
+            for (uint i = array.length; i--;)
+                result += sum(array[i]);
+            return result;
+        }
+        void setValues(thread int[][6][7] array)
+        {
+            for (uint i = array.length; i--;) {
+                for (uint j = array[i].length; j--;) {
+                    for (uint k = array[i][j].length; k--;)
+                        array[i][j][k] = int(i + j + k);
+                }
+            }
+        }
+        test int testSetValuesAndSum()
+        {
+            int[5][6][7] array;
+            setValues(@array);
+            return sum(array);
+        }
+        test int testSetValuesMutateValuesAndSum()
+        {
+            int[5][6][7] array;
+            setValues(@array);
+            for (uint i = array.length; i--;) {
+                for (uint j = array[i].length; j--;) {
+                    for (uint k = array[i][j].length; k--;)
+                        array[i][j][k] = array[i][j][k] * int(k);
+                }
+            }
+            return sum(array);
+        }
+    `);
+    checkInt(program, callFunction(program, "testSetValuesAndSum", []), 1575);
+    checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", []), 5565);
+}
+
+tests.lotsOfLocalVariables = function()
+{
+    let src = "test int sum() {\n";
+    src += "    int i = 0;\n";
+    let target = 0;
+    const numVars = 1024;
+    for (let i = 0; i < numVars; i++) {
+        const value = i * 3;
+        src += `   i = ${i};\n`;
+        src += `   int V${i} = (i + 3) * (i + 3);\n`;
+        target += (i + 3) * (i + 3);
+    }
+    src += "    int result = 0;\n";
+    for (let i = 0; i < numVars; i++) {
+        src += `    result += V${i};\n`;
+    }
+    src += "    return result;\n";
+    src += "}";
+    let program = doPrep(src);
+    checkInt(program, callFunction(program, "sum", []), target);
 }
 
 tests.operatorBool = function()
@@ -7938,13 +8102,6 @@ function* doTest(testFilter)
     if (!okToTest)
         throw new Error("Test setup is incomplete.");
     let before = preciseTime();
-
-    print("Compiling standard library...");
-    const compileBefore = preciseTime();
-    yield;
-    prepare();
-    const compileAfter = preciseTime();
-    print(`    OK, took ${Math.round((compileAfter - compileBefore) * 1000)} ms`);
 
     let names = [];
     for (let s in tests)

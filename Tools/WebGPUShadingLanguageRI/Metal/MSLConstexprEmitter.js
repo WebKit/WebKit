@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,27 +20,35 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-"use strict";
 
-class MakeArrayRefExpression extends Expression {
-    constructor(origin, lValue)
+// Used in scenarios where having an auxiliary variable is not possible (e.g. switch cases).
+class MSLConstexprEmitter extends Visitor
+{
+    visitIdentityExpression(node)
     {
-        super(origin);
-        this._lValue = lValue;
+        return node.target.visit(this);
     }
 
-    get type()
+    visitBoolLiteral(node)
     {
-        return typeOf(this.lValue).arrayRefType;
+        return node.value.toString();
     }
 
-    get lValue() { return this._lValue; }
-
-    toString()
+    visitEnumLiteral(node)
     {
-        return "@" + (this.numElements ? "<<" + this.numElements + ">>" : "") + "(" + this.lValue + ")";
+        return node.member.value.visit(this);
+    }
+
+    visitGenericLiteral(node)
+    {
+        // FIXME: What happens in the case of halfs/floats/etc
+        return node.value.toString();
+    }
+
+    visitNullLiteral(node)
+    {
+        return "nullptr";
     }
 }
-

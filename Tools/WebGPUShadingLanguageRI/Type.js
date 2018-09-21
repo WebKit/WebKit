@@ -36,6 +36,11 @@ class Type extends Node {
     get isEnum() { return false; }
     get isPrimitive() { return false; }
     
+    get arrayRefType()
+    {
+        return new ArrayRefType(this.origin, "thread", this);
+    }
+
     // Have to call these on the unifyNode.
     argumentForAndOverload(origin, value)
     {
