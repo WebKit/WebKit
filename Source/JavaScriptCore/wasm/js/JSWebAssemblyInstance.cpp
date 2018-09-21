@@ -66,7 +66,7 @@ void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, 
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
     m_callee.set(vm, this, module->callee());
 
-    heap()->reportExtraMemoryAllocated(m_instance->extraMemoryAllocated());
+    vm.heap.reportExtraMemoryAllocated(m_instance->extraMemoryAllocated());
 }
 
 void JSWebAssemblyInstance::destroy(JSCell* cell)

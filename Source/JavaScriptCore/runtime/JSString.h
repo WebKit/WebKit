@@ -123,7 +123,7 @@ private:
         Base::finishCreation(vm);
         setLength(length);
         setIs8Bit(m_value.impl()->is8Bit());
-        Heap::heap(this)->reportExtraMemoryAllocated(cost);
+        vm.heap.reportExtraMemoryAllocated(cost);
     }
 
 protected:

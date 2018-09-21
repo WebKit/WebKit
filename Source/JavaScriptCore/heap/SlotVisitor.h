@@ -216,6 +216,8 @@ private:
     void noteLiveAuxiliaryCell(HeapCell*);
     
     void visitChildren(const JSCell*);
+
+    void propagateExternalMemoryVisitedIfNecessary();
     
     void donateKnownParallel();
     void donateKnownParallel(MarkStackArray& from, MarkStackArray& to);
@@ -237,6 +239,7 @@ private:
     size_t m_bytesVisited;
     size_t m_visitCount;
     size_t m_nonCellVisitCount { 0 }; // Used for incremental draining, ignored otherwise.
+    Checked<size_t, RecordOverflow> m_extraMemorySize { 0 };
     bool m_isInParallelMode;
 
     HeapVersion m_markingVersion;

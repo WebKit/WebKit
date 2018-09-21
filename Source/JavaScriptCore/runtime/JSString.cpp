@@ -205,7 +205,7 @@ void JSRopeString::resolveRopeToAtomicString(ExecState* exec) const
 
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
     if (m_value.impl()->hasOneRef())
-        Heap::heap(this)->reportExtraMemoryAllocated(m_value.impl()->cost());
+        vm.heap.reportExtraMemoryAllocated(m_value.impl()->cost());
 }
 
 void JSRopeString::clearFibers() const
@@ -264,7 +264,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
     if (is8Bit()) {
         LChar* buffer;
         if (auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer)) {
-            Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
+            exec->vm().heap.reportExtraMemoryAllocated(newImpl->cost());
             m_value = WTFMove(newImpl);
         } else {
             outOfMemory(exec);
@@ -278,7 +278,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
     
     UChar* buffer;
     if (auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer)) {
-        Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
+        exec->vm().heap.reportExtraMemoryAllocated(newImpl->cost());
         m_value = WTFMove(newImpl);
     } else {
         outOfMemory(exec);

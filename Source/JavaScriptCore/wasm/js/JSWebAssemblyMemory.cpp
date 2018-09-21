@@ -133,7 +133,7 @@ void JSWebAssemblyMemory::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    heap()->reportExtraMemoryAllocated(memory().size());
+    vm.heap.reportExtraMemoryAllocated(memory().size());
 }
 
 void JSWebAssemblyMemory::destroy(JSCell* cell)

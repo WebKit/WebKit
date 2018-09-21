@@ -1,3 +1,40 @@
+2018-09-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Heap::reportExtraMemoryVisited shows contention if we have many JSString
+        https://bugs.webkit.org/show_bug.cgi?id=189558
+
+        Reviewed by Mark Lam.
+
+        When running web-tooling-benchmark postcss test on Linux JSCOnly port, we get the following result in `perf report`.
+
+            10.95%  AutomaticThread  libJavaScriptCore.so.1.0.0  [.] JSC::Heap::reportExtraMemoryVisited
+
+        This is because postcss produces bunch of JSString, which require reportExtraMemoryVisited calls in JSString::visitChildren.
+        And since reportExtraMemoryVisited attempts to update atomic counter, if we have bunch of marking threads, it becomes super contended.
+
+        This patch reduces the frequency of updating the atomic counter. Each SlotVisitor has per-SlotVisitor m_extraMemorySize counter.
+        And we propagate this value to the global atomic counter when rebalance happens.
+
+        We also reduce HeapCell::heap() access by using `vm.heap`.
+
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::propagateExternalMemoryVisitedIfNecessary):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::performIncrementOfDraining):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryVisited):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeToAtomicString const):
+        (JSC::JSRopeString::resolveRope const):
+        * runtime/JSString.h:
+        (JSC::JSString::finishCreation):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::finishCreation):
+
 2018-09-20  Michael Saboff  <msaboff@apple.com>
 
         Add functions to measure memory footprint to JSC
