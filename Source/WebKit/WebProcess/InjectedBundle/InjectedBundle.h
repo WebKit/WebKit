@@ -168,10 +168,6 @@ public:
 private:
     explicit InjectedBundle(const WebProcessCreationParameters&);
 
-#if PLATFORM(COCOA) && WK_API_ENABLED
-    void decodeBundleParameters(API::Data*);
-#endif
-
     String m_path;
     PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
 
