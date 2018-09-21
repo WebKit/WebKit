@@ -1,5 +1,12 @@
 2018-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed test gardening, consolidate expectation file for EventTarget-dispatchEvent.html.
+
+        * platform/ios-11/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+
+2018-09-21  Ryan Haddad  <ryanhaddad@apple.com>
+
         REGRESSION (r235948?): Layout Test media/media-controls-accessibility.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=189674
 
