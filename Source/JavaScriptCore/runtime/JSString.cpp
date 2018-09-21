@@ -250,7 +250,7 @@ RefPtr<AtomicStringImpl> JSRopeString::resolveRopeToExistingAtomicString(ExecSta
     return nullptr;
 }
 
-void JSRopeString::resolveRope(ExecState* exec) const
+void JSRopeString::resolveRope(ExecState* nullOrExecForOOM) const
 {
     ASSERT(isRope());
     
@@ -264,10 +264,10 @@ void JSRopeString::resolveRope(ExecState* exec) const
     if (is8Bit()) {
         LChar* buffer;
         if (auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer)) {
-            exec->vm().heap.reportExtraMemoryAllocated(newImpl->cost());
+            Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
             m_value = WTFMove(newImpl);
         } else {
-            outOfMemory(exec);
+            outOfMemory(nullOrExecForOOM);
             return;
         }
         resolveRopeInternal8NoSubstring(buffer);
@@ -278,10 +278,10 @@ void JSRopeString::resolveRope(ExecState* exec) const
     
     UChar* buffer;
     if (auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer)) {
-        exec->vm().heap.reportExtraMemoryAllocated(newImpl->cost());
+        Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
         m_value = WTFMove(newImpl);
     } else {
-        outOfMemory(exec);
+        outOfMemory(nullOrExecForOOM);
         return;
     }
     
@@ -380,16 +380,16 @@ void JSRopeString::resolveRopeSlowCase(UChar* buffer) const
     ASSERT(buffer == position);
 }
 
-void JSRopeString::outOfMemory(ExecState* exec) const
+void JSRopeString::outOfMemory(ExecState* nullOrExecForOOM) const
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     clearFibers();
     ASSERT(isRope());
     ASSERT(m_value.isNull());
-    if (exec)
-        throwOutOfMemoryError(exec, scope);
+    if (nullOrExecForOOM) {
+        VM& vm = nullOrExecForOOM->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        throwOutOfMemoryError(nullOrExecForOOM, scope);
+    }
 }
 
 JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const

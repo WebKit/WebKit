@@ -159,7 +159,7 @@ public:
 
     inline bool equal(ExecState*, JSString* other) const;
     const String& value(ExecState*) const;
-    const String& tryGetValue() const;
+    inline const String& tryGetValue() const;
     const StringImpl* tryGetValueImpl() const;
     ALWAYS_INLINE unsigned length() const { return m_length; }
 
@@ -218,7 +218,6 @@ private:
     mutable uint16_t m_flags { 0 };
     // The poison is strategically placed and holds a value such that the first
     // 64 bits of JSString look like a double JSValue.
-    uint16_t m_poison { 1 };
     mutable String m_value;
 
     friend class LLIntOffsetsExtractor;
@@ -418,12 +417,14 @@ private:
     friend JSValue jsStringFromRegisterArray(ExecState*, Register*, unsigned);
     friend JSValue jsStringFromArguments(ExecState*, JSValue);
 
-    JS_EXPORT_PRIVATE void resolveRope(ExecState*) const;
+    // If nullOrExecForOOM is null, resolveRope() will be do nothing in the event of an OOM error.
+    // The rope value will remain a null string in that case.
+    JS_EXPORT_PRIVATE void resolveRope(ExecState* nullOrExecForOOM) const;
     JS_EXPORT_PRIVATE void resolveRopeToAtomicString(ExecState*) const;
     JS_EXPORT_PRIVATE RefPtr<AtomicStringImpl> resolveRopeToExistingAtomicString(ExecState*) const;
     void resolveRopeSlowCase8(LChar*) const;
     void resolveRopeSlowCase(UChar*) const;
-    void outOfMemory(ExecState*) const;
+    void outOfMemory(ExecState* nullOrExecForOOM) const;
     void resolveRopeInternal8(LChar*) const;
     void resolveRopeInternal8NoSubstring(LChar*) const;
     void resolveRopeInternal16(UChar*) const;
@@ -548,8 +549,10 @@ inline const String& JSString::value(ExecState* exec) const
 
 inline const String& JSString::tryGetValue() const
 {
-    if (isRope())
-        static_cast<const JSRopeString*>(this)->resolveRope(0);
+    if (isRope()) {
+        // Pass nullptr for the ExecState so that resolveRope does not throw in the event of an OOM error.
+        static_cast<const JSRopeString*>(this)->resolveRope(nullptr);
+    }
     return m_value;
 }
 

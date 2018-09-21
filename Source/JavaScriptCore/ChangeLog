@@ -1,3 +1,24 @@
+2018-09-21  Mark Lam  <mark.lam@apple.com>
+
+        JSRopeString::resolveRope() wrongly assumes that tryGetValue() passes it a valid ExecState.
+        https://bugs.webkit.org/show_bug.cgi?id=189855
+        <rdar://problem/44680181>
+
+        Reviewed by Filip Pizlo.
+
+        tryGetValue() always passes a nullptr to JSRopeString::resolveRope() for the
+        ExecState* argument.  This is intentional so that resolveRope() does not throw
+        in the event of an OutOfMemory error.  Hence, JSRopeString::resolveRope() should
+        get the VM from the cell instead of via the ExecState.
+
+        Also removed an obsolete and unused field in JSString.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRope const):
+        (JSC::JSRopeString::outOfMemory const):
+        * runtime/JSString.h:
+        (JSC::JSString::tryGetValue const):
+
 2018-09-21  Michael Saboff  <msaboff@apple.com>
 
         Add functions to measure memory footprint to JSC
