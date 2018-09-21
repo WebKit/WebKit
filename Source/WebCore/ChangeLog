@@ -1,3 +1,27 @@
+2018-09-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Accelerated animations don't get suspended
+        https://bugs.webkit.org/show_bug.cgi?id=189783
+        <rdar://problem/43033568>
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/accelerated-animation-suspension.html
+
+        We used to set the flag that marked the timeline as suspended prior to notifying animations that they need to be suspended.
+        However, since the timeline was marked as suspended, querying the running state of the animations would indicate that the
+        animations weren't running since a suspended timeline would identify its animations as not running. As such we would fail
+        to pause the accelerated animations because they were already not marked as running. We now set the suspended flag on the
+        timeline _after_ suspending its animations.
+
+        We also fix a bug in the new internals.acceleratedAnimationsForElement() test function so that we read from the actual
+        CA animations and not from a stale list of animations which would not indicate the correct animation speeds.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::suspendAnimations):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::acceleratedAnimationsForTesting):
+
 2018-09-21  Zan Dobersek  <zdobersek@igalia.com>
 
         TransformationMatrix::toColumnMajorFloatArray() should return a std::array<> object

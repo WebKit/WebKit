@@ -4272,7 +4272,8 @@ Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesti
             size_t numAnimations = propertyAnimations.size();
             for (size_t i = 0; i < numAnimations; ++i) {
                 const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
-                animations.append({ animatedPropertyIDAsString(currAnimation.m_property), currAnimation.m_animation->speed() });
+                auto caAnimation = animatedLayer(currAnimation.m_property)->animationForKey(animationIdentifier(currAnimation.m_name, currAnimation.m_property, currAnimation.m_index, currAnimation.m_subIndex));
+                animations.append({ animatedPropertyIDAsString(currAnimation.m_property), caAnimation->speed() });
             }
         }
     }
