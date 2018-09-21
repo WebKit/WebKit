@@ -154,7 +154,8 @@ public:
     FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
     struct CommitState {
-        int treeDepth { 0 };
+        unsigned treeDepth { 0 };
+        unsigned totalBackdropFilterArea { 0 };
         bool ancestorHadChanges { false };
         bool ancestorHasTransformAnimation { false };
         bool ancestorStartedOrEndedTransformAnimation { false };
@@ -162,7 +163,7 @@ public:
         bool ancestorIsViewportConstrained { false };
     };
     bool needsCommit(const CommitState&);
-    void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
+    void recursiveCommitChanges(CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
     WEBCORE_EXPORT void flushCompositingState(const FloatRect&) override;
     WEBCORE_EXPORT void flushCompositingStateForThisLayerOnly() override;
@@ -424,7 +425,7 @@ private:
 
     void updateOpacityOnLayer();
     void updateFilters();
-    void updateBackdropFilters();
+    void updateBackdropFilters(CommitState&);
     void updateBackdropFiltersRect();
 
 #if ENABLE(CSS_COMPOSITING)

@@ -1,3 +1,41 @@
+2018-09-20  Dean Jackson  <dino@apple.com>
+
+        Restrict the total combined size of backdrop filters
+        https://bugs.webkit.org/show_bug.cgi?id=189812
+        <rdar://problem/44532782>
+
+        Reviewed by Simon Fraser.
+
+        If the total area of all backdrop filters on the page gets
+        too large, the universe collapses in on itself and we enter
+        the Quantum Realm (i.e. crash horribly).
+
+        Put a hard limit on the total coverage, and ignore any backdrop
+        filters after the limit. This might break some content, but
+        such content is likely not doing things in the most optimal manner.
+        There isn't any reason to have a backdrop larger than the size of
+        the screen, because you'd be better off applying a foreground
+        filter to the main content and showing something above it.
+
+        Tests: css3/filters/backdrop/resource-use-add-more-layers.html
+               css3/filters/backdrop/resource-use-excessive.html
+               css3/filters/backdrop/resource-use-ok.html
+               css3/filters/backdrop/resource-use-remove-some-layers.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp: Pick a fairly small maximum size. We
+        can consider increasing this if necessary, and as devices with less RAM are
+        upgraded.
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): Gather the accumulated size
+        of backdrop filters into the commit state as we are recursing through the tree.
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Force any layer
+        with backdrop filters, or any that is removing backdrop filters, into an update.
+        (WebCore::GraphicsLayerCA::updateBackdropFilters): Update the logic to first
+        check if this backdrop layer causes us to exceed the total allowed size, and if
+        it does, forbid it from getting the GraphicsLayer that composits the backdrop.
+
+        * platform/graphics/ca/GraphicsLayerCA.h: Remove const from some parameters so
+        that we can use the CommitState to hold the accumulated size.
+
 2018-09-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Adopt safe-area-insets on ImageDocument

@@ -47,6 +47,7 @@
 #include <QuartzCore/CATransform3D.h>
 #include <limits.h>
 #include <pal/spi/cf/CFUtilitiesSPI.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
@@ -88,7 +89,10 @@ static const int cMaxPixelDimension = 2048;
 #endif
 
 // Derived empirically: <rdar://problem/13401861>
-static const int cMaxLayerTreeDepth = 250;
+static const unsigned cMaxLayerTreeDepth = 250;
+
+// About 10 screens of an iPhone 6 Plus. <rdar://problem/44532782>
+static const unsigned cMaxTotalBackdropFilterArea = 1242 * 2208 * 10;
 
 // If we send a duration of 0 to CA, then it will use the default duration
 // of 250ms. So send a very small value instead.
@@ -1487,7 +1491,7 @@ bool GraphicsLayerCA::needsCommit(const CommitState& commitState)
 
 // rootRelativeTransformForScaling is a transform from the root, but for layers with transform animations, it cherry-picked the state of the
 // animation that contributes maximally to the scale (on every layer with animations down the hierarchy).
-void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
+void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
     if (!needsCommit(commitState))
         return;
@@ -1583,6 +1587,8 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         if (currentChild.isRunningTransformAnimation() || currentChild.hasDescendantsWithRunningTransformAnimations())
             hasDescendantsWithRunningTransformAnimations = true;
     }
+
+    commitState.totalBackdropFilterArea = childCommitState.totalBackdropFilterArea;
 
     if (GraphicsLayerCA* replicaLayer = downcast<GraphicsLayerCA>(m_replicaLayer.get()))
         replicaLayer->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
@@ -1778,8 +1784,10 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & FiltersChanged)
         updateFilters();
 
-    if (m_uncommittedChanges & BackdropFiltersChanged)
-        updateBackdropFilters();
+    // If there are backdrop filters, we need to always check the resource usage
+    // because something up the tree may have changed its usage.
+    if (m_uncommittedChanges & BackdropFiltersChanged || needsBackdrop())
+        updateBackdropFilters(commitState);
 
     if (m_uncommittedChanges & BackdropFiltersRectChanged)
         updateBackdropFiltersRect();
@@ -2126,9 +2134,24 @@ void GraphicsLayerCA::updateFilters()
     }
 }
 
-void GraphicsLayerCA::updateBackdropFilters()
+void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
 {
-    if (m_backdropFilters.isEmpty()) {
+    bool canHaveBackdropFilters = needsBackdrop();
+
+    if (canHaveBackdropFilters) {
+        Checked<unsigned, RecordOverflow> backdropFilterArea = Checked<unsigned>(static_cast<int>(m_backdropFiltersRect.rect().width())) * Checked<unsigned>(static_cast<int>(m_backdropFiltersRect.rect().height()));
+        if (backdropFilterArea.hasOverflowed())
+            canHaveBackdropFilters = false;
+        else {
+            Checked<unsigned, RecordOverflow> newTotalBackdropFilterArea = Checked<unsigned, RecordOverflow>(commitState.totalBackdropFilterArea) + backdropFilterArea;
+            if (newTotalBackdropFilterArea.hasOverflowed() || newTotalBackdropFilterArea.unsafeGet() > cMaxTotalBackdropFilterArea)
+                canHaveBackdropFilters = false;
+            else
+                commitState.totalBackdropFilterArea = newTotalBackdropFilterArea.unsafeGet();
+        }
+    }
+
+    if (!canHaveBackdropFilters) {
         if (m_backdropLayer) {
             m_backdropLayer->removeFromSuperlayer();
             m_backdropLayer->setOwner(nullptr);
@@ -2136,6 +2159,10 @@ void GraphicsLayerCA::updateBackdropFilters()
         }
         return;
     }
+
+    // If nothing actually changed, no need to touch the layer properties.
+    if (!(m_uncommittedChanges & BackdropFiltersChanged))
+        return;
 
     bool madeLayer = !m_backdropLayer;
     if (!m_backdropLayer) {

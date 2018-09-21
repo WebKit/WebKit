@@ -1,3 +1,27 @@
+2018-09-20  Dean Jackson  <dino@apple.com>
+
+        Restrict the total combined size of backdrop filters
+        https://bugs.webkit.org/show_bug.cgi?id=189812
+        <rdar://problem/44532782>
+
+        Reviewed by Simon Fraser.
+
+        Tests that have an acceptable number of backdrops, an excessive
+        number of backdrops, and then some that add and remove backdrops
+        at various points in the tree to confirm we do recursive checks
+        correctly.
+
+        * css3/filters/backdrop/layer-tree-as-text.js: Added.
+        * css3/filters/backdrop/resource-use-add-more-layers-expected.txt: Added.
+        * css3/filters/backdrop/resource-use-add-more-layers.html: Added.
+        * css3/filters/backdrop/resource-use-excessive-expected.txt: Added.
+        * css3/filters/backdrop/resource-use-excessive.html: Added.
+        * css3/filters/backdrop/resource-use-ok-expected.txt: Added.
+        * css3/filters/backdrop/resource-use-ok.html: Added.
+        * css3/filters/backdrop/resource-use-remove-some-layers-expected.txt: Added.
+        * css3/filters/backdrop/resource-use-remove-some-layers.html: Added.
+        * css3/filters/backdrop/resource-use.css: Added.
+
 2018-09-20  Truitt Savell  <tsavell@apple.com>
 
         Continued test gardening after r236236
