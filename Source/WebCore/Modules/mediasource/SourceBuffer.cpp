@@ -1629,7 +1629,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
         // to the decoded duration. When comparing deltas between decode timestamps, the decode duration, not the presentation.
         if (trackBuffer.lastDecodeTimestamp.isValid()) {
             MediaTime lastDecodeDuration = decodeTimestamp - trackBuffer.lastDecodeTimestamp;
-            if (lastDecodeDuration > trackBuffer.greatestDecodeDuration)
+            if (!trackBuffer.greatestDecodeDuration.isValid() || lastDecodeDuration > trackBuffer.greatestDecodeDuration)
                 trackBuffer.greatestDecodeDuration = lastDecodeDuration;
         }
 

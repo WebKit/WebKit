@@ -1,3 +1,20 @@
+2018-09-21  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Fix comparsion with uninitialized greatestDecodeDuration
+        https://bugs.webkit.org/show_bug.cgi?id=189805
+
+        Reviewed by Michael Catanzaro.
+
+        This bug was causing greatestDecodeDuration to never be initialized,
+        which in turned caused unintended frame erase as distant appends where
+        not being recognized as distinct coded frame groups.
+
+        A test reproducing the sequence of appends that caused unintended
+        frame deletion has also been added (media-source-append-out-of-order.html).
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2018-09-20  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer][MSE] Add a default sample duration
