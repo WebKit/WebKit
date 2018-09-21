@@ -147,9 +147,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     applyFilter(filterText)
     {
         let matchesName = this._nameElement.textContent.includes(filterText);
+        this._nameElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName, !!matchesName);
+
         let matchesValue = this._valueElement.textContent.includes(filterText);
+        this._valueElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName, !!matchesValue);
+
         let matches = matchesName || matchesValue;
-        this._contentElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName, matches);
         this._contentElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName, !matches);
         return matches;
     }
@@ -232,6 +235,33 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._warningElement.className = "warning";
         } else
             this._contentElement.append(" */");
+
+        if (!this._property.implicit && this._property.ownerStyle.type === WI.CSSStyleDeclaration.Type.Computed) {
+            let effectiveProperty = this._property.ownerStyle.nodeStyles.effectivePropertyForName(this._property.name);
+            if (effectiveProperty && !effectiveProperty.styleSheetTextRange)
+                effectiveProperty = effectiveProperty.relatedShorthandProperty;
+
+            let ownerRule = effectiveProperty ? effectiveProperty.ownerStyle.ownerRule : null;
+
+            let arrowElement = this._contentElement.appendChild(WI.createGoToArrowButton());
+            arrowElement.addEventListener("click", (event) => {
+                if (!effectiveProperty || !ownerRule || !event.altKey) {
+                    if (this._delegate.spreadsheetStylePropertyShowProperty)
+                        this._delegate.spreadsheetStylePropertyShowProperty(this, this._property);
+                    return;
+                }
+
+                let sourceCode = ownerRule.sourceCodeLocation.sourceCode;
+                let {startLine, startColumn} = effectiveProperty.styleSheetTextRange;
+                WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(startLine, startColumn), {
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                });
+            });
+
+            if (effectiveProperty && ownerRule)
+                arrowElement.title = WI.UIString("Option-click to show source");
+        }
 
         this.updateStatus();
     }

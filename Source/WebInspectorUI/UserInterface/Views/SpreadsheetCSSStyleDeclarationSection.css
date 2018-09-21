@@ -27,13 +27,11 @@
     margin: 0;
     padding: 0 0 var(--css-declaration-vertical-padding);
     font-family: Menlo, monospace;
+    font-size: 11px;
     color: hsl(0, 0%, 70%);
     background: white;
     border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
     -webkit-user-select: text;
-
-    --css-declaration-vertical-padding: 4px;
-    --css-declaration-horizontal-padding: 6px;
 }
 
 .spreadsheet-css-declaration :matches(.header, .header-media) {

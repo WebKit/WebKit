@@ -35,8 +35,14 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this.style = style;
         this._propertyViews = [];
 
-        this._inlineSwatchActive = false;
         this._focused = false;
+        this._inlineSwatchActive = false;
+
+        this._showsImplicitProperties = false;
+        this._alwaysShowPropertyNames = new Set;
+        this._propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.ShowAll;
+        this._hideFilterNonMatchingProperties = false;
+        this._sortPropertiesByName = false;
 
         this._propertyPendingStartEditing = null;
         this._pendingAddBlankPropertyIndexOffset = NaN;
@@ -47,7 +53,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     initialLayout()
     {
-        if (!this.style.editable)
+        if (!this._style || !this._style.editable)
             return;
 
         this.element.addEventListener("focus", () => { this.focused = true; }, true);
@@ -71,7 +77,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
         this.element.removeChildren();
 
-        let properties = this._propertiesToRender;
+        let properties = this.propertiesToRender;
         this.element.classList.toggle("no-properties", !properties.length);
 
         // FIXME: Only re-layout properties that have been modified and preserve focus whenever possible.
@@ -154,6 +160,77 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._updateStyleLock();
     }
 
+    set showsImplicitProperties(value)
+    {
+        if (value === this._showsImplicitProperties)
+            return;
+
+        this._showsImplicitProperties = value;
+
+        this.needsLayout();
+    }
+
+    set alwaysShowPropertyNames(propertyNames)
+    {
+        this._alwaysShowPropertyNames = new Set(propertyNames);
+
+        this.needsLayout();
+    }
+
+    set propertyVisibilityMode(propertyVisibilityMode)
+    {
+        if (this._propertyVisibilityMode === propertyVisibilityMode)
+            return;
+
+        this._propertyVisibilityMode = propertyVisibilityMode;
+
+        this.needsLayout();
+    }
+
+    set hideFilterNonMatchingProperties(value)
+    {
+        if (value === this._hideFilterNonMatchingProperties)
+            return;
+
+        this._hideFilterNonMatchingProperties = value;
+
+        this.needsLayout();
+    }
+
+    set sortPropertiesByName(value)
+    {
+        if (value === this._sortPropertiesByName)
+            return;
+
+        this._sortPropertiesByName = value;
+        this.needsLayout();
+    }
+
+    get propertiesToRender()
+    {
+        let properties = [];
+        if (!this._style)
+            return properties;
+
+        if (this._style._styleSheetTextRange)
+            properties = this._style.allVisibleProperties;
+        else
+            properties = this._style.allProperties;
+
+        if (this._sortPropertiesByName)
+            properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
+
+        return properties.filter((property) => {
+            if (!property.variable && this._propertyVisibilityMode === WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideNonVariables)
+                return false;
+
+            if (property.variable && this._propertyVisibilityMode === WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideVariables)
+                return false;
+
+            return !property.implicit || this._showsImplicitProperties || this._alwaysShowPropertyNames.has(property.canonicalName);
+        });
+    }
+
     startEditingFirstProperty()
     {
         let firstEditableProperty = this._editablePropertyAfter(-1);
@@ -201,7 +278,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             return false;
         };
 
-        for (let cssProperty of this.style.properties) {
+        for (let cssProperty of this._style.properties) {
             if (propertiesMatch(cssProperty)) {
                 let propertyView = cssProperty.__propertyView;
                 if (propertyView) {
@@ -229,6 +306,29 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._propertyPendingStartEditing = this._style.newBlankProperty(index);
         this.needsLayout();
     }
+
+    applyFilter(filterText)
+    {
+        this._filterText = filterText;
+
+        if (!this.didInitialLayout)
+            return;
+
+        let matches = false;
+        for (let propertyView of this._propertyViews) {
+            if (propertyView.applyFilter(this._filterText)) {
+                matches = true;
+
+                if (this._hideFilterNonMatchingProperties)
+                    this.element.append(propertyView.element);
+            } else if (this._hideFilterNonMatchingProperties)
+                propertyView.element.remove();
+        }
+
+        this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, {matches});
+    }
+
+    // SpreadsheetStyleProperty delegate
 
     spreadsheetStylePropertyFocusMoved(propertyView, {direction, willRemoveProperty})
     {
@@ -277,8 +377,6 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         }
     }
 
-    // SpreadsheetStyleProperty delegate
-
     spreadsheetStylePropertyAddBlankPropertySoon(propertyView, {index})
     {
         if (isNaN(index))
@@ -296,6 +394,12 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._focused = false;
     }
 
+    spreadsheetStylePropertyShowProperty(propertyView, property)
+    {
+        if (this._delegate.spreadsheetCSSStyleDeclarationEditorShowProperty)
+            this._delegate.spreadsheetCSSStyleDeclarationEditorShowProperty(this, property);
+    }
+
     stylePropertyInlineSwatchActivated()
     {
         this.inlineSwatchActive = true;
@@ -306,31 +410,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this.inlineSwatchActive = false;
     }
 
-    applyFilter(filterText)
-    {
-        this._filterText = filterText;
-
-        if (!this.didInitialLayout)
-            return;
-
-        let matches = false;
-        for (let propertyView of this._propertyViews) {
-            if (propertyView.applyFilter(this._filterText))
-                matches = true;
-        }
-
-        this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, {matches});
-    }
-
     // Private
-
-    get _propertiesToRender()
-    {
-        if (this._style._styleSheetTextRange)
-            return this._style.allVisibleProperties;
-
-        return this._style.allProperties;
-    }
 
     _editablePropertyAfter(propertyIndex)
     {
@@ -370,7 +450,10 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     _updateStyleLock()
     {
-        this.style.locked = this._focused || this._inlineSwatchActive;
+        if (!this._style)
+            return;
+
+        this._style.locked = this._focused || this._inlineSwatchActive;
     }
 };
 
@@ -379,3 +462,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor.Event = {
 };
 
 WI.SpreadsheetCSSStyleDeclarationEditor.StyleClassName = "spreadsheet-style-declaration-editor";
+
+WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode = {
+    ShowAll: Symbol("variable-visibility-show-all"),
+    HideVariables: Symbol("variable-visibility-hide-variables"),
+    HideNonVariables: Symbol("variable-visibility-hide-non-variables"),
+};

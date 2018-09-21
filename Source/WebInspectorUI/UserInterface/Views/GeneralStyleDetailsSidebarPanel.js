@@ -165,8 +165,6 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
             this.contentView.element.appendChild(this._forcedPseudoClassContainer);
         }
 
-        this._panel.addEventListener(WI.StyleDetailsPanel.Event.Refreshed, this._filterDidChange, this);
-
         this._showPanel(this._panel);
 
         let optionsContainer = this.element.createChild("div", "options-container");

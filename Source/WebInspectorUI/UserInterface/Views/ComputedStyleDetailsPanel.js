@@ -31,47 +31,10 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this._computedStyleShowAllSetting = new WI.Setting("computed-style-show-all", false);
 
-        this.cssStyleDeclarationTextEditorShouldAddPropertyGoToArrows = true;
+        this._filterText = null;
     }
 
     // Public
-
-    cssStyleDeclarationTextEditorShowProperty(property, showSource)
-    {
-        function delegateShowProperty() {
-            if (typeof this._delegate.computedStyleDetailsPanelShowProperty === "function")
-                this._delegate.computedStyleDetailsPanelShowProperty(property);
-        }
-
-        if (!showSource) {
-            delegateShowProperty.call(this);
-            return;
-        }
-
-        let effectiveProperty = this._nodeStyles.effectivePropertyForName(property.name);
-        if (!effectiveProperty || !effectiveProperty.styleSheetTextRange) {
-            if (!effectiveProperty.relatedShorthandProperty) {
-                delegateShowProperty.call(this);
-                return;
-            }
-            effectiveProperty = effectiveProperty.relatedShorthandProperty;
-        }
-
-        let ownerRule = effectiveProperty.ownerStyle.ownerRule;
-        if (!ownerRule) {
-            delegateShowProperty.call(this);
-            return;
-        }
-
-        let sourceCode = ownerRule.sourceCodeLocation.sourceCode;
-        let {startLine, startColumn} = effectiveProperty.styleSheetTextRange;
-
-        const options = {
-            ignoreNetworkTab: true,
-            ignoreSearchTab: true,
-        };
-        WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(startLine, startColumn), options);
-    }
 
     refresh(significantChange)
     {
@@ -83,19 +46,36 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         }
 
         this._propertiesTextEditor.style = this.nodeStyles.computedStyle;
+        this._propertiesSection.element.classList.toggle("hidden", !this._propertiesTextEditor.propertiesToRender.length);
+
         this._variablesTextEditor.style = this.nodeStyles.computedStyle;
+        this._variablesSection.element.classList.toggle("hidden", !this._variablesTextEditor.propertiesToRender.length);
+
         this._boxModelDiagramRow.nodeStyles = this.nodeStyles;
 
-        super.refresh();
+        if (this._filterText)
+            this.applyFilter(this._filterText);
 
-        this._variablesSection.element.classList.toggle("hidden", !this._variablesTextEditor.shownProperties.length);
+        super.refresh();
     }
 
-    filterDidChange(filterBar)
+    applyFilter(filterText)
     {
-        let filterText = filterBar.filters.text;
-        this._propertiesTextEditor.removeNonMatchingProperties(filterText);
-        this._variablesTextEditor.removeNonMatchingProperties(filterText);
+        this._filterText = filterText;
+
+        if (!this.didInitialLayout)
+            return;
+
+        this._propertiesTextEditor.applyFilter(filterText);
+        this._variablesTextEditor.applyFilter(filterText);
+    }
+
+    // SpreadsheetCSSStyleDeclarationEditor delegate
+
+    spreadsheetCSSStyleDeclarationEditorShowProperty(editor, property)
+    {
+        if (this._delegate.computedStyleDetailsPanelShowProperty)
+            this._delegate.computedStyleDetailsPanelShowProperty(property);
     }
 
     focusFirstSection()
@@ -142,24 +122,28 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._computedStyleShowAllCheckbox.addEventListener("change", this._computedStyleShowAllCheckboxValueChanged.bind(this));
         computedStyleShowAllLabel.appendChild(this._computedStyleShowAllCheckbox);
 
-        this._propertiesTextEditor = new WI.CSSStyleDeclarationTextEditor(this);
-        this._propertiesTextEditor.propertyVisibilityMode = WI.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.HideVariables;
+        this._propertiesTextEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this);
+        this._propertiesTextEditor.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideVariables;
         this._propertiesTextEditor.showsImplicitProperties = this._computedStyleShowAllSetting.value;
         this._propertiesTextEditor.alwaysShowPropertyNames = ["display", "width", "height"];
-        this._propertiesTextEditor.sortProperties = true;
+        this._propertiesTextEditor.hideFilterNonMatchingProperties = true;
+        this._propertiesTextEditor.sortPropertiesByName = true;
+        this._propertiesTextEditor.addEventListener(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, this._handleEditorFilterApplied, this);
 
         let propertiesRow = new WI.DetailsSectionRow;
         let propertiesGroup = new WI.DetailsSectionGroup([propertiesRow]);
-        let propertiesSection = new WI.DetailsSection("computed-style-properties", WI.UIString("Properties"), [propertiesGroup], computedStyleShowAllLabel);
-        propertiesSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handlePropertiesSectionCollapsedStateChanged, this);
+        this._propertiesSection = new WI.DetailsSection("computed-style-properties", WI.UIString("Properties"), [propertiesGroup], computedStyleShowAllLabel);
+        this._propertiesSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handlePropertiesSectionCollapsedStateChanged, this);
 
         this.addSubview(this._propertiesTextEditor);
 
         propertiesRow.element.appendChild(this._propertiesTextEditor.element);
 
-        this._variablesTextEditor = new WI.CSSStyleDeclarationTextEditor(this);
-        this._variablesTextEditor.propertyVisibilityMode = WI.CSSStyleDeclarationTextEditor.PropertyVisibilityMode.HideNonVariables;
-        this._variablesTextEditor.sortProperties = true;
+        this._variablesTextEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this);
+        this._variablesTextEditor.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideNonVariables;
+        this._variablesTextEditor.hideFilterNonMatchingProperties = true;
+        this._variablesTextEditor.sortPropertiesByName = true;
+        this._variablesTextEditor.addEventListener(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, this._handleEditorFilterApplied, this);
 
         let variablesRow = new WI.DetailsSectionRow;
         let variablesGroup = new WI.DetailsSectionGroup([variablesRow]);
@@ -170,15 +154,22 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         variablesRow.element.appendChild(this._variablesTextEditor.element);
 
-        this.element.appendChild(propertiesSection.element);
+        this.element.appendChild(this._propertiesSection.element);
         this.element.appendChild(this._variablesSection.element);
 
         this._boxModelDiagramRow = new WI.BoxModelDetailsSectionRow;
 
         let boxModelGroup = new WI.DetailsSectionGroup([this._boxModelDiagramRow]);
-        let boxModelSection = new WI.DetailsSection("style-box-model", WI.UIString("Box Model"), [boxModelGroup]);
+        let boxModelSection = new WI.DetailsSection("computed-style-box-model", WI.UIString("Box Model"), [boxModelGroup]);
 
         this.element.appendChild(boxModelSection.element);
+    }
+
+    filterDidChange(filterBar)
+    {
+        super.filterDidChange(filterBar);
+
+        this.applyFilter(filterBar.filters.text);
     }
 
     // Private
@@ -188,19 +179,30 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         let checked = this._computedStyleShowAllCheckbox.checked;
         this._computedStyleShowAllSetting.value = checked;
         this._propertiesTextEditor.showsImplicitProperties = checked;
-        this._propertiesTextEditor.updateLayout();
     }
 
     _handlePropertiesSectionCollapsedStateChanged(event)
     {
         if (event && event.data && !event.data.collapsed)
-            this._propertiesTextEditor.refresh();
+            this._propertiesTextEditor.needsLayout();
     }
 
     _handleVariablesSectionCollapsedStateChanged(event)
     {
         if (event && event.data && !event.data.collapsed)
-            this._variablesTextEditor.refresh();
+            this._variablesTextEditor.needsLayout();
+    }
+
+    _handleEditorFilterApplied(event)
+    {
+        let section = null;
+        if (event.target === this._propertiesTextEditor)
+            section = this._propertiesSection;
+        else if (event.target === this._variablesTextEditor)
+            section = this._variablesSection;
+
+        if (section)
+            section.element.classList.toggle("hidden", !event.data.matches);
     }
 };
 

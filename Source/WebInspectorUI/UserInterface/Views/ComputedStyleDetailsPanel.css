@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.computed-style-properties.details-section {
+.details-section:matches(.computed-style-properties, .computed-style-box-model):not(.collapsed) > :matches(.header, .content) {
     background-color: white;
 }
 
-.details-section > .content > .group > .row .CodeMirror-code pre .go-to-arrow {
+.computed-style-properties .property .go-to-arrow {
     display: none;
     position: absolute;
     width: 12px;
@@ -35,12 +35,8 @@
     vertical-align: text-bottom;
 }
 
-.details-section > .content > .group > .row .CodeMirror-code pre:hover .go-to-arrow {
+.computed-style-properties .property:hover .go-to-arrow {
     display: initial;
-}
-
-.details-section.style-box-model:not(.collapsed) > :matches(.header, .content) {
-    background-color: white;
 }
 
 @media (prefers-dark-interface) {

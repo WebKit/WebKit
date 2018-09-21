@@ -123,6 +123,9 @@
     --navigation-bar-height: 29px;
 
     --slider-height: 11px;
+
+    --css-declaration-vertical-padding: 4px;
+    --css-declaration-horizontal-padding: 6px;
 }
 
 body.window-inactive {

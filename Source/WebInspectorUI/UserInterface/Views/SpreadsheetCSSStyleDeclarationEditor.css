@@ -26,6 +26,10 @@
 .spreadsheet-style-declaration-editor {
     position: relative;
     clear: both;
+    font-family: Menlo, monospace;
+    font-size: 11px;
+    color: hsl(0, 0%, 70%);
+    -webkit-user-select: text;
 }
 
 .spreadsheet-style-declaration-editor .property {
@@ -116,7 +120,7 @@
     -webkit-clip-path: polygon(0% 50%, 6px 0%, 100% 0%, 100% 100%, 6px 100%);
 }
 
-.spreadsheet-style-declaration-editor .property.not-inherited .content > * {
+.spreadsheet-style-declaration-editor .property:matches(.implicit, .not-inherited) .content > * {
     opacity: 0.5;
 }
 

@@ -1,3 +1,96 @@
+2018-09-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Styles Redesign: rework Computed panel to use Spreadsheet classes
+        https://bugs.webkit.org/show_bug.cgi?id=183627
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel):
+        (WI.ComputedStyleDetailsPanel.prototype.refresh):
+        (WI.ComputedStyleDetailsPanel.prototype.applyFilter):
+        (WI.ComputedStyleDetailsPanel.prototype.spreadsheetCSSStyleDeclarationEditorShowProperty):
+        (WI.ComputedStyleDetailsPanel.prototype.initialLayout):
+        (WI.ComputedStyleDetailsPanel.prototype.filterDidChange):
+        (WI.ComputedStyleDetailsPanel.prototype._computedStyleShowAllCheckboxValueChanged):
+        (WI.ComputedStyleDetailsPanel.prototype._handlePropertiesSectionCollapsedStateChanged):
+        (WI.ComputedStyleDetailsPanel.prototype._handleVariablesSectionCollapsedStateChanged):
+        (WI.ComputedStyleDetailsPanel.prototype._handleEditorFilterApplied):
+        (WI.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorShowProperty.delegateShowProperty): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorShowProperty): Deleted.
+        Replace CSSStyleDeclarationTextEditor with SpreadsheetCSSStyleDeclarationEditor.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set showsImplicitProperties):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set alwaysShowPropertyNames):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set propertyVisibilityMode):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set hideFilterNonMatchingProperties):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set sortPropertiesByName): Added.
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get propertiesToRender):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.highlightProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.applyFilter):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyShowProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._updateStyleLock):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get _propertiesToRender): Deleted.
+        Create setters for the "special" functionality required by the Computed panel and tie them
+        into the logic that determines what properties are rendered.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        Create go-to arrow if the property has a shorthand version or a source code location.
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.initialLayout):
+        Don't reapply the filter after refreshing, as the current panel will handle applying it.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.details-section:matches(.computed-style-properties, .computed-style-box-model):not(.collapsed) > :matches(.header, .content)):
+        (.computed-style-properties .property .go-to-arrow):
+        (.computed-style-properties .property:hover .go-to-arrow):
+        (.computed-style-properties.details-section): Deleted.
+        (.details-section > .content > .group > .row .CodeMirror-code pre .go-to-arrow): Deleted.
+        (.details-section > .content > .group > .row .CodeMirror-code pre:hover .go-to-arrow): Deleted.
+        (.details-section.style-box-model:not(.collapsed) > :matches(.header, .content)): Deleted.
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section.computed-style-properties:not(.collapsed) > .header): Deleted.
+        Consolidate Computed panel styles to it's respective CSS file.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor):
+        (.spreadsheet-style-declaration-editor .property:matches(.implicit, .not-inherited) .content > *):
+        (.spreadsheet-style-declaration-editor .property.not-inherited .content > *): Deleted.
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Move `css-declaration` padding variables so they can be used by SpreadsheetCSSStyleDeclarationEditor
+        without a parent SpreadsheetCSSStyleDeclarationSection.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css:
+        (.style-spreadsheet .style-rule): Deleted.
+        (.style-spreadsheet .selector-line): Deleted.
+        (.style-spreadsheet .selector): Deleted.
+        (.style-spreadsheet :matches(.selector .matched, .selector:focus)): Deleted.
+        (.style-spreadsheet .name): Deleted.
+        (.style-spreadsheet .value): Deleted.
+        (.style-spreadsheet :matches(.selector, .name, .value)): Deleted.
+        (.style-spreadsheet :matches(.selector, .name, .value):focus): Deleted.
+        (.style-spreadsheet .selector-inline): Deleted.
+        (.style-spreadsheet .property): Deleted.
+        (.style-spreadsheet .property-disabled,): Deleted.
+        (.style-spreadsheet .property-disabled :matches(.name, .value)): Deleted.
+        (.style-spreadsheet .styles-source): Deleted.
+        (.style-spreadsheet :matches(a, .node-link)): Deleted.
+        (.style-spreadsheet :matches(a, .node-link):hover): Deleted.
+        (.style-spreadsheet .declarations): Deleted.
+        (.style-spreadsheet input[type="checkbox"]): Deleted.
+        (.style-spreadsheet input[type="checkbox"]:not(:checked)): Deleted.
+        (.style-spreadsheet .declarations:hover input[type="checkbox"]): Deleted.
+        Drive-by fix: remove styles that don't apply to anything.
+
 2018-09-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: move DarkMode.css rules into appropriate CSS files

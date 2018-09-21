@@ -107,10 +107,6 @@ body[dir=rtl] .details-section > .header > .options {
     border-bottom: 1px solid hsl(0, 0%, 87%);
 }
 
-.details-section.computed-style-properties:not(.collapsed) > .header {
-    background-color: hsl(0, 0%, 100%);
-}
-
 .details-section > .header::before {
     display: block;
     width: 21px;
