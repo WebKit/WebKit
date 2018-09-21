@@ -1,3 +1,121 @@
+2018-09-21  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Introduce the concept of CDMInstanceSession.
+        https://bugs.webkit.org/show_bug.cgi?id=189725
+
+        Reviewed by Eric Carlson.
+
+        Currently, the same CDMInstance owned by a MediaKeys object is passed to every MediaKeySession created by that
+        MediaKeys, and since the CDMInstance has only a single CDMInstanceClient, subsequent MediaKeySessions prevent
+        previous ones from getting updates.
+
+        Add a new virtual interface, CDMInstanceSession, to be passed to MediaKeySession upon creation. Refactor
+        CDMInstanceClearKey and CDMInstanceFairPlayStreamingAVFObjC to adopt this new interface.
+
+        Drive-by fixes: Made a number of virtual overrides in final classes final themselves.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::create):
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::load):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::remove):
+        (WebCore::MediaKeySession::updateKeyStatuses):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::createSession):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/encryptedmedia/CDMInstance.h:
+        (WebCore::CDMInstance::setHDCPStatus):
+        (WebCore::CDMInstance::setClient): Deleted.
+        (WebCore::CDMInstance::clearClient): Deleted.
+        * platform/encryptedmedia/CDMInstanceSession.h: Copied from Source/WebCore/platform/encryptedmedia/CDMInstance.h.
+        (WebCore::CDMInstanceSession::setClient):
+        (WebCore::CDMInstanceSession::clearClient):
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::parseLicenseFormat):
+        (WebCore::CDMInstanceClearKey::keySystem const):
+        (WebCore::CDMInstanceClearKey::createSession):
+        (WebCore::CDMInstanceSessionClearKey::requestLicense):
+        (WebCore::CDMInstanceSessionClearKey::keys const):
+        (WebCore::CDMInstanceSessionClearKey::updateLicense):
+        (WebCore::CDMInstanceSessionClearKey::loadSession):
+        (WebCore::CDMInstanceSessionClearKey::closeSession):
+        (WebCore::CDMInstanceSessionClearKey::removeSessionData):
+        (WebCore::CDMInstanceSessionClearKey::storeRecordOfKeyUsage):
+        (WebCore::CDMInstanceClearKey::requestLicense): Deleted.
+        (WebCore::CDMInstanceClearKey::keys const): Deleted.
+        (WebCore::CDMInstanceClearKey::updateLicense): Deleted.
+        (WebCore::CDMInstanceClearKey::loadSession): Deleted.
+        (WebCore::CDMInstanceClearKey::closeSession): Deleted.
+        (WebCore::CDMInstanceClearKey::removeSessionData): Deleted.
+        (WebCore::CDMInstanceClearKey::storeRecordOfKeyUsage): Deleted.
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::createSession):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::processContentKeyRequestForSession):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::processNextContentKeyRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::keySystem const):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvidePersistableRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::requestDidSucceed):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::shouldRetryRequestForReason):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::sessionIdentifierChanged):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingAVFObjC):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::storeRecordOfKeyUsage):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::setClient):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::clearClient):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvidePersistableRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::shouldRetryRequestForReason):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::sessionIdentifierChanged):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::isLicenseTypeSupported const):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::isLicenseTypeSupported const): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::keyIDs): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::requestLicense): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::updateLicense): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::loadSession): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::closeSession): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::removeSessionData): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::storeRecordOfKeyUsage): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setClient): Deleted.
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::clearClient): Deleted.
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::keySystem const):
+        (WebCore::MockCDMInstance::createSession):
+        (WebCore::MockCDMInstanceSession::MockCDMInstanceSession):
+        (WebCore::MockCDMInstanceSession::requestLicense):
+        (WebCore::MockCDMInstanceSession::updateLicense):
+        (WebCore::MockCDMInstanceSession::loadSession):
+        (WebCore::MockCDMInstanceSession::closeSession):
+        (WebCore::MockCDMInstanceSession::removeSessionData):
+        (WebCore::MockCDMInstanceSession::storeRecordOfKeyUsage):
+        (WebCore::MockCDMInstance::requestLicense): Deleted.
+        (WebCore::MockCDMInstance::updateLicense): Deleted.
+        (WebCore::MockCDMInstance::loadSession): Deleted.
+        (WebCore::MockCDMInstance::closeSession): Deleted.
+        (WebCore::MockCDMInstance::removeSessionData): Deleted.
+        (WebCore::MockCDMInstance::storeRecordOfKeyUsage): Deleted.
+        * testing/MockCDMFactory.h:
+        (WebCore::MockCDMInstance::factory const):
+        (WebCore::MockCDMInstance::distinctiveIdentifiersAllowed const):
+        (WebCore::MockCDMInstance::persistentStateAllowed const):
+
 2018-09-21  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Fix comparsion with uninitialized greatestDecodeDuration

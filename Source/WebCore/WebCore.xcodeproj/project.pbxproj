@@ -13324,6 +13324,7 @@
 		CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMMessageType.h; sourceTree = "<group>"; };
 		CD94A5DA1F71CBB000F525C5 /* CDMClearKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMClearKey.h; sourceTree = "<group>"; };
 		CD94A5DB1F71CBB000F525C5 /* CDMClearKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMClearKey.cpp; sourceTree = "<group>"; };
+		CD9D375A215163E40049657B /* CDMInstanceSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDMInstanceSession.h; sourceTree = "<group>"; };
 		CD9D82731C7AE535006FF066 /* TextureCacheCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextureCacheCV.mm; sourceTree = "<group>"; };
 		CD9D82741C7AE535006FF066 /* TextureCacheCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureCacheCV.h; sourceTree = "<group>"; };
 		CD9D82771C7B8EE1006FF066 /* VideoTextureCopierCV.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoTextureCopierCV.cpp; sourceTree = "<group>"; };
@@ -24777,6 +24778,7 @@
 				CD94A5D11F71CB6B00F525C5 /* CDMFactory.cpp */,
 				CD94A5D21F71CB6B00F525C5 /* CDMFactory.h */,
 				CD94A5CE1F71CB6A00F525C5 /* CDMInstance.h */,
+				CD9D375A215163E40049657B /* CDMInstanceSession.h */,
 				CD94A5D41F71CB6C00F525C5 /* CDMKeyStatus.h */,
 				CD94A5CD1F71CB6900F525C5 /* CDMKeySystemConfiguration.h */,
 				CD94A5D31F71CB6C00F525C5 /* CDMMediaCapability.h */,

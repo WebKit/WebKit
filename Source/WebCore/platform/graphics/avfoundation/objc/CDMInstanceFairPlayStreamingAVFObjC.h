@@ -28,9 +28,10 @@
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
 
 #include "CDMInstance.h"
+#include "CDMInstanceSession.h"
 #include <wtf/Function.h>
+#include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS AVContentKeyRequest;
@@ -41,6 +42,8 @@ OBJC_CLASS NSURL;
 OBJC_CLASS WebCoreFPSContentKeySessionDelegate;
 
 namespace WebCore {
+
+class CDMInstanceSessionFairPlayStreamingAVFObjC;
 
 class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
 public:
@@ -58,15 +61,9 @@ public:
     SuccessValue setPersistentStateAllowed(bool) final;
     SuccessValue setServerCertificate(Ref<SharedBuffer>&&) final;
     SuccessValue setStorageDirectory(const String&) final;
+    RefPtr<CDMInstanceSession> createSession() final;
 
-    void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) final;
-    void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback) final;
-    void loadSession(LicenseType, const String&, const String&, LoadSessionCallback) final;
-    void closeSession(const String&, CloseSessionCallback) final;
-    void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback) final;
-    void storeRecordOfKeyUsage(const String&) final;
-    void setClient(CDMInstanceClient&) final;
-    void clearClient() final;
+    void processContentKeyRequestForSession(CDMInstanceSessionFairPlayStreamingAVFObjC&, RetainPtr<NSString>&& identifier, RetainPtr<NSData>&& initData);
 
     const String& keySystem() const final;
 
@@ -79,21 +76,62 @@ public:
     void sessionIdentifierChanged(NSData *);
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
 
+    NSURL *storageDirectory() const { return m_storageDirectory.get(); }
     AVContentKeySession *contentKeySession() { return m_session.get(); }
+    bool persistentStateAllowed() const { return m_persistentStateAllowed; }
+    SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
 
 private:
-    bool isLicenseTypeSupported(LicenseType) const;
+    void processNextContentKeyRequest();
 
-    Vector<Ref<SharedBuffer>> keyIDs();
+    struct ContentKeyRequest {
+        WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC> sessionInstance;
+        RetainPtr<NSString> identifier;
+        RetainPtr<NSData> initData;
+    };
+    Vector<ContentKeyRequest> m_currentRequests;
+
+    HashMap<RetainPtr<AVContentKeyRequest>, WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC>> m_requestMap;
 
     RefPtr<SharedBuffer> m_serverCertificate;
     bool m_persistentStateAllowed { true };
     RetainPtr<NSURL> m_storageDirectory;
     RetainPtr<AVContentKeySession> m_session;
-    RetainPtr<AVContentKeyRequest> m_request;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
+};
+
+class CDMInstanceSessionFairPlayStreamingAVFObjC final : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC> {
+public:
+    CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
+
+    // CDMInstanceSession
+    void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback&&) final;
+    void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
+    void closeSession(const String&, CloseSessionCallback&&) final;
+    void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
+    void storeRecordOfKeyUsage(const String&) final;
+    void setClient(WeakPtr<CDMInstanceSessionClient>&&) final;
+    void clearClient() final;
+
+    void didProvideRequest(AVContentKeyRequest*);
+    void didProvideRenewingRequest(AVContentKeyRequest*);
+    void didProvidePersistableRequest(AVContentKeyRequest*);
+    void didFailToProvideRequest(AVContentKeyRequest*, NSError*);
+    void requestDidSucceed(AVContentKeyRequest*);
+    bool shouldRetryRequestForReason(AVContentKeyRequest*, NSString*);
+    void sessionIdentifierChanged(NSData*);
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
+
+    Vector<Ref<SharedBuffer>> keyIDs();
+
+private:
+    bool isLicenseTypeSupported(LicenseType) const;
+
+    Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;
+    RetainPtr<AVContentKeyRequest> m_request;
     Vector<RetainPtr<NSData>> m_expiredSessions;
-    CDMInstanceClient* m_client;
+    WeakPtr<CDMInstanceSessionClient> m_client;
     String m_sessionId;
 
     LicenseCallback m_requestLicenseCallback;
@@ -101,6 +139,7 @@ private:
     CloseSessionCallback m_closeSessionCallback;
     RemoveSessionDataCallback m_removeSessionDataCallback;
 };
+
 }
 
 SPECIALIZE_TYPE_TRAITS_CDM_INSTANCE(WebCore::CDMInstanceFairPlayStreamingAVFObjC, WebCore::CDMInstance::ImplementationType::FairPlayStreaming)

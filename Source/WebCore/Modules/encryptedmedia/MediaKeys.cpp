@@ -64,10 +64,14 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContex
     if (!m_implementation->supportsSessions())
         return Exception(InvalidStateError);
 
+    auto instanceSession = m_instance->createSession();
+    if (!instanceSession)
+        return Exception(InvalidStateError);
+
     // 3. Let session be a new MediaKeySession object, and initialize it as follows:
     // NOTE: Continued in MediaKeySession.
     // 4. Return session.
-    auto session = MediaKeySession::create(context, makeWeakPtr(*this), sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), m_instance.copyRef());
+    auto session = MediaKeySession::create(context, makeWeakPtr(*this), sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), instanceSession.releaseNonNull());
     m_sessions.append(session.copyRef());
     return WTFMove(session);
 }

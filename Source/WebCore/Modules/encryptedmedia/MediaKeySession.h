@@ -31,7 +31,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "ActiveDOMObject.h"
-#include "CDMInstance.h"
+#include "CDMInstanceSession.h"
 #include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
@@ -52,9 +52,9 @@ class MediaKeyStatusMap;
 class MediaKeys;
 class SharedBuffer;
 
-class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CanMakeWeakPtr<MediaKeySession>, public CDMInstanceClient {
+class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CanMakeWeakPtr<MediaKeySession>, public CDMInstanceSessionClient {
 public:
-    static Ref<MediaKeySession> create(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
+    static Ref<MediaKeySession> create(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     virtual ~MediaKeySession();
 
     using RefCounted<MediaKeySession>::ref;
@@ -78,14 +78,14 @@ public:
     const Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }
 
 private:
-    MediaKeySession(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
+    MediaKeySession(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
     void updateExpiration(double);
     void sessionClosed();
     String mediaKeysStorageDirectory() const;
 
-    // CDMInstanceClient
-    void updateKeyStatuses(CDMInstanceClient::KeyStatusVector&&) override;
+    // CDMInstanceSessionClient
+    void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }
@@ -110,13 +110,14 @@ private:
     bool m_useDistinctiveIdentifier;
     MediaKeySessionType m_sessionType;
     Ref<CDM> m_implementation;
-    Ref<CDMInstance> m_instance;
+    Ref<CDMInstanceSession> m_instanceSession;
     GenericEventQueue m_eventQueue;
     GenericTaskQueue<Timer> m_taskQueue;
     Vector<Ref<SharedBuffer>> m_recordOfKeyUsage;
     double m_firstDecryptTime { 0 };
     double m_latestDecryptTime { 0 };
     Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>> m_statuses;
+    WeakPtrFactory<CDMInstanceSessionClient> m_cdmInstanceClientWeakPtrFactory;
 };
 
 } // namespace WebCore

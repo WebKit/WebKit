@@ -30,6 +30,7 @@
 #include "CDM.h"
 #include "CDMFactory.h"
 #include "CDMInstance.h"
+#include "CDMInstanceSession.h"
 #include "CDMPrivate.h"
 #include "MediaKeysRequirement.h"
 #include <wtf/HashMap.h>
@@ -121,9 +122,13 @@ private:
     WeakPtr<MockCDMFactory> m_factory;
 };
 
-class MockCDMInstance : public CDMInstance {
+class MockCDMInstance : public CDMInstance, public CanMakeWeakPtr<MockCDMInstance> {
 public:
     MockCDMInstance(WeakPtr<MockCDM>);
+
+    MockCDMFactory* factory() const { return m_cdm ? m_cdm->factory() : nullptr; }
+    bool distinctiveIdentifiersAllowed() const { return m_distinctiveIdentifiersAllowed; }
+    bool persistentStateAllowed() const { return m_persistentStateAllowed; }
 
 private:
     ImplementationType implementationType() const final { return ImplementationType::Mock; }
@@ -132,18 +137,27 @@ private:
     SuccessValue setPersistentStateAllowed(bool) final;
     SuccessValue setServerCertificate(Ref<SharedBuffer>&&) final;
     SuccessValue setStorageDirectory(const String&) final;
-    void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) final;
-    void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback) final;
-    void loadSession(LicenseType, const String&, const String&, LoadSessionCallback) final;
-    void closeSession(const String&, CloseSessionCallback) final;
-    void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback) final;
-    void storeRecordOfKeyUsage(const String&) final;
-
     const String& keySystem() const final;
+    RefPtr<CDMInstanceSession> createSession() final;
 
     WeakPtr<MockCDM> m_cdm;
     bool m_distinctiveIdentifiersAllowed { true };
     bool m_persistentStateAllowed { true };
+};
+
+class MockCDMInstanceSession : public CDMInstanceSession {
+public:
+    MockCDMInstanceSession(WeakPtr<MockCDMInstance>&&);
+
+private:
+    void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback&&) final;
+    void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
+    void closeSession(const String&, CloseSessionCallback&&) final;
+    void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
+    void storeRecordOfKeyUsage(const String&) final;
+
+    WeakPtr<MockCDMInstance> m_instance;
 };
 
 }
