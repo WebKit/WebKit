@@ -1,3 +1,21 @@
+2018-09-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        FloatQuad point getters should return const references
+        https://bugs.webkit.org/show_bug.cgi?id=189821
+
+        Reviewed by Yusuke Suzuki.
+
+        Be pedantic and have the FloatQuad point getters return const references
+        to the FloatPoint member variables, instead of technically creating
+        copies of them (though much of this copying is eliminated when the
+        getters are inlined).
+
+        * platform/graphics/FloatQuad.h:
+        (WebCore::FloatQuad::p1 const):
+        (WebCore::FloatQuad::p2 const):
+        (WebCore::FloatQuad::p3 const):
+        (WebCore::FloatQuad::p4 const):
+
 2018-09-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] DocumentTimeline::updateAnimations() is called endlessly

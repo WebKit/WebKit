@@ -61,10 +61,10 @@ public:
     {
     }
 
-    FloatPoint p1() const { return m_p1; }
-    FloatPoint p2() const { return m_p2; }
-    FloatPoint p3() const { return m_p3; }
-    FloatPoint p4() const { return m_p4; }
+    const FloatPoint& p1() const { return m_p1; }
+    const FloatPoint& p2() const { return m_p2; }
+    const FloatPoint& p3() const { return m_p3; }
+    const FloatPoint& p4() const { return m_p4; }
 
     void setP1(const FloatPoint& p) { m_p1 = p; }
     void setP2(const FloatPoint& p) { m_p2 = p; }
