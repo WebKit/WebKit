@@ -8079,3 +8079,31 @@ index 333448be348..47d18093c96 100644
  
  typedef intptr_t EGLNativeDisplayType;
  typedef intptr_t EGLNativeWindowType;
+diff --git a/include/EGL/eglplatform.h b/include/EGL/eglplatform.h
+index 47d18093c96..e781564891d 100644
+--- a/include/EGL/eglplatform.h
++++ b/include/EGL/eglplatform.h
+@@ -114,6 +114,8 @@ typedef struct wl_egl_window *EGLNativeWindowType;
+ 
+ #elif defined(__unix__)
+ 
++#if defined(ANGLE_USE_X11) && !defined(MESA_EGL_NO_X11_HEADERS)
++
+ /* X11 (tentative)  */
+ #include <X11/Xlib.h>
+ #include <X11/Xutil.h>
+@@ -122,6 +124,14 @@ typedef Display *EGLNativeDisplayType;
+ typedef Pixmap   EGLNativePixmapType;
+ typedef Window   EGLNativeWindowType;
+ 
++#else
++
++typedef void             *EGLNativeDisplayType;
++typedef khronos_uintptr_t EGLNativePixmapType;
++typedef khronos_uintptr_t EGLNativeWindowType;
++
++#endif /* ANGLE_USE_X11 && !MESA_EGL_NO_X11_HEADERS */
++
+ #else
+ #error "Platform not recognized"
+ #endif

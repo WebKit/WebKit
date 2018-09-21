@@ -1,3 +1,19 @@
+2018-09-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] ANGLE's eglplatform.h does not support Wayland-only builds
+        https://bugs.webkit.org/show_bug.cgi?id=189844
+
+        Reviewed by Michael Catanzaro.
+
+        This makes it possible to build WebKitGTK+ after r225340 when the
+        build is configured to support only Wayland, and the X11 headers
+        are not present.
+
+        * changes.diff: Updated.
+        * include/EGL/eglplatform.h: Include the X11 headers only when
+        ANGLE_USE_X11 is defined and, for consistency with Mesa's version
+        of the header, when MESA_EGL_NO_X11_HEADERS is not defined.
+
 2018-08-29  David Kilzer  <ddkilzer@apple.com>
 
         Remove empty directories from from svn.webkit.org repository

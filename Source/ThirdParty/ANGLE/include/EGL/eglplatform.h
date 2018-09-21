@@ -114,6 +114,8 @@ typedef struct wl_egl_window *EGLNativeWindowType;
 
 #elif defined(__unix__)
 
+#if defined(ANGLE_USE_X11) && !defined(MESA_EGL_NO_X11_HEADERS)
+
 /* X11 (tentative)  */
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -121,6 +123,14 @@ typedef struct wl_egl_window *EGLNativeWindowType;
 typedef Display *EGLNativeDisplayType;
 typedef Pixmap   EGLNativePixmapType;
 typedef Window   EGLNativeWindowType;
+
+#else
+
+typedef void             *EGLNativeDisplayType;
+typedef khronos_uintptr_t EGLNativePixmapType;
+typedef khronos_uintptr_t EGLNativeWindowType;
+
+#endif /* ANGLE_USE_X11 && !MESA_EGL_NO_X11_HEADERS */
 
 #else
 #error "Platform not recognized"
