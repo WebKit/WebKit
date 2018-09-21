@@ -26,31 +26,20 @@
 #pragma once
 
 #include "JSCast.h"
-#include "JSPromise.h"
 #include "Structure.h"
 
 namespace JSC {
 
 class Exception;
 class JSPromiseConstructor;
-class JSFunction;
 
 class JSPromiseDeferred : public JSCell {
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    struct DeferredData {
-        WTF_FORBID_HEAP_ALLOCATION;
-    public:
-        JSPromise* promise { nullptr };
-        JSFunction* resolve { nullptr };
-        JSFunction* reject { nullptr };
-    };
-    static DeferredData createDeferredData(ExecState*, JSGlobalObject*, JSPromiseConstructor*);
-
     JS_EXPORT_PRIVATE static JSPromiseDeferred* create(ExecState*, JSGlobalObject*);
-    JS_EXPORT_PRIVATE static JSPromiseDeferred* create(VM&, JSPromise*, JSFunction* resolve, JSFunction* reject);
+    JS_EXPORT_PRIVATE static JSPromiseDeferred* create(VM&, JSObject* promise, JSValue resolve, JSValue reject);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -59,9 +48,9 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JSPromise* promise() const { return m_promise.get(); }
-    JSFunction* resolve() const { return m_resolve.get(); }
-    JSFunction* reject() const { return m_reject.get(); }
+    JSObject* promise() const { return m_promise.get(); }
+    JSValue resolve() const { return m_resolve.get(); }
+    JSValue reject() const { return m_reject.get(); }
 
     JS_EXPORT_PRIVATE void resolve(ExecState*, JSValue);
     JS_EXPORT_PRIVATE void reject(ExecState*, JSValue);
@@ -73,7 +62,7 @@ public:
 
 protected:
     JSPromiseDeferred(VM&, Structure*);
-    void finishCreation(VM&, JSPromise*, JSFunction* resolve, JSFunction* reject);
+    void finishCreation(VM&, JSObject*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
@@ -83,9 +72,11 @@ private:
     bool m_promiseIsAsyncPending { false };
 #endif
 
-    WriteBarrier<JSPromise> m_promise;
-    WriteBarrier<JSFunction> m_resolve;
-    WriteBarrier<JSFunction> m_reject;
+    WriteBarrier<JSObject> m_promise;
+    WriteBarrier<Unknown> m_resolve;
+    WriteBarrier<Unknown> m_reject;
 };
+
+JSValue newPromiseCapability(ExecState*, JSGlobalObject*, JSPromiseConstructor*);
 
 } // namespace JSC

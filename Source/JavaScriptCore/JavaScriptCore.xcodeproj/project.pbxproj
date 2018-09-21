@@ -1042,7 +1042,6 @@
 		53C6FEEF1E8ADFA900B18425 /* WasmOpcodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C6FEEE1E8ADFA900B18425 /* WasmOpcodeOrigin.h */; };
 		53CA730A1EA533D80076049D /* WasmBBQPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CA73081EA533D80076049D /* WasmBBQPlan.h */; };
 		53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */; };
-		53E1F8F82154715A0001DDBC /* JSValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E1F8F7215471490001DDBC /* JSValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53E777E41E92E265007CBEC4 /* WasmModuleInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E777E21E92E265007CBEC4 /* WasmModuleInformation.h */; };
 		53E9E0AC1EAE83DF00FEE251 /* WasmMachineThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9E0AA1EAE83DE00FEE251 /* WasmMachineThreads.h */; };
 		53E9E0AF1EAEC45700FEE251 /* WasmTierUpCount.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9E0AE1EAEC45700FEE251 /* WasmTierUpCount.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3502,7 +3501,6 @@
 		53CA73081EA533D80076049D /* WasmBBQPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBBQPlan.h; sourceTree = "<group>"; };
 		53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3WasmAddressValue.h; path = b3/B3WasmAddressValue.h; sourceTree = "<group>"; };
 		53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3WasmAddressValue.cpp; path = b3/B3WasmAddressValue.cpp; sourceTree = "<group>"; };
-		53E1F8F7215471490001DDBC /* JSValuePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValuePrivate.h; sourceTree = "<group>"; };
 		53E777E11E92E265007CBEC4 /* WasmModuleInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmModuleInformation.cpp; sourceTree = "<group>"; };
 		53E777E21E92E265007CBEC4 /* WasmModuleInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmModuleInformation.h; sourceTree = "<group>"; };
 		53E9E0A91EAE83DE00FEE251 /* WasmMachineThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmMachineThreads.cpp; sourceTree = "<group>"; };
@@ -5914,7 +5912,6 @@
 				86E3C606167BAB87006D760A /* JSValue.h */,
 				86E3C60D167BAB87006D760A /* JSValue.mm */,
 				86E3C60E167BAB87006D760A /* JSValueInternal.h */,
-				53E1F8F7215471490001DDBC /* JSValuePrivate.h */,
 				14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */,
 				1482B6EA0A4300B300517CFC /* JSValueRef.h */,
 				86E3C60F167BAB87006D760A /* JSVirtualMachine.h */,
@@ -7833,6 +7830,7 @@
 			isa = PBXGroup;
 			children = (
 				99DA00991BD5992700F4575C /* __init__.py */,
+				99DA009D1BD5992700F4575C /* wkbuiltins.py */,
 				99DA009E1BD5992700F4575C /* builtins_generate_combined_header.py */,
 				99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */,
 				412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */,
@@ -7844,7 +7842,6 @@
 				99DA009A1BD5992700F4575C /* builtins_generator.py */,
 				99DA009B1BD5992700F4575C /* builtins_model.py */,
 				99DA009C1BD5992700F4575C /* builtins_templates.py */,
-				99DA009D1BD5992700F4575C /* wkbuiltins.py */,
 			);
 			path = wkbuiltins;
 			sourceTree = "<group>";
@@ -8442,6 +8439,7 @@
 				DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */,
 				A7D801A51880D66E0026C39B /* BuiltinExecutables.h in Headers */,
 				A75EE9B218AAB7E200AAD043 /* BuiltinNames.h in Headers */,
+				99DA00A61BD5993100F4575C /* wkbuiltins.py in Headers */,
 				99DA00A71BD5993100F4575C /* builtins_generate_combined_header.py in Headers */,
 				99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */,
 				412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */,
@@ -9212,7 +9210,6 @@
 				0F2B670117B6B5AB00A7AE3F /* JSUint8ClampedArray.h in Headers */,
 				86E3C612167BABD7006D760A /* JSValue.h in Headers */,
 				86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */,
-				53E1F8F82154715A0001DDBC /* JSValuePrivate.h in Headers */,
 				BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */,
 				86E3C615167BABD7006D760A /* JSVirtualMachine.h in Headers */,
 				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
@@ -9692,7 +9689,6 @@
 				ADBC54D51DF8EA2B005BF738 /* WebAssemblyToJSCallee.h in Headers */,
 				52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */,
 				BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */,
-				99DA00A61BD5993100F4575C /* wkbuiltins.py in Headers */,
 				A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */,
 				C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
 				0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */,

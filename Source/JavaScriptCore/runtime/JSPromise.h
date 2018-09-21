@@ -34,13 +34,6 @@ public:
     typedef JSNonFinalObject Base;
 
     static JSPromise* create(VM&, Structure*);
-    struct JSPromiseAndCallbacks {
-        JSPromise* promise;
-        JSFunction* resolve;
-        JSFunction* reject;
-    };
-    static JSPromiseAndCallbacks createWithCallbacks(VM&, Structure*);
-
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;

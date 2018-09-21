@@ -70,17 +70,6 @@ JS_EXPORT bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef objec
 JS_EXPORT JSObjectRef JSObjectGetProxyTarget(JSObjectRef);
 
 JS_EXPORT JSGlobalContextRef JSObjectGetGlobalContext(JSObjectRef object);
-
-/*!
- @function
- @abstract Creates a JavaScript promise object by invoking the provided executor.
- @param ctx The execution context to use.
- @param resolve A pointer to a JSObjectRef in which to store the resolve function for the new promise. Pass NULL if you do not care to store the resolve callback.
- @param reject A pointer to a JSObjectRef in which to store the reject function for the new promise. Pass NULL if you do not care to store the reject callback.
- @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
- @result A JSObject that is a promise or NULL if an exception occurred.
- */
-JS_EXPORT JSObjectRef JSObjectMakeDeferredPromise(JSContextRef ctx, JSObjectRef* resolve, JSObjectRef* reject, JSValueRef* exception) JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
     
 #ifdef __cplusplus
 }

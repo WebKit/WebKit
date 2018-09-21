@@ -158,8 +158,7 @@
 {
     Thread& thread = Thread::current();
     CallbackData *entry = (CallbackData *)thread.m_apiData;
-    // calleeValue may be null if we are initializing a promise.
-    if (!entry || !entry->calleeValue)
+    if (!entry)
         return nil;
     return [JSValue valueWithJSValueRef:entry->calleeValue inContext:[JSContext currentContext]];
 }

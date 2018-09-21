@@ -31,10 +31,8 @@
 #import "Exception.h"
 #import "JavaScriptCore.h"
 #import "JSContextInternal.h"
-#import "JSObjectRefPrivate.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSValueInternal.h"
-#import "JSValuePrivate.h"
 #import "JSWrapperMap.h"
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
@@ -153,48 +151,6 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 {
     auto string = OpaqueJSString::create(description);
     return [JSValue valueWithJSValueRef:JSValueMakeSymbol([context JSGlobalContextRef], string.get()) inContext:context];
-}
-
-+ (JSValue *)valueWithNewPromiseInContext:(JSContext *)context fromExecutor:(void (^)(JSValue *, JSValue *))executor
-{
-    JSObjectRef resolve;
-    JSObjectRef reject;
-    JSValueRef exception = nullptr;
-    JSObjectRef promise = JSObjectMakeDeferredPromise([context JSGlobalContextRef], &resolve, &reject, &exception);
-    if (exception) {
-        [context notifyException:exception];
-        return [JSValue valueWithUndefinedInContext:context];
-    }
-
-    JSValue *result = [JSValue valueWithJSValueRef:promise inContext:context];
-    JSValue *rejection = [JSValue valueWithJSValueRef:reject inContext:context];
-    CallbackData callbackData;
-    const size_t argumentCount = 2;
-    JSValueRef arguments[argumentCount];
-    arguments[0] = resolve;
-    arguments[1] = reject;
-
-    [context beginCallbackWithData:&callbackData calleeValue:nullptr thisValue:promise argumentCount:argumentCount arguments:arguments];
-    executor([JSValue valueWithJSValueRef:resolve inContext:context], rejection);
-    if (context.exception)
-        [rejection callWithArguments:@[context.exception]];
-    [context endCallbackWithData:&callbackData];
-
-    return result;
-}
-
-+ (JSValue *)valueWithNewPromiseResolvedWithResult:(id)result inContext:(JSContext *)context
-{
-    return [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *resolve, JSValue *) {
-        [resolve callWithArguments:@[result]];
-    }];
-}
-
-+ (JSValue *)valueWithNewPromiseRejectedWithReason:(id)reason inContext:(JSContext *)context
-{
-    return [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *, JSValue *reject) {
-        [reject callWithArguments:@[reason]];
-    }];
 }
 
 - (id)toObject

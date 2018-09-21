@@ -54,7 +54,6 @@ WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)
 WTF_EXPORT_PRIVATE void setMainThreadCallbacksPaused(bool paused);
 
 WTF_EXPORT_PRIVATE bool isMainThread();
-WTF_EXPORT_PRIVATE bool isMainThreadIfInitialized();
 
 WTF_EXPORT_PRIVATE bool canAccessThreadLocalDataForThread(Thread&);
 

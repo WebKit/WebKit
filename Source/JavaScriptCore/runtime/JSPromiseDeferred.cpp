@@ -39,11 +39,8 @@ namespace JSC {
 
 const ClassInfo JSPromiseDeferred::s_info = { "JSPromiseDeferred", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSPromiseDeferred) };
 
-JSPromiseDeferred::DeferredData JSPromiseDeferred::createDeferredData(ExecState* exec, JSGlobalObject* globalObject, JSPromiseConstructor* promiseConstructor)
+JSValue newPromiseCapability(ExecState* exec, JSGlobalObject* globalObject, JSPromiseConstructor* promiseConstructor)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     JSFunction* newPromiseCapabilityFunction = globalObject->newPromiseCapabilityFunction();
     CallData callData;
     CallType callType = JSC::getCallData(exec->vm(), newPromiseCapabilityFunction, callData);
@@ -52,31 +49,30 @@ JSPromiseDeferred::DeferredData JSPromiseDeferred::createDeferredData(ExecState*
     MarkedArgumentBuffer arguments;
     arguments.append(promiseConstructor);
     ASSERT(!arguments.hasOverflowed());
-    JSValue deferred = call(exec, newPromiseCapabilityFunction, callType, callData, jsUndefined(), arguments);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    DeferredData result;
-    result.promise = jsCast<JSPromise*>(deferred.get(exec, vm.propertyNames->builtinNames().promisePrivateName()));
-    RETURN_IF_EXCEPTION(scope, { });
-    result.resolve = jsCast<JSFunction*>(deferred.get(exec, vm.propertyNames->builtinNames().resolvePrivateName()));
-    RETURN_IF_EXCEPTION(scope, { });
-    result.reject = jsCast<JSFunction*>(deferred.get(exec, vm.propertyNames->builtinNames().rejectPrivateName()));
-    RETURN_IF_EXCEPTION(scope, { });
-
-    return result;
+    return call(exec, newPromiseCapabilityFunction, callType, callData, jsUndefined(), arguments);
 }
+
 
 JSPromiseDeferred* JSPromiseDeferred::create(ExecState* exec, JSGlobalObject* globalObject)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    DeferredData data = createDeferredData(exec, globalObject, globalObject->promiseConstructor());
-    RETURN_IF_EXCEPTION(scope, { });
-    return JSPromiseDeferred::create(vm, data.promise, data.resolve, data.reject);
+    JSValue deferred = newPromiseCapability(exec, globalObject, globalObject->promiseConstructor());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    JSValue promise = deferred.get(exec, vm.propertyNames->builtinNames().promisePrivateName());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    ASSERT(promise.inherits<JSPromise>(vm));
+    JSValue resolve = deferred.get(exec, vm.propertyNames->builtinNames().resolvePrivateName());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    JSValue reject = deferred.get(exec, vm.propertyNames->builtinNames().rejectPrivateName());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    return JSPromiseDeferred::create(vm, jsCast<JSPromise*>(promise), resolve, reject);
 }
 
-JSPromiseDeferred* JSPromiseDeferred::create(VM& vm, JSPromise* promise, JSFunction* resolve, JSFunction* reject)
+JSPromiseDeferred* JSPromiseDeferred::create(VM& vm, JSObject* promise, JSValue resolve, JSValue reject)
 {
     JSPromiseDeferred* deferred = new (NotNull, allocateCell<JSPromiseDeferred>(vm.heap)) JSPromiseDeferred(vm);
     deferred->finishCreation(vm, promise, resolve, reject);
@@ -125,7 +121,7 @@ void JSPromiseDeferred::reject(ExecState* exec, Exception* reason)
     reject(exec, reason->value());
 }
 
-void JSPromiseDeferred::finishCreation(VM& vm, JSPromise* promise, JSFunction* resolve, JSFunction* reject)
+void JSPromiseDeferred::finishCreation(VM& vm, JSObject* promise, JSValue resolve, JSValue reject)
 {
     Base::finishCreation(vm);
     m_promise.set(vm, this, promise);

@@ -42,11 +42,19 @@ JSInternalPromiseDeferred* JSInternalPromiseDeferred::create(ExecState* exec, JS
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    DeferredData data = createDeferredData(exec, globalObject, globalObject->internalPromiseConstructor());
+    JSValue deferred = newPromiseCapability(exec, globalObject, globalObject->internalPromiseConstructor());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    JSValue promise = deferred.get(exec, vm.propertyNames->builtinNames().promisePrivateName());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    ASSERT(promise.inherits<JSInternalPromise>(vm));
+    JSValue resolve = deferred.get(exec, vm.propertyNames->builtinNames().resolvePrivateName());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    JSValue reject = deferred.get(exec, vm.propertyNames->builtinNames().rejectPrivateName());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSInternalPromiseDeferred* result = new (NotNull, allocateCell<JSInternalPromiseDeferred>(vm.heap)) JSInternalPromiseDeferred(vm);
-    result->finishCreation(vm, data.promise, data.resolve, data.reject);
+    result->finishCreation(vm, jsCast<JSObject*>(promise), resolve, reject);
     return result;
 }
 

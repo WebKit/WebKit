@@ -29,15 +29,13 @@
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
 
-#include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <wtf/DataLog.h>
 #include <wtf/Expected.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/NumberOfCores.h>
 #include <wtf/Vector.h>
 
-extern "C" int testCAPIViaCpp(const char* filter);
+extern "C" int testCAPIViaCpp();
 
 class APIString {
     WTF_MAKE_NONCOPYABLE(APIString);
@@ -85,7 +83,6 @@ public:
     }
 
     operator JSGlobalContextRef() { return m_context; }
-    operator JSC::ExecState*() { return toJS(m_context); }
 
 private:
     JSGlobalContextRef m_context;
@@ -125,19 +122,7 @@ private:
 
 class TestAPI {
 public:
-    int run(const char* filter);
-
-    void basicSymbol();
-    void symbolsTypeof();
-    void symbolsGetPropertyForKey();
-    void symbolsSetPropertyForKey();
-    void symbolsHasPropertyForKey();
-    void symbolsDeletePropertyForKey();
-    void promiseResolveTrue();
-    void promiseRejectTrue();
-
-    int failed() const { return m_failed; }
-
+    int run();
 private:
 
     template<typename... Strings>
@@ -158,9 +143,15 @@ private:
     APIVector<JSObjectRef> interestingObjects();
     APIVector<JSValueRef> interestingKeys();
 
-    int m_failed { 0 };
+    int failed { 0 };
     APIContext context;
 };
+
+int testCAPIViaCpp()
+{
+    TestAPI tester;
+    return tester.run();
+}
 
 TestAPI::ScriptResult TestAPI::evaluateScript(const char* script, JSObjectRef thisObject)
 {
@@ -211,7 +202,7 @@ bool TestAPI::check(bool condition, Strings... messages)
 {
     if (!condition) {
         dataLogLn(messages..., ": FAILED");
-        m_failed++;
+        failed++;
     } else
         dataLogLn(messages..., ": PASSED");
 
@@ -266,269 +257,139 @@ APIVector<JSValueRef> TestAPI::interestingKeys()
     return result;
 }
 
-static const char* isSymbolFunction = "(function isSymbol(symbol) { return typeof(symbol) === 'symbol'; })";
-static const char* getFunction = "(function get(object, key) { return object[key]; })";
-static const char* setFunction = "(function set(object, key, value) { object[key] = value; })";
-
-void TestAPI::basicSymbol()
-{
-    // Can't call Symbol as a constructor since it's not subclassable.
-    auto result = evaluateScript("Symbol('dope');");
-    check(JSValueGetType(context, result.value()) == kJSTypeSymbol, "dope get type is a symbol");
-    check(JSValueIsSymbol(context, result.value()), "dope is a symbol");
-}
-
-void TestAPI::symbolsTypeof()
-{
-    APIString description("dope");
-    JSValueRef symbol = JSValueMakeSymbol(context, description);
-    check(functionReturnsTrue(isSymbolFunction, symbol), "JSValueMakeSymbol makes a symbol value");
-}
-
-void TestAPI::symbolsGetPropertyForKey()
-{
-    auto objects = interestingObjects();
-    auto keys = interestingKeys();
-
-    for (auto& object : objects) {
-        dataLogLn("\nnext object: ", toJS(context, object));
-        for (auto& key : keys) {
-            dataLogLn("Using key: ", toJS(context, key));
-            checkJSAndAPIMatch(
-            [&] {
-                return callFunction(getFunction, object, key);
-            }, [&] (JSValueRef* exception) {
-                return JSObjectGetPropertyForKey(context, object, key, exception);
-            }, "checking get property keys");
-        }
-    }
-}
-
-void TestAPI::symbolsSetPropertyForKey()
-{
-    auto jsObjects = interestingObjects();
-    auto apiObjects = interestingObjects();
-    auto keys = interestingKeys();
-
-    JSValueRef theAnswer = JSValueMakeNumber(context, 42);
-    for (size_t i = 0; i < jsObjects.size(); i++) {
-        for (auto& key : keys) {
-            JSObjectRef jsObject = jsObjects[i];
-            JSObjectRef apiObject = apiObjects[i];
-            checkJSAndAPIMatch(
-                [&] {
-                    return callFunction(setFunction, jsObject, key, theAnswer);
-                } , [&] (JSValueRef* exception) {
-                    JSObjectSetPropertyForKey(context, apiObject, key, theAnswer, kJSPropertyAttributeNone, exception);
-                    return JSValueMakeUndefined(context);
-                }, "setting property keys to the answer");
-            // Check get is the same on API object.
-            checkJSAndAPIMatch(
-                [&] {
-                    return callFunction(getFunction, apiObject, key);
-                }, [&] (JSValueRef* exception) {
-                    return JSObjectGetPropertyForKey(context, apiObject, key, exception);
-                }, "getting property keys from API objects");
-            // Check get is the same on respective objects.
-            checkJSAndAPIMatch(
-                [&] {
-                    return callFunction(getFunction, jsObject, key);
-                }, [&] (JSValueRef* exception) {
-                    return JSObjectGetPropertyForKey(context, apiObject, key, exception);
-                }, "getting property keys from respective objects");
-        }
-    }
-}
-
-void TestAPI::symbolsHasPropertyForKey()
-{
-    const char* hasFunction = "(function has(object, key) { return key in object; })";
-    auto objects = interestingObjects();
-    auto keys = interestingKeys();
-
-    JSValueRef theAnswer = JSValueMakeNumber(context, 42);
-    for (auto& object : objects) {
-        dataLogLn("\nNext object: ", toJS(context, object));
-        for (auto& key : keys) {
-            dataLogLn("Using key: ", toJS(context, key));
-            checkJSAndAPIMatch(
-                [&] {
-                    return callFunction(hasFunction, object, key);
-                }, [&] (JSValueRef* exception) {
-                    return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object, key, exception));
-                }, "checking has property keys unset");
-
-            check(!!callFunction(setFunction, object, key, theAnswer), "set property to the answer");
-
-            checkJSAndAPIMatch(
-                [&] {
-                    return callFunction(hasFunction, object, key);
-                }, [&] (JSValueRef* exception) {
-                    return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object, key, exception));
-                }, "checking has property keys set");
-        }
-    }
-}
-
-
-void TestAPI::symbolsDeletePropertyForKey()
-{
-    const char* deleteFunction = "(function del(object, key) { return delete object[key]; })";
-    auto objects = interestingObjects();
-    auto keys = interestingKeys();
-
-    JSValueRef theAnswer = JSValueMakeNumber(context, 42);
-    for (auto& object : objects) {
-        dataLogLn("\nNext object: ", toJS(context, object));
-        for (auto& key : keys) {
-            dataLogLn("Using key: ", toJS(context, key));
-            checkJSAndAPIMatch(
-                [&] {
-                    return callFunction(deleteFunction, object, key);
-                }, [&] (JSValueRef* exception) {
-                    return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object, key, exception));
-                }, "checking has property keys unset");
-
-            check(!!callFunction(setFunction, object, key, theAnswer), "set property to the answer");
-
-            checkJSAndAPIMatch(
-                [&] {
-                    return callFunction(deleteFunction, object, key);
-                }, [&] (JSValueRef* exception) {
-                    return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object, key, exception));
-                }, "checking has property keys set");
-        }
-    }
-}
-
-void TestAPI::promiseResolveTrue()
-{
-    JSObjectRef resolve;
-    JSObjectRef reject;
-    JSValueRef exception = nullptr;
-    JSObjectRef promise = JSObjectMakeDeferredPromise(context, &resolve, &reject, &exception);
-    check(!exception, "No exception should be thrown creating a deferred promise");
-
-    // Ugh, we don't have any C API that takes blocks... so we do this hack to capture the runner.
-    static TestAPI* tester = this;
-    static bool passedTrueCalled = false;
-
-    APIString trueString("passedTrue");
-    auto passedTrue = [](JSContextRef ctx, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*) -> JSValueRef {
-        tester->check(argumentCount && JSValueIsStrictEqual(ctx, arguments[0], JSValueMakeBoolean(ctx, true)), "function should have been called back with true");
-        passedTrueCalled = true;
-        return JSValueMakeUndefined(ctx);
-    };
-
-    APIString thenString("then");
-    JSValueRef thenFunction = JSObjectGetProperty(context, promise, thenString, &exception);
-    check(!exception && thenFunction && JSValueIsObject(context, thenFunction), "Promise should have a then object property");
-
-    JSValueRef passedTrueFunction = JSObjectMakeFunctionWithCallback(context, trueString, passedTrue);
-    JSObjectCallAsFunction(context, const_cast<JSObjectRef>(thenFunction), promise, 1, &passedTrueFunction, &exception);
-    check(!exception, "No exception should be thrown setting up callback");
-
-    auto trueValue = JSValueMakeBoolean(context, true);
-    JSObjectCallAsFunction(context, resolve, resolve, 1, &trueValue, &exception);
-    check(!exception, "No exception should be thrown resolve promise");
-    check(passedTrueCalled, "then response function should have been called.");
-}
-
-void TestAPI::promiseRejectTrue()
-{
-    JSObjectRef resolve;
-    JSObjectRef reject;
-    JSValueRef exception = nullptr;
-    JSObjectRef promise = JSObjectMakeDeferredPromise(context, &resolve, &reject, &exception);
-    check(!exception, "No exception should be thrown creating a deferred promise");
-
-    // Ugh, we don't have any C API that takes blocks... so we do this hack to capture the runner.
-    static TestAPI* tester = this;
-    static bool passedTrueCalled = false;
-
-    APIString trueString("passedTrue");
-    auto passedTrue = [](JSContextRef ctx, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*) -> JSValueRef {
-        tester->check(argumentCount && JSValueIsStrictEqual(ctx, arguments[0], JSValueMakeBoolean(ctx, true)), "function should have been called back with true");
-        passedTrueCalled = true;
-        return JSValueMakeUndefined(ctx);
-    };
-
-    APIString catchString("catch");
-    JSValueRef catchFunction = JSObjectGetProperty(context, promise, catchString, &exception);
-    check(!exception && catchFunction && JSValueIsObject(context, catchFunction), "Promise should have a then object property");
-
-    JSValueRef passedTrueFunction = JSObjectMakeFunctionWithCallback(context, trueString, passedTrue);
-    JSObjectCallAsFunction(context, const_cast<JSObjectRef>(catchFunction), promise, 1, &passedTrueFunction, &exception);
-    check(!exception, "No exception should be thrown setting up callback");
-
-    auto trueValue = JSValueMakeBoolean(context, true);
-    JSObjectCallAsFunction(context, reject, reject, 1, &trueValue, &exception);
-    check(!exception, "No exception should be thrown resolve promise");
-    check(passedTrueCalled, "then response function should have been called.");
-}
-
-#define RUN(test) do {                                 \
-        if (!shouldRun(#test))                         \
-            break;                                     \
-        tasks.append(                                  \
-            createSharedTask<void(TestAPI&)>(          \
-                [&] (TestAPI& tester) {                \
-                    tester.test;                       \
-                    dataLog(#test ": OK!\n");          \
-                }));                                   \
-    } while (false)
-
-int testCAPIViaCpp(const char* filter)
+int TestAPI::run()
 {
     dataLogLn("Starting C-API tests in C++");
+    const char* isSymbolFunction = "(function isSymbol(symbol) { return typeof(symbol) === 'symbol'; })";
+    const char* getFunction = "(function get(object, key) { return object[key]; })";
+    const char* setFunction = "(function set(object, key, value) { object[key] = value; })";
+    const char* hasFunction = "(function has(object, key) { return key in object; })";
+    const char* deleteFunction = "(function del(object, key) { return delete object[key]; })";
 
-    Deque<RefPtr<SharedTask<void(TestAPI&)>>> tasks;
+    JSC::ExecState* exec = toJS(context);
 
-    auto shouldRun = [&] (const char* testName) -> bool {
-        return !filter || !!strcasestr(testName, filter);
-    };
-
-    RUN(basicSymbol());
-    RUN(symbolsTypeof());
-    RUN(symbolsGetPropertyForKey());
-    RUN(symbolsSetPropertyForKey());
-    RUN(symbolsHasPropertyForKey());
-    RUN(symbolsDeletePropertyForKey());
-    RUN(promiseResolveTrue());
-    RUN(promiseRejectTrue());
-
-    if (tasks.isEmpty()) {
-        dataLogLn("Filtered all tests: ERROR");
-        return 1;
+    {
+        // Can't call Symbol as a constructor since it's not subclassable.
+        auto result = evaluateScript("Symbol('dope');");
+        check(JSValueGetType(context, result.value()) == kJSTypeSymbol, "dope get type is a symbol");
+        check(JSValueIsSymbol(context, result.value()), "dope is a symbol");
     }
 
-    Lock lock;
-
-    static Atomic<int> failed { 0 };
-    Vector<Ref<Thread>> threads;
-    for (unsigned i = filter ? 1 : WTF::numberOfProcessorCores(); i--;) {
-        threads.append(Thread::create(
-            "Testapi via C++ thread",
-            [&] () {
-                TestAPI tester;
-                for (;;) {
-                    RefPtr<SharedTask<void(TestAPI&)>> task;
-                    {
-                        LockHolder locker(lock);
-                        if (tasks.isEmpty())
-                            return;
-                        task = tasks.takeFirst();
-                    }
-
-                    task->run(tester);
-                }
-                failed.exchangeAdd(tester.failed());
-            }));
+    {
+        APIString description("dope");
+        JSValueRef symbol = JSValueMakeSymbol(context, description);
+        check(functionReturnsTrue(isSymbolFunction, symbol), "JSValueMakeSymbol makes a symbol value");
     }
 
-    for (auto& thread : threads)
-        thread->waitForCompletion();
+    {
+        auto objects = interestingObjects();
+        auto keys = interestingKeys();
 
-    dataLogLn("C-API tests in C++ had ", failed.load(), " failures");
-    return failed.load();
+        for (auto& object : objects) {
+            dataLogLn("\nnext object: ", toJS(exec, object));
+            for (auto& key : keys) {
+                dataLogLn("Using key: ", toJS(exec, key));
+                checkJSAndAPIMatch(
+                    [&] {
+                        return callFunction(getFunction, object, key);
+                    }, [&] (JSValueRef* exception) {
+                        return JSObjectGetPropertyForKey(context, object, key, exception);
+                    }, "checking get property keys");
+            }
+        }
+    }
+
+    {
+        auto jsObjects = interestingObjects();
+        auto apiObjects = interestingObjects();
+        auto keys = interestingKeys();
+
+        JSValueRef theAnswer = JSValueMakeNumber(context, 42);
+        for (size_t i = 0; i < jsObjects.size(); i++) {
+            for (auto& key : keys) {
+                JSObjectRef jsObject = jsObjects[i];
+                JSObjectRef apiObject = apiObjects[i];
+                checkJSAndAPIMatch(
+                    [&] {
+                        return callFunction(setFunction, jsObject, key, theAnswer);
+                    } , [&] (JSValueRef* exception) {
+                        JSObjectSetPropertyForKey(context, apiObject, key, theAnswer, kJSPropertyAttributeNone, exception);
+                        return JSValueMakeUndefined(context);
+                    }, "setting property keys to the answer");
+                // Check get is the same on API object.
+                checkJSAndAPIMatch(
+                    [&] {
+                        return callFunction(getFunction, apiObject, key);
+                    }, [&] (JSValueRef* exception) {
+                        return JSObjectGetPropertyForKey(context, apiObject, key, exception);
+                    }, "getting property keys from API objects");
+                // Check get is the same on respective objects.
+                checkJSAndAPIMatch(
+                    [&] {
+                        return callFunction(getFunction, jsObject, key);
+                    }, [&] (JSValueRef* exception) {
+                        return JSObjectGetPropertyForKey(context, apiObject, key, exception);
+                    }, "getting property keys from respective objects");
+            }
+        }
+    }
+
+    {
+        auto objects = interestingObjects();
+        auto keys = interestingKeys();
+
+        JSValueRef theAnswer = JSValueMakeNumber(context, 42);
+        for (auto& object : objects) {
+            dataLogLn("\nNext object: ", toJS(exec, object));
+            for (auto& key : keys) {
+                dataLogLn("Using key: ", toJS(exec, key));
+                checkJSAndAPIMatch(
+                    [&] {
+                        return callFunction(hasFunction, object, key);
+                    }, [&] (JSValueRef* exception) {
+                        return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object, key, exception));
+                    }, "checking has property keys unset");
+
+                check(!!callFunction(setFunction, object, key, theAnswer), "set property to the answer");
+
+                checkJSAndAPIMatch(
+                    [&] {
+                        return callFunction(hasFunction, object, key);
+                    }, [&] (JSValueRef* exception) {
+                        return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object, key, exception));
+                    }, "checking has property keys set");
+            }
+        }
+    }
+
+    {
+        auto objects = interestingObjects();
+        auto keys = interestingKeys();
+
+        JSValueRef theAnswer = JSValueMakeNumber(context, 42);
+        for (auto& object : objects) {
+            dataLogLn("\nNext object: ", toJS(exec, object));
+            for (auto& key : keys) {
+                dataLogLn("Using key: ", toJS(exec, key));
+                checkJSAndAPIMatch(
+                    [&] {
+                        return callFunction(deleteFunction, object, key);
+                    }, [&] (JSValueRef* exception) {
+                        return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object, key, exception));
+                    }, "checking has property keys unset");
+
+                check(!!callFunction(setFunction, object, key, theAnswer), "set property to the answer");
+
+                checkJSAndAPIMatch(
+                    [&] {
+                        return callFunction(deleteFunction, object, key);
+                    }, [&] (JSValueRef* exception) {
+                        return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object, key, exception));
+                    }, "checking has property keys set");
+            }
+        }
+    }
+
+    dataLogLn("C-API tests in C++ had ", failed, " failures");
+    return failed;
 }
