@@ -1,3 +1,24 @@
+2018-09-20  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Use some tolerance when deciding whether a frame should be appended to the decode queue
+        https://bugs.webkit.org/show_bug.cgi?id=189782
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Ideally, container formats should use exact timestamps and frames
+        should not overlap. Unfortunately, there are lots of files out there
+        where this is not always the case.
+
+        This is particularly a problem in WebM, where timestamps are expressed
+        in a power of 10 timescale, which forces some rounding.
+
+        This patch makes SourceBuffer allow frames with a small overlaps
+        (<=1ms) as those usually found in WebM. 1 ms is chosen because it's
+        the default time scale of WebM files.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2018-09-11  Pablo Saavedra  <psaavedra@igalia.com>
 
         playbackControlsManagerUpdateTimerFired and
