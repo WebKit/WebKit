@@ -11,13 +11,13 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.clearAllDatabases();
     testRunner.dumpDatabaseCallbacks(); 
-    testRunner.databaseDefaultQuota = 5 * 1024 * 1024;
+    testRunner.databaseDefaultQuota = 0.1 * 1024 * 1024;
     testRunner.databaseMaxQuota = 50 * 1024 * 1024;
 }
 
 let db;
 
-const dataSize = 8 * 1024 * 1024; // 8 MB.
+const dataSize = 0.5 * 1024 * 1024; // 0.5 MB.
 let largeData = "";
 for (let i = 0; i < dataSize; i++)
     largeData += "x";
@@ -45,7 +45,7 @@ function writeData()
 
 function runTest() {
     try {
-        db = openDatabase('ExpandedQuotaTransaction', '', '', 6 * 1024 * 1024);
+        db = openDatabase('ExpandedQuotaTransaction', '', '', 0.2 * 1024 * 1024);
     } catch (err) {
         testFailed("Failed to open the database");
         finishJSTest();

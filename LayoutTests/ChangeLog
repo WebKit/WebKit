@@ -1,3 +1,12 @@
+2018-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, speed up storage/websql/transaction-database-expand-quota.html
+
+        This test was so slow that is sometimes timed out on the debug bots.
+
+        * storage/websql/transaction-database-expand-quota-expected.txt:
+        * storage/websql/transaction-database-expand-quota.html:
+
 2018-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, consolidate expectation file for EventTarget-dispatchEvent.html.
