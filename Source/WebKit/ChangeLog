@@ -1,3 +1,28 @@
+2018-09-21  Woodrow Wang  <woodrow_wang@apple.com>
+
+        Clear persistent storage between tests for resourceLoadStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=189684
+        <rdar://problem/44540099>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+
+        Remove function only called in testing for resetting statistics to consistent
+        state. 
+
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemory): Deleted.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::WebsiteDataStore::removeAllStorageAccessHandler):
+
 2018-09-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236289.

@@ -265,6 +265,14 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
         callback(false);
     m_writeBlobToFilePathCallbackMap.clear();
 
+    for (auto& callback : m_removeAllStorageAccessCallbackMap.values())
+        callback();
+    m_removeAllStorageAccessCallbackMap.clear();
+
+    for (auto& callback : m_updateBlockCookiesCallbackMap.values())
+        callback();
+    m_updateBlockCookiesCallbackMap.clear();
+    
     // This may cause us to be deleted.
     networkProcessCrashed();
 }
@@ -392,7 +400,7 @@ void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID
     }
     
     auto callbackId = generateCallbackID();
-    auto addResult = m_updateBlockCookiesCallbackMap.add(callbackId, [protectedThis = makeRef(*this), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
+    auto addResult = m_updateBlockCookiesCallbackMap.add(callbackId, [protectedProcessPool = makeRef(m_processPool), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);

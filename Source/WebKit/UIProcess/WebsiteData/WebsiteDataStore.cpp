@@ -1255,7 +1255,7 @@ void WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<Stri
 
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
-            process->updatePrevalentDomainsToBlockCookiesFor(m_sessionID, domainsToBlock, shouldClearFirst, [callbackAggregator = callbackAggregator.copyRef()] { });
+            process->updatePrevalentDomainsToBlockCookiesFor(m_sessionID, domainsToBlock, shouldClearFirst, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
@@ -1301,7 +1301,7 @@ void WebsiteDataStore::removeAllStorageAccessHandler(CompletionHandler<void()>&&
     
     for (auto& processPool : processPools()) {
         if (auto networkProcess = processPool->networkProcess())
-            networkProcess->removeAllStorageAccess(m_sessionID, [callbackAggregator = callbackAggregator.copyRef()] { });
+            networkProcess->removeAllStorageAccess(m_sessionID, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
