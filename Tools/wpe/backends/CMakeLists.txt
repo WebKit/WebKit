@@ -49,7 +49,7 @@ add_custom_command(
     COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}/xdg-shell-unstable-v6-client-protocol.h
     VERBATIM)
 
-add_library(WPEToolingBackends ${WPEToolingBackends_SOURCES})
+add_library(WPEToolingBackends STATIC ${WPEToolingBackends_SOURCES})
 include_directories(${WPEToolingBackends_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${WPEToolingBackends_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WPEToolingBackends ${WPEToolingBackends_LIBRARIES})
