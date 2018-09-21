@@ -1,3 +1,16 @@
+2018-09-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] UNUSED_PARAM(this) causes compilation error of "cannot take the address of an rvalue of type"
+        https://bugs.webkit.org/show_bug.cgi?id=189732
+
+        Reviewed by Per Arne Vollan.
+
+        Clang for Windows can't compile the MSVC workaround of
+        UNUSED_PARAM which has been introduced for Windows CE and Visual
+        Studio 10. I think it's safe just to remove it.
+
+        * wtf/Compiler.h: Removed the code for COMPILER(MSVC).
+
 2018-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r235976.

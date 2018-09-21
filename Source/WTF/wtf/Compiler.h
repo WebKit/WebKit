@@ -363,10 +363,6 @@
 
 /* UNUSED_PARAM */
 
-#if !defined(UNUSED_PARAM) && COMPILER(MSVC)
-#define UNUSED_PARAM(variable) (void)&variable
-#endif
-
 #if !defined(UNUSED_PARAM)
 #define UNUSED_PARAM(variable) (void)variable
 #endif
