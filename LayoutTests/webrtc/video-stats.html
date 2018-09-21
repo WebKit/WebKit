@@ -69,6 +69,8 @@ function checkInboundFramesNumberIncreased(secondConnection, statsSecondConnecti
         if (stats.framesDecoded > statsSecondConnection.framesDecoded) {
             if (testTimestampDifference(stats.timestamp - statsSecondConnection.timestamp, stats.framesDecoded - statsSecondConnection.framesDecoded))
                 return Promise.reject("timestamp and frames increment do not match");
+            assert_not_equals(Object.keys(stats).indexOf("codecId"), -1, "codecId");
+            assert_not_equals(Object.keys(stats).indexOf("trackId"), -1, "trackId");
             return;
         }
         if (++count === 20)
@@ -85,6 +87,8 @@ function checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnectio
         if (stats.framesEncoded > statsFirstConnection.framesEncoded) {
             if (testTimestampDifference(stats.timestamp - statsFirstConnection.timestamp, stats.framesEncoded - statsFirstConnection.framesEncoded))
                 return Promise.reject("timestamp and frames increment do not match");
+            assert_not_equals(Object.keys(stats).indexOf("codecId"), -1, "codecId");
+            assert_not_equals(Object.keys(stats).indexOf("trackId"), -1, "trackId");
             return;
         }
         if (++count === 20)
@@ -133,10 +137,10 @@ promise_test(async (test) => {
     await checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
 
     let types = await getStatsType(firstConnection);
-    assert_array_equals(types, ["candidate-pair", "certificate", "inbound-rtp", "outbound-rtp", "track"]);
+    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "outbound-rtp", "track"]);
 
     types = await getStatsType(secondConnection);
-    assert_array_equals(types, ["candidate-pair", "certificate", "inbound-rtp", "outbound-rtp", "track"]);
+    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "outbound-rtp", "track"]);
 }, "Basic video stats");
 
 promise_test(async (test) => {

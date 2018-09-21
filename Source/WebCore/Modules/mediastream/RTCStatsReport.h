@@ -64,7 +64,7 @@ public:
         bool isRemote { false };
         String mediaType;
 
-        String mediaTrackId;
+        String trackId;
         String transportId;
         String codecId;
         unsigned long firCount { 0 };
@@ -77,18 +77,6 @@ public:
     struct InboundRTPStreamStats : RTCRTPStreamStats {
         InboundRTPStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
 
-        uint32_t ssrc;
-        String associateStatsId;
-        bool isRemote { false };
-        String mediaType;
-        String mediaTrackId;
-        String transportId;
-        String codecId;
-        unsigned long firCount { 0 };
-        unsigned long pliCount { 0 };
-        unsigned long nackCount { 0 };
-        unsigned long sliCount { 0 };
-        unsigned long long qpSum { 0 };
         unsigned long packetsReceived { 0 };
         unsigned long long bytesReceived { 0 };
         unsigned long packetsLost { 0 };
@@ -196,6 +184,24 @@ public:
         String fingerprintAlgorithm;
         String base64Certificate;
         String issuerCertificateId;
+    };
+
+    enum class CodecType {
+        Encode,
+        Decode
+    };
+
+    struct CodecStats : Stats {
+        CodecStats() { type = RTCStatsReport::Type::Codec; }
+
+        unsigned long payloadType;
+        std::optional<CodecType> codecType;
+        String transportId;
+        String mimeType;
+        std::optional<unsigned> clockRate;
+        std::optional<unsigned> channels;
+        String sdpFmtpLine;
+        String implementation;
     };
 
 private:

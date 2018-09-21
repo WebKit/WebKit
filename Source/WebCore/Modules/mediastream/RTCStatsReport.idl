@@ -59,7 +59,7 @@ dictionary RTCRTPStreamStats : RTCStats {
     DOMString associateStatsId;
     boolean isRemote = false;
     DOMString mediaType;
-    DOMString mediaTrackId;
+    DOMString trackId;
     DOMString transportId;
     DOMString codecId;
     unsigned long firCount;
@@ -173,7 +173,23 @@ dictionary RTCCertificateStats : RTCStats {
     DOMString issuerCertificateId;
 };
 
-// FIXME 169662: missing RTCCodecStats
+enum RTCCodecType {
+    "encode",
+    "decode"
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCCodecStats : RTCStats {
+    unsigned long payloadType;
+    RTCCodecType codecType;
+    DOMString transportId;
+    DOMString mimeType;
+    unsigned long clockRate;
+    unsigned long channels;
+    DOMString sdpFmtpLine;
+    DOMString implementation;
+};
+
 // FIXME 169662: missing RTCPeerConnectionStats
 // FIXME 169662: missing RTCMediaStreamStats
 // FIXME 169662: missing RTCTransportStats

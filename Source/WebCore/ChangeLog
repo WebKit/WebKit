@@ -1,3 +1,26 @@
+2018-09-21  Youenn Fablet  <youenn@apple.com>
+
+        Add RTCCodecStats support
+        https://bugs.webkit.org/show_bug.cgi?id=189792
+        <rdar://problem/32370668>
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated and rebased tests.
+
+        * Modules/mediastream/RTCStatsReport.h:
+        Removed fields that are already defined in the base class.
+        (WebCore::RTCStatsReport::CodecStats::CodecStats):
+        Add support for RTCCodecStats.
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnStatsDelivered):
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::fillRTCRTPStreamStats):
+        (WebCore::fillRTCCodecStats):
+        (WebCore::LibWebRTCStatsCollector::OnStatsDelivered):
+        Add routines to fill RTCCodecStats from libwebrtc stats.
+
 2018-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Make "overflow: overlay" a synonym for "overflow: auto"

@@ -798,12 +798,8 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
             m_statsLogTimer.startRepeating(statsLogInterval(timestamp));
         }
 
-        for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
-            if (iterator->type() == webrtc::RTCCodecStats::kType)
-                continue;
-
+        for (auto iterator = report->begin(); iterator != report->end(); ++iterator)
             ALWAYS_LOG(Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()), RTCStatsLogger { *iterator });
-        }
     });
 #else
     UNUSED_PARAM(report);

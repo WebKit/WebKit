@@ -1,3 +1,13 @@
+2018-09-21  Youenn Fablet  <youenn@apple.com>
+
+        Add RTCCodecStats support
+        https://bugs.webkit.org/show_bug.cgi?id=189792
+        <rdar://problem/32370668>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-stats.html:
+
 2018-09-21  Megan Gardner  <megan_gardner@apple.com>
 
         [iOS] Layout test fast/gradients/conic-gradient-alpha.html is failing

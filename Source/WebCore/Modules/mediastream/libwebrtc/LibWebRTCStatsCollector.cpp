@@ -72,7 +72,7 @@ static inline void fillRTCRTPStreamStats(RTCStatsReport::RTCRTPStreamStats& stat
     if (rtcStats.media_type.is_defined())
         stats.mediaType = fromStdString(*rtcStats.media_type);
     if (rtcStats.track_id.is_defined())
-        stats.mediaTrackId = fromStdString(*rtcStats.track_id);
+        stats.trackId = fromStdString(*rtcStats.track_id);
     if (rtcStats.transport_id.is_defined())
         stats.transportId = fromStdString(*rtcStats.transport_id);
     if (rtcStats.codec_id.is_defined())
@@ -291,6 +291,25 @@ static inline void fillRTCCertificateStats(RTCStatsReport::CertificateStats& sta
     if (rtcStats.issuer_certificate_id.is_defined())
         stats.issuerCertificateId = fromStdString(*rtcStats.issuer_certificate_id);
 }
+
+static inline void fillRTCCodecStats(RTCStatsReport::CodecStats& stats, const webrtc::RTCCodecStats& rtcStats)
+{
+    fillRTCStats(stats, rtcStats);
+
+    if (rtcStats.payload_type.is_defined())
+        stats.payloadType = *rtcStats.payload_type;
+    if (rtcStats.mime_type.is_defined())
+        stats.mimeType = fromStdString(*rtcStats.mime_type);
+    if (rtcStats.clock_rate.is_defined())
+        stats.clockRate = *rtcStats.clock_rate;
+    if (rtcStats.channels.is_defined())
+        stats.channels = *rtcStats.channels;
+    if (rtcStats.sdp_fmtp_line.is_defined())
+        stats.sdpFmtpLine = fromStdString(*rtcStats.sdp_fmtp_line);
+    if (rtcStats.implementation.is_defined())
+        stats.implementation = fromStdString(*rtcStats.implementation);
+}
+
 void LibWebRTCStatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
 {
     callOnMainThread([protectedThis = rtc::scoped_refptr<LibWebRTCStatsCollector>(this), rtcReport] {
@@ -325,6 +344,10 @@ void LibWebRTCStatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const we
                 RTCStatsReport::CertificateStats stats;
                 fillRTCCertificateStats(stats, static_cast<const webrtc::RTCCertificateStats&>(rtcStats));
                 report->addStats<IDLDictionary<RTCStatsReport::CertificateStats>>(WTFMove(stats));
+            } else if (rtcStats.type() == webrtc::RTCCodecStats::kType) {
+                RTCStatsReport::CodecStats stats;
+                fillRTCCodecStats(stats, static_cast<const webrtc::RTCCodecStats&>(rtcStats));
+                report->addStats<IDLDictionary<RTCStatsReport::CodecStats>>(WTFMove(stats));
             }
         }
     });
