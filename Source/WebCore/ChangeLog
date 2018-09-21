@@ -1,3 +1,28 @@
+2018-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify the logic around has*ScrollbarWithAutoBehavior
+        https://bugs.webkit.org/show_bug.cgi?id=189813
+
+        Reviewed by Zalan Bujtas.
+
+        The boolean logic in scrollsOverflowX() and hasHorizontalScrollbarWithAutoBehavior() (and the vertical
+        equivalents) reduces simply to hasOverflowClip() && (style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Auto);
+        
+        Similarly, RenderBox::intrinsicScrollbarLogicalWidth() just needs the part of the logic
+        that asks whether the theme uses overlay scrollbars which are not customized (and thus
+        turned into non-overlay scrollbars).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::intrinsicScrollbarLogicalWidth const):
+        (WebCore::RenderBox::canUseOverlayScrollbars const):
+        (WebCore::RenderBox::hasVerticalScrollbarWithAutoBehavior const):
+        (WebCore::RenderBox::hasHorizontalScrollbarWithAutoBehavior const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::scrollsOverflowX const):
+        (WebCore::RenderBox::scrollsOverflowY const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+
 2018-09-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r236255.

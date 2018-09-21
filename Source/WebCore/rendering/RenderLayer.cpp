@@ -3515,7 +3515,6 @@ void RenderLayer::updateScrollbarsAfterLayout()
 
         if (renderer().style().overflowX() == Overflow::Auto || renderer().style().overflowY() == Overflow::Auto) {
             if (!m_inOverflowRelayout) {
-                // Our proprietary overflow: overlay value doesn't trigger a layout.
                 m_inOverflowRelayout = true;
                 renderer().setNeedsLayout(MarkOnlyThis);
                 if (is<RenderBlock>(renderer())) {
