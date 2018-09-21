@@ -48,9 +48,26 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     auto nsData = adoptNS([[NSData alloc] initWithBytes:resumeData.data() length:resumeData.size()]);
 
     // FIXME: This is a temporary workaround for <rdar://problem/34745171>.
-    NSMutableDictionary *dictionary = [NSPropertyListSerialization propertyListWithData:nsData.get() options:NSPropertyListImmutable format:0 error:nullptr];
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400)
+    static NSSet<Class> *plistClasses = nil;
+    static dispatch_once_t onceToken;
+
+    dispatch_once(&onceToken, ^{
+        plistClasses = [[NSSet setWithObjects:[NSDictionary class], [NSArray class], [NSString class], [NSNumber class], [NSData class], [NSURL class], [NSURLRequest class], nil] retain];
+    });
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nil]);
+    [unarchiver setDecodingFailurePolicy:NSDecodingFailurePolicyRaiseException];
+    auto dictionary = retainPtr([unarchiver decodeObjectOfClasses:plistClasses forKey:@"NSKeyedArchiveRootObjectKey"]);
+    [unarchiver finishDecoding];
+    [dictionary setObject:static_cast<NSString*>(path) forKey:@"NSURLSessionResumeInfoLocalPath"];
+    auto encoder = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
+    [encoder encodeObject:dictionary.get() forKey:@"NSKeyedArchiveRootObjectKey"];
+    NSData *updatedData = [encoder encodedData];
+#else
+    NSMutableDictionary *dictionary = [NSPropertyListSerialization propertyListWithData:nsData.get() options:NSPropertyListMutableContainersAndLeaves format:0 error:nullptr];
     [dictionary setObject:static_cast<NSString*>(path) forKey:@"NSURLSessionResumeInfoLocalPath"];
     NSData *updatedData = [NSPropertyListSerialization dataWithPropertyList:dictionary format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
+#endif
 
     m_downloadTask = cocoaSession.downloadTaskWithResumeData(updatedData);
     cocoaSession.addDownloadID(m_downloadTask.get().taskIdentifier, m_downloadID);

@@ -1,3 +1,18 @@
+2018-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(Mojave): Resuming a WK2 download crashes
+        https://bugs.webkit.org/show_bug.cgi?id=189838
+        <rdar://problem/44618538>
+
+        Reviewed by Alex Christensen.
+
+        Update our workaround to tweak the download resume data to include the actual download path so that
+        it works on macOS Mojave and up. Unfortunately, the resume data internal representation has changed,
+        causing our previous workaround to fail.
+
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+
 2018-09-21  Youenn Fablet  <youenn@apple.com>
 
         Whitelist two additional plugins
