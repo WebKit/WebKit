@@ -151,6 +151,8 @@ void GraphicsContextImplCairo::fillRect(const FloatRect& rect, const Color& colo
 void GraphicsContextImplCairo::fillRect(const FloatRect& rect, Gradient& gradient)
 {
     RefPtr<cairo_pattern_t> platformGradient = adoptRef(gradient.createPlatformGradient(1.0));
+    if (!platformGradient)
+        return;
 
     Cairo::save(m_platformContext);
     Cairo::fillRect(m_platformContext, rect, platformGradient.get());

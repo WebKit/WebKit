@@ -1,3 +1,23 @@
+2018-09-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Null-check cairo_pattern_t gradient objects
+        https://bugs.webkit.org/show_bug.cgi?id=189820
+
+        Reviewed by Alex Christensen.
+
+        Cairo-specific implementation of Gradient::createPlatformGradient() can
+        now return a nullptr value when a conic gradient is described by the
+        Gradient object. Cairo doesn't have a way to create cairo_pattern_t
+        objects for such gradients.
+
+        Null-checks are now done on return values of createPlatformGradient(),
+        in order to avoid proceeding to paint a null cairo_pattern_t object.
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::fill):
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::fillRect):
+
 2018-09-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cannot start a drag inside a shadow tree when an inclusive-ancestor of its shadow host is a draggable element
