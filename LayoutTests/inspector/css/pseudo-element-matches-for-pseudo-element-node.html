@@ -15,8 +15,15 @@ function test() {
         InspectorTest.expectThat(!Object.keys(nodeStyles.pseudoElements).length, "No Pseudo Element Styles");
 
         InspectorTest.expectThat(nodeStyles.computedStyle, "Has Computed Styles");
-        InspectorTest.log("PROPERTY: " + nodeStyles.computedStyle.propertyForName("content").text);
-        InspectorTest.log("PROPERTY: " + nodeStyles.computedStyle.propertyForName("color").text);
+
+        function logProperty(propertyName) {
+            const dontCreateIfMissing = true;
+            let property = nodeStyles.computedStyle.propertyForName(propertyName, dontCreateIfMissing);
+            InspectorTest.log(`PROPERTY: ${property.name}: ${property.value};`);
+        }
+
+        logProperty("content");
+        logProperty("color");
 
         for (var rule of nodeStyles.matchedRules) {
             InspectorTest.log("MATCHED RULE:");

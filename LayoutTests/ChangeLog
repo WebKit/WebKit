@@ -1,3 +1,15 @@
+2018-09-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r236336): computed CSSProperty doesn't have a value for _text
+        https://bugs.webkit.org/show_bug.cgi?id=189864
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/css/pseudo-element-matches-for-pseudo-element-node.html:
+
+        `CSS.types.CSSComputedStyleProperty` doesn't include a `text` value, which was used to print
+         each property's text. Modify the test to generate it's own text via `name` and `value`.
+
 2018-09-21  Justin Michaud  <justin_michaud@apple.com>
 
         Implement initialValue support for CSS Custom Properties and Values API
