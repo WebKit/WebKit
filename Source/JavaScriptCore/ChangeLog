@@ -1,3 +1,28 @@
+2018-09-22  Saam barati  <sbarati@apple.com>
+
+        The sampling should not use Strong<CodeBlock> in its machineLocation field
+        https://bugs.webkit.org/show_bug.cgi?id=189319
+
+        Reviewed by Filip Pizlo.
+
+        The sampling profiler has a CLI mode where we gather information about inline
+        call frames. That data structure was using a Strong<CodeBlock>. We were
+        constructing this Strong<CodeBlock> during GC concurrently to processing all
+        the Strong handles. This is a bug since we end up corrupting that data
+        structure. This patch fixes this by just making this data structure use the
+        sampling profiler's mechanism for holding onto and properly visiting heap pointers.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        These CLI helpers needed a DeferGC otherwise we may end up deadlocking when we
+        cause a GC to happen while already holding the sampling profiler's
+        lock.
+
 2018-09-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Enable LLInt ASM interpreter on X64 and ARM64 in non JIT configuration

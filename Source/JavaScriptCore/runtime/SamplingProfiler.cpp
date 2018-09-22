@@ -567,8 +567,9 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 // output on the command line, but we could extend it to the web
                 // inspector in the future if we find a need for it there.
                 RELEASE_ASSERT(stackTrace.frames.size());
+                m_liveCellPointers.add(machineCodeBlock);
                 for (size_t i = startIndex; i < stackTrace.frames.size() - 1; i++)
-                    stackTrace.frames[i].machineLocation = std::make_pair(machineLocation, Strong<CodeBlock>(m_vm, machineCodeBlock));
+                    stackTrace.frames[i].machineLocation = std::make_pair(machineLocation, machineCodeBlock);
             }
         };
 
@@ -957,6 +958,7 @@ void SamplingProfiler::reportTopFunctions()
 void SamplingProfiler::reportTopFunctions(PrintStream& out)
 {
     LockHolder locker(m_lock);
+    DeferGCForAWhile deferGC(m_vm.heap);
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
@@ -1009,6 +1011,7 @@ void SamplingProfiler::reportTopBytecodes()
 void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 {
     LockHolder locker(m_lock);
+    DeferGCForAWhile deferGC(m_vm.heap);
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
@@ -1040,7 +1043,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 
         StackFrame& frame = stackTrace.frames.first();
         String frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation));
-        if (std::optional<std::pair<StackFrame::CodeLocation, Strong<CodeBlock>>> machineLocation = frame.machineLocation) {
+        if (std::optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = frame.machineLocation) {
             frameDescription = makeString(frameDescription, " <-- ",
                 machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first));
         }

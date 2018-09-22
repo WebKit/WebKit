@@ -207,7 +207,7 @@ void InspectorScriptProfilerAgent::trackingComplete()
     if (m_enabledSamplingProfiler) {
         VM& vm = m_environment.scriptDebugServer().vm();
         JSLockHolder lock(vm);
-        DeferGC deferGC(vm.heap);
+        DeferGC deferGC(vm.heap); // This is required because we will have raw pointers into the heap after we releaseStackTraces().
         SamplingProfiler* samplingProfiler = vm.samplingProfiler();
         RELEASE_ASSERT(samplingProfiler);
 

@@ -1,3 +1,12 @@
+2018-09-22  Saam barati  <sbarati@apple.com>
+
+        The sampling should not use Strong<CodeBlock> in its machineLocation field
+        https://bugs.webkit.org/show_bug.cgi?id=189319
+
+        Reviewed by Filip Pizlo.
+
+        * stress/sampling-profiler-richards.js: Added.
+
 2018-09-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Array#indexOf in C++ runtime
