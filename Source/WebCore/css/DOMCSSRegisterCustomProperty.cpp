@@ -26,20 +26,27 @@
 #include "config.h"
 #include "DOMCSSRegisterCustomProperty.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSRegisteredCustomProperty.h"
+#include "CSSTokenizer.h"
 #include "DOMCSSNamespace.h"
 #include "Document.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-void DOMCSSRegisterCustomProperty::registerProperty(Document& document, const DOMCSSCustomPropertyDescriptor& descriptor)
+ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& document, const DOMCSSCustomPropertyDescriptor& descriptor)
 {
-    CSSRegisteredCustomProperty property { descriptor.name };
-    if (!document.registerCSSProperty(WTFMove(property))) {
-        /* TODO throw JS exception */
-        return;
-    }
+    CSSTokenizer tokenizer(descriptor.initialValue);
+    RefPtr<CSSCustomPropertyValue> initialValue;
+    if (!tokenizer.tokenRange().atEnd())
+        initialValue = CSSCustomPropertyValue::createWithVariableData(descriptor.name, CSSVariableData::create(tokenizer.tokenRange(), false));
+
+    CSSRegisteredCustomProperty property { descriptor.name, WTFMove(initialValue) };
+    if (!document.registerCSSProperty(WTFMove(property)))
+        return Exception { InvalidModificationError, "This property has already been registered." };
+
+    return { };
 }
 
 DOMCSSRegisterCustomProperty* DOMCSSRegisterCustomProperty::from(DOMCSSNamespace& css)

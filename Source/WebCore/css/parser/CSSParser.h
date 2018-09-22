@@ -23,6 +23,7 @@
 #pragma once
 
 #include "CSSParserContext.h"
+#include "CSSRegisteredCustomProperty.h"
 #include "CSSValue.h"
 #include "WritingMode.h"
 #include <wtf/text/WTFString.h>
@@ -75,7 +76,7 @@ public:
 
     void parseSelector(const String&, CSSSelectorList&);
 
-    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, const CustomPropertyValueMap& customProperties, TextDirection, WritingMode);
+    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, TextDirection, WritingMode);
 
     static Color parseColor(const String&, bool strict = false);
     static Color parseSystemColor(const String&, const CSSParserContext*);

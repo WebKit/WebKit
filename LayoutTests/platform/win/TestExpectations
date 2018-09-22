@@ -4160,6 +4160,9 @@ http/tests/security/mixedContent/websocket [ Skip ]
 imported/blink/http/tests/websocket [ Skip ]
 imported/blink/http/tests/security/mixedContent/websocket [ Skip ]
 
+# Feature flag only enabled for wk2
+css-custom-properties-api [ Skip ]
+
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 
 webkit.org/b/188853 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Crash Pass ]

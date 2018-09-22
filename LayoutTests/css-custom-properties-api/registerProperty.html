@@ -18,8 +18,6 @@ test(function() {
     CSS.registerProperty({name: '--name2, no need for escapes', inherits: false});
     CSS.registerProperty({name: ['--name', 3], inherits: false});
     // Invalid property names
-    assert_throws(new TypeError(), () => CSS.registerProperty({}));
-    assert_throws(new TypeError(), () => CSS.registerProperty({name: '--no-inherits'}));
     //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: 'no-leading-dash', inherits: false}));
     //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: '', inherits: false}));
     //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: '\\--name', inherits: false}));
@@ -27,7 +25,16 @@ test(function() {
 test(function() {
     CSS.registerProperty({name: '--syntax-test-1', inherits: false, syntax: '*'});
     CSS.registerProperty({name: '--syntax-test-2', inherits: false, syntax: ' * '});
-    /*assert_throws(new SyntaxError(),
-        () => CSS.registerProperty({name: '--syntax-test-3', syntax: 'length'}));*/
-}, "registerProperty only allows omitting initialValue is syntax is '*'");
+    CSS.registerProperty({name: '--syntax-test-3', inherits: false, initialValue: '500px'});
+    assert_throws(new TypeError(), () => CSS.registerProperty({}));
+    assert_throws(new TypeError(), () => CSS.registerProperty({name: '--no-inherits'}));
+    assert_throws(new TypeError(), () => CSS.registerProperty({inherits: false}));
+    // Repeated name
+    assert_throws(null,
+        () => CSS.registerProperty({name: '--syntax-test-3', inherits: false, initialValue: '500px'}));
+}, "registerProperty always allows omitting initialValue and syntax, requires name and inherits");
+test(function() {
+    CSS.registerProperty({name: '--syntax-test-4', inherits: false, syntax: '*'});
+    CSS.registerProperty({name: '--syntax-test-5', inherits: false, syntax: ' * '});
+}, "registerProperty requires inherits and name");
 </script>

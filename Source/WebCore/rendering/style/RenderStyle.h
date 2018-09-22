@@ -792,7 +792,7 @@ public:
     ApplePayButtonType applePayButtonType() const { return static_cast<ApplePayButtonType>(m_rareNonInheritedData->applePayButtonType); }
 #endif
 
-    void checkVariablesInCustomProperties();
+    void checkVariablesInCustomProperties(const CSSRegisteredCustomPropertySet&);
 
 // attribute setter methods
 

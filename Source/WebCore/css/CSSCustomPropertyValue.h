@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSRegisteredCustomProperty.h"
 #include "CSSValue.h"
 #include "CSSVariableData.h"
 #include <wtf/RefPtr.h>
@@ -70,7 +71,7 @@ public:
     bool containsVariables() const { return m_containsVariables; }
     bool checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
 
-    void resolveVariableReferences(const CustomPropertyValueMap&, Vector<Ref<CSSCustomPropertyValue>>&) const;
+    void resolveVariableReferences(const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, Vector<Ref<CSSCustomPropertyValue>>&) const;
 
     CSSValueID valueID() const { return m_valueId; }
     CSSVariableData* value() const { return m_value.get(); }

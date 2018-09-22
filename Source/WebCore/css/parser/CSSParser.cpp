@@ -175,7 +175,7 @@ void CSSParser::parseDeclarationForInspector(const CSSParserContext& context, co
     CSSParserImpl::parseDeclarationListForInspector(string, context, observer);
 }
 
-RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, const CustomPropertyValueMap& customProperties, TextDirection direction, WritingMode writingMode)
+RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet& registeredProperties, TextDirection direction, WritingMode writingMode)
 {
     if (value.isPendingSubstitutionValue()) {
         // FIXME: Should have a resolvedShorthands cache to stop this from being done
@@ -189,7 +189,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
         ASSERT(variableData);
         
         Vector<CSSParserToken> resolvedTokens;
-        if (!variableData->resolveTokenRange(customProperties, variableData->tokens(), resolvedTokens))
+        if (!variableData->resolveTokenRange(customProperties, registeredProperties, variableData->tokens(), resolvedTokens))
             return nullptr;
         
         ParsedPropertyVector parsedProperties;
@@ -210,7 +210,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
         ASSERT(variableData);
         
         Vector<CSSParserToken> resolvedTokens;
-        if (!variableData->resolveTokenRange(customProperties, variableData->tokens(), resolvedTokens))
+        if (!variableData->resolveTokenRange(customProperties, registeredProperties, variableData->tokens(), resolvedTokens))
             return nullptr;
         
         return CSSPropertyParser::parseSingleValue(propID, resolvedTokens, m_context);

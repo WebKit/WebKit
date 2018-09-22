@@ -29,9 +29,14 @@
 
 namespace WebCore {
 
+class CSSCustomPropertyValue;
+
 struct CSSRegisteredCustomProperty {
     const String name;
-    /* TODO syntax, inherits, initialValue */
+    /* TODO syntax, inherits */
+    const RefPtr<CSSCustomPropertyValue> initialValue;
 };
+
+using CSSRegisteredCustomPropertySet = HashMap<String, std::unique_ptr<CSSRegisteredCustomProperty>>;
 
 }

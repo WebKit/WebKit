@@ -125,16 +125,16 @@ bool CSSVariableData::checkVariablesForCyclesWithRange(CSSParserTokenRange range
     return true;
 }
 
-bool CSSVariableData::resolveVariableFallback(const CustomPropertyValueMap& customProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result) const
+bool CSSVariableData::resolveVariableFallback(const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet& registeredProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result) const
 {
     if (range.atEnd())
         return false;
     ASSERT(range.peek().type() == CommaToken);
     range.consume();
-    return resolveTokenRange(customProperties, range, result);
+    return resolveTokenRange(customProperties, registeredProperties, range, result);
 }
-    
-bool CSSVariableData::resolveVariableReference(const CustomPropertyValueMap& customProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result) const
+
+bool CSSVariableData::resolveVariableReference(const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet& registeredProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result) const
 {
     range.consumeWhitespace();
     ASSERT(range.peek().type() == IdentToken);
@@ -142,12 +142,18 @@ bool CSSVariableData::resolveVariableReference(const CustomPropertyValueMap& cus
     ASSERT(range.atEnd() || (range.peek().type() == CommaToken));
     
     RefPtr<CSSCustomPropertyValue> property = customProperties.get(variableName);
-    if (!property || !property->value())
-        return resolveVariableFallback(customProperties, range, result);
+    if (!property || !property->value()) {
+        auto* registered = registeredProperties.get(variableName);
+        if (registered && registered->initialValue)
+            property = registered->initialValue;
+        else
+            return resolveVariableFallback(customProperties, registeredProperties, range, result);
+    }
+    ASSERT(property);
     
     if (property->containsVariables()) {
         // FIXME: Avoid doing this work more than once.
-        RefPtr<CSSVariableData> resolvedData = property->value()->resolveVariableReferences(customProperties);
+        RefPtr<CSSVariableData> resolvedData = property->value()->resolveVariableReferences(customProperties, registeredProperties);
         if (!resolvedData)
             return false;
         result.appendVector(resolvedData->tokens());
@@ -157,21 +163,21 @@ bool CSSVariableData::resolveVariableReference(const CustomPropertyValueMap& cus
     return true;
 }
 
-RefPtr<CSSVariableData> CSSVariableData::resolveVariableReferences(const CustomPropertyValueMap& customProperties) const
+RefPtr<CSSVariableData> CSSVariableData::resolveVariableReferences(const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet& registeredProperties) const
 {
     Vector<CSSParserToken> resolvedTokens;
     CSSParserTokenRange range = m_tokens;
-    if (!resolveTokenRange(customProperties, range, resolvedTokens))
+    if (!resolveTokenRange(customProperties, registeredProperties, range, resolvedTokens))
         return nullptr;
     return CSSVariableData::createResolved(resolvedTokens, *this);
 }
     
-bool CSSVariableData::resolveTokenRange(const CustomPropertyValueMap& customProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result) const
+bool CSSVariableData::resolveTokenRange(const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet& registeredProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result) const
 {
     bool success = true;
     while (!range.atEnd()) {
         if (range.peek().functionId() == CSSValueVar || range.peek().functionId() == CSSValueEnv)
-            success &= resolveVariableReference(customProperties, range.consumeBlock(), result);
+            success &= resolveVariableReference(customProperties, registeredProperties, range.consumeBlock(), result);
         else
             result.append(range.consume());
     }

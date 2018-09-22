@@ -1708,7 +1708,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
 RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, const CSSValue& value)
 {
     CSSParser parser(document());
-    return parser.parseValueWithVariableReferences(propID, value, m_state.style()->customProperties(), m_state.style()->direction(), m_state.style()->writingMode());
+    return parser.parseValueWithVariableReferences(propID, value, m_state.style()->customProperties(), document().getCSSRegisteredCustomPropertySet(), m_state.style()->direction(), m_state.style()->writingMode());
 }
 
 RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
@@ -2285,7 +2285,7 @@ void StyleResolver::applyCascadedProperties(CascadedProperties& cascade, int fir
     }
 
     if (firstProperty == CSSPropertyCustom)
-        m_state.style()->checkVariablesInCustomProperties();
+        m_state.style()->checkVariablesInCustomProperties(document().getCSSRegisteredCustomPropertySet());
 }
 
 } // namespace WebCore

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DOMCSSCustomPropertyDescriptor.h"
+#include "ExceptionOr.h"
 #include "Supplementable.h"
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class DOMCSSRegisterCustomProperty final : public Supplement<DOMCSSNamespace> {
 public:
     explicit DOMCSSRegisterCustomProperty(DOMCSSNamespace&) { }
 
-    static void registerProperty(Document&, const DOMCSSCustomPropertyDescriptor&);
+    static ExceptionOr<void> registerProperty(Document&, const DOMCSSCustomPropertyDescriptor&);
 
 private:
     static DOMCSSRegisterCustomProperty* from(DOMCSSNamespace&);

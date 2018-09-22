@@ -1,3 +1,38 @@
+2018-09-21  Justin Michaud  <justin_michaud@apple.com>
+
+        Implement initialValue support for CSS Custom Properties and Values API
+        https://bugs.webkit.org/show_bug.cgi?id=189819
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::customPropertyValue):
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::resolveVariableReferences const):
+        * css/CSSCustomPropertyValue.h:
+        * css/CSSRegisteredCustomProperty.h:
+        * css/CSSVariableData.cpp:
+        (WebCore::CSSVariableData::resolveVariableFallback const):
+        (WebCore::CSSVariableData::resolveVariableReference const):
+        (WebCore::CSSVariableData::resolveVariableReferences const):
+        (WebCore::CSSVariableData::resolveTokenRange const):
+        * css/CSSVariableData.h:
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * css/DOMCSSRegisterCustomProperty.h:
+        * css/DOMCSSRegisterCustomProperty.idl:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::resolvedVariableValue):
+        (WebCore::StyleResolver::applyCascadedProperties):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * css/parser/CSSParser.h:
+        * dom/Document.h:
+        (WebCore::Document::getCSSRegisteredCustomPropertySet const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::checkVariablesInCustomProperties):
+        * rendering/style/RenderStyle.h:
+
 2018-09-21  Dean Jackson  <dino@apple.com>
 
         Add PointerEvent, plus feature flag, plus Web Platform Tests

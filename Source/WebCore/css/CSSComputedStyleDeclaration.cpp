@@ -2624,7 +2624,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& prope
     if (!style)
         return nullptr;
 
-    return style->customProperties().get(propertyName);
+    auto* value = style->customProperties().get(propertyName);
+    if (value)
+        return value;
+
+    auto* registered = styledElement->document().getCSSRegisteredCustomPropertySet().get(propertyName);
+    if (registered && registered->initialValue)
+        return registered->initialValue;
+
+    return nullptr;
 }
 
 String ComputedStyleExtractor::customPropertyText(const String& propertyName)

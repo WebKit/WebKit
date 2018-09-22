@@ -1492,6 +1492,7 @@ public:
     void updateMainArticleElementAfterLayout();
     bool hasMainArticleElement() const { return !!m_mainArticleElement; }
 
+    const CSSRegisteredCustomPropertySet& getCSSRegisteredCustomPropertySet() const { return m_CSSRegisteredPropertySet; }
     bool registerCSSProperty(CSSRegisteredCustomProperty&&);
 
     void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
@@ -2026,7 +2027,7 @@ private:
     
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
 
-    HashMap<String, std::unique_ptr<CSSRegisteredCustomProperty>> m_CSSRegisteredPropertySet;
+    CSSRegisteredCustomPropertySet m_CSSRegisteredPropertySet;
 
     bool m_isRunningUserScripts { false };
 };

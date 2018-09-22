@@ -2242,7 +2242,7 @@ bool RenderStyle::hasReferenceFilterOnly() const
     return filterOperations.size() == 1 && filterOperations.at(0)->type() == FilterOperation::REFERENCE;
 }
 
-void RenderStyle::checkVariablesInCustomProperties()
+void RenderStyle::checkVariablesInCustomProperties(const CSSRegisteredCustomPropertySet& registeredProperties)
 {
     if (!m_rareInheritedData->customProperties->containsVariables)
         return;
@@ -2273,7 +2273,7 @@ void RenderStyle::checkVariablesInCustomProperties()
     for (auto entry : customProperties) {
         if (!entry.value->containsVariables())
             continue;
-        entry.value->resolveVariableReferences(customProperties, resolvedValues);
+        entry.value->resolveVariableReferences(customProperties, registeredProperties, resolvedValues);
     }
     
     // With all results computed, we can now mutate our table to eliminate the variables and

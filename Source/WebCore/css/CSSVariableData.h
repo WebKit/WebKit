@@ -31,6 +31,7 @@
 
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include "CSSRegisteredCustomProperty.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -62,8 +63,8 @@ public:
 
     bool checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
 
-    RefPtr<CSSVariableData> resolveVariableReferences(const CustomPropertyValueMap& customProperties) const;
-    bool resolveTokenRange(const CustomPropertyValueMap&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
+    RefPtr<CSSVariableData> resolveVariableReferences(const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet&) const;
+    bool resolveTokenRange(const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
 
 private:
     CSSVariableData(const CSSParserTokenRange&, bool needsVariableResolution);
@@ -82,8 +83,8 @@ private:
     template<typename CharacterType> void updateTokens(const CSSParserTokenRange&);
     
     bool checkVariablesForCyclesWithRange(CSSParserTokenRange, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
-    bool resolveVariableReference(const CustomPropertyValueMap&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
-    bool resolveVariableFallback(const CustomPropertyValueMap&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
+    bool resolveVariableReference(const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
+    bool resolveVariableFallback(const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
 
     String m_backingString;
     Vector<CSSParserToken> m_tokens;

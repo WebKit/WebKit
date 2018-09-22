@@ -37,14 +37,14 @@ bool CSSCustomPropertyValue::checkVariablesForCycles(const AtomicString& name, C
     return true;
 }
 
-void CSSCustomPropertyValue::resolveVariableReferences(const CustomPropertyValueMap& customProperties, Vector<Ref<CSSCustomPropertyValue>>& resolvedValues) const
+void CSSCustomPropertyValue::resolveVariableReferences(const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet& registeredProperties, Vector<Ref<CSSCustomPropertyValue>>& resolvedValues) const
 {
     ASSERT(containsVariables());
     if (!m_value)
         return;
     
     ASSERT(m_value->needsVariableResolution());
-    RefPtr<CSSVariableData> resolvedData = m_value->resolveVariableReferences(customProperties);
+    RefPtr<CSSVariableData> resolvedData = m_value->resolveVariableReferences(customProperties, registeredProperties);
     if (resolvedData)
         resolvedValues.append(CSSCustomPropertyValue::createWithVariableData(m_name, resolvedData.releaseNonNull()));
     else
