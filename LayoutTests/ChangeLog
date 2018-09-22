@@ -1,3 +1,21 @@
+2018-09-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cannot start a drag inside a shadow tree when an inclusive-ancestor of its shadow host is a draggable element
+        https://bugs.webkit.org/show_bug.cgi?id=136836
+
+        Reviewed by Wenson Hsieh.
+
+        Added regression tests for dragging a element with a shadow tree, which is fixed in this bug
+        as well as dragging an element inside a shadow tree, which was already functional but had no tests.
+
+        * TestExpectations:
+        * fast/shadow-dom/dragging-element-inside-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/dragging-element-inside-shadow-tree.html: Added.
+        * fast/shadow-dom/dragging-element-with-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/dragging-element-with-shadow-tree.html: Added.
+        * platform/ios/TestExpectations: Don't mark the entirety of fast/shadow-dom as PASS.
+        * platform/mac-wk1/TestExpectations:
+
 2018-09-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r236336): computed CSSProperty doesn't have a value for _text

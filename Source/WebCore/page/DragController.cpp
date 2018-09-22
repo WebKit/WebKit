@@ -905,21 +905,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     Ref<Frame> protector(src);
     HitTestResult hitTestResult = src.eventHandler().hitTestResultAtPoint(dragOrigin, HitTestRequest::ReadOnly | HitTestRequest::Active);
 
-    // FIXME(136836): Investigate whether all elements should use the containsIncludingShadowDOM() path here.
-    bool includeShadowDOM = false;
-#if ENABLE(VIDEO)
-    includeShadowDOM = state.source->isMediaElement();
-#endif
-#if ENABLE(INPUT_TYPE_COLOR)
-    bool isColorControl = is<HTMLInputElement>(state.source) && downcast<HTMLInputElement>(*state.source).isColorControl();
-    includeShadowDOM = includeShadowDOM || isColorControl;
-#endif
-    bool sourceContainsHitNode;
-    if (!includeShadowDOM)
-        sourceContainsHitNode = state.source->contains(hitTestResult.innerNode());
-    else
-        sourceContainsHitNode = state.source->containsIncludingShadowDOM(hitTestResult.innerNode());
-
+    bool sourceContainsHitNode = state.source->containsIncludingShadowDOM(hitTestResult.innerNode());
     if (!sourceContainsHitNode) {
         // The original node being dragged isn't under the drag origin anymore... maybe it was
         // hidden or moved out from under the cursor. Regardless, we don't want to start a drag on
@@ -1178,6 +1164,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
+    bool isColorControl = is<HTMLInputElement>(state.source) && downcast<HTMLInputElement>(*state.source).isColorControl();
     if (isColorControl && m_dragSourceAction & DragSourceActionColor) {
         auto& input = downcast<HTMLInputElement>(*state.source);
         auto color = input.valueAsColor();

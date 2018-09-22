@@ -24,6 +24,8 @@ editing/pasteboard/drag-end-crash-accessing-item-list.html [ Pass ]
 editing/pasteboard/drag-file-promises-to-editable-element-as-URLs.html [ Pass ]
 editing/pasteboard/drag-file-promises-to-editable-element-as-attachment.html [ Pass ]
 editing/pasteboard/file-input-files-access-promise.html [ Pass ]
+fast/shadow-dom/dragging-element-with-shadow-tree.html [ Pass ]
+fast/shadow-dom/dragging-element-inside-shadow-tree.html [ Pass ]
 http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,18 @@
+2018-09-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cannot start a drag inside a shadow tree when an inclusive-ancestor of its shadow host is a draggable element
+        https://bugs.webkit.org/show_bug.cgi?id=136836
+
+        Reviewed by Wenson Hsieh.
+
+        Fixed the bug by simply generalizing the existing code path existed for video / input type=color.
+
+        Tests: fast/shadow-dom/dragging-element-inside-shadow-tree.html
+               fast/shadow-dom/dragging-element-with-shadow-tree.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
 2018-09-22  Chris Dumez  <cdumez@apple.com>
 
         FontDataCache should use Ref<Font> instead of a RefPtr<Font>
