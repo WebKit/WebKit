@@ -90,11 +90,6 @@ public:
     void setWebShareEnabled(bool isEnabled) { m_isWebShareEnabled = isEnabled; }
     bool webShareEnabled() const { return m_isWebShareEnabled; }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
-    bool attachmentElementEnabled() const { return m_isAttachmentElementEnabled; }
-#endif
-
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
@@ -103,6 +98,82 @@ public:
 
     void setIsSecureContextAttributeEnabled(bool isEnabled) { m_isSecureContextAttributeEnabled = isEnabled; }
     bool isSecureContextAttributeEnabled() const { return m_isSecureContextAttributeEnabled; }
+
+    void setWebAnimationsEnabled(bool areEnabled) { m_areWebAnimationsEnabled = areEnabled; }
+    bool webAnimationsEnabled() const { return m_areWebAnimationsEnabled; }
+
+    void setWebAnimationsCSSIntegrationEnabled(bool isEnabled) { m_isWebAnimationsCSSIntegrationEnabled = isEnabled; }
+    bool webAnimationsCSSIntegrationEnabled() const { return m_areWebAnimationsEnabled && m_isWebAnimationsCSSIntegrationEnabled; }
+
+    void setImageBitmapOffscreenCanvasEnabled(bool isEnabled) { m_isImageBitmapOffscreenCanvasEnabled = isEnabled; }
+    bool imageBitmapOffscreenCanvasEnabled() const { return m_isImageBitmapOffscreenCanvasEnabled; }
+
+    void setCacheAPIEnabled(bool isEnabled) { m_isCacheAPIEnabled = isEnabled; }
+    bool cacheAPIEnabled() const { return m_isCacheAPIEnabled; }
+
+    void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
+    bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
+
+    void setWebSocketEnabled(bool isEnabled) { m_isWebSocketEnabled = isEnabled; }
+    bool webSocketEnabled() const { return m_isWebSocketEnabled; }
+
+    bool fetchAPIKeepAliveEnabled() const { return m_fetchAPIKeepAliveEnabled; }
+    void setFetchAPIKeepAliveEnabled(bool isEnabled) { m_fetchAPIKeepAliveEnabled = isEnabled; }
+
+    bool spectreGadgetsEnabled() const;
+
+    void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
+    bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
+
+    void setWebVREnabled(bool isEnabled) { m_webVREnabled = isEnabled; }
+    bool webVREnabled() const { return m_webVREnabled; }
+
+    void setAccessibilityObjectModelEnabled(bool isEnabled) { m_accessibilityObjectModelEnabled = isEnabled; }
+    bool accessibilityObjectModelEnabled() const { return m_accessibilityObjectModelEnabled; }
+
+    void setAriaReflectionEnabled(bool isEnabled) { m_ariaReflectionEnabled = isEnabled; }
+    bool ariaReflectionEnabled() const { return m_ariaReflectionEnabled; }
+
+    void setResourceLoadStatisticsDebugMode(bool isEnabled) { m_resourceLoadStatisticsDebugMode = isEnabled; }
+    bool resourceLoadStatisticsDebugMode() const { return m_resourceLoadStatisticsDebugMode; }
+
+    void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
+    bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
+
+    void setCrossOriginResourcePolicyEnabled(bool isEnabled) { m_crossOriginResourcePolicyEnabled = isEnabled; }
+    bool crossOriginResourcePolicyEnabled() const { return m_crossOriginResourcePolicyEnabled; }
+
+    void setWebGLCompressedTextureASTCSupportEnabled(bool isEnabled) { m_isWebGLCompressedTextureASTCSupportEnabled = isEnabled; }
+    bool webGLCompressedTextureASTCSupportEnabled() const { return m_isWebGLCompressedTextureASTCSupportEnabled; }
+
+    void setStorageAccessPromptsEnabled(bool isEnabled)  { m_promptForStorageAccessAPIEnabled = isEnabled; }
+    bool storageAccessPromptsEnabled() const { return m_promptForStorageAccessAPIEnabled; }
+
+    void setServerTimingEnabled(bool isEnabled) { m_isServerTimingEnabled = isEnabled; }
+    bool serverTimingEnabled() const { return m_isServerTimingEnabled; }
+
+    void setExperimentalPlugInSandboxProfilesEnabled(bool isEnabled) { m_experimentalPlugInSandboxProfilesEnabled = isEnabled; }
+    bool experimentalPlugInSandboxProfilesEnabled() const { return m_experimentalPlugInSandboxProfilesEnabled; }
+
+    void setDisabledAdaptationsMetaTagEnabled(bool isEnabled) { m_disabledAdaptationsMetaTagEnabled = isEnabled; }
+    bool disabledAdaptationsMetaTagEnabled() const { return m_disabledAdaptationsMetaTagEnabled; }
+
+    void setAttrStyleEnabled(bool isEnabled) { m_attrStyleEnabled = isEnabled; }
+    bool attrStyleEnabled() const { return m_attrStyleEnabled; }
+
+    void setWebAPIStatisticsEnabled(bool isEnabled) { m_webAPIStatisticsEnabled = isEnabled; }
+    bool webAPIStatisticsEnabled() const { return m_webAPIStatisticsEnabled; }
+
+    void setCSSCustomPropertiesAndValuesEnabled(bool isEnabled) { m_CSSCustomPropertiesAndValuesEnabled = isEnabled; }
+    bool cssCustomPropertiesAndValuesEnabled() const { return m_CSSCustomPropertiesAndValuesEnabled; }
+
+    void setPointerEventsEnabled(bool isEnabled) { m_pointerEventsEnabled = isEnabled; }
+    bool pointerEventsEnabled() const { return m_pointerEventsEnabled; }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
+    bool attachmentElementEnabled() const { return m_isAttachmentElementEnabled; }
+#endif
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     void setIndexedDBWorkersEnabled(bool isEnabled) { m_isIndexedDBWorkersEnabled = isEnabled; }
@@ -173,12 +244,6 @@ public:
     bool animationTriggersEnabled() const { return m_areAnimationTriggersEnabled; }
 #endif
 
-    void setWebAnimationsEnabled(bool areEnabled) { m_areWebAnimationsEnabled = areEnabled; }
-    bool webAnimationsEnabled() const { return m_areWebAnimationsEnabled; }
-
-    void setWebAnimationsCSSIntegrationEnabled(bool isEnabled) { m_isWebAnimationsCSSIntegrationEnabled = isEnabled; }
-    bool webAnimationsCSSIntegrationEnabled() const { return m_areWebAnimationsEnabled && m_isWebAnimationsCSSIntegrationEnabled; }
-
 #if ENABLE(WEBGL2)
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
@@ -188,18 +253,6 @@ public:
     void setWebGPUEnabled(bool isEnabled) { m_isWebGPUEnabled = isEnabled; }
     bool webGPUEnabled() const { return m_isWebGPUEnabled; }
 #endif
-
-    void setImageBitmapOffscreenCanvasEnabled(bool isEnabled) { m_isImageBitmapOffscreenCanvasEnabled = isEnabled; }
-    bool imageBitmapOffscreenCanvasEnabled() const { return m_isImageBitmapOffscreenCanvasEnabled; }
-
-    void setCacheAPIEnabled(bool isEnabled) { m_isCacheAPIEnabled = isEnabled; }
-    bool cacheAPIEnabled() const { return m_isCacheAPIEnabled; }
-
-    void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
-    bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
-
-    void setWebSocketEnabled(bool isEnabled) { m_isWebSocketEnabled = isEnabled; }
-    bool webSocketEnabled() const { return m_isWebSocketEnabled; }
 
 #if ENABLE(STREAMS_API)
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
@@ -233,60 +286,10 @@ public:
     void setServiceWorkerEnabled(bool isEnabled) { m_serviceWorkerEnabled = isEnabled; }
 #endif
 
-    bool fetchAPIKeepAliveEnabled() const { return m_fetchAPIKeepAliveEnabled; }
-    void setFetchAPIKeepAliveEnabled(bool isEnabled) { m_fetchAPIKeepAliveEnabled = isEnabled; }
-
-    bool spectreGadgetsEnabled() const;
-
-    void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
-    bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
-
-    void setWebVREnabled(bool isEnabled) { m_webVREnabled = isEnabled; }
-    bool webVREnabled() const { return m_webVREnabled; }
-
-    void setAccessibilityObjectModelEnabled(bool isEnabled) { m_accessibilityObjectModelEnabled = isEnabled; }
-    bool accessibilityObjectModelEnabled() const { return m_accessibilityObjectModelEnabled; }
-    
-    void setAriaReflectionEnabled(bool isEnabled) { m_ariaReflectionEnabled = isEnabled; }
-    bool ariaReflectionEnabled() const { return m_ariaReflectionEnabled; }
-
-    void setResourceLoadStatisticsDebugMode(bool isEnabled) { m_resourceLoadStatisticsDebugMode = isEnabled; }
-    bool resourceLoadStatisticsDebugMode() const { return m_resourceLoadStatisticsDebugMode; }
-
-    void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
-    bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
-
-    void setCrossOriginResourcePolicyEnabled(bool isEnabled) { m_crossOriginResourcePolicyEnabled = isEnabled; }
-    bool crossOriginResourcePolicyEnabled() const { return m_crossOriginResourcePolicyEnabled; }
-    
-    void setWebGLCompressedTextureASTCSupportEnabled(bool isEnabled) { m_isWebGLCompressedTextureASTCSupportEnabled = isEnabled; }
-    bool webGLCompressedTextureASTCSupportEnabled() const { return m_isWebGLCompressedTextureASTCSupportEnabled; }
-
-    void setStorageAccessPromptsEnabled(bool isEnabled)  { m_promptForStorageAccessAPIEnabled = isEnabled; }
-    bool storageAccessPromptsEnabled() const { return m_promptForStorageAccessAPIEnabled; }
-
-    void setServerTimingEnabled(bool isEnabled) { m_isServerTimingEnabled = isEnabled; }
-    bool serverTimingEnabled() const { return m_isServerTimingEnabled; }
-
-    void setExperimentalPlugInSandboxProfilesEnabled(bool isEnabled) { m_experimentalPlugInSandboxProfilesEnabled = isEnabled; }
-    bool experimentalPlugInSandboxProfilesEnabled() const { return m_experimentalPlugInSandboxProfilesEnabled; }
-
-    void setDisabledAdaptationsMetaTagEnabled(bool isEnabled) { m_disabledAdaptationsMetaTagEnabled = isEnabled; }
-    bool disabledAdaptationsMetaTagEnabled() const { return m_disabledAdaptationsMetaTagEnabled; }
-
 #if USE(SYSTEM_PREVIEW)
     void setSystemPreviewEnabled(bool isEnabled) { m_systemPreviewEnabled = isEnabled; }
     bool systemPreviewEnabled() const { return m_systemPreviewEnabled; }
 #endif
-
-    void setAttrStyleEnabled(bool isEnabled) { m_attrStyleEnabled = isEnabled; }
-    bool attrStyleEnabled() const { return m_attrStyleEnabled; }
-
-    void setWebAPIStatisticsEnabled(bool isEnabled) { m_webAPIStatisticsEnabled = isEnabled; }
-    bool webAPIStatisticsEnabled() const { return m_webAPIStatisticsEnabled; }
-
-    void setCSSCustomPropertiesAndValuesEnabled(bool isEnabled) { m_CSSCustomPropertiesAndValuesEnabled = isEnabled; }
-    bool cssCustomPropertiesAndValuesEnabled() const { return m_CSSCustomPropertiesAndValuesEnabled; }
 
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
@@ -312,6 +315,29 @@ private:
     bool m_isCustomPasteboardDataEnabled { false };
     bool m_isWebShareEnabled { false };
     bool m_inputEventsEnabled { true };
+    bool m_areWebAnimationsEnabled { true };
+    bool m_isWebAnimationsCSSIntegrationEnabled { false };
+    bool m_isImageBitmapOffscreenCanvasEnabled { true };
+    bool m_isCacheAPIEnabled { false };
+    bool m_isFetchAPIEnabled { true };
+    bool m_isWebSocketEnabled { true };
+    bool m_fetchAPIKeepAliveEnabled { false };
+    bool m_inspectorAdditionsEnabled { false };
+    bool m_webVREnabled { false };
+    bool m_accessibilityObjectModelEnabled { false };
+    bool m_ariaReflectionEnabled { true };
+    bool m_resourceLoadStatisticsDebugMode { false };
+    bool m_isRestrictedHTTPResponseAccess { true };
+    bool m_crossOriginResourcePolicyEnabled { true };
+    bool m_isWebGLCompressedTextureASTCSupportEnabled { false };
+    bool m_promptForStorageAccessAPIEnabled { false };
+    bool m_isServerTimingEnabled { false };
+    bool m_experimentalPlugInSandboxProfilesEnabled { false };
+    bool m_disabledAdaptationsMetaTagEnabled { false };
+    bool m_attrStyleEnabled { false };
+    bool m_webAPIStatisticsEnabled { false };
+    bool m_CSSCustomPropertiesAndValuesEnabled { false };
+    bool m_pointerEventsEnabled { false };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };
@@ -374,9 +400,6 @@ private:
     bool m_isWritableStreamAPIEnabled { false };
 #endif
 
-    bool m_areWebAnimationsEnabled { true };
-    bool m_isWebAnimationsCSSIntegrationEnabled { false };
-
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { false };
 #endif
@@ -384,12 +407,6 @@ private:
 #if ENABLE(WEBGPU)
     bool m_isWebGPUEnabled { false };
 #endif
-
-    bool m_isImageBitmapOffscreenCanvasEnabled { true };
-    bool m_isCacheAPIEnabled { false };
-    bool m_isFetchAPIEnabled { true };
-
-    bool m_isWebSocketEnabled { true };
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     bool m_isDownloadAttributeEnabled { false };
@@ -411,29 +428,9 @@ private:
     bool m_serviceWorkerEnabled { false };
 #endif
 
-    bool m_fetchAPIKeepAliveEnabled { false };
-    bool m_inspectorAdditionsEnabled { false };
-    bool m_webVREnabled { false };
-    bool m_accessibilityObjectModelEnabled { false };
-    bool m_ariaReflectionEnabled { true };
-    bool m_resourceLoadStatisticsDebugMode { false };
-    bool m_isRestrictedHTTPResponseAccess { true };
-    bool m_crossOriginResourcePolicyEnabled { true };
-    bool m_isWebGLCompressedTextureASTCSupportEnabled { false };
-    bool m_promptForStorageAccessAPIEnabled { false };
-    bool m_isServerTimingEnabled { false };
-    bool m_experimentalPlugInSandboxProfilesEnabled { false };
-    bool m_disabledAdaptationsMetaTagEnabled { false };
-
 #if USE(SYSTEM_PREVIEW)
     bool m_systemPreviewEnabled { false };
 #endif
-
-    bool m_attrStyleEnabled { false };
-
-    bool m_webAPIStatisticsEnabled { false };
-
-    bool m_CSSCustomPropertiesAndValuesEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

@@ -1,3 +1,43 @@
+2018-09-21  Dean Jackson  <dino@apple.com>
+
+        Add PointerEvent, plus feature flag, plus Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=189867
+        <rdar://problem/44697384>
+
+        Reviewed by Simon Fraser.
+
+        Add the PointerEvent interface.
+
+        Tests: imported/w3c/web-platform-tests/pointerevents/extension/idlharness.window.html
+               imported/w3c/web-platform-tests/pointerevents/extension/pointerevent_constructor.html
+               imported/w3c/web-platform-tests/pointerevents/extension/pointerevent_touch-action-verification.html
+               imported/w3c/web-platform-tests/pointerevents/idlharness.window.html
+               imported/w3c/web-platform-tests/pointerevents/pointerevent_constructor.html
+               imported/w3c/web-platform-tests/pointerevents/pointerevent_on_event_handlers.html
+               imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-illegal.html
+               imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-verification.html
+
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+                Add the new files.
+
+        * dom/Event.h:
+        (WebCore::Event::isPointerEvent const): New virtual identification method.
+
+        * dom/EventNames.in: Add PointerEvent so the InterfaceType code is generated.
+
+        * dom/PointerEvent.cpp: The PointerEvent interface, as specified by W3C.
+        (WebCore::PointerEvent::PointerEvent):
+        (WebCore::PointerEvent::eventInterface const):
+        * dom/PointerEvent.h: Added.
+        * dom/PointerEvent.idl: Added.
+
+        * page/RuntimeEnabledFeatures.h: Clean up the ordering of the features, so there aren't
+        confusing blank lines interspersed with #if USE macros.
+        (WebCore::RuntimeEnabledFeatures::setPointerEventsEnabled): Add a new flag for Pointer Events.
+        (WebCore::RuntimeEnabledFeatures::pointerEventsEnabled const):
+
 2018-09-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Custom elements in a reaction queue can lose its JS wrapper and become HTMLUnknownElement

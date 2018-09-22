@@ -277,7 +277,7 @@
     "web-platform-tests/payment-method-id": "skip", 
     "web-platform-tests/payment-request": "import", 
     "web-platform-tests/performance-timeline": "skip", 
-    "web-platform-tests/pointerevents": "skip", 
+    "web-platform-tests/pointerevents": "import", 
     "web-platform-tests/pointerlock": "skip", 
     "web-platform-tests/preload": "skip", 
     "web-platform-tests/presentation-api": "skip", 

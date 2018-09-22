@@ -1183,6 +1183,14 @@ VisualViewportAPIEnabled:
   humanReadableDescription: "Enable Visual Viewport API"
   category: experimental
 
+PointerEventsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Pointer Events"
+  humanReadableDescription: "Enable Pointer Events"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+
 CSSOMViewScrollingAPIEnabled:
   type: bool
   defaultValue: false

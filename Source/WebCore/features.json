@@ -1025,6 +1025,16 @@
         }
     },
     {
+        "name": "Pointer Events",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://www.w3.org/TR/pointerevents/",
+        "specification": "Pointer Events Level 2",
+        "description": "Pointer Events describes events and related interfaces for handling hardware agnostic pointer input from devices including a mouse, pen, touchscreen, etc."
+    },
+    {
         "name": "Position: sticky",
         "status": {
             "status": "Supported",

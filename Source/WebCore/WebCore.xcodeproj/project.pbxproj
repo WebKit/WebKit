@@ -942,6 +942,7 @@
 		316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */; };
 		316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */; };
 		31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		317D3FF3215599F40034E3B9 /* PointerEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 317D3FF2215599E30034E3B9 /* PointerEvent.h */; };
 		31815A311F9A6C8F00FCBF89 /* ImageBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D26BBF1F86D189008FF255 /* ImageBitmap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		318891611AB7EEA100EA627B /* missingImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF419991AB0DA14004E64E1 /* missingImage@3x.png */; };
 		318EAD4D1FA91380008CEF86 /* ImageBitmapRenderingContextSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 318EAD4A1FA91157008CEF86 /* ImageBitmapRenderingContextSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6918,6 +6919,9 @@
 		316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyframeAnimation.cpp; sourceTree = "<group>"; };
 		316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyframeAnimation.h; sourceTree = "<group>"; };
 		31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimulatedClickOptions.h; sourceTree = "<group>"; };
+		317D3FEF215599E10034E3B9 /* PointerEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PointerEvent.idl; sourceTree = "<group>"; };
+		317D3FF1215599E20034E3B9 /* PointerEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PointerEvent.cpp; sourceTree = "<group>"; };
+		317D3FF2215599E30034E3B9 /* PointerEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PointerEvent.h; sourceTree = "<group>"; };
 		3189E6DB16B2103500386EA3 /* plugIns.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = plugIns.css; sourceTree = "<group>"; };
 		318EAD4A1FA91157008CEF86 /* ImageBitmapRenderingContextSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBitmapRenderingContextSettings.h; sourceTree = "<group>"; };
 		318EAD4C1FA91352008CEF86 /* ImageBitmapRenderingContextSettings.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageBitmapRenderingContextSettings.idl; sourceTree = "<group>"; };
@@ -26511,6 +26515,9 @@
 				8A7CC96F12076F8A001D4588 /* PendingScript.cpp */,
 				8A7CC96A12076D73001D4588 /* PendingScript.h */,
 				E3FA38611D716E7600AA5950 /* PendingScriptClient.h */,
+				317D3FF1215599E20034E3B9 /* PointerEvent.cpp */,
+				317D3FF2215599E30034E3B9 /* PointerEvent.h */,
+				317D3FEF215599E10034E3B9 /* PointerEvent.idl */,
 				5189F0DD10B46B0E00F3C739 /* PopStateEvent.cpp */,
 				5174E20810A1F44F00F95E6F /* PopStateEvent.h */,
 				5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */,
@@ -29852,6 +29859,7 @@
 				BCBB8AB913F1AFB000734DF0 /* PODInterval.h in Headers */,
 				BCBB8ABA13F1AFB000734DF0 /* PODIntervalTree.h in Headers */,
 				BCBB8ABB13F1AFB000734DF0 /* PODRedBlackTree.h in Headers */,
+				317D3FF3215599F40034E3B9 /* PointerEvent.h in Headers */,
 				B2B1F7170D00CAA8004AEA64 /* PointerEventsHitRules.h in Headers */,
 				3FF813A71DBA8640009BF001 /* PointerLockController.h in Headers */,
 				84730D921248F0B300D3A9C9 /* PointLightSource.h in Headers */,

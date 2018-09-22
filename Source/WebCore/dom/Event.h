@@ -104,6 +104,7 @@ public:
     virtual bool isInputEvent() const { return false; }
     virtual bool isKeyboardEvent() const { return false; }
     virtual bool isMouseEvent() const { return false; }
+    virtual bool isPointerEvent() const { return false; }
     virtual bool isTextEvent() const { return false; }
     virtual bool isTouchEvent() const { return false; }
     virtual bool isUIEvent() const { return false; }

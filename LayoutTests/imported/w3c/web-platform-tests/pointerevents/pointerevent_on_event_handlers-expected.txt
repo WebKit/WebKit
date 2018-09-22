@@ -1,0 +1,38 @@
+PointerEvent: Dispatch custom event
+
+Test Description: This test checks if on pointer event handlers through attributes works properly using synthetic pointerevents. For valid results, this test must be run without generating real (trusted) events on the black rectangle below.
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL The default value of onpointerdown is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onpointerdown content attribute must be compiled into the onpointerdown property assert_equals: The onpointerdown property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a pointerdown event must trigger element.onpointerdown 
+FAIL The default value of onpointerup is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onpointerup content attribute must be compiled into the onpointerup property assert_equals: The onpointerup property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a pointerup event must trigger element.onpointerup 
+FAIL The default value of onpointercancel is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onpointercancel content attribute must be compiled into the onpointercancel property assert_equals: The onpointercancel property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a pointercancel event must trigger element.onpointercancel 
+FAIL The default value of onpointermove is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onpointermove content attribute must be compiled into the onpointermove property assert_equals: The onpointermove property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a pointermove event must trigger element.onpointermove 
+FAIL The default value of onpointerover is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onpointerover content attribute must be compiled into the onpointerover property assert_equals: The onpointerover property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a pointerover event must trigger element.onpointerover 
+FAIL The default value of onpointerout is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onpointerout content attribute must be compiled into the onpointerout property assert_equals: The onpointerout property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a pointerout event must trigger element.onpointerout 
+FAIL The default value of onpointerenter is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onpointerenter content attribute must be compiled into the onpointerenter property assert_equals: The onpointerenter property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a pointerenter event must trigger element.onpointerenter 
+FAIL The default value of onpointerleave is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onpointerleave content attribute must be compiled into the onpointerleave property assert_equals: The onpointerleave property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a pointerleave event must trigger element.onpointerleave 
+FAIL The default value of ongotpointercapture is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The ongotpointercapture content attribute must be compiled into the ongotpointercapture property assert_equals: The ongotpointercapture property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a gotpointercapture event must trigger element.ongotpointercapture 
+FAIL The default value of onlostpointercapture is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
+FAIL The onlostpointercapture content attribute must be compiled into the onlostpointercapture property assert_equals: The onlostpointercapture property must be a function expected "function" but got "undefined"
+NOTRUN dispatching a lostpointercapture event must trigger element.onlostpointercapture 
+

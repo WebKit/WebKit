@@ -785,6 +785,7 @@ dom/NodeTraversal.cpp
 dom/OverflowEvent.cpp
 dom/PageTransitionEvent.cpp
 dom/PendingScript.cpp
+dom/PointerEvent.cpp
 dom/PopStateEvent.cpp
 dom/Position.cpp
 dom/PositionIterator.cpp
@@ -2849,6 +2850,7 @@ JSPerformanceServerTiming.cpp
 JSPerformanceTiming.cpp
 JSPeriodicWave.cpp
 JSPlaybackDirection.cpp
+JSPointerEvent.cpp
 JSPopStateEvent.cpp
 JSPositionCallback.cpp
 JSPositionError.cpp

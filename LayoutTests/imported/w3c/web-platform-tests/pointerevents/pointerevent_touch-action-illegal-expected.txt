@@ -1,0 +1,13 @@
+Pointer Events touch-action attribute support
+
+Test Description: Test will automatically check behaviour of following combinations: 'pan-x none', 'pan-y none', 'auto none'
+
+touch-action: none
+
+The following pointer types were detected: (none).
+
+
+FAIL 'pan-x none' is corrected properly assert_true: 'pan-x none' is corrected properly expected true got false
+FAIL 'pan-y none' is corrected properly assert_true: 'pan-y none' is corrected properly expected true got false
+FAIL 'auto none' is corrected properly assert_true: 'auto none' is corrected properly expected true got false
+
