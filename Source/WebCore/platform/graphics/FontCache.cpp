@@ -283,7 +283,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
 };
 
-typedef HashMap<FontPlatformData, RefPtr<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
+typedef HashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
 
 static FontDataCache& cachedFonts()
 {
@@ -337,13 +337,13 @@ Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
     auto locker = holdLock(fontLock);
 #endif
     
-    auto addResult = cachedFonts().add(platformData, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = Font::create(platformData);
+    auto addResult = cachedFonts().ensure(platformData, [&] {
+        return Font::create(platformData);
+    });
 
     ASSERT(addResult.iterator->value->platformData() == platformData);
 
-    return *addResult.iterator->value;
+    return addResult.iterator->value.copyRef();
 }
 
 void FontCache::purgeInactiveFontDataIfNeeded()
@@ -375,12 +375,12 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
 #endif
 
     while (purgeCount) {
-        Vector<RefPtr<Font>, 20> fontsToDelete;
-        for (auto font : cachedFonts().values()) {
+        Vector<Ref<Font>, 20> fontsToDelete;
+        for (auto& font : cachedFonts().values()) {
             LOG(Fonts, " trying to purge font %s (has one ref %d)", font->platformData().description().utf8().data(), font->hasOneRef());
             if (!font->hasOneRef())
                 continue;
-            fontsToDelete.append(WTFMove(font));
+            fontsToDelete.append(font.copyRef());
             if (!--purgeCount)
                 break;
         }

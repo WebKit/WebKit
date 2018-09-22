@@ -1,3 +1,14 @@
+2018-09-22  Chris Dumez  <cdumez@apple.com>
+
+        FontDataCache should use Ref<Font> instead of a RefPtr<Font>
+        https://bugs.webkit.org/show_bug.cgi?id=189861
+
+        Reviewed by Antti Koivisto.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::fontForPlatformData):
+        (WebCore::FontCache::purgeInactiveFontData):
+
 2018-09-21  Justin Michaud  <justin_michaud@apple.com>
 
         Implement initialValue support for CSS Custom Properties and Values API
