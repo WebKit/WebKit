@@ -14,7 +14,7 @@ fast/events/autoscroll-when-zoomed.html [ Pass ]
 fast/events/autoscroll-main-document.html [ Pass ]
 
 accessibility/smart-invert.html [ Pass ]
-accessibility/smart-invert-reference.html [ Pass ]
+webkit.org/b/189818 accessibility/smart-invert-reference.html [ Pass ImageOnlyFailure ]
 fast/media/mq-inverted-colors-live-update.html [ Pass ]
 fast/media/mq-inverted-colors-live-update-in-subframes.html [ Pass ]
 fast/media/mq-monochrome-live-update.html [ Pass ]
