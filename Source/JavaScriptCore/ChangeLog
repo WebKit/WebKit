@@ -1,3 +1,111 @@
+2018-09-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Enable LLInt ASM interpreter on X64 and ARM64 in non JIT configuration
+        https://bugs.webkit.org/show_bug.cgi?id=189778
+
+        Reviewed by Keith Miller.
+
+        LLInt ASM interpreter is 2x and 15% faster than CLoop interpreter on
+        Linux and macOS respectively. We would like to enable it for non JIT
+        configurations in X86_64 and ARM64.
+
+        This patch enables LLInt for non JIT builds in X86_64 and ARM64 architectures.
+        Previously, we switch LLInt ASM interpreter and CLoop by using ENABLE(JIT)
+        configuration. But it is wrong in the new scenario since we have a build
+        configuration that uses LLInt ASM interpreter and JIT is disabled. We introduce
+        ENABLE(C_LOOP) option, which represents that we use CLoop. And we replace
+        ENABLE(JIT) with ENABLE(C_LOOP) if the previous ENABLE(JIT) is essentially just
+        related to LLInt ASM interpreter and not related to JIT.
+
+        We also replace some ENABLE(JIT) configurations with ENABLE(ASSEMBLER).
+        ENABLE(ASSEMBLER) is now enabled even if we disable JIT since MacroAssembler
+        has machine register information that is used in LLInt ASM interpreter.
+
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (testPingPongStackOverflow):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MaxFrameExtentForSlowPathCall.h:
+        * bytecode/CallReturnOffsetToBytecodeOffset.h: Removed. It is no longer used.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::calleeSaveRegisters const):
+        (JSC::CodeBlock::numberOfLLIntBaselineCalleeSaveRegisters):
+        (JSC::CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters):
+        (JSC::CodeBlock::calleeSaveSpaceAsVirtualRegisters):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * heap/Heap.cpp:
+        (JSC::Heap::gatherJSStackRoots):
+        (JSC::Heap::stopThePeriphery):
+        * interpreter/CLoopStack.cpp:
+        * interpreter/CLoopStack.h:
+        * interpreter/CLoopStackInlines.h:
+        * interpreter/EntryFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        (JSC::UnwindFunctor::copyCalleeSavesToEntryFrameCalleeSavesBuffer const):
+        * interpreter/Interpreter.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::calleeSaveRegisters):
+        * interpreter/VMEntryRecord.h:
+        * jit/ExecutableAllocator.h:
+        * jit/FPRInfo.h:
+        (WTF::printInternal):
+        * jit/GPRInfo.cpp:
+        * jit/GPRInfo.h:
+        (WTF::printInternal):
+        * jit/HostCallReturnValue.cpp:
+        (JSC::getHostCallReturnValueWithExecState): Moved. They are used in LLInt ASM interpreter too.
+        * jit/HostCallReturnValue.h:
+        * jit/JITOperations.cpp:
+        (JSC::getHostCallReturnValueWithExecState): Deleted.
+        * jit/JITOperationsMSVC64.cpp:
+        * jit/Reg.cpp:
+        * jit/Reg.h:
+        * jit/RegisterAtOffset.cpp:
+        * jit/RegisterAtOffset.h:
+        * jit/RegisterAtOffsetList.cpp:
+        * jit/RegisterAtOffsetList.h:
+        * jit/RegisterMap.h:
+        * jit/RegisterSet.cpp:
+        * jit/RegisterSet.h:
+        * jit/TempRegisterSet.cpp:
+        * jit/TempRegisterSet.h:
+        * llint/LLIntCLoop.cpp:
+        * llint/LLIntCLoop.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntData.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntOpcode.h:
+        * llint/LLIntPCRanges.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LLIntThunks.cpp:
+        * llint/LowLevelInterpreter.cpp:
+        * llint/LowLevelInterpreter.h:
+        * runtime/JSCJSValue.h:
+        * runtime/MachineContext.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces): Enable SamplingProfiler
+        for LLInt ASM interpreter with non JIT configuration.
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::optimizeNextInvocation):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::getHostFunction):
+        (JSC::VM::updateSoftReservedZoneSize):
+        (JSC::sanitizeStackForVM):
+        (JSC::VM::committedStackByteCount):
+        * runtime/VM.h:
+        * runtime/VMInlines.h:
+        (JSC::VM::ensureStackCapacityFor):
+        (JSC::VM::isSafeToRecurseSoft const):
+
 2018-09-21  Keith Miller  <keith_miller@apple.com>
 
         Add Promise SPI

@@ -672,7 +672,7 @@ void Heap::gatherStackRoots(ConservativeRoots& roots)
 
 void Heap::gatherJSStackRoots(ConservativeRoots& roots)
 {
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     m_vm->interpreter->cloopStack().gatherConservativeRoots(roots, *m_jitStubRoutines, *m_codeBlocks);
 #else
     UNUSED_PARAM(roots);
@@ -1605,9 +1605,8 @@ void Heap::stopThePeriphery(GCConductor conn)
             && conn == GCConductor::Collector)
             setGCDidJIT();
     }
-#else
-    UNUSED_PARAM(conn);
 #endif // ENABLE(JIT)
+    UNUSED_PARAM(conn);
     
     vm()->shadowChicken().update(*vm(), vm()->topCallFrame);
     

@@ -27,7 +27,7 @@
 
 #include "Opcode.h"
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 
 namespace JSC {
 
@@ -44,4 +44,4 @@ FOR_EACH_CORE_OPCODE_ID(LLINT_OPCODE_ALIAS)
 
 } // namespace JSC
 
-#endif // !ENABLE(JIT)
+#endif // ENABLE(C_LOOP)

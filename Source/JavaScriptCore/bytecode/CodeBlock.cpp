@@ -89,7 +89,7 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/UniquedStringImpl.h>
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 #include "RegisterAtOffsetList.h"
 #endif
 
@@ -509,7 +509,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (size_t size = unlinkedCodeBlock->numberOfObjectAllocationProfiles())
         m_objectAllocationProfiles = RefCountedArray<ObjectAllocationProfile>(size);
 
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
     setCalleeSaveRegisters(RegisterSet::llintBaselineCalleeSaveRegisters());
 #endif
 
@@ -2145,7 +2145,7 @@ unsigned CodeBlock::reoptimizationRetryCounter() const
 #endif // ENABLE(JIT)
 }
 
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 void CodeBlock::setCalleeSaveRegisters(RegisterSet calleeSaveRegisters)
 {
     m_calleeSaveRegisters = std::make_unique<RegisterAtOffsetList>(calleeSaveRegisters);
@@ -2172,6 +2172,9 @@ size_t CodeBlock::calleeSaveSpaceAsVirtualRegisters()
 {
     return roundCalleeSaveSpaceAsVirtualRegisters(m_calleeSaveRegisters->size());
 }
+#endif
+
+#if ENABLE(JIT)
 
 void CodeBlock::countReoptimization()
 {

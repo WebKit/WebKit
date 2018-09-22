@@ -50,10 +50,10 @@ inline void setInstructionPointer(PlatformRegisters&, MacroAssemblerCodePtr<CFun
 
 template<size_t N> void*& argumentPointer(PlatformRegisters&);
 template<size_t N> void* argumentPointer(const PlatformRegisters&);
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 void*& llintInstructionPointer(PlatformRegisters&);
 void* llintInstructionPointer(const PlatformRegisters&);
-#endif // ENABLE(JIT)
+#endif // !ENABLE(C_LOOP)
 
 #if HAVE(MACHINE_CONTEXT)
 
@@ -72,10 +72,10 @@ inline void setInstructionPointer(mcontext_t&, MacroAssemblerCodePtr<CFunctionPt
 
 template<size_t N> void*& argumentPointer(mcontext_t&);
 template<size_t N> void* argumentPointer(const mcontext_t&);
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 void*& llintInstructionPointer(mcontext_t&);
 void* llintInstructionPointer(const mcontext_t&);
-#endif // ENABLE(JIT)
+#endif // !ENABLE(C_LOOP)
 #endif // HAVE(MACHINE_CONTEXT)
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
@@ -668,7 +668,7 @@ inline void* argumentPointer(const mcontext_t& machineContext)
 }
 #endif // HAVE(MACHINE_CONTEXT)
 
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 #if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 inline void*& llintInstructionPointer(PlatformRegisters& regs)
 {
@@ -783,7 +783,7 @@ inline void* llintInstructionPointer(const mcontext_t& machineContext)
     return llintInstructionPointer(const_cast<mcontext_t&>(machineContext));
 }
 #endif // HAVE(MACHINE_CONTEXT)
-#endif // ENABLE(JIT)
+#endif // !ENABLE(C_LOOP)
 
 }
 }

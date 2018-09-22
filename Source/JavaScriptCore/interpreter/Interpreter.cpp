@@ -67,6 +67,7 @@
 #include "ProtoCallFrame.h"
 #include "RegExpObject.h"
 #include "Register.h"
+#include "RegisterAtOffsetList.h"
 #include "ScopedArguments.h"
 #include "StackAlignment.h"
 #include "StackFrame.h"
@@ -332,7 +333,7 @@ void setupForwardArgumentsFrameAndSetThis(CallFrame* execCaller, CallFrame* exec
 
 Interpreter::Interpreter(VM& vm)
     : m_vm(vm)
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     , m_cloopStack(vm)
 #endif
 {
@@ -563,7 +564,7 @@ public:
 private:
     void copyCalleeSavesToEntryFrameCalleeSavesBuffer(StackVisitor& visitor) const
     {
-#if ENABLE(JIT) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+#if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
         RegisterAtOffsetList* currentCalleeSaves = visitor->calleeSaveRegisters();
 
         if (!currentCalleeSaves)

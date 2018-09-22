@@ -34,7 +34,7 @@ namespace JSC {
 class VM;
 struct Instruction;
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 typedef OpcodeID LLIntCode;
 #else
 typedef void (*LLIntCode)();

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RegisterAtOffsetList.h"
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 
 #include <wtf/ListDump.h>
 
@@ -68,5 +68,5 @@ unsigned RegisterAtOffsetList::indexOf(Reg reg) const
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(ASSEMBLER)
 

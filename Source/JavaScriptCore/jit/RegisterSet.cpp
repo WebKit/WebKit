@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RegisterSet.h"
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 
 #include "GPRInfo.h"
 #include "JSCInlines.h"
@@ -395,5 +395,5 @@ void RegisterSet::dump(PrintStream& out) const
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(ASSEMBLER)
 

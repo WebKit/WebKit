@@ -29,7 +29,7 @@
 #include "config.h"
 #include "CLoopStack.h"
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 
 #include "CLoopStackInlines.h"
 #include "ConservativeRoots.h"
@@ -163,4 +163,4 @@ size_t CLoopStack::committedByteCount()
 
 } // namespace JSC
 
-#endif // !ENABLE(JIT)
+#endif // ENABLE(C_LOOP)

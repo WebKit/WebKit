@@ -58,7 +58,7 @@ namespace JSC {
 #undef OPCODE_ID_ENUM
 
 const int maxOpcodeLength = 9;
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_CLOOP_BYTECODE_HELPER_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 #else
 const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;

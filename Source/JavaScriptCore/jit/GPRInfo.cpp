@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPRInfo.h"
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 
 namespace JSC {
 
@@ -48,4 +48,4 @@ const GPRReg GPRInfo::patchpointScratchRegister = ARM64Registers::ip0;
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(ASSEMBLER)

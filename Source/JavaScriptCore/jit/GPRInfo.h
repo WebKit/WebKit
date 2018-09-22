@@ -41,7 +41,7 @@ enum NoResultTag { NoResult };
 typedef MacroAssembler::RegisterID GPRReg;
 static constexpr GPRReg InvalidGPRReg { GPRReg::InvalidGPRReg };
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 
 #if USE(JSVALUE64)
 class JSValueRegs {
@@ -816,7 +816,7 @@ inline NoResultTag extractResult(NoResultTag) { return NoResult; }
 // We use this hack to get the GPRInfo from the GPRReg type in templates because our code is bad and we should feel bad..
 constexpr GPRInfo toInfoFromReg(GPRReg) { return GPRInfo(); }
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(ASSEMBLER)
 
 } // namespace JSC
 
@@ -824,7 +824,7 @@ namespace WTF {
 
 inline void printInternal(PrintStream& out, JSC::GPRReg reg)
 {
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
     out.print("%", JSC::GPRInfo::debugName(reg));
 #else
     out.printf("%%r%d", reg);

@@ -601,10 +601,15 @@ void SamplingProfiler::processUnverifiedStackTraces()
                     storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
                     startIndex = 1;
                 }
-            } else if (std::optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
-                appendCodeOrigin(topCodeBlock, *codeOrigin);
-                storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
-                startIndex = 1;
+            } else {
+#if ENABLE(JIT)
+                if (std::optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
+                    appendCodeOrigin(topCodeBlock, *codeOrigin);
+                    storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
+                    startIndex = 1;
+                }
+#endif
+                UNUSED_PARAM(appendCodeOrigin);
             }
         }
 

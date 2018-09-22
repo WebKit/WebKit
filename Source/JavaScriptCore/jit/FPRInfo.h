@@ -33,7 +33,7 @@ namespace JSC {
 typedef MacroAssembler::FPRegisterID FPRReg;
 static constexpr FPRReg InvalidFPRReg { FPRReg::InvalidFPRReg };
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 
 #if CPU(X86) || CPU(X86_64)
 
@@ -332,7 +332,7 @@ public:
 // We use this hack to get the FPRInfo from the FPRReg type in templates because our code is bad and we should feel bad..
 constexpr FPRInfo toInfoFromReg(FPRReg) { return FPRInfo(); }
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(ASSEMBLER)
 
 } // namespace JSC
 
@@ -340,7 +340,7 @@ namespace WTF {
 
 inline void printInternal(PrintStream& out, JSC::FPRReg reg)
 {
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
     out.print("%", JSC::FPRInfo::debugName(reg));
 #else
     out.printf("%%fr%d", reg);

@@ -145,7 +145,7 @@ private:
 
 #else
 inline bool isJITPC(void*) { return false; }
-#endif // ENABLE(JIT) && ENABLE(ASSEMBLER)
+#endif // ENABLE(ASSEMBLER)
 
 
 } // namespace JSC

@@ -35,7 +35,7 @@ namespace JSC {
 // that can be used for outgoing args when calling a slow path C function
 // from JS code.
 
-#if !ENABLE(JIT)
+#if !ENABLE(ASSEMBLER)
 static const size_t maxFrameExtentForSlowPathCall = 0;
 
 #elif CPU(X86_64) && OS(WINDOWS)
@@ -69,7 +69,7 @@ static const size_t maxFrameExtentForSlowPathCall = 40;
 
 COMPILE_ASSERT(!(maxFrameExtentForSlowPathCall % sizeof(Register)), extent_must_be_in_multiples_of_registers);
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 // Make sure that cfr - maxFrameExtentForSlowPathCall bytes will make the stack pointer aligned
 COMPILE_ASSERT((maxFrameExtentForSlowPathCall % 16) == 16 - sizeof(CallerFrameAndPC), extent_must_align_stack_from_callframe_pointer);
 #endif

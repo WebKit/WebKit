@@ -1,3 +1,20 @@
+2018-09-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Enable LLInt ASM interpreter on X64 and ARM64 in non JIT configuration
+        https://bugs.webkit.org/show_bug.cgi?id=189778
+
+        Reviewed by Keith Miller.
+
+        This patch adds ENABLE(C_LOOP) which indicates we use CLoop as the interpreter.
+        Previously, we used !ENABLE(JIT) for this configuration. But now, we have
+        a build configuration that has LLInt ASM interpreter (not CLoop) and !ENABLE(JIT).
+
+        We enable LLInt ASM interpreter for non JIT environment in X86_64 and ARM64 architectures.
+        And we enable ENABLE(ASSEMBLER) for non JIT environment since it offers machine register
+        information which is used for LLInt and SamplingProfiler.
+
+        * wtf/Platform.h:
+
 2018-09-21  Keith Miller  <keith_miller@apple.com>
 
         Add Promise SPI

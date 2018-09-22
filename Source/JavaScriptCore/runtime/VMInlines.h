@@ -35,7 +35,7 @@ namespace JSC {
     
 bool VM::ensureStackCapacityFor(Register* newTopOfStack)
 {
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
     ASSERT(Thread::current().stack().isGrowingDownward());
     return newTopOfStack >= m_softStackLimit;
 #else
@@ -47,7 +47,7 @@ bool VM::ensureStackCapacityFor(Register* newTopOfStack)
 bool VM::isSafeToRecurseSoft() const
 {
     bool safe = isSafeToRecurse(m_softStackLimit);
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     safe = safe && isSafeToRecurseSoftCLoop();
 #endif
     return safe;

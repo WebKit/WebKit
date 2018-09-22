@@ -159,7 +159,7 @@
 #include <wtf/text/AtomicStringTable.h>
 #include <wtf/text/SymbolRegistry.h>
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 #include "CLoopStack.h"
 #include "CLoopStackInlines.h"
 #endif
@@ -461,7 +461,7 @@ VM::VM(VMType vmType, HeapType heapType)
     ftlThunks = std::make_unique<FTL::Thunks>();
 #endif // ENABLE(FTL_JIT)
     
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
     initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.
 #endif
     
@@ -741,9 +741,8 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
             intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : 0,
             intrinsic, signature, name);
     }
-#else // ENABLE(JIT)
-    UNUSED_PARAM(intrinsic);
 #endif // ENABLE(JIT)
+    UNUSED_PARAM(intrinsic);
     return NativeExecutable::create(*this,
         adoptRef(*new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
         adoptRef(*new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
@@ -876,7 +875,7 @@ size_t VM::updateSoftReservedZoneSize(size_t softReservedZoneSize)
 {
     size_t oldSoftReservedZoneSize = m_currentSoftReservedZoneSize;
     m_currentSoftReservedZoneSize = softReservedZoneSize;
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     interpreter->cloopStack().setSoftReservedZoneSize(softReservedZoneSize);
 #endif
 
@@ -1145,7 +1144,7 @@ void sanitizeStackForVM(VM* vm)
         ASSERT(vm->currentThreadIsHoldingAPILock());
         ASSERT_UNUSED(stackBounds, stackBounds.contains(vm->lastStackTop()));
     }
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     vm->interpreter->cloopStack().sanitizeStack();
 #else
     sanitizeStackForVMImpl(vm);
@@ -1154,7 +1153,7 @@ void sanitizeStackForVM(VM* vm)
 
 size_t VM::committedStackByteCount()
 {
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
     // When using the C stack, we don't know how many stack pages are actually
     // committed. So, we use the current stack usage as an estimate.
     ASSERT(Thread::current().stack().isGrowingDownward());
@@ -1166,7 +1165,7 @@ size_t VM::committedStackByteCount()
 #endif
 }
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 bool VM::ensureStackCapacityForCLoop(Register* newTopOfStack)
 {
     return interpreter->cloopStack().ensureCapacityFor(newTopOfStack);
@@ -1176,7 +1175,7 @@ bool VM::isSafeToRecurseSoftCLoop() const
 {
     return interpreter->cloopStack().isSafeToRecurse();
 }
-#endif // !ENABLE(JIT)
+#endif // ENABLE(C_LOOP)
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionEventLocation& location)

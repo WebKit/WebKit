@@ -257,7 +257,7 @@ RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegisters()
     if (isInlinedFrame())
         return nullptr;
 
-#if ENABLE(JIT) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+#if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 
 #if ENABLE(WEBASSEMBLY)
     if (isWasmFrame()) {
@@ -273,7 +273,7 @@ RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegisters()
     if (CodeBlock* codeBlock = this->codeBlock())
         return codeBlock->calleeSaveRegisters();
 
-#endif // ENABLE(JIT) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+#endif // !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 
     return nullptr;
 }

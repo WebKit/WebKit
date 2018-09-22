@@ -31,7 +31,7 @@
 namespace JSC {
 
 struct EntryFrame {
-#if ENABLE(JIT) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+#if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     static ptrdiff_t vmEntryRecordOffset()
     {
         EntryFrame* fakeEntryFrame = reinterpret_cast<EntryFrame*>(0x1000);

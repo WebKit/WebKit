@@ -536,7 +536,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
         slowPathLogF("Num vars = %u.\n", codeBlock->numVars());
     }
     slowPathLogF("Current OS stack end is at %p.\n", vm.softStackLimit());
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     slowPathLogF("Current C Loop stack end is at %p.\n", vm.cloopStackLimit());
 #endif
 
@@ -547,7 +547,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
     // For JIT enabled builds which uses the C stack, the stack is not growable.
     // Hence, if we get here, then we know a stack overflow is imminent. So, just
     // throw the StackOverflowError unconditionally.
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     Register* topOfFrame = exec->topOfFrame();
     if (LIKELY(topOfFrame < reinterpret_cast<Register*>(exec))) {
         ASSERT(!vm.interpreter->cloopStack().containsAddress(topOfFrame));
@@ -1861,7 +1861,7 @@ extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCall
     return encodeResult(0, 0);
 }
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM* vm, Register* newTopOfStack)
 {
     bool success = vm->ensureStackCapacityFor(newTopOfStack);

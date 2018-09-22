@@ -716,7 +716,7 @@ public:
     void* stackLimit() { return m_stackLimit; }
     void* softStackLimit() { return m_softStackLimit; }
     void** addressOfSoftStackLimit() { return &m_softStackLimit; }
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     void* cloopStackLimit() { return m_cloopStackLimit; }
     void setCLoopStackLimit(void* limit) { m_cloopStackLimit = limit; }
 #endif
@@ -929,10 +929,10 @@ private:
         m_exception = nullptr;
     }
 
-#if !ENABLE(JIT)    
+#if ENABLE(C_LOOP)
     bool ensureStackCapacityForCLoop(Register* newTopOfStack);
     bool isSafeToRecurseSoftCLoop() const;
-#endif // !ENABLE(JIT)
+#endif // ENABLE(C_LOOP)
 
     JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
     JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
@@ -953,7 +953,7 @@ private:
     size_t m_currentSoftReservedZoneSize;
     void* m_stackLimit { nullptr };
     void* m_softStackLimit { nullptr };
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     void* m_cloopStackLimit { nullptr };
 #endif
     void* m_lastStackTop { nullptr };
@@ -1035,7 +1035,7 @@ inline Heap* WeakSet::heap() const
     return &m_vm->heap;
 }
 
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 extern "C" void sanitizeStackForVMImpl(VM*);
 #endif
 

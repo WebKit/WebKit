@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
@@ -246,4 +246,4 @@ template<> struct HashTraits<JSC::RegisterSet> : public CustomHashTraits<JSC::Re
 
 } // namespace WTF
 
-#endif // ENABLE(JIT)
+#endif // !ENABLE(C_LOOP)

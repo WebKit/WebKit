@@ -46,16 +46,16 @@ namespace JSC { namespace LLInt {
 Instruction Data::s_exceptionInstructions[maxOpcodeLength + 1] = { };
 Opcode Data::s_opcodeMap[numOpcodeIDs] = { };
 
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 extern "C" void llint_entry(void*);
 #endif
 
 void initialize()
 {
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
     CLoop::initialize();
 
-#else // ENABLE(JIT)
+#else // !ENABLE(C_LOOP)
     llint_entry(&Data::s_opcodeMap);
 
     for (int i = 0; i < numOpcodeIDs; ++i)
@@ -64,7 +64,7 @@ void initialize()
     void* handler = Data::s_opcodeMap[llint_throw_from_slow_path_trampoline];
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
         Data::s_exceptionInstructions[i].u.pointer = handler;
-#endif // ENABLE(JIT)
+#endif // ENABLE(C_LOOP)
 }
 
 IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
@@ -125,7 +125,7 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(ValueUndefined == (TagBitTypeOther | TagBitUndefined));
     STATIC_ASSERT(ValueNull == TagBitTypeOther);
 #endif
-#if (CPU(X86_64) && !OS(WINDOWS)) || CPU(ARM64) || !ENABLE(JIT)
+#if (CPU(X86_64) && !OS(WINDOWS)) || CPU(ARM64) || !ENABLE(ASSEMBLER)
     STATIC_ASSERT(!maxFrameExtentForSlowPathCall);
 #elif CPU(ARM)
     STATIC_ASSERT(maxFrameExtentForSlowPathCall == 24);
@@ -135,7 +135,7 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(maxFrameExtentForSlowPathCall == 64);
 #endif
 
-#if !ENABLE(JIT) || USE(JSVALUE32_64)
+#if ENABLE(C_LOOP) || USE(JSVALUE32_64)
     ASSERT(!CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters());
 #elif (CPU(X86_64) && !OS(WINDOWS))  || CPU(ARM64)
     ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 3);

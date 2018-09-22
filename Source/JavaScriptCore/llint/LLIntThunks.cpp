@@ -98,8 +98,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> moduleProgramEntryThunkGenerator(VM* vm)
 
 } // namespace LLInt
 
-#else // ENABLE(JIT)
+#endif
 
+#if ENABLE(C_LOOP)
 // Non-JIT (i.e. C Loop LLINT) case:
 
 EncodedJSValue vmEntryToJavaScript(void* executableAddress, VM* vm, ProtoCallFrame* protoCallFrame)
@@ -122,7 +123,6 @@ extern "C" VMEntryRecord* vmEntryRecord(EntryFrame* entryFrame)
     return reinterpret_cast<VMEntryRecord*>(reinterpret_cast<char*>(entryFrame) - VMEntryTotalFrameSize);
 }
 
-
-#endif // ENABLE(JIT)
+#endif // ENABLE(C_LOOP)
 
 } // namespace JSC

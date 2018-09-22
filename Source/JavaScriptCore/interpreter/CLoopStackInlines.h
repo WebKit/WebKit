@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 
 #include "CLoopStack.h"
 #include "CallFrame.h"
@@ -59,4 +59,4 @@ inline void CLoopStack::setCLoopStackLimit(Register* newTopOfStack)
 
 } // namespace JSC
 
-#endif // !ENABLE(JIT)
+#endif // ENABLE(C_LOOP)

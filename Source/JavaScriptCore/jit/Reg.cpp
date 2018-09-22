@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Reg.h"
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"
@@ -54,5 +54,5 @@ void Reg::dump(PrintStream& out) const
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(ASSEMBLER)
 

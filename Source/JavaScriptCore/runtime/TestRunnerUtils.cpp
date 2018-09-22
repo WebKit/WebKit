@@ -102,10 +102,8 @@ JSValue optimizeNextInvocation(JSValue theFunctionValue)
 #if ENABLE(JIT)
     if (CodeBlock* baselineCodeBlock = getSomeBaselineCodeBlockForFunction(theFunctionValue))
         baselineCodeBlock->optimizeNextInvocation();
-#else
-    UNUSED_PARAM(theFunctionValue);
 #endif
-
+    UNUSED_PARAM(theFunctionValue);
     return jsUndefined();
 }
 

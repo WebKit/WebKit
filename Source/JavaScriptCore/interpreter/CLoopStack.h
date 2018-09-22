@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 
 #include "Register.h"
 #include <wtf/Noncopyable.h>
@@ -107,4 +107,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // !ENABLE(JIT)
+#endif // ENABLE(C_LOOP)

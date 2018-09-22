@@ -27,7 +27,7 @@
 
 #include "JSCJSValue.h"
 
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 
 #if CALLING_CONVENTION_IS_STDCALL
 #define HOST_CALL_RETURN_VALUE_OPTION CDECL
@@ -57,4 +57,4 @@ inline void initializeHostCallReturnValue() { }
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+#endif // !ENABLE(C_LOOP)

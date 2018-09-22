@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 
 #include "MacroAssembler.h"
 
@@ -245,4 +245,4 @@ template<> struct HashTraits<JSC::Reg> : SimpleClassHashTraits<JSC::Reg> {
 
 } // namespace WTF
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(ASSEMBLER)

@@ -36,7 +36,7 @@
 #include "StackAlignment.h"
 #include <wtf/HashMap.h>
 
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
 #include "CLoopStack.h"
 #endif
 
@@ -93,7 +93,7 @@ namespace JSC {
         Interpreter(VM &);
         ~Interpreter();
         
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
         CLoopStack& cloopStack() { return m_cloopStack; }
 #endif
         
@@ -147,7 +147,7 @@ namespace JSC {
         JSValue execute(CallFrameClosure&);
 
         VM& m_vm;
-#if !ENABLE(JIT)
+#if ENABLE(C_LOOP)
         CLoopStack m_cloopStack;
 #endif
         

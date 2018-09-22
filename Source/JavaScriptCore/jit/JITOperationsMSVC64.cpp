@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if !ENABLE(JIT) && COMPILER(MSVC) && CPU(X86_64)
+#if ENABLE(C_LOOP) && COMPILER(MSVC) && CPU(X86_64)
 
 #include "CallFrame.h"
 #include "JSCJSValue.h"
@@ -43,4 +43,4 @@ extern "C" EncodedJSValue getHostCallReturnValueWithExecState(ExecState*)
 
 } // namespace JSC
 
-#endif // !ENABLE(JIT) && COMPILER(MSVC) && CPU(X86_64)
+#endif // ENABLE(C_LOOP) && COMPILER(MSVC) && CPU(X86_64)

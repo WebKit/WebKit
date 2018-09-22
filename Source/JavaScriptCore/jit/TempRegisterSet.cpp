@@ -26,9 +26,8 @@
 #include "config.h"
 #include "TempRegisterSet.h"
 
-#if ENABLE(JIT)
+#if ENABLE(ASSEMBLER)
 
-#include "JSCInlines.h"
 #include "RegisterSet.h"
 
 namespace JSC {
@@ -51,4 +50,4 @@ TempRegisterSet::TempRegisterSet(const RegisterSet& other)
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(ASSEMBLER)
