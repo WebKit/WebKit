@@ -1781,6 +1781,4 @@ webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Slow ]
 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Slow ]
 
-webkit.org/b/189413 http/tests/media/clearkey/collect-webkit-media-session.html [ Pass Failure ]
-
 webkit.org/189674 media/media-controls-accessibility.html [ Pass Failure ]

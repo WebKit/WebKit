@@ -1,3 +1,17 @@
+2018-09-22  Youenn Fablet  <youenn@apple.com>
+
+        Tests checking document GC in case of ActiveDOMObjects are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=189413
+        <rdar://problem/44243231>
+
+        Reviewed by Eric Carlson.
+
+        Media controls prevent in some cases to collect the document.
+        Remove the controls to remove a source of flakiness for this test.
+
+        * http/tests/media/clearkey/resources/mywebkitmediasessionframe.htm:
+        * platform/mac/TestExpectations:
+
 2018-09-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cannot start a drag inside a shadow tree when an inclusive-ancestor of its shadow host is a draggable element
