@@ -36,6 +36,10 @@ class Visitor {
         node.returnType.visit(this);
         for (let parameter of node.parameters)
             parameter.visit(this);
+        if (node.attributeBlock) {
+            for (let attribute of node.attributeBlock)
+                attribute.visit(this);
+        }
     }
     
     visitFuncParameter(node)
@@ -346,6 +350,10 @@ class Visitor {
         node.elementType.visit(this);
         node.numRows.visit(this);
         node.numColumns.visit(this);
+    }
+
+    visitFuncNumThreadsAttribute(node)
+    {
     }
 }
 

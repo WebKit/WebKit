@@ -1155,6 +1155,50 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return maybeError.text;
     }
 
+    function parseAttributeBlock()
+    {
+        let maybeError = consume("[");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        maybeError = consume("numthreads");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        maybeError = consume("(");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        let xDimension = consumeKind("intLiteral");
+        if (xDimension instanceof WSyntaxError)
+            return xDimension;
+        let xDimensionUintVersion = xDimension.text >>> 0;
+        if (xDimensionUintVersion.toString() !== xDimension.text)
+            return fail("Numthreads X attribute is not 32-bit unsigned integer: " + xDimension.text);
+        maybeError = consume(",");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        let yDimension = consumeKind("intLiteral");
+        if (yDimension instanceof WSyntaxError)
+            return yDimension;
+        let yDimensionUintVersion = yDimension.text >>> 0;
+        if (yDimensionUintVersion.toString() !== yDimension.text)
+            return fail("Numthreads Y attribute is not 32-bit unsigned integer: " + yDimension.text);
+        maybeError = consume(",");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        let zDimension = consumeKind("intLiteral");
+        if (zDimension instanceof WSyntaxError)
+            return zDimension;
+        let zDimensionUintVersion = zDimension.text >>> 0;
+        if (zDimensionUintVersion.toString() !== zDimension.text)
+            return fail("Numthreads Z attribute is not 32-bit unsigned integer: " + zDimension.text);
+        maybeError = consume(")");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        maybeError = consume("]");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        return [new FuncNumThreadsAttribute(xDimensionUintVersion, yDimensionUintVersion, zDimensionUintVersion)];
+    }
+
     function parseFuncDecl()
     {
         let origin;
@@ -1162,6 +1206,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let name;
         let isCast;
         let shaderType;
+        let attributeBlock = null;
         let operatorToken = tryConsume("operator");
         if (operatorToken) {
             origin = operatorToken;
@@ -1171,7 +1216,15 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             name = "operator cast";
             isCast = true;
         } else {
-            shaderType = tryConsume("vertex", "fragment", "test");
+            if (test("[")) {
+                attributeBlock = parseAttributeBlock();
+                if (attributeBlock instanceof WSyntaxError)
+                    return attributeBlock;
+                shaderType = consume("compute");
+                if (shaderType instanceof WSyntaxError)
+                    return shaderType;
+            } else
+                shaderType = tryConsume("vertex", "fragment", "test");
             returnType = parseType();
             if (returnType instanceof WSyntaxError)
                 return returnType;
@@ -1188,7 +1241,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let parameters = parseParameters();
         if (parameters instanceof WSyntaxError)
             return parameters;
-        return new Func(origin, name, returnType, parameters, isCast, shaderType);
+        return new Func(origin, name, returnType, parameters, isCast, shaderType, attributeBlock);
     }
 
     function parseFuncDef()
@@ -1199,7 +1252,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let body = parseBlock();
         if (body instanceof WSyntaxError)
             return body;
-        return new FuncDef(func.origin, func.name, func.returnType, func.parameters, body, func.isCast, func.shaderType);
+        return new FuncDef(func.origin, func.name, func.returnType, func.parameters, body, func.isCast, func.shaderType, func.attributeBlock);
     }
 
     function parseField()
@@ -1242,6 +1295,8 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let func = parseFuncDecl();
         if (func instanceof WSyntaxError)
             return func;
+        if (func.attributeBlock)
+            return fail("Native function must not have attribute block");
         let maybeError = consume(";");
         if (maybeError instanceof WSyntaxError)
             return maybeError;

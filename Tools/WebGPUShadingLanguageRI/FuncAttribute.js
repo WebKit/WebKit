@@ -20,35 +20,10 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class FuncDef extends Func {
-    constructor(origin, name, returnType, parameters, body, isCast, shaderType, attributeBlock = null)
-    {
-        super(origin, name, returnType, parameters, isCast, shaderType, attributeBlock);
-        this._body = body;
-        this.isRestricted = false;
-    }
-
-    get body() { return this._body; }
-
-    set body(newBody)
-    {
-        this._body = newBody;
-    }
-
-    rewrite(rewriter)
-    {
-        this._returnType = this._returnType.visit(rewriter);
-        this._parameters = this._parameters.map(parameter => parameter.visit(rewriter));
-        this._body = this.body.visit(rewriter);
-    }
-    
-    toString()
-    {
-        return super.toString() + " " + this.body;
-    }
+class FuncAttribute extends Node {
 }
 

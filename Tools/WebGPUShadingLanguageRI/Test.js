@@ -6766,6 +6766,120 @@ tests.arrayIndex = function() {
     checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 1), makeUint(program, 2) ]), 6);
 }
 
+tests.numThreads = function() {
+    let program = doPrep(`
+        [numthreads(3, 4, 5)]
+        compute void foo() {
+        }
+
+        [numthreads(6, 7, 8)]
+        compute void bar() {
+        }
+
+        [numthreads(9, 10, 11)]
+        compute void bar(device float[] buffer) {
+        }
+
+        struct R {
+            float4 position;
+        }
+        vertex R baz() {
+            R r;
+            r.position = float4(1, 2, 3, 4);
+            return r;
+        }
+    `);
+
+    if (program.functions.get("foo").length != 1)
+        throw new Error("Cannot find function named 'foo'");
+    let foo = program.functions.get("foo")[0];
+    if (foo.attributeBlock.length != 1)
+        throw new Error("'foo' doesn't have numthreads attribute");
+    if (foo.attributeBlock[0].x != 3)
+        throw new Error("'foo' numthreads x is not 3");
+    if (foo.attributeBlock[0].y != 4)
+        throw new Error("'foo' numthreads y is not 4");
+    if (foo.attributeBlock[0].z != 5)
+        throw new Error("'foo' numthreads z is not 5");
+
+    if (program.functions.get("bar").length != 2)
+        throw new Error("Cannot find function named 'bar'");
+    let bar1 = null;
+    let bar2 = null;
+    for (let bar of program.functions.get("bar")) {
+        if (bar.parameters.length == 0)
+            bar1 = bar;
+        else if (bar.parameters.length == 1)
+            bar2 = bar;
+        else
+            throw new Error("Unexpected 'bar' function.");
+    }
+    if (!bar1)
+        throw new Error("Could not find appropriate 'bar' function");
+    if (!bar2)
+        throw new Error("Could not find appropriate 'bar' function");
+
+    if (bar1.attributeBlock.length != 1)
+        throw new Error("'bar1' doesn't have numthreads attribute");
+    if (bar1.attributeBlock[0].x != 6)
+        throw new Error("'bar1' numthreads x is not 6");
+    if (bar1.attributeBlock[0].y != 7)
+        throw new Error("'bar1' numthreads y is not 7");
+    if (bar1.attributeBlock[0].z != 8)
+        throw new Error("'bar1' numthreads z is not 8");
+
+    if (bar2.attributeBlock.length != 1)
+        throw new Error("'bar2' doesn't have numthreads attribute");
+    if (bar2.attributeBlock[0].x != 9)
+        throw new Error("'bar2' numthreads x is not 9");
+    if (bar2.attributeBlock[0].y != 10)
+        throw new Error("'bar2' numthreads y is not 10");
+    if (bar2.attributeBlock[0].z != 11)
+        throw new Error("'bar2' numthreads z is not 11");
+
+    if (program.functions.get("baz").length != 1)
+        throw new Error("Cannot find function named 'baz'");
+    let baz = program.functions.get("baz")[0];
+    if (baz.attributeBlock != null)
+        throw new Error("'baz' has attribute block");
+
+    checkFail(() => doPrep(`
+        [numthreads(3, 4)]
+        compute void foo() {
+        }
+    `), e => e instanceof WSyntaxError);
+
+    checkFail(() => doPrep(`
+        []
+        compute void foo() {
+        }
+    `), e => e instanceof WSyntaxError);
+
+    checkFail(() => doPrep(`
+        [numthreads(3, 4, 5), numthreads(3, 4, 5)]
+        compute void foo() {
+        }
+    `), e => e instanceof WSyntaxError);
+
+    checkFail(() => doPrep(`
+        compute void foo() {
+        }
+    `), e => e instanceof WSyntaxError);
+
+
+    checkFail(() => doPrep(`
+        struct R {
+            float4 position;
+        }
+        [numthreads(3, 4, 5)]
+        vertex R baz() {
+            R r;
+            r.position = float4(1, 2, 3, 4);
+            return r;
+        }
+    `), e => e instanceof WSyntaxError);
+}
+
 function createTexturesForTesting(program)
 {
     let texture1D = make1DTexture(program, [[1, 7, 14, 79], [13, 16], [15]], "float");

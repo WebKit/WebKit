@@ -70,6 +70,8 @@ class LateChecker extends Visitor {
                 }
             }
             break;
+        case "compute":
+            break;
         case "test":
             break;
         default:

@@ -27,12 +27,15 @@
 class StatementCloner extends Rewriter {
     visitFuncDef(node)
     {
+        let attributeBlock = null;
+        if (node.attributeBlock)
+            attributeBlock = node.attributeBlock.map(attribute => attribute.visit(this));
         let result = new FuncDef(
             node.origin, node.name,
             node.returnType.visit(this),
             node.parameters.map(parameter => parameter.visit(this)),
             node.body.visit(this),
-            node.isCast, node.shaderType);
+            node.isCast, node.shaderType, attributeBlock);
         result.isRestricted = node.isRestricted;
         return result;
     }
@@ -77,6 +80,11 @@ class StatementCloner extends Rewriter {
         for (let member of node.members)
             result.add(member);
         return result;
+    }
+
+    visitFuncNumThreadsAttribute(node)
+    {
+        return new FuncNumThreadsAttribute(node.x, node.y, node.z);
     }
 }
 

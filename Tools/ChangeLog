@@ -1,5 +1,51 @@
 2018-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WHSL] Need grammar to specify kernel group size
+        https://bugs.webkit.org/show_bug.cgi?id=189108
+
+        Reviewed by Dean Jackson.
+
+        In HLSL, compute functions are annotated with their workgroup size.
+        For example,
+
+        [numthreads(3, 4, 5)] compute void foo(...) { ... }
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func):
+        (Func.prototype.get attributeBlock):
+        * WebGPUShadingLanguageRI/FuncAttribute.js: Copied from Tools/WebGPUShadingLanguageRI/FuncDef.js.
+        (FuncAttribute):
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef):
+        * WebGPUShadingLanguageRI/FuncNumThreadsAttribute.js: Copied from Tools/WebGPUShadingLanguageRI/FuncDef.js.
+        (FuncNumThreadsAttribute):
+        (FuncNumThreadsAttribute.prototype.get x):
+        (FuncNumThreadsAttribute.prototype.get y):
+        (FuncNumThreadsAttribute.prototype.get z):
+        * WebGPUShadingLanguageRI/LateChecker.js:
+        (LateChecker.prototype._checkShaderType):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseAttributeBlock):
+        (parseFuncDecl):
+        (parseFuncDef):
+        (parseNativeFunc):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/StatementCloner.js:
+        (StatementCloner.prototype.visitFuncDef):
+        (StatementCloner.prototype.visitFuncNumThreadsAttribute):
+        (StatementCloner):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.numThreads):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitFunc):
+        (Visitor.prototype.visitFuncNumThreadsAttribute):
+        (Visitor):
+        * WebGPUShadingLanguageRI/index.html:
+
+2018-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Native functions which accept pointers need to do null checks
         https://bugs.webkit.org/show_bug.cgi?id=189883
 
