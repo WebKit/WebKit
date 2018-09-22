@@ -230,12 +230,16 @@ class Intrinsics {
              "native typedef atomic_int",
              type => {
                  this.atomic_int = type;
+                 type.size = 1;
+                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
              });
 
         this._map.set(
              "native typedef atomic_uint",
              type => {
                  this.atomic_uint = type;
+                 type.size = 1;
+                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
              });
 
         for (let vectorType of VectorElementTypes) {
@@ -852,6 +856,248 @@ class Intrinsics {
 
         for (let setter of BuiltinMatrixSetter.functions())
             this._map.set(setter.toString(), func => setter.instantiateImplementation(func));
+
+        for (let addressSpace of ["thread", "threadgroup", "device"]) {
+            this._map.set(
+                `native void InterlockedAdd(atomic_uint* ${addressSpace},uint,uint* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToUint(a + b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedAdd(atomic_int* ${addressSpace},int,int* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToInt(a + b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedAnd(atomic_uint* ${addressSpace},uint,uint* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToUint(a & b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedAnd(atomic_int* ${addressSpace},int,int* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToInt(a & b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedExchange(atomic_uint* ${addressSpace},uint,uint* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(b), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedExchange(atomic_int* ${addressSpace},int,int* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(b), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedMax(atomic_uint* ${addressSpace},uint,uint* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToUint(a > b ? a : b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedMax(atomic_int* ${addressSpace},int,int* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToInt(a > b ? a : b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedMin(atomic_uint* ${addressSpace},uint,uint* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToUint(a < b ? a : b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedMin(atomic_int* ${addressSpace},int,int* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToInt(a < b ? a : b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedOr(atomic_uint* ${addressSpace},uint,uint* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToUint(a | b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedOr(atomic_int* ${addressSpace},int,int* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToInt(a | b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedXor(atomic_uint* ${addressSpace},uint,uint* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToUint(a ^ b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedXor(atomic_int* ${addressSpace},int,int* thread)`,
+                func => {
+                    func.implementation = function([atomic, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = value.loadValue();
+                        let result = castToInt(a ^ b);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedCompareExchange(atomic_uint* ${addressSpace},uint,uint,uint* thread)`,
+                func => {
+                    func.implementation = function([atomic, compareValue, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = compareValue.loadValue();
+                        let c = value.loadValue();
+                        if (a == b)
+                            atomic.loadValue().copyFrom(EPtr.box(c), 1);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                    }
+                });
+
+            this._map.set(
+                `native void InterlockedCompareExchange(atomic_int* ${addressSpace},int,int,int* thread)`,
+                func => {
+                    func.implementation = function([atomic, compareValue, value, originalValue]) {
+                        if (!atomic.loadValue())
+                            throw new WTrapError("[Atomics]", "Null atomic pointer");
+                        let a = atomic.loadValue().loadValue();
+                        let b = compareValue.loadValue();
+                        let c = value.loadValue();
+                        if (a == b)
+                            atomic.loadValue().copyFrom(EPtr.box(c), 1);
+                        if (originalValue.loadValue())
+                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                    }
+                });
+        }
 
         function checkUndefined(origin, explanation, value)
         {
