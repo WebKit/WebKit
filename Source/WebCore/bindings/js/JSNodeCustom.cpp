@@ -61,6 +61,7 @@
 #include "SVGElement.h"
 #include "ScriptState.h"
 #include "ShadowRoot.h"
+#include "GCReachableRef.h"
 #include "StyleSheet.h"
 #include "StyledElement.h"
 #include "Text.h"
@@ -105,6 +106,11 @@ static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor, const ch
         if (node->isFiringEventListeners()) {
             if (UNLIKELY(reason))
                 *reason = "Node which is firing event listeners";
+            return true;
+        }
+        if (GCReachableRefMap::contains(*node)) {
+            if (UNLIKELY(reason))
+                *reason = "Node is scheduled to be used in an async script invocation)";
             return true;
         }
     }

@@ -1,3 +1,16 @@
+2018-09-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Custom elements in a reaction queue can lose its JS wrapper and become HTMLUnknownElement
+        https://bugs.webkit.org/show_bug.cgi?id=184307
+
+        Reviewed by Keith Miller.
+
+        Added a test for enqueuing a lot of custom elements into the reaction queue via innerHTML setter.
+        WebKit should retain the JS wrappers of all custom elements.
+
+        * fast/custom-elements/custom-elements-reaction-queue-retains-js-wrapper-expected.txt: Added.
+        * fast/custom-elements/custom-elements-reaction-queue-retains-js-wrapper.html: Added.
+
 2018-09-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, speed up storage/websql/transaction-database-expand-quota.html

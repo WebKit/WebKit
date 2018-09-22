@@ -234,15 +234,14 @@ inline void CustomElementReactionQueue::ElementQueue::invokeAll()
 {
     RELEASE_ASSERT(!m_invoking);
     SetForScope<bool> invoking(m_invoking, true);
-    Vector<Ref<Element>> elements;
-    elements.swap(m_elements);
-    RELEASE_ASSERT(m_elements.isEmpty());
-    for (auto& element : elements) {
+    auto originalSize = m_elements.size();
+    for (auto& element : m_elements) {
         auto* queue = element->reactionQueue();
         ASSERT(queue);
         queue->invokeAll(element.get());
     }
-    RELEASE_ASSERT(m_elements.isEmpty());
+    RELEASE_ASSERT(m_elements.size() == originalSize);
+    m_elements.clear();
 }
 
 inline void CustomElementReactionQueue::ElementQueue::processQueue(JSC::ExecState* state)

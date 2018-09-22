@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GCReachableRef.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -71,7 +72,7 @@ public:
     private:
         void invokeAll();
 
-        Vector<Ref<Element>> m_elements;
+        Vector<GCReachableRef<Element>> m_elements;
         bool m_invoking { false };
     };
 

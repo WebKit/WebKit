@@ -2842,6 +2842,7 @@
 		9B6C41531344949000085B62 /* StringWithDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6C41521344949000085B62 /* StringWithDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B714E211C91166900AC0E92 /* EventPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B714E1F1C91166900AC0E92 /* EventPath.h */; };
 		9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */; };
+		9BAAC45C21520128003D4A98 /* GCReachableRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAAC4562151E39E003D4A98 /* GCReachableRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAB6C6A12550631001626D4 /* EditingStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAF3B2312C1A39800014BF1 /* WritingDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BBA2CAB1F679E0C00FD1C1E /* WebContentReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BF433761F67619B00E1FD71 /* WebContentReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10871,6 +10872,8 @@
 		9B9299B01F6796A4006723C2 /* WebContentReaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentReaderCocoa.mm; sourceTree = "<group>"; };
 		9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicalSelectionOffsetCaches.h; sourceTree = "<group>"; };
 		9BA827781F06156500F71E75 /* NavigationDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationDisabler.h; sourceTree = "<group>"; };
+		9BAAC4562151E39E003D4A98 /* GCReachableRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCReachableRef.h; sourceTree = "<group>"; };
+		9BAAC4582151E77A003D4A98 /* GCReachableRef.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GCReachableRef.cpp; sourceTree = "<group>"; };
 		9BAB6C6A12550631001626D4 /* EditingStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingStyle.h; sourceTree = "<group>"; };
 		9BAB6C6B12550631001626D4 /* EditingStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditingStyle.cpp; sourceTree = "<group>"; };
 		9BAF3B2312C1A39800014BF1 /* WritingDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritingDirection.h; sourceTree = "<group>"; };
@@ -26590,6 +26593,8 @@
 				8102C5871325BB1100DDE67A /* StringCallback.cpp */,
 				81AC6C35131C57D30009A7E0 /* StringCallback.h */,
 				81AC6C34131C57C20009A7E0 /* StringCallback.idl */,
+				9BAAC4582151E77A003D4A98 /* GCReachableRef.cpp */,
+				9BAAC4562151E39E003D4A98 /* GCReachableRef.h */,
 				A8C4A7EC09D563270003AC8D /* StyledElement.cpp */,
 				A8C4A7EB09D563270003AC8D /* StyledElement.h */,
 				C99058121E32B7340073BDDA /* SuccessOr.h */,
@@ -30425,6 +30430,7 @@
 				ECA680C71E67724500731D20 /* StringUtilities.h in Headers */,
 				9B6C41531344949000085B62 /* StringWithDirection.h in Headers */,
 				849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */,
+				9BAAC45C21520128003D4A98 /* GCReachableRef.h in Headers */,
 				414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */,
 				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
 				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,

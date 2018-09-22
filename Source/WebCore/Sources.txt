@@ -815,6 +815,7 @@ dom/SpectreGadget.cpp
 dom/StaticNodeList.cpp
 dom/StaticRange.cpp
 dom/StringCallback.cpp
+dom/GCReachableRef.cpp
 dom/StyledElement.cpp
 dom/TagCollection.cpp
 dom/TemplateContentDocumentFragment.cpp

@@ -1,3 +1,47 @@
+2018-09-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Custom elements in a reaction queue can lose its JS wrapper and become HTMLUnknownElement
+        https://bugs.webkit.org/show_bug.cgi?id=184307
+
+        Reviewed by Keith Miller.
+
+        The bug was caused by the custom elements reaction queue not reporting its content to GC during marking.
+
+        When there is no JS reference to the JS wrappers of those custom element, and if those custom elements
+        are disconnected, GC would happily collect those the wrappers. Unfortunately, the same bug exists for
+        any asynchronous events and other WebCore code which keeps elements alive for a later use but doesn't
+        report them to GC (e.g. during visitChildren).
+
+        This patch, therefore, introduces a generic mechanism to keep these elements' wrappers alive. Namely,
+        we introduce GCReachableRef, a new smart pointer type for Node's subclasses, which keeps element as well
+        as its wrappers alive. GCReachableRef works by adding its Node to a global hash counted set when it's
+        created and making JSNodeOwner::isReachableFromOpaqueRoots return true when the node is in the set.
+
+        Test: fast/custom-elements/custom-elements-reaction-queue-retains-js-wrapper.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isReachableFromDOM):
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::ElementQueue::invokeAll): Don't swap the vector of elements in
+        in the queue. Assuming each DOM API has an appropriate CustomElementsReactionStack, we should never
+        append a new element to this queue while invoking custom element reactions.
+        * dom/CustomElementReactionQueue.h:
+        * dom/GCReachableRef.cpp: Added.
+        * dom/GCReachableRef.h: Added.
+        (WebCore::GCReachableRefMap::contains): Added.
+        (WebCore::GCReachableRefMap::add): Added.
+        (WebCore::GCReachableRefMap::remove): Added.
+        (WebCore::GCReachableRef::GCReachableRef): Added. We need isNull() check since WTFMove may have been
+        called on the source GCReachableRef.
+        (WebCore::GCReachableRef::~GCReachableRef): Ditto.
+        (WebCore::GCReachableRef::operator-> const): Added.
+        (WebCore::GCReachableRef::get const): Added.
+        (WebCore::GCReachableRef::operator T& const): Added.
+        (WebCore::GCReachableRef::operator! const): Added.
+        (WebCore::GCReachableRef::isNull const): Added. Returns true if WTFMove had been called on Ref.
+
 2018-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Use a Variant for FormDataElement
