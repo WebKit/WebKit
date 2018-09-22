@@ -347,9 +347,6 @@ bool WebInspectorProxy::platformIsFront()
 
 bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
 {
-    if ([m_inspectorWindow styleMask] & NSWindowStyleMaskFullScreen)
-        return false;
-
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     if ([WKInspectorViewController viewIsInspectorWebView:inspectedView])
         return webProcessCanAttach;

@@ -1,3 +1,23 @@
+2018-09-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: dock buttons disappear if Web Inspector goes fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=189865
+        <rdar://problem/42600534>
+
+        Reviewed by Matt Baker.
+
+        When a fullscreen Safari tab has a docked Inspector, and the "detach" button
+        is clicked, Inspector goes into its own fullscreen window. In that window,
+        there are no buttons for docking to side or bottom.
+
+        It turns out that we always send setDockingUnavailable(true) if the inspector
+        window is fullscreen. This eventually causes the inspector to reflect that
+        by hiding the docking-related buttons.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCanAttach):
+        This early exit does not seem to serve any purpose, so remove it.
+
 2018-09-21  Chris Dumez  <cdumez@apple.com>
 
         Extending the lifetime of a NetworkProcessProxy / StorageProcessProxy may cause it to have a stale WebProcessPool pointer
