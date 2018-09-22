@@ -1177,8 +1177,10 @@ class Intrinsics {
                             let mipID = miplevel.loadValue();
                             if (mipID >= tex.levelCount)
                                 throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            if (numberOfLevels.loadValue())
+                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                         }
                     });
 
@@ -1221,9 +1223,12 @@ class Intrinsics {
                             let mipID = miplevel.loadValue();
                             if (mipID >= tex.levelCount)
                                 throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            if (elements.loadValue())
+                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                            if (numberOfLevels.loadValue())
+                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                         }
                     });
 
@@ -1412,9 +1417,12 @@ class Intrinsics {
                             let mipID = miplevel.loadValue();
                             if (mipID >= tex.levelCount)
                                 throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                            if (numberOfLevels.loadValue())
+                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                         }
                     });
 
@@ -1603,10 +1611,14 @@ class Intrinsics {
                             let mipID = miplevel.loadValue();
                             if (mipID >= tex.levelCount)
                                 throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                            if (elements.loadValue())
+                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                            if (numberOfLevels.loadValue())
+                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                         }
                     });
 
@@ -1649,10 +1661,14 @@ class Intrinsics {
                             let mipID = miplevel.loadValue();
                             if (mipID >= tex.levelCount)
                                 throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            depth.loadValue().copyFrom(EPtr.box(tex.depthAtLevel(mipID)), 1);
-                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                            if (depth.loadValue())
+                                depth.loadValue().copyFrom(EPtr.box(tex.depthAtLevel(mipID)), 1);
+                            if (numberOfLevels.loadValue())
+                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                         }
                     });
 
@@ -1746,9 +1762,12 @@ class Intrinsics {
                                 throw new Error("Cube texture doesn't have 6 faces");
                             if (mipID >= tex.levelCount)
                                 throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                            if (numberOfLevels.loadValue())
+                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                         }
                     });
 
@@ -1756,14 +1775,16 @@ class Intrinsics {
                     `native void GetDimensions(RWTexture1D<${type}${length}>,uint* thread Width)`,
                     func => {
                         func.implementation = function([texture, width]) {
-                            width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
                         }
                     });
                 this._map.set(
                     `native void GetDimensions(RWTexture1D<${type}${length}>,float* thread Width)`,
                     func => {
                         func.implementation = function([texture, width]) {
-                            width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
                         }
                     });
                 this._map.set(
@@ -1786,8 +1807,10 @@ class Intrinsics {
                     func => {
                         func.implementation = function([texture, width, elements]) {
                             let tex = texture.loadValue();
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (elements.loadValue())
+                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
                         }
                     });
                 this._map.set(
@@ -1795,8 +1818,10 @@ class Intrinsics {
                     func => {
                         func.implementation = function([texture, width, elements]) {
                             let tex = texture.loadValue();
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (elements.loadValue())
+                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
                         }
                     });
                 this._map.set(
@@ -1819,8 +1844,10 @@ class Intrinsics {
                     func => {
                         func.implementation = function([texture, width, height]) {
                             let tex = texture.loadValue();
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
                         }
                     });
                 this._map.set(
@@ -1828,8 +1855,10 @@ class Intrinsics {
                     func => {
                         func.implementation = function([texture, width, height]) {
                             let tex = texture.loadValue();
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
                         }
                     });
                 this._map.set(
@@ -1852,9 +1881,12 @@ class Intrinsics {
                     func => {
                         func.implementation = function([texture, width, height, elements]) {
                             let tex = texture.loadValue();
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            if (elements.loadValue())
+                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
                         }
                     });
                 this._map.set(
@@ -1862,9 +1894,12 @@ class Intrinsics {
                     func => {
                         func.implementation = function([texture, width, height, elements]) {
                             let tex = texture.loadValue();
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            if (elements.loadValue())
+                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
                         }
                     });
                 this._map.set(
@@ -1887,9 +1922,12 @@ class Intrinsics {
                     func => {
                         func.implementation = function([texture, width, height, depth]) {
                             let tex = texture.loadValue();
-                            depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            if (depth.loadValue())
+                                depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
                         }
                     });
                 this._map.set(
@@ -1897,9 +1935,12 @@ class Intrinsics {
                     func => {
                         func.implementation = function([texture, width, height, depth]) {
                             let tex = texture.loadValue();
-                            depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (width.loadValue())
+                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                            if (height.loadValue())
+                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            if (depth.loadValue())
+                                depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
                         }
                     });
                 this._map.set(
@@ -2116,9 +2157,12 @@ class Intrinsics {
                         let mipID = miplevel.loadValue();
                         if (mipID >= tex.levelCount)
                             throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                        height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        if (width.loadValue())
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                        if (height.loadValue())
+                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                        if (numberOfLevels.loadValue())
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                     }
                 });
             this._map.set(
@@ -2317,10 +2361,14 @@ class Intrinsics {
                         let mipID = miplevel.loadValue();
                         if (mipID >= tex.levelCount)
                             throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                        height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        if (width.loadValue())
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                        if (height.loadValue())
+                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                        if (elements.loadValue())
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                        if (numberOfLevels.loadValue())
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                     }
                 });
             this._map.set(
@@ -2415,9 +2463,12 @@ class Intrinsics {
                             throw new Error("Cube texture doesn't have 6 faces");
                         if (mipID >= tex.levelCount)
                             throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                        height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        if (width.loadValue())
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                        if (height.loadValue())
+                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                        if (numberOfLevels.loadValue())
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
                     }
                 });
             this._map.set(
@@ -2425,8 +2476,10 @@ class Intrinsics {
                 func => {
                     func.implementation = function ([texture, width, height]) {
                         let tex = texture.loadValue();
-                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        if (width.loadValue())
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        if (height.loadValue())
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
                     }
                 });
             this._map.set(
@@ -2434,8 +2487,10 @@ class Intrinsics {
                 func => {
                     func.implementation = function ([texture, width, height]) {
                         let tex = texture.loadValue();
-                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        if (width.loadValue())
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        if (height.loadValue())
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
                     }
                 });
             this._map.set(
@@ -2457,9 +2512,12 @@ class Intrinsics {
                 func => {
                     func.implementation = function ([texture, width, height, elements]) {
                         let tex = texture.loadValue();
-                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        if (width.loadValue())
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        if (height.loadValue())
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                        if (elements.loadValue())
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
                     }
                 });
             this._map.set(
@@ -2467,9 +2525,12 @@ class Intrinsics {
                 func => {
                     func.implementation = function ([texture, width, height, elements]) {
                         let tex = texture.loadValue();
-                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        if (width.loadValue())
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        if (height.loadValue())
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                        if (elements.loadValue())
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
                     }
                 });
             this._map.set(

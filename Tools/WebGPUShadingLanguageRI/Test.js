@@ -7330,6 +7330,99 @@ tests.textureDimensions = function() {
     checkUint(program, callFunction(program, "foo45", [rwTextureDepth2DArray]), 2);
 }
 
+tests.textureDimensionsNull = function() {
+    let program = doPrep(`
+        test bool foo1(Texture1D<float> texture) {
+            GetDimensions(texture, 0, null, null);
+            return true;
+        }
+        test bool foo2(Texture1DArray<float> texture) {
+            GetDimensions(texture, 0, null, null, null);
+            return true;
+        }
+        test bool foo3(Texture2D<float> texture) {
+            GetDimensions(texture, 0, null, null, null);
+            return true;
+        }
+        test bool foo4(Texture2DArray<float> texture) {
+            GetDimensions(texture, 0, null, null, null, null);
+            return true;
+        }
+        test bool foo5(Texture3D<float> texture) {
+            GetDimensions(texture, 0, null, null, null, null);
+            return true;
+        }
+        test bool foo6(TextureCube<float> texture) {
+            GetDimensions(texture, 0, null, null, null);
+            return true;
+        }
+        test bool foo7(RWTexture1D<float> texture) {
+            thread float* ptr = null;
+            GetDimensions(texture, ptr);
+            return true;
+        }
+        test bool foo8(RWTexture1DArray<float> texture) {
+            thread uint* ptr = null;
+            GetDimensions(texture, ptr, ptr);
+            return true;
+        }
+        test bool foo9(RWTexture2D<float> texture) {
+            thread uint* ptr = null;
+            GetDimensions(texture, ptr, ptr);
+            return true;
+        }
+        test bool foo10(RWTexture2DArray<float> texture) {
+            thread uint* ptr = null;
+            GetDimensions(texture, ptr, ptr, ptr);
+            return true;
+        }
+        test bool foo11(RWTexture3D<float> texture) {
+            thread uint* ptr = null;
+            GetDimensions(texture, ptr, ptr, ptr);
+            return true;
+        }
+        test bool foo12(TextureDepth2D<float> texture) {
+            GetDimensions(texture, 0, null, null, null);
+            return true;
+        }
+        test bool foo13(TextureDepth2DArray<float> texture) {
+            GetDimensions(texture, 0, null, null, null, null);
+            return true;
+        }
+        test bool foo14(TextureDepthCube<float> texture) {
+            GetDimensions(texture, 0, null, null, null);
+            return true;
+        }
+        test bool foo15(RWTextureDepth2D<float> texture) {
+            thread uint* ptr = null;
+            GetDimensions(texture, ptr, ptr);
+            return true;
+        }
+        test bool foo16(RWTextureDepth2DArray<float> texture) {
+            thread uint* ptr = null;
+            GetDimensions(texture, ptr, ptr, ptr);
+            return true;
+        }
+    `);
+    let [texture1D, texture1DArray, texture2D, texture2DArray, texture3D, textureCube, rwTexture1D, rwTexture1DArray, rwTexture2D, rwTexture2DArray, rwTexture3D, textureDepth2D, textureDepth2DArray, textureDepthCube, rwTextureDepth2D, rwTextureDepth2DArray] = createTexturesForTesting(program);
+    checkBool(program, callFunction(program, "foo1", [texture1D]), true);
+    checkBool(program, callFunction(program, "foo2", [texture1DArray]), true);
+    checkBool(program, callFunction(program, "foo3", [texture2D]), true);
+    checkBool(program, callFunction(program, "foo4", [texture2DArray]), true);
+    checkBool(program, callFunction(program, "foo5", [texture3D]), true);
+    checkBool(program, callFunction(program, "foo6", [textureCube]), true);
+    checkBool(program, callFunction(program, "foo7", [rwTexture1D]), true);
+    checkBool(program, callFunction(program, "foo8", [rwTexture1DArray]), true);
+    checkBool(program, callFunction(program, "foo9", [rwTexture2D]), true);
+    checkBool(program, callFunction(program, "foo10", [rwTexture2DArray]), true);
+    checkBool(program, callFunction(program, "foo11", [rwTexture3D]), true);
+    checkBool(program, callFunction(program, "foo12", [textureDepth2D]), true);
+    checkBool(program, callFunction(program, "foo13", [textureDepth2DArray]), true);
+    checkBool(program, callFunction(program, "foo14", [textureDepthCube]), true);
+    checkBool(program, callFunction(program, "foo15", [rwTextureDepth2D]), true);
+    checkBool(program, callFunction(program, "foo16", [rwTextureDepth2DArray]), true);
+}
+
 tests.textureLoad = function() {
     let program = doPrep(`
         test float foo1(Texture1D<float> texture, int location, int mipmap) {

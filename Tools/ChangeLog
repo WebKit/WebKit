@@ -1,5 +1,19 @@
 2018-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Native functions which accept pointers need to do null checks
+        https://bugs.webkit.org/show_bug.cgi?id=189883
+
+        Reviewed by Dean Jackson.
+
+        Simply guard all the places where we write through an author-provided pointer.
+
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics.):
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.textureDimensionsNull):
+
+2018-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WHLSL] Implement atomic operations and barriers
         https://bugs.webkit.org/show_bug.cgi?id=189025
 
