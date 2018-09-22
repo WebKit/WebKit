@@ -1,3 +1,18 @@
+2018-09-22  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WPE] Be very permissive in the MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=189800
+
+        This is just a test tool and we should make
+        it just work, security and privacy is not really
+        a primary focus here.
+
+        Reviewed by Žan Doberšek.
+
+        * MiniBrowser/wpe/main.cpp:
+        (decidePermissionRequest):
+        (main):
+
 2018-09-21  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Local variables should be statically allocated

@@ -92,6 +92,14 @@ static void automationStartedCallback(WebKitWebContext*, WebKitAutomationSession
     g_signal_connect(session, "create-web-view", G_CALLBACK(createWebViewForAutomationCallback), view);
 }
 
+static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermissionRequest *request, gpointer unused_udata)
+{
+    g_print("Accepting %s request\n", G_OBJECT_TYPE_NAME(request));
+    webkit_permission_request_allow(request);
+
+    return TRUE;
+}
+
 static std::unique_ptr<WPEToolingBackends::ViewBackend> createViewBackend(uint32_t width, uint32_t height)
 {
     if (headlessMode)
@@ -178,6 +186,7 @@ int main(int argc, char *argv[])
 
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
+    g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), NULL);
 
     if (ignoreTLSErrors)
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
