@@ -23,6 +23,10 @@ webrtc [ Skip ]
 # Not supported on WK1
 media/no-fullscreen-when-hidden.html [ Skip ]
 
+# Skip pointerevents on WK1
+pointerevents [ Skip ]
+imported/w3c/web-platform-tests/pointerevents [ Skip ]
+
 # <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
 editing/deleting/4922367.html
 editing/deleting/5126166.html

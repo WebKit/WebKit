@@ -1,3 +1,10 @@
+2018-09-22  Dean Jackson  <dino@apple.com>
+
+        Unreviewed - Skip pointer events tests on legacy WebKit.
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2018-09-22  Youenn Fablet  <youenn@apple.com>
 
         Tests checking document GC in case of ActiveDOMObjects are flaky
