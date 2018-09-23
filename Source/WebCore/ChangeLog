@@ -1,3 +1,15 @@
+2018-09-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [ARM] Building FELightingNEON.cpp fails due to missing lightVector member
+        https://bugs.webkit.org/show_bug.cgi?id=189890
+
+        Reviewed by Darin Adler.
+
+        No new tests needed.
+
+        * platform/graphics/cpu/arm/filters/FELightingNEON.h:
+        (WebCore::FELighting::platformApplyNeon): Adapt to new layout of "struct PaintingData" after r225122.
+
 2018-09-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Null-check cairo_pattern_t gradient objects
