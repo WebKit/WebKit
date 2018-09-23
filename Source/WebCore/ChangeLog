@@ -1,3 +1,14 @@
+2018-09-23  Frederic Wang  <fwang@igalia.com>
+
+        Add missing includes in TextCodecReplacement.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=189894
+
+        Reviewed by Darin Adler.
+
+        No new tests, behavior unchanged.
+
+        * platform/text/TextCodecReplacement.cpp: Add missing headers.
+
 2018-09-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [ARM] Building FELightingNEON.cpp fails due to missing lightVector member
