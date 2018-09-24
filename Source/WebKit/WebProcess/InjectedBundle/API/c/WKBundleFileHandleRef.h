@@ -35,7 +35,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKBundleFileHandleGetTypeID();
 
-WK_EXPORT WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef path) WK_BUNDLE_API_DEPRECATED_WITH_REPLACEMENT(WKBundleFileHandleCreateWithPathForPage);
+WK_EXPORT WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef path) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundleFileHandleCreateWithPathForPage);
 WK_EXPORT WKBundleFileHandleRef WKBundleFileHandleCreateWithPathForPage(WKStringRef path, WKBundlePageRef page);
 
 #ifdef __cplusplus
