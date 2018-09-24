@@ -1,5 +1,21 @@
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
+        CSS reference filter with feDisplacementMap shows buffer corruption on Retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=188486
+        <rdar://problem/43189750>
+
+        Reviewed by Dean Jackson.
+        
+        The paintSize needs to be scaled by filterScale on Retina displays.
+
+        Test: css3/filters/hidpi-feDisplacementMap.html
+
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::platformApplySoftware):
+        * platform/graphics/filters/FEDisplacementMap.h:
+
+2018-09-24  Simon Fraser  <simon.fraser@apple.com>
+
         ReferenceFilterOperation doesn't need to store the FilterEffect
         https://bugs.webkit.org/show_bug.cgi?id=189904
 

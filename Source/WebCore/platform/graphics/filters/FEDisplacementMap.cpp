@@ -112,6 +112,8 @@ void FEDisplacementMap::platformApplySoftware()
 
     Filter& filter = this->filter();
     IntSize paintSize = absolutePaintRect().size();
+    paintSize.scale(filter.filterScale());
+
     FloatSize scale = filter.scaledByFilterResolution({ m_scale, m_scale });
     float scaleForColorX = scale.width() / 255.0;
     float scaleForColorY = scale.height() / 255.0;
