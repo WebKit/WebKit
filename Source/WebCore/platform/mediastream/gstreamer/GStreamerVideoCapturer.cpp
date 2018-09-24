@@ -24,8 +24,6 @@
 #if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "GStreamerVideoCapturer.h"
 
-#include <gst/app/gstappsink.h>
-
 namespace WebCore {
 
 GStreamerVideoCapturer::GStreamerVideoCapturer(GStreamerCaptureDevice device)

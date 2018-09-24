@@ -159,15 +159,15 @@ public:
         }
 
         // FIXME- Use a GstBufferPool.
-        auto buffer = gst_buffer_new_wrapped(g_memdup(inputImage._buffer, inputImage._size),
-            inputImage._size);
-        GST_BUFFER_DTS(buffer) = (static_cast<guint64>(inputImage._timeStamp) * GST_MSECOND) - m_firstBufferDts;
-        GST_BUFFER_PTS(buffer) = (static_cast<guint64>(renderTimeMs) * GST_MSECOND) - m_firstBufferPts;
-        m_dtsPtsMap[GST_BUFFER_PTS(buffer)] = inputImage._timeStamp;
+        auto buffer = adoptGRef(gst_buffer_new_wrapped(g_memdup(inputImage._buffer, inputImage._size),
+            inputImage._size));
+        GST_BUFFER_DTS(buffer.get()) = (static_cast<guint64>(inputImage._timeStamp) * GST_MSECOND) - m_firstBufferDts;
+        GST_BUFFER_PTS(buffer.get()) = (static_cast<guint64>(renderTimeMs) * GST_MSECOND) - m_firstBufferPts;
+        m_dtsPtsMap[GST_BUFFER_PTS(buffer.get())] = inputImage._timeStamp;
 
         GST_LOG_OBJECT(pipeline(), "%ld Decoding: %" GST_PTR_FORMAT, renderTimeMs, buffer);
-        switch (gst_app_src_push_sample(GST_APP_SRC(m_src),
-            gst_sample_new(buffer, GetCapsForFrame(inputImage), nullptr, nullptr))) {
+        auto sample = adoptGRef(gst_sample_new(buffer.get(), GetCapsForFrame(inputImage), nullptr, nullptr));
+        switch (gst_app_src_push_sample(GST_APP_SRC(m_src), sample.get())) {
         case GST_FLOW_OK:
             return WEBRTC_VIDEO_CODEC_OK;
         case GST_FLOW_FLUSHING:
