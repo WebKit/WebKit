@@ -1,0 +1,31 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/rendering/multisample-corruption.html
+[ 1: PASS ] Canvas should be red
+[ 2: PASS ] Canvas should be red
+[ 3: FAIL ] Canvas should be red
+[ 4: FAIL ] Canvas should be red
+[ 5: PASS ] Canvas should be red
+[ 6: FAIL ] Canvas should be red
+[ 7: FAIL ] Canvas should be red
+[ 8: PASS ] Canvas should be red
+[ 9: FAIL ] Canvas should be red
+[ 10: FAIL ] Canvas should be red
+[ 11: PASS ] Canvas should be red
+[ 12: FAIL ] Canvas should be red
+[ 13: FAIL ] Canvas should be red
+[ 14: PASS ] Canvas should be red
+[ 15: FAIL ] Canvas should be red
+[ 16: FAIL ] Canvas should be red
+[ 17: PASS ] Canvas should be red
+[ 18: FAIL ] Canvas should be red
+[ 19: FAIL ] Canvas should be red
+[ 20: PASS ] Canvas should be red
+[ 21: FAIL ] Canvas should be red
+[ 22: FAIL ] Canvas should be red
+[ 23: FAIL ] Canvas should be red
+[ 24: FAIL ] Canvas should be red
+[ 25: FAIL ] Canvas should be red
+[ 26: PASS ] successfullyParsed is true
+[ FAIL ] 17 failures reported
+

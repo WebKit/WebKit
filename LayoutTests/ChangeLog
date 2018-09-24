@@ -1,3 +1,13 @@
+2018-09-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Managing failing WebGL tests in the 2.0.0
+        version of the Khronos conformance suite.
+
+        * platform/wpe/TestExpectations: Skip the GLSL test cases of which one
+        is DoS-ing AMD GPUs on Linux. This needs more research to isolate the
+        culprit and properly fix the underlying problem.
+        * platform/wpe/webgl/2.0.0/: 44 test baselines added.
+
 2018-09-24  Daniel Bates  <dabates@apple.com>
 
         [iOS] Key code is 0 for many hardware keyboard keys

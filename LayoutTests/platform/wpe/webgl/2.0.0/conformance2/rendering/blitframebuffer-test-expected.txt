@@ -1,0 +1,24 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance2/rendering/blitframebuffer-test.html
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] should be red at first
+[ 3: PASS ] should be green
+[ 4: PASS ] getError was expected value: NO_ERROR : blitFramebuffer should succeed.
+[ 5: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : blitFramebuffer should generate INVALID_OPERATION if read/draw buffer are identical.
+[ 6: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : blitFramebuffer should generate INVALID_OPERATION if read/draw buffer are identical.
+[ 7: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : blitFramebuffer should generate INVALID_OPERATION if read/draw color buffer are identical.
+[ 8: PASS ] getError was expected value: NO_ERROR : blitFramebuffer should succeed if read/draw buffer has the same image with different levels.
+[ 9: PASS ] getError was expected value: NO_ERROR : blitFramebuffer should succeed if read/draw buffer has the same CUBE_MAP image with different faces.
+[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : blitFramebuffer should succeed if read/draw buffer has the same 3D/2D_ARRAY image with different layers.
+[ 11: PASS ] getError was expected value: NO_ERROR : blitFramebuffer should succeed.
+[ 12: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : blitFramebuffer should generate INVALID_OPERATION if read/draw framebuffer have identical depth buffer attachment.
+[ 13: FAIL ] Framebuffer incomplete.
+[ 14: PASS ] getError was expected value: NO_ERROR : blitFramebuffer from multisampled srgb image should succeed.
+[ 15: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : blitFramebuffer to a multisampled srgb image should generate INVALID_OPERATION.
+[ 16: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : blitFramebuffer from a multisampled srgb image, the src region and the dst region must be exactly the same.
+[ 17: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : blitFramebuffer from a multisampled srgb image, the src region and the dst region must be exactly the same.
+[ 18: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : blitFramebuffer from a multisampled srgb image, the format/type must be exactly the same.
+[ 19: PASS ] successfullyParsed is true
+[ FAIL ] 10 failures reported
+

@@ -1,0 +1,161 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/attribs/gl-bindAttribLocation-matrix.html
+[ 1: PASS ] maxAttributes is >= 4
+[ 2: FAIL ] Matrix with location 0 and vector with location 0 should not link.
+[ 3: FAIL ] Matrix with location 0 and vector with location 1 should not link.
+[ 4: PASS ] Matrix with location 0 and vector with location 2 should link.
+[ 5: FAIL ] Matrix with location 1 and vector with location 1 should not link.
+[ 6: FAIL ] Matrix with location 1 and vector with location 2 should not link.
+[ 7: PASS ] Matrix with location 1 and vector with location 3 should link.
+[ 8: FAIL ] Matrix with location 2 and vector with location 2 should not link.
+[ 9: FAIL ] Matrix with location 2 and vector with location 3 should not link.
+[ 10: PASS ] Matrix with location 2 and vector with location 4 should link.
+[ 11: FAIL ] Matrix with location 3 and vector with location 3 should not link.
+[ 12: FAIL ] Matrix with location 3 and vector with location 4 should not link.
+[ 13: PASS ] Matrix with location 3 and vector with location 5 should link.
+[ 14: FAIL ] Matrix with location 4 and vector with location 4 should not link.
+[ 15: FAIL ] Matrix with location 4 and vector with location 5 should not link.
+[ 16: PASS ] Matrix with location 4 and vector with location 6 should link.
+[ 17: FAIL ] Matrix with location 5 and vector with location 5 should not link.
+[ 18: FAIL ] Matrix with location 5 and vector with location 6 should not link.
+[ 19: PASS ] Matrix with location 5 and vector with location 7 should link.
+[ 20: FAIL ] Matrix with location 6 and vector with location 6 should not link.
+[ 21: FAIL ] Matrix with location 6 and vector with location 7 should not link.
+[ 22: PASS ] Matrix with location 6 and vector with location 8 should link.
+[ 23: FAIL ] Matrix with location 7 and vector with location 7 should not link.
+[ 24: FAIL ] Matrix with location 7 and vector with location 8 should not link.
+[ 25: PASS ] Matrix with location 7 and vector with location 9 should link.
+[ 26: FAIL ] Matrix with location 8 and vector with location 8 should not link.
+[ 27: FAIL ] Matrix with location 8 and vector with location 9 should not link.
+[ 28: PASS ] Matrix with location 8 and vector with location 10 should link.
+[ 29: FAIL ] Matrix with location 9 and vector with location 9 should not link.
+[ 30: FAIL ] Matrix with location 9 and vector with location 10 should not link.
+[ 31: PASS ] Matrix with location 9 and vector with location 11 should link.
+[ 32: FAIL ] Matrix with location 10 and vector with location 10 should not link.
+[ 33: FAIL ] Matrix with location 10 and vector with location 11 should not link.
+[ 34: PASS ] Matrix with location 10 and vector with location 12 should link.
+[ 35: FAIL ] Matrix with location 11 and vector with location 11 should not link.
+[ 36: FAIL ] Matrix with location 11 and vector with location 12 should not link.
+[ 37: PASS ] Matrix with location 11 and vector with location 13 should link.
+[ 38: FAIL ] Matrix with location 12 and vector with location 12 should not link.
+[ 39: FAIL ] Matrix with location 12 and vector with location 13 should not link.
+[ 40: PASS ] Matrix with location 12 and vector with location 14 should link.
+[ 41: FAIL ] Matrix with location 13 and vector with location 13 should not link.
+[ 42: FAIL ] Matrix with location 13 and vector with location 14 should not link.
+[ 43: PASS ] Matrix with location 13 and vector with location 15 should link.
+[ 44: FAIL ] Matrix with location 0 and vector with location 0 should not link.
+[ 45: FAIL ] Matrix with location 0 and vector with location 1 should not link.
+[ 46: FAIL ] Matrix with location 0 and vector with location 2 should not link.
+[ 47: PASS ] Matrix with location 0 and vector with location 3 should link.
+[ 48: FAIL ] Matrix with location 1 and vector with location 1 should not link.
+[ 49: FAIL ] Matrix with location 1 and vector with location 2 should not link.
+[ 50: FAIL ] Matrix with location 1 and vector with location 3 should not link.
+[ 51: PASS ] Matrix with location 1 and vector with location 4 should link.
+[ 52: FAIL ] Matrix with location 2 and vector with location 2 should not link.
+[ 53: FAIL ] Matrix with location 2 and vector with location 3 should not link.
+[ 54: FAIL ] Matrix with location 2 and vector with location 4 should not link.
+[ 55: PASS ] Matrix with location 2 and vector with location 5 should link.
+[ 56: FAIL ] Matrix with location 3 and vector with location 3 should not link.
+[ 57: FAIL ] Matrix with location 3 and vector with location 4 should not link.
+[ 58: FAIL ] Matrix with location 3 and vector with location 5 should not link.
+[ 59: PASS ] Matrix with location 3 and vector with location 6 should link.
+[ 60: FAIL ] Matrix with location 4 and vector with location 4 should not link.
+[ 61: FAIL ] Matrix with location 4 and vector with location 5 should not link.
+[ 62: FAIL ] Matrix with location 4 and vector with location 6 should not link.
+[ 63: PASS ] Matrix with location 4 and vector with location 7 should link.
+[ 64: FAIL ] Matrix with location 5 and vector with location 5 should not link.
+[ 65: FAIL ] Matrix with location 5 and vector with location 6 should not link.
+[ 66: FAIL ] Matrix with location 5 and vector with location 7 should not link.
+[ 67: PASS ] Matrix with location 5 and vector with location 8 should link.
+[ 68: FAIL ] Matrix with location 6 and vector with location 6 should not link.
+[ 69: FAIL ] Matrix with location 6 and vector with location 7 should not link.
+[ 70: FAIL ] Matrix with location 6 and vector with location 8 should not link.
+[ 71: PASS ] Matrix with location 6 and vector with location 9 should link.
+[ 72: FAIL ] Matrix with location 7 and vector with location 7 should not link.
+[ 73: FAIL ] Matrix with location 7 and vector with location 8 should not link.
+[ 74: FAIL ] Matrix with location 7 and vector with location 9 should not link.
+[ 75: PASS ] Matrix with location 7 and vector with location 10 should link.
+[ 76: FAIL ] Matrix with location 8 and vector with location 8 should not link.
+[ 77: FAIL ] Matrix with location 8 and vector with location 9 should not link.
+[ 78: FAIL ] Matrix with location 8 and vector with location 10 should not link.
+[ 79: PASS ] Matrix with location 8 and vector with location 11 should link.
+[ 80: FAIL ] Matrix with location 9 and vector with location 9 should not link.
+[ 81: FAIL ] Matrix with location 9 and vector with location 10 should not link.
+[ 82: FAIL ] Matrix with location 9 and vector with location 11 should not link.
+[ 83: PASS ] Matrix with location 9 and vector with location 12 should link.
+[ 84: FAIL ] Matrix with location 10 and vector with location 10 should not link.
+[ 85: FAIL ] Matrix with location 10 and vector with location 11 should not link.
+[ 86: FAIL ] Matrix with location 10 and vector with location 12 should not link.
+[ 87: PASS ] Matrix with location 10 and vector with location 13 should link.
+[ 88: FAIL ] Matrix with location 11 and vector with location 11 should not link.
+[ 89: FAIL ] Matrix with location 11 and vector with location 12 should not link.
+[ 90: FAIL ] Matrix with location 11 and vector with location 13 should not link.
+[ 91: PASS ] Matrix with location 11 and vector with location 14 should link.
+[ 92: FAIL ] Matrix with location 12 and vector with location 12 should not link.
+[ 93: FAIL ] Matrix with location 12 and vector with location 13 should not link.
+[ 94: FAIL ] Matrix with location 12 and vector with location 14 should not link.
+[ 95: PASS ] Matrix with location 12 and vector with location 15 should link.
+[ 96: FAIL ] Matrix with location 0 and vector with location 0 should not link.
+[ 97: FAIL ] Matrix with location 0 and vector with location 1 should not link.
+[ 98: FAIL ] Matrix with location 0 and vector with location 2 should not link.
+[ 99: FAIL ] Matrix with location 0 and vector with location 3 should not link.
+[ 100: PASS ] Matrix with location 0 and vector with location 4 should link.
+[ 101: FAIL ] Matrix with location 1 and vector with location 1 should not link.
+[ 102: FAIL ] Matrix with location 1 and vector with location 2 should not link.
+[ 103: FAIL ] Matrix with location 1 and vector with location 3 should not link.
+[ 104: FAIL ] Matrix with location 1 and vector with location 4 should not link.
+[ 105: PASS ] Matrix with location 1 and vector with location 5 should link.
+[ 106: FAIL ] Matrix with location 2 and vector with location 2 should not link.
+[ 107: FAIL ] Matrix with location 2 and vector with location 3 should not link.
+[ 108: FAIL ] Matrix with location 2 and vector with location 4 should not link.
+[ 109: FAIL ] Matrix with location 2 and vector with location 5 should not link.
+[ 110: PASS ] Matrix with location 2 and vector with location 6 should link.
+[ 111: FAIL ] Matrix with location 3 and vector with location 3 should not link.
+[ 112: FAIL ] Matrix with location 3 and vector with location 4 should not link.
+[ 113: FAIL ] Matrix with location 3 and vector with location 5 should not link.
+[ 114: FAIL ] Matrix with location 3 and vector with location 6 should not link.
+[ 115: PASS ] Matrix with location 3 and vector with location 7 should link.
+[ 116: FAIL ] Matrix with location 4 and vector with location 4 should not link.
+[ 117: FAIL ] Matrix with location 4 and vector with location 5 should not link.
+[ 118: FAIL ] Matrix with location 4 and vector with location 6 should not link.
+[ 119: FAIL ] Matrix with location 4 and vector with location 7 should not link.
+[ 120: PASS ] Matrix with location 4 and vector with location 8 should link.
+[ 121: FAIL ] Matrix with location 5 and vector with location 5 should not link.
+[ 122: FAIL ] Matrix with location 5 and vector with location 6 should not link.
+[ 123: FAIL ] Matrix with location 5 and vector with location 7 should not link.
+[ 124: FAIL ] Matrix with location 5 and vector with location 8 should not link.
+[ 125: PASS ] Matrix with location 5 and vector with location 9 should link.
+[ 126: FAIL ] Matrix with location 6 and vector with location 6 should not link.
+[ 127: FAIL ] Matrix with location 6 and vector with location 7 should not link.
+[ 128: FAIL ] Matrix with location 6 and vector with location 8 should not link.
+[ 129: FAIL ] Matrix with location 6 and vector with location 9 should not link.
+[ 130: PASS ] Matrix with location 6 and vector with location 10 should link.
+[ 131: FAIL ] Matrix with location 7 and vector with location 7 should not link.
+[ 132: FAIL ] Matrix with location 7 and vector with location 8 should not link.
+[ 133: FAIL ] Matrix with location 7 and vector with location 9 should not link.
+[ 134: FAIL ] Matrix with location 7 and vector with location 10 should not link.
+[ 135: PASS ] Matrix with location 7 and vector with location 11 should link.
+[ 136: FAIL ] Matrix with location 8 and vector with location 8 should not link.
+[ 137: FAIL ] Matrix with location 8 and vector with location 9 should not link.
+[ 138: FAIL ] Matrix with location 8 and vector with location 10 should not link.
+[ 139: FAIL ] Matrix with location 8 and vector with location 11 should not link.
+[ 140: PASS ] Matrix with location 8 and vector with location 12 should link.
+[ 141: FAIL ] Matrix with location 9 and vector with location 9 should not link.
+[ 142: FAIL ] Matrix with location 9 and vector with location 10 should not link.
+[ 143: FAIL ] Matrix with location 9 and vector with location 11 should not link.
+[ 144: FAIL ] Matrix with location 9 and vector with location 12 should not link.
+[ 145: PASS ] Matrix with location 9 and vector with location 13 should link.
+[ 146: FAIL ] Matrix with location 10 and vector with location 10 should not link.
+[ 147: FAIL ] Matrix with location 10 and vector with location 11 should not link.
+[ 148: FAIL ] Matrix with location 10 and vector with location 12 should not link.
+[ 149: FAIL ] Matrix with location 10 and vector with location 13 should not link.
+[ 150: PASS ] Matrix with location 10 and vector with location 14 should link.
+[ 151: FAIL ] Matrix with location 11 and vector with location 11 should not link.
+[ 152: FAIL ] Matrix with location 11 and vector with location 12 should not link.
+[ 153: FAIL ] Matrix with location 11 and vector with location 13 should not link.
+[ 154: FAIL ] Matrix with location 11 and vector with location 14 should not link.
+[ 155: PASS ] Matrix with location 11 and vector with location 15 should link.
+[ 156: PASS ] successfullyParsed is true
+[ FAIL ] 115 failures reported
+

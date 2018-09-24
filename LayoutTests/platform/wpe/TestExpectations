@@ -856,6 +856,7 @@ Bug(WPE) webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.htm
 Bug(WPE) webgl/1.0.3/conformance/textures/texture-upload-size.html [ Timeout ]
 #  One of these tests is DDoS-ing Mesa AMD drivers.
 Bug(WPE) webgl/1.0.3/conformance/glsl/bugs [ Skip ]
+Bug(WPE) webgl/2.0.0/conformance/glsl/bugs [ Skip ]
 # Pixel test result oddities
 Bug(WPE) webgl/webgl-border.html [ ImageOnlyFailure ]
 Bug(WPE) webgl/webgl-box-shadow.html [ ImageOnlyFailure ]
