@@ -1,5 +1,14 @@
 2018-09-24  Truitt Savell  <tsavell@apple.com>
 
+        [ iOS ] Layout Tests in media/media-fragments/ are flaky - Remved Debug only as tests are flakey on Release. 
+        https://bugs.webkit.org/show_bug.cgi?id=187557
+
+        Unreviewed Test Gardening
+
+        * platform/ios/TestExpectations:
+
+2018-09-24  Truitt Savell  <tsavell@apple.com>
+
         [ iOS ] Layout Tests in media/media-fragments/ are flaky
         https://bugs.webkit.org/show_bug.cgi?id=187557
 
