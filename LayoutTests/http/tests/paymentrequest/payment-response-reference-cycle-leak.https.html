@@ -10,7 +10,7 @@
 async function checkForNodeLeaks(testFunction, underlyingClass)
 {
     // Bump this number as high as we need to, to get reproducible results.
-    const repetitions = 40;
+    const repetitions = 80;
 
     GCController.collect();
     const beforeCount = internals.numberOfLiveNodes();

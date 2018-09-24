@@ -1,3 +1,12 @@
+2018-09-24  Andy Estes  <aestes@apple.com>
+
+        Try to make payment-response-reference-cycle-leak.https.html not be flaky.
+
+        Unreviewed.
+
+        * http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html:
+        Doubled the number of repetitions (from 40 to 80).
+
 2018-09-24  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Change name of WebVTT region attribute 'height' to 'lines'.
