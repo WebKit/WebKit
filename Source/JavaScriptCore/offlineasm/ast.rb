@@ -727,26 +727,31 @@ end
 class Variable < NoChildren
     attr_reader :name
     
-    def initialize(codeOrigin, name)
+    def initialize(codeOrigin, name, originalName = nil)
         super(codeOrigin)
         @name = name
+        @originalName = originalName
     end
     
     @@mapping = {}
     
-    def self.forName(codeOrigin, name)
+    def self.forName(codeOrigin, name, originalName = nil)
         unless @@mapping[name]
-            @@mapping[name] = Variable.new(codeOrigin, name)
+            @@mapping[name] = Variable.new(codeOrigin, name, originalName)
         end
         @@mapping[name]
     end
+
+    def originalName
+        @originalName || name
+    end
     
     def dump
-        name
+        originalName
     end
     
     def inspect
-        "<variable #{name} at #{codeOriginString}>"
+        "<variable #{originalName} at #{codeOriginString}>"
     end
 end
 
@@ -1455,13 +1460,18 @@ end
 class MacroCall < Node
     attr_reader :name, :operands, :annotation
     
-    def initialize(codeOrigin, name, operands, annotation)
+    def initialize(codeOrigin, name, operands, annotation, originalName = nil)
         super(codeOrigin)
         @name = name
         @operands = operands
         raise unless @operands
         @operands.each{|v| raise unless v}
         @annotation = annotation
+        @originalName = originalName
+    end
+
+    def originalName
+        @originalName || name
     end
     
     def children
@@ -1469,11 +1479,11 @@ class MacroCall < Node
     end
     
     def mapChildren(&proc)
-        MacroCall.new(codeOrigin, @name, @operands.map(&proc), @annotation)
+        MacroCall.new(codeOrigin, @name, @operands.map(&proc), @annotation, @originalName)
     end
     
     def dump
-        "\t#{name}(" + operands.collect{|v| v.dump}.join(", ") + ")"
+        "\t#{originalName}(" + operands.collect{|v| v.dump}.join(", ") + ")"
     end
 end
 

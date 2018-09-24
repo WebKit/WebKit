@@ -1,5 +1,32 @@
 2018-09-24  Tadeu Zagallo  <tzagallo@apple.com>
 
+        offlineasm: fix macro scoping
+        https://bugs.webkit.org/show_bug.cgi?id=189902
+
+        Reviewed by Mark Lam.
+
+        In the code below, the reference to `f` in `g`, which should refer to
+        the outer macro definition will instead refer to the f argument of the
+        anonymous macro passed to `g`. That leads to this code failing to
+        compile (f expected 0 args but got 1).
+        
+        ```
+        macro f(x)
+            move x, t0
+        end
+        
+        macro g(fn)
+            fn(macro () f(42) end)
+        end
+        
+        g(macro(f) f() end)
+        ```
+
+        * offlineasm/ast.rb:
+        * offlineasm/transform.rb:
+
+2018-09-24  Tadeu Zagallo  <tzagallo@apple.com>
+
         Add forEach method for iterating CodeBlock's ValueProfiles
         https://bugs.webkit.org/show_bug.cgi?id=189897
 

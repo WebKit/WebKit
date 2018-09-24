@@ -134,7 +134,20 @@ class Node
     end
 end
 
+$uniqueMacroVarID = 0
 class Macro
+    def capture
+        mapping = {}
+        newVars = []
+        variables.each do |var|
+            $uniqueMacroVarID += 1
+            newVar = Variable.forName(var.codeOrigin, "_var#{$uniqueMacroVarID}", var.originalName)
+            newVars << newVar
+            mapping[var] = newVar
+        end
+        Macro.new(codeOrigin, name, newVars, body.substitute(mapping))
+    end
+
     def substitute(mapping)
         myMapping = {}
         mapping.each_pair {
@@ -147,6 +160,17 @@ class Macro
             | child |
             child.substitute(myMapping)
         }
+    end
+end
+
+class MacroCall
+    def substitute(mapping)
+        newName = Variable.forName(codeOrigin, name)
+        if mapping[newName]
+            newName = mapping[newName]
+        end
+        newOperands = operands.map { |operand| operand.substitute(mapping) }
+        MacroCall.new(codeOrigin, newName.name, newOperands, annotation, originalName)
     end
 end
 
@@ -203,7 +227,7 @@ class Sequence
         @list.each {
             | item |
             if item.is_a? Macro
-                myMacros[item.name] = item
+                myMacros[item.name] = item.capture
             end
         }
         newList = []
@@ -214,15 +238,15 @@ class Sequence
             elsif item.is_a? MacroCall
                 mapping = {}
                 myMyMacros = myMacros.dup
-                raise "Could not find macro #{item.name} at #{item.codeOriginString}" unless myMacros[item.name]
-                raise "Argument count mismatch for call to #{item.name} at #{item.codeOriginString}" unless item.operands.size == myMacros[item.name].variables.size
+                raise "Could not find macro #{item.originalName} at #{item.codeOriginString}" unless myMacros[item.name]
+                raise "Argument count mismatch for call to #{item.originalName} at #{item.codeOriginString}" unless item.operands.size == myMacros[item.name].variables.size
                 item.operands.size.times {
                     | idx |
                     if item.operands[idx].is_a? Variable and myMacros[item.operands[idx].name]
                         myMyMacros[myMacros[item.name].variables[idx].name] = myMacros[item.operands[idx].name]
                         mapping[myMacros[item.name].variables[idx].name] = nil
                     elsif item.operands[idx].is_a? Macro
-                        myMyMacros[myMacros[item.name].variables[idx].name] = item.operands[idx]
+                        myMyMacros[myMacros[item.name].variables[idx].name] = item.operands[idx].capture
                         mapping[myMacros[item.name].variables[idx].name] = nil
                     else
                         myMyMacros[myMacros[item.name].variables[idx]] = nil
@@ -232,7 +256,7 @@ class Sequence
                 if item.annotation
                     newList << Instruction.new(item.codeOrigin, "localAnnotation", [], item.annotation)
                 end
-                newList += myMacros[item.name].body.substitute(mapping).demacroify(myMyMacros).renameLabels(item.name).list
+                newList += myMacros[item.name].body.substitute(mapping).demacroify(myMyMacros).renameLabels(item.originalName).list
             else
                 newList << item.demacroify(myMacros)
             end
