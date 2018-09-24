@@ -17,13 +17,13 @@ LOAD_BUILDBOT_DATA([
                     "Apple Sierra Release WK2 (Tests)", 
                     "Apple Win 7 Debug (Tests)", 
                     "Apple Win 7 Release (Tests)", 
-                    "Apple iOS 11 Simulator Debug WK2 (Tests)", 
-                    "Apple iOS 11 Simulator Release WK2 (Tests)", 
+                    "Apple iOS 12 Simulator Debug WK2 (Tests)", 
+                    "Apple iOS 12 Simulator Release WK2 (Tests)", 
                     "GTK Linux 64-bit Debug (Tests)", 
                     "GTK Linux 64-bit Release (Tests)", 
                     "GTK Linux 64-bit Release Wayland (Tests)", 
-                    "WPE Linux 64-bit Release (Tests)",
-                    "WPE Linux 64-bit Debug (Tests)"
+                    "WPE Linux 64-bit Debug (Tests)", 
+                    "WPE Linux 64-bit Release (Tests)"
                 ]
             }
         }, 
