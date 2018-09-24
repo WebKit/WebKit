@@ -80,6 +80,7 @@ public:
     WebCore::MediaSourceStreamTypeGStreamer streamType() { return m_streamType; }
 
     void disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*);
+    void appendPipelineDemuxerNoMorePadsFromAnyThread();
     void connectDemuxerSrcPadToAppsinkFromAnyThread(GstPad*);
     void connectDemuxerSrcPadToAppsink(GstPad*);
 
@@ -93,6 +94,7 @@ private:
     void handleAppsrcNeedDataReceived();
     void removeAppsrcDataLeavingProbe();
     void setAppsrcDataLeavingProbe();
+    void demuxerNoMorePads();
 
     Ref<MediaSourceClientGStreamerMSE> m_mediaSourceClient;
     Ref<SourceBufferPrivateGStreamer> m_sourceBufferPrivate;

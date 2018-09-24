@@ -88,6 +88,7 @@
       <patch file="gst-plugins-good-0007-matroskademux-Allow-Matroska-headers-to-be-read-more.patch" strip="1" /> <!-- Merged as 9dc7859184d4b7ad1dd7e2b54704e994dbace329 (to be shipped in 1.14.4) -->
       <patch file="gst-plugins-good-0008-matroskademux-Refactor-track-parsing-out-from-adding.patch" strip="1" /> <!-- Merged as f279bc5336dda19741a5996a108da42dd3201366 (to be shipped in 1.14.4) -->
       <patch file="gst-plugins-good-0009-matroskademux-Parse-successive-Tracks-elements.patch" strip="1" /> <!-- Merged as 0e60076a390fd3ef53d350940b2c695ff7bbe008 (to be shipped in 1.14.4) -->
+      <patch file="gst-plugins-good-0010-matroskademux-Emit-no-more-pads-after-parsing-Tracks.patch" strip="1" /> <!-- Merged as 7ceefec7141069b4adf4451a874766f8760c66d6 (to be shipped in 1.14.4) -->
     </branch>
   </autotools>
 

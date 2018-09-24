@@ -1,3 +1,31 @@
+2018-09-24  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Use no-more-pads event for noticing initialization segments
+        https://bugs.webkit.org/show_bug.cgi?id=189868
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Fixes the following YTTV 2018 tests:
+        62.VideoDimensionVP9
+        63.PlaybackStateVP9
+
+        This removes the hack that was making supporting multiple tracks in
+        the same file in MSE impossible.
+
+        For WebM, this GStreamer patch is required:
+        https://bugzilla.gnome.org/show_bug.cgi?id=797187
+        "matroskademux: Emit no-more-pads after parsing Tracks"
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::handleApplicationMessage):
+        (WebCore::AppendPipeline::demuxerNoMorePads):
+        (WebCore::AppendPipeline::appsinkCapsChanged):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        (WebCore::AppendPipeline::appendPipelineDemuxerNoMorePadsFromAnyThread):
+        (WebCore::appendPipelineDemuxerNoMorePads):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+
 2018-09-24  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK][WebRTC] Fix leaks in the libwebrtc Decoder and Encoder
