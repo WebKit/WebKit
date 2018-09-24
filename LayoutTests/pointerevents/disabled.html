@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:PointerEventsEnabled=false ] -->
+<p>The PointerEvent interface shouldn't be visible when the feature is disabled.</p>
+<p>window.PointerEvent == <span></span></p>
+<script>
+window.addEventListener("load", () => {
+    const output = document.querySelector("span");
+    output.textContent = `${window.PointerEvent}`;
+}, false);
+</script>

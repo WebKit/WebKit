@@ -1,3 +1,17 @@
+2018-09-22  Dean Jackson  <dino@apple.com>
+
+        Ensure PointerEvent is not visible when disabled
+        https://bugs.webkit.org/show_bug.cgi?id=189889
+        <rdar://problem/44708253>
+
+        Reviewed by Eric Carlson.
+
+        Test: pointerevents/disabled.html
+
+        * bindings/js/WebCoreBuiltinNames.h: Now that it is enabled at runtime, it needs
+        a built-in name.
+        * dom/PointerEvent.idl: Add EnabledAtRuntime.
+
 2018-09-24  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Pull demuxed samples in batches

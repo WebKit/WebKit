@@ -120,6 +120,7 @@ namespace WebCore {
     macro(PerformanceObserverEntryList) \
     macro(PerformanceResourceTiming) \
     macro(PerformanceServerTiming) \
+    macro(PointerEvent) \
     macro(PublicKeyCredential) \
     macro(RTCDTMFSender) \
     macro(RTCDTMFToneChangeEvent) \

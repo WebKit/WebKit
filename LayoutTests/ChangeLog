@@ -1,3 +1,17 @@
+2018-09-22  Dean Jackson  <dino@apple.com>
+
+        Ensure PointerEvent is not visible when disabled
+        https://bugs.webkit.org/show_bug.cgi?id=189889
+        <rdar://problem/44708253>
+
+        Reviewed by Eric Carlson.
+
+        A test that explicitly disables PointerEvents and checks
+        that the interface is not visible.
+
+        * pointerevents/disabled-expected.html: Added.
+        * pointerevents/disabled.html: Added.
+
 2018-09-24  Truitt Savell  <tsavell@apple.com>
 
         [ iOS ] Layout Tests in media/media-fragments/ are flaky - Remved Debug only as tests are flakey on Release. 
