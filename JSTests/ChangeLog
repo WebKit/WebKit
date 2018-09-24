@@ -1,3 +1,14 @@
+2018-09-24  Saam Barati  <sbarati@apple.com>
+
+        Array.prototype.indexOf fast path needs to ensure the length is still valid after performing effects
+        https://bugs.webkit.org/show_bug.cgi?id=189922
+        <rdar://problem/44651275>
+
+        Reviewed by Mark Lam.
+
+        * stress/array-indexof-fast-path-effects.js: Added.
+        * stress/array-indexof-cached-length.js: Added.
+
 2018-09-24  Saam barati  <sbarati@apple.com>
 
         ArgumentsEliminationPhase should snip basic blocks after proven OSR exits

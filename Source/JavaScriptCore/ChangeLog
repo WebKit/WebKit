@@ -1,3 +1,19 @@
+2018-09-24  Saam Barati  <sbarati@apple.com>
+
+        Array.prototype.indexOf fast path needs to ensure the length is still valid after performing effects
+        https://bugs.webkit.org/show_bug.cgi?id=189922
+        <rdar://problem/44651275>
+
+        Reviewed by Mark Lam.
+
+        The implementation was first getting the length to iterate up to,
+        then getting the starting index. However, getting the starting
+        index may perform effects. e.g, it could change the length of the
+        array. This changes it so we verify the length is still valid.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncIndexOf):
+
 2018-09-24  Tadeu Zagallo  <tzagallo@apple.com>
 
         offlineasm: fix macro scoping

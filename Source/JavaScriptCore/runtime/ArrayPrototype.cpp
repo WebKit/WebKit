@@ -1169,7 +1169,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
 
     if (isJSArray(thisObject)) {
         JSArray* array = asArray(thisObject);
-        if (array->canDoFastIndexedAccess(vm)) {
+        bool canDoFastPath = array->canDoFastIndexedAccess(vm)
+            && array->getArrayLength() == length; // The effects in getting `index` could have changed the length of this array.
+        if (canDoFastPath) {
             switch (array->indexingType()) {
             case ALL_INT32_INDEXING_TYPES: {
                 if (!searchElement.isNumber())
