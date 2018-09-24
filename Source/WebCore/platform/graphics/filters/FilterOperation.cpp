@@ -71,11 +71,6 @@ void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader
     m_cachedSVGDocumentReference->load(cachedResourceLoader, options);
 }
 
-void ReferenceFilterOperation::setFilterEffect(RefPtr<FilterEffect>&& filterEffect)
-{
-    m_filterEffect = WTFMove(filterEffect);
-}
-
 RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))

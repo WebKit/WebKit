@@ -1,5 +1,21 @@
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
+        ReferenceFilterOperation doesn't need to store the FilterEffect
+        https://bugs.webkit.org/show_bug.cgi?id=189904
+
+        Reviewed by Dean Jackson.
+
+        ReferenceFilterOperation doesn't do anything with m_filterEffect so don't store it.
+
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::ReferenceFilterOperation::setFilterEffect): Deleted.
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::ReferenceFilterOperation::filterEffect const): Deleted.
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::build):
+
+2018-09-24  Simon Fraser  <simon.fraser@apple.com>
+
         Garbled rendering of image when applied feConvolveMatrix to it, on Retina display
         https://bugs.webkit.org/show_bug.cgi?id=189748
         <rdar://problem/44621494>

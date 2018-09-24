@@ -144,7 +144,6 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
         case FilterOperation::REFERENCE: {
             auto& referenceOperation = downcast<ReferenceFilterOperation>(filterOperation);
             effect = buildReferenceFilter(renderer, *previousEffect, referenceOperation);
-            referenceOperation.setFilterEffect(effect.copyRef());
             break;
         }
         case FilterOperation::GRAYSCALE: {

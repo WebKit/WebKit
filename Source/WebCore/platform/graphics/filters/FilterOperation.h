@@ -189,9 +189,6 @@ public:
 
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
 
-    FilterEffect* filterEffect() const { return m_filterEffect.get(); }
-    void setFilterEffect(RefPtr<FilterEffect>&&);
-
 private:
     ReferenceFilterOperation(const String& url, const String& fragment);
 
@@ -200,7 +197,6 @@ private:
     String m_url;
     String m_fragment;
     std::unique_ptr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
-    RefPtr<FilterEffect> m_filterEffect;
 };
 
 // GRAYSCALE, SEPIA, SATURATE and HUE_ROTATE are variations on a basic color matrix effect.
