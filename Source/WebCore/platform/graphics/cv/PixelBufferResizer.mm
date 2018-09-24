@@ -23,15 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PixelBufferResizer.h"
+#import "config.h"
+#import "PixelBufferResizer.h"
 
 #if USE(VIDEOTOOLBOX)
 
-#include <wtf/SoftLinking.h>
+#import "Logging.h"
+#import <wtf/SoftLinking.h>
 
-#include "CoreVideoSoftLink.h"
-#include "VideoToolboxSoftLink.h"
+#import "CoreVideoSoftLink.h"
+#import "VideoToolboxSoftLink.h"
 
 namespace WebCore {
 

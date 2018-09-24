@@ -27,6 +27,7 @@
 
 #if USE(VIDEOTOOLBOX)
 
+#include "IntSize.h"
 #include <wtf/RetainPtr.h>
 
 typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;

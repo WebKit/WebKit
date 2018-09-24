@@ -1,3 +1,21 @@
+2018-09-24  Daniel Bates  <dabates@apple.com>
+
+        Include more headers in IOSurface.mm, PixelBufferResizer.{h, mm}
+        https://bugs.webkit.org/show_bug.cgi?id=189928
+
+        Reviewed by Andy Estes.
+
+        Make building IOSurface.mm and PixelBufferResizer.mm deterministic regardless of
+        which bundle of unified sources they are built in.
+
+        * platform/graphics/cocoa/IOSurface.mm: Include headers HostWindow.h and PlatformScreen.h
+        since we make use of functionality from these headers.
+        * platform/graphics/cv/PixelBufferResizer.h: Include header IntSize.h since
+        we need the size of an IntSize for m_size.
+        * platform/graphics/cv/PixelBufferResizer.mm: Include header Logging.h since
+        this file makes use of logging facilities. Also substitute #import for #include
+        while I am here since this file is an Objective-C++ file.
+
 2018-09-24  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Events cleanup

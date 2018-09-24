@@ -30,10 +30,12 @@
 
 #import "GraphicsContext3D.h"
 #import "GraphicsContextCG.h"
+#import "HostWindow.h"
 #import "IOSurfacePool.h"
 #import "ImageBuffer.h"
 #import "ImageBufferDataCG.h"
 #import "Logging.h"
+#import "PlatformScreen.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/IOSurfaceSPI.h>
 #import <wtf/Assertions.h>
