@@ -6505,6 +6505,24 @@ tests.atomicsNull = function()
         (e) => e instanceof WTrapError);
 }
 
+tests.selfCasts = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        test int foo()
+        {
+            Foo foo;
+            foo.x = 21;
+            Foo bar = Foo(foo);
+            bar.x = 42;
+            return foo.x + bar.x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", []), 21 + 42);
+}
+
 tests.pointerToMember = function()
 {
     checkFail(

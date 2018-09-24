@@ -1,3 +1,16 @@
+2018-09-24  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Casting user-created types to themselves should always work
+        https://bugs.webkit.org/show_bug.cgi?id=189113
+
+        Reviewed by Myles C. Maxfield.
+
+        Casting user-defined types to themselves worked already, but we didn't
+        test it anywhere.
+
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.selfCasts):
+
 2018-09-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for Jhbuild-using ports.
