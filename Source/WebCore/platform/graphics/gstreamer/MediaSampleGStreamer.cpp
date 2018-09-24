@@ -36,8 +36,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
 {
     ASSERT(sample);
     GstBuffer* buffer = gst_sample_get_buffer(sample.get());
-    if (!buffer)
-        return;
+    RELEASE_ASSERT(buffer);
 
     auto createMediaTime =
         [](GstClockTime time) -> MediaTime {
