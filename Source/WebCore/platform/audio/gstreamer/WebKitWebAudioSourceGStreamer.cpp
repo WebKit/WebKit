@@ -308,7 +308,7 @@ static void webKitWebAudioSrcGetProperty(GObject* object, guint propertyId, GVal
     }
 }
 
-static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
+static std::optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndRenderAudio(WebKitWebAudioSrc* src)
 {
     WebKitWebAudioSourcePrivate* priv = src->priv;
 
@@ -317,7 +317,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     if (!priv->provider || !priv->bus) {
         GST_ELEMENT_ERROR(src, CORE, FAILED, ("Internal WebAudioSrc error"), ("Can't start without provider or bus"));
         gst_task_stop(src->priv->task.get());
-        return;
+        return std::nullopt;
     }
 
     ASSERT(priv->pool);
@@ -327,37 +327,49 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
 
     Vector<GRefPtr<GstBuffer>> channelBufferList;
     channelBufferList.reserveInitialCapacity(priv->sources.size());
+    Vector<GstMappedBuffer> mappedBuffers;
+    mappedBuffers.reserveInitialCapacity(priv->sources.size());
     for (unsigned i = 0; i < priv->sources.size(); ++i) {
         GRefPtr<GstBuffer> buffer;
         GstFlowReturn ret = gst_buffer_pool_acquire_buffer(priv->pool.get(), &buffer.outPtr(), nullptr);
         if (ret != GST_FLOW_OK) {
-            for (auto& buffer : channelBufferList)
-                unmapGstBuffer(buffer.get());
-
             // FLUSHING and EOS are not errors.
             if (ret < GST_FLOW_EOS || ret == GST_FLOW_NOT_LINKED)
                 GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to allocate buffer for flow: %s", gst_flow_get_name(ret)));
-            gst_task_stop(src->priv->task.get());
-            return;
+            return std::nullopt;
         }
 
         ASSERT(buffer);
         GST_BUFFER_TIMESTAMP(buffer.get()) = timestamp;
         GST_BUFFER_DURATION(buffer.get()) = duration;
-        mapGstBuffer(buffer.get(), GST_MAP_READWRITE);
-        priv->bus->setChannelMemory(i, reinterpret_cast<float*>(getGstBufferDataPointer(buffer.get())), priv->framesToPull);
+        GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_READWRITE);
+        ASSERT(mappedBuffer);
+        mappedBuffers.uncheckedAppend(WTFMove(mappedBuffer));
+        priv->bus->setChannelMemory(i, reinterpret_cast<float*>(mappedBuffers[i].data()), priv->framesToPull);
         channelBufferList.uncheckedAppend(WTFMove(buffer));
     }
 
     // FIXME: Add support for local/live audio input.
     priv->provider->render(nullptr, priv->bus, priv->framesToPull);
 
-    ASSERT(channelBufferList.size() == priv->sources.size());
+    return std::make_optional(channelBufferList);
+}
+
+static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
+{
+    WebKitWebAudioSourcePrivate* priv = src->priv;
+
+    std::optional<Vector<GRefPtr<GstBuffer>>> channelBufferList = webKitWebAudioSrcAllocateBuffersAndRenderAudio(src);
+    if (!channelBufferList) {
+        gst_task_stop(src->priv->task.get());
+        return;
+    }
+
+    ASSERT(channelBufferList->size() == priv->sources.size());
+
     bool failed = false;
     for (unsigned i = 0; i < priv->sources.size(); ++i) {
-        // Unmap before passing on the buffer.
-        auto& buffer = channelBufferList[i];
-        unmapGstBuffer(buffer.get());
+        auto& buffer = channelBufferList.value()[i];
 
         if (priv->enableGapBufferSupport && priv->bus->channel(i)->isSilent())
             GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_GAP);
