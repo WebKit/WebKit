@@ -1,3 +1,11 @@
+2018-09-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window.html
+
+        This newly imported test flakily times out.
+
+        * TestExpectations:
+
 2018-09-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Managing failing WebGL tests in the 2.0.0
