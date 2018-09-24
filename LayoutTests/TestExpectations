@@ -186,6 +186,13 @@ imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https.html [ Skip ]
 
+# Skip html/webappapis that are timing out.
+imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-immediate.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-while-navigating.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-xml.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.html [ Skip ]
+
 # Requires additional test infrastructure.
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 
@@ -2837,6 +2844,8 @@ webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-b
 webkit.org/b/187269 [ Debug ] imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html [ Skip ]
 
 webkit.org/b/185308 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
+
+webkit.org/b/189917 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window.html [ Crash ]
 
 fast/gradients/conic-repeating.html [ Skip ]
 fast/gradients/conic.html [ Skip ]

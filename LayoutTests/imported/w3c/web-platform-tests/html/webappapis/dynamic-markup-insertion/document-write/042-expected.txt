@@ -1,0 +1,4 @@
+∉abc
+
+PASS document.write entity 
+

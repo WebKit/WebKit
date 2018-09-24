@@ -1,0 +1,4 @@
+
+FAIL document.open() and document's URL containing a fragment (entry is not relevant) assert_equals: expected "http://localhost:8800/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-fragment.window.html" but got "http://localhost:8800/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-fragment.window.html#heya"
+PASS document.open() and document's URL containing a fragment (entry is relevant) 
+

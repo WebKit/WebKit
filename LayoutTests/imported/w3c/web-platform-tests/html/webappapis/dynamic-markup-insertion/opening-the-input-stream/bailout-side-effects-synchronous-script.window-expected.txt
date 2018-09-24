@@ -1,0 +1,3 @@
+
+FAIL document.open bailout should not have any side effects (active parser whose script nesting level is greater than 0) assert_equals: The original URL should be kept (active parser whose script nesting level is greater than 0) expected "http://localhost:8800/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-synchronous-script-frame.html" but got "http://localhost:8800/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-synchronous-script.window.html"
+

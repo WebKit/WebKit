@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/aborted-parser-async-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/aborted-parser-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-custom-element-with-domain-frame.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-synchronous-script-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-synchronous-script-with-domain-frame.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-xml-with-domain-frame.sub.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-xml-with-synchronous-script-frame.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/document-open-side-effects.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/dummy.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/encoding-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/global-variables-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/history-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/http-refresh.py
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/meta-refresh.py
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/page-with-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/set-document-domain.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/slow-png.py
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/url-frame.html

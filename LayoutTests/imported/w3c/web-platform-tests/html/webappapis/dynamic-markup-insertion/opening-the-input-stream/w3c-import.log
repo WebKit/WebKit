@@ -1,0 +1,70 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/011-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/011.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/012-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/012.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/013-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/013.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/014-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/014.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/015-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/015.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/016-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/016.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-immediate.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-multisecond-header.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-multisecond-meta.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-while-navigating.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/aborted-parser.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/active.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-origin.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-xml.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-ignore-opens-during-unload.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-same-origin-domain.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-synchronous-script.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-xml.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/beforeunload.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/custom-element.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-01.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-03-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-03.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/encoding.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/event-listeners.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/history-state.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/history.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/mutation-events.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/mutation-observer.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/no-new-global.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/origin-check-in-document-open-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/origin-check-in-document-open-same-origin-domain.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/readiness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/reload.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext-subframe.txt
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/unload.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-fragment.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url.window.js

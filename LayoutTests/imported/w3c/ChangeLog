@@ -1,3 +1,419 @@
+2018-09-24  Chris Dumez  <cdumez@apple.com>
+
+        Import html/webappapis/dynamic-markup-insertion WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=189863
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/closing-the-input-stream/document.close-01-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/closing-the-input-stream/document.close-01.xhtml: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/closing-the-input-stream/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/001-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/001.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/002-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/002.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/003-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/003.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/004-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/004.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/005-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/005.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/005.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/006-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/006.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/006.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/007-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/007.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/007.js: Added.
+        (t.step):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/008-1.js: Added.
+        (t.step):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/008-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/008.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/008.js: Added.
+        (t.step):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/009-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/009.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/010-1.js: Added.
+        (t.step):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/010-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/010.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/010.js: Added.
+        (t.step):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/011-1.js: Added.
+        (t.step):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/011-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/011.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/011.js: Added.
+        (t.step):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/012-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/012.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/012.js: Added.
+        (t.step):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/013-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/013.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/013.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/014-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/014.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/015-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/015.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/016-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/016.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/017-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/017.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/018-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/018.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/019-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/019.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/020-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/020.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/021-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/021.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/022-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/022.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/023-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/023.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/024-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/024.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/025-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/025.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/026-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/026.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/027-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/027.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/028-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/028.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/029-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/029.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/030-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/030.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/031-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/031.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/032-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/032.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/033-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/033.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/034-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/034.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/035-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/035.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/036-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/036.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/037-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/037.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/038-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/038.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/039-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/039.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/040-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/040.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/041-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/041.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/042-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/042.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/043-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/043.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/044-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/044.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/045-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/045.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/046-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/046.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/047-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/047.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/048-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/048.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/049-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/049.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/050-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/050.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/051-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/051.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window.js: Added.
+        (string_appeared_here.forEach.val.async_test.t.frame.onload.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/document.write-01-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/document.write-01.xhtml: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/document.write-02-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/document.write-02.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/empty.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_001-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_001.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_002-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_002.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_003-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_003.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_004-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_004.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_005-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_005.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_005.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_006-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_006.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_007-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_007.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_008-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_008.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_009-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_009.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_010-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/iframe_010.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/nested-document-write-1.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/nested-document-write-2.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/nested-document-write-external.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/original-id.json: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_001-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_001.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_002-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_002.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_003-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_003.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_004-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_004.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_005-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_005.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_006-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_006.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_007-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_007.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_008-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_008.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_009-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_009.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_010-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_010.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_011-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_011.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_012-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_012.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_013-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/script_013.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/write-active-document-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/write-active-document.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-writeln/document.writeln-01-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-writeln/document.writeln-01.xhtml: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-writeln/document.writeln-02-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-writeln/document.writeln-02.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-writeln/document.writeln-03-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-writeln/document.writeln-03.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-writeln/original-id.json: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-writeln/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/002-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/002.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/004-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/004.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/006-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/006.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/011-1.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/011-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/011.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/012-1.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/012-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/012.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/013-1.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/013-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/013.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/014-1.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/014-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/014.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/015-1.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/015-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/015.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/016-1.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/016-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/016.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-immediate.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-immediate.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-immediate.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-multisecond-header.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-multisecond-header.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-multisecond-header.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-multisecond-meta.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-multisecond-meta.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-refresh-multisecond-meta.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-while-navigating.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-while-navigating.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort-while-navigating.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        (async_test.t.t.step_timeout):
+        (async_test.t.t.step_timeout.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort.sub.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort.sub.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort.sub.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/aborted-parser.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/aborted-parser.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/aborted-parser.window.js: Added.
+        (async_test.t.window.handlers.afterOpen.t.step_func_done):
+        (async_test.t.window.handlers.afterOpenAsync.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/active.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/active.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/active.window.js: Added.
+        (assertOpenIsEffective):
+        (async_test.t.frame.onload.t.step_func):
+        (async_test.t.xhr.onload.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-origin.sub.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-origin.sub.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-origin.sub.window.js: Added.
+        (setEntryToTopLevel):
+        (async_test.t.t.add_cleanup):
+        (async_test.t.iframe.onload.t.step_func_done):
+        (async_test.t.window.onCustomElementReady.t.step_func):
+        (async_test.t.self.testSynchronousScript.t.step_func):
+        (string_appeared_here.async_test.t.t.add_cleanup):
+        (string_appeared_here.async_test.t.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-xml.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-xml.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-xml.window.js: Added.
+        (async_test.t.t.add_cleanup):
+        (async_test.t.self.testSynchronousScript.t.step_func_done):
+        (string_appeared_here.async_test.t.t.add_cleanup):
+        (string_appeared_here.async_test.t.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-ignore-opens-during-unload.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-ignore-opens-during-unload.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-ignore-opens-during-unload.window.js: Added.
+        (string_appeared_here.async_test.t.iframe.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-same-origin-domain.sub.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-same-origin-domain.sub.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-same-origin-domain.sub.window.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-synchronous-script.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-synchronous-script.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-synchronous-script.window.js: Added.
+        (async_test.t.self.testSynchronousScript.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-xml.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-xml.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-xml.window.js: Added.
+        (async_test.t.iframe.onload.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/beforeunload.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/beforeunload.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/beforeunload.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/custom-element.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/custom-element.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/custom-element.window.js: Added.
+        (CustomElement):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-01-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-01.xhtml: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-02-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-02.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-03-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-03-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-03.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/encoding.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/encoding.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/encoding.window.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/event-listeners.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/event-listeners.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/event-listeners.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        (test.t.const.winListener.t.step_func):
+        (test.t.t.add_cleanup):
+        (test.t.const.bodyListener.t.step_func):
+        (async_test.t.xhr.onload.t.step_func_done):
+        (test.t.t.step_func):
+        (test.t.thrower.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/history-state.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/history-state.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/history-state.window.js: Added.
+        (async_test.t.iframe.onload.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/history.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/history.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/history.window.js: Added.
+        (window.onFrameLoaded.t.step_func):
+        (window.onDocumentOpen.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window.js: Added.
+        (async_test.t.iframe.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/mutation-events.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/mutation-events.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/mutation-events.window.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/mutation-observer.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/mutation-observer.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/mutation-observer.window.js: Added.
+        (async_test.t.t.add_cleanup):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/no-new-global.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/no-new-global.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/no-new-global.window.js: Added.
+        (async_test.t.frame.onload.t.step_func_done):
+        (testIdentity):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/origin-check-in-document-open-basic-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/origin-check-in-document-open-basic.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/origin-check-in-document-open-same-origin-domain.sub-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/origin-check-in-document-open-same-origin-domain.sub.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/readiness.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/readiness.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/readiness.window.js: Added.
+        (async_test.t.t.add_cleanup):
+        (async_test.t.frame.onload.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/reload.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/reload.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/reload.window.js: Added.
+        (window.name.string_appeared_here.async_test.t.t.add_cleanup):
+        (window.name.string_appeared_here.async_test.t.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/aborted-parser-async-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/aborted-parser-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-custom-element-with-domain-frame.sub.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-synchronous-script-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-synchronous-script-with-domain-frame.sub.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-xml-with-domain-frame.sub.xhtml: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/bailout-order-xml-with-synchronous-script-frame.xhtml: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/document-open-side-effects.js: Added.
+        (assertDocumentIsReadyForSideEffectsTest):
+        (assertOpenHasNoSideEffects):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/dummy.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/encoding-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/global-variables-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/history-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/http-refresh.py: Added.
+        (main):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/meta-refresh.py: Added.
+        (main):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/page-with-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/set-document-domain.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/slow-png.py: Added.
+        (main):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/url-frame.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.js: Added.
+        (taskTest):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext-subframe.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext.window.js: Added.
+        (string_appeared_here.forEach.type.async_test.t.frame.onload.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument.window.js: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/unload.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/unload.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/unload.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-fragment.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-fragment.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-fragment.window.js: Added.
+        (async_test.t.t.add_cleanup):
+        (async_test.t.self.onhashchange.t.step_func_done):
+        (async_test.t.const.frame.document.body.appendChild.document.createElement.string_appeared_here.t.add_cleanup):
+        (async_test.t.window.testDone.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url.window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url.window.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url.window.js: Added.
+        (async_test.t.frame.onload.t.step_func):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/w3c-import.log: Added.
+
 2018-09-24  Yoav Weiss  <yoav@yoav.ws>
 
         Import WPT resource-timing tests
