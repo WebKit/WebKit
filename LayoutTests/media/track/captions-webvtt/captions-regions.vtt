@@ -3,7 +3,7 @@ WEBVTT FILE
 REGION
 id=fred
 width=50%
-height=2
+lines=2
 regionanchor=50%,100%
 viewportanchor=10%,40%
 

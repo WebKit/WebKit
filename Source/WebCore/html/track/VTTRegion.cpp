@@ -84,11 +84,11 @@ ExceptionOr<void> VTTRegion::setWidth(double value)
     return { };
 }
 
-ExceptionOr<void> VTTRegion::setHeight(int value)
+ExceptionOr<void> VTTRegion::setLines(int value)
 {
     if (value < 0)
         return Exception { IndexSizeError };
-    m_heightInLines = value;
+    m_lines = value;
     return { };
 }
 
@@ -150,7 +150,7 @@ ExceptionOr<void> VTTRegion::setScroll(const AtomicString& value)
 
 void VTTRegion::updateParametersFromRegion(const VTTRegion& other)
 {
-    m_heightInLines = other.m_heightInLines;
+    m_lines = other.m_lines;
     m_width = other.m_width;
     m_regionAnchor = other.m_regionAnchor;
     m_viewportAnchor = other.m_viewportAnchor;
@@ -185,8 +185,8 @@ VTTRegion::RegionSetting VTTRegion::scanSettingName(VTTScanner& input)
 {
     if (input.scan("id"))
         return Id;
-    if (input.scan("height"))
-        return Height;
+    if (input.scan("lines"))
+        return Lines;
     if (input.scan("width"))
         return Width;
     if (input.scan("viewportanchor"))
@@ -223,10 +223,10 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
             LOG(Media, "VTTRegion::parseSettingValue, invalid Width");
         break;
     }
-    case Height: {
+    case Lines: {
         int number;
         if (input.scanDigits(number) && parsedEntireRun(input, valueRun))
-            m_heightInLines = number;
+            m_lines = number;
         else
             LOG(Media, "VTTRegion::parseSettingValue, invalid Height");
         break;
@@ -364,7 +364,7 @@ void VTTRegion::prepareRegionDisplayTree()
     // Let lineHeight be '0.0533vh' ('vh' is a CSS unit) and regionHeight be
     // the text track region height. Let height be 'lineHeight' multiplied
     // by regionHeight.
-    double height = lineHeight * m_heightInLines;
+    double height = lineHeight * m_lines;
     m_regionDisplayTree->setInlineStyleProperty(CSSPropertyHeight, height, CSSPrimitiveValue::CSS_VH);
 
     // Let viewportAnchorX be the x dimension of the text track region viewport

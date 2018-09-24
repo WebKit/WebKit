@@ -34,7 +34,7 @@
 
     attribute DOMString id;
     attribute double width;
-    attribute long height;
+    attribute long lines;
     attribute double regionAnchorX;
     attribute double regionAnchorY;
     attribute double viewportAnchorX;

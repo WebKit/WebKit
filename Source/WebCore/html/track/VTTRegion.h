@@ -61,8 +61,8 @@ public:
     double width() const { return m_width; }
     ExceptionOr<void> setWidth(double);
 
-    int height() const { return m_heightInLines; }
-    ExceptionOr<void> setHeight(int);
+    int lines() const { return m_lines; }
+    ExceptionOr<void> setLines(int);
 
     double regionAnchorX() const { return m_regionAnchor.x(); }
     ExceptionOr<void> setRegionAnchorX(double);
@@ -106,7 +106,7 @@ private:
         None,
         Id,
         Width,
-        Height,
+        Lines,
         RegionAnchor,
         ViewportAnchor,
         Scroll
@@ -124,7 +124,7 @@ private:
     String m_settings;
 
     double m_width { 100 };
-    unsigned m_heightInLines { 3 };
+    unsigned m_lines { 3 };
 
     FloatPoint m_regionAnchor { 0, 100 };
     FloatPoint m_viewportAnchor { 0, 100 };

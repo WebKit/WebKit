@@ -9,7 +9,7 @@ EXPECTED (region.viewportAnchorX == '0') OK
 EXPECTED (region.viewportAnchorY == '100') OK
 EXPECTED (region.regionAnchorX == '0') OK
 EXPECTED (region.regionAnchorY == '100') OK
-EXPECTED (region.height == '3') OK
+EXPECTED (region.lines == '3') OK
 EXPECTED (region.width == '100') OK
 
 ** Test that incorrect mutation keeps previous valid values. **
@@ -101,13 +101,13 @@ EXPECTED (region.regionAnchorY == '100') OK
 RUN(region.width = invalidPercentageValues[index])
 TypeError: The provided value is non-finite
 EXPECTED (region.width == '100') OK
-RUN(region.height = -1)
+RUN(region.lines = -1)
 IndexSizeError: The index is not in the allowed range.
-EXPECTED (region.height == '3') OK
+EXPECTED (region.lines == '3') OK
 
 ** Test that proper mutation keeps assigned value. **
-RUN(region.height = 130)
-EXPECTED (region.height == '130') OK
+RUN(region.lines = 130)
+EXPECTED (region.lines == '130') OK
 RUN(region.viewportAnchorX = 64)
 EXPECTED (region.viewportAnchorX == '64') OK
 RUN(region.viewportAnchorY = 32)

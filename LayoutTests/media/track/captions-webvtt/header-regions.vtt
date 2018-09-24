@@ -6,7 +6,7 @@ id=region_without_settings
 REGION
 id=region_with_all_settings
 width=32%
-height=5
+lines=5
 regionanchor=41%,20%
 viewportanchor=31%,84%
 scroll=up

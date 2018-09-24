@@ -27,7 +27,7 @@
                 testExpected("region.viewportAnchorY", 100);
                 testExpected("region.regionAnchorX", 0);
                 testExpected("region.regionAnchorY", 100);
-                testExpected("region.height", 3);
+                testExpected("region.lines", 3);
                 testExpected("region.width", 100);
 
                 consoleWrite("<br>** Test that incorrect mutation keeps previous valid values. **");
@@ -49,12 +49,12 @@
                   testExpected("region.width", 100);
                 }
 
-                run("region.height = -1");
-                testExpected("region.height", 3);
+                run("region.lines = -1");
+                testExpected("region.lines", 3);
 
                 consoleWrite("<br>** Test that proper mutation keeps assigned value. **");
-                run("region.height = 130");
-                testExpected("region.height", 130);
+                run("region.lines = 130");
+                testExpected("region.lines", 130);
 
                 run("region.viewportAnchorX = 64");
                 testExpected("region.viewportAnchorX", 64);

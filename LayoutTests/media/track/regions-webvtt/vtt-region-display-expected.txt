@@ -12,7 +12,7 @@ EVENT(seeked)
 Total cues in region: 1
 Cue content is: We are in New York City
 Cue lines visible from this cue: 1
-EXPECTED (totalVisibleLines <= testTrack.regions[0].height == 'true') OK
+EXPECTED (totalVisibleLines <= testTrack.regions[0].lines == 'true') OK
 
 RUN(video.currentTime = 0.5)
 EVENT(seeked)
@@ -21,7 +21,7 @@ Cue content is: We are in New York City
 Cue lines visible from this cue: 1
 Cue content is: Second cue
 Cue lines visible from this cue: 1
-EXPECTED (totalVisibleLines <= testTrack.regions[0].height == 'true') OK
+EXPECTED (totalVisibleLines <= testTrack.regions[0].lines == 'true') OK
 
 RUN(video.currentTime = 1)
 EVENT(seeked)
@@ -32,7 +32,7 @@ Cue content is: Second cue
 Cue lines visible from this cue: 1
 Cue content is: Multiline Cue
 Cue lines visible from this cue: 0
-EXPECTED (totalVisibleLines <= testTrack.regions[0].height == 'true') OK
+EXPECTED (totalVisibleLines <= testTrack.regions[0].lines == 'true') OK
 
 RUN(video.currentTime = 2.3)
 EVENT(seeked)
@@ -41,13 +41,13 @@ Cue content is: Multiline Cue
 Cue lines visible from this cue: 2
 Cue content is: Fourth cue!
 Cue lines visible from this cue: 0
-EXPECTED (totalVisibleLines <= testTrack.regions[0].height == 'true') OK
+EXPECTED (totalVisibleLines <= testTrack.regions[0].lines == 'true') OK
 
 RUN(video.currentTime = 3)
 EVENT(seeked)
 Total cues in region: 1
 Cue content is: Fourth cue!
 Cue lines visible from this cue: 1
-EXPECTED (totalVisibleLines <= testTrack.regions[0].height == 'true') OK
+EXPECTED (totalVisibleLines <= testTrack.regions[0].lines == 'true') OK
 END OF TEST
 

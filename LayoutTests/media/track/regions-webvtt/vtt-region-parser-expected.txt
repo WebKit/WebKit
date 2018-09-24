@@ -7,7 +7,7 @@ EXPECTED (region.id == 'region_without_settings') OK
 
 EXPECTED (region.id == 'region_with_all_settings') OK
 EXPECTED (region.width == '32') OK
-EXPECTED (region.height == '5') OK
+EXPECTED (region.lines == '5') OK
 EXPECTED (region.regionAnchorX == '41') OK
 EXPECTED (region.regionAnchorY == '20') OK
 EXPECTED (region.viewportAnchorX == '31') OK
