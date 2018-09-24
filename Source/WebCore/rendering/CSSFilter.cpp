@@ -40,6 +40,7 @@
 #include "SVGElement.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include "SourceAlpha.h"
 #include "SourceGraphic.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
@@ -111,6 +112,7 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
     RefPtr<FilterEffect> effect;
 
     auto builder = std::make_unique<SVGFilterBuilder>(&previousEffect);
+    m_sourceAlpha = builder->getEffectById(SourceAlpha::effectName());
 
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(*filter)) {
         effect = effectElement.build(builder.get(), *this);
@@ -355,6 +357,8 @@ void CSSFilter::determineFilterPrimitiveSubregion()
 void CSSFilter::clearIntermediateResults()
 {
     m_sourceGraphic->clearResult();
+    if (m_sourceAlpha)
+        m_sourceAlpha->clearResult();
     for (auto& effect : m_effects)
         effect->clearResult();
 }

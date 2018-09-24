@@ -37,6 +37,7 @@ class FilterOperations;
 class GraphicsContext;
 class ReferenceFilterOperation;
 class RenderElement;
+class SourceAlpha;
 class SourceGraphic;
 
 enum class FilterConsumer { FilterProperty, FilterFunction };
@@ -90,6 +91,7 @@ private:
 
     Vector<Ref<FilterEffect>> m_effects;
     Ref<SourceGraphic> m_sourceGraphic;
+    RefPtr<FilterEffect> m_sourceAlpha;
 
     IntRectExtent m_outsets;
 

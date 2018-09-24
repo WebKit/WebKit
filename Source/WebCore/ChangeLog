@@ -1,5 +1,24 @@
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
+        feMorphology filter in CSS doesn't update when element moves
+        https://bugs.webkit.org/show_bug.cgi?id=189895
+
+        Reviewed by Dean Jackson.
+        
+        SourceAlpha needs to be invalidated from clearIntermediateResults(),
+        so get it from the SVGFilterBuilder (which always creates one) and store in
+        a member variable.
+
+        Test: css3/filters/invalidate-sourceAlpha.html
+
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::buildReferenceFilter):
+        (WebCore::CSSFilter::clearIntermediateResults):
+        * rendering/CSSFilter.h:
+        * svg/graphics/filters/SVGFilterBuilder.h:
+
+2018-09-24  Simon Fraser  <simon.fraser@apple.com>
+
         CSS reference filter with feDisplacementMap shows buffer corruption on Retina displays
         https://bugs.webkit.org/show_bug.cgi?id=188486
         <rdar://problem/43189750>
