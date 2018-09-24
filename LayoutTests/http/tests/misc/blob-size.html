@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that constructing a Blob and querying its size right away is not flaky");
+
+function runTest() {
+    for (let i = 0; i < 50; i++) {
+        for (let j = 0; j < 200; j++) {
+            fetch('/resources/square100.png', { cache: 'no-store' }).then(function(res) { });
+        }
+        for (let k = 0; k < 5; k++) {
+        if ((new Blob(["aaaa"])).size != 4) {
+            testFailed("Getting the Blob size is flaky");
+            return;
+        }
+        }
+    }
+    testPassed("Getting the Blob size is not flaky");
+}
+
+runTest();
+</script>
+</body>
+</html>

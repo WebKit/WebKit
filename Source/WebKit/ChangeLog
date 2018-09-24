@@ -1,3 +1,25 @@
+2018-09-24  Chris Dumez  <cdumez@apple.com>
+
+        Do not do early processing of incoming sync IPC unless we're waiting for a sync IPC reply
+        https://bugs.webkit.org/show_bug.cgi?id=186941
+
+        Reviewed by Alex Christensen.
+
+        The comment was claiming we were processing incoming sync messages while waiting for a
+        sync IPC reply to prevent deadlocks. However, the code was failing to check if we were
+        waiting for a sync IPC reply. As a result, incoming sync IPC messages would get processed
+        early no matter what, jumping the line. This was the source of the flakiness in the blob
+        tests since the IPC to register the blob in the network process was async and the follow-up
+        IPC to ask the network process for the blob size was sync. The sync message to get the blob
+        size would jump the line and get processed before the async message to register the blob.
+        As a result, the network process would not know about the blob yet and return size 0. Of
+        course, this could happen if the network process was sending sync IPC at the time. However,
+        the network process never sends any sync IPC and therefore, should never process incoming
+        IPC messages out of order.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::processIncomingMessage):
+
 2018-09-24  Daniel Bates  <dabates@apple.com>
 
         [iOS] Key code is 0 for many hardware keyboard keys

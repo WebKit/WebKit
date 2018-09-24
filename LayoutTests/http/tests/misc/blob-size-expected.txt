@@ -1,0 +1,10 @@
+Tests that constructing a Blob and querying its size right away is not flaky
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Getting the Blob size is not flaky
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
