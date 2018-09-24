@@ -1,5 +1,13 @@
 2018-09-24  Alicia Boya García  <aboya@igalia.com>
 
+        [GStreamer] Unreviewed build fix.
+
+        A GStreamer patch was not applying cleanly on 1.14.3.
+
+        * gstreamer/patches/gst-plugins-good-0008-matroskademux-Refactor-track-parsing-out-from-adding.patch:
+
+2018-09-24  Alicia Boya García  <aboya@igalia.com>
+
         [MSE][GStreamer] Use no-more-pads event for noticing initialization segments
         https://bugs.webkit.org/show_bug.cgi?id=189868
 
