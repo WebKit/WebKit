@@ -35,3 +35,9 @@
     readonly attribute DOMString validationURL;
     [MayThrowException] void complete(Promise<any> merchantSessionPromise);
 };
+
+[
+    Conditional=PAYMENT_REQUEST,
+] dictionary MerchantValidationEventInit : EventInit {
+    USVString validationURL = "";
+};

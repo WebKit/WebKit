@@ -120,6 +120,7 @@ private:
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return PaymentRequestEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    bool isPaymentRequest() const final { return true; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -140,5 +141,9 @@ private:
 std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier);
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PaymentRequest)
+    static bool isType(const WebCore::EventTarget& eventTarget) { return eventTarget.isPaymentRequest(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(PAYMENT_REQUEST)

@@ -1,3 +1,63 @@
+2018-09-24  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Events cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=189925
+
+        Reviewed by Simon Fraser.
+
+        1. Constructed MerchantValidationEvents (and ApplePayValidateMerchantEvents) with rvalue
+        references to validationURLs.
+        2. Instead of MerchantValidationEvent and PaymentRequestUpdateEvent having a
+        RefPtr<PaymentRequest>, downcasted their target to a PaymentRequest. Trusted versions of
+        these events are always dispatched to a PaymentRequest object.
+        3. Defined MerchantValidationEventInit in MerchantValidationEvent.idl instead of having a
+        separate .idl and .h for this dictionary.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::validateMerchant):
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/applepay/ApplePayValidateMerchantEvent.cpp:
+        (WebCore::ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent):
+        * Modules/applepay/ApplePayValidateMerchantEvent.h:
+        (WebCore::ApplePayValidateMerchantEvent::create):
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::validateMerchant):
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentSession.h:
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::validateMerchant):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * Modules/paymentrequest/MerchantValidationEvent.cpp:
+        (WebCore::MerchantValidationEvent::create):
+        (WebCore::MerchantValidationEvent::MerchantValidationEvent):
+        (WebCore::MerchantValidationEvent::complete):
+        * Modules/paymentrequest/MerchantValidationEvent.h:
+        * Modules/paymentrequest/MerchantValidationEvent.idl:
+        * Modules/paymentrequest/MerchantValidationEventInit.h: Removed.
+        * Modules/paymentrequest/MerchantValidationEventInit.idl: Removed.
+        * Modules/paymentrequest/PaymentMethodChangeEvent.cpp:
+        (WebCore::PaymentMethodChangeEvent::PaymentMethodChangeEvent):
+        * Modules/paymentrequest/PaymentMethodChangeEvent.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::shippingAddressChanged):
+        (WebCore::PaymentRequest::shippingOptionChanged):
+        (WebCore::PaymentRequest::paymentMethodChanged):
+        * Modules/paymentrequest/PaymentRequest.h:
+        (isType):
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.cpp:
+        (WebCore::PaymentRequestUpdateEvent::PaymentRequestUpdateEvent):
+        (WebCore::PaymentRequestUpdateEvent::updateWith):
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::isPaymentRequest const):
+        * dom/EventTarget.h:
+
 2018-09-24  Daniel Bates  <dabates@apple.com>
 
         Separate Mac and iOS implementation of windowsKeyCodeForCharCode()

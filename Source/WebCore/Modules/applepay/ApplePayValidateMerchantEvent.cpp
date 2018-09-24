@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent(const AtomicString& type, const URL& validationURL)
+ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent(const AtomicString& type, URL&& validationURL)
     : Event(type, CanBubble::No, IsCancelable::No)
-    , m_validationURL(validationURL)
+    , m_validationURL(WTFMove(validationURL))
 {
 }
 

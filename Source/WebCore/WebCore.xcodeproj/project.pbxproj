@@ -2933,8 +2933,6 @@
 		A15E6BF11E212A6A0080AF34 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A15E6BF01E212A6A0080AF34 /* Foundation.framework */; };
 		A164A2472134BC7100509156 /* PaymentMethodChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A2442134BC7100509156 /* PaymentMethodChangeEvent.h */; };
 		A164A2552134C1CC00509156 /* JSPaymentMethodChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A2512134C1CB00509156 /* JSPaymentMethodChangeEvent.h */; };
-		A1677DE9213CDFAA00A08C34 /* MerchantValidationEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677DE6213CDFAA00A08C34 /* MerchantValidationEventInit.h */; };
-		A1677DF0213CE0B100A08C34 /* JSMerchantValidationEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677DEE213CE0B000A08C34 /* JSMerchantValidationEventInit.h */; };
 		A1677DFD213E006600A08C34 /* PaymentValidationErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677DFA213E006600A08C34 /* PaymentValidationErrors.h */; };
 		A1677E03213E01C700A08C34 /* JSPaymentValidationErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677E01213E01C500A08C34 /* JSPaymentValidationErrors.h */; };
 		A1677E08213E024C00A08C34 /* PayerErrorFields.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677E05213E024C00A08C34 /* PayerErrorFields.h */; };
@@ -11006,10 +11004,6 @@
 		A164A2462134BC7100509156 /* PaymentMethodChangeEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentMethodChangeEvent.idl; sourceTree = "<group>"; };
 		A164A2512134C1CB00509156 /* JSPaymentMethodChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentMethodChangeEvent.h; sourceTree = "<group>"; };
 		A164A2532134C1CB00509156 /* JSPaymentMethodChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentMethodChangeEvent.cpp; sourceTree = "<group>"; };
-		A1677DE6213CDFAA00A08C34 /* MerchantValidationEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MerchantValidationEventInit.h; sourceTree = "<group>"; };
-		A1677DE8213CDFAA00A08C34 /* MerchantValidationEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MerchantValidationEventInit.idl; sourceTree = "<group>"; };
-		A1677DED213CE0AF00A08C34 /* JSMerchantValidationEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMerchantValidationEventInit.cpp; sourceTree = "<group>"; };
-		A1677DEE213CE0B000A08C34 /* JSMerchantValidationEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMerchantValidationEventInit.h; sourceTree = "<group>"; };
 		A1677DFA213E006600A08C34 /* PaymentValidationErrors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentValidationErrors.h; sourceTree = "<group>"; };
 		A1677DFC213E006600A08C34 /* PaymentValidationErrors.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentValidationErrors.idl; sourceTree = "<group>"; };
 		A1677E01213E01C500A08C34 /* JSPaymentValidationErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentValidationErrors.h; sourceTree = "<group>"; };
@@ -21395,8 +21389,6 @@
 				A1677E11213E03C500A08C34 /* JSAddressErrors.h */,
 				A11AE0D01FFD61DE0047348B /* JSMerchantValidationEvent.cpp */,
 				A11AE0D11FFD61DF0047348B /* JSMerchantValidationEvent.h */,
-				A1677DED213CE0AF00A08C34 /* JSMerchantValidationEventInit.cpp */,
-				A1677DEE213CE0B000A08C34 /* JSMerchantValidationEventInit.h */,
 				A1677E16213E03F000A08C34 /* JSPayerErrorFields.cpp */,
 				A1677E15213E03F000A08C34 /* JSPayerErrorFields.h */,
 				A1CC565F1F46146100A4555B /* JSPaymentAddress.cpp */,
@@ -21460,8 +21452,6 @@
 				A11AE0CA1FFD60530047348B /* MerchantValidationEvent.cpp */,
 				A11AE0C91FFD60530047348B /* MerchantValidationEvent.h */,
 				A11AE0CB1FFD60530047348B /* MerchantValidationEvent.idl */,
-				A1677DE6213CDFAA00A08C34 /* MerchantValidationEventInit.h */,
-				A1677DE8213CDFAA00A08C34 /* MerchantValidationEventInit.idl */,
 				A1677E05213E024C00A08C34 /* PayerErrorFields.h */,
 				A1677E07213E024C00A08C34 /* PayerErrorFields.idl */,
 				A1CFE0311F9E71290065C345 /* PaymentAddress.cpp */,
@@ -26410,6 +26400,8 @@
 				B6D9D23314EABD260090D75E /* FocusEvent.h */,
 				B6D9D27214EABF030090D75E /* FocusEvent.idl */,
 				A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */,
+				9BAAC4582151E77A003D4A98 /* GCReachableRef.cpp */,
+				9BAAC4562151E39E003D4A98 /* GCReachableRef.h */,
 				0720B09E14D3323500642955 /* GenericEventQueue.cpp */,
 				0720B09F14D3323500642955 /* GenericEventQueue.h */,
 				7C4189AB1B07C170000FA757 /* GlobalEventHandlers.idl */,
@@ -26600,8 +26592,6 @@
 				8102C5871325BB1100DDE67A /* StringCallback.cpp */,
 				81AC6C35131C57D30009A7E0 /* StringCallback.h */,
 				81AC6C34131C57C20009A7E0 /* StringCallback.idl */,
-				9BAAC4582151E77A003D4A98 /* GCReachableRef.cpp */,
-				9BAAC4562151E39E003D4A98 /* GCReachableRef.h */,
 				A8C4A7EC09D563270003AC8D /* StyledElement.cpp */,
 				A8C4A7EB09D563270003AC8D /* StyledElement.h */,
 				C99058121E32B7340073BDDA /* SuccessOr.h */,
@@ -28133,6 +28123,7 @@
 				8EC6C963201A251600FBFA53 /* GapLength.h in Headers */,
 				935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */,
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
+				9BAAC45C21520128003D4A98 /* GCReachableRef.h in Headers */,
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				830030F61B7D33B500ED3AAC /* GenericCachedHTMLCollection.h in Headers */,
@@ -28940,7 +28931,6 @@
 				932CC0D51DFFD667004C0F9F /* JSMediaTrackConstraints.h in Headers */,
 				0787C46A1BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h in Headers */,
 				A11AE0D31FFD61DF0047348B /* JSMerchantValidationEvent.h in Headers */,
-				A1677DF0213CE0B100A08C34 /* JSMerchantValidationEventInit.h in Headers */,
 				E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */,
 				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
 				E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */,
@@ -29582,7 +29572,6 @@
 				517139061BF64DEC000D5F01 /* MemoryObjectStoreCursor.h in Headers */,
 				413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */,
 				A11AE0CC1FFD60530047348B /* MerchantValidationEvent.h in Headers */,
-				A1677DE9213CDFAA00A08C34 /* MerchantValidationEventInit.h in Headers */,
 				93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */,
 				E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */,
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
@@ -30438,7 +30427,6 @@
 				ECA680C71E67724500731D20 /* StringUtilities.h in Headers */,
 				9B6C41531344949000085B62 /* StringWithDirection.h in Headers */,
 				849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */,
-				9BAAC45C21520128003D4A98 /* GCReachableRef.h in Headers */,
 				414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */,
 				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
 				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,

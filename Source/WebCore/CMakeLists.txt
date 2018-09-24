@@ -346,7 +346,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/paymentrequest/AddressErrors.idl
     Modules/paymentrequest/MerchantValidationEvent.idl
-    Modules/paymentrequest/MerchantValidationEventInit.idl
     Modules/paymentrequest/PayerErrorFields.idl
     Modules/paymentrequest/PaymentAddress.idl
     Modules/paymentrequest/PaymentComplete.idl

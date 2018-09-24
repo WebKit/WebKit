@@ -42,8 +42,8 @@ PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomicString& type, Ini
 {
 }
 
-PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomicString& type, PaymentRequest& request, const String& methodName, MethodDetailsFunction&& methodDetailsFunction)
-    : PaymentRequestUpdateEvent { type, request }
+PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomicString& type, const String& methodName, MethodDetailsFunction&& methodDetailsFunction)
+    : PaymentRequestUpdateEvent { type }
     , m_methodName { methodName }
     , m_methodDetails { WTFMove(methodDetailsFunction) }
 {

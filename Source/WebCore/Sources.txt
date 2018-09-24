@@ -2770,7 +2770,6 @@ JSMediaStreamTrackEvent.cpp
 JSMediaTrackConstraints.cpp
 JSMediaTrackSupportedConstraints.cpp
 JSMerchantValidationEvent.cpp
-JSMerchantValidationEventInit.cpp
 JSMessageChannel.cpp
 JSMessageEvent.cpp
 JSMessagePort.cpp

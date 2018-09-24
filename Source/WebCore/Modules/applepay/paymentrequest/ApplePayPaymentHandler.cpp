@@ -430,10 +430,10 @@ unsigned ApplePayPaymentHandler::version() const
     return version;
 }
 
-void ApplePayPaymentHandler::validateMerchant(const URL& validationURL)
+void ApplePayPaymentHandler::validateMerchant(URL&& validationURL)
 {
     if (validationURL.isValid())
-        m_paymentRequest->dispatchEvent(MerchantValidationEvent::create(eventNames().merchantvalidationEvent, validationURL, m_paymentRequest.get()).get());
+        m_paymentRequest->dispatchEvent(MerchantValidationEvent::create(eventNames().merchantvalidationEvent, WTFMove(validationURL)).get());
 }
 
 static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)

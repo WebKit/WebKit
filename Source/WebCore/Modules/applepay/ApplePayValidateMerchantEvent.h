@@ -34,9 +34,9 @@ namespace WebCore {
 
 class ApplePayValidateMerchantEvent : public Event {
 public:
-    static Ref<ApplePayValidateMerchantEvent> create(const AtomicString& type, const URL& validationURL)
+    static Ref<ApplePayValidateMerchantEvent> create(const AtomicString& type, URL&& validationURL)
     {
-        return adoptRef(*new ApplePayValidateMerchantEvent(type, validationURL));
+        return adoptRef(*new ApplePayValidateMerchantEvent(type, WTFMove(validationURL)));
     }
 
     virtual ~ApplePayValidateMerchantEvent();
@@ -44,7 +44,7 @@ public:
     const String& validationURL() const { return m_validationURL.string(); }
 
 protected:
-    ApplePayValidateMerchantEvent(const AtomicString& type, const URL& validationURL);
+    ApplePayValidateMerchantEvent(const AtomicString& type, URL&& validationURL);
 
     // Event.
     EventInterface eventInterface() const override;

@@ -133,14 +133,14 @@ void PaymentCoordinator::cancelPaymentSession()
     m_client.cancelPaymentSession();
 }
 
-void PaymentCoordinator::validateMerchant(const URL& validationURL)
+void PaymentCoordinator::validateMerchant(URL&& validationURL)
 {
     if (!m_activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
-    m_activeSession->validateMerchant(validationURL);
+    m_activeSession->validateMerchant(WTFMove(validationURL));
 }
 
 void PaymentCoordinator::didAuthorizePayment(const Payment& payment)

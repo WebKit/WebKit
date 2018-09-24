@@ -59,6 +59,7 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
     virtual bool isNode() const;
+    virtual bool isPaymentRequest() const;
 
     struct ListenerOptions {
         ListenerOptions(bool capture = false)

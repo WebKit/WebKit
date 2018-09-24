@@ -39,9 +39,8 @@ PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type, c
     ASSERT(!isTrusted());
 }
 
-PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequest& paymentRequest)
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type)
     : Event { type, CanBubble::No, IsCancelable::No }
-    , m_paymentRequest { &paymentRequest }
 {
     ASSERT(isTrusted());
 }
@@ -52,8 +51,6 @@ ExceptionOr<void> PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&& detail
 {
     if (!isTrusted())
         return Exception { InvalidStateError };
-
-    ASSERT(m_paymentRequest);
 
     if (m_waitForUpdate)
         return Exception { InvalidStateError };
@@ -73,7 +70,7 @@ ExceptionOr<void> PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&& detail
         return Exception { TypeError };
     }
 
-    auto exception = m_paymentRequest->updateWith(reason, WTFMove(detailsPromise));
+    auto exception = downcast<PaymentRequest>(target())->updateWith(reason, WTFMove(detailsPromise));
     if (exception.hasException())
         return exception.releaseException();
 

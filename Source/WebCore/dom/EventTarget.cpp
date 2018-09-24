@@ -58,6 +58,11 @@ bool EventTarget::isNode() const
     return false;
 }
 
+bool EventTarget::isPaymentRequest() const
+{
+    return false;
+}
+
 bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     auto passive = options.passive;

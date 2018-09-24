@@ -755,7 +755,7 @@ unsigned ApplePaySession::version() const
     return m_version;
 }
 
-void ApplePaySession::validateMerchant(const URL& validationURL)
+void ApplePaySession::validateMerchant(URL&& validationURL)
 {
     if (m_state == State::Aborted) {
         // ApplePaySession::abort has been called.
@@ -773,7 +773,7 @@ void ApplePaySession::validateMerchant(const URL& validationURL)
 
     m_merchantValidationState = MerchantValidationState::ValidatingMerchant;
 
-    auto event = ApplePayValidateMerchantEvent::create(eventNames().validatemerchantEvent, validationURL);
+    auto event = ApplePayValidateMerchantEvent::create(eventNames().validatemerchantEvent, WTFMove(validationURL));
     dispatchEvent(event.get());
 }
 

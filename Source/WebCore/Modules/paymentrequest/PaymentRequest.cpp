@@ -540,7 +540,7 @@ void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddres
 {
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingAddress = makeRefPtr(shippingAddress.get())]() mutable {
         m_shippingAddress = WTFMove(shippingAddress);
-        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent, *this));
+        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent));
     });
 }
 
@@ -548,7 +548,7 @@ void PaymentRequest::shippingOptionChanged(const String& shippingOption)
 {
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingOption]() mutable {
         m_shippingOption = shippingOption;
-        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent, *this));
+        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent));
     });
 }
 
@@ -557,7 +557,7 @@ void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMetho
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), methodName, methodDetailsFunction = WTFMove(methodDetailsFunction)]() mutable {
         auto& eventName = eventNames().paymentmethodchangeEvent;
         if (hasEventListeners(eventName))
-            dispatchEvent(PaymentMethodChangeEvent::create(eventName, *this, methodName, WTFMove(methodDetailsFunction)));
+            dispatchEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
         else
             m_activePaymentHandler->detailsUpdated(UpdateReason::PaymentMethodChanged, { });
     });

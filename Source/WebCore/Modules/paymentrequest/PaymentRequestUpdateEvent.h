@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class DOMPromise;
-class PaymentRequest;
 struct PaymentRequestUpdateEventInit;
 
 class PaymentRequestUpdateEvent : public Event {
@@ -46,14 +45,13 @@ public:
     ExceptionOr<void> updateWith(Ref<DOMPromise>&&);
 
 protected:
-    PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequest&);
+    explicit PaymentRequestUpdateEvent(const AtomicString& type);
     PaymentRequestUpdateEvent(const AtomicString& type, const PaymentRequestUpdateEventInit&);
 
     // Event
     EventInterface eventInterface() const override;
 
 private:
-    RefPtr<PaymentRequest> m_paymentRequest;
     bool m_waitForUpdate { false };
 };
 
