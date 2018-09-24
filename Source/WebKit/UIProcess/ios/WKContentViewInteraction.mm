@@ -3748,7 +3748,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
                                                            modifiers:event._modifierFlags
                                                          isRepeating:(event._inputFlags & kUIKeyboardInputRepeat)
                                                            withFlags:event._inputFlags
-                                                             keyCode:0
+                                                             keyCode:event._hidEvent ? ((UIPhysicalKeyboardEvent *)event)._keyCode : 0
                                                             isTabKey:[event._modifiedInput isEqualToString:@"\t"]
                                                         characterSet:WebEventCharacterSetUnicode] autorelease];
     webEvent.uiEvent = event;

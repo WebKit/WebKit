@@ -11,13 +11,11 @@ if (window.testRunner) {
 </script>
 </head>
 <body onkeydown="handleKeyDown(event)" onkeyup="handleKeyUp(event)">
-<p>This tests that DOM keydown and keyup events are dispatched to a non-editable &lt;body&gt; on iOS for hardware key presses. To run this test manually, verify that two messages are emitted when you press the following keys: a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -, =, [, ], \, ;, ', ,, ., /, &lt;return&gt;, &#x2191;, &#x2193;, &#x2190;, &#x2192;.</p>
+<p>This tests that DOM keydown and keyup events are dispatched to a non-editable &lt;body&gt; on iOS for hardware key presses of non-special keys. To run this test manually, verify that two messages are emitted when you press the following keys: <kbd>a</kbd>, <kbd>b</kbd>, <kbd>c</kbd>, <kbd>d</kbd>, <kbd>e</kbd>, <kbd>f</kbd>, <kbd>g</kbd>, <kbd>h</kbd>, <kbd>i</kbd>, <kbd>j</kbd>, <kbd>k</kbd>, <kbd>l</kbd>, <kbd>m</kbd>, <kbd>n</kbd>, <kbd>o</kbd>, <kbd>p</kbd>, <kbd>q</kbd>, <kbd>r</kbd>, <kbd>s</kbd>, <kbd>t</kbd>, <kbd>u</kbd>, <kbd>v</kbd>, <kbd>w</kbd>, <kbd>x</kbd>, <kbd>y</kbd>, <kbd>z</kbd>, <kbd>0</kbd>, <kbd>1</kbd>, <kbd>2</kbd>, <kbd>3</kbd>, <kbd>4</kbd>, <kbd>5</kbd>, <kbd>6</kbd>, <kbd>7</kbd>, <kbd>8</kbd>, <kbd>9</kbd>, <kbd>-</kbd>, <kbd>=</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>\</kbd>, <kbd>;</kbd>, <kbd>'</kbd>, <kbd>,</kbd>, <kbd>.</kbd>, <kbd>/</kbd>.</p>
 <pre id="console"></pre>
 <script>
-const asciiCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-=[]\\;',./\r".split("");
-const specialKeys = ["upArrow", "downArrow", "leftArrow", "rightArrow"];
-
-var remainingKeysToPress = asciiCharacters.concat(specialKeys);
+const asciiCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-=[]\\;',./".split("");
+var remainingKeysToPress = asciiCharacters;
 
 async function nextKeyPress()
 {

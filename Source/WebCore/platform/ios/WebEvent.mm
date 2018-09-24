@@ -150,15 +150,9 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     
     if (keyCode)
         _keyCode = windowsKeyCodeForKeyCode(keyCode);
-
-    // NOTE: this preserves the original semantics which used the 
-    // characters string for the keyCode. This should be changed in iOS 4.0 to
-    // allow the client to explicitly specify a keyCode, otherwise default to 
-    // mapping the characters string to a keyCode.
-    // e.g. add an 'else' before this 'if'.
-    if ([charactersIgnoringModifiers length] == 1) {
-        unichar ch = [charactersIgnoringModifiers characterAtIndex:0];
-        _keyCode = windowsKeyCodeForCharCodeIOS(ch);
+    else if ([charactersIgnoringModifiers length] == 1) {
+        // This event is likely for a software keyboard-generated event.
+        _keyCode = windowsKeyCodeForCharCodeIOS([charactersIgnoringModifiers characterAtIndex:0]);
     }
 
     return self;
@@ -192,17 +186,11 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     
     if (keyCode)
         _keyCode = windowsKeyCodeForKeyCode(keyCode);
-    
-    // NOTE: this preserves the original semantics which used the
-    // characters string for the keyCode. This should be changed in iOS 4.0 to
-    // allow the client to explicitly specify a keyCode, otherwise default to
-    // mapping the characters string to a keyCode.
-    // e.g. add an 'else' before this 'if'.
-    if ([charactersIgnoringModifiers length] == 1) {
-        unichar ch = [charactersIgnoringModifiers characterAtIndex:0];
-        _keyCode = windowsKeyCodeForCharCodeIOS(ch);
+    else if ([charactersIgnoringModifiers length] == 1) {
+        // This event is likely for a software keyboard-generated event.
+        _keyCode = windowsKeyCodeForCharCodeIOS([charactersIgnoringModifiers characterAtIndex:0]);
     }
-    
+
     return self;
 }
 

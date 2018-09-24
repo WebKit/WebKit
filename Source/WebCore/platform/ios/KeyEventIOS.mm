@@ -28,11 +28,173 @@
 
 #if PLATFORM(IOS)
 
+#import "KeyEventCocoa.h"
 #import "NotImplemented.h"
+#import "WindowsKeyboardCodes.h"
+#import <pal/spi/cocoa/IOKitSPI.h>
 
 using namespace WTF;
 
 namespace WebCore {
+
+int windowsKeyCodeForKeyCode(uint16_t keyCode)
+{
+    static const int windowsKeyCode[] = {
+        /* 0 */ 0, // n/a
+        /* 1 */ 0, // n/a
+        /* 2 */ 0, // n/a
+        /* 3 */ 0, // n/a
+        /* 4 */ VK_A,
+        /* 5 */ VK_B,
+        /* 6 */ VK_C,
+        /* 7 */ VK_D,
+        /* 8 */ VK_E,
+        /* 9 */ VK_F,
+        /* 0x0A */ VK_G,
+        /* 0x0B */ VK_H,
+        /* 0x0C */ VK_I,
+        /* 0x0D */ VK_J,
+        /* 0x0E */ VK_K,
+        /* 0x0F */ VK_L,
+        /* 0x10 */ VK_M,
+        /* 0x11 */ VK_N,
+        /* 0x12 */ VK_O,
+        /* 0x13 */ VK_P,
+        /* 0x14 */ VK_Q,
+        /* 0x15 */ VK_R,
+        /* 0x16 */ VK_S,
+        /* 0x17 */ VK_T,
+        /* 0x18 */ VK_U,
+        /* 0x19 */ VK_V,
+        /* 0x1A */ VK_W,
+        /* 0x1B */ VK_X,
+        /* 0x1C */ VK_Y,
+        /* 0x1D */ VK_Z,
+        /* 0x1E */ VK_1,
+        /* 0x1F */ VK_2,
+        /* 0x20 */ VK_3,
+        /* 0x21 */ VK_4,
+        /* 0x22 */ VK_5,
+        /* 0x23 */ VK_6,
+        /* 0x24 */ VK_7,
+        /* 0x25 */ VK_8,
+        /* 0x26 */ VK_9,
+        /* 0x27 */ VK_0,
+        /* 0x28 */ VK_RETURN, // Return
+        /* 0x29 */ VK_ESCAPE,
+        /* 0x2A */ VK_BACK, // Backspace
+        /* 0x2B */ VK_TAB,
+        /* 0x2C */ VK_SPACE,
+        /* 0x2D */ VK_OEM_MINUS, // -_
+        /* 0x2E */ VK_OEM_PLUS, // =+
+        /* 0x2F */ VK_OEM_4, // [{
+        /* 0x30 */ VK_OEM_6, // ]}
+        /* 0x31 */ VK_OEM_5, // \|
+        /* 0x32 */ 0, // kHIDUsage_KeyboardNonUSPound
+        /* 0x33 */ VK_OEM_1, // ;:
+        /* 0x34 */ VK_OEM_7, // '"
+        /* 0x35 */ VK_OEM_3, // `~
+        /* 0x36 */ VK_OEM_COMMA, // ,<
+        /* 0x37 */ VK_OEM_PERIOD, // .>
+        /* 0x38 */ VK_OEM_2, // /?
+        /* 0x39 */ VK_CAPITAL, // Caps Lock
+        /* 0x3A */ VK_F1,
+        /* 0x3B */ VK_F2,
+        /* 0x3C */ VK_F3,
+        /* 0x3D */ VK_F4,
+        /* 0x3E */ VK_F5,
+        /* 0x3F */ VK_F6,
+        /* 0x40 */ VK_F7,
+        /* 0x41 */ VK_F8,
+        /* 0x42 */ VK_F9,
+        /* 0x43 */ VK_F10,
+        /* 0x44 */ VK_F11,
+        /* 0x45 */ VK_F12,
+        /* 0x46 */ VK_SNAPSHOT, // Print Screen
+        /* 0x47 */ VK_SCROLL, // Scroll Lock
+        /* 0x48 */ VK_PAUSE,
+        /* 0x49 */ VK_INSERT,
+        /* 0x4A */ VK_HOME, // Home
+        /* 0x4B */ VK_PRIOR, // Page Up
+        /* 0x4C */ VK_DELETE, // Forward Delete
+        /* 0x4D */ VK_END, // End
+        /* 0x4E */ VK_NEXT, // Page Down
+        /* 0x4F */ VK_RIGHT, // Right Arrow
+        /* 0x50 */ VK_LEFT, // Left Arrow
+        /* 0x51 */ VK_DOWN, // Down Arrow
+        /* 0x52 */ VK_UP, // Up Arrow
+        /* 0x53 */ VK_CLEAR, // Num Pad Clear
+        /* 0x54 */ VK_DIVIDE, // Num Pad /
+        /* 0x55 */ VK_MULTIPLY, // Num Pad *
+        /* 0x56 */ VK_SUBTRACT, // Num Pad -
+        /* 0x57 */ VK_ADD, // Num Pad +
+        /* 0x58 */ VK_RETURN, // Num Pad Enter
+        /* 0x59 */ VK_NUMPAD1,
+        /* 0x5A */ VK_NUMPAD2,
+        /* 0x5B */ VK_NUMPAD3,
+        /* 0x5C */ VK_NUMPAD4,
+        /* 0x5D */ VK_NUMPAD5,
+        /* 0x5E */ VK_NUMPAD6,
+        /* 0x5F */ VK_NUMPAD7,
+        /* 0x60 */ VK_NUMPAD8,
+        /* 0x61 */ VK_NUMPAD9,
+        /* 0x62 */ VK_NUMPAD0,
+        /* 0x63 */ VK_DECIMAL, // Num Pad .
+        /* 0x64 */ 0, // Non-ANSI \|
+        /* 0x65 */ 0, // Application
+        /* 0x66 */ 0, // Power
+        /* 0x67 */ VK_OEM_PLUS, // Num Pad =. There is no such key on common PC keyboards, mapping to normal "+=".
+        /* 0x68 */ VK_F13,
+        /* 0x69 */ VK_F14,
+        /* 0x6A */ VK_F15,
+        /* 0x6B */ VK_F16,
+        /* 0x6C */ VK_F17,
+        /* 0x6D */ VK_F18,
+        /* 0x6E */ VK_F19,
+        /* 0x6F */ VK_F20,
+        /* 0x70 */ VK_F21,
+        /* 0x71 */ VK_F22,
+        /* 0x72 */ VK_F23,
+        /* 0x73 */ VK_F24,
+        /* 0x74 */ VK_EXECUTE,
+        /* 0x75 */ VK_INSERT, // Help
+        /* 0x76 */ 0, // Menu
+        /* 0x77 */ VK_SELECT,
+        /* 0x78 */ 0, // Stop
+        /* 0x79 */ 0, // Again
+        /* 0x7A */ 0, // Undo
+        /* 0x7B */ 0, // Cut
+        /* 0x7C */ 0, // Copy
+        /* 0x7D */ 0, // Paste
+        /* 0x7E */ 0, // Find
+        /* 0x7F */ VK_VOLUME_MUTE, // Mute
+        /* 0x80 */ VK_VOLUME_UP, // Volume Up
+        /* 0x81 */ VK_VOLUME_DOWN, // Volume Down
+    };
+    // Check if key is a modifier.
+    switch (keyCode) {
+    case kHIDUsage_KeyboardLeftControl:
+        return VK_LCONTROL;
+    case kHIDUsage_KeyboardLeftShift:
+        return VK_LSHIFT;
+    case kHIDUsage_KeyboardLeftAlt: // Left Option
+        return VK_LMENU;
+    case kHIDUsage_KeyboardLeftGUI: // Left Command
+        return VK_LWIN;
+    case kHIDUsage_KeyboardRightControl:
+        return VK_RCONTROL;
+    case kHIDUsage_KeyboardRightShift:
+        return VK_RSHIFT;
+    case kHIDUsage_KeyboardRightAlt: // Right Option
+        return VK_RMENU;
+    case kHIDUsage_KeyboardRightGUI: // Right Command
+        return VK_APPS;
+    }
+    // Otherwise check all other known keys.
+    if (keyCode < WTF_ARRAY_LENGTH(windowsKeyCode))
+        return windowsKeyCode[keyCode];
+    return 0; // Unknown key
+}
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCompatibilityMode)
 {

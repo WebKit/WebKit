@@ -1,3 +1,19 @@
+2018-09-24  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Key code is 0 for many hardware keyboard keys
+        https://bugs.webkit.org/show_bug.cgi?id=189604
+
+        Reviewed by Wenson Hsieh.
+
+        Update existing test and test result and add a new test to ensure we dispatch DOM keydown
+        and DOM keyup events dispatched for special keys.
+
+        * fast/events/ios/keydown-keyup-in-non-editable-content-expected.txt: Update expected result.
+        * fast/events/ios/keydown-keyup-in-non-editable-content.html: Remove logic to test arrow keys
+        as these are tested in test keydown-keyup-special-keys-in-non-editable-element.html. Also
+        update manual instructions to use <kbd> to format keyboard keys.
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element-expected.txt:
+
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         feMorphology filter in CSS doesn't update when element moves

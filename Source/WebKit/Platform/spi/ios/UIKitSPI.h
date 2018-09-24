@@ -998,6 +998,13 @@ typedef NSInteger UICompositingMode;
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+@interface UIPhysicalKeyboardEvent : UIPressesEvent
+@end
+
+@interface UIPhysicalKeyboardEvent ()
+@property (nonatomic, readonly) CFIndex _keyCode;
+@end
+
 @interface UIColor (IPI)
 + (UIColor *)insertionPointColor;
 @end

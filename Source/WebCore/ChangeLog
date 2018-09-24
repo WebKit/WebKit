@@ -1,3 +1,42 @@
+2018-09-24  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Key code is 0 for many hardware keyboard keys
+        https://bugs.webkit.org/show_bug.cgi?id=189604
+
+        Reviewed by Wenson Hsieh.
+
+        Based off a patch by Jeremy Jones.
+
+        Add iOS-specific implementation of windowsKeyCodeForKeyCode() to map an iOS virtual key code to
+        the corresponding Windows virtual key code. Only hardware keyboard-generated events have a
+        virtual key code. For software-generated keyboard events we do what we do now and compute the
+        Windows virtual key code from the character string associated with the event.
+
+        When a WebEvent is instantiated with a non-zero iOS virtual key code (keyCode) we now always
+        convert it to its corresponding Windows virtual key code without considering the specified
+        charactersIgnoringModifiers character string. Currently we prefer computing the key code from
+        charactersIgnoringModifiers regardless of whether a non-zero iOS virtual key code was given.
+        However this causes special keys, including function keys (e.g. F10) to be misidentified because
+        keyboard layouts in iOS (at least iOS 12) map such special keys to ASCII control characters (e.g.
+        F10 maps to ASCII control character "data link escape" = 0x10) as opposed to special 16-bit
+        integral constants as we do on Mac (e.g. F10 maps to NSF10FunctionKey = 0xF70D on Mac). I will
+        look to fix up the computation of a Windows virtual key code from a char code on iOS in a
+        subsequent commit(s). For now, computing the Windows virtual key code directly from the iOS
+        virtual key code specified to the WebEvent constructor avoids the misidentification using
+        an ANSI US keyboard layout.
+
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::windowsKeyCodeForKeyCode): Deleted; moved to KeyEventMac.mm as this mapping is specific to Mac.
+        * platform/ios/KeyEventIOS.mm:
+        (WebCore::windowsKeyCodeForKeyCode): Added.
+        * platform/ios/WebEvent.mm:
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:withFlags:keyCode:isTabKey:characterSet:]): Address the NOTE comment and compute the Windows virtual key code from
+        the iOS virtual key code when we have one. Also inline the value of an unncessary local variable.
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:withFlags:withInputManagerHint:keyCode:isTabKey:]): Ditto.
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::windowsKeyCodeForKeyCode): Moved from KeyEventCocoa.mm. Updated code to make use of WTF_ARRAY_LENGTH() instead
+        of hardcoding the upper bound of the lookup table.
+
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         feMorphology filter in CSS doesn't update when element moves

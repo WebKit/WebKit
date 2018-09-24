@@ -1,3 +1,18 @@
+2018-09-24  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Key code is 0 for many hardware keyboard keys
+        https://bugs.webkit.org/show_bug.cgi?id=189604
+
+        Reviewed by Wenson Hsieh.
+
+        For a hardware keyboard-generated event (an event with a non-nill event._hidEvent) pass
+        the key code for the event. Otherwise, do what we do now and pass 0 as the event is likely
+        a software keyboard-generated event.
+
+        * Platform/spi/ios/UIKitSPI.h: Add some more SPI.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView handleKeyEvent:]):
+
 2018-09-24  Brian Burg  <bburg@apple.com>
 
         Web Inspector: topContentInset is not accounted for when inspecting a WKWebView and docked to side
