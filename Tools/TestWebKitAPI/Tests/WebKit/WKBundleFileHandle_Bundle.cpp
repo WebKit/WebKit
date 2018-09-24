@@ -69,7 +69,7 @@ private:
         
         JSGlobalContextRef globalContext = WKBundleFrameGetJavaScriptContextForWorld(mainFrame, world);
 
-        auto fileHandle = adoptWK(WKBundleFileHandleCreateWithPath((WKStringRef)messageBody));
+        auto fileHandle = adoptWK(WKBundleFileHandleCreateWithPathForPage((WKStringRef)messageBody, loadedPage));
         JSValueRef jsFileHandle = WKBundleFrameGetJavaScriptWrapperForFileForWorld(mainFrame, fileHandle.get(), world);
 
         JSObjectRef globalObject = JSContextGetGlobalObject(globalContext);

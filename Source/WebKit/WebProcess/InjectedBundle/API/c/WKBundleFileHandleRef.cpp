@@ -41,3 +41,8 @@ WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef pathRef)
 {
     return toAPI(InjectedBundleFileHandle::create(toWTFString(pathRef)).leakRef());
 }
+
+WKBundleFileHandleRef WKBundleFileHandleCreateWithPathForPage(WKStringRef pathRef, WKBundlePageRef)
+{
+    return toAPI(InjectedBundleFileHandle::create(toWTFString(pathRef)).leakRef());
+}
