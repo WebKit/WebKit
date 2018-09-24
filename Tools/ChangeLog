@@ -1,3 +1,11 @@
+2018-09-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for Jhbuild-using ports.
+
+        * gstreamer/patches/gst-plugins-good-0010-matroskademux-Emit-no-more-pads-after-parsing-Tracks.patch:
+        Adjust the patch so it applies cleanly on the 1.14.3 version of the
+        gst-plugins-good package.
+
 2018-09-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update flakiness dashboard configuration for iOS 12 queues
