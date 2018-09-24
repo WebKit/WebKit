@@ -85,6 +85,9 @@
       <patch file="gst-plugins-good-0004-qtdemux-Add-initial-support-for-AV1-demuxing.patch" strip="1" /> <!-- Merged as b6e8c6323e01249bb3ac4f121c3adc3ea8d924bf (to be shipped in 1.16) -->
       <patch file="gst-plugins-good-0005-qtdemux-Extract-AV1-codec_data-and-put-it-in-the-cap.patch" strip="1" /> <!-- Merged as 43ee4055c3d03a9f99acdf3c05f45e154899edef (to be shipped in 1.16) -->
       <patch file="gst-plugins-good-0006-qtdemux-Recognize-more-AV1-atoms.patch" strip="1" /> <!-- Merged as e07ce9afb4edb2ea898763c7ea11f0af2704104e (to be shipped in 1.16) -->
+      <patch file="gst-plugins-good-0007-matroskademux-Allow-Matroska-headers-to-be-read-more.patch" strip="1" /> <!-- Merged as 9dc7859184d4b7ad1dd7e2b54704e994dbace329 (to be shipped in 1.14.4) -->
+      <patch file="gst-plugins-good-0008-matroskademux-Refactor-track-parsing-out-from-adding.patch" strip="1" /> <!-- Merged as f279bc5336dda19741a5996a108da42dd3201366 (to be shipped in 1.14.4) -->
+      <patch file="gst-plugins-good-0009-matroskademux-Parse-successive-Tracks-elements.patch" strip="1" /> <!-- Merged as 0e60076a390fd3ef53d350940b2c695ff7bbe008 (to be shipped in 1.14.4) -->
     </branch>
   </autotools>
 
