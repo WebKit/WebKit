@@ -1,3 +1,22 @@
+2018-09-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Enable http/tests/misc tests.
+        https://bugs.webkit.org/show_bug.cgi?id=189931
+
+        Unreviewed test gardening.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/http/tests/misc/acid2-expected.txt: Added.
+        * platform/wincairo/http/tests/misc/acid2-pixel-expected.txt: Added.
+        * platform/wincairo/http/tests/misc/error404-expected.txt: Added.
+        * platform/wincairo/http/tests/misc/favicon-as-image-expected.txt: Added.
+        * platform/wincairo/http/tests/misc/frame-access-during-load-expected.txt: Added.
+        * platform/wincairo/http/tests/misc/generated-content-inside-table-expected.txt: Added.
+        * platform/wincairo/http/tests/misc/iframe404-expected.txt: Added.
+        * platform/wincairo/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.txt: Added.
+        * platform/wincairo/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/wincairo/http/tests/misc/slow-loading-image-in-pattern-expected.txt: Added.
+
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Update some test results under compositing/overflow
