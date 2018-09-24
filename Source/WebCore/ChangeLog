@@ -1,3 +1,17 @@
+2018-09-24  Jer Noble  <jer.noble@apple.com>
+
+        SharedBuffer should have an equality test
+        https://bugs.webkit.org/show_bug.cgi?id=189919
+
+        Reviewed by Alex Christensen.
+
+        Test: TestWebKitAPI SharedBuffer.isEqualTo.
+
+        * platform/SharedBuffer.cpp:
+        * platform/SharedBuffer.h:
+        (WebCore::operator==):
+        (WebCore::operator!=):
+
 2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         imported/w3c/web-platform-tests/shadow-dom/slotchange.html is a flaky failure

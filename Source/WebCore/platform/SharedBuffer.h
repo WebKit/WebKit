@@ -173,6 +173,9 @@ public:
 
     void hintMemoryNotNeededSoon() const;
 
+    bool operator==(const SharedBuffer&) const;
+    bool operator!=(const SharedBuffer& other) const { return !operator==(other); }
+
 private:
     explicit SharedBuffer() = default;
     explicit SharedBuffer(const char*, size_t);
@@ -201,6 +204,16 @@ private:
     bool internallyConsistent() const;
 #endif
 };
+
+inline bool operator==(const Ref<SharedBuffer>& left, const SharedBuffer& right)
+{
+    return left.get() == right;
+}
+
+inline bool operator!=(const Ref<SharedBuffer>& left, const SharedBuffer& right)
+{
+    return left.get() != right;
+}
 
 class WEBCORE_EXPORT SharedBufferDataView {
 public:

@@ -222,6 +222,55 @@ void SharedBuffer::hintMemoryNotNeededSoon() const
 }
 #endif
 
+bool SharedBuffer::operator==(const SharedBuffer& other) const
+{
+    if (this == &other)
+        return true;
+
+    if (m_size != other.m_size)
+        return false;
+
+    auto thisIterator = begin();
+    size_t thisOffset = 0;
+    auto otherIterator = other.begin();
+    size_t otherOffset = 0;
+
+    while (thisIterator != end() && otherIterator != other.end()) {
+        auto& thisSegment = thisIterator->segment.get();
+        auto& otherSegment = otherIterator->segment.get();
+
+        if (&thisSegment == &otherSegment && !thisOffset && !otherOffset) {
+            ++thisIterator;
+            ++otherIterator;
+            continue;
+        }
+
+        ASSERT(thisOffset < thisSegment.size());
+        ASSERT(otherOffset < otherSegment.size());
+
+        size_t thisRemaining = thisSegment.size() - thisOffset;
+        size_t otherRemaining = otherSegment.size() - otherOffset;
+        size_t remaining = std::min(thisRemaining, otherRemaining);
+
+        if (memcmp(thisSegment.data() + thisOffset, otherSegment.data() + otherOffset, remaining))
+            return false;
+
+        thisOffset += remaining;
+        otherOffset += remaining;
+
+        if (thisOffset == thisSegment.size()) {
+            ++thisIterator;
+            thisOffset = 0;
+        }
+
+        if (otherOffset == otherSegment.size()) {
+            ++otherIterator;
+            otherOffset = 0;
+        }
+    }
+    return true;
+}
+
 size_t SharedBuffer::DataSegment::size() const
 {
     auto visitor = WTF::makeVisitor(

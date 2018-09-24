@@ -198,4 +198,23 @@ TEST_F(SharedBufferTest, getSomeData)
     checkBuffer(l.data(), l.size(), "l");
 }
 
+TEST_F(SharedBufferTest, isEqualTo)
+{
+    auto makeBuffer = [] (Vector<Vector<char>>&& contents) {
+        auto buffer = SharedBuffer::create();
+        for (auto& content : contents)
+            buffer->append(WTFMove(content));
+        return buffer;
+    };
+    auto buffer1 = makeBuffer({{'a', 'b', 'c', 'd'}});
+    EXPECT_EQ(buffer1, buffer1);
+
+    buffer1->append(Vector<char>({'a', 'b', 'c', 'd'}));
+    EXPECT_EQ(buffer1, makeBuffer({{'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'}}));
+    EXPECT_EQ(makeBuffer({{'a'}, {'b', 'c'}, {'d'}}), makeBuffer({{'a', 'b'}, {'c', 'd'}}));
+    EXPECT_NE(makeBuffer({{'a', 'b'}}), makeBuffer({{'a', 'b', 'c'}}));
+    EXPECT_NE(makeBuffer({{'a', 'b'}}), makeBuffer({{'b', 'c'}}));
+    EXPECT_NE(makeBuffer({{'a'}, {'b'}}), makeBuffer({{'a'}, {'a'}}));
+}
+
 }
