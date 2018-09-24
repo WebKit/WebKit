@@ -347,14 +347,6 @@ fast/writing-mode/japanese-rl-text.html [ Failure ]
 # <rdar://problem/11187491> storage/websql/quota-tracking.html is failing on Mountain Lion
 storage/websql/quota-tracking.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=95009
-compositing/overflow/overflow-auto-with-touch.html [ Failure ]
-compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
-compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
-compositing/overflow/textarea-scroll-touch.html [ Failure ]
-compositing/overflow/updating-scrolling-content.html [ Failure ]
-compositing/overflow/scrolling-without-painting.html [ Failure ]
-
 # <rdar://problem/11229810> SVG square caps on zero-length paths draw incorrectly on Mountain Lion
 svg/W3C-SVG-1.1-SE/painting-control-04-f.svg [ Failure ]
 svg/custom/zero-path-square-cap-rendering.svg [ Failure ]

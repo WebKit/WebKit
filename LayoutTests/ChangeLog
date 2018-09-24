@@ -1,3 +1,31 @@
+2018-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Update some test results under compositing/overflow
+        https://bugs.webkit.org/show_bug.cgi?id=189857
+
+        Reviewed by Tim Horton.
+        
+        Unskip some tests under compositing/overflow, and land new macOS and iOS expectations.
+
+        * compositing/overflow/overflow-auto-with-touch-expected.txt:
+        * compositing/overflow/overflow-overlay-with-touch-expected.txt:
+        * compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+        * compositing/overflow/scrolling-without-painting-expected.txt:
+        * compositing/overflow/textarea-scroll-touch-expected.txt:
+        * compositing/overflow/updating-scrolling-content-expected.txt:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/compositing/overflow/nested-scrolling-expected.txt:
+        * platform/ios/compositing/overflow/overflow-auto-with-touch-expected.txt: Copied from LayoutTests/compositing/overflow/overflow-auto-with-touch-expected.txt.
+        * platform/ios/compositing/overflow/overflow-auto-with-touch-toggle-expected.txt: Copied from LayoutTests/compositing/overflow/overflow-auto-with-touch-expected.txt.
+        * platform/ios/compositing/overflow/overflow-overlay-with-touch-expected.txt: Copied from LayoutTests/compositing/overflow/overflow-overlay-with-touch-expected.txt.
+        * platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt: Copied from LayoutTests/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+        * platform/ios/compositing/overflow/scrolling-without-painting-expected.txt: Copied from LayoutTests/compositing/overflow/scrolling-without-painting-expected.txt.
+        * platform/ios/compositing/overflow/textarea-scroll-touch-expected.txt: Copied from LayoutTests/compositing/overflow/textarea-scroll-touch-expected.txt.
+        * platform/ios/compositing/overflow/updating-scrolling-content-expected.txt: Copied from LayoutTests/compositing/overflow/updating-scrolling-content-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/mac/compositing/overflow/composited-scrolling-paint-phases-expected.txt:
+
 2018-09-24  Truitt Savell  <tsavell@apple.com>
 
         Continued test gardening of media-fragment/ tests for ios 12

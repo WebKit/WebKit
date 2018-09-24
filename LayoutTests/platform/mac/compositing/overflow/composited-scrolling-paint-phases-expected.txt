@@ -4,8 +4,7 @@
   (paintingPhases
     GraphicsLayerPaintBackground
     GraphicsLayerPaintForeground
-    GraphicsLayerPaintMask
-  )
+    )
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
@@ -13,8 +12,7 @@
       (paintingPhases
         GraphicsLayerPaintBackground
         GraphicsLayerPaintForeground
-        GraphicsLayerPaintMask
-      )
+        )
       (children 1
         (GraphicsLayer
           (position 28.00 20.00)
@@ -22,26 +20,26 @@
           (drawsContent 1)
           (paintingPhases
             GraphicsLayerPaintBackground
-            GraphicsLayerPaintMask
             GraphicsLayerPaintCompositedScroll
-          )
+            )
           (children 4
             (GraphicsLayer
+              (offsetFromRenderer width=-1 height=-1)
               (position 1.00 1.00)
               (bounds 185.00 185.00)
               (paintingPhases
                 GraphicsLayerPaintBackground
                 GraphicsLayerPaintForeground
-                GraphicsLayerPaintMask
-              )
+                )
               (children 1
                 (GraphicsLayer
+                  (offsetFromRenderer width=1 height=1)
                   (bounds 185.00 715.00)
                   (drawsContent 1)
                   (paintingPhases
                     GraphicsLayerPaintOverflowContents
                     GraphicsLayerPaintCompositedScroll
-                  )
+                    )
                   (children 2
                     (GraphicsLayer
                       (position 0.00 10.00)
@@ -50,15 +48,15 @@
                       (paintingPhases
                         GraphicsLayerPaintBackground
                         GraphicsLayerPaintForeground
-                        GraphicsLayerPaintMask
-                      )
+                        )
                     )
                     (GraphicsLayer
+                      (offsetFromRenderer width=1 height=1)
                       (bounds 185.00 715.00)
                       (drawsContent 1)
                       (paintingPhases
                         GraphicsLayerPaintForeground
-                      )
+                        )
                     )
                   )
                 )
@@ -71,8 +69,7 @@
               (paintingPhases
                 GraphicsLayerPaintBackground
                 GraphicsLayerPaintForeground
-                GraphicsLayerPaintMask
-              )
+                )
             )
             (GraphicsLayer
               (position 186.00 1.00)
@@ -81,8 +78,7 @@
               (paintingPhases
                 GraphicsLayerPaintBackground
                 GraphicsLayerPaintForeground
-                GraphicsLayerPaintMask
-              )
+                )
             )
             (GraphicsLayer
               (position 186.00 186.00)
@@ -91,8 +87,7 @@
               (paintingPhases
                 GraphicsLayerPaintBackground
                 GraphicsLayerPaintForeground
-                GraphicsLayerPaintMask
-              )
+                )
             )
           )
         )
