@@ -658,9 +658,9 @@ void RenderLayerBacking::updateAfterLayout(OptionSet<UpdateAfterLayoutFlags> fla
             updateGeometry();
             updateAfterDescendants();
             compositor().updateRootLayerPosition();
-            auto* stackingContainer = m_owningLayer.enclosingStackingContainer();
-            if (!compositor().compositingLayersNeedRebuild() && stackingContainer && (stackingContainer != &m_owningLayer))
-                compositor().updateCompositingDescendantGeometry(*stackingContainer, *stackingContainer);
+            auto* stackingContext = m_owningLayer.enclosingStackingContext();
+            if (!compositor().compositingLayersNeedRebuild() && stackingContext && (stackingContext != &m_owningLayer))
+                compositor().updateCompositingDescendantGeometry(*stackingContext, *stackingContext);
         }
     }
     
@@ -923,12 +923,6 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(RenderLayer* compo
         ScrollOffset scrollOffset = compositedAncestor->scrollOffset();
         parentGraphicsLayerRect = LayoutRect((paddingBox.location() - toLayoutSize(ancestorCompositedBounds.location()) - toLayoutSize(scrollOffset)), paddingBox.size());
     }
-#else
-    if (compositedAncestor->needsCompositedScrolling()) {
-        auto& renderBox = downcast<RenderBox>(compositedAncestor->renderer());
-        LayoutPoint scrollOrigin(renderBox.borderLeft(), renderBox.borderTop());
-        parentGraphicsLayerRect = LayoutRect(scrollOrigin - toLayoutSize(compositedAncestor->scrollOffset()), renderBox.borderBoxRect().size());
-    }
 #endif
 
     if (m_ancestorClippingLayer) {
@@ -951,7 +945,7 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(RenderLayer* compo
 void RenderLayerBacking::updateGeometry()
 {
     // If we haven't built z-order lists yet, wait until later.
-    if (m_owningLayer.isStackingContainer() && m_owningLayer.m_zOrderListsDirty)
+    if (m_owningLayer.isStackingContext() && m_owningLayer.m_zOrderListsDirty)
         return;
 
     const RenderStyle& style = renderer().style();
@@ -1452,21 +1446,21 @@ void RenderLayerBacking::setRequiresBackgroundLayer(bool requiresBackgroundLayer
 
 bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
 {
-    if (!m_owningLayer.hasOverlayScrollbars() && !m_owningLayer.needsCompositedScrolling())
+    if (!m_owningLayer.hasOverlayScrollbars())
         return false;
     return m_owningLayer.horizontalScrollbar();
 }
 
 bool RenderLayerBacking::requiresVerticalScrollbarLayer() const
 {
-    if (!m_owningLayer.hasOverlayScrollbars() && !m_owningLayer.needsCompositedScrolling())
+    if (!m_owningLayer.hasOverlayScrollbars())
         return false;
     return m_owningLayer.verticalScrollbar();
 }
 
 bool RenderLayerBacking::requiresScrollCornerLayer() const
 {
-    if (!m_owningLayer.hasOverlayScrollbars() && !m_owningLayer.needsCompositedScrolling())
+    if (!m_owningLayer.hasOverlayScrollbars())
         return false;
     return !m_owningLayer.scrollCornerAndResizerRect().isEmpty();
 }
@@ -1560,26 +1554,6 @@ void RenderLayerBacking::positionOverflowControlsLayers()
         layer->setSize(scrollCornerAndResizer.size());
         layer->setDrawsContent(!scrollCornerAndResizer.isEmpty());
     }
-}
-
-bool RenderLayerBacking::hasUnpositionedOverflowControlsLayers() const
-{
-    if (auto* layer = layerForHorizontalScrollbar()) {
-        if (!layer->drawsContent())
-            return true;
-    }
-
-    if (auto* layer = layerForVerticalScrollbar()) {
-        if (!layer->drawsContent())
-            return true;
-    }
-
-    if (auto* layer = layerForScrollCorner()) {
-        if (!layer->drawsContent())
-            return true;
-    }
-
-    return false;
 }
 
 bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
@@ -1813,7 +1787,7 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
     for (auto* curr = m_owningLayer.parent(); curr; curr = curr->parent()) {
         // We only care about parents that are stacking contexts.
         // Recall that opacity creates stacking context.
-        if (!curr->isStackingContainer())
+        if (!curr->isStackingContext())
             continue;
         
         // If we found a compositing layer, we want to compute opacity
@@ -2122,7 +2096,7 @@ static LayerTraversal traverseVisibleNonCompositedDescendantLayers(RenderLayer& 
         }
     }
 
-    if (parent.isStackingContainer() && !parent.hasVisibleDescendant())
+    if (parent.isStackingContext() && !parent.hasVisibleDescendant())
         return LayerTraversal::Continue;
 
     // Use the m_hasCompositingDescendant bit to optimize?

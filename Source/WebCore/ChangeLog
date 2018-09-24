@@ -1,3 +1,71 @@
+2018-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the old "AcceleratedCompositingForOverflowScroll" code
+        https://bugs.webkit.org/show_bug.cgi?id=189870
+
+        Reviewed by Zalan Bujtas.
+
+        The "AcceleratedCompositingForOverflowScroll" code was added to allow overflow:scroll to use
+        composited scrolling if an overflow:scroll could be made a stacking context without affecting
+        z-order. We need overflow:scroll to be accelerated always, so a different approach is needed.
+        Remove this old code (unused by any platform?) to make working on new code easier.
+
+        * page/Settings.yaml:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::setHasVisibleContent):
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+        (WebCore::RenderLayer::dirty3DTransformedDescendantStatus):
+        (WebCore::RenderLayer::stackingContext const):
+        (WebCore::compositingContainer):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::hasAcceleratedTouchScrolling const):
+        (WebCore::RenderLayer::usesAcceleratedScrolling const):
+        (WebCore::adjustedScrollDelta):
+        (WebCore::RenderLayer::updateCompositingLayersAfterScroll):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::enclosingFragmentedFlowAncestor const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::RenderLayer::acceleratedCompositingForOverflowScrollEnabled const): Deleted.
+        (WebCore::RenderLayer::updateDescendantsAreContiguousInStackingOrder): Deleted.
+        (WebCore::RenderLayer::updateDescendantsAreContiguousInStackingOrderRecursive): Deleted.
+        (WebCore::RenderLayer::positionNewlyCreatedOverflowControls): Deleted.
+        (WebCore::RenderLayer::canBeStackingContainer const): Deleted.
+        (WebCore::RenderLayer::stackingContainer const): Deleted.
+        (WebCore::RenderLayer::needsCompositedScrolling const): Deleted.
+        (WebCore::RenderLayer::updateNeedsCompositedScrolling): Deleted.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::clearZOrderLists):
+        (WebCore::RenderLayer::updateZOrderLists):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect const):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::requiresHorizontalScrollbarLayer const):
+        (WebCore::RenderLayerBacking::requiresVerticalScrollbarLayer const):
+        (WebCore::RenderLayerBacking::requiresScrollCornerLayer const):
+        (WebCore::RenderLayerBacking::compositingOpacity const):
+        (WebCore::traverseVisibleNonCompositedDescendantLayers):
+        (WebCore::RenderLayerBacking::hasUnpositionedOverflowControlsLayers const): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush):
+        (WebCore::RenderLayerCompositor::updateCustomLayersAfterFlush):
+        (WebCore::styleChangeRequiresLayerRebuild):
+        (WebCore::RenderLayerCompositor::enclosingNonStackingClippingLayer const):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer const):
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore const):
+        (WebCore::RenderLayerCompositor::reasonsForCompositing const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForBackfaceVisibility const):
+        (WebCore::RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForOverflowScrolling const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrolling const): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2018-09-24  Youenn Fablet  <youenn@apple.com>
 
         Enable conversion of libwebrtc internal frames as CVPixelBuffer

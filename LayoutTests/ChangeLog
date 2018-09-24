@@ -1,3 +1,40 @@
+2018-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the old "AcceleratedCompositingForOverflowScroll" code
+        https://bugs.webkit.org/show_bug.cgi?id=189870
+
+        Reviewed by Zalan Bujtas.
+
+        The "AcceleratedCompositingForOverflowScroll" code was added to allow overflow:scroll to use
+        composited scrolling if an overflow:scroll could be made a stacking context without affecting
+        z-order. We need overflow:scroll to be accelerated always, so a different approach is needed.
+        Remove this old code (unused by any platform?) to make working on new code easier.
+        
+        Keep some of the tests; they will be useful later.
+
+        * compositing/overflow/automatically-opt-into-composited-scrolling-expected.txt: Removed.
+        * compositing/overflow/automatically-opt-into-composited-scrolling.html: Removed.
+        * compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html:
+        * compositing/overflow/composited-scrolling-creates-a-stacking-container.html: Removed.
+        * compositing/overflow/composited-scrolling-paint-phases.html:
+        * compositing/overflow/do-not-paint-outline-into-composited-scrolling-contents.html:
+        * compositing/overflow/dynamic-composited-scrolling-status.html:
+        * compositing/overflow/iframe-inside-overflow-clipping.html:
+        * compositing/overflow/nested-scrolling.html:
+        * compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html:
+        * compositing/overflow/paint-neg-z-order-descendants-into-scrolling-contents-layer.html:
+        * compositing/overflow/scrolling-content-clip-to-viewport.html:
+        * compositing/overflow/scrolling-without-painting.html:
+        * compositing/overflow/textarea-scroll-touch.html:
+        * compositing/overflow/updating-scrolling-content.html:
+        * compositing/rtl/rtl-overflow-scrolling.html:
+        * platform/gtk/compositing/overflow/composited-scrolling-creates-a-stacking-container-expected.txt: Removed.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/compositing/overflow/automatically-opt-into-composited-scrolling-expected.txt: Removed.
+        * platform/ios/compositing/overflow/composited-scrolling-creates-a-stacking-container-expected.txt: Removed.
+        * platform/mac/compositing/overflow/composited-scrolling-creates-a-stacking-container-expected.txt: Removed.
+
 2018-09-24  Chris Dumez  <cdumez@apple.com>
 
         Do not do early processing of incoming sync IPC unless we're waiting for a sync IPC reply

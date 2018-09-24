@@ -432,10 +432,6 @@ ShowsURLsInToolTipsEnabled:
   defaultValue: false
   webcoreName: showsURLsInToolTips
 
-AcceleratedCompositingForOverflowScrollEnabled:
-  type: bool
-  defaultValue: false
-
 HiddenPageDOMTimerThrottlingEnabled:
   type: bool
   defaultValue: DEFAULT_HIDDEN_PAGE_DOM_TIMER_THROTTLING_ENABLED

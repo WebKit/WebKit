@@ -182,8 +182,7 @@ public:
     
     void updateAfterWidgetResize();
     void positionOverflowControlsLayers();
-    bool hasUnpositionedOverflowControlsLayers() const;
-
+    
     bool isFrameLayerWithTiledBacking() const { return m_isFrameLayerWithTiledBacking; }
 
     WEBCORE_EXPORT TiledBacking* tiledBacking() const;

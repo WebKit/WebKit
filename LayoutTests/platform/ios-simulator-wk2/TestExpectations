@@ -14,7 +14,7 @@ fast/events/scroll-to-anchor-vertical-lr-writing-mode.html [ ImageOnlyFailure ]
 fast/events/scroll-to-anchor-vertical-writing-mode.html [ ImageOnlyFailure ]
 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 
-webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
+webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Pass Failure ]
 
 webkit.org/b/173178 [ Release ] svg/animations/svglength-element-removed-crash.svg [ Skip ]
 
