@@ -391,6 +391,8 @@ void FEConvolveMatrix::platformApplySoftware()
         return;
 
     IntSize paintSize = absolutePaintRect().size();
+    paintSize.scale(filter().filterScale());
+
     PaintingData paintingData = {
         *srcPixelArray,
         *resultImage,

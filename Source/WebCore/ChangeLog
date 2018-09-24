@@ -1,3 +1,19 @@
+2018-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Garbled rendering of image when applied feConvolveMatrix to it, on Retina display
+        https://bugs.webkit.org/show_bug.cgi?id=189748
+        <rdar://problem/44621494>
+
+        Reviewed by Jon Lee.
+        
+        feConvolveMatrix needs to scale the paintSize by the filter scale (2x on Retina displays),
+        otherwise parts of the output buffer are uninitialized and the result is incorrect.
+
+        Test: css3/filters/hidpi-feConvolveMatrix.html
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::platformApplySoftware):
+
 2018-09-22  Dean Jackson  <dino@apple.com>
 
         Ensure PointerEvent is not visible when disabled
