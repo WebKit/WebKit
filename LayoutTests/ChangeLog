@@ -1,3 +1,13 @@
+2018-09-24  Yoav Weiss  <yoav@yoav.ws>
+
+        Import WPT resource-timing tests
+        https://bugs.webkit.org/show_bug.cgi?id=189903
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:: Added a few failing tests.
+        * platform/mac/TestExpectations:: Added a timeout test.
+
 2018-09-22  Dean Jackson  <dino@apple.com>
 
         Unreviewed - Skip pointer events tests on legacy WebKit.

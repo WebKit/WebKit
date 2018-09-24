@@ -1,0 +1,12 @@
+Blocked access to external URL http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=multi_wildcard
+CONSOLE MESSAGE: line 2659: Error: assert_greater_than: The iframe should have at least one resource timing entry. expected a number greater than 0 but got 0
+Description
+
+This test validates that for a cross origin resource, the timing allow check algorithm will pass when the HTTP response has multiple Timing-Allow-Origin header fields and the subsequent field value is separated by a comma.
+
+
+Harness Error (FAIL), message = Error: assert_greater_than: The iframe should have at least one resource timing entry. expected a number greater than 0 but got 0
+
+PASS window.performance is defined 
+PASS window.performance.getEntriesByType is defined 
+

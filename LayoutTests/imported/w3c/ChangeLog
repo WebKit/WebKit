@@ -1,3 +1,106 @@
+2018-09-24  Yoav Weiss  <yoav@yoav.ws>
+
+        Import WPT resource-timing tests
+        https://bugs.webkit.org/show_bug.cgi?id=189903
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/resource-timing/META.yml: Added.
+        * web-platform-tests/resource-timing/OWNERS: Removed.
+        * web-platform-tests/resource-timing/clear_resource_timing_functionality.html: Added.
+        * web-platform-tests/resource-timing/clear_resource_timing_functionality-expected.txt: Added.
+        * web-platform-tests/resource-timing/idlharness.any.html: Added.
+        * web-platform-tests/resource-timing/idlharness.any-expected.txt: Added.
+        * web-platform-tests/resource-timing/idlharness.any.js: Added.
+        (idl_array.catch):
+        * web-platform-tests/resource-timing/idlharness.any.worker.html: Added.
+        * web-platform-tests/resource-timing/idlharness.any.worker-expected.txt: Added.
+        * web-platform-tests/resource-timing/idlharness.html: Removed.
+        * web-platform-tests/resource-timing/resource-timing-tojson.html: Added.
+        * web-platform-tests/resource-timing/resource-timing-tojson-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain.html: Added.
+        * web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_TAO_match_origin.htm:
+        * web-platform-tests/resource-timing/resource_TAO_match_origin-expected.txt: Changed.
+        * web-platform-tests/resource-timing/resource_TAO_match_wildcard.htm:
+        * web-platform-tests/resource-timing/resource_TAO_match_wildcard-expected.txt: Changed.
+        * web-platform-tests/resource-timing/resource_TAO_multi.htm:
+        * web-platform-tests/resource-timing/resource_TAO_multi-expected.txt: Changed.
+        * web-platform-tests/resource-timing/resource_TAO_multi_wildcard.html: Copied from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_multi.htm.
+        * web-platform-tests/resource-timing/resource_TAO_multi_wildcard-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_TAO_null.htm:
+        * web-platform-tests/resource-timing/resource_TAO_null-expected.txt: Changed.
+        * web-platform-tests/resource-timing/resource_TAO_origin_uppercase.htm:
+        * web-platform-tests/resource-timing/resource_TAO_origin_uppercase-expected.txt: Changed.
+        * web-platform-tests/resource-timing/resource_TAO_space.htm:
+        * web-platform-tests/resource-timing/resource_TAO_space-expected.txt: Changed.
+        * web-platform-tests/resource-timing/resource_TAO_wildcard.htm:
+        * web-platform-tests/resource-timing/resource_TAO_wildcard-expected.txt: Changed.
+        * web-platform-tests/resource-timing/resource_dedicated_worker.html: Added.
+        * web-platform-tests/resource-timing/resource_dedicated_worker-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_ignore_data_url.html: Added.
+        * web-platform-tests/resource-timing/resource_ignore_data_url-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_ignore_failures.html: Added.
+        * web-platform-tests/resource-timing/resource_ignore_failures-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_initiator_types.html: Added.
+        * web-platform-tests/resource-timing/resource_initiator_types-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_memory_cached.sub.html: Added.
+        * web-platform-tests/resource-timing/resource_memory_cached.sub-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_redirects.html: Added.
+        * web-platform-tests/resource-timing/resource_redirects-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_reparenting.html: Added.
+        * web-platform-tests/resource-timing/resource_reparenting-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_script_types.html: Added.
+        * web-platform-tests/resource-timing/resource_script_types-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_subframe_self_navigation.html: Added.
+        * web-platform-tests/resource-timing/resource_subframe_self_navigation-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing.worker.html: Added.
+        * web-platform-tests/resource-timing/resource_timing.worker-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing.worker.js: Added.
+        (check):
+        (async_test.t.then):
+        * web-platform-tests/resource-timing/resource_timing_TAO_cross_origin_redirect.html: Added.
+        * web-platform-tests/resource-timing/resource_timing_TAO_cross_origin_redirect-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing_buffer_full_eventually.html: Added.
+        * web-platform-tests/resource-timing/resource_timing_buffer_full_eventually-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing_buffer_full_when_populate_entries.html: Added.
+        * web-platform-tests/resource-timing/resource_timing_buffer_full_when_populate_entries-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing_buffer_full_when_shrink_buffer_size.html: Added.
+        * web-platform-tests/resource-timing/resource_timing_buffer_full_when_shrink_buffer_size-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing_cross_origin_redirect.html: Added.
+        * web-platform-tests/resource-timing/resource_timing_cross_origin_redirect-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain.html: Added.
+        * web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing_same_origin_redirect.html: Added.
+        * web-platform-tests/resource-timing/resource_timing_same_origin_redirect-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource_timing_store_and_clear_during_callback.html: Added.
+        * web-platform-tests/resource-timing/resource_timing_store_and_clear_during_callback-expected.txt: Added.
+        * web-platform-tests/resource-timing/resources/TAOResponse.py:
+        (main):
+        * web-platform-tests/resource-timing/resources/all_resource_types.htm: Added.
+        * web-platform-tests/resource-timing/resources/blank_page_green.htm: Added.
+        * web-platform-tests/resource-timing/resources/empty.js: Added.
+        * web-platform-tests/resource-timing/resources/empty.py: Added.
+        (main):
+        * web-platform-tests/resource-timing/resources/empty_script.js: Added.
+        * web-platform-tests/resource-timing/resources/eventsource.py: Added.
+        (main):
+        * web-platform-tests/resource-timing/resources/green_frame.htm: Added.
+        * web-platform-tests/resource-timing/resources/iframe_TAO_multi_wildcard.html: Added.
+        * web-platform-tests/resource-timing/resources/multi_redirect.py: Added.
+        (main):
+        * web-platform-tests/resource-timing/resources/nested.css: Added.
+        (@import "resource_timing_test0.css?id=n1";):
+        (ol):
+        * web-platform-tests/resource-timing/resources/notify_parent.html: Added.
+        * web-platform-tests/resource-timing/resources/self_navigation.html: Added.
+        * web-platform-tests/resource-timing/resources/w3c-import.log:
+        * web-platform-tests/resource-timing/resources/worker_with_images.js: Added.
+        (checkDone):
+        (makeRequest.xhr.onreadystatechange):
+        (makeRequest):
+        * web-platform-tests/resource-timing/w3c-import.log:
+
 2018-09-21  Dean Jackson  <dino@apple.com>
 
         Add PointerEvent, plus feature flag, plus Web Platform Tests

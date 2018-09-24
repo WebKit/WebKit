@@ -1653,6 +1653,7 @@ webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.htm
 [ Sierra ] fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Skip ]
 
 webkit.org/b/180260 [ HighSierra ] http/wpt/resource-timing/rt-resources-per-worker.html [ Pass Failure ]
+webkit.org/b/189908 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Pass Timeout ]
 
 webkit.org/b/181830 [ Debug ] media/video-main-content-allow-then-deny.html [ Pass Failure ]
 
