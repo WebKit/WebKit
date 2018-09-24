@@ -62,8 +62,8 @@
     [CEReactions] attribute [TreatNullAs=EmptyString] DOMString outerText;
 
     // iOS autocorrect / autocapitalization extensions.
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute [TreatNullAs=EmptyString] DOMString autocapitalize;
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, CEReactions] attribute boolean autocorrect;
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, CEReactions] attribute [TreatNullAs=EmptyString] DOMString autocapitalize;
 
     // FIXME: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
     [CEReactions, Reflect] attribute DOMString webkitdropzone;

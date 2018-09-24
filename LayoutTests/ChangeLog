@@ -1,3 +1,16 @@
+2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert when using paper-textarea due to autocorrect IDL attribute missing CEReactions
+        https://bugs.webkit.org/show_bug.cgi?id=174629
+        <rdar://problem/33407620>
+
+        Reviewed by Simon Fraser.
+
+        Added a regression test for mutating autocorrect and autocapitalize IDL attributes during connected callback.
+
+        * fast/custom-elements/autocorrect-autocapitalize-idl-attributes-crash-expected.txt: Added.
+        * fast/custom-elements/autocorrect-autocapitalize-idl-attributes-crash.html: Added.
+
 2018-09-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Enable http/tests/misc tests.

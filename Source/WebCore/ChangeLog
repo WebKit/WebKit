@@ -1,3 +1,17 @@
+2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert when using paper-textarea due to autocorrect IDL attribute missing CEReactions
+        https://bugs.webkit.org/show_bug.cgi?id=174629
+        <rdar://problem/33407620>
+
+        Reviewed by Simon Fraser.
+
+        The bug was caused by autocorrect and autocapitalize IDL attributes missing CEReactions.
+
+        Test: fast/custom-elements/autocorrect-autocapitalize-idl-attributes-crash.html
+
+        * html/HTMLElement.idl:
+
 2018-09-24  Chris Dumez  <cdumez@apple.com>
 
         No-op document.open() calls should not have any side effects
