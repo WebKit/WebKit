@@ -624,9 +624,12 @@ private:
     
     void transform()
     {
-        InsertionSet insertionSet(m_graph);
+        bool modifiedCFG = false;
         
+        InsertionSet insertionSet(m_graph);
+
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
+            Node* pseudoTerminal = nullptr;
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
                 
@@ -1210,11 +1213,32 @@ private:
                 default:
                     break;
                 }
-                if (node->isPseudoTerminal())
+
+                if (node->isPseudoTerminal()) {
+                    pseudoTerminal = node;
                     break;
+                }
             }
-            
+
             insertionSet.execute(block);
+
+            if (pseudoTerminal) {
+                for (unsigned i = 0; i < block->size(); ++i) {
+                    Node* node = block->at(i);
+                    if (node != pseudoTerminal)
+                        continue;
+                    block->resize(i + 1);
+                    block->append(m_graph.addNode(SpecNone, Unreachable, node->origin));
+                    modifiedCFG = true;
+                    break;
+                }
+            }
+        }
+
+        if (modifiedCFG) {
+            m_graph.invalidateCFG();
+            m_graph.resetReachability();
+            m_graph.killUnreachableBlocks();
         }
     }
     

@@ -1,3 +1,39 @@
+2018-09-24  Saam barati  <sbarati@apple.com>
+
+        ArgumentsEliminationPhase should snip basic blocks after proven OSR exits
+        https://bugs.webkit.org/show_bug.cgi?id=189682
+        <rdar://problem/43557315>
+
+        Reviewed by Mark Lam.
+
+        Otherwise, if we have code like this:
+        ```
+        a: Arguments
+        b: GetButterfly(@a)
+        c: ForceExit
+        d: GetArrayLength(@a, @b)
+        ```
+        it will get transformed into this invalid DFG IR:
+        ```
+        a: PhantomArguments
+        b: Check(@a)
+        c: ForceExit
+        d: GetArrayLength(@a, @b)
+        ```
+        
+        And we will fail DFG validation since @b does not have a result.
+        
+        The fix is to just remove all nodes after the ForceExit and plant an
+        Unreachable after it. So the above code program will now turn into this:
+        ```
+        a: PhantomArguments
+        b: Check(@a)
+        c: ForceExit
+        e: Unreachable
+        ```
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2018-09-22  Saam barati  <sbarati@apple.com>
 
         The sampling should not use Strong<CodeBlock> in its machineLocation field
