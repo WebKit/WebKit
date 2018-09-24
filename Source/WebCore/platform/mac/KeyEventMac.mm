@@ -172,6 +172,66 @@ int windowsKeyCodeForKeyCode(uint16_t keyCode)
     return 0;
 }
 
+int windowsKeyCodeForCharCode(unichar charCode)
+{
+    switch (charCode) {
+    case 'a': case 'A': return VK_A;
+    case 'b': case 'B': return VK_B;
+    case 'c': case 'C': return VK_C;
+    case 'd': case 'D': return VK_D;
+    case 'e': case 'E': return VK_E;
+    case 'f': case 'F': return VK_F;
+    case 'g': case 'G': return VK_G;
+    case 'h': case 'H': return VK_H;
+    case 'i': case 'I': return VK_I;
+    case 'j': case 'J': return VK_J;
+    case 'k': case 'K': return VK_K;
+    case 'l': case 'L': return VK_L;
+    case 'm': case 'M': return VK_M;
+    case 'n': case 'N': return VK_N;
+    case 'o': case 'O': return VK_O;
+    case 'p': case 'P': return VK_P;
+    case 'q': case 'Q': return VK_Q;
+    case 'r': case 'R': return VK_R;
+    case 's': case 'S': return VK_S;
+    case 't': case 'T': return VK_T;
+    case 'u': case 'U': return VK_U;
+    case 'v': case 'V': return VK_V;
+    case 'w': case 'W': return VK_W;
+    case 'x': case 'X': return VK_X;
+    case 'y': case 'Y': return VK_Y;
+    case 'z': case 'Z': return VK_Z;
+
+    // AppKit generates Unicode PUA character codes for some function keys; using these when key code is not known.
+    case NSPauseFunctionKey: return VK_PAUSE;
+    case NSSelectFunctionKey: return VK_SELECT;
+    case NSPrintFunctionKey: return VK_PRINT;
+    case NSExecuteFunctionKey: return VK_EXECUTE;
+    case NSPrintScreenFunctionKey: return VK_SNAPSHOT;
+    case NSInsertFunctionKey: return VK_INSERT;
+    case NSF21FunctionKey: return VK_F21;
+    case NSF22FunctionKey: return VK_F22;
+    case NSF23FunctionKey: return VK_F23;
+    case NSF24FunctionKey: return VK_F24;
+    case NSScrollLockFunctionKey: return VK_SCROLL;
+
+    // This is for U.S. keyboard mapping, and doesn't necessarily make sense for different keyboard layouts.
+    // For example, '"' on Windows Russian layout is VK_2, not VK_OEM_7.
+    case ';': case ':': return VK_OEM_1;
+    case '=': case '+': return VK_OEM_PLUS;
+    case ',': case '<': return VK_OEM_COMMA;
+    case '-': case '_': return VK_OEM_MINUS;
+    case '.': case '>': return VK_OEM_PERIOD;
+    case '/': case '?': return VK_OEM_2;
+    case '`': case '~': return VK_OEM_3;
+    case '[': case '{': return VK_OEM_4;
+    case '\\': case '|': return VK_OEM_5;
+    case ']': case '}': return VK_OEM_6;
+    case '\'': case '"': return VK_OEM_7;
+    }
+    return 0;
+}
+
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCompatibilityMode)
 {
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.

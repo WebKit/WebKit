@@ -1,3 +1,27 @@
+2018-09-24  Daniel Bates  <dabates@apple.com>
+
+        Separate Mac and iOS implementation of windowsKeyCodeForCharCode()
+        https://bugs.webkit.org/show_bug.cgi?id=189898
+
+        Reviewed by Tim Horton.
+
+        Extract the Mac and iOS implementations into a windowsKeyCodeForCharCode() defined in file
+        KeyEventMac.mm and file KeyEventIOS, respectively.
+
+        Mac and iOS have significant differences in how they represent function keys. It is not worthwhile
+        to share windowsKeyCodeForCharCode() between them given these differences. On Mac function keys
+        are represented by a char code in the range 0xF700-0xF8FF. On iOS these keys may not have a unique
+        char code (e.g. F1 = 0x10 = F10) and must be identified either by special string (e.g. UIKeyInputUpArrow)
+        or key code.
+
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::windowsKeyCodeForCharCode): Deleted.
+        * platform/ios/KeyEventIOS.mm:
+        (WebCore::windowsKeyCodeForCharCode): Added. Remove the handling of NS*FunctionKey char codes
+        as function keys are not represented using them as of iOS 12.
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::windowsKeyCodeForCharCode): Added.
+
 2018-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the old "AcceleratedCompositingForOverflowScroll" code
