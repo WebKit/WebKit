@@ -27,6 +27,7 @@
 #define WKPage_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKErrorRef.h>
 #include <WebKit/WKEvent.h>
 #include <WebKit/WKFindOptions.h>
@@ -224,8 +225,8 @@ WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClientBase* c
 WK_EXPORT void WKPageSetPageInjectedBundleClient(WKPageRef page, const WKPageInjectedBundleClientBase* client);
 
 // A client can implement either a navigation client or loader and policy clients, but never both.
-WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClientBase* client);
-WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClientBase* client);
+WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClientBase* client) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKPageSetPageNavigationClient, macosx(WK_MAC_TBA));
+WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClientBase* client) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKPageSetPageNavigationClient, macosx(WK_MAC_TBA));
 WK_EXPORT void WKPageSetPageNavigationClient(WKPageRef page, const WKPageNavigationClientBase* client);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKSerializedScriptValueRef, WKErrorRef, void*);

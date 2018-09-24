@@ -1050,6 +1050,7 @@
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C26958520043212005C439B /* WKOpenPanelParametersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C298D9E1C3DEF2900470AFE /* PendingDownload.h */; };
+		5C359C0D2154739F009E7948 /* WKDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C359C0C21547321009E7948 /* WKDeprecated.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C8DD3801FE4521600F2A556 /* WebsiteAutoplayPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C8DD37F1FE4519200F2A556 /* WebsiteAutoplayPolicy.h */; };
@@ -3424,6 +3425,7 @@
 		5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSession.h; sourceTree = "<group>"; };
 		5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersPrivate.h; sourceTree = "<group>"; };
 		5C298D9E1C3DEF2900470AFE /* PendingDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingDownload.h; sourceTree = "<group>"; };
+		5C359C0C21547321009E7948 /* WKDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeprecated.h; sourceTree = "<group>"; };
 		5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsitePoliciesData.cpp; sourceTree = "<group>"; };
 		5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoOrRedo.h; sourceTree = "<group>"; };
 		5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskPrivate.h; sourceTree = "<group>"; };
@@ -8233,6 +8235,7 @@
 				BC4075DB124FF0270068F20A /* WKData.cpp */,
 				BC4075DC124FF0270068F20A /* WKData.h */,
 				377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */,
+				5C359C0C21547321009E7948 /* WKDeprecated.h */,
 				1AFF48FE1833DE78009AB15A /* WKDeprecatedFunctions.cpp */,
 				8372DB2E1A677D4A00C697C5 /* WKDiagnosticLoggingResultType.h */,
 				BC4075DD124FF0270068F20A /* WKDictionary.cpp */,
@@ -9583,6 +9586,7 @@
 				37A709A91E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h in Headers */,
 				2E94FC1620351A6D00974BA0 /* WKDatePickerViewController.h in Headers */,
 				377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */,
+				5C359C0D2154739F009E7948 /* WKDeprecated.h in Headers */,
 				8372DB2F1A677D4A00C697C5 /* WKDiagnosticLoggingResultType.h in Headers */,
 				BC4075FA124FF0270068F20A /* WKDictionary.h in Headers */,
 				BC017D0716260FF4007054F5 /* WKDOMDocument.h in Headers */,

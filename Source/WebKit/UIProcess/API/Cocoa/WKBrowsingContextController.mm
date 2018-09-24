@@ -514,7 +514,9 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             WKFramePolicyListenerUse(listener);
     };
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKPageSetPagePolicyClient(toAPI(&page), &policyClient.base);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (id <WKBrowsingContextLoadDelegate>)loadDelegate
@@ -543,8 +545,11 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
     if (policyDelegate)
         setUpPagePolicyClient(self, *_page);
-    else
+    else {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         WKPageSetPagePolicyClient(toAPI(_page.get()), nullptr);
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
 }
 
 - (id <WKBrowsingContextHistoryDelegate>)historyDelegate
