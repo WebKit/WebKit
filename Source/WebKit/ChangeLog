@@ -1,3 +1,14 @@
+2018-09-24  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: topContentInset is not accounted for when inspecting a WKWebView and docked to side
+        https://bugs.webkit.org/show_bug.cgi?id=189859
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        Add special cases for inspecting a WKWebView. We already special-case for WKView.
+
 2018-09-24  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Compositing indicators are not working
