@@ -34,6 +34,7 @@
 #include "MutationObserver.h"
 
 #include "Document.h"
+#include "GCReachableRef.h"
 #include "HTMLSlotElement.h"
 #include "Microtasks.h"
 #include "MutationCallback.h"
@@ -151,9 +152,9 @@ static MutationObserverSet& suspendedMutationObservers()
 }
 
 // https://dom.spec.whatwg.org/#signal-slot-list
-static Vector<RefPtr<HTMLSlotElement>>& signalSlotList()
+static Vector<GCReachableRef<HTMLSlotElement>>& signalSlotList()
 {
-    static NeverDestroyed<Vector<RefPtr<HTMLSlotElement>>> list;
+    static NeverDestroyed<Vector<GCReachableRef<HTMLSlotElement>>> list;
     return list;
 }
 
@@ -189,8 +190,8 @@ void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
 {
     ASSERT(isMainThread());
-    ASSERT(!signalSlotList().contains(&slot));
-    signalSlotList().append(&slot);
+    ASSERT(signalSlotList().findMatching([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
+    signalSlotList().append(slot);
 
     queueMutationObserverCompoundMicrotask();
 }
@@ -273,7 +274,7 @@ void MutationObserver::notifyMutationObservers()
 
         // 3. Let signalList be a copy of unit of related similar-origin browsing contexts' signal slot list.
         // 4. Empty unit of related similar-origin browsing contexts' signal slot list.
-        Vector<RefPtr<HTMLSlotElement>> slotList;
+        Vector<GCReachableRef<HTMLSlotElement>> slotList;
         if (!signalSlotList().isEmpty()) {
             slotList.swap(signalSlotList());
             for (auto& slot : slotList)

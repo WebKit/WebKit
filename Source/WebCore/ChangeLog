@@ -1,5 +1,22 @@
 2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        imported/w3c/web-platform-tests/shadow-dom/slotchange.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=167652
+
+        Reviewed by Saam Barati.
+
+        The bug appears to be caused by the JS wrappers of slot elements getting prematurely collected.
+        Deployed GCReachableRef introduced in r236376 to fix the bug.
+
+        Test: fast/shadow-dom/signal-slot-list-retains-js-wrappers.html
+
+        * dom/MutationObserver.cpp:
+        (WebCore::signalSlotList):
+        (WebCore::MutationObserver::enqueueSlotChangeEvent):
+        (WebCore::MutationObserver::notifyMutationObservers):
+
+2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Release assert when using paper-textarea due to autocorrect IDL attribute missing CEReactions
         https://bugs.webkit.org/show_bug.cgi?id=174629
         <rdar://problem/33407620>

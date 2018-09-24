@@ -1,5 +1,17 @@
 2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        imported/w3c/web-platform-tests/shadow-dom/slotchange.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=167652
+
+        Reviewed by Saam Barati.
+
+        Added a regression test for signaling a lot of slot elements.
+
+        * fast/shadow-dom/signal-slot-list-retains-js-wrappers-expected.txt: Added.
+        * fast/shadow-dom/signal-slot-list-retains-js-wrappers.html: Added.
+
+2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Release assert when using paper-textarea due to autocorrect IDL attribute missing CEReactions
         https://bugs.webkit.org/show_bug.cgi?id=174629
         <rdar://problem/33407620>
