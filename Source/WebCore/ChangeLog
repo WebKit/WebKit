@@ -1,3 +1,19 @@
+2018-09-24  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE][GStreamer] Don't update duration when it was not previously NaN
+        https://bugs.webkit.org/show_bug.cgi?id=189869
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This is what the spec mandates. The spec doesn't say anything about
+        updating duration when it had been previously set, even if the new
+        init segment says that the duration is growing.
+
+        This fixes MSE YTTV 2018 69.MediaSourceDurationVP9.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+
 2018-09-23  Frederic Wang  <fwang@igalia.com>
 
         Add missing includes in TextCodecReplacement.cpp
