@@ -345,6 +345,12 @@ void CoordinatedGraphicsScene::updateSceneState()
                             layer.setPreserves3D(layerState.flags.preserves3D);
                         }
 
+                        if (layerState.delta.repaintCounterChanged)
+                            layer.setRepaintCounter(layerState.repaintCounter.visible, layerState.repaintCounter.count);
+
+                        if (layerState.delta.debugBorderChanged)
+                            layer.setDebugVisuals(layerState.debugBorder.visible, layerState.debugBorder.color, layerState.debugBorder.width);
+
                         if (layerState.backingStore) {
                             auto& impl = backingStoreImpl(*layerState.backingStore);
                             layersByBacking.backingStore.append(
