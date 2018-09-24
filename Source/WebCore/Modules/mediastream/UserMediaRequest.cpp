@@ -228,6 +228,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             return;
 
         if (!privateStream) {
+            RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
             deny(MediaAccessDenialReason::HardwareError);
             return;
         }

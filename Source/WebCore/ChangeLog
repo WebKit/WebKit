@@ -1,3 +1,43 @@
+2018-09-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Add mock window capture source
+        https://bugs.webkit.org/show_bug.cgi?id=189843
+        <rdar://problem/44687445>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, the API is disabled and it isn't possible to test yet.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::processNewFrame): Remove an extra blank line.
+
+        * platform/mock/MockMediaDevice.h:
+        (WebCore::MockDisplayProperties::encode const): Get rid of defaultFrameRate, add type.
+        (WebCore::MockDisplayProperties::decode): Ditto.
+        (WebCore::MockMediaDevice::type const):
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::defaultDevices): Add mock window devices.
+        (WebCore::MockRealtimeMediaSourceCenter::audioDevices): Cleanup.
+        (WebCore::MockRealtimeMediaSourceCenter::videoDevices): Cleanup.
+        (WebCore::MockRealtimeMediaSourceCenter::displayDevices): New.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource): Set default size on displays.
+        (WebCore::MockRealtimeVideoSource::supportsSizeAndFrameRate): Call RealtimeVideoSource for 
+        mock camera, base class for device.
+        (WebCore::MockRealtimeVideoSource::setSizeAndFrameRate): Ditto.
+        (WebCore::MockRealtimeVideoSource::generatePresets): ASSERT if called as a camera.
+        (WebCore::MockRealtimeVideoSource::capabilities): updateCapabilities is only appropriate for cameras.
+        (WebCore::MockRealtimeVideoSource::settings): Camera and Device are different surface types.
+        (WebCore::MockRealtimeVideoSource::drawText): Render name, not ID.
+        (WebCore::MockRealtimeVideoSource::mockDisplayType const):
+
+        * platform/mock/MockRealtimeVideoSource.h:
+        (WebCore::MockRealtimeVideoSource::mockDisplay const):
+        (WebCore::MockRealtimeVideoSource::mockScreen const):
+        (WebCore::MockRealtimeVideoSource::mockWindow const):
+
 2018-09-24  Daniel Bates  <dabates@apple.com>
 
         [iOS] Key code is 0 for many hardware keyboard keys

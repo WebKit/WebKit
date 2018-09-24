@@ -45,8 +45,8 @@ protected:
     RealtimeVideoSource(const String& id, const String& name);
 
     void prepareToProduceData();
-    bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
-    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
+    bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
+    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
 
     virtual void generatePresets() = 0;
     virtual bool prefersPreset(VideoPreset&) { return true; }

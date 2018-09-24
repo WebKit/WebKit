@@ -58,10 +58,10 @@ public:
         switch (device.type()) {
         case CaptureDevice::DeviceType::Camera:
         case CaptureDevice::DeviceType::Screen:
+        case CaptureDevice::DeviceType::Window:
             return MockRealtimeVideoSource::create(device.persistentId(), device.label(), constraints);
             break;
         case CaptureDevice::DeviceType::Application:
-        case CaptureDevice::DeviceType::Window:
         case CaptureDevice::DeviceType::Browser:
         case CaptureDevice::DeviceType::Microphone:
         case CaptureDevice::DeviceType::Unknown:
@@ -121,9 +121,9 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(const String& deviceID, const S
     m_dashWidths.uncheckedAppend(6);
     m_dashWidths.uncheckedAppend(6);
 
-    if (mockScreen()) {
+    if (mockDisplay()) {
         auto& properties = WTF::get<MockDisplayProperties>(m_device.properties);
-        setFrameRate(properties.defaultFrameRate);
+        setSize(properties.defaultSize);
         m_fillColor = properties.fillColor;
         return;
     }
@@ -134,8 +134,29 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(const String& deviceID, const S
     m_fillColor = properties.fillColor;
 }
 
+bool MockRealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
+{
+    // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
+    // because of the RealtimeVideoSource inheritance.
+    if (mockCamera())
+        return RealtimeVideoSource::supportsSizeAndFrameRate(width, height, rate);
+
+    return RealtimeMediaSource::supportsSizeAndFrameRate(width, height, rate);
+}
+
+void MockRealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
+{
+    // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
+    // because of the RealtimeVideoSource inheritance.
+    if (mockCamera())
+        return RealtimeVideoSource::setSizeAndFrameRate(width, height, rate);
+
+    return RealtimeMediaSource::setSizeAndFrameRate(width, height, rate);
+}
+
 void MockRealtimeVideoSource::generatePresets()
 {
+    ASSERT(mockCamera());
     setSupportedPresets(WTFMove(WTF::get<MockCameraProperties>(m_device.properties).presets));
 }
 
@@ -145,17 +166,18 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
         capabilities.setDeviceId(id());
-        if (mockCamera())
+        if (mockCamera()) {
             capabilities.addFacingMode(WTF::get<MockCameraProperties>(m_device.properties).facingMode);
-        else {
+            updateCapabilities(capabilities);
+        } else {
             capabilities.setWidth(CapabilityValueOrRange(72, 2880));
             capabilities.setHeight(CapabilityValueOrRange(45, 1800));
             capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
         }
 
-        updateCapabilities(capabilities);
         m_capabilities = WTFMove(capabilities);
     }
+
     return m_capabilities.value();
 }
 
@@ -168,8 +190,8 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     if (mockCamera())
         settings.setFacingMode(facingMode());
     else {
-        settings.setDisplaySurface(RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor);
-        settings.setLogicalSurface(true);
+        settings.setDisplaySurface(mockScreen() ? RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor : RealtimeMediaSourceSettings::DisplaySurfaceType::Window);
+        settings.setLogicalSurface(false);
     }
     settings.setFrameRate(frameRate());
     auto& size = this->size();
@@ -187,6 +209,10 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     supportedConstraints.setSupportsAspectRatio(true);
     if (mockCamera())
         supportedConstraints.setSupportsFacingMode(true);
+    else {
+        supportedConstraints.setSupportsDisplaySurface(true);
+        supportedConstraints.setSupportsLogicalSurface(true);
+    }
     settings.setSupportedConstraints(supportedConstraints);
 
     m_currentSettings = WTFMove(settings);
@@ -395,7 +421,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
         context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
     } else {
         statsLocation.move(0, m_statsFontSize);
-        context.drawText(statsFont, TextRun { id() }, statsLocation);
+        context.drawText(statsFont, TextRun { name() }, statsLocation);
     }
 
     FloatPoint bipBopLocation(size.width() * .6, size.height() * .6);
@@ -458,6 +484,14 @@ ImageBuffer* MockRealtimeVideoSource::imageBuffer() const
     m_imageBuffer->context().setStrokeThickness(1);
 
     return m_imageBuffer.get();
+}
+
+bool MockRealtimeVideoSource::mockDisplayType(CaptureDevice::DeviceType type) const
+{
+    if (!WTF::holds_alternative<MockDisplayProperties>(m_device.properties))
+        return false;
+
+    return WTF::get<MockDisplayProperties>(m_device.properties).type == type;
 }
 
 } // namespace WebCore

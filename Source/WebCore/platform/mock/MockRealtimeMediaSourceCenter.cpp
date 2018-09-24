@@ -75,8 +75,11 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 Color::darkGray,
             } },
 
-        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { 30, Color::lightGray } },
-        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { 10, Color::yellow } }
+        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 3840, 2160 } } },
+        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 1920, 1080 } } },
+
+        MockMediaDevice { "WINDOW-2"_s, "Mock window 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, 0xfff1b5, { 640, 480 } } },
+        MockMediaDevice { "WINDOW-2"_s, "Mock window 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, 0xffd0b5, { 1280, 600 } } },
     };
 }
 
@@ -214,7 +217,7 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::audioDevices()
     static auto audioDevices = makeNeverDestroyed([] {
         Vector<CaptureDevice> audioDevices;
         for (const auto& device : devices()) {
-            if (device.type() == CaptureDevice::DeviceType::Microphone)
+            if (device.isMicrophone())
                 audioDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, device.persistentId).value());
         }
         return audioDevices;
@@ -228,7 +231,7 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::videoDevices()
     static auto videoDevices = makeNeverDestroyed([] {
         Vector<CaptureDevice> videoDevices;
         for (const auto& device : devices()) {
-            if (device.type() == CaptureDevice::DeviceType::Camera)
+            if (device.isCamera())
                 videoDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId).value());
         }
         return videoDevices;
@@ -242,7 +245,7 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
     static auto displayDevices = makeNeverDestroyed([] {
         Vector<CaptureDevice> displayDevices;
         for (const auto& device : devices()) {
-            if (device.type() == CaptureDevice::DeviceType::Screen)
+            if (device.isDisplay())
                 displayDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, device.persistentId).value());
         }
         return displayDevices;

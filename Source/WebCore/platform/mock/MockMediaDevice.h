@@ -102,16 +102,16 @@ struct MockDisplayProperties {
     template<class Encoder>
     void encode(Encoder& encoder) const
     {
-        encoder << defaultFrameRate;
+        encoder.encodeEnum(type);
         encoder << fillColor;
+        encoder << defaultSize;
     }
 
     template <class Decoder>
     static std::optional<MockDisplayProperties> decode(Decoder& decoder)
     {
-        std::optional<double> defaultFrameRate;
-        decoder >> defaultFrameRate;
-        if (!defaultFrameRate)
+        std::optional<CaptureDevice::DeviceType> type;
+        decoder >> type;
             return std::nullopt;
 
         std::optional<Color> fillColor;
@@ -119,11 +119,17 @@ struct MockDisplayProperties {
         if (!fillColor)
             return std::nullopt;
 
-        return MockDisplayProperties { *defaultFrameRate, *fillColor };
+        std::optional<IntSize> defaultSize;
+        decoder >> defaultSize;
+        if (!defaultSize)
+            return std::nullopt;
+
+        return MockDisplayProperties { *type, *fillColor, *defaultSize };
     }
 
-    double defaultFrameRate { 30 };
+    CaptureDevice::DeviceType type;
     Color fillColor { Color::lightGray };
+    IntSize defaultSize;
 };
 
 struct MockMediaDevice {
@@ -137,8 +143,9 @@ struct MockMediaDevice {
             return CaptureDevice::DeviceType::Microphone;
         if (isCamera())
             return CaptureDevice::DeviceType::Camera;
+
         ASSERT(isDisplay());
-        return CaptureDevice::DeviceType::Screen;
+        return WTF::get<MockDisplayProperties>(properties).type;
     }
 
     template<class Encoder>
