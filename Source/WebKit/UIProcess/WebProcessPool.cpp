@@ -471,7 +471,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         return *m_networkProcess;
     }
 
-    m_networkProcess = std::make_unique<NetworkProcessProxy>(*this);
+    m_networkProcess = NetworkProcessProxy::create(*this);
 
     NetworkProcessCreationParameters parameters;
 
@@ -612,7 +612,7 @@ void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* r
         parameters.shouldDisableServiceWorkerProcessTerminationDelay = m_shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
 
-        m_storageProcess = std::make_unique<StorageProcessProxy>(*this);
+        m_storageProcess = StorageProcessProxy::create(*this);
         m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(parameters), 0);
     }
 
@@ -648,7 +648,7 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
 #if ENABLE(SERVICE_WORKER)
 void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy, SecurityOriginData&& securityOrigin, std::optional<PAL::SessionID> sessionID)
 {
-    ASSERT_UNUSED(proxy, &proxy == m_storageProcess.get());
+    ASSERT_UNUSED(proxy, &proxy == m_storageProcess);
 
     if (m_serviceWorkerProcesses.contains(securityOrigin))
         return;

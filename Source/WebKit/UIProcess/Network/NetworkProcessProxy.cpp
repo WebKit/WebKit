@@ -66,6 +66,11 @@ static uint64_t generateCallbackID()
     return ++callbackID;
 }
 
+Ref<NetworkProcessProxy> NetworkProcessProxy::create(WebProcessPool& processPool)
+{
+    return adoptRef(*new NetworkProcessProxy(processPool));
+}
+
 NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)
@@ -90,16 +95,6 @@ NetworkProcessProxy::~NetworkProcessProxy()
     for (auto* proxy : m_webUserContentControllerProxies)
         proxy->removeNetworkProcess(*this);
 #endif
-}
-
-void NetworkProcessProxy::ref()
-{
-    m_processPool.ref();
-}
-
-void NetworkProcessProxy::deref()
-{
-    m_processPool.deref();
 }
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -253,7 +248,7 @@ void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC
 
 void NetworkProcessProxy::didClose(IPC::Connection&)
 {
-    auto protectedThis = makeRef(*this);
+    auto protectedProcessPool = makeRef(m_processPool);
 
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
@@ -405,7 +400,7 @@ void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID
     }
     
     auto callbackId = generateCallbackID();
-    auto addResult = m_updateBlockCookiesCallbackMap.add(callbackId, [protectedThis = makeRef(*this), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
+    auto addResult = m_updateBlockCookiesCallbackMap.add(callbackId, [protectedProcessPool = makeRef(m_processPool), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);

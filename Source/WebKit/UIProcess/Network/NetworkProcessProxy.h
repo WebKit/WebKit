@@ -64,9 +64,9 @@ struct NetworkProcessCreationParameters;
 class WebUserContentControllerProxy;
 struct WebsiteData;
 
-class NetworkProcessProxy final : public ChildProcessProxy, private ProcessThrottlerClient {
+class NetworkProcessProxy : public ChildProcessProxy, private ProcessThrottlerClient {
 public:
-    explicit NetworkProcessProxy(WebProcessPool&);
+    static Ref<NetworkProcessProxy> create(WebProcessPool&);
     ~NetworkProcessProxy();
 
     void getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&&);
@@ -86,9 +86,6 @@ public:
     void setCacheMaxAgeCapForPrevalentResources(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
-
-    void ref();
-    void deref();
 
     void writeBlobToFilePath(const WebCore::URL&, const String& path, CompletionHandler<void(bool)>&& callback);
 
@@ -113,6 +110,8 @@ public:
     void removeSession(PAL::SessionID);
 
 private:
+    NetworkProcessProxy(WebProcessPool&);
+
     // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;
