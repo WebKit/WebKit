@@ -91,7 +91,38 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height)
     return adoptCF(pixelBuffer);
 }
 
-CVPixelBufferRef RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame(const webrtc::VideoFrame& frame)
+CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height)
+{
+    if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height) {
+        const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+        auto pixelAttributes = @{
+            (__bridge NSString *)kCVPixelBufferWidthKey: @(width),
+            (__bridge NSString *)kCVPixelBufferHeightKey: @(height),
+            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat),
+            (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @(NO),
+#if PLATFORM(IOS)
+            (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @(YES),
+#else
+            (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @(YES),
+#endif
+            (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
+        };
+
+        CVPixelBufferPoolRef pool = nullptr;
+        auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &pool);
+
+        if (status != kCVReturnSuccess) {
+            RELEASE_LOG(MediaStream, "RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame failed creating a pixel buffer pool with error %d", status);
+            return nullptr;
+        }
+        m_pixelBufferPool = adoptCF(pool);
+        m_pixelBufferPoolWidth = width;
+        m_pixelBufferPoolHeight = height;
+    }
+    return m_pixelBufferPool.get();
+}
+
+RetainPtr<CVPixelBufferRef> RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame(const webrtc::VideoFrame& frame)
 {
     if (muted()) {
         if (!m_blackFrame || m_blackFrameWidth != frame.width() || m_blackFrameHeight != frame.height()) {
@@ -101,8 +132,23 @@ CVPixelBufferRef RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame(con
         }
         return m_blackFrame.get();
     }
-    ASSERT(frame.video_frame_buffer()->type() == webrtc::VideoFrameBuffer::Type::kNative);
-    return webrtc::pixelBufferFromFrame(frame);
+
+    RetainPtr<CVPixelBufferRef> newPixelBuffer;
+    return webrtc::pixelBufferFromFrame(frame, [this, &newPixelBuffer](size_t width, size_t height) -> CVPixelBufferRef {
+        auto pixelBufferPool = this->pixelBufferPool(width, height);
+        if (!pixelBufferPool)
+            return nullptr;
+
+        CVPixelBufferRef pixelBuffer = nullptr;
+        auto status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_pixelBufferPool.get(), &pixelBuffer);
+
+        if (status != kCVReturnSuccess) {
+            RELEASE_LOG(MediaStream, "RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame failed creating a pixel buffer with error %d", status);
+            return nullptr;
+        }
+        newPixelBuffer = adoptCF(pixelBuffer);
+        return newPixelBuffer.get();
+    });
 }
 
 void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)

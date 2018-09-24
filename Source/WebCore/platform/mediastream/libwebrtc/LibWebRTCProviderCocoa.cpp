@@ -57,12 +57,12 @@ void LibWebRTCProviderCocoa::setH264HardwareEncoderAllowed(bool allowed)
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderCocoa::createDecoderFactory()
 {
-    return webrtc::createVideoToolboxDecoderFactory();
+    return webrtc::createWebKitDecoderFactory();
 }
 
 std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderCocoa::createEncoderFactory()
 {
-    return webrtc::createVideoToolboxEncoderFactory();
+    return webrtc::createWebKitEncoderFactory();
 }
 
 void LibWebRTCProviderCocoa::setActive(bool value)

@@ -38,15 +38,15 @@ class VideoDecoderFactory;
 class VideoEncoderFactory;
 class VideoFrame;
 
-std::unique_ptr<webrtc::VideoEncoderFactory> createVideoToolboxEncoderFactory();
-std::unique_ptr<webrtc::VideoDecoderFactory> createVideoToolboxDecoderFactory();
+std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory();
+std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory();
 
 void setApplicationStatus(bool isActive);
 
 void setH264HardwareEncoderAllowed(bool);
 bool isH264HardwareEncoderAllowed();
 
-CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&);
+CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t)>&);
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef);
 
 }

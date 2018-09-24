@@ -1,3 +1,27 @@
+2018-09-24  Youenn Fablet  <youenn@apple.com>
+
+        Enable conversion of libwebrtc internal frames as CVPixelBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=189892
+
+        Reviewed by Eric Carlson.
+
+        Make sure to handle the case of libwebrtc frames that are not backed by CVPixelBuffer.
+        No observable change of behavior.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProviderCocoa::createDecoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::createEncoderFactory):
+        Update according renamed methods.
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame):
+        In case of libwebrtc frame that are not backed by CVPixelBuffer, we create
+        a CVPixelBuffer from a pixel buffer pool.
+        This CVPixelBuffer is then filled as part of webrtc::pixelBufferFromFrame.
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.mm:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::convertToYUV):
+        Make sure to use preferred pixel buffer format.
+
 2018-09-24  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add mock window capture source

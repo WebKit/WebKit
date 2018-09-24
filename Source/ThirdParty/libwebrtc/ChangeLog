@@ -1,3 +1,27 @@
+2018-09-24  Youenn Fablet  <youenn@apple.com>
+
+        Enable conversion of libwebrtc internal frames as CVPixelBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=189892
+
+        Reviewed by Eric Carlson.
+
+        Renamed encoder/decoder factory creation routine.
+        Make pixelBufferFromFrame take a function to create a CVPixelBuffer
+        if the frame does not wrap one.
+        Initialize the CVPixelBuffer with libwebrtc internal frame.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::createWebKitEncoderFactory):
+        (webrtc::createWebKitDecoderFactory):
+        (webrtc::CopyVideoFrameToPixelBuffer):
+        (webrtc::pixelBufferFromFrame):
+        (webrtc::createVideoToolboxEncoderFactory): Deleted.
+        (webrtc::createVideoToolboxDecoderFactory): Deleted.
+
 2018-09-21  Thibault Saunier  <tsaunier@igalia.com>
 
         [libwebrtc] Allow IP mismatch for local connections on localhost
