@@ -1,3 +1,30 @@
+2018-09-24  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add forEach method for iterating CodeBlock's ValueProfiles
+        https://bugs.webkit.org/show_bug.cgi?id=189897
+
+        Reviewed by Mark Lam.
+
+        Add method to abstract how we find ValueProfiles in a CodeBlock in
+        preparation for https://bugs.webkit.org/show_bug.cgi?id=189785, when
+        ValueProfiles will be stored in the MetadataTable.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllValueProfilePredictions):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::forEachValueProfile):
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+        (JSC::CodeBlock::valueProfileForArgument):
+        (JSC::CodeBlock::numberOfValueProfiles):
+        (JSC::CodeBlock::valueProfile):
+        (JSC::CodeBlock::totalNumberOfValueProfiles): Deleted.
+        (JSC::CodeBlock::getFromAllValueProfiles): Deleted.
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::validateJSCell):
+
 2018-09-24  Saam barati  <sbarati@apple.com>
 
         ArgumentsEliminationPhase should snip basic blocks after proven OSR exits

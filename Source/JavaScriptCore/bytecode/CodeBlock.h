@@ -415,6 +415,7 @@ public:
         ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters) || !vm()->canUseJIT());
         return m_argumentValueProfiles.size();
     }
+
     ValueProfile& valueProfileForArgument(unsigned argumentIndex)
     {
         ASSERT(vm()->canUseJIT()); // This is only called from the various JIT compilers or places that first check numberOfArgumentValueProfiles before calling this.
@@ -423,10 +424,7 @@ public:
         return result;
     }
 
-    unsigned numberOfValueProfiles() { return m_valueProfiles.size(); }
-    ValueProfile& valueProfile(int index) { return m_valueProfiles[index]; }
     ValueProfile& valueProfileForBytecodeOffset(int bytecodeOffset);
-    ValueProfile* tryGetValueProfileForBytecodeOffset(int bytecodeOffset);
     SpeculatedType valueProfilePredictionForBytecodeOffset(const ConcurrentJSLocker& locker, int bytecodeOffset)
     {
         if (ValueProfile* valueProfile = tryGetValueProfileForBytecodeOffset(bytecodeOffset))
@@ -434,15 +432,12 @@ public:
         return SpecNone;
     }
 
-    unsigned totalNumberOfValueProfiles()
+    template<typename Functor> void forEachValueProfile(const Functor& func)
     {
-        return numberOfArgumentValueProfiles() + numberOfValueProfiles();
-    }
-    ValueProfile& getFromAllValueProfiles(unsigned index)
-    {
-        if (index < numberOfArgumentValueProfiles())
-            return valueProfileForArgument(index);
-        return valueProfile(index - numberOfArgumentValueProfiles());
+        for (unsigned i = 0; i < numberOfArgumentValueProfiles(); ++i)
+            func(valueProfileForArgument(i));
+        for (unsigned i = 0; i < numberOfValueProfiles(); ++i)
+            func(valueProfile(i));
     }
 
     RareCaseProfile* addRareCaseProfile(int bytecodeOffset);
@@ -925,6 +920,12 @@ private:
     void stronglyVisitStrongReferences(const ConcurrentJSLocker&, SlotVisitor&);
     void stronglyVisitWeakReferences(const ConcurrentJSLocker&, SlotVisitor&);
     void visitOSRExitTargets(const ConcurrentJSLocker&, SlotVisitor&);
+
+    unsigned numberOfValueProfiles() { return m_valueProfiles.size(); }
+    unsigned numberOfNonArgumentValueProfiles() { return numberOfValueProfiles(); }
+    unsigned totalNumberOfValueProfiles() { return numberOfArgumentValueProfiles() + numberOfNonArgumentValueProfiles(); }
+    ValueProfile& valueProfile(int index) { return m_valueProfiles[index]; }
+    ValueProfile* tryGetValueProfileForBytecodeOffset(int bytecodeOffset);
 
     Seconds timeSinceCreation()
     {
