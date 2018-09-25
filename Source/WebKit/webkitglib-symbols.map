@@ -1,5 +1,6 @@
 {
 global:
+  jsc_*;
   webkit_*;
   WebProcessMainUnix;
   NetworkProcessMainUnix;
