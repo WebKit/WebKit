@@ -1,3 +1,12 @@
+2018-09-24  Justin Michaud  <justin_michaud@apple.com>
+
+        Import WPT tests for css custom properties api
+        https://bugs.webkit.org/show_bug.cgi?id=189764
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-09-24  Matt Lewis  <jlewis3@apple.com>
 
         Skipped accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html on High Sierra+.

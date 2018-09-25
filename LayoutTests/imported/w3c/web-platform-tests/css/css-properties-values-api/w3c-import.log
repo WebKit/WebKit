@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/property-cascade.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/register-property-syntax-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/register-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-properties-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-computation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-initial.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/typedom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/url-resolution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/var-reference-registered-properties-cycles.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/var-reference-registered-properties.html

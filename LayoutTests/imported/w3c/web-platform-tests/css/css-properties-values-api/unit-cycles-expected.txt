@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 63: TypeError: undefined is not an object (evaluating 'element.attributeStyleMap.clear')
+
+FAIL Untitled TypeError: undefined is not an object (evaluating 'element.attributeStyleMap.clear')
+

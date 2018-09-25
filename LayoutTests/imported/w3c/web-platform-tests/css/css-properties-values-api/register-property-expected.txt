@@ -1,0 +1,7 @@
+
+PASS registerProperty requires a Dictionary type 
+FAIL registerProperty requires a name matching <custom-property-name> assert_throws: function "() => CSS.registerProperty({name: 'no-leading-dash', inherits: false})" did not throw
+FAIL registerProperty only allows omitting initialValue if syntax is '*' assert_throws: function "() => CSS.registerProperty({name: '--syntax-test-3', syntax: 'length', inherits: false})" did not throw
+PASS registerProperty fails for an already registered property 
+PASS registerProperty requires inherits 
+

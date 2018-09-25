@@ -1,3 +1,51 @@
+2018-09-24  Justin Michaud  <justin_michaud@apple.com>
+
+        Import WPT tests for css custom properties api
+        https://bugs.webkit.org/show_bug.cgi?id=189764
+
+        Reviewed by Ryosuke Niwa.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-properties-values-api/META.yml: Added.
+        * web-platform-tests/css/css-properties-values-api/idlharness-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/idlharness.html: Added.
+        * web-platform-tests/css/css-properties-values-api/property-cascade-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/property-cascade.html: Added.
+        * web-platform-tests/css/css-properties-values-api/register-property-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/register-property-syntax-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/register-property-syntax-parsing.html: Added.
+        * web-platform-tests/css/css-properties-values-api/register-property.html: Added.
+        * web-platform-tests/css/css-properties-values-api/registered-properties-inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/registered-properties-inheritance.html: Added.
+        * web-platform-tests/css/css-properties-values-api/registered-property-computation-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/registered-property-computation.html: Added.
+        * web-platform-tests/css/css-properties-values-api/registered-property-cssom-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/registered-property-cssom.html: Added.
+        * web-platform-tests/css/css-properties-values-api/registered-property-initial-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/registered-property-initial.html: Added.
+        * web-platform-tests/css/css-properties-values-api/support/alt/alt.css: Added.
+        (#target):
+        * web-platform-tests/css/css-properties-values-api/support/alt/alt.js: Added.
+        (reg_url):
+        * web-platform-tests/css/css-properties-values-api/support/alt/w3c-import.log: Added.
+        * web-platform-tests/css/css-properties-values-api/support/main/main.css: Added.
+        (#target):
+        * web-platform-tests/css/css-properties-values-api/support/main/main.js: Added.
+        (reg_url):
+        * web-platform-tests/css/css-properties-values-api/support/main/main.utf16be.css: Added.
+        * web-platform-tests/css/css-properties-values-api/support/main/w3c-import.log: Added.
+        * web-platform-tests/css/css-properties-values-api/typedom.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/typedom.tentative.html: Added.
+        * web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/unit-cycles.html: Added.
+        * web-platform-tests/css/css-properties-values-api/url-resolution-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/url-resolution.html: Added.
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties-cycles-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties-cycles.html: Added.
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties.html: Added.
+        * web-platform-tests/css/css-properties-values-api/w3c-import.log: Added.
+
 2018-09-24  Chris Dumez  <cdumez@apple.com>
 
         No-op document.open() calls should not have any side effects

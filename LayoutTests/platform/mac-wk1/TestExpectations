@@ -627,4 +627,5 @@ webkit.org/b/189594 imported/w3c/web-platform-tests/css/css-animations/pending-s
 webkit.org/b/188070 imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.html [ Pass Failure ]
 
 # Not supported on WK1
+imported/w3c/web-platform-tests/css/css-properties-values-api/ [ Skip ]
 css-custom-properties-api [ Skip ]

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<!--  TODO(andruud): Add Typed OM details to spec and link to it here.  -->
+<link rel="help" href="https://github.com/w3c/css-houdini-drafts/pull/783" />
+<meta name="assert" content="Verifies that registered custom properties interact correctly with CSS Typed OM" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style id=style>
+    div {}
+</style>
+<div id=target></div>
+
+<script>
+
+// Properties are generated on demand, as `--prop-${g_counter}`.
+let g_counter = 1;
+
+// Generate a new property name.
+function gen_name() {
+    let name = `--prop-${g_counter}`;
+    g_counter++;
+    return name;
+}
+
+// Generate a property and return its name.
+function gen_prop(syntax, initialValue) {
+    let name = gen_name();
+    CSS.registerProperty({
+        name: name,
+        syntax: syntax,
+        initialValue: initialValue,
+        inherits: false
+    });
+    return name;
+}
+
+// On the target element, verify that computed value of 'name' is an instance
+// of 'expected' and not an instance of CSSUnparsedValue.
+//
+// If 'value' is non-null, that value is first set on the attributeStyleMap
+// of the target.
+function assert_computed_type(name, value, expected) {
+    if (expected == CSSUnparsedValue) {
+        throw 'CSSUnparsedValue may not be used as expected type';
+    }
+
+    if (value != null) {
+        target.style = `${name}: ${value}`;
+    }
+
+    let computedValue = target.computedStyleMap().get(name);
+
+    assert_false(computedValue instanceof CSSUnparsedValue);
+    assert_true(computedValue instanceof expected);
+
+    if (value != null) {
+        target.style = '';
+    }
+}
+
+function assert_attribute_get_type(styleDecl, propertyMap, syntax, value, expected) {
+    let name = gen_name();
+    styleDecl.setProperty(name, value);
+
+    assert_true(propertyMap.get(name) instanceof CSSUnparsedValue);
+
+    CSS.registerProperty({
+        name: name,
+        syntax: syntax,
+        initialValue: value,
+        inherits: false
+    });
+
+    if (expected == CSSStyleValue) {
+        assert_false(propertyMap.get(name) instanceof CSSUnparsedValue);
+    }
+
+    assert_true(propertyMap.get(name) instanceof expected);
+}
+
+// computedStyleMap
+
+test(function(){
+    let name = gen_prop('*', 'if(){}');
+    assert_true(target.computedStyleMap().get(name) instanceof CSSUnparsedValue);
+
+    target.attributeStyleMap.set(name, 'as{}df');
+    assert_true(target.computedStyleMap().get(name) instanceof CSSUnparsedValue);
+    target.attributeStyleMap.delete(name);
+}, 'Computed * is reified as CSSUnparsedValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<angle>', '42deg'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<angle> | fail', 'fail'), '42deg', CSSUnitValue);
+}, 'Computed <angle> is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<color>', '#fefefe'), null, CSSStyleValue);
+    assert_computed_type(gen_prop('<color> | fail', 'fail'), null, CSSStyleValue);
+}, 'Computed <color> is reified as CSSStyleValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<custom-ident>', 'none'), null, CSSKeywordValue);
+    assert_computed_type(gen_prop('<custom-ident> | <length>', '10px'), 'none', CSSKeywordValue);
+}, 'Computed <custom-ident> is reified as CSSKeywordValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<image>', 'url(thing.png)'), null, CSSImageValue);
+    assert_computed_type(gen_prop('<image> | fail', 'fail'), 'url(thing.png)', CSSImageValue);
+}, 'Computed <image> [url] is reified as CSSImageValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<integer>', '100'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<integer> | fail', 'fail'), '100', CSSUnitValue);
+}, 'Computed <integer> is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<length-percentage>', '10%'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<length-percentage> | fail', 'fail'), '10%', CSSUnitValue);
+}, 'Computed <length-percentage> [%] is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<length-percentage>', '10px'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<length-percentage> | fail', 'fail'), '10px', CSSUnitValue);
+}, 'Computed <length-percentage> [px] is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<length-percentage>', 'calc(10px + 10%)'), null, CSSMathSum);
+    assert_computed_type(gen_prop('<length-percentage> | fail', 'fail'), 'calc(10px + 10%)', CSSMathSum);
+}, 'Computed <length-percentage> [px + %] is reified as CSSMathSum');
+
+test(function(){
+    assert_computed_type(gen_prop('<length>', '10px'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<length> | fail', 'fail'), '10px', CSSUnitValue);
+}, 'Computed <length> is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<number>', '42'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<number> | fail', 'fail'), '42', CSSUnitValue);
+}, 'Computed <number> is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<percentage>', '10%'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<percentage> | fail', 'fail'), '10%', CSSUnitValue);
+}, 'Computed <percentage> is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<resolution>', '300dpi'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<resolution> | fail', 'fail'), '300dpi', CSSUnitValue);
+}, 'Computed <resolution> is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<time>', '42s'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<time> | fail', 'fail'), '42s', CSSUnitValue);
+}, 'Computed <time> is reified as CSSUnitValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<url>', 'url(a)'), null, CSSStyleValue);
+    assert_computed_type(gen_prop('<url> | fail', 'fail'), 'url(a)', CSSStyleValue);
+}, 'Computed <url> is reified as CSSStyleValue');
+
+test(function(){
+    assert_computed_type(gen_prop('thing1 | THING2', 'thing1'), null, CSSKeywordValue);
+    assert_computed_type(gen_prop('thing1 | THING2 | <url>', 'url(fail)'), 'THING2', CSSKeywordValue);
+}, 'Computed ident is reified as CSSKeywordValue');
+
+test(function(){
+    assert_computed_type(gen_prop('<length>+', '10px 20px'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<length>+', '0px 0px'), '10px 20px', CSSUnitValue);
+}, 'First computed value correctly reified in space-separated list');
+
+test(function(){
+    assert_computed_type(gen_prop('<length>#', '10px, 20px'), null, CSSUnitValue);
+    assert_computed_type(gen_prop('<length>#', '0px, 0px'), '10px, 20px', CSSUnitValue);
+}, 'First computed value correctly reified in comma-separated list');
+
+test(function(){
+    let name = gen_prop('<length>+', '10px 20px');
+    assert_equals(target.computedStyleMap().getAll(name).length, 2);
+    assert_true(target.computedStyleMap().getAll(name).every(x => x instanceof CSSUnitValue));
+
+    target.style = `${name}: 10px 20px 30px`;
+    assert_equals(target.computedStyleMap().getAll(name).length, 3);
+    assert_true(target.computedStyleMap().getAll(name).every(x => x instanceof CSSUnitValue));
+}, 'All computed values correctly reified in space-separated list');
+
+test(function(){
+    let name = gen_prop('<length>#', '10px, 20px');
+    assert_equals(target.computedStyleMap().getAll(name).length, 2);
+    assert_true(target.computedStyleMap().getAll(name).every(x => x instanceof CSSUnitValue));
+
+    target.style = `${name}: 10px, 20px, 30px`;
+    assert_equals(target.computedStyleMap().getAll(name).length, 3);
+    assert_true(target.computedStyleMap().getAll(name).every(x => x instanceof CSSUnitValue));
+}, 'All computed values correctly reified in comma-separated list');
+
+// attributeStyleMap.get / styleMap.get
+
+function test_style_property_map_get(test_fn, name_fn) {
+    let rule = style.sheet.rules[0];
+
+    test(function(){
+        target.attributeStyleMap.clear();
+        test_fn(target.style, target.attributeStyleMap);
+    }, name_fn('attributeStyleMap'));
+
+    test(function(){
+        rule.styleMap.clear();
+        test_fn(rule.style, rule.styleMap);
+    }, name_fn('styleMap'));
+}
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    let name1 = gen_prop('<length>', '100px');
+    let name2 = gen_prop('<length>', '0px');
+    styleDecl.setProperty(name2, `var(${name1})`);
+    assert_true(propertyMap.get(name2) instanceof CSSUnparsedValue);
+}, name => `${name}.get returns CSSUnparsedValue for value with var references`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    let name1 = gen_prop('<length>', '100px');
+    let name2 = gen_prop('<length>#', '0px');
+    styleDecl.setProperty(name2, `1px, var(${name1}), 3px`);
+    assert_true(propertyMap.get(name2) instanceof CSSUnparsedValue);
+}, name => `${name}.get returns CSSUnparsedValue for value with var references in list`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '*', 'if(){}', CSSUnparsedValue);
+}, name => `${name}.get returns CSSUnparsedValue for *`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<angle>', '42deg', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <angle>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<color>', '#fefefe', CSSStyleValue);
+}, name => `${name}.get returns CSSStyleValue for <color>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<custom-ident>', 'none', CSSKeywordValue);
+}, name => `${name}.get returns CSSKeywordValue for <custom-ident>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<image>', 'url(thing.png)', CSSImageValue);
+}, name => `${name}.get returns CSSImageValue for <image>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<integer>', '100', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <integer>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<length-percentage>', '10%', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <length-percentage> [10%]`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<length-percentage>', '10px', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <length-percentage> [10px]`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<length-percentage>', 'calc(10px + 10%)', CSSMathSum);
+}, name => `${name}.get returns CSSMathSum for <length-percentage> [calc(10px + 10%)]`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<length>', '10px', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <length>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<number>', '42', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <number>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<percentage>', '10%', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <percentage>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<resolution>', '300dpi', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <resolution>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<time>', '42s', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <time>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<url>', 'url(a)', CSSStyleValue);
+}, name => `${name}.get returns CSSStyleValue for <url>`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, 'thing1 | THING2', 'thing1', CSSKeywordValue);
+}, name => `${name}.get returns CSSKeywordValue for thing1 | THING2`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<length>+', '10px 20px', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <length>+`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    assert_attribute_get_type(styleDecl, propertyMap, '<length>#', '10px 20px', CSSUnitValue);
+}, name => `${name}.get returns CSSUnitValue for <length>#`);
+
+// attributeStyleMap.getAll
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    let name = gen_prop('<length>+', '0px');
+    styleDecl.setProperty(name, '10px 20px 30px');
+    assert_equals(propertyMap.getAll(name).length, 3);
+    assert_true(propertyMap.getAll(name).every(x => x instanceof CSSUnitValue));
+}, name => `${name}.getAll returns a list of CSSUnitValues for <length>+`);
+
+test_style_property_map_get(function(styleDecl, propertyMap){
+    let name = gen_prop('<length>#', '0px');
+    styleDecl.setProperty(name, '10px, 20px, 30px');
+    assert_equals(propertyMap.getAll(name).length, 3);
+    assert_true(propertyMap.getAll(name).every(x => x instanceof CSSUnitValue));
+}, name => `${name}.getAll returns a list of CSSUnitValues for <length>#`);
+
+// StylePropertyMap.set
+
+function test_style_property_map_set_using_property_map(propertyMapName, propertyMap, options) {
+    test(function(){
+        let name = gen_prop(options.syntax, options.initialValue);
+        propertyMap.clear();
+
+        for (let value of options.shouldAccept)
+            propertyMap.set(name, value);
+
+        for (let value of options.shouldReject) {
+            assert_throws(new TypeError(), () => propertyMap.set(name, value));
+        }
+    }, `${propertyMapName}.set accepts correct CSSUnitValues for ${options.syntax}`);
+}
+
+// Verify that the correct CSSStyleValues are accepted/rejected for a registered
+// property with the specified syntax.
+//
+// The same test is performed twice: once for attributeStyleMap, and once
+// for styleMap.
+function test_style_property_map_set(options) {
+    test_style_property_map_set_using_property_map('attributeStyleMap', target.attributeStyleMap, options);
+    test_style_property_map_set_using_property_map('styleMap', style.sheet.rules[0].styleMap, options);
+}
+
+let unparsed = x => new CSSUnparsedValue([x]);
+let keyword = x => new CSSKeywordValue(x);
+let sum = (a, b) => new CSSMathSum(a, b);
+let url_image = x => CSSStyleValue.parse('background-image', x);
+
+test_style_property_map_set({
+    syntax: '*',
+    initialValue: 'none',
+    shouldAccept: [unparsed('thing')],
+    shouldReject: [CSS.px(15), keyword('none')],
+});
+
+test_style_property_map_set({
+    syntax: '<angle>',
+    initialValue: '0deg',
+    shouldAccept: [CSS.deg(42), CSS.turn(2), '42deg'],
+    shouldReject: [unparsed('42deg'), CSS.px(15), '50px'],
+});
+
+test_style_property_map_set({
+    syntax: '<custom-ident>',
+    initialValue: 'none',
+    shouldAccept: [keyword('foo'), 'foo'],
+    shouldReject: [unparsed('foo'), CSS.px(15), '15px'],
+});
+
+test_style_property_map_set({
+    syntax: '<image>',
+    initialValue: 'url(a)',
+    shouldAccept: [url_image('url(b)'), 'url(b)'],
+    shouldReject: [unparsed('url(b)'), CSS.px(100), '50px'],
+});
+
+test_style_property_map_set({
+    syntax: '<integer>',
+    initialValue: '0',
+    shouldAccept: [CSS.number(1), CSS.number(-42), '1', '-42'],
+    shouldReject: [unparsed('42'), CSS.px(100), '50px'],
+});
+
+test_style_property_map_set({
+    syntax: '<length-percentage>',
+    initialValue: '0px',
+    shouldAccept: [CSS.percent(10), CSS.px(1), CSS.em(1), '10px', '10%'],
+    shouldReject: [unparsed('10%'), unparsed('10px'), CSS.dpi(1), 'url(b)'],
+});
+
+test_style_property_map_set({
+    syntax: '<length>',
+    initialValue: '0px',
+    shouldAccept: [CSS.px(10), CSS.em(10), CSS.vh(200), sum(CSS.px(10), CSS.em(20)), '10em', 'calc(10px + 10em)'],
+    shouldReject: [unparsed('10px'), CSS.percent(1), 'url(b)'],
+});
+
+test_style_property_map_set({
+    syntax: '<number>',
+    initialValue: '0',
+    shouldAccept: [CSS.number(1337), CSS.number(-42.5), '1337', '-42.5'],
+    shouldReject: [unparsed('42'), CSS.px(15), '#fef'],
+});
+
+test_style_property_map_set({
+    syntax: '<percentage>',
+    initialValue: '0%',
+    shouldAccept: [CSS.percent(10), '10%'],
+    shouldReject: [unparsed('10%'), CSS.px(1), '#fef'],
+});
+
+test_style_property_map_set({
+    syntax: '<resolution>',
+    initialValue: '0dpi',
+    shouldAccept: [CSS.dpi(100), CSS.dpcm(10), CSS.dppx(50), '100dpi'],
+    shouldReject: [unparsed('42'), CSS.px(15), '#fef'],
+});
+
+test_style_property_map_set({
+    syntax: '<time>',
+    initialValue: '0s',
+    shouldAccept: [CSS.s(42), CSS.ms(16), '16ms'],
+    shouldReject: [unparsed('42s'), CSS.px(15), '#fef'],
+});
+
+test_style_property_map_set({
+    syntax: '<url>',
+    initialValue: 'url(a)',
+    shouldAccept: [url_image('url(b)')],
+    shouldReject: [unparsed('url(b)'), CSS.px(100), '#fef'],
+});
+
+test_style_property_map_set({
+    syntax: '<transform-list>',
+    initialValue: 'translateX(0px)',
+    shouldAccept: [CSSStyleValue.parse('transform', 'translateX(10px)')],
+    shouldReject: [unparsed('transformX(10px'), CSS.px(100), '#fef'],
+});
+
+test_style_property_map_set({
+    syntax: 'none | thing | THING',
+    initialValue: 'none',
+    shouldAccept: [keyword('thing'), keyword('THING'), 'thing'],
+    shouldReject: [unparsed('thing'), CSS.px(15), keyword('notathing'), 'notathing'],
+});
+
+test_style_property_map_set({
+    syntax: '<angle> | <length>',
+    initialValue: '0deg',
+    shouldAccept: [CSS.deg(42), CSS.turn(2), CSS.px(10), CSS.em(10), '10deg', '10px'],
+    shouldReject: [unparsed('42deg'), unparsed('20px'), CSS.s(1), '#fef'],
+});
+
+// CSSStyleValue.parse/parseAll
+
+function assert_parsed_type(prop, value, expected) {
+    let parse_value = CSSStyleValue.parse(prop, value);
+    let parse_all_value = CSSStyleValue.parseAll(prop, value);
+
+    assert_true(parse_value instanceof expected);
+    assert_true(parse_all_value.every(x => x instanceof expected))
+
+    // If CSSStyleValue is expected, the values must be exactly CSSStyleValue.
+    // This is because CSSUnparsedValues are also CSSStyleValues, which would be
+    // wrong in this case.
+    if (expected == CSSStyleValue) {
+        assert_equals(parse_value.constructor, CSSStyleValue);
+        assert_true(parse_all_value.every(x => x.constructor == CSSStyleValue));
+    }
+}
+
+test(function(){
+    assert_parsed_type(gen_prop('*', 'if(){}'), 'while(){}', CSSUnparsedValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnparsedValue for *');
+
+test(function(){
+    assert_parsed_type(gen_prop('<angle> | fail', 'fail'), '42deg', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <angle>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<color> | fail', 'fail'), '#fefefe', CSSStyleValue);
+}, 'CSSStyleValue.parse[All] returns CSSStyleValue for <color>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<custom-ident> | <length>', '10px'), 'none', CSSKeywordValue);
+}, 'CSSStyleValue.parse[All] returns CSSKeywordValue for <custom-ident>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<image> | fail', 'fail'), 'url(thing.png)', CSSImageValue);
+}, 'CSSStyleValue.parse[All] returns CSSImageValue for <image> [url]');
+
+test(function(){
+    assert_parsed_type(gen_prop('<integer> | fail', 'fail'), '100', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <integer>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<length-percentage> | fail', 'fail'), '10%', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <length-percentage> [%]');
+
+test(function(){
+    assert_parsed_type(gen_prop('<length-percentage> | fail', 'fail'), '10px', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <length-percentage> [px]');
+
+test(function(){
+    assert_parsed_type(gen_prop('<length-percentage> | fail', 'fail'), 'calc(10px + 10%)', CSSMathSum);
+}, 'CSSStyleValue.parse[All] returns CSSMathSum for <length-percentage> [px + %]');
+
+test(function(){
+    assert_parsed_type(gen_prop('<length> | fail', 'fail'), '10px', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <length>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<number> | fail', 'fail'), '42', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <number>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<percentage> | fail', 'fail'), '10%', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <percentage>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<resolution> | fail', 'fail'), '300dpi', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <resolution>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<time> | fail', 'fail'), '42s', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns CSSUnitValue for <time>');
+
+test(function(){
+    assert_parsed_type(gen_prop('<url> | fail', 'fail'), 'url(a)', CSSStyleValue);
+}, 'CSSStyleValue.parse[All] returns CSSStyleValue for <url>');
+
+test(function(){
+    assert_parsed_type(gen_prop('thing1 | THING2 | <url>', 'url(fail)'), 'THING2', CSSKeywordValue);
+}, 'CSSStyleValue.parse[All] returns CSSKeywordValue for ident');
+
+test(function(){
+    assert_parsed_type(gen_prop('<length>+ | fail', 'fail'), '10px 20px', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns list of CSSUnitValues for <length>+');
+
+test(function(){
+    assert_parsed_type(gen_prop('<length># | fail', 'fail'), '10px, 20px', CSSUnitValue);
+}, 'CSSStyleValue.parse[All] returns list of CSSUnitValues for <length>#');
+
+</script>
