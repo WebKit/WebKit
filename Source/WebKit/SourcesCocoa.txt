@@ -455,6 +455,17 @@ UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm
 UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
 UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
 
+UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm
+UIProcess/WebAuthentication/Cocoa/LocalConnection.mm
+UIProcess/WebAuthentication/Cocoa/LocalService.mm
+
+UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp
+UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
+UIProcess/WebAuthentication/Mock/MockLocalService.cpp
+
+UIProcess/WebAuthentication/AuthenticatorManager.cpp
+UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
+UIProcess/WebAuthentication/Authenticator.cpp
 UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
 
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm

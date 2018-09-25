@@ -33,8 +33,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class LocalAuthenticator;
-
 struct ExceptionData;
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialData;
@@ -62,10 +60,8 @@ private:
 
     // Senders.
     void requestReply(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
-    void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool);
 
     WebPageProxy& m_webPageProxy;
-    std::unique_ptr<WebCore::LocalAuthenticator> m_authenticator;
 };
 
 } // namespace WebKit

@@ -30,8 +30,6 @@
 #import "TileController.h"
 #import <wtf/MainThread.h>
 
-using namespace WebCore;
-
 @implementation WebTiledBackingLayer
 
 - (id)init
@@ -61,7 +59,7 @@ using namespace WebCore;
     return nil;
 }
 
-- (TileController*)createTileController:(PlatformCALayer*)rootLayer
+- (WebCore::TileController*)createTileController:(WebCore::PlatformCALayer*)rootLayer
 {
     ASSERT(!_tileController);
     _tileController = std::make_unique<WebCore::TileController>(rootLayer);
@@ -100,7 +98,7 @@ using namespace WebCore;
 
 - (void)setNeedsDisplayInRect:(CGRect)rect
 {
-    _tileController->setNeedsDisplayInRect(enclosingIntRect(rect));
+    _tileController->setNeedsDisplayInRect(WebCore::enclosingIntRect(rect));
 }
 
 - (void)setDrawsAsynchronously:(BOOL)acceleratesDrawing
@@ -157,7 +155,7 @@ using namespace WebCore;
 
 - (void)setBorderColor:(CGColorRef)borderColor
 {
-    _tileController->setTileDebugBorderColor(Color(borderColor));
+    _tileController->setTileDebugBorderColor(WebCore::Color(borderColor));
 }
 
 - (void)setBorderWidth:(CGFloat)borderWidth

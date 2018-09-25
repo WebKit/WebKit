@@ -3168,11 +3168,27 @@ void TestController::injectUserScript(WKStringRef)
 {
 }
 
+void TestController::addTestKeyToKeychain(const String&, const String&, const String&)
+{
+}
+
+void TestController::cleanUpKeychain(const String&)
+{
+}
+
+bool TestController::keyExistsInKeychain(const String&, const String&)
+{
+}
 #endif
 
 void TestController::sendDisplayConfigurationChangedMessageForTesting()
 {
     WKSendDisplayConfigurationChangedMessageForTesting(platformContext());
+}
+
+void TestController::setWebAuthenticationMockConfiguration(WKDictionaryRef configuration)
+{
+    WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKContextGetWebsiteDataStore(platformContext()), configuration);
 }
 
 } // namespace WTR

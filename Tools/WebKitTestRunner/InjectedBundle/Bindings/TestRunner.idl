@@ -351,4 +351,10 @@ interface TestRunner {
     readonly attribute unsigned long userScriptInjectedCount;
 
     void sendDisplayConfigurationChangedMessageForTesting();
+
+    // WebAuthN
+    void setWebAuthenticationMockConfiguration(object configuration);
+    void addTestKeyToKeychain(DOMString privateKeyBase64, DOMString attrLabel, DOMString applicationTagBase64);
+    void cleanUpKeychain(DOMString attrLabel);
+    boolean keyExistsInKeychain(DOMString attrLabel, DOMString applicationTagBase64);
 };

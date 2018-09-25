@@ -1,3 +1,32 @@
+2018-09-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Make AuthenticatorManager
+        https://bugs.webkit.org/show_bug.cgi?id=189279
+        <rdar://problem/44116792>
+
+        Reviewed by Chris Dumez.
+
+        Most of the new tests are rewritten from the LocalAuthenticator API tests. Old mock tests are temporarily skipped
+        for the new mock tests.
+
+        * TestExpectations:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-create-success-local.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-create-success.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-get-success-local.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-success-local.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-get-success.https.html:
+        * http/wpt/webauthn/public-key-credential-is-user-verifying-platform-authenticator-available-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-is-user-verifying-platform-authenticator-available.html: Added.
+        * http/wpt/webauthn/public-key-is-user-verifying-platform-authenticator-available-expected.txt: Removed.
+        * http/wpt/webauthn/public-key-is-user-verifying-platform-authenticator-available.html: Removed.
+        * http/wpt/webauthn/resources/util.js:
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: (r235948) Layout Test compositing/backing/backing-store-attachment-fill-forwards-animation.html is a flaky failure

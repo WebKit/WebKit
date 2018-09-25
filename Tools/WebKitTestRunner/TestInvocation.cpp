@@ -1452,6 +1452,50 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetWebAuthenticationMockConfiguration")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        TestController::singleton().setWebAuthenticationMockConfiguration(static_cast<WKDictionaryRef>(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AddTestKeyToKeychain")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef testKeyDictionary = static_cast<WKDictionaryRef>(messageBody);
+
+        WKRetainPtr<WKStringRef> privateKeyKey(AdoptWK, WKStringCreateWithUTF8CString("PrivateKey"));
+        WKStringRef privateKeyWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testKeyDictionary, privateKeyKey.get()));
+
+        WKRetainPtr<WKStringRef> attrLabelKey(AdoptWK, WKStringCreateWithUTF8CString("AttrLabel"));
+        WKStringRef attrLabelWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testKeyDictionary, attrLabelKey.get()));
+
+        WKRetainPtr<WKStringRef> applicationTagKey(AdoptWK, WKStringCreateWithUTF8CString("ApplicationTag"));
+        WKStringRef applicationTagWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testKeyDictionary, applicationTagKey.get()));
+
+        TestController::singleton().addTestKeyToKeychain(toWTFString(privateKeyWK), toWTFString(attrLabelWK), toWTFString(applicationTagWK));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CleanUpKeychain")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        TestController::singleton().cleanUpKeychain(toWTFString(static_cast<WKStringRef>(messageBody)));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "KeyExistsInKeychain")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef testDictionary = static_cast<WKDictionaryRef>(messageBody);
+
+        WKRetainPtr<WKStringRef> attrLabelKey(AdoptWK, WKStringCreateWithUTF8CString("AttrLabel"));
+        WKStringRef attrLabelWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testDictionary, attrLabelKey.get()));
+
+        WKRetainPtr<WKStringRef> applicationTagKey(AdoptWK, WKStringCreateWithUTF8CString("ApplicationTag"));
+        WKStringRef applicationTagWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testDictionary, applicationTagKey.get()));
+
+        bool keyExistsInKeychain = TestController::singleton().keyExistsInKeychain(toWTFString(attrLabelWK), toWTFString(applicationTagWK));
+        WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(keyExistsInKeychain));
+        return result;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

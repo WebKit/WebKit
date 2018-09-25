@@ -415,6 +415,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/AuthenticatorAssertionResponse.idl
     Modules/webauthn/AuthenticatorAttestationResponse.idl
     Modules/webauthn/AuthenticatorResponse.idl
+    Modules/webauthn/AuthenticatorTransport.idl
     Modules/webauthn/PublicKeyCredential.idl
     Modules/webauthn/PublicKeyCredentialCreationOptions.idl
     Modules/webauthn/PublicKeyCredentialDescriptor.idl

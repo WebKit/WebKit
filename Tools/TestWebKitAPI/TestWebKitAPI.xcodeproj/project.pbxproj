@@ -41,7 +41,6 @@
 		0F139E791A42457000F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		0F2C20B81DCD545000542D9E /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C20B71DCD544800542D9E /* Time.cpp */; };
 		0F30CB5C1FCE1796004B5323 /* ConcurrentPtrHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30CB5B1FCE1792004B5323 /* ConcurrentPtrHashSet.cpp */; };
-		4909EE3A2D09480C88982D56 /* Markable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EC79F168BE454E579E417B05 /* Markable.cpp */; };
 		0F3B94A71A77267400DE3272 /* WKWebViewEvaluateJavaScript.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */; };
 		0F4FFA9E1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F4FFA9D1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm */; };
 		0F5651F71FCE4DDC00310FBC /* NoHistoryItemScrollToFragment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F5651F61FCE4DDB00310FBC /* NoHistoryItemScrollToFragment.mm */; };
@@ -174,6 +173,7 @@
 		46C519E81D3563FD00DAA51A /* LocalStorageNullEntries.localstorage-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46C519E41D35629600DAA51A /* LocalStorageNullEntries.localstorage-shm */; };
 		46E66A901F0D75590026D83C /* WKWebViewDiagnosticLogging.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46E66A8F1F0D75590026D83C /* WKWebViewDiagnosticLogging.mm */; };
 		46E816F81E79E29C00375ADC /* RestoreStateAfterTermination.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46E816F71E79E29100375ADC /* RestoreStateAfterTermination.mm */; };
+		4909EE3A2D09480C88982D56 /* Markable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EC79F168BE454E579E417B05 /* Markable.cpp */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
 		510477721D298DDD009747EB /* IDBDeleteRecovery.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */; };
 		510477731D298DDD009747EB /* IDBDeleteRecovery.sqlite3-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */; };
@@ -244,7 +244,6 @@
 		57303BC9200824D300355965 /* CBORValueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BAC2006C56000355965 /* CBORValueTest.cpp */; };
 		57303BCA20082C0100355965 /* CBORWriterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BAB2006C55400355965 /* CBORWriterTest.cpp */; };
 		57303BCB2008376500355965 /* CBORReaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BC220071E2200355965 /* CBORReaderTest.cpp */; };
-		574F55CF204D37C5002948C6 /* LocalAuthenticator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 574F55CE204D3763002948C6 /* LocalAuthenticator.mm */; };
 		574F55D2204D47F0002948C6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 		57599E211F07191900A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57599E201F07191700A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm */; };
 		57599E271F071AA000A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57599E241F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3 */; };
@@ -934,7 +933,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				C944160021430E8900B1EDDA /* audio-with-controls.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
@@ -951,6 +949,7 @@
 				7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */,
 				37137E4B21124D01002BEEA4 /* AttrStyle.html in Copy Resources */,
 				CD9E292E1C90C33F000BB800 /* audio-only.html in Copy Resources */,
+				C944160021430E8900B1EDDA /* audio-with-controls.html in Copy Resources */,
 				CD57779C211CE91F001B371E /* audio-with-web-audio.html in Copy Resources */,
 				76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */,
 				F41AB99F1EF4696B0083FA08 /* autofocus-contenteditable.html in Copy Resources */,
@@ -1238,7 +1237,6 @@
 		0F17BBD415AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreStatisticsWithNoWebProcess.cpp; sourceTree = "<group>"; };
 		0F2C20B71DCD544800542D9E /* Time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Time.cpp; sourceTree = "<group>"; };
 		0F30CB5B1FCE1792004B5323 /* ConcurrentPtrHashSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcurrentPtrHashSet.cpp; sourceTree = "<group>"; };
-		EC79F168BE454E579E417B05 /* Markable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Markable.cpp; sourceTree = "<group>"; };
 		0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewEvaluateJavaScript.mm; sourceTree = "<group>"; };
 		0F4FFA9D1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SnapshotViaRenderInContext.mm; sourceTree = "<group>"; };
 		0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
@@ -1541,7 +1539,6 @@
 		57303BAC2006C56000355965 /* CBORValueTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORValueTest.cpp; sourceTree = "<group>"; };
 		57303BC220071E2200355965 /* CBORReaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORReaderTest.cpp; sourceTree = "<group>"; };
 		5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TestWebKitAPI-iOS.entitlements"; sourceTree = "<group>"; };
-		574F55CE204D3763002948C6 /* LocalAuthenticator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticator.mm; sourceTree = "<group>"; };
 		574F55D0204D471C002948C6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		57599E201F07191700A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBStructuredCloneBackwardCompatibility.mm; sourceTree = "<group>"; };
 		57599E231F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityWrite.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = IndexedDBStructuredCloneBackwardCompatibilityWrite.html; sourceTree = "<group>"; };
@@ -2021,6 +2018,7 @@
 		E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Deque.cpp; sourceTree = "<group>"; };
 		E4C9ABC71B3DB1710040A987 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		E5036F77211BC22800BFDBE2 /* color-drop.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "color-drop.html"; sourceTree = "<group>"; };
+		EC79F168BE454E579E417B05 /* Markable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Markable.cpp; sourceTree = "<group>"; };
 		ECA680CD1E68CC0900731D20 /* StringUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringUtilities.mm; sourceTree = "<group>"; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F407FE381F1D0DE60017CF25 /* enormous.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = enormous.svg; sourceTree = "<group>"; };
@@ -2554,7 +2552,6 @@
 				F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */,
 				F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */,
 				F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */,
-				574F55CE204D3763002948C6 /* LocalAuthenticator.mm */,
 				7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */,
 				F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */,
 				F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */,
@@ -2621,7 +2618,6 @@
 		A16F66B81C40E9E100BD4D24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C94415FF21430B6700B1EDDA /* audio-with-controls.html */,
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
 				F4A9202E1FEE34C800F59590 /* apple-data-url.html */,
 				F47D30EB1ED28619000482E1 /* apple.gif */,
@@ -2630,6 +2626,7 @@
 				5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */,
 				F4856CA21E6498A8009D7EE7 /* attachment-element.html */,
 				3760C4F221124BD000233ACC /* AttrStyle.html */,
+				C94415FF21430B6700B1EDDA /* audio-with-controls.html */,
 				CD57779A211CE6B7001B371E /* audio-with-web-audio.html */,
 				F41AB9981EF4692C0083FA08 /* autofocus-contenteditable.html */,
 				93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */,
@@ -3863,7 +3860,6 @@
 				5C838F7F1DB04F900082858F /* LoadInvalidURLRequest.mm in Sources */,
 				7C83E0C01D0A652700FEBCF3 /* LoadInvalidURLRequest.mm in Sources */,
 				7CCE7F001A411AE600447C4C /* LoadPageOnCrash.cpp in Sources */,
-				574F55CF204D37C5002948C6 /* LocalAuthenticator.mm in Sources */,
 				51E6A8941D2F1C0A00C004B6 /* LocalStorageClear.mm in Sources */,
 				CA38459620AE17A900990D3B /* LocalStorageDatabaseTracker.mm in Sources */,
 				46C519DA1D355AB200DAA51A /* LocalStorageNullEntries.mm in Sources */,

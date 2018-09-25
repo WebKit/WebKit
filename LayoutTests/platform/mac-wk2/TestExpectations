@@ -882,3 +882,9 @@ webkit.org/b/184204 [ Sierra ] http/wpt/cache-storage/cache-put-keys.https.any.w
 webkit.org/b/189094 [ HighSierra+ ] accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Skip ]
 
 webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
+
+# Skip local authenticator tests for mac now.
+http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]

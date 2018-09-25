@@ -113,7 +113,6 @@
 		31308B1420A21705003FB929 /* SystemPreviewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31308B1320A21705003FB929 /* SystemPreviewSPI.h */; };
 		570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */; };
 		570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */; };
-		57F12518205787D7001AB8A6 /* DeviceIdentitySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57F12517205787C8001AB8A6 /* DeviceIdentitySPI.h */; };
 		7A1656441F97B2B900BA3CE4 /* NSKeyedArchiverSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A1656431F97B2B800BA3CE4 /* NSKeyedArchiverSPI.h */; };
 		7A3A6A8020CADB4700317AAE /* NSImageSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A3A6A7F20CADB4600317AAE /* NSImageSPI.h */; };
 		A10265891F56747A00B4C844 /* HIToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10265881F56747A00B4C844 /* HIToolboxSPI.h */; };
@@ -268,7 +267,6 @@
 		37119A7820CCB5FF002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecKeyProxySPI.h; sourceTree = "<group>"; };
 		570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSXPCConnectionSPI.h; sourceTree = "<group>"; };
-		57F12517205787C8001AB8A6 /* DeviceIdentitySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceIdentitySPI.h; sourceTree = "<group>"; };
 		7A1656431F97B2B800BA3CE4 /* NSKeyedArchiverSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSKeyedArchiverSPI.h; sourceTree = "<group>"; };
 		7A3A6A7F20CADB4600317AAE /* NSImageSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSImageSPI.h; sourceTree = "<group>"; };
 		93E5909C1F93BF1E0067F8CF /* UnencodableHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnencodableHandling.h; sourceTree = "<group>"; };
@@ -376,7 +374,6 @@
 				0C2DA1231F3BEB4900DBC317 /* CFNSURLConnectionSPI.h */,
 				0C2DA1241F3BEB4900DBC317 /* CoreTextSPI.h */,
 				0C2DA1251F3BEB4900DBC317 /* DataDetectorsCoreSPI.h */,
-				57F12517205787C8001AB8A6 /* DeviceIdentitySPI.h */,
 				CE5673862151A7B9002F92D7 /* IOKitSPI.h */,
 				0C2DA1261F3BEB4900DBC317 /* IOPMLibSPI.h */,
 				0C2DA1271F3BEB4900DBC317 /* IOPSLibSPI.h */,
@@ -665,7 +662,6 @@
 				0C77858A1F45130F00F4EBB6 /* DataDetectorsSPI.h in Headers */,
 				0C5AF91A1F43A4C7002EAC02 /* DataDetectorsUISPI.h in Headers */,
 				A1175B571F6B470500C4B9F0 /* DefaultSearchProvider.h in Headers */,
-				57F12518205787D7001AB8A6 /* DeviceIdentitySPI.h in Headers */,
 				0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */,
 				F44291601FA5261E002CC93E /* FileSizeFormatter.h in Headers */,
 				0C5AF91B1F43A4C7002EAC02 /* GraphicsServicesSPI.h in Headers */,

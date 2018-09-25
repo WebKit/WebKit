@@ -2862,3 +2862,11 @@ fast/gradients/conic-gradient.html [ Skip ]
 fast/gradients/conic-two-hints.html [ Skip ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
+
+# Temporary disables old WebAuthN tests, will either reenable or remove them in webkit.org/b/189283
+http/wpt/credential-management/credentialscontainer-store-basics.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-failure.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-success.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-success.https.html [ Skip ]
+http/wpt/webauthn/idl.https.html [ Skip ]

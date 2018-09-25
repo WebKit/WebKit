@@ -34,7 +34,7 @@ struct ExceptionData {
     ExceptionCode code;
     String message;
 
-    ExceptionData isolatedCopy() const;
+    WEBCORE_EXPORT ExceptionData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, ExceptionData&);

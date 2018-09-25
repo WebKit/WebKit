@@ -45,7 +45,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement()
     : EventListener(EventListener::CPPEventListenerType)
@@ -273,5 +273,7 @@ void VideoFullscreenModelVideoElement::didExitPictureInPicture()
     for (auto& client : m_clients)
         client->didExitPictureInPicture();
 }
+
+} // namespace WebCore
 
 #endif

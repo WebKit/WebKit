@@ -28,13 +28,16 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticatorManager.h"
+#include "LocalService.h"
 #include "WebAuthenticatorCoordinatorMessages.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/ExceptionData.h>
-#include <WebCore/LocalAuthenticator.h>
 #include <WebCore/PublicKeyCredentialData.h>
+#include <wtf/MainThread.h>
 
 namespace WebKit {
 
@@ -42,7 +45,6 @@ WebAuthenticatorCoordinatorProxy::WebAuthenticatorCoordinatorProxy(WebPageProxy&
     : m_webPageProxy(webPageProxy)
 {
     m_webPageProxy.process().addMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);
-    m_authenticator = std::make_unique<WebCore::LocalAuthenticator>();
 }
 
 WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
@@ -52,13 +54,8 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions& options)
 {
-    // FIXME(182767)
-    if (!m_authenticator) {
-        requestReply({ }, { WebCore::NotAllowedError, "No avaliable authenticators."_s });
-        return;
-    }
-    // FIXME(183534): Weak pointers doesn't work in another thread because of race condition.
     auto callback = [weakThis = makeWeakPtr(*this)] (Variant<WebCore::PublicKeyCredentialData, WebCore::ExceptionData>&& result) {
+        ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
 
@@ -68,16 +65,13 @@ void WebAuthenticatorCoordinatorProxy::makeCredential(const Vector<uint8_t>& has
             weakThis->requestReply({ }, exception);
         });
     };
-    m_authenticator->makeCredential(hash, options, WTFMove(callback));
+    m_webPageProxy.websiteDataStore().authenticatorManager().makeCredential(hash, options, WTFMove(callback));
 }
 
 void WebAuthenticatorCoordinatorProxy::getAssertion(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions& options)
 {
-    // FIXME(182767)
-    if (!m_authenticator)
-        requestReply({ }, { WebCore::NotAllowedError, "No avaliable authenticators."_s });
-    // FIXME(183534): Weak pointers doesn't work in another thread because of race condition.
     auto callback = [weakThis = makeWeakPtr(*this)] (Variant<WebCore::PublicKeyCredentialData, WebCore::ExceptionData>&& result) {
+        ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
 
@@ -87,26 +81,17 @@ void WebAuthenticatorCoordinatorProxy::getAssertion(const Vector<uint8_t>& hash,
             weakThis->requestReply({ }, exception);
         });
     };
-    m_authenticator->getAssertion(hash, options, WTFMove(callback));
+    m_webPageProxy.websiteDataStore().authenticatorManager().getAssertion(hash, options, WTFMove(callback));
 }
 
 void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId)
 {
-    if (!m_authenticator) {
-        isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, false);
-        return;
-    }
-    isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, m_authenticator->isAvailable());
+    m_webPageProxy.send(Messages::WebAuthenticatorCoordinator::IsUserVerifyingPlatformAuthenticatorAvailableReply(messageId, LocalService::isAvailable()));
 }
 
 void WebAuthenticatorCoordinatorProxy::requestReply(const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception)
 {
     m_webPageProxy.send(Messages::WebAuthenticatorCoordinator::RequestReply(data, exception));
-}
-
-void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool result)
-{
-    m_webPageProxy.send(Messages::WebAuthenticatorCoordinator::IsUserVerifyingPlatformAuthenticatorAvailableReply(messageId, result));
 }
 
 } // namespace WebKit

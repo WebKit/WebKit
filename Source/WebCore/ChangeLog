@@ -1,3 +1,253 @@
+2018-09-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Make AuthenticatorManager
+        https://bugs.webkit.org/show_bug.cgi?id=189279
+        <rdar://problem/44116792>
+
+        Reviewed by Chris Dumez.
+
+        This patch does the following things in WebCore in order to support AuthenticatorManager:
+        1) It separates AuthenticatorTransport from PublicKeyCredentialDescriptor such that the enum
+        can be queried from WebKit directly.
+        2) It adds AuthenticatorAttachment to PublicKeyCredentialCreationOptions such that relying parties
+        could express their interests in cross platform authenticators.
+        3) It enhances IPC encoder/decoder of a few such that Vectors and empty objects can be correctly coded.
+        4) It moves the LocalAuthenticator implementation to WebKit to better integrate with AuthenticatorManager.
+        5) It moves linking to LocalAuthentication.framework to WebKit as well.
+        6) It temporarily bans old mock test mechanism in Internals so we could enable the new mock test mechanism in
+        WebKitTestRunner which we will have a better coverage of codes in UI Process. Those tests will be either
+        removed or ported to the new mechanism in Bug 189283.
+        7) It also removes "using namespace WebCore" from the top namespace in some .mm files as they are reordered
+        to where they could introduce name confusions.
+
+        Tests: http/wpt/webauthn/public-key-credential-create-failure-local.https.html
+               http/wpt/webauthn/public-key-credential-create-success-local.https.html
+               http/wpt/webauthn/public-key-credential-get-failure-local.https.html
+               http/wpt/webauthn/public-key-credential-get-success-local.https.html
+               http/wpt/webauthn/public-key-credential-is-user-verifying-platform-authenticator-available.html
+
+        * CMakeLists.txt:
+        * Configurations/WebCore.xcconfig:
+        * DerivedSources.make:
+        * Modules/webauthn/AuthenticatorTransport.h: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        * Modules/webauthn/AuthenticatorTransport.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredentialDescriptor.idl.
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        (WebCore::PublicKeyCredentialCreationOptions::encode const):
+        (WebCore::PublicKeyCredentialCreationOptions::decode):
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.idl:
+        * Modules/webauthn/PublicKeyCredentialData.h:
+        (WebCore::PublicKeyCredentialData::encode const):
+        (WebCore::PublicKeyCredentialData::decode):
+        * Modules/webauthn/PublicKeyCredentialDescriptor.h:
+        (WebCore::PublicKeyCredentialDescriptor::encode const):
+        * Modules/webauthn/PublicKeyCredentialDescriptor.idl:
+        * Modules/webauthn/cocoa/LocalAuthenticator.mm: Removed.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ExceptionData.h:
+        * platform/cocoa/LocalAuthenticationSoftLink.mm: Removed.
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (-[WebCoreSharedBufferData initWithSharedBufferDataSegment:]):
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement): Deleted.
+        (VideoFullscreenModelVideoElement::~VideoFullscreenModelVideoElement): Deleted.
+        (VideoFullscreenModelVideoElement::setVideoElement): Deleted.
+        (VideoFullscreenModelVideoElement::handleEvent): Deleted.
+        (VideoFullscreenModelVideoElement::updateForEventName): Deleted.
+        (VideoFullscreenModelVideoElement::willExitFullscreen): Deleted.
+        (VideoFullscreenModelVideoElement::setVideoFullscreenLayer): Deleted.
+        (VideoFullscreenModelVideoElement::waitForPreparedForInlineThen): Deleted.
+        (VideoFullscreenModelVideoElement::requestFullscreenMode): Deleted.
+        (VideoFullscreenModelVideoElement::setVideoLayerFrame): Deleted.
+        (VideoFullscreenModelVideoElement::setVideoLayerGravity): Deleted.
+        (VideoFullscreenModelVideoElement::observedEventNames): Deleted.
+        (VideoFullscreenModelVideoElement::eventNameAll): Deleted.
+        (VideoFullscreenModelVideoElement::fullscreenModeChanged): Deleted.
+        (VideoFullscreenModelVideoElement::addClient): Deleted.
+        (VideoFullscreenModelVideoElement::removeClient): Deleted.
+        (VideoFullscreenModelVideoElement::isVisible const): Deleted.
+        (VideoFullscreenModelVideoElement::setHasVideo): Deleted.
+        (VideoFullscreenModelVideoElement::setVideoDimensions): Deleted.
+        (VideoFullscreenModelVideoElement::willEnterPictureInPicture): Deleted.
+        (VideoFullscreenModelVideoElement::didEnterPictureInPicture): Deleted.
+        (VideoFullscreenModelVideoElement::failedToEnterPictureInPicture): Deleted.
+        (VideoFullscreenModelVideoElement::willExitPictureInPicture): Deleted.
+        (VideoFullscreenModelVideoElement::didExitPictureInPicture): Deleted.
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (WebCore::hasExplicitBeginTime):
+        (WebCore::setHasExplicitBeginTime):
+        (WebCore::toCAFillModeType):
+        (WebCore::toCAValueFunctionType):
+        (WebCore::toCAMediaTimingFunction):
+        (WebCore::PlatformCAAnimationCocoa::setFromValue):
+        (WebCore::PlatformCAAnimationCocoa::setToValue):
+        (WebCore::PlatformCAAnimationCocoa::setValues):
+        (fromCAFillModeType): Deleted.
+        (fromCAValueFunctionType): Deleted.
+        (PlatformCAAnimationCocoa::create): Deleted.
+        (PlatformCAAnimationCocoa::PlatformCAAnimationCocoa): Deleted.
+        (PlatformCAAnimationCocoa::~PlatformCAAnimationCocoa): Deleted.
+        (PlatformCAAnimationCocoa::copy const): Deleted.
+        (PlatformCAAnimationCocoa::platformAnimation const): Deleted.
+        (PlatformCAAnimationCocoa::keyPath const): Deleted.
+        (PlatformCAAnimationCocoa::beginTime const): Deleted.
+        (PlatformCAAnimationCocoa::setBeginTime): Deleted.
+        (PlatformCAAnimationCocoa::duration const): Deleted.
+        (PlatformCAAnimationCocoa::setDuration): Deleted.
+        (PlatformCAAnimationCocoa::speed const): Deleted.
+        (PlatformCAAnimationCocoa::setSpeed): Deleted.
+        (PlatformCAAnimationCocoa::timeOffset const): Deleted.
+        (PlatformCAAnimationCocoa::setTimeOffset): Deleted.
+        (PlatformCAAnimationCocoa::repeatCount const): Deleted.
+        (PlatformCAAnimationCocoa::setRepeatCount): Deleted.
+        (PlatformCAAnimationCocoa::autoreverses const): Deleted.
+        (PlatformCAAnimationCocoa::setAutoreverses): Deleted.
+        (PlatformCAAnimationCocoa::fillMode const): Deleted.
+        (PlatformCAAnimationCocoa::setFillMode): Deleted.
+        (PlatformCAAnimationCocoa::setTimingFunction): Deleted.
+        (PlatformCAAnimationCocoa::copyTimingFunctionFrom): Deleted.
+        (PlatformCAAnimationCocoa::isRemovedOnCompletion const): Deleted.
+        (PlatformCAAnimationCocoa::setRemovedOnCompletion): Deleted.
+        (PlatformCAAnimationCocoa::isAdditive const): Deleted.
+        (PlatformCAAnimationCocoa::setAdditive): Deleted.
+        (PlatformCAAnimationCocoa::valueFunction const): Deleted.
+        (PlatformCAAnimationCocoa::setValueFunction): Deleted.
+        (PlatformCAAnimationCocoa::setFromValue): Deleted.
+        (PlatformCAAnimationCocoa::copyFromValueFrom): Deleted.
+        (PlatformCAAnimationCocoa::setToValue): Deleted.
+        (PlatformCAAnimationCocoa::copyToValueFrom): Deleted.
+        (PlatformCAAnimationCocoa::setValues): Deleted.
+        (PlatformCAAnimationCocoa::copyValuesFrom): Deleted.
+        (PlatformCAAnimationCocoa::setKeyTimes): Deleted.
+        (PlatformCAAnimationCocoa::copyKeyTimesFrom): Deleted.
+        (PlatformCAAnimationCocoa::setTimingFunctions): Deleted.
+        (PlatformCAAnimationCocoa::copyTimingFunctionsFrom): Deleted.
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+        (PlatformCAFilters::filterValueForOperation): Deleted.
+        (PlatformCAFilters::colorMatrixValueForFilter): Deleted.
+        (PlatformCAFilters::setBlendingFiltersOnLayer): Deleted.
+        (PlatformCAFilters::numAnimatedFilterProperties): Deleted.
+        (PlatformCAFilters::animatedFilterPropertyName): Deleted.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (-[WebAnimationDelegate animationDidStart:]):
+        (-[WebAnimationDelegate animationDidStop:finished:]):
+        (-[WebAnimationDelegate setOwner:]):
+        (PlatformCALayerCocoa::create): Deleted.
+        (PlatformCALayer::platformCALayer): Deleted.
+        (mediaTimeToCurrentTime): Deleted.
+        (PlatformCALayerCocoa::setOwner): Deleted.
+        (toCAFilterType): Deleted.
+        (PlatformCALayerCocoa::layerTypeForPlatformLayer): Deleted.
+        (PlatformCALayerCocoa::PlatformCALayerCocoa): Deleted.
+        (PlatformCALayerCocoa::commonInit): Deleted.
+        (PlatformCALayerCocoa::clone const): Deleted.
+        (PlatformCALayerCocoa::~PlatformCALayerCocoa): Deleted.
+        (PlatformCALayerCocoa::animationStarted): Deleted.
+        (PlatformCALayerCocoa::animationEnded): Deleted.
+        (PlatformCALayerCocoa::setNeedsDisplay): Deleted.
+        (PlatformCALayerCocoa::setNeedsDisplayInRect): Deleted.
+        (PlatformCALayerCocoa::copyContentsFromLayer): Deleted.
+        (PlatformCALayerCocoa::superlayer const): Deleted.
+        (PlatformCALayerCocoa::removeFromSuperlayer): Deleted.
+        (PlatformCALayerCocoa::setSublayers): Deleted.
+        (PlatformCALayerCocoa::removeAllSublayers): Deleted.
+        (PlatformCALayerCocoa::appendSublayer): Deleted.
+        (PlatformCALayerCocoa::insertSublayer): Deleted.
+        (PlatformCALayerCocoa::replaceSublayer): Deleted.
+        (PlatformCALayerCocoa::adoptSublayers): Deleted.
+        (PlatformCALayerCocoa::addAnimationForKey): Deleted.
+        (PlatformCALayerCocoa::removeAnimationForKey): Deleted.
+        (PlatformCALayerCocoa::animationForKey): Deleted.
+        (PlatformCALayerCocoa::setMask): Deleted.
+        (PlatformCALayerCocoa::isOpaque const): Deleted.
+        (PlatformCALayerCocoa::setOpaque): Deleted.
+        (PlatformCALayerCocoa::bounds const): Deleted.
+        (PlatformCALayerCocoa::setBounds): Deleted.
+        (PlatformCALayerCocoa::position const): Deleted.
+        (PlatformCALayerCocoa::setPosition): Deleted.
+        (PlatformCALayerCocoa::anchorPoint const): Deleted.
+        (PlatformCALayerCocoa::setAnchorPoint): Deleted.
+        (PlatformCALayerCocoa::transform const): Deleted.
+        (PlatformCALayerCocoa::setTransform): Deleted.
+        (PlatformCALayerCocoa::sublayerTransform const): Deleted.
+        (PlatformCALayerCocoa::setSublayerTransform): Deleted.
+        (PlatformCALayerCocoa::isHidden const): Deleted.
+        (PlatformCALayerCocoa::setHidden): Deleted.
+        (PlatformCALayerCocoa::contentsHidden const): Deleted.
+        (PlatformCALayerCocoa::setContentsHidden): Deleted.
+        (PlatformCALayerCocoa::userInteractionEnabled const): Deleted.
+        (PlatformCALayerCocoa::setUserInteractionEnabled): Deleted.
+        (PlatformCALayerCocoa::setBackingStoreAttached): Deleted.
+        (PlatformCALayerCocoa::backingStoreAttached const): Deleted.
+        (PlatformCALayerCocoa::geometryFlipped const): Deleted.
+        (PlatformCALayerCocoa::setGeometryFlipped): Deleted.
+        (PlatformCALayerCocoa::isDoubleSided const): Deleted.
+        (PlatformCALayerCocoa::setDoubleSided): Deleted.
+        (PlatformCALayerCocoa::masksToBounds const): Deleted.
+        (PlatformCALayerCocoa::setMasksToBounds): Deleted.
+        (PlatformCALayerCocoa::acceleratesDrawing const): Deleted.
+        (PlatformCALayerCocoa::setAcceleratesDrawing): Deleted.
+        (PlatformCALayerCocoa::wantsDeepColorBackingStore const): Deleted.
+        (PlatformCALayerCocoa::setWantsDeepColorBackingStore): Deleted.
+        (PlatformCALayerCocoa::supportsSubpixelAntialiasedText const): Deleted.
+        (PlatformCALayerCocoa::setSupportsSubpixelAntialiasedText): Deleted.
+        (PlatformCALayerCocoa::hasContents const): Deleted.
+        (PlatformCALayerCocoa::contents const): Deleted.
+        (PlatformCALayerCocoa::setContents): Deleted.
+        (PlatformCALayerCocoa::setContentsRect): Deleted.
+        (PlatformCALayerCocoa::setMinificationFilter): Deleted.
+        (PlatformCALayerCocoa::setMagnificationFilter): Deleted.
+        (PlatformCALayerCocoa::backgroundColor const): Deleted.
+        (PlatformCALayerCocoa::setBackgroundColor): Deleted.
+        (PlatformCALayerCocoa::setBorderWidth): Deleted.
+        (PlatformCALayerCocoa::setBorderColor): Deleted.
+        (PlatformCALayerCocoa::opacity const): Deleted.
+        (PlatformCALayerCocoa::setOpacity): Deleted.
+        (PlatformCALayerCocoa::setFilters): Deleted.
+        (PlatformCALayerCocoa::copyFiltersFrom): Deleted.
+        (PlatformCALayerCocoa::filtersCanBeComposited): Deleted.
+        (PlatformCALayerCocoa::setBlendMode): Deleted.
+        (PlatformCALayerCocoa::setName): Deleted.
+        (PlatformCALayerCocoa::setSpeed): Deleted.
+        (PlatformCALayerCocoa::setTimeOffset): Deleted.
+        (PlatformCALayerCocoa::contentsScale const): Deleted.
+        (PlatformCALayerCocoa::setContentsScale): Deleted.
+        (PlatformCALayerCocoa::cornerRadius const): Deleted.
+        (PlatformCALayerCocoa::setCornerRadius): Deleted.
+        (PlatformCALayerCocoa::setEdgeAntialiasingMask): Deleted.
+        (PlatformCALayerCocoa::shapeRoundedRect const): Deleted.
+        (PlatformCALayerCocoa::setShapeRoundedRect): Deleted.
+        (PlatformCALayerCocoa::shapeWindRule const): Deleted.
+        (PlatformCALayerCocoa::setShapeWindRule): Deleted.
+        (PlatformCALayerCocoa::shapePath const): Deleted.
+        (PlatformCALayerCocoa::setShapePath): Deleted.
+        (PlatformCALayerCocoa::requiresCustomAppearanceUpdateOnBoundsChange const): Deleted.
+        (PlatformCALayerCocoa::updateCustomAppearance): Deleted.
+        (layerContentsFormat): Deleted.
+        (PlatformCALayerCocoa::updateContentsFormat): Deleted.
+        (PlatformCALayerCocoa::tiledBacking): Deleted.
+        (PlatformCALayer::isWebLayer): Deleted.
+        (PlatformCALayer::setBoundsOnMainThread): Deleted.
+        (PlatformCALayer::setPositionOnMainThread): Deleted.
+        (PlatformCALayer::setAnchorPointOnMainThread): Deleted.
+        (PlatformCALayer::collectRectsToPaint): Deleted.
+        (PlatformCALayer::drawLayerContents): Deleted.
+        (PlatformCALayer::frameForLayer): Deleted.
+        (PlatformCALayerCocoa::createCompatibleLayer const): Deleted.
+        (PlatformCALayerCocoa::enumerateRectsBeingDrawn): Deleted.
+        (PlatformCALayerCocoa::backingStoreBytesPerPixel const): Deleted.
+        (PlatformCALayerCocoa::avPlayerLayer const): Deleted.
+        * platform/graphics/ca/cocoa/WebSystemBackdropLayer.mm:
+        (-[WebLightSystemBackdropLayer init]):
+        (-[WebDarkSystemBackdropLayer init]):
+        * platform/graphics/ca/cocoa/WebTiledBackingLayer.mm:
+        (-[WebTiledBackingLayer createTileController:]):
+        (-[WebTiledBackingLayer setNeedsDisplayInRect:]):
+        (-[WebTiledBackingLayer setBorderColor:]):
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+
 2018-09-25  YUHAN WU  <yuhan_wu@apple.com>
 
         Implement MediaStreamTrack Content Hints

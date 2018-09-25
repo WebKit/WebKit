@@ -1737,7 +1737,6 @@
 		571252691E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h in Headers */ = {isa = PBXBuildFile; fileRef = 571252681E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h */; };
 		571F21891DA57C54005C9EFD /* JSSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */; };
 		572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */; };
-		57212152205365650062AA1F /* LocalAuthenticationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721214E20535D710062AA1F /* LocalAuthenticationSoftLink.h */; };
 		5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9861ECE53B10081295A /* CryptoDigestAlgorithm.h */; };
 		5721A98B1ECE57040081295A /* CryptoAlgorithmRsaPssParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9881ECE57040081295A /* CryptoAlgorithmRsaPssParams.h */; };
 		572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A7F201C6E5719009C6149 /* SimulatedClick.h */; };
@@ -1762,7 +1761,6 @@
 		57303C4620105D2F00355965 /* AuthenticatorCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C4320105B3D00355965 /* AuthenticatorCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */; };
 		5739E12F1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */; };
-		574F55E0204F3ACE002948C6 /* LocalAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 574F55DE204F3744002948C6 /* LocalAuthenticator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		574F55E1204F3B23002948C6 /* COSEConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 574F55DC204F3732002948C6 /* COSEConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5750A9751E68D00000705C4A /* CryptoKeyEC.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9731E68D00000705C4A /* CryptoKeyEC.h */; };
 		5750A97E1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A97D1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h */; };
@@ -1796,6 +1794,8 @@
 		57DCED672140775B0016B847 /* JSMockAuthenticatorCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED622140763C0016B847 /* JSMockAuthenticatorCoordinator.h */; };
 		57DCED69214077640016B847 /* JSMockAuthenticatorCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED632140763C0016B847 /* JSMockAuthenticatorCoordinator.cpp */; };
 		57DCED74214305F00016B847 /* PublicKeyCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED72214305F00016B847 /* PublicKeyCredentialData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57DCED9021487FF70016B847 /* AuthenticatorTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED8C21487EDB0016B847 /* AuthenticatorTransport.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57DCED98214882160016B847 /* JSAuthenticatorTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED92214880C60016B847 /* JSAuthenticatorTransport.h */; };
 		57E1E5A31E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5A11E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h */; };
 		57E1E5A71E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5A61E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h */; };
 		57E1E5AD1E8DD09B00EE37C9 /* JSAesCtrParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5AB1E8DD09B00EE37C9 /* JSAesCtrParams.h */; };
@@ -8494,8 +8494,6 @@
 		571F218A1DA57C7A005C9EFD /* JSSubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCrypto.cpp; sourceTree = "<group>"; };
 		572093D11DDCEA4B00310AB0 /* AesCbcCfbParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AesCbcCfbParams.idl; sourceTree = "<group>"; };
 		572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCbcCfbParams.h; sourceTree = "<group>"; };
-		5721214E20535D710062AA1F /* LocalAuthenticationSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSoftLink.h; sourceTree = "<group>"; };
-		57212150205361D20062AA1F /* LocalAuthenticationSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticationSoftLink.mm; sourceTree = "<group>"; };
 		5721A9831ECE4FB90081295A /* CryptoAlgorithmRSA_PSSMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSA_PSSMac.cpp; sourceTree = "<group>"; };
 		5721A9861ECE53B10081295A /* CryptoDigestAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoDigestAlgorithm.h; sourceTree = "<group>"; };
 		5721A9881ECE57040081295A /* CryptoAlgorithmRsaPssParams.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaPssParams.h; sourceTree = "<group>"; };
@@ -8545,8 +8543,6 @@
 		574AC7531DAC367D00E9744C /* CryptoAlgorithmParameters.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CryptoAlgorithmParameters.idl; sourceTree = "<group>"; };
 		574D42791D594FF6002CF50E /* GlobalCrypto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GlobalCrypto.idl; sourceTree = "<group>"; };
 		574F55DC204F3732002948C6 /* COSEConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COSEConstants.h; sourceTree = "<group>"; };
-		574F55DE204F3744002948C6 /* LocalAuthenticator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticator.h; sourceTree = "<group>"; };
-		574F55DF204F3744002948C6 /* LocalAuthenticator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticator.mm; sourceTree = "<group>"; };
 		574F55E2204F3CBF002948C6 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		5750A9721E68D00000705C4A /* CryptoKeyEC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyEC.cpp; sourceTree = "<group>"; };
 		5750A9731E68D00000705C4A /* CryptoKeyEC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyEC.h; sourceTree = "<group>"; };
@@ -8622,6 +8618,10 @@
 		57DCED622140763C0016B847 /* JSMockAuthenticatorCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockAuthenticatorCoordinator.h; sourceTree = "<group>"; };
 		57DCED632140763C0016B847 /* JSMockAuthenticatorCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockAuthenticatorCoordinator.cpp; sourceTree = "<group>"; };
 		57DCED72214305F00016B847 /* PublicKeyCredentialData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PublicKeyCredentialData.h; sourceTree = "<group>"; };
+		57DCED8C21487EDB0016B847 /* AuthenticatorTransport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorTransport.h; sourceTree = "<group>"; };
+		57DCED8E21487EDB0016B847 /* AuthenticatorTransport.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AuthenticatorTransport.idl; sourceTree = "<group>"; };
+		57DCED91214880C60016B847 /* JSAuthenticatorTransport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAuthenticatorTransport.cpp; sourceTree = "<group>"; };
+		57DCED92214880C60016B847 /* JSAuthenticatorTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAuthenticatorTransport.h; sourceTree = "<group>"; };
 		57E1E5A01E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_CTR.cpp; sourceTree = "<group>"; };
 		57E1E5A11E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_CTR.h; sourceTree = "<group>"; };
 		57E1E5A61E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCtrParams.h; sourceTree = "<group>"; };
@@ -18836,6 +18836,8 @@
 				576082702021513F00116678 /* AuthenticatorCoordinatorClient.h */,
 				57303BCF20087A8300355965 /* AuthenticatorResponse.h */,
 				57303BD120087A8300355965 /* AuthenticatorResponse.idl */,
+				57DCED8C21487EDB0016B847 /* AuthenticatorTransport.h */,
+				57DCED8E21487EDB0016B847 /* AuthenticatorTransport.idl */,
 				574F55DC204F3732002948C6 /* COSEConstants.h */,
 				57D8462C1FEAF68F00CA3682 /* PublicKeyCredential.cpp */,
 				57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */,
@@ -18862,6 +18864,8 @@
 				57303C212009AEF600355965 /* JSAuthenticatorAttestationResponse.h */,
 				57303BDE20095B2700355965 /* JSAuthenticatorResponse.cpp */,
 				57303BDD20095B2600355965 /* JSAuthenticatorResponse.h */,
+				57DCED91214880C60016B847 /* JSAuthenticatorTransport.cpp */,
+				57DCED92214880C60016B847 /* JSAuthenticatorTransport.h */,
 				57D846311FEAFC2F00CA3682 /* JSPublicKeyCredential.cpp */,
 				57D846301FEAFC2F00CA3682 /* JSPublicKeyCredential.h */,
 				57303C142009A25700355965 /* JSPublicKeyCredentialCreationOptions.cpp */,
@@ -21692,8 +21696,6 @@
 				514B3F750C722055000530DF /* FileSystemCocoa.mm */,
 				A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */,
 				A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */,
-				5721214E20535D710062AA1F /* LocalAuthenticationSoftLink.h */,
-				57212150205361D20062AA1F /* LocalAuthenticationSoftLink.mm */,
 				1A4832B21A953BA6008B4DFE /* LocalizedStringsCocoa.mm */,
 				C53D39331C97892D007F3AE9 /* MIMETypeRegistryCocoa.mm */,
 				A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */,
@@ -27304,6 +27306,7 @@
 				57303C4620105D2F00355965 /* AuthenticatorCoordinator.h in Headers */,
 				5760827220215A5500116678 /* AuthenticatorCoordinatorClient.h in Headers */,
 				57303BD220087A8300355965 /* AuthenticatorResponse.h in Headers */,
+				57DCED9021487FF70016B847 /* AuthenticatorTransport.h in Headers */,
 				A501920E132EBF2E008BFE55 /* Autocapitalize.h in Headers */,
 				A5A7AA43132F0ECC00D3A3C2 /* AutocapitalizeTypes.h in Headers */,
 				7C1843FE1C8B7283002EB973 /* Autofill.h in Headers */,
@@ -28582,6 +28585,7 @@
 				57303C2F2009B7E100355965 /* JSAuthenticatorAssertionResponse.h in Headers */,
 				57303C222009AF0300355965 /* JSAuthenticatorAttestationResponse.h in Headers */,
 				57303BE120095D6100355965 /* JSAuthenticatorResponse.h in Headers */,
+				57DCED98214882160016B847 /* JSAuthenticatorTransport.h in Headers */,
 				BC124F000C26447A009E2349 /* JSBarProp.h in Headers */,
 				57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */,
 				BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */,
@@ -29456,8 +29460,6 @@
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */,
 				8A12E35D11FA33280025836A /* LoadTiming.h in Headers */,
-				57212152205365650062AA1F /* LocalAuthenticationSoftLink.h in Headers */,
-				574F55E0204F3ACE002948C6 /* LocalAuthenticator.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
 				445775E520472F73008DCE5D /* LocalDefaultSystemAppearance.h in Headers */,
 				F5973DE015CFB2030027F804 /* LocaleMac.h in Headers */,

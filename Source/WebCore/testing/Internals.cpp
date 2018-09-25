@@ -555,10 +555,11 @@ Internals::Internals(Document& document)
 #endif
 
 #if ENABLE(WEB_AUTHN)
+    // FIXME(189283)
     if (document.page()) {
         auto mockAuthenticatorCoordinator = std::make_unique<MockAuthenticatorCoordinator>();
         m_mockAuthenticatorCoordinator = makeWeakPtr(mockAuthenticatorCoordinator.get());
-        document.page()->authenticatorCoordinator().setClient(WTFMove(mockAuthenticatorCoordinator));
+//        document.page()->authenticatorCoordinator().setClient(WTFMove(mockAuthenticatorCoordinator));
     }
 #endif
 }

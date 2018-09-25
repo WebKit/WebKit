@@ -1,4 +1,0 @@
-
-PASS PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() without any available authenticators. 
-PASS PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() with available authenticators. 
-

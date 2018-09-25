@@ -32,6 +32,7 @@
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
 #import <Foundation/Foundation.h>
+#import <Security/SecItem.h>
 #import <WebKit/WKContextConfigurationRef.h>
 #import <WebKit/WKCookieManager.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -289,6 +290,64 @@ void TestController::injectUserScript(WKStringRef script)
 
     [[globalWebViewConfiguration userContentController] addUserScript: userScript.get()];
 #endif
+}
+
+void TestController::addTestKeyToKeychain(const String& privateKeyBase64, const String& attrLabel, const String& applicationTagBase64)
+{
+    // FIXME(182772)
+#if PLATFORM(IOS)
+    NSDictionary* options = @{
+        (id)kSecAttrKeyType: (id)kSecAttrKeyTypeECSECPrimeRandom,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrKeySizeInBits: @256
+    };
+    CFErrorRef errorRef = nullptr;
+    auto key = adoptCF(SecKeyCreateWithData(
+        (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:privateKeyBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
+        (__bridge CFDictionaryRef)options,
+        &errorRef
+    ));
+    ASSERT(!errorRef);
+
+    NSDictionary* addQuery = @{
+        (id)kSecValueRef: (id)key.get(),
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrLabel: attrLabel,
+        (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:applicationTagBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get()
+    };
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
+    ASSERT_UNUSED(status, !status);
+#endif
+}
+
+void TestController::cleanUpKeychain(const String& attrLabel)
+{
+    // FIXME(182772)
+#if PLATFORM(IOS)
+    NSDictionary* deleteQuery = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrLabel: attrLabel
+    };
+    SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+#endif
+}
+
+bool TestController::keyExistsInKeychain(const String& attrLabel, const String& applicationTagBase64)
+{
+    // FIXME(182772)
+#if PLATFORM(IOS)
+    NSDictionary *query = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrLabel: attrLabel,
+        (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:applicationTagBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
+    };
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, NULL);
+    if (!status)
+        return true;
+    ASSERT(status == errSecItemNotFound);
+#endif
+    return false;
 }
 
 } // namespace WTR

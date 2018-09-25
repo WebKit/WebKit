@@ -66,7 +66,7 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVPlayerLayer)
 
-using namespace WebCore;
+namespace WebCore {
 
 Ref<PlatformCALayer> PlatformCALayerCocoa::create(LayerType layerType, PlatformCALayerClient* owner)
 {
@@ -97,13 +97,15 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
     return MonotonicTime::now() + Seconds(t - CACurrentMediaTime());
 }
 
+} // namespace WebCore
+
 // Delegate for animationDidStart callback
 @interface WebAnimationDelegate : NSObject {
-    PlatformCALayer* m_owner;
+    WebCore::PlatformCALayer* m_owner;
 }
 
 - (void)animationDidStart:(CAAnimation *)anim;
-- (void)setOwner:(PlatformCALayer*)owner;
+- (void)setOwner:(WebCore::PlatformCALayer*)owner;
 
 @end
 
@@ -111,6 +113,7 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 
 - (void)animationDidStart:(CAAnimation *)animation
 {
+    using namespace WebCore;
 #if PLATFORM(IOS)
     WebThreadLock();
 #endif
@@ -141,6 +144,7 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
 {
+    using namespace WebCore;
 #if PLATFORM(IOS)
     WebThreadLock();
 #endif
@@ -163,12 +167,14 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
         m_owner->animationEnded(animationKey);
 }
 
-- (void)setOwner:(PlatformCALayer*)owner
+- (void)setOwner:(WebCore::PlatformCALayer*)owner
 {
     m_owner = owner;
 }
 
 @end
+
+namespace WebCore {
 
 void PlatformCALayerCocoa::setOwner(PlatformCALayerClient* owner)
 {
@@ -1262,3 +1268,5 @@ AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
     ASSERT_NOT_REACHED();
     return nil;
 }
+
+} // namespace WebCore

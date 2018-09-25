@@ -1,3 +1,159 @@
+2018-09-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Make AuthenticatorManager
+        https://bugs.webkit.org/show_bug.cgi?id=189279
+        <rdar://problem/44116792>
+
+        Reviewed by Chris Dumez.
+
+        This patch introduces AuthenticatorManager which is the central of WebAuthentication that 1) handles
+        web requests, 2) discovers authenticators, 3) manages authetnicators and 4) in the future interacts with UI.
+        The lifetime of the AuthenticatorManager is managed by WebsiteDataStore such that it is almost a singleton
+        per UI Process.
+
+        1) Requests come from WebAuthenticatorCoordinatorProxy and then cached in AuthenticatorManager which will
+        then distribute requests whenever a new authenticator is discovered.
+
+        2) An ABC AuthenticatorTransportService is provided as an interface for AuthenticatorManager to invoke
+        startDiscovery. Actual work will be done in corresponding derived classes, say, LocalService. LocalService
+        is the one that discover attached platform authenticators, for example, TouchID or FaceID.
+
+        Eache service is unique per AuthetnicatorManager, which means we will have at most 4 services, Local, USB,
+        NFC, and BLE. The latter three will be implemented soon. Also, AuthenticatorManager serves as an observer to
+        *Service, so the latter can inform the former whenever an authenticator is added or removed.
+
+        When a new authenticator is discovered, the corresponding service will create an Authetnicator object that
+        binds to the physical authenticator device through a *Connection object. There is no ABC for connection for
+        now as I forsee every *Connection will be quite different. The *Connection object is the one that send/receive
+        messages from the physicla device. So far, a LocalConnection is provided even though normally local authenticators
+        are attached. This class is provided solely for separating UI and network traffic from LocalAuthenticator's
+        request handling process. So we can override them in a mock test environment. I will talk about this in the
+        next section.
+
+        3) An ABC Authenticator is provided as an interface for AuthenticatorManager to distribute requests on. Requests
+        will then be handled by the derived classes, say, LocalAuthenticator. Each authenticator object is a FSM that
+        works asynchronously.
+
+        For LocalAuthenticator, it has 4 states for MakeCredential: Init => RequestReceived => UserConsented => Attested => End,
+        and 3 states for GetAssertion: Init => RequestReceived => UserConsented => End. In the transit from RequestReceived to
+        UserConsented, it will invoke LocalConnection to talk to LocalAuthentication.framework that prompt users for TouchID
+        or FaceID. And then the transit from UserConsented => Attested, it will invoke LocalConnection to talk to
+        DeviceIdentity.framework that does Apple attestation. Most of the work are from the original LocalAuthenticator
+        implementation, and this patch converts it to a FSM and simplify the callback and threading model.
+
+        When a respond is ready, each authenticator will notify their observer which is the AuthenticatorManager.
+        AuthenticatorManager will only reply to Web Process whenever there is a valid respond or a terminating error. Otherwise,
+        the request will time out. I will explore the time out mechanism in a more detailed manner in Bug 189642.
+
+        The above is a briefing of the AuthetnicatorManager architecture in functional. The asynchronous model is explained here:
+        1) Since most discovery and request handling processes are asynchronous, I enforced them to be executed asyncrhonous in
+        the interface of the ABC.
+        2) There is no dedicated secondary threads here. However, underlying framework might decide to perform works on a dedicated
+        thread and then execute the provided callback. Whenever such situation happens, the policy here is to wrap the actual callback
+        into a callback that will post the actual callback back to the main thread and pass the wrapping callback to the APIs. Hence,
+        weak pointers in the actual callback are guaranteed to work.
+        3) Callbacks are used only if it is one way, and they are CompletionHandlers.
+        4) Potential multi ways asynchronous operations are encapsulated in regarding Observer interfaces.
+
+        Finally, let me explain how the mock test works:
+        1) Mock testing is done in WebKitTestRunner instead of Internals because a considerable large portion of work is in UIProcess
+        instead of WebProcess, says, the AuthenticatorManager.
+        2) The basic idea is to override functionality of *Connection classes and then make them thin such that we can get the best
+        possible coverage in auto tests.
+        3) In order to enable layout tests to configure the Mock*Connection classes, a MockWebAuthenticationConfiguration struct is
+        provided. A corresponding JS dictionary will be created by each test and passed from the TestRunner to the connection object.
+        4) To bridge the above tunnel, a MockAuthenticatorManager is constructed. It is instrumented to return every error.
+        5) Also, Mock*Service classes are made to mock the discovery process as well.
+        6) Noted, every mock overrided methods are made thin.
+
+        * CMakeLists.txt:
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/Cocoa/DeviceIdentitySPI.h: Copied from Source/WebCore/PAL/pal/spi/cocoa/DeviceIdentitySPI.h.
+        * SourcesCocoa.txt:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebAuthentication/Authenticator.cpp: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        (WebKit::Authenticator::handleRequest):
+        (WebKit::Authenticator::receiveRespond const):
+        * UIProcess/WebAuthentication/Authenticator.h: Renamed from Source/WebCore/Modules/webauthn/cocoa/LocalAuthenticator.h.
+        (WebKit::Authenticator::setObserver):
+        (WebKit::Authenticator::observer const):
+        (WebKit::Authenticator::requestData const):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp: Added.
+        (WebKit::AuthenticatorManagerInternal::collectTransports):
+        (WebKit::AuthenticatorManager::makeCredential):
+        (WebKit::AuthenticatorManager::getAssertion):
+        (WebKit::AuthenticatorManager::clearState):
+        (WebKit::AuthenticatorManager::authenticatorAdded):
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::createService const):
+        (WebKit::AuthenticatorManager::respondReceivedInternal):
+        (WebKit::AuthenticatorManager::startDiscovery):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h: Added.
+        (WebKit::AuthenticatorManager::pendingCompletionHandler):
+        * UIProcess/WebAuthentication/AuthenticatorTransportService.cpp: Copied from Source/WebCore/PAL/pal/spi/cocoa/DeviceIdentitySPI.h.
+        (WebKit::AuthenticatorTransportService::create):
+        (WebKit::AuthenticatorTransportService::createMock):
+        (WebKit::AuthenticatorTransportService::AuthenticatorTransportService):
+        (WebKit::AuthenticatorTransportService::startDiscovery const):
+        * UIProcess/WebAuthentication/AuthenticatorTransportService.h: Copied from Source/WebCore/PAL/pal/spi/cocoa/DeviceIdentitySPI.h.
+        (WebKit::AuthenticatorTransportService::observer const):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.h: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.h: Copied from Source/WebCore/PAL/pal/spi/cocoa/DeviceIdentitySPI.h.
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm: Added.
+        (WebKit::LocalAuthenticatorInternal::buildAuthData):
+        (WebKit::LocalAuthenticatorInternal::transportsContain):
+        (WebKit::LocalAuthenticatorInternal::produceHashSet):
+        (WebKit::LocalAuthenticatorInternal::toVector):
+        (WebKit::LocalAuthenticator::LocalAuthenticator):
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.h: Copied from Source/WebCore/PAL/pal/spi/cocoa/DeviceIdentitySPI.h.
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm: Added.
+        (WebKit::LocalConnection::getUserConsent const):
+        (WebKit::LocalConnection::getAttestation const):
+        * UIProcess/WebAuthentication/Cocoa/LocalService.h: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm: Renamed from Source/WebCore/PAL/pal/spi/cocoa/DeviceIdentitySPI.h.
+        (WebKit::LocalService::LocalService):
+        (WebKit::LocalService::isAvailable):
+        (WebKit::LocalService::startDiscoveryInternal const):
+        (WebKit::LocalService::platformStartDiscovery const):
+        (WebKit::LocalService::createLocalConnection const):
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        (WebKit::MockAuthenticatorManager::MockAuthenticatorManager):
+        (WebKit::MockAuthenticatorManager::createService const):
+        (WebKit::MockAuthenticatorManager::respondReceivedInternal):
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.h: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.h: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm: Added.
+        (WebKit::MockLocalConnection::MockLocalConnection):
+        (WebKit::MockLocalConnection::getUserConsent const):
+        (WebKit::MockLocalConnection::getAttestation const):
+        * UIProcess/WebAuthentication/Mock/MockLocalService.cpp: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        (WebKit::MockLocalService::MockLocalService):
+        (WebKit::MockLocalService::platformStartDiscovery const):
+        (WebKit::MockLocalService::createLocalConnection const):
+        * UIProcess/WebAuthentication/Mock/MockLocalService.h: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h: Copied from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h: Renamed from Source/WebCore/platform/cocoa/LocalAuthenticationSoftLink.h.
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::WebAuthenticatorCoordinatorProxy):
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable):
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailableReply): Deleted.
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::setMockWebAuthenticationConfiguration):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::authenticatorManager):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-09-25  Chris Dumez  <cdumez@apple.com>
 
         Revert some of the changes in r236471

@@ -51,6 +51,8 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
     "${WEBKIT_DIR}/UIProcess/Storage"
     "${WEBKIT_DIR}/UIProcess/UserContent"
+    "${WEBKIT_DIR}/UIProcess/WebAuthentication"
+    "${WEBKIT_DIR}/UIProcess/WebAuthentication/Mock"
     "${WEBKIT_DIR}/UIProcess/WebStorage"
     "${WEBKIT_DIR}/UIProcess/WebsiteData"
     "${WEBKIT_DIR}/WebProcess"

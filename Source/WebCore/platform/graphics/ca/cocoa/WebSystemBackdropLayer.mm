@@ -29,8 +29,6 @@
 #import "GraphicsContextCG.h"
 #import <QuartzCore/QuartzCore.h>
 
-using namespace WebCore;
-
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=146250
 // These should provide the system recipes for the layers
 // with the appropriate tinting, blending and blurring.
@@ -51,7 +49,7 @@ using namespace WebCore;
 #endif
 
     CGFloat components[4] = { 0.8, 0.8, 0.8, 0.8 };
-    [super setBackgroundColor:adoptCF(CGColorCreate(sRGBColorSpaceRef(), components)).get()];
+    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceRef(), components)).get()];
 
     return self;
 }
@@ -77,7 +75,7 @@ using namespace WebCore;
 #endif
 
     CGFloat components[4] = { 0.2, 0.2, 0.2, 0.8 };
-    [super setBackgroundColor:adoptCF(CGColorCreate(sRGBColorSpaceRef(), components)).get()];
+    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceRef(), components)).get()];
 
     return self;
 }

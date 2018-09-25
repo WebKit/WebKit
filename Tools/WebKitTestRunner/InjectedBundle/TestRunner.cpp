@@ -2348,4 +2348,142 @@ void TestRunner::sendDisplayConfigurationChangedMessageForTesting()
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
 }
 
+// WebAuthN
+void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationValue)
+{
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    if (!JSValueIsObject(context, configurationValue))
+        return;
+    JSObjectRef configuration = JSValueToObject(context, configurationValue, 0);
+
+    JSRetainPtr<JSStringRef> localPropertyName(Adopt, JSStringCreateWithUTF8CString("local"));
+    JSValueRef localValue = JSObjectGetProperty(context, configuration, localPropertyName.get(), 0);
+    if (!JSValueIsObject(context, localValue))
+        return;
+    JSObjectRef local = JSValueToObject(context, localValue, 0);
+
+    JSRetainPtr<JSStringRef> acceptAuthenticationPropertyName(Adopt, JSStringCreateWithUTF8CString("acceptAuthentication"));
+    JSValueRef acceptAuthenticationValue = JSObjectGetProperty(context, local, acceptAuthenticationPropertyName.get(), 0);
+    if (!JSValueIsBoolean(context, acceptAuthenticationValue))
+        return;
+    bool acceptAuthentication = JSValueToBoolean(context, acceptAuthenticationValue);
+
+    JSRetainPtr<JSStringRef> acceptAttestationPropertyName(Adopt, JSStringCreateWithUTF8CString("acceptAttestation"));
+    JSValueRef acceptAttestationValue = JSObjectGetProperty(context, local, acceptAttestationPropertyName.get(), 0);
+    if (!JSValueIsBoolean(context, acceptAttestationValue))
+        return;
+    bool acceptAttestation = JSValueToBoolean(context, acceptAttestationValue);
+
+    JSRetainPtr<JSStringRef> privateKeyBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("privateKeyBase64"));
+    JSValueRef privateKeyBase64Value = JSObjectGetProperty(context, local, privateKeyBase64PropertyName.get(), 0);
+    if (!JSValueIsString(context, privateKeyBase64Value))
+        return;
+
+    Vector<WKRetainPtr<WKStringRef>> localKeys;
+    Vector<WKRetainPtr<WKTypeRef>> localValues;
+    localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("AcceptAuthentication") });
+    localValues.append(adoptWK(WKBooleanCreate(acceptAuthentication)).get());
+    localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("AcceptAttestation") });
+    localValues.append(adoptWK(WKBooleanCreate(acceptAttestation)).get());
+    localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("PrivateKeyBase64") });
+    localValues.append(toWK(adopt(JSValueToStringCopy(context, privateKeyBase64Value, 0)).get()));
+
+    Vector<WKStringRef> rawLocalKeys;
+    Vector<WKTypeRef> rawLocalValues;
+    rawLocalKeys.resize(localKeys.size());
+    rawLocalValues.resize(localValues.size());
+    for (size_t i = 0; i < localKeys.size(); ++i) {
+        rawLocalKeys[i] = localKeys[i].get();
+        rawLocalValues[i] = localValues[i].get();
+    }
+
+    Vector<WKRetainPtr<WKStringRef>> configurationKeys;
+    Vector<WKRetainPtr<WKTypeRef>> configurationValues;
+    configurationKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("Local") });
+    configurationValues.append({ AdoptWK, WKDictionaryCreate(rawLocalKeys.data(), rawLocalValues.data(), rawLocalKeys.size()) });
+
+    Vector<WKStringRef> rawConfigurationKeys;
+    Vector<WKTypeRef> rawConfigurationValues;
+    rawConfigurationKeys.resize(configurationKeys.size());
+    rawConfigurationValues.resize(configurationValues.size());
+    for (size_t i = 0; i < configurationKeys.size(); ++i) {
+        rawConfigurationKeys[i] = configurationKeys[i].get();
+        rawConfigurationValues[i] = configurationValues[i].get();
+    }
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetWebAuthenticationMockConfiguration"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawConfigurationKeys.data(), rawConfigurationValues.data(), rawConfigurationKeys.size()));
+    
+    WKBundlePostSynchronousMessage(injectedBundle.bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::addTestKeyToKeychain(JSStringRef privateKeyBase64, JSStringRef attrLabel, JSStringRef applicationTagBase64)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("PrivateKey") });
+    values.append(toWK(privateKeyBase64));
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("AttrLabel") });
+    values.append(toWK(attrLabel));
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("ApplicationTag") });
+    values.append(toWK(applicationTagBase64));
+
+    Vector<WKStringRef> rawKeys;
+    Vector<WKTypeRef> rawValues;
+    rawKeys.resize(keys.size());
+    rawValues.resize(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("AddTestKeyToKeychain"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::cleanUpKeychain(JSStringRef attrLabel)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("CleanUpKeychain"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(attrLabel));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+bool TestRunner::keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("AttrLabel") });
+    values.append(toWK(attrLabel));
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("ApplicationTag") });
+    values.append(toWK(applicationTagBase64));
+
+    Vector<WKStringRef> rawKeys;
+    Vector<WKTypeRef> rawValues;
+    rawKeys.resize(keys.size());
+    rawValues.resize(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("KeyExistsInKeychain"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+
+    WKTypeRef returnData = 0;
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), &returnData);
+    return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
+}
+
 } // namespace WTR

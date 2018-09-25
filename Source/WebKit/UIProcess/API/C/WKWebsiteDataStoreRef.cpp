@@ -28,7 +28,11 @@
 
 #include "APIArray.h"
 #include "APIWebsiteDataStore.h"
+#include "MockWebAuthenticationConfiguration.h"
 #include "WKAPICast.h"
+#include "WKDictionary.h"
+#include "WKNumber.h"
+#include "WKRetainPtr.h"
 #include "WKSecurityOriginRef.h"
 #include "WKString.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -565,4 +569,19 @@ WKStringRef WKWebsiteDataStoreCopyServiceWorkerRegistrationDirectory(WKWebsiteDa
 void WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(WKWebsiteDataStoreRef dataStoreRef, WKStringRef serviceWorkerRegistrationDirectory)
 {
     WebKit::toImpl(dataStoreRef)->websiteDataStore().setServiceWorkerRegistrationDirectory(WebKit::toImpl(serviceWorkerRegistrationDirectory)->string());
+}
+
+
+void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreRef dataStoreRef, WKDictionaryRef configurationRef)
+{
+#if ENABLE(WEB_AUTHN)
+    auto localRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Local")).get()));
+
+    MockWebAuthenticationConfiguration configuration;
+    configuration.local.acceptAuthentication = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("AcceptAuthentication")).get())));
+    configuration.local.acceptAttestation = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("AcceptAttestation")).get())));
+    configuration.local.privateKeyBase64 = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("PrivateKeyBase64")).get())))->string();
+
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().setMockWebAuthenticationConfiguration(WTFMove(configuration));
+#endif
 }

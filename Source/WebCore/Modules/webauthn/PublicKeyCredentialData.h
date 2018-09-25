@@ -57,17 +57,25 @@ struct PublicKeyCredentialData {
 template<class Encoder>
 void PublicKeyCredentialData::encode(Encoder& encoder) const
 {
+    if (!rawId) {
+        encoder << true;
+        return;
+    }
+    encoder << false;
+
     encoder << static_cast<uint64_t>(rawId->byteLength());
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(rawId->data()), rawId->byteLength(), 1);
 
     encoder << isAuthenticatorAttestationResponse;
 
-    if (isAuthenticatorAttestationResponse) {
+    if (isAuthenticatorAttestationResponse && attestationObject) {
         encoder << static_cast<uint64_t>(attestationObject->byteLength());
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(attestationObject->data()), attestationObject->byteLength(), 1);
         return;
     }
 
+    if (!authenticatorData || !signature || !userHandle)
+        return;
     encoder << static_cast<uint64_t>(authenticatorData->byteLength());
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(authenticatorData->data()), authenticatorData->byteLength(), 1);
     encoder << static_cast<uint64_t>(signature->byteLength());
@@ -80,6 +88,13 @@ template<class Decoder>
 std::optional<PublicKeyCredentialData> PublicKeyCredentialData::decode(Decoder& decoder)
 {
     PublicKeyCredentialData result;
+
+    std::optional<bool> isEmpty;
+    decoder >> isEmpty;
+    if (!isEmpty)
+        return std::nullopt;
+    if (isEmpty.value())
+        return result;
 
     std::optional<uint64_t> rawIdLength;
     decoder >> rawIdLength;

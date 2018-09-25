@@ -1,3 +1,37 @@
+2018-09-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Make AuthenticatorManager
+        https://bugs.webkit.org/show_bug.cgi?id=189279
+        <rdar://problem/44116792>
+
+        Reviewed by Chris Dumez.
+
+        Besides the functionality to set the WebAuthenticationMockConfiguration. Three operations are
+        added to manipulate Keychain: addTestKeyToKeychain, cleanUpKeychain and keyExistedInKeychain.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/LocalAuthenticator.mm: Removed.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebAuthenticationMockConfiguration):
+        (WTR::TestRunner::addTestKeyToKeychain):
+        (WTR::TestRunner::cleanUpKeychain):
+        (WTR::TestRunner::isKeyExisted):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::addTestKeyToKeychain):
+        (WTR::TestController::cleanUpKeychain):
+        (WTR::TestController::isKeyExisted):
+        (WTR::TestController::setWebAuthenticationMockConfiguration):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::addTestKeyToKeychain):
+        (WTR::TestController::cleanUpKeychain):
+        (WTR::TestController::keyExistedInKeychain):
+
 2018-09-25  Sihui Liu  <sihui_liu@apple.com>
 
         Move Service Worker Management from Storage Process to Network Process

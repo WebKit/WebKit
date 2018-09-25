@@ -1,3 +1,15 @@
+2018-09-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Make AuthenticatorManager
+        https://bugs.webkit.org/show_bug.cgi?id=189279
+        <rdar://problem/44116792>
+
+        Reviewed by Chris Dumez.
+
+        It moves linking to DeviceIdentity.framework to WebKit.
+
+        * PAL.xcodeproj/project.pbxproj:
+
 2018-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Fix the open source iOS 12 build after r236445

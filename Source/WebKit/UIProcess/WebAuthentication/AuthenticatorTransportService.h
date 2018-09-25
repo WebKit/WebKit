@@ -27,37 +27,46 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
+#include <WebCore/AuthenticatorTransport.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
+namespace WebKit {
 
-struct ExceptionData;
-struct PublicKeyCredentialCreationOptions;
-struct PublicKeyCredentialData;
-struct PublicKeyCredentialRequestOptions;
+class Authenticator;
 
-using Callback = Function<void(Variant<PublicKeyCredentialData, ExceptionData>&&)>;
+struct MockWebAuthenticationConfiguration;
 
-typedef void (^CompletionBlock)(SecKeyRef _Nullable referenceKey, NSArray * _Nullable certificates, NSError * _Nullable error);
-
-// FIXME(182769): LocalAuthenticator should belongs to WebKit. However, we need unit tests.
-class WEBCORE_EXPORT LocalAuthenticator : public CanMakeWeakPtr<LocalAuthenticator> {
-    WTF_MAKE_NONCOPYABLE(LocalAuthenticator);
+class AuthenticatorTransportService : public CanMakeWeakPtr<AuthenticatorTransportService> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(AuthenticatorTransportService);
 public:
-    LocalAuthenticator();
-    virtual ~LocalAuthenticator() = default;
+    class Observer : public CanMakeWeakPtr<Observer> {
+    public:
+        virtual ~Observer() = default;
 
-    void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, Callback&&);
-    void getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions&, Callback&&);
-    bool isAvailable() const;
+        virtual void authenticatorAdded(Ref<Authenticator>&&) = 0;
+    };
+
+    static UniqueRef<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, Observer&);
+    static UniqueRef<AuthenticatorTransportService> createMock(WebCore::AuthenticatorTransport, Observer&, const MockWebAuthenticationConfiguration&);
+
+    virtual ~AuthenticatorTransportService() = default;
+
+    // This operation is guaranteed to execute asynchronously.
+    void startDiscovery() const;
 
 protected:
-    // Apple Attestation is moved into this virtual method such that it can be overrided by self attestation for testing.
-    virtual void issueClientCertificate(const String& rpId, const String& username, const Vector<uint8_t>& hash, CompletionBlock _Nonnull) const;
+    explicit AuthenticatorTransportService(Observer&);
+
+    Observer* observer() const { return m_observer.get(); }
+
+private:
+    virtual void startDiscoveryInternal() const = 0;
+
+    WeakPtr<Observer> m_observer;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

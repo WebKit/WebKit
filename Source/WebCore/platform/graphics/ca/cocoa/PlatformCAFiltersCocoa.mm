@@ -33,7 +33,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 // FIXME: Should share these values with CSSFilter::build() (https://bugs.webkit.org/show_bug.cgi?id=76008).
 static const double sepiaFullConstants[3][3] = {
@@ -692,3 +692,5 @@ const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Opera
     }
 #endif
 }
+
+} // namespace WebCore

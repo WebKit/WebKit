@@ -29,6 +29,8 @@
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataRecord.h"
 #include "APIWebsiteDataStore.h"
+#include "AuthenticatorManager.h"
+#include "MockAuthenticatorManager.h"
 #include "NetworkProcessMessages.h"
 #include "StorageManager.h"
 #include "StorageProcessCreationParameters.h"
@@ -96,6 +98,9 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration, PAL::SessionID s
     , m_configuration(WTFMove(configuration))
     , m_storageManager(StorageManager::create(m_configuration.localStorageDirectory))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
+#if ENABLE(WEB_AUTHN)
+    , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
+#endif
 {
     WTF::setProcessPrivileges(allPrivileges());
     maybeRegisterWithSessionIDMap();
@@ -108,6 +113,9 @@ WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
     , m_configuration()
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
+#if ENABLE(WEB_AUTHN)
+    , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
+#endif
 {
     maybeRegisterWithSessionIDMap();
     platformInitialize();
@@ -1648,6 +1656,15 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 void WebsiteDataStore::addSecKeyProxyStore(Ref<SecKeyProxyStore>&& store)
 {
     m_secKeyProxyStores.append(WTFMove(store));
+}
+#endif
+
+#if ENABLE(WEB_AUTHN)
+void WebsiteDataStore::setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration&& configuration)
+{
+    if (!m_authenticatorManager->isMock())
+        m_authenticatorManager = makeUniqueRef<MockAuthenticatorManager>(WTFMove(configuration));
+    static_cast<MockAuthenticatorManager*>(&m_authenticatorManager)->setTestConfiguration(WTFMove(configuration));
 }
 #endif
 

@@ -37,6 +37,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -51,6 +52,7 @@ class SecurityOrigin;
 
 namespace WebKit {
 
+class AuthenticatorManager;
 class SecKeyProxyStore;
 class StorageManager;
 class WebPageProxy;
@@ -58,6 +60,7 @@ class WebProcessPool;
 class WebResourceLoadStatisticsStore;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
+struct MockWebAuthenticationConfiguration;
 struct StorageProcessCreationParameters;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
@@ -189,6 +192,11 @@ public:
     void addSecKeyProxyStore(Ref<SecKeyProxyStore>&&);
 #endif
 
+#if ENABLE(WEB_AUTHN)
+    AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
+    void setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration&&);
+#endif
+
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Configuration, PAL::SessionID);
@@ -246,6 +254,10 @@ private:
 
 #if HAVE(SEC_KEY_PROXY)
     Vector<Ref<SecKeyProxyStore>> m_secKeyProxyStores;
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    UniqueRef<AuthenticatorManager> m_authenticatorManager;
 #endif
 };
 

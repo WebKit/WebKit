@@ -2428,6 +2428,7 @@ JSAudioProcessingEvent.cpp
 JSAuthenticatorAssertionResponse.cpp
 JSAuthenticatorAttestationResponse.cpp
 JSAuthenticatorResponse.cpp
+JSAuthenticatorTransport.cpp
 JSBarProp.cpp
 JSBasicCredential.cpp
 JSBeforeLoadEvent.cpp

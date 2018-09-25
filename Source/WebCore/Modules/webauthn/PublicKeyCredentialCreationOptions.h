@@ -31,11 +31,17 @@
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct PublicKeyCredentialCreationOptions {
+    enum class AuthenticatorAttachment {
+        Platform,
+        CrossPlatform
+    };
+
     struct Entity {
         String name;
         String icon;
@@ -59,6 +65,13 @@ struct PublicKeyCredentialCreationOptions {
         template<class Decoder> static std::optional<Parameters> decode(Decoder&);
     };
 
+    struct AuthenticatorSelectionCriteria {
+        AuthenticatorAttachment authenticatorAttachment;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static std::optional<AuthenticatorSelectionCriteria> decode(Decoder&);
+    };
+
     RpEntity rp;
     UserEntity user;
 
@@ -67,6 +80,7 @@ struct PublicKeyCredentialCreationOptions {
 
     std::optional<unsigned long> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
+    std::optional<AuthenticatorSelectionCriteria> authenticatorSelection;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PublicKeyCredentialCreationOptions> decode(Decoder&);
@@ -89,6 +103,21 @@ std::optional<PublicKeyCredentialCreationOptions::Parameters> PublicKeyCredentia
     return result;
 }
 
+template<class Encoder>
+void PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::encode(Encoder& encoder) const
+{
+    encoder << authenticatorAttachment;
+}
+
+template<class Decoder>
+std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::decode(Decoder& decoder)
+{
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria result;
+    if (!decoder.decodeEnum(result.authenticatorAttachment))
+        return std::nullopt;
+    return result;
+}
+
 // Not every member is encoded.
 template<class Encoder>
 void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
@@ -96,7 +125,7 @@ void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
     encoder << rp.id << rp.name << rp.icon;
     encoder << static_cast<uint64_t>(user.id.length());
     encoder.encodeFixedLengthData(user.id.data(), user.id.length(), 1);
-    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << excludeCredentials;
+    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << excludeCredentials << authenticatorSelection;
 }
 
 template<class Decoder>
@@ -109,15 +138,8 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
         return std::nullopt;
     if (!decoder.decode(result.rp.icon))
         return std::nullopt;
-
-    std::optional<uint64_t> userIdLength;
-    decoder >> userIdLength;
-    if (!userIdLength)
+    if (!decoder.decode(result.user.idVector))
         return std::nullopt;
-    result.user.idVector.reserveCapacity(userIdLength.value());
-    if (!decoder.decodeFixedLengthData(result.user.idVector.data(), userIdLength.value(), 1))
-        return std::nullopt;
-
     if (!decoder.decode(result.user.displayName))
         return std::nullopt;
     if (!decoder.decode(result.user.name))
@@ -128,6 +150,13 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
         return std::nullopt;
     if (!decoder.decode(result.excludeCredentials))
         return std::nullopt;
+
+    std::optional<std::optional<AuthenticatorSelectionCriteria>> authenticatorSelection;
+    decoder >> authenticatorSelection;
+    if (!authenticatorSelection)
+        return std::nullopt;
+    result.authenticatorSelection = WTFMove(authenticatorSelection.value());
+
     return result;
 }
 
@@ -151,6 +180,15 @@ template<> struct CrossThreadCopierBase<false, false, WebCore::PublicKeyCredenti
         return result;
     }
 };
+
+template<> struct EnumTraits<WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment> {
+    using values = EnumValues<
+        WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment,
+        WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform,
+        WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform
+    >;
+};
+
 } // namespace WTF
 
 #endif // ENABLE(WEB_AUTHN)

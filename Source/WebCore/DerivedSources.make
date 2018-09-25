@@ -340,10 +340,11 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webauthn/AuthenticatorAssertionResponse.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorAttestationResponse.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorResponse.idl \
+    $(WebCore)/Modules/webauthn/AuthenticatorTransport.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredential.idl \
-	$(WebCore)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialDescriptor.idl \
-	$(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \

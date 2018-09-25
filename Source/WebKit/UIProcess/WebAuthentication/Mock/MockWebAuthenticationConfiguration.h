@@ -25,9 +25,20 @@
 
 #pragma once
 
-#import <LocalAuthentication/LocalAuthentication.h>
-#import <wtf/SoftLinking.h>
+#if ENABLE(WEB_AUTHN)
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, LocalAuthentication)
+namespace WebKit {
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, LocalAuthentication, LAContext)
+struct MockWebAuthenticationConfiguration {
+    struct Local {
+        bool acceptAuthentication { false };
+        bool acceptAttestation { false };
+        String privateKeyBase64;
+    };
+
+    Local local;
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(WEB_AUTHN)

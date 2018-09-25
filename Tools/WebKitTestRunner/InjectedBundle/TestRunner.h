@@ -468,6 +468,13 @@ public:
 
     void sendDisplayConfigurationChangedMessageForTesting();
 
+    // WebAuthN
+    void setWebAuthenticationMockConfiguration(JSValueRef);
+    // FIXME(189876)
+    void addTestKeyToKeychain(JSStringRef privateKeyBase64, JSStringRef attrLabel, JSStringRef applicationTagBase64);
+    void cleanUpKeychain(JSStringRef attrLabel);
+    bool keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64);
+
 private:
     TestRunner();
 
