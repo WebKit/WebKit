@@ -1,3 +1,12 @@
+2018-09-25  YUHAN WU  <yuhan_wu@apple.com>
+
+        Import WPT content hint tests
+        https://bugs.webkit.org/show_bug.cgi?id=189854
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/mst-content-hint/idlharness.window-expected.txt: Added.
+
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Remove filterRes parameter from SVG filters
