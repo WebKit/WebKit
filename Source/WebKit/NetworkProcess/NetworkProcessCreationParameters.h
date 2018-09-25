@@ -130,6 +130,12 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    String serviceWorkerRegistrationDirectory;
+    SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
+    Vector<String> urlSchemesServiceWorkersCanHandle;
+    bool shouldDisableServiceWorkerProcessTerminationDelay { false };
+#endif
 };
 
 } // namespace WebKit

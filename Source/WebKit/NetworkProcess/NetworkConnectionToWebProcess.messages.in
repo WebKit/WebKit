@@ -76,4 +76,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RemoveIDBConnectionToServer(uint64_t serverConnectionIdentifier)
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier)
+#endif
 }

@@ -27,15 +27,10 @@
 
 #include "Connection.h"
 #include "MessageSender.h"
-
-#include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
-
-class WebSWServerConnection;
-class WebSWServerToContextConnection;
 
 class StorageToWebProcessConnection : public RefCounted<StorageToWebProcessConnection>, private IPC::Connection::Client, private IPC::MessageSender {
 public:
@@ -58,13 +53,6 @@ private:
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override { return m_connection.ptr(); }
     uint64_t messageSenderDestinationID() override { return 0; }
-
-#if ENABLE(SERVICE_WORKER)
-    void establishSWServerConnection(PAL::SessionID, WebCore::SWServerConnectionIdentifier&);
-    void unregisterSWConnections();
-
-    HashMap<WebCore::SWServerConnectionIdentifier, WeakPtr<WebSWServerConnection>> m_swConnections;
-#endif
 
     Ref<IPC::Connection> m_connection;
 };

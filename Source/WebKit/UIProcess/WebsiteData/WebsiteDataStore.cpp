@@ -227,6 +227,11 @@ static ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(OptionSet<W
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !isNonPersistentStore)
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
+#if ENABLE(SERVICE_WORKER)
+    if (dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && !isNonPersistentStore)
+        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+#endif
+
     return processAccessType;
 }
 
@@ -513,19 +518,6 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
         });
     }
 
-#if ENABLE(SERVICE_WORKER)
-    if (dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && isPersistent()) {
-        for (auto& processPool : processPools()) {
-            processPool->ensureStorageProcessAndWebsiteDataStore(this);
-
-            callbackAggregator->addPendingCallback();
-            processPool->storageProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
-                callbackAggregator->removePendingCallback(WTFMove(websiteData));
-            });
-        }
-    }
-#endif
-
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         callbackAggregator->addPendingCallback();
 
@@ -659,6 +651,11 @@ static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet
 
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !isNonPersistentStore)
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+    
+#if ENABLE(SERVICE_WORKER)
+    if (dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && !isNonPersistentStore)
+        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+#endif
 
     return processAccessType;
 }
@@ -823,19 +820,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
             });
         });
     }
-
-#if ENABLE(SERVICE_WORKER)
-    if (dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && isPersistent()) {
-        for (auto& processPool : processPools()) {
-            processPool->ensureStorageProcessAndWebsiteDataStore(this);
-
-            callbackAggregator->addPendingCallback();
-            processPool->storageProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator, processPool] {
-                callbackAggregator->removePendingCallback();
-            });
-        }
-    }
-#endif
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         callbackAggregator->addPendingCallback();
@@ -1122,19 +1106,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             });
         });
     }
-
-#if ENABLE(SERVICE_WORKER)
-    if (dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && isPersistent()) {
-        for (auto& processPool : processPools()) {
-            processPool->ensureStorageProcessAndWebsiteDataStore(this);
-
-            callbackAggregator->addPendingCallback();
-            processPool->storageProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator, processPool] {
-                callbackAggregator->removePendingCallback();
-            });
-        }
-    }
-#endif
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         HashSet<WebCore::SecurityOriginData> origins;
@@ -1625,12 +1596,6 @@ StorageProcessCreationParameters WebsiteDataStore::storageProcessParameters()
 
     parameters.sessionID = m_sessionID;
 
-#if ENABLE(SERVICE_WORKER)
-    parameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
-    if (!parameters.serviceWorkerRegistrationDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-#endif
-
     return parameters;
 }
 
@@ -1667,6 +1632,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
     if (!parameters.indexedDatabaseDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    parameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
+    if (!parameters.serviceWorkerRegistrationDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
     return parameters;

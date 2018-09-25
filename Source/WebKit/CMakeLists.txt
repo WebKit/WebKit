@@ -10,6 +10,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/Downloads"
     "${WEBKIT_DIR}/NetworkProcess/FileAPI"
     "${WEBKIT_DIR}/NetworkProcess/IndexedDB"
+    "${WEBKIT_DIR}/NetworkProcess/ServiceWorker"
     "${WEBKIT_DIR}/NetworkProcess/cache"
     "${WEBKIT_DIR}/NetworkProcess/capture"
     "${WEBKIT_DIR}/NetworkProcess/watchos"
@@ -33,7 +34,6 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/Storage"
     "${WEBKIT_DIR}/Shared/WebsiteData"
     "${WEBKIT_DIR}/StorageProcess"
-    "${WEBKIT_DIR}/StorageProcess/ServiceWorker"
     "${WEBKIT_DIR}/UIProcess"
     "${WEBKIT_DIR}/UIProcess/API"
     "${WEBKIT_DIR}/UIProcess/API/C"
@@ -104,13 +104,16 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/Cookies/WebCookieManager.messages.in
 
+    NetworkProcess/IndexedDB/WebIDBConnectionToClient.messages.in
+
     NetworkProcess/NetworkConnectionToWebProcess.messages.in
     NetworkProcess/NetworkContentRuleListManager.messages.in
     NetworkProcess/NetworkProcess.messages.in
     NetworkProcess/NetworkResourceLoader.messages.in
     NetworkProcess/NetworkSocketStream.messages.in
 
-    NetworkProcess/IndexedDB/WebIDBConnectionToClient.messages.in
+    NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
+    NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
 
     NetworkProcess/cache/CacheStorageEngineConnection.messages.in
 
@@ -132,9 +135,6 @@ set(WebKit_MESSAGES_IN_FILES
 
     StorageProcess/StorageProcess.messages.in
     StorageProcess/StorageToWebProcessConnection.messages.in
-
-    StorageProcess/ServiceWorker/WebSWServerConnection.messages.in
-    StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
     UIProcess/RemoteWebInspectorProxy.messages.in

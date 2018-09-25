@@ -37,6 +37,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/cocoa/Entitlements.h>
 
 #define ENABLE_MANUAL_NETWORK_SANDBOXING 0
 
@@ -94,6 +95,12 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 void NetworkProcess::platformTerminate()
 {
     notImplemented();
+}
+
+bool NetworkProcess::parentProcessHasServiceWorkerEntitlement() const
+{
+    static bool hasEntitlement = WTF::hasEntitlement(parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers");
+    return hasEntitlement;
 }
 
 } // namespace WebKit

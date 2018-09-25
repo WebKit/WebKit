@@ -535,6 +535,19 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    if (m_websiteDataStore)
+        parameters.serviceWorkerRegistrationDirectory = m_websiteDataStore->websiteDataStore().resolvedServiceWorkerRegistrationDirectory();
+    if (!parameters.serviceWorkerRegistrationDirectory)
+        parameters.serviceWorkerRegistrationDirectory =  API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
+    SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+
+    if (!m_schemesServiceWorkersCanHandle.isEmpty())
+        parameters.urlSchemesServiceWorkersCanHandle = copyToVector(m_schemesServiceWorkersCanHandle);
+
+    parameters.shouldDisableServiceWorkerProcessTerminationDelay = m_shouldDisableServiceWorkerProcessTerminationDelay;
+#endif
+
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
 
@@ -560,7 +573,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     return *m_networkProcess;
 }
 
-void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessProxy, Vector<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&& pendingReplies)
+void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessProxy, Vector<std::pair<RefPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>>&& pendingReplies)
 {
     ASSERT(m_networkProcess);
     ASSERT(&networkProcessProxy == m_networkProcess.get());
@@ -582,15 +595,15 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessPr
         return;
     auto& newNetworkProcess = ensureNetworkProcess();
     for (auto& reply : pendingReplies)
-        newNetworkProcess.getNetworkProcessConnection(WTFMove(reply));
+        newNetworkProcess.getNetworkProcessConnection(*reply.first, WTFMove(reply.second));
 }
 
-void WebProcessPool::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
+void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
     ensureNetworkProcess();
     ASSERT(m_networkProcess);
 
-    m_networkProcess->getNetworkProcessConnection(WTFMove(reply));
+    m_networkProcess->getNetworkProcessConnection(webProcessProxy, WTFMove(reply));
 }
 
 void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore)
@@ -599,18 +612,6 @@ void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* r
         auto parameters = m_websiteDataStore ? m_websiteDataStore->websiteDataStore().storageProcessParameters() : (relevantDataStore ? relevantDataStore->storageProcessParameters() : API::WebsiteDataStore::defaultDataStore()->websiteDataStore().storageProcessParameters());
 
         ASSERT(parameters.sessionID.isValid());
-
-#if ENABLE(SERVICE_WORKER)
-        if (parameters.serviceWorkerRegistrationDirectory.isEmpty()) {
-            parameters.serviceWorkerRegistrationDirectory = API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
-            SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-        }
-
-        if (!m_schemesServiceWorkersCanHandle.isEmpty())
-            parameters.urlSchemesServiceWorkersCanHandle = copyToVector(m_schemesServiceWorkersCanHandle);
-
-        parameters.shouldDisableServiceWorkerProcessTerminationDelay = m_shouldDisableServiceWorkerProcessTerminationDelay;
-#endif
 
         m_storageProcess = std::make_unique<StorageProcessProxy>(*this);
         m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(parameters), 0);
@@ -646,9 +647,9 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy, SecurityOriginData&& securityOrigin, std::optional<PAL::SessionID> sessionID)
+void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, SecurityOriginData&& securityOrigin, std::optional<PAL::SessionID> sessionID)
 {
-    ASSERT_UNUSED(proxy, &proxy == m_storageProcess.get());
+    ASSERT_UNUSED(proxy, &proxy == m_networkProcess.get());
 
     if (m_serviceWorkerProcesses.contains(securityOrigin))
         return;
@@ -690,8 +691,8 @@ void WebProcessPool::disableServiceWorkerProcessTerminationDelay()
         return;
 
     m_shouldDisableServiceWorkerProcessTerminationDelay = true;
-    if (m_storageProcess)
-        m_storageProcess->send(Messages::StorageProcess::DisableServiceWorkerProcessTerminationDelay(), 0);
+    if (m_networkProcess)
+        m_networkProcess->send(Messages::NetworkProcess::DisableServiceWorkerProcessTerminationDelay(), 0);
 #endif
 }
 
@@ -1211,10 +1212,6 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page)
             m_networkProcess->addSession(makeRef(page.websiteDataStore()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
         page.websiteDataStore().clearPendingCookies();
-
-#if ENABLE(SERVICE_WORKER)
-        ensureStorageProcessAndWebsiteDataStore(&page.websiteDataStore());
-#endif
     }
 
 #if ENABLE(SERVICE_WORKER)
@@ -1481,8 +1478,8 @@ void WebProcessPool::registerURLSchemeServiceWorkersCanHandle(const String& urlS
 {
     m_schemesServiceWorkersCanHandle.add(urlScheme);
     sendToAllProcesses(Messages::ChildProcess::RegisterURLSchemeServiceWorkersCanHandle(urlScheme));
-    if (m_storageProcess)
-        m_storageProcess->send(Messages::ChildProcess::RegisterURLSchemeServiceWorkersCanHandle(urlScheme), 0);
+    if (m_networkProcess)
+        m_networkProcess->send(Messages::ChildProcess::RegisterURLSchemeServiceWorkersCanHandle(urlScheme), 0);
 }
 
 void WebProcessPool::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& urlScheme)
@@ -2041,12 +2038,12 @@ void WebProcessPool::updateProcessAssertions()
 #if ENABLE(SERVICE_WORKER)
 void WebProcessPool::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destination, MessageWithMessagePorts&& message, ServiceWorkerIdentifier source, const String& sourceOrigin)
 {
-    sendToStorageProcessRelaunchingIfNecessary(Messages::StorageProcess::PostMessageToServiceWorkerClient(destination, WTFMove(message), source, sourceOrigin));
+    sendToNetworkingProcessRelaunchingIfNecessary(Messages::NetworkProcess::PostMessageToServiceWorkerClient(destination, WTFMove(message), source, sourceOrigin));
 }
 
 void WebProcessPool::postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& source, SWServerConnectionIdentifier connectionIdentifier)
 {
-    sendToStorageProcessRelaunchingIfNecessary(Messages::StorageProcess::PostMessageToServiceWorker(destination, WTFMove(message), source, connectionIdentifier));
+    sendToNetworkingProcessRelaunchingIfNecessary(Messages::NetworkProcess::PostMessageToServiceWorker(destination, WTFMove(message), source, connectionIdentifier));
 }
 #endif
 

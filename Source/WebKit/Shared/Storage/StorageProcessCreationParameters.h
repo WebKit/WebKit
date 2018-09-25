@@ -44,13 +44,6 @@ struct StorageProcessCreationParameters {
     static bool decode(IPC::Decoder&, StorageProcessCreationParameters&);
 
     PAL::SessionID sessionID;
-
-#if ENABLE(SERVICE_WORKER)
-    String serviceWorkerRegistrationDirectory;
-    SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
-    Vector<String> urlSchemesServiceWorkersCanHandle;
-    bool shouldDisableServiceWorkerProcessTerminationDelay { false };
-#endif
 };
 
 } // namespace WebKit

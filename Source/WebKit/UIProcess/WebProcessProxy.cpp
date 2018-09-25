@@ -623,7 +623,7 @@ void WebProcessProxy::getPluginProcessConnection(uint64_t pluginProcessToken, Me
 
 void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
-    m_processPool->getNetworkProcessConnection(WTFMove(reply));
+    m_processPool->getNetworkProcessConnection(*this, WTFMove(reply));
 }
 
 void WebProcessProxy::getStorageProcessConnection(PAL::SessionID initialSessionID, Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply&& reply)

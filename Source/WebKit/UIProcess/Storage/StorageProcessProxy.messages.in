@@ -26,9 +26,4 @@ messages -> StorageProcessProxy LegacyReceiver {
     DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(uint64_t callbackID)
     DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
-
-#if ENABLE(SERVICE_WORKER)
-    EstablishWorkerContextConnectionToStorageProcess(struct WebCore::SecurityOriginData origin)
-    EstablishWorkerContextConnectionToStorageProcessForExplicitSession(struct WebCore::SecurityOriginData origin, PAL::SessionID explicitSession)
-#endif
 }

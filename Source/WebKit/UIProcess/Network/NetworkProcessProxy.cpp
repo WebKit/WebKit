@@ -37,7 +37,6 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "SandboxExtension.h"
-#include "StorageProcessMessages.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
@@ -117,16 +116,25 @@ void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
     ASSERT_UNUSED(connection, this->connection() == &connection);
 }
 
-void NetworkProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
+void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
-    m_pendingConnectionReplies.append(WTFMove(reply));
+    m_pendingConnectionReplies.append(std::make_pair(&webProcessProxy, WTFMove(reply)));
 
     if (state() == State::Launching) {
         m_numPendingConnectionRequests++;
         return;
     }
 
-    connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    bool isServiceWorkerProcess = false;
+    SecurityOriginData securityOrigin;
+#if ENABLE(SERVICE_WORKER)
+    if (is<ServiceWorkerProcessProxy>(webProcessProxy)) {
+        isServiceWorkerProcess = true;
+        securityOrigin = downcast<ServiceWorkerProcessProxy>(webProcessProxy).securityOrigin();
+    }
+#endif
+
+    connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(isServiceWorkerProcess, securityOrigin), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 DownloadProxy* NetworkProcessProxy::createDownloadProxy(const ResourceRequest& resourceRequest)
@@ -195,7 +203,7 @@ void NetworkProcessProxy::networkProcessCrashed()
 {
     clearCallbackStates();
 
-    Vector<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> pendingReplies;
+    Vector<std::pair<RefPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> pendingReplies;
     pendingReplies.reserveInitialCapacity(m_pendingConnectionReplies.size());
     for (auto& reply : m_pendingConnectionReplies)
         pendingReplies.append(WTFMove(reply));
@@ -281,7 +289,7 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Atta
     ASSERT(!m_pendingConnectionReplies.isEmpty());
 
     // Grab the first pending connection reply.
-    auto reply = m_pendingConnectionReplies.takeFirst();
+    auto reply = m_pendingConnectionReplies.takeFirst().second;
 
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
     reply(connectionIdentifier);
@@ -338,7 +346,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     }
 
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
-        connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0);
+        connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(false, { }), 0);
     
     m_numPendingConnectionRequests = 0;
 
@@ -676,6 +684,18 @@ void NetworkProcessProxy::getSandboxExtensionsForBlobFiles(uint64_t requestID, c
     }
     
     send(Messages::NetworkProcess::DidGetSandboxExtensionsForBlobFiles(requestID, extensions), 0);
+}
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess(SecurityOriginData&& origin)
+{
+    m_processPool.establishWorkerContextConnectionToNetworkProcess(*this, WTFMove(origin), std::nullopt);
+}
+
+void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcessForExplicitSession(SecurityOriginData&& origin, PAL::SessionID sessionID)
+{
+    m_processPool.establishWorkerContextConnectionToNetworkProcess(*this, WTFMove(origin), sessionID);
 }
 #endif
 

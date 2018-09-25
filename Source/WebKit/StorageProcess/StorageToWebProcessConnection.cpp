@@ -30,14 +30,7 @@
 #include "StorageProcess.h"
 #include "StorageProcessMessages.h"
 #include "StorageToWebProcessConnectionMessages.h"
-#include "WebSWServerConnection.h"
-#include "WebSWServerConnectionMessages.h"
 #include <wtf/RunLoop.h>
-
-#if ENABLE(SERVICE_WORKER)
-#include "WebSWServerToContextConnection.h"
-#include "WebSWServerToContextConnectionMessages.h"
-#endif
 
 using namespace PAL;
 using namespace WebCore;
@@ -59,10 +52,6 @@ StorageToWebProcessConnection::StorageToWebProcessConnection(IPC::Connection::Id
 StorageToWebProcessConnection::~StorageToWebProcessConnection()
 {
     m_connection->invalidate();
-
-#if ENABLE(SERVICE_WORKER)
-    unregisterSWConnections();
-#endif
 }
 
 void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -72,88 +61,22 @@ void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connectio
         return;
     }
 
-#if ENABLE(SERVICE_WORKER)
-    if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
-        if (auto swConnection = m_swConnections.get(makeObjectIdentifier<SWServerConnectionIdentifierType>(decoder.destinationID())))
-            swConnection->didReceiveMessage(connection, decoder);
-        return;
-    }
-
-    if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
-        if (auto* contextConnection = StorageProcess::singleton().connectionToContextProcessFromIPCConnection(connection)) {
-            contextConnection->didReceiveMessage(connection, decoder);
-            return;
-        }
-    }
-#endif
-
     ASSERT_NOT_REACHED();
 }
 
 void StorageToWebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
-    if (decoder.messageReceiverName() == Messages::StorageToWebProcessConnection::messageReceiverName()) {
-        didReceiveSyncStorageToWebProcessConnectionMessage(connection, decoder, replyEncoder);
-        return;
-    }
-
-#if ENABLE(SERVICE_WORKER)
-    if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
-        if (auto swConnection = m_swConnections.get(makeObjectIdentifier<SWServerConnectionIdentifierType>(decoder.destinationID())))
-            swConnection->didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return;
-    }
-#endif
-
     ASSERT_NOT_REACHED();
 }
 
 void StorageToWebProcessConnection::didClose(IPC::Connection& connection)
 {
     UNUSED_PARAM(connection);
-
-#if ENABLE(SERVICE_WORKER)
-    if (RefPtr<WebSWServerToContextConnection> serverToContextConnection = StorageProcess::singleton().connectionToContextProcessFromIPCConnection(connection)) {
-        // Service Worker process exited.
-        StorageProcess::singleton().connectionToContextProcessWasClosed(serverToContextConnection.releaseNonNull());
-        return;
-    }
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-    unregisterSWConnections();
-#endif
 }
 
 void StorageToWebProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 
 }
-
-#if ENABLE(SERVICE_WORKER)
-
-void StorageToWebProcessConnection::unregisterSWConnections()
-{
-    auto swConnections = WTFMove(m_swConnections);
-    for (auto& swConnection : swConnections.values()) {
-        if (swConnection)
-            swConnection->server().removeConnection(swConnection->identifier());
-    }
-}
-
-void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessionID, SWServerConnectionIdentifier& serverConnectionIdentifier)
-{
-    auto& server = StorageProcess::singleton().swServerForSession(sessionID);
-    auto connection = std::make_unique<WebSWServerConnection>(server, m_connection.get(), sessionID);
-
-    serverConnectionIdentifier = connection->identifier();
-    LOG(ServiceWorker, "StorageToWebProcessConnection::establishSWServerConnection - %s", serverConnectionIdentifier.loggingString().utf8().data());
-
-    ASSERT(!m_swConnections.contains(serverConnectionIdentifier));
-    m_swConnections.add(serverConnectionIdentifier, makeWeakPtr(*connection));
-    server.addConnection(WTFMove(connection));
-}
-
-#endif
 
 } // namespace WebKit

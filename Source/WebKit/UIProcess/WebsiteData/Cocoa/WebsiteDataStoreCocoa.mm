@@ -91,6 +91,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    parameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
+    if (!parameters.serviceWorkerRegistrationDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+#endif
+
     return parameters;
 }
 

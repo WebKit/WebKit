@@ -58,4 +58,9 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #if ENABLE(SANDBOX_EXTENSIONS)
     GetSandboxExtensionsForBlobFiles(uint64_t requestID, Vector<String> paths)
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+    EstablishWorkerContextConnectionToNetworkProcess(struct WebCore::SecurityOriginData origin)
+    EstablishWorkerContextConnectionToNetworkProcessForExplicitSession(struct WebCore::SecurityOriginData origin, PAL::SessionID explicitSession)
+#endif
 }

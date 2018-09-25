@@ -45,6 +45,10 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(INDEXED_DATABASE)
     encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle;
+#endif
 }
 
 std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Decoder& decoder)
@@ -89,6 +93,20 @@ std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC
     parameters.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    std::optional<String> serviceWorkerRegistrationDirectory;
+    decoder >> serviceWorkerRegistrationDirectory;
+    if (!serviceWorkerRegistrationDirectory)
+        return std::nullopt;
+    parameters.serviceWorkerRegistrationDirectory = WTFMove(*serviceWorkerRegistrationDirectory);
+    
+    std::optional<SandboxExtension::Handle> serviceWorkerRegistrationDirectoryExtensionHandle;
+    decoder >> serviceWorkerRegistrationDirectoryExtensionHandle;
+    if (!serviceWorkerRegistrationDirectoryExtensionHandle)
+        return std::nullopt;
+    parameters.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle);
+#endif
+    
     return WTFMove(parameters);
 }
 
@@ -101,6 +119,9 @@ WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(
 #endif
         }
 #if ENABLE(INDEXED_DATABASE)
+        , { }, { }
+#endif
+#if ENABLE(SERVICE_WORKER)
         , { }, { }
 #endif
     };

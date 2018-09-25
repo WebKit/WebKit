@@ -69,7 +69,7 @@ public:
     explicit NetworkProcessProxy(WebProcessPool&);
     ~NetworkProcessProxy();
 
-    void getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&&);
+    void getNetworkProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&&);
 
     DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
 
@@ -160,13 +160,18 @@ private:
     void getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths);
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    void establishWorkerContextConnectionToNetworkProcess(WebCore::SecurityOriginData&&);
+    void establishWorkerContextConnectionToNetworkProcessForExplicitSession(WebCore::SecurityOriginData&&, PAL::SessionID);
+#endif
+
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     WebProcessPool& m_processPool;
     
     unsigned m_numPendingConnectionRequests;
-    Deque<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> m_pendingConnectionReplies;
+    Deque<std::pair<RefPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
     HashMap<uint64_t, CompletionHandler<void(WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
     HashMap<uint64_t, CompletionHandler<void()>> m_pendingDeleteWebsiteDataCallbacks;

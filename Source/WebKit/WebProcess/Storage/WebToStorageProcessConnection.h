@@ -28,7 +28,6 @@
 
 #include "Connection.h"
 #include "MessageSender.h"
-#include "WebSWClientConnection.h"
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 #include <wtf/RefCounted.h>
@@ -49,11 +48,6 @@ public:
     
     IPC::Connection& connection() { return m_connection.get(); }
 
-#if ENABLE(SERVICE_WORKER)
-    WebSWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID sessionID) { return m_swConnectionsBySession.get(sessionID); }
-    WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
-#endif
-
 private:
     WebToStorageProcessConnection(IPC::Connection::Identifier);
 
@@ -68,11 +62,6 @@ private:
     uint64_t messageSenderDestinationID() override { return 0; }
 
     Ref<IPC::Connection> m_connection;
-
-#if ENABLE(SERVICE_WORKER)
-    HashMap<PAL::SessionID, RefPtr<WebSWClientConnection>> m_swConnectionsBySession;
-    HashMap<WebCore::SWServerConnectionIdentifier, WebSWClientConnection*> m_swConnectionsByIdentifier;
-#endif
 };
 
 } // namespace WebKit

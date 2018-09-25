@@ -31,8 +31,8 @@
 #include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
+#include "NetworkConnectionToWebProcessMessages.h"
 #include "ServiceWorkerClientFetch.h"
-#include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"
@@ -57,7 +57,7 @@ WebSWClientConnection::WebSWClientConnection(IPC::Connection& connection, Sessio
     , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
     ASSERT(sessionID.isValid());
-    bool result = sendSync(Messages::StorageToWebProcessConnection::EstablishSWServerConnection(sessionID), Messages::StorageToWebProcessConnection::EstablishSWServerConnection::Reply(m_identifier), Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
+    bool result = sendSync(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection(sessionID), Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection::Reply(m_identifier), Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
 
     ASSERT_UNUSED(result, result);
 }

@@ -48,6 +48,8 @@ class ResourceResponse;
 
 namespace WebKit {
 
+class WebSWClientConnection;
+
 typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
@@ -67,6 +69,11 @@ public:
 #if ENABLE(INDEXED_DATABASE)
     WebIDBConnectionToServer* existingIDBConnectionToServerForIdentifier(uint64_t identifier) const { return m_webIDBConnectionsByIdentifier.get(identifier); };
     WebIDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID);
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    WebSWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID sessionID) { return m_swConnectionsBySession.get(sessionID); }
+    WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
 #endif
 
 private:
@@ -98,6 +105,10 @@ private:
     HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsByIdentifier;
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    HashMap<PAL::SessionID, RefPtr<WebSWClientConnection>> m_swConnectionsBySession;
+    HashMap<WebCore::SWServerConnectionIdentifier, WebSWClientConnection*> m_swConnectionsByIdentifier;
+#endif
 };
 
 } // namespace WebKit

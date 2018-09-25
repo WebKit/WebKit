@@ -1101,8 +1101,8 @@ TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    // Make sure that storage process is launched.
-    EXPECT_NE(0, webView.get().configuration.processPool._storageProcessIdentifier);
+    // Make sure storage process is not launched.
+    EXPECT_EQ(0, webView.get().configuration.processPool._storageProcessIdentifier);
 
     // Make sure that loading the simple page did not start the service worker process.
     EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCount);

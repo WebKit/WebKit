@@ -28,7 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "StorageProcess.h"
+#include "NetworkProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include <WebCore/ServiceWorkerContextData.h>
@@ -105,7 +105,7 @@ void WebSWServerToContextConnection::didFinishSkipWaiting(uint64_t callbackID)
 
 void WebSWServerToContextConnection::connectionMayNoLongerBeNeeded()
 {
-    StorageProcess::singleton().swContextConnectionMayNoLongerBeNeeded(*this);
+    NetworkProcess::singleton().swContextConnectionMayNoLongerBeNeeded(*this);
 }
 
 void WebSWServerToContextConnection::terminate()

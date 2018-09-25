@@ -91,7 +91,7 @@ private:
     void setUserAgent(String&& userAgent);
     void terminateProcess();
 
-    Ref<IPC::Connection> m_connectionToStorageProcess;
+    Ref<IPC::Connection> m_connectionToNetworkProcess;
     uint64_t m_pageGroupID;
     uint64_t m_pageID { 0 };
     uint64_t m_previousServiceWorkerID { 0 };

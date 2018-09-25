@@ -31,7 +31,7 @@
 #include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
-#include "StorageProcessMessages.h"
+#include "NetworkProcessMessages.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseProvider.h"
@@ -106,7 +106,7 @@ private:
 };
 
 WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore& store)
-    : m_connectionToStorageProcess(WTFMove(connection))
+    : m_connectionToNetworkProcess(WTFMove(connection))
     , m_pageGroupID(pageGroupID)
     , m_pageID(pageID)
 #if PLATFORM(COCOA)
@@ -178,9 +178,9 @@ void WebSWContextManagerConnection::removeFrameLoaderClient(ServiceWorkerFrameLo
 void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage)
 {
     if (exceptionMessage.isEmpty())
-        m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::ScriptContextStarted(jobDataIdentifier, serviceWorkerIdentifier), 0);
+        m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ScriptContextStarted(jobDataIdentifier, serviceWorkerIdentifier), 0);
     else
-        m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::ScriptContextFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage), 0);
+        m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ScriptContextFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage), 0);
 }
 
 static inline bool isValidFetch(const ResourceRequest& request, const FetchOptions& options, const URL& serviceWorkerURL, const String& referrer)
@@ -222,16 +222,16 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
 {
     auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
     if (!serviceWorkerThreadProxy) {
-        m_connectionToStorageProcess->send(Messages::StorageProcess::DidNotHandleFetch { serverConnectionIdentifier, fetchIdentifier }, 0);
+        m_connectionToNetworkProcess->send(Messages::NetworkProcess::DidNotHandleFetch { serverConnectionIdentifier, fetchIdentifier }, 0);
         return;
     }
 
     if (!isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer)) {
-        m_connectionToStorageProcess->send(Messages::StorageProcess::DidNotHandleFetch { serverConnectionIdentifier, fetchIdentifier }, 0);
+        m_connectionToNetworkProcess->send(Messages::NetworkProcess::DidNotHandleFetch { serverConnectionIdentifier, fetchIdentifier }, 0);
         return;
     }
 
-    auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier);
+    auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToNetworkProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier);
     std::optional<ServiceWorkerClientIdentifier> clientId;
     if (options.clientIdentifier)
         clientId = ServiceWorkerClientIdentifier { serverConnectionIdentifier, options.clientIdentifier.value() };
@@ -274,41 +274,41 @@ void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const Servi
 
 void WebSWContextManagerConnection::didFinishInstall(std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
 {
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::DidFinishInstall(jobDataIdentifier, serviceWorkerIdentifier, wasSuccessful), 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::DidFinishInstall(jobDataIdentifier, serviceWorkerIdentifier, wasSuccessful), 0);
 }
 
 void WebSWContextManagerConnection::didFinishActivation(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::DidFinishActivation(serviceWorkerIdentifier), 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::DidFinishActivation(serviceWorkerIdentifier), 0);
 }
 
 void WebSWContextManagerConnection::setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier serviceWorkerIdentifier, bool hasPendingEvents)
 {
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::SetServiceWorkerHasPendingEvents(serviceWorkerIdentifier, hasPendingEvents), 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SetServiceWorkerHasPendingEvents(serviceWorkerIdentifier, hasPendingEvents), 0);
 }
 
 void WebSWContextManagerConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, WTF::Function<void()>&& callback)
 {
     auto callbackID = ++m_previousRequestIdentifier;
     m_skipWaitingRequests.add(callbackID, WTFMove(callback));
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::SkipWaiting(serviceWorkerIdentifier, callbackID), 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SkipWaiting(serviceWorkerIdentifier, callbackID), 0);
 }
 
 void WebSWContextManagerConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, const ServiceWorkerContextData::ImportedScript& script)
 {
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::SetScriptResource { serviceWorkerIdentifier, url, script.script, script.responseURL, script.mimeType }, 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SetScriptResource { serviceWorkerIdentifier, url, script.script, script.responseURL, script.mimeType }, 0);
 }
 
 void WebSWContextManagerConnection::workerTerminated(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::WorkerTerminated(serviceWorkerIdentifier), 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::WorkerTerminated(serviceWorkerIdentifier), 0);
 }
 
 void WebSWContextManagerConnection::findClientByIdentifier(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerClientIdentifier clientIdentifier, FindClientByIdentifierCallback&& callback)
 {
     auto requestIdentifier = ++m_previousRequestIdentifier;
     m_findClientByIdentifierRequests.add(requestIdentifier, WTFMove(callback));
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::FindClientByIdentifier { requestIdentifier, serviceWorkerIdentifier, clientIdentifier }, 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::FindClientByIdentifier { requestIdentifier, serviceWorkerIdentifier, clientIdentifier }, 0);
 }
 
 void WebSWContextManagerConnection::findClientByIdentifierCompleted(uint64_t requestIdentifier, std::optional<ServiceWorkerClientData>&& clientData, bool hasSecurityError)
@@ -326,7 +326,7 @@ void WebSWContextManagerConnection::matchAll(WebCore::ServiceWorkerIdentifier se
 {
     auto requestIdentifier = ++m_previousRequestIdentifier;
     m_matchAllRequests.add(requestIdentifier, WTFMove(callback));
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::MatchAll { requestIdentifier, serviceWorkerIdentifier, options }, 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::MatchAll { requestIdentifier, serviceWorkerIdentifier, options }, 0);
 }
 
 void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier, Vector<ServiceWorkerClientData>&& clientsData)
@@ -339,7 +339,7 @@ void WebSWContextManagerConnection::claim(WebCore::ServiceWorkerIdentifier servi
 {
     auto requestIdentifier = ++m_previousRequestIdentifier;
     m_claimRequests.add(requestIdentifier, WTFMove(callback));
-    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::Claim { requestIdentifier, serviceWorkerIdentifier }, 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::Claim { requestIdentifier, serviceWorkerIdentifier }, 0);
 }
 
 void WebSWContextManagerConnection::claimCompleted(uint64_t claimRequestIdentifier)

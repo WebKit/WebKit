@@ -1187,6 +1187,13 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    if (SWContextManager::singleton().connection()) {
+        RELEASE_LOG(ServiceWorker, "Service worker process is exiting because network process is gone");
+        _exit(EXIT_SUCCESS);
+    }
+#endif
+
     m_networkProcessConnection = nullptr;
 
     logDiagnosticMessageForNetworkProcessCrash();
@@ -1207,13 +1214,6 @@ void WebProcess::webToStorageProcessConnectionClosed(WebToStorageProcessConnecti
 {
     ASSERT(m_webToStorageProcessConnection);
     ASSERT(m_webToStorageProcessConnection == connection);
-
-#if ENABLE(SERVICE_WORKER)
-    if (SWContextManager::singleton().connection()) {
-        RELEASE_LOG(ServiceWorker, "Service worker process is exiting because its storage process is gone");
-        _exit(EXIT_SUCCESS);
-    }
-#endif
 
     m_webToStorageProcessConnection = nullptr;
 }
@@ -1703,12 +1703,12 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcess::establishWorkerContextConnectionToStorageProcess(uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore& store, PAL::SessionID initialSessionID)
+void WebProcess::establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore& store, PAL::SessionID initialSessionID)
 {
     // We are in the Service Worker context process and the call below establishes our connection to the Storage Process
     // by calling webToStorageProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
     // WebToStorageProcessConnection for synchronization purposes.
-    auto& ipcConnection = ensureWebToStorageProcessConnection(initialSessionID).connection();
+    auto& ipcConnection = ensureNetworkProcessConnection().connection();
     SWContextManager::singleton().setConnection(std::make_unique<WebSWContextManagerConnection>(ipcConnection, pageGroupID, pageID, store));
 }
 

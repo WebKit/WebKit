@@ -59,6 +59,8 @@ class NetworkResourceLoader;
 class NetworkSocketStream;
 class SyncNetworkResourceLoader;
 class WebIDBConnectionToClient;
+class WebSWServerConnection;
+class WebSWServerToContextConnection;
 typedef uint64_t ResourceLoadIdentifier;
 
 namespace NetworkCache {
@@ -184,6 +186,11 @@ private:
     void removeIDBConnectionToServer(uint64_t serverConnectionIdentifier);
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    void establishSWServerConnection(PAL::SessionID, WebCore::SWServerConnectionIdentifier&);
+    void unregisterSWConnections();
+#endif
+
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
 #endif
@@ -253,7 +260,10 @@ private:
 #if ENABLE(INDEXED_DATABASE)
     HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;
 #endif
-
+    
+#if ENABLE(SERVICE_WORKER)
+    HashMap<WebCore::SWServerConnectionIdentifier, WeakPtr<WebSWServerConnection>> m_swConnections;
+#endif
 };
 
 } // namespace WebKit

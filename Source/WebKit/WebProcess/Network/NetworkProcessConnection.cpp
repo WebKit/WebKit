@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "LibWebRTCNetwork.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "ServiceWorkerClientFetchMessages.h"
 #include "WebCacheStorageConnection.h"
 #include "WebCacheStorageConnectionMessages.h"
 #include "WebCacheStorageProvider.h"
@@ -44,6 +45,11 @@
 #include "WebRTCResolverMessages.h"
 #include "WebRTCSocketMessages.h"
 #include "WebResourceLoaderMessages.h"
+#include "WebSWClientConnection.h"
+#include "WebSWClientConnectionMessages.h"
+#include "WebSWContextManagerConnection.h"
+#include "WebSWContextManagerConnectionMessages.h"
+#include "WebServiceWorkerProvider.h"
 #include "WebSocketStream.h"
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CachedResource.h>
@@ -116,11 +122,39 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
+        auto serviceWorkerConnection = m_swConnectionsByIdentifier.get(makeObjectIdentifier<SWServerConnectionIdentifierType>(decoder.destinationID()));
+        if (serviceWorkerConnection)
+            serviceWorkerConnection->didReceiveMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::ServiceWorkerClientFetch::messageReceiverName()) {
+        WebServiceWorkerProvider::singleton().didReceiveServiceWorkerClientFetchMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
+        ASSERT(SWContextManager::singleton().connection());
+        if (auto* contextManagerConnection = SWContextManager::singleton().connection())
+            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
+
     didReceiveNetworkProcessConnectionMessage(connection, decoder);
 }
 
-void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&)
+void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
+#if ENABLE(SERVICE_WORKER)
+    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
+        ASSERT(SWContextManager::singleton().connection());
+        if (auto* contextManagerConnection = SWContextManager::singleton().connection())
+            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return;
+    }
+#endif
+
     ASSERT_NOT_REACHED();
 }
 
@@ -145,6 +179,13 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
     m_webIDBConnectionsBySession.clear();
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    for (auto& connection : m_swConnectionsBySession.values())
+        connection->connectionToServerLost();
+    
+    m_swConnectionsByIdentifier.clear();
+    m_swConnectionsBySession.clear();
+#endif
 }
 
 void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
@@ -207,6 +248,21 @@ WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServerForSess
         auto connection = WebIDBConnectionToServer::create(sessionID);
         
         auto result = m_webIDBConnectionsByIdentifier.add(connection->identifier(), connection.copyRef());
+        ASSERT_UNUSED(result, result.isNewEntry);
+        
+        return connection;
+    }).iterator->value;
+}
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnectionForSession(PAL::SessionID sessionID)
+{
+    ASSERT(sessionID.isValid());
+    return *m_swConnectionsBySession.ensure(sessionID, [&] {
+        auto connection = WebSWClientConnection::create(m_connection, sessionID);
+        
+        auto result = m_swConnectionsByIdentifier.add(connection->serverConnectionIdentifier(), connection.ptr());
         ASSERT_UNUSED(result, result.isNewEntry);
         
         return connection;

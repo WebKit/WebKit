@@ -1,3 +1,277 @@
+2018-09-25  Sihui Liu  <sihui_liu@apple.com>
+
+        Move Service Worker Management from Storage Process to Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=189422
+
+        Reviewed by Youenn Fablet.
+
+        After r236035, this is another piece to move functionality of storage process to network process. When 
+        we enable Service Workers, network process instead of storage process will be launched. 
+        This patch will not change the behavior of Service Worker.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::unregisterSWConnections):
+        (WebKit::NetworkConnectionToWebProcess::establishSWServerConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveMessage):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::connectionToContextProcessFromIPCConnection):
+        (WebKit::NetworkProcess::connectionToContextProcessWasClosed):
+        (WebKit::NetworkProcess::needsServerToContextConnectionForOrigin const):
+        (WebKit::NetworkProcess::swServerForSession):
+        (WebKit::NetworkProcess::swOriginStoreForSession):
+        (WebKit::NetworkProcess::existingSWOriginStoreForSession const):
+        (WebKit::NetworkProcess::serverToContextConnectionForOrigin):
+        (WebKit::NetworkProcess::createServerToContextConnection):
+        (WebKit::NetworkProcess::didFailFetch):
+        (WebKit::NetworkProcess::didNotHandleFetch):
+        (WebKit::NetworkProcess::didReceiveFetchResponse):
+        (WebKit::NetworkProcess::didReceiveFetchData):
+        (WebKit::NetworkProcess::didReceiveFetchFormData):
+        (WebKit::NetworkProcess::didFinishFetch):
+        (WebKit::NetworkProcess::postMessageToServiceWorkerClient):
+        (WebKit::NetworkProcess::postMessageToServiceWorker):
+        (WebKit::NetworkProcess::registerSWServerConnection):
+        (WebKit::NetworkProcess::unregisterSWServerConnection):
+        (WebKit::NetworkProcess::swContextConnectionMayNoLongerBeNeeded):
+        (WebKit::NetworkProcess::disableServiceWorkerProcessTerminationDelay):
+        (WebKit::NetworkProcess::addServiceWorkerSession):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::parentProcessHasServiceWorkerEntitlement const):
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/ServiceWorker/WebSWOriginStore.cpp: Renamed from Source/WebKit/StorageProcess/ServiceWorker/WebSWOriginStore.cpp.
+        (WebKit::WebSWOriginStore::WebSWOriginStore):
+        (WebKit::WebSWOriginStore::addToStore):
+        (WebKit::WebSWOriginStore::removeFromStore):
+        (WebKit::WebSWOriginStore::clearStore):
+        (WebKit::WebSWOriginStore::importComplete):
+        (WebKit::WebSWOriginStore::registerSWServerConnection):
+        (WebKit::WebSWOriginStore::unregisterSWServerConnection):
+        (WebKit::WebSWOriginStore::sendStoreHandle):
+        (WebKit::WebSWOriginStore::didInvalidateSharedMemory):
+        * NetworkProcess/ServiceWorker/WebSWOriginStore.h: Renamed from Source/WebKit/StorageProcess/ServiceWorker/WebSWOriginStore.h.
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp: Renamed from Source/WebKit/StorageProcess/ServiceWorker/WebSWServerConnection.cpp.
+        (WebKit::WebSWServerConnection::WebSWServerConnection):
+        (WebKit::WebSWServerConnection::~WebSWServerConnection):
+        (WebKit::WebSWServerConnection::rejectJobInClient):
+        (WebKit::WebSWServerConnection::resolveRegistrationJobInClient):
+        (WebKit::WebSWServerConnection::resolveUnregistrationJobInClient):
+        (WebKit::WebSWServerConnection::startScriptFetchInClient):
+        (WebKit::WebSWServerConnection::updateRegistrationStateInClient):
+        (WebKit::WebSWServerConnection::fireUpdateFoundEvent):
+        (WebKit::WebSWServerConnection::setRegistrationLastUpdateTime):
+        (WebKit::WebSWServerConnection::setRegistrationUpdateViaCache):
+        (WebKit::WebSWServerConnection::notifyClientsOfControllerChange):
+        (WebKit::WebSWServerConnection::updateWorkerStateInClient):
+        (WebKit::WebSWServerConnection::cancelFetch):
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorker):
+        (WebKit::WebSWServerConnection::scheduleJobInServer):
+        (WebKit::WebSWServerConnection::didReceiveFetchResponse):
+        (WebKit::WebSWServerConnection::didReceiveFetchData):
+        (WebKit::WebSWServerConnection::didReceiveFetchFormData):
+        (WebKit::WebSWServerConnection::didFinishFetch):
+        (WebKit::WebSWServerConnection::didFailFetch):
+        (WebKit::WebSWServerConnection::didNotHandleFetch):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorkerClient):
+        (WebKit::WebSWServerConnection::matchRegistration):
+        (WebKit::WebSWServerConnection::registrationReady):
+        (WebKit::WebSWServerConnection::getRegistrations):
+        (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+        (WebKit::WebSWServerConnection::unregisterServiceWorkerClient):
+        (WebKit::WebSWServerConnection::sendToContextProcess):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h: Renamed from Source/WebKit/StorageProcess/ServiceWorker/WebSWServerConnection.h.
+        (WebKit::WebSWServerConnection::ipcConnection const):
+        (WebKit::WebSWServerConnection::sessionID const):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in: Renamed from Source/WebKit/StorageProcess/ServiceWorker/WebSWServerConnection.messages.in.
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp: Renamed from Source/WebKit/StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp.
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::messageSenderConnection):
+        (WebKit::WebSWServerToContextConnection::messageSenderDestinationID):
+        (WebKit::WebSWServerToContextConnection::connectionClosed):
+        (WebKit::WebSWServerToContextConnection::installServiceWorkerContext):
+        (WebKit::WebSWServerToContextConnection::fireInstallEvent):
+        (WebKit::WebSWServerToContextConnection::fireActivateEvent):
+        (WebKit::WebSWServerToContextConnection::terminateWorker):
+        (WebKit::WebSWServerToContextConnection::syncTerminateWorker):
+        (WebKit::WebSWServerToContextConnection::findClientByIdentifierCompleted):
+        (WebKit::WebSWServerToContextConnection::matchAllCompleted):
+        (WebKit::WebSWServerToContextConnection::claimCompleted):
+        (WebKit::WebSWServerToContextConnection::didFinishSkipWaiting):
+        (WebKit::WebSWServerToContextConnection::connectionMayNoLongerBeNeeded):
+        (WebKit::WebSWServerToContextConnection::terminate):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h: Renamed from Source/WebKit/StorageProcess/ServiceWorker/WebSWServerToContextConnection.h.
+        (WebKit::WebSWServerToContextConnection::create):
+        (WebKit::WebSWServerToContextConnection::ipcConnection const):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in: Renamed from Source/WebKit/StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in.
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::parentProcessHasServiceWorkerEntitlement const):
+        * Shared/Storage/StorageProcessCreationParameters.cpp:
+        (WebKit::StorageProcessCreationParameters::encode const):
+        (WebKit::StorageProcessCreationParameters::decode):
+        * Shared/Storage/StorageProcessCreationParameters.h:
+        (): Deleted.
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+        * Shared/WebsiteDataStoreParameters.h:
+        * Sources.txt:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didReceiveMessage):
+        (WebKit::StorageProcess::initializeWebsiteDataStore):
+        (WebKit::StorageProcess::createStorageToWebProcessConnection):
+        (WebKit::StorageProcess::destroySession):
+        (WebKit::StorageProcess::fetchWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+        (WebKit::StorageProcess::connectionToContextProcessFromIPCConnection): Deleted.
+        (WebKit::StorageProcess::connectionToContextProcessWasClosed): Deleted.
+        (WebKit::StorageProcess::needsServerToContextConnectionForOrigin const): Deleted.
+        (WebKit::StorageProcess::swServerForSession): Deleted.
+        (WebKit::StorageProcess::swOriginStoreForSession): Deleted.
+        (WebKit::StorageProcess::existingSWOriginStoreForSession const): Deleted.
+        (WebKit::StorageProcess::serverToContextConnectionForOrigin): Deleted.
+        (WebKit::StorageProcess::createServerToContextConnection): Deleted.
+        (WebKit::StorageProcess::didFailFetch): Deleted.
+        (WebKit::StorageProcess::didNotHandleFetch): Deleted.
+        (WebKit::StorageProcess::didReceiveFetchResponse): Deleted.
+        (WebKit::StorageProcess::didReceiveFetchData): Deleted.
+        (WebKit::StorageProcess::didReceiveFetchFormData): Deleted.
+        (WebKit::StorageProcess::didFinishFetch): Deleted.
+        (WebKit::StorageProcess::postMessageToServiceWorkerClient): Deleted.
+        (WebKit::StorageProcess::postMessageToServiceWorker): Deleted.
+        (WebKit::StorageProcess::registerSWServerConnection): Deleted.
+        (WebKit::StorageProcess::unregisterSWServerConnection): Deleted.
+        (WebKit::StorageProcess::swContextConnectionMayNoLongerBeNeeded): Deleted.
+        (WebKit::StorageProcess::disableServiceWorkerProcessTerminationDelay): Deleted.
+        * StorageProcess/StorageProcess.h:
+        (WebKit::StorageProcess::parentProcessHasServiceWorkerEntitlement const): Deleted.
+        (): Deleted.
+        * StorageProcess/StorageProcess.messages.in:
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::~StorageToWebProcessConnection):
+        (WebKit::StorageToWebProcessConnection::didReceiveMessage):
+        (WebKit::StorageToWebProcessConnection::didReceiveSyncMessage):
+        (WebKit::StorageToWebProcessConnection::didClose):
+        (WebKit::StorageToWebProcessConnection::unregisterSWConnections): Deleted.
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection): Deleted.
+        * StorageProcess/StorageToWebProcessConnection.h:
+        * StorageProcess/StorageToWebProcessConnection.messages.in:
+        * StorageProcess/ios/StorageProcessIOS.mm:
+        (WebKit::StorageProcess::parentProcessHasServiceWorkerEntitlement const): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+        (WebKit::NetworkProcessProxy::didCreateNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcessForExplicitSession):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::start):
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::getStorageProcessConnection):
+        (WebKit::StorageProcessProxy::establishWorkerContextConnectionToStorageProcess): Deleted.
+        (WebKit::StorageProcessProxy::establishWorkerContextConnectionToStorageProcessForExplicitSession): Deleted.
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::networkProcessCrashed):
+        (WebKit::WebProcessPool::getNetworkProcessConnection):
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::disableServiceWorkerProcessTerminationDelay):
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::registerURLSchemeServiceWorkersCanHandle):
+        (WebKit::WebProcessPool::postMessageToServiceWorkerClient):
+        (WebKit::WebProcessPool::postMessageToServiceWorker):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getNetworkProcessConnection):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeNetworkProcessAccessTypeForDataFetch):
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::computeNetworkProcessAccessTypeForDataRemoval):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::storageProcessParameters):
+        (WebKit::WebsiteDataStore::parameters):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage):
+        (WebKit::NetworkProcessConnection::didClose):
+        (WebKit::NetworkProcessConnection::serviceWorkerConnectionForSession):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit::NetworkProcessConnection::existingServiceWorkerConnectionForSession):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::WebSWContextManagerConnection):
+        (WebKit::WebSWContextManagerConnection::serviceWorkerStartedWithMessage):
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        (WebKit::WebSWContextManagerConnection::didFinishInstall):
+        (WebKit::WebSWContextManagerConnection::didFinishActivation):
+        (WebKit::WebSWContextManagerConnection::setServiceWorkerHasPendingEvents):
+        (WebKit::WebSWContextManagerConnection::skipWaiting):
+        (WebKit::WebSWContextManagerConnection::setScriptResource):
+        (WebKit::WebSWContextManagerConnection::workerTerminated):
+        (WebKit::WebSWContextManagerConnection::findClientByIdentifier):
+        (WebKit::WebSWContextManagerConnection::matchAll):
+        (WebKit::WebSWContextManagerConnection::claim):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveResponse):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveBlobChunk):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFail):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFinish):
+        (WebKit::WebServiceWorkerFetchTaskClient::didNotHandle):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::serviceWorkerConnectionForSession):
+        (WebKit::WebServiceWorkerProvider::existingServiceWorkerConnectionForSession):
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::didReceiveMessage):
+        (WebKit::WebToStorageProcessConnection::didReceiveSyncMessage):
+        (WebKit::WebToStorageProcessConnection::didClose):
+        (WebKit::WebToStorageProcessConnection::serviceWorkerConnectionForSession): Deleted.
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+        (WebKit::WebToStorageProcessConnection::existingServiceWorkerConnectionForSession): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::webToStorageProcessConnectionClosed):
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcess::establishWorkerContextConnectionToStorageProcess): Deleted.
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::existingNetworkProcessConnection):
+        (WebKit::WebProcess::existingWebToStorageProcessConnection): Deleted.
+        * WebProcess/WebProcess.messages.in:
+
 2018-09-25  Chris Dumez  <cdumez@apple.com>
 
         UIProcess should process incoming sync IPC from WebProcess when waiting for a sync IPC reply from it

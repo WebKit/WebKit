@@ -30,8 +30,8 @@
 
 #include "DataReference.h"
 #include "FormDataReference.h"
+#include "NetworkProcessMessages.h"
 #include "SharedBufferDataReference.h"
-#include "StorageProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include <WebCore/ResourceError.h>
@@ -60,14 +60,14 @@ void WebServiceWorkerFetchTaskClient::didReceiveResponse(const ResourceResponse&
 {
     if (!m_connection)
         return;
-    m_connection->send(Messages::StorageProcess::DidReceiveFetchResponse { m_serverConnectionIdentifier, m_fetchIdentifier, response }, 0);
+    m_connection->send(Messages::NetworkProcess::DidReceiveFetchResponse { m_serverConnectionIdentifier, m_fetchIdentifier, response }, 0);
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
 {
     if (!m_connection)
         return;
-    m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, { buffer }, static_cast<int64_t>(buffer->size()) }, 0);
+    m_connection->send(Messages::NetworkProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, { buffer }, static_cast<int64_t>(buffer->size()) }, 0);
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&& formData)
@@ -79,7 +79,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
     // For now and for the case of blobs, we read it there and send the data through IPC.
     URL blobURL = formData->asBlobURL();
     if (blobURL.isNull()) {
-        m_connection->send(Messages::StorageProcess::DidReceiveFetchFormData { m_serverConnectionIdentifier, m_fetchIdentifier, IPC::FormDataReference { WTFMove(formData) } }, 0);
+        m_connection->send(Messages::NetworkProcess::DidReceiveFetchFormData { m_serverConnectionIdentifier, m_fetchIdentifier, IPC::FormDataReference { WTFMove(formData) } }, 0);
         return;
     }
 
@@ -107,7 +107,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveBlobChunk(const char* data, size
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, { reinterpret_cast<const uint8_t*>(data), size }, static_cast<int64_t>(size) }, 0);
+    m_connection->send(Messages::NetworkProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, { reinterpret_cast<const uint8_t*>(data), size }, static_cast<int64_t>(size) }, 0);
 }
 
 void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()
@@ -122,7 +122,7 @@ void WebServiceWorkerFetchTaskClient::didFail(const ResourceError& error)
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::StorageProcess::DidFailFetch { m_serverConnectionIdentifier, m_fetchIdentifier, error }, 0);
+    m_connection->send(Messages::NetworkProcess::DidFailFetch { m_serverConnectionIdentifier, m_fetchIdentifier, error }, 0);
 
     cleanup();
 }
@@ -132,7 +132,7 @@ void WebServiceWorkerFetchTaskClient::didFinish()
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::StorageProcess::DidFinishFetch { m_serverConnectionIdentifier, m_fetchIdentifier }, 0);
+    m_connection->send(Messages::NetworkProcess::DidFinishFetch { m_serverConnectionIdentifier, m_fetchIdentifier }, 0);
 
     cleanup();
 }
@@ -142,7 +142,7 @@ void WebServiceWorkerFetchTaskClient::didNotHandle()
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::StorageProcess::DidNotHandleFetch { m_serverConnectionIdentifier, m_fetchIdentifier }, 0);
+    m_connection->send(Messages::NetworkProcess::DidNotHandleFetch { m_serverConnectionIdentifier, m_fetchIdentifier }, 0);
 
     cleanup();
 }

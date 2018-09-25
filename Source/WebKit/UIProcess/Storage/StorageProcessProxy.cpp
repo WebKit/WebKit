@@ -135,12 +135,6 @@ void StorageProcessProxy::getStorageProcessConnection(WebProcessProxy& webProces
 
     bool isServiceWorkerProcess = false;
     SecurityOriginData securityOrigin;
-#if ENABLE(SERVICE_WORKER)
-    if (is<ServiceWorkerProcessProxy>(webProcessProxy)) {
-        isServiceWorkerProcess = true;
-        securityOrigin = downcast<ServiceWorkerProcessProxy>(webProcessProxy).securityOrigin();
-    }
-#endif
 
     send(Messages::StorageProcess::CreateStorageToWebProcessConnection(isServiceWorkerProcess, securityOrigin), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
@@ -230,17 +224,5 @@ void StorageProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     
     m_numPendingConnectionRequests = 0;
 }
-
-#if ENABLE(SERVICE_WORKER)
-void StorageProcessProxy::establishWorkerContextConnectionToStorageProcess(SecurityOriginData&& origin)
-{
-    m_processPool.establishWorkerContextConnectionToStorageProcess(*this, WTFMove(origin), std::nullopt);
-}
-
-void StorageProcessProxy::establishWorkerContextConnectionToStorageProcessForExplicitSession(SecurityOriginData&& origin, PAL::SessionID sessionID)
-{
-    m_processPool.establishWorkerContextConnectionToStorageProcess(*this, WTFMove(origin), sessionID);
-}
-#endif
 
 } // namespace WebKit

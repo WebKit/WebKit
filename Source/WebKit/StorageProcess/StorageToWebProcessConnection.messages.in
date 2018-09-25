@@ -21,7 +21,4 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageToWebProcessConnection LegacyReceiver {
-#if ENABLE(SERVICE_WORKER)
-    EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier)
-#endif
 }
