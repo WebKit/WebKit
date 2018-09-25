@@ -5770,6 +5770,7 @@ tests.shaderStages = function()
         }
     `);
     doPrep(`
+        [numthreads(1, 1, 1)]
         compute void foo()
         {
             AllMemoryBarrierWithGroupSync();
