@@ -117,7 +117,7 @@ private:
     double m_firstDecryptTime { 0 };
     double m_latestDecryptTime { 0 };
     Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>> m_statuses;
-    WeakPtrFactory<CDMInstanceSessionClient> m_cdmInstanceClientWeakPtrFactory;
+    WeakPtrFactory<CDMInstanceSessionClient> m_cdmInstanceSessionClientWeakPtrFactory;
 };
 
 } // namespace WebCore

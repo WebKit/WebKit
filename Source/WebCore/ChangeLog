@@ -1,3 +1,18 @@
+2018-09-25  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME] Fix variable name that should have gone in r236317
+        https://bugs.webkit.org/show_bug.cgi?id=189944
+
+        Reviewed by Jer Noble.
+
+        m_cdmInstanceClientWeakPtrFactory becomes
+        m_cdmInstanceSessionClientWeakPtrFactory as its type changes to
+        CDMInstanceSessionClient.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+        * Modules/encryptedmedia/MediaKeySession.h:
+
 2018-09-25  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up code around RenderLayer's "has accelerated scrolling" functions
