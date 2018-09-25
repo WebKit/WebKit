@@ -776,7 +776,6 @@ QualifiedName SVGElement::animatableAttributeForName(const AtomicString& localNa
             &SVGNames::elevationAttr.get(),
             &SVGNames::exponentAttr.get(),
             &SVGNames::externalResourcesRequiredAttr.get(),
-            &SVGNames::filterResAttr.get(),
             &SVGNames::filterUnitsAttr.get(),
             &SVGNames::fxAttr.get(),
             &SVGNames::fyAttr.get(),

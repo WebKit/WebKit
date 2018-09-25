@@ -1,3 +1,56 @@
+2018-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove filterRes parameter from filters
+        https://bugs.webkit.org/show_bug.cgi?id=129565
+        <rdar://problem/44714340>
+
+        Reviewed by Dean Jackson.
+
+        Remove support for the "filterRes" attribute on SVG filters. It's marked as
+        deprecated in https://drafts.fxtf.org/filter-effects/#element-attrdef-filter-filterres
+        and no longer supported by Chrome or Firefox.
+        
+        Removed existing filterRes tests, added new test checking that it has no effect.
+
+        * html5lib/resources/tests11.dat: Edited to remove filterRes. This seems to have been superseded by
+            imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests11.html
+        * platform/gtk/svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.png: Removed.
+        * platform/gtk/svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.png: Removed.
+        * platform/gtk/svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.png: Removed.
+        * platform/gtk/svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.png: Removed.
+        * platform/gtk/svg/filters/filterRes-expected.png: Removed.
+        * platform/gtk/svg/filters/filterRes1-expected.png: Removed.
+        * platform/gtk/svg/filters/filterRes3-expected.png: Removed.
+        * platform/mac/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.png: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.png: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.png: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.png: Removed.
+        * platform/mac/svg/filters/filterRes-expected.png: Removed.
+        * platform/mac/svg/filters/filterRes1-expected.png: Removed.
+        * platform/mac/svg/filters/filterRes2-expected.png: Removed.
+        * platform/mac/svg/filters/filterRes3-expected.png: Removed.
+        * svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+        * svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg:
+        * svg/dom/SVGAnimatedInteger-expected.txt:
+        * svg/dom/SVGAnimatedInteger.html: Change to use feConvolveMatrix orderX.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.txt: Removed.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call.html: Removed.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.txt: Removed.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop.html: Removed.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.txt: Removed.
+        * svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop.html: Removed.
+        * svg/filters/filterRes-is-noop-expected.svg: Added.
+        * svg/filters/filterRes-is-noop.svg: Added.
+        * svg/filters/filterRes.svg: Removed.
+        * svg/filters/filterRes1-expected.txt: Removed.
+        * svg/filters/filterRes1.svg: Removed.
+        * svg/filters/filterRes2-expected.png: Removed.
+        * svg/filters/filterRes2-expected.txt: Removed.
+        * svg/filters/filterRes2.svg: Removed.
+        * svg/filters/filterRes3-expected.txt: Removed.
+        * svg/filters/filterRes3.svg: Removed.
+
 2018-09-24  Justin Michaud  <justin_michaud@apple.com>
 
         Import WPT tests for css custom properties api

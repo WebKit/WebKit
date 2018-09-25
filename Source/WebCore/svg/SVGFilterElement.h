@@ -38,16 +38,12 @@ class SVGFilterElement final : public SVGElement, public SVGExternalResourcesReq
 public:
     static Ref<SVGFilterElement> create(const QualifiedName&, Document&);
 
-    void setFilterRes(unsigned filterResX, unsigned filterResY);
-
     SVGUnitTypes::SVGUnitType filterUnits() const { return m_filterUnits.currentValue(attributeOwnerProxy()); }
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
-    int filterResX() const { return m_filterResX.currentValue(attributeOwnerProxy()); }
-    int filterResY() const { return m_filterResY.currentValue(attributeOwnerProxy()); }
 
     RefPtr<SVGAnimatedEnumeration> filterUnitsAnimated() { return m_filterUnits.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedEnumeration> primitiveUnitsAnimated() { return m_primitiveUnits.animatedProperty(attributeOwnerProxy()); }
@@ -55,8 +51,6 @@ public:
     RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedInteger> filterResXAnimated() { return m_filterResX.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedInteger> filterResYAnimated() { return m_filterResY.animatedProperty(attributeOwnerProxy()); }
 
 private:
     SVGFilterElement(const QualifiedName&, Document&);
@@ -79,9 +73,6 @@ private:
 
     bool selfHasRelativeLengths() const final { return true; }
 
-    static const AtomicString& filterResXIdentifier();
-    static const AtomicString& filterResYIdentifier();
-
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_filterUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
     SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_primitiveUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
@@ -89,8 +80,6 @@ private:
     SVGAnimatedLengthAttribute m_y { LengthModeHeight, "-10%" };
     SVGAnimatedLengthAttribute m_width { LengthModeWidth, "120%" };
     SVGAnimatedLengthAttribute m_height { LengthModeHeight, "120%" };
-    SVGAnimatedIntegerAttribute m_filterResX;
-    SVGAnimatedIntegerAttribute m_filterResY;
 };
 
 } // namespace WebCore

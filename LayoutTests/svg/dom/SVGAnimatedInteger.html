@@ -7,37 +7,37 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("This test checks the SVGAnimatedInteger API - utilizing the filterResX property of SVGFilterElement");
+description("This test checks the SVGAnimatedInteger API - utilizing the orderX property of feConvolveMatrix");
 
-var filterElement = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+var convolveMatrix = document.createElementNS("http://www.w3.org/2000/svg", "feConvolveMatrix");
 
 debug("");
 debug("Check initial filterResX value");
-shouldBeEqualToString("filterElement.filterResX.toString()", "[object SVGAnimatedInteger]");
-shouldBeEqualToString("typeof(filterElement.filterResX.baseVal)", "number");
-shouldBe("filterElement.filterResX.baseVal", "0");
+shouldBeEqualToString("convolveMatrix.orderX.toString()", "[object SVGAnimatedInteger]");
+shouldBeEqualToString("typeof(convolveMatrix.orderX.baseVal)", "number");
+shouldBe("convolveMatrix.orderX.baseVal", "0");
 
 debug("");
 debug("Check that integers are static, caching value in a local variable and modifying it, should have no effect");
-var numRef = filterElement.filterResX.baseVal;
+var numRef = convolveMatrix.orderX.baseVal;
 numRef = 100;
 shouldBe("numRef", "100");
-shouldBe("filterElement.filterResX.baseVal", "0");
+shouldBe("convolveMatrix.orderX.baseVal", "0");
 
 debug("");
 debug("Check assigning various valid and invalid values");
-shouldBe("filterElement.filterResX.baseVal = -1", "-1"); // Negative values are allowed from SVG DOM, but should lead to an error when rendering (disable the filter)
-shouldBe("filterElement.filterResX.baseVal = 300", "300");
+shouldBe("convolveMatrix.orderX.baseVal = -1", "-1"); // Negative values are allowed from SVG DOM, but should lead to an error when rendering (disable the filter)
+shouldBe("convolveMatrix.orderX.baseVal = 300", "300");
 // ECMA-262, 9.5, "ToInt32"
-shouldBe("filterElement.filterResX.baseVal = 'aString'", "'aString'");
-shouldBe("filterElement.filterResX.baseVal", "0");
-shouldBe("filterElement.filterResX.baseVal = filterElement", "filterElement");
-shouldBe("filterElement.filterResX.baseVal", "0");
-shouldBe("filterElement.filterResX.baseVal = 300", "300");
+shouldBe("convolveMatrix.orderX.baseVal = 'aString'", "'aString'");
+shouldBe("convolveMatrix.orderX.baseVal", "0");
+shouldBe("convolveMatrix.orderX.baseVal = convolveMatrix", "convolveMatrix");
+shouldBe("convolveMatrix.orderX.baseVal", "0");
+shouldBe("convolveMatrix.orderX.baseVal = 300", "300");
 
 debug("");
 debug("Check that the filterResX value remained 300");
-shouldBe("filterElement.filterResX.baseVal", "300");
+shouldBe("convolveMatrix.orderX.baseVal", "300");
 
 successfullyParsed = true;
 </script>

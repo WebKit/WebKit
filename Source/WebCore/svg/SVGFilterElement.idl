@@ -31,11 +31,6 @@ interface SVGFilterElement : SVGElement {
     readonly attribute SVGAnimatedLength      y;
     readonly attribute SVGAnimatedLength      width;
     readonly attribute SVGAnimatedLength      height;
-    readonly attribute SVGAnimatedInteger     filterResX;
-    readonly attribute SVGAnimatedInteger     filterResY;
-
-    void setFilterRes(optional unsigned long filterResX = 0,
-                      optional unsigned long filterResY = 0);
 };
 
 SVGFilterElement implements SVGExternalResourcesRequired;

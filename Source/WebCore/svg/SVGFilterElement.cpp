@@ -54,27 +54,6 @@ Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFilterElement(tagName, document));
 }
 
-const AtomicString& SVGFilterElement::filterResXIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGFilterResX", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-const AtomicString& SVGFilterElement::filterResYIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGFilterResY", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-void SVGFilterElement::setFilterRes(unsigned filterResX, unsigned filterResY)
-{
-    m_filterResX.setValue(filterResX);
-    m_filterResY.setValue(filterResY);
-
-    if (RenderObject* object = renderer())
-        object->setNeedsLayout();
-}
-
 void SVGFilterElement::registerAttributes()
 {
     auto& registry = attributeRegistry();
@@ -86,9 +65,6 @@ void SVGFilterElement::registerAttributes()
     registry.registerAttribute<SVGNames::yAttr, &SVGFilterElement::m_y>();
     registry.registerAttribute<SVGNames::widthAttr, &SVGFilterElement::m_width>();
     registry.registerAttribute<SVGNames::heightAttr, &SVGFilterElement::m_height>();
-    registry.registerAttribute<SVGNames::filterResAttr,
-        &SVGFilterElement::filterResXIdentifier, &SVGFilterElement::m_filterResX,
-        &SVGFilterElement::filterResYIdentifier, &SVGFilterElement::m_filterResY>();
 }
 
 void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -111,13 +87,6 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicStr
         m_width.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::heightAttr)
         m_height.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
-    else if (name == SVGNames::filterResAttr) {
-        float x, y;
-        if (parseNumberOptionalNumber(value, x, y)) {
-            m_filterResX.setValue(x);
-            m_filterResY.setValue(y);
-        }
-    }
 
     reportAttributeParsingError(parseError, name, value);
 

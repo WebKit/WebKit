@@ -147,7 +147,7 @@
         new Subtest("g.gradientUnits.baseVal == 2 (SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)", "g.gradientUnits.baseVal == 2"),
 
         // SVGAnimatedInteger
-        new Subtest("f.filterResX.baseVal == 0"),
+        new Subtest("c.orderX.baseVal == 0"),
         
         // SVGAnimatedAngle
         new Subtest("m.orientAngle.baseVal.value == 0"),

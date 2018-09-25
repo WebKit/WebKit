@@ -1,3 +1,33 @@
+2018-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove filterRes parameter from SVG filters
+        https://bugs.webkit.org/show_bug.cgi?id=129565
+        <rdar://problem/44714340>
+
+        Reviewed by Dean Jackson.
+        
+        Remove support for the "filterRes" attribute on SVG filters. It's marked as
+        deprecated in https://drafts.fxtf.org/filter-effects/#element-attrdef-filter-filterres
+        and no longer supported by Chrome or Firefox.
+        
+        Removed existing filterRes tests, added new test checking that it has no effect.
+
+        Tests: svg/filters/filterRes-is-noop.svg
+
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::animatableAttributeForName):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::registerAttributes):
+        (WebCore::SVGFilterElement::parseAttribute):
+        (WebCore::SVGFilterElement::filterResXIdentifier): Deleted.
+        (WebCore::SVGFilterElement::filterResYIdentifier): Deleted.
+        (WebCore::SVGFilterElement::setFilterRes): Deleted.
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterElement.idl:
+        * svg/svgattrs.in:
+
 2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't cause a crash even when some IDL attribute is missing CEReactions
