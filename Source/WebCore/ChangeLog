@@ -1,3 +1,22 @@
+2018-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't cause a crash even when some IDL attribute is missing CEReactions
+        https://bugs.webkit.org/show_bug.cgi?id=189937
+
+        Reviewed by Simon Fraser.
+
+        Replaced release assertions in ElementQueue::add and ElementQueue::invokeAll by debug assertions
+        since a missing CEReactions resulting in a crash is a terrible user experience.
+
+        Also made the iteration in invokeAll safe when more elements were added to m_elements.
+
+        No new tests since we would still hit debug assertions, and this behavior should only come up
+        when some IDL attribute is erroneously missing CEReactions.
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::ElementQueue::add):
+        (WebCore::CustomElementReactionQueue::ElementQueue::invokeAll):
+
 2018-09-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor Editor::fontAttributesForSelectionStart to be platform-agnostic
