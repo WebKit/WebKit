@@ -1290,7 +1290,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return result;
     }
 
-    function parseNativeFunc()
+    function parseNativeFunc(stage = null)
     {
         let func = parseFuncDecl();
         if (func instanceof WSyntaxError)
@@ -1300,7 +1300,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let maybeError = consume(";");
         if (maybeError instanceof WSyntaxError)
             return maybeError;
-        return new NativeFunc(func.origin, func.name, func.returnType, func.parameters, func.isCast, func.shaderType);
+        return new NativeFunc(func.origin, func.name, func.returnType, func.parameters, func.isCast, func.shaderType, stage);
     }
 
     function parseNative()
@@ -1320,7 +1320,10 @@ function parse(program, origin, originKind, lineNumberOffset, text)
                 return maybeError;
             return NativeType.create(origin, name.text, args);
         }
-        return parseNativeFunc();
+        let stage = tryConsume("vertex", "fragment", "compute");
+        if (stage)
+            stage = stage.text;
+        return parseNativeFunc(stage);
     }
 
     function parseRestrictedFuncDef()

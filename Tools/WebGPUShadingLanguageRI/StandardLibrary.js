@@ -803,11 +803,19 @@ let standardLibrary = (function() {
         // These functions are unary floating-point scalar functions,
         // which can also be applied to vectors and matrices component-wise.
         (function() {
-            let nativeFunctions = [`cos`, `sin`, `tan`, `acos`, `asin`, `atan`, `cosh`, `sinh`, `tanh`, `ceil`, `exp`, `floor`, `log`, `round`, `trunc`, `ddx`, `ddy`];
+            let nativeFunctions = [`cos`, `sin`, `tan`, `acos`, `asin`, `atan`, `cosh`, `sinh`, `tanh`, `ceil`, `exp`, `floor`, `log`, `round`, `trunc`];
+            let nativeFragmentFunctions = [`ddx`, `ddy`];
             let nonNativeFunctions = [`sqrt`, `log2`, `log10`, `frac`, `exp2`, `degrees`, `radians`, `rcp`, `rsqrt`, `saturate`, `ddx_coarse`, `ddx_fine`, `ddy_coarse`, `ddy_fine`, `fwidth`];
         
             for (let nativeFunction of nativeFunctions) {
                 print(`native float ${nativeFunction}(float);`);
+                print(`half ${nativeFunction}(half x) {`);
+                print(`    return half(${nativeFunction}(float(x)));`);
+                print(`}`);
+            }
+        
+            for (let nativeFunction of nativeFragmentFunctions) {
+                print(`native fragment float ${nativeFunction}(float);`);
                 print(`half ${nativeFunction}(half x) {`);
                 print(`    return half(${nativeFunction}(float(x)));`);
                 print(`}`);
@@ -860,7 +868,7 @@ let standardLibrary = (function() {
                 print(`    return abs(ddx(x)) + abs(ddy(x));`);
                 print(`}`);
         
-                for (let outputFunction of nativeFunctions.concat(nonNativeFunctions)) {
+                for (let outputFunction of nativeFunctions.concat(nativeFragmentFunctions.concat(nonNativeFunctions))) {
                     for (let size of [2, 3, 4]) {
                         print(`${type}${size} ${outputFunction}(${type}${size} x) {`);
                         print(`    ${type}${size} result;`);
@@ -1786,9 +1794,9 @@ let standardLibrary = (function() {
         }
         print();
         
-        print(`native void AllMemoryBarrierWithGroupSync();`);
-        print(`native void DeviceMemoryBarrierWithGroupSync();`);
-        print(`native void GroupMemoryBarrierWithGroupSync();`);
+        print(`native compute void AllMemoryBarrierWithGroupSync();`);
+        print(`native compute void DeviceMemoryBarrierWithGroupSync();`);
+        print(`native compute void GroupMemoryBarrierWithGroupSync();`);
         print();
         
         for (let type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
@@ -1910,6 +1918,8 @@ let standardLibrary = (function() {
         }
         print();
 
+        // You might think that the sampling functions that rely on implicit derivatives can't be called in vertex shaders.
+        // However, they do work; they just a level of 0.
         for (let type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
             for (let length of [``, `2`, `3`, `4`]) {
                 print(`native ${type}${length} Sample(Texture1D<${type}${length}>, sampler, float location);`);

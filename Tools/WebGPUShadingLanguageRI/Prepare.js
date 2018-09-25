@@ -70,6 +70,7 @@ let prepare = (() => {
         allocateAtEntryPoints(program);
         program.visit(new StructLayoutBuilder());
         lateCheckAndLayoutBuffers(program);
+        checkNativeFuncStages(program);
         if (shouldInline)
             inline(program);
         return program;

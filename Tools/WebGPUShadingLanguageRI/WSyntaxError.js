@@ -31,5 +31,10 @@ class WSyntaxError {
         this.originString = originString;
         this.syntaxErrorMessage = message;
     }
+
+    toString()
+    {
+        return this.payload;
+    }
 }
 

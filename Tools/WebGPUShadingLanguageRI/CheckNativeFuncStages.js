@@ -20,34 +20,29 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class NativeFunc extends Func {
-    constructor(origin, name, returnType, parameters, isCast, shaderType, stage = null)
-    {
-        super(origin, name, returnType, parameters, isCast, shaderType);
-        this._stage = stage;
-        this.isRestricted = false;
-        this.implementation = null;
-        this._implementationData = null;
-        this.visitImplementationData = (implementationData, visitor) => null;
+function checkNativeFuncStages(program)
+{
+    class CheckNativeFuncStages extends Visitor {
+        constructor(entryPoint) {
+            super();
+            this._entryPoint = entryPoint;
+        }
+
+        visitCallExpression(node)
+        {
+            if ((node.func instanceof NativeFunc) && node.func.stage && node.func.stage != this._entryPoint.shaderType)
+                throw new WTypeError(node.origin, `Cannot call ${node.func.stage} function ${node.func.name} inside ${this._entryPoint.shadeType} entry point`);
+            node.func.visit(this);
+        }
     }
-
-    get isNative() { return true; }
-    get stage() { return this._stage; }
-
-    get implementationData() { return this._implementationData; }
-    set implementationData(newImplData) { this._implementationData = newImplData; }
-
-    toDeclString()
-    {
-        let result = "native ";
-        if (this.stage)
-            result += `${this.stage} `;
-        result += super.toDeclString();
-        return result;
+    for (let [name, funcDefs] of program.functions) {
+        for (let funcDef of funcDefs) {
+            if (funcDef.isEntryPoint)
+                funcDef.visit(new CheckNativeFuncStages(funcDef));
+        }
     }
 }
-

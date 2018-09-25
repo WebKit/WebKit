@@ -56,6 +56,7 @@ load("Casts.js");
 load("Check.js");
 load("CheckLiteralTypes.js");
 load("CheckLoops.js");
+load("CheckNativeFuncStages.js");
 load("CheckRecursion.js");
 load("CheckRecursiveTypes.js");
 load("CheckReturns.js");

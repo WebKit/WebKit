@@ -5753,6 +5753,132 @@ tests.andReturnedArrayRef = function()
     checkInt(program, callFunction(program, "foo", []), 354);
 }
 
+tests.shaderStages = function()
+{
+    doPrep(`
+        struct Result {
+            float4 output;
+        }
+        fragment Result foo()
+        {
+            float x = 7;
+            float dx = ddx(x);
+            float dy = ddy(x);
+            Result r;
+            r.output = float4(1, 2, 3, 4);
+            return r;
+        }
+    `);
+    doPrep(`
+        compute void foo()
+        {
+            AllMemoryBarrierWithGroupSync();
+            DeviceMemoryBarrierWithGroupSync();
+            GroupMemoryBarrierWithGroupSync();
+        }
+    `);
+    checkFail(
+        () => doPrep(`
+            struct Result {
+                float4 output;
+            }
+            vertex Result foo()
+            {
+                float x = 7;
+                float dx = ddx(x);
+                float dy = ddy(x);
+                Result r;
+                r.output = float4(1, 2, 3, 4);
+                return r;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Result {
+                float4 output;
+            }
+            vertex Result foo()
+            {
+                AllMemoryBarrierWithGroupSync();
+                Result r;
+                r.output = float4(1, 2, 3, 4);
+                return r;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Result {
+                float4 output;
+            }
+            fragment Result foo()
+            {
+                AllMemoryBarrierWithGroupSync();
+                Result r;
+                r.output = float4(1, 2, 3, 4);
+                return r;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Result {
+                float4 output;
+            }
+            vertex Result foo()
+            {
+                DeviceMemoryBarrierWithGroupSync();
+                Result r;
+                r.output = float4(1, 2, 3, 4);
+                return r;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Result {
+                float4 output;
+            }
+            fragment Result foo()
+            {
+                DeviceMemoryBarrierWithGroupSync();
+                Result r;
+                r.output = float4(1, 2, 3, 4);
+                return r;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Result {
+                float4 output;
+            }
+            vertex Result foo()
+            {
+                GroupMemoryBarrierWithGroupSync();
+                Result r;
+                r.output = float4(1, 2, 3, 4);
+                return r;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Result {
+                float4 output;
+            }
+            fragment Result foo()
+            {
+                GroupMemoryBarrierWithGroupSync();
+                Result r;
+                r.output = float4(1, 2, 3, 4);
+                return r;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
 tests.casts = function()
 {
     let program = doPrep(`

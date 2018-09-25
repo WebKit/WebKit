@@ -46,7 +46,7 @@ class StatementCloner extends Rewriter {
             node.origin, node.name,
             node.returnType.visit(this),
             node.parameters.map(parameter => parameter.visit(this)),
-            node.isCast, node.shaderType);
+            node.isCast, node.shaderType, node.stage);
         result.isRestricted = node.isRestricted;
         return result;
     }

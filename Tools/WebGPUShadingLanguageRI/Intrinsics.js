@@ -715,13 +715,13 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native float ddx(float)",
+            "native fragment float ddx(float)",
             func => {
                 func.implementation = ([value]) => EPtr.box(0);
             });
 
         this._map.set(
-            "native float ddy(float)",
+            "native fragment float ddy(float)",
             func => {
                 func.implementation = ([value]) => EPtr.box(0);
             });
@@ -822,19 +822,19 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native void AllMemoryBarrierWithGroupSync()",
+            "native compute void AllMemoryBarrierWithGroupSync()",
             func => {
                 func.implementation = function() {};
             });
 
         this._map.set(
-            "native void DeviceMemoryBarrierWithGroupSync()",
+            "native compute void DeviceMemoryBarrierWithGroupSync()",
             func => {
                 func.implementation = function() {};
             });
 
         this._map.set(
-            "native void GroupMemoryBarrierWithGroupSync()",
+            "native compute void GroupMemoryBarrierWithGroupSync()",
             func => {
                 func.implementation = function() {};
             });

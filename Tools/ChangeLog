@@ -1,3 +1,44 @@
+2018-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Not all functions should be able to run in all shader stages
+        https://bugs.webkit.org/show_bug.cgi?id=189121
+
+        Reviewed by Filip Pizlo.
+
+        ddx() and ddy() can only run in fragment shaders, and the barrier functions can only run in compute shaders.
+        ddx_coarse() & friends are currently implemented as just calling ddx(), so we only need to modify those functions
+        if/when we make them native.
+
+        The texture sampling functions that use implicit derivatives can run in any shader stage - they just use a LOD of
+        0. Therefore, those functions are unchanged.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        * WebGPUShadingLanguageRI/LateChecker.js:
+        (LateChecker.prototype._checkShaderType):
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc):
+        (NativeFunc.prototype.get stage):
+        (NativeFunc.prototype.toDeclString):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseFuncDecl):
+        (parseNativeFunc):
+        (parseNative):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (let.standardLibrary):
+        * WebGPUShadingLanguageRI/StatementCloner.js:
+        (StatementCloner.prototype.visitNativeFunc):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.shaderStages):
+        * WebGPUShadingLanguageRI/WSyntaxError.js:
+        (WSyntaxError.prototype.toString):
+        (WSyntaxError):
+        * WebGPUShadingLanguageRI/index.html:
+
 2018-09-24  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Implement trap statements in Metal code generation
