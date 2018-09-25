@@ -4173,7 +4173,7 @@ webkit.org/b/188853 http/tests/security/contentSecurityPolicy/video-with-https-u
 
 webkit.org/b/188948 fast/events/dblclick-event-getModifierState.html [ Failure ]
 
-webkit.org/b/186941 http/tests/misc/blob-size.html [ Crash ]
+webkit.org/b/189948 http/tests/misc/blob-size.html [ Crash ]
 
 # Tests failing on EWS after updating to iTunes 12.8
 webkit.org/b/189194 http/tests/IndexedDB/collect-IDB-objects.https.html [ Failure ]
