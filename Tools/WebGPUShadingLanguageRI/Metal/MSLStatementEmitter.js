@@ -25,9 +25,10 @@
 
 class MSLStatementEmitter extends Visitor {
 
-    constructor(funcMangler, typeUnifier, func, paramMap, debugName, typeAttributes)
+    constructor(program, funcMangler, typeUnifier, func, paramMap, debugName, typeAttributes)
     {
         super();
+        this._program = program;
         this._funcMangler = funcMangler;
         this._typeUnifier = typeUnifier;
         this._func = func;
@@ -47,7 +48,22 @@ class MSLStatementEmitter extends Visitor {
 
     _emitTrap()
     {
-        this._add('// FIXME: Handle traps.');
+        // No need to update this if in an entry point, we can just return zero.
+        if (!this._func.isEntryPoint)
+            this._add(`*(${this._func._trapPointerExpression.visit(this)}) = false;`);
+        this._emitTrapReturn();
+    }
+
+    _emitTrapReturn()
+    {
+        if (this._func.returnType.equals(this._program.intrinsics.void))
+            this._add('return;');
+        else {
+            const id = this._fresh();
+            this._add(`${this._typeUnifier.uniqueTypeId(this._func.returnType)} ${id};`);
+            this._zeroInitialize(this._func.returnType, id);
+            this._add(`return ${id};`);
+        }
     }
 
     _zeroInitialize(type, variableName, allowComment = true)
@@ -414,6 +430,10 @@ class MSLStatementEmitter extends Visitor {
                 this._add(`${resultVariable} = ${callString};`);
             else
                 this._add(`${callString};`);
+
+            this._add(`if (!(*(${this._func._trapPointerExpression.visit(this)}))) {`);
+            this._indent(() => this._emitTrapReturn());
+            this._add("}");
         } else
             this._makeNativeFunctionCall(node.func, resultVariable, args);
 

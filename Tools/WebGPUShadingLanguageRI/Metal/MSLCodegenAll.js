@@ -29,6 +29,7 @@ load("MSLConstexprEmitter.js");
 load("MSLFunctionDeclaration.js");
 load("MSLFunctionDefinition.js");
 load("MSLFunctionForwardDeclaration.js");
+load("MSLInsertTrapParameter.js");
 load("MSLNameMangler.js");
 load("MSLNativeFunctionCall.js");
 load("MSLStatementEmitter.js");

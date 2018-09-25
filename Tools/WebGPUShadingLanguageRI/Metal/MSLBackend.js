@@ -79,6 +79,8 @@ class MSLBackend {
 
     _msl()
     {
+        insertTrapParameter(this.program);
+
         const functionsToCompile = this._findFunctionsToCompile();
         for (let func of functionsToCompile)
             func.visit(this._typeUnifier);
@@ -156,8 +158,8 @@ class MSLBackend {
     _createFunctionDecls(unifiedFunctionDefs)
     {
         for (let func of unifiedFunctionDefs) {
-            this._forwardFunctionDecls.push(new MSLFunctionForwardDeclaration(this._funcNameMangler, func, this._typeUnifier, this._allTypeAttributes));
-            this._functionDefintions.push(new MSLFunctionDefinition(this._funcNameMangler, func, this._typeUnifier, this._allTypeAttributes));
+            this._forwardFunctionDecls.push(new MSLFunctionForwardDeclaration(this.program, this._funcNameMangler, func, this._typeUnifier, this._allTypeAttributes));
+            this._functionDefintions.push(new MSLFunctionDefinition(this.program, this._funcNameMangler, func, this._typeUnifier, this._allTypeAttributes));
         }
     }
 

@@ -1,5 +1,33 @@
 2018-09-24  Thomas Denney  <tdenney@apple.com>
 
+        [WHLSL] Implement trap statements in Metal code generation
+        https://bugs.webkit.org/show_bug.cgi?id=189615
+
+        Reviewed by Myles C. Maxfield.
+
+        Each function called by an entry point now receives an additional
+        boolean pointer parameter, which is set to false if the function traps.
+        After each function call (to a non-native function) this trap parameter
+        is checked. The behavior of the interpreter has also been updated so
+        that a function entry point catches the trap and instead returns zero,
+        matching the behavior of compiled code.
+
+        * WebGPUShadingLanguageRI/Evaluator.js: Adds a new flag to allow the
+        test suite to check for traps and also returns zero from entry points
+        whose invocation trapped.
+        * WebGPUShadingLanguageRI/Metal/MSLBackend.js: Pass program to function
+        declarations.
+        * WebGPUShadingLanguageRI/Metal/MSLCodegenAll.js: Update dependencies.
+        * WebGPUShadingLanguageRI/Metal/MSLFunctionDeclaration.js: Add program
+        property.
+        * WebGPUShadingLanguageRI/Metal/MSLFunctionDefinition.js: Ditto.
+        * WebGPUShadingLanguageRI/Metal/MSLInsertTrapParameter.js: Added.
+        * WebGPUShadingLanguageRI/Metal/MSLStatementEmitter.js: Conforms to the
+        new trapping behavior.
+        * WebGPUShadingLanguageRI/Test.js: Update tests that trap.
+
+2018-09-24  Thomas Denney  <tdenney@apple.com>
+
         [WHLSL] It shouldn’t be possible to use ternary expressions as l-values
         https://bugs.webkit.org/show_bug.cgi?id=189290
 

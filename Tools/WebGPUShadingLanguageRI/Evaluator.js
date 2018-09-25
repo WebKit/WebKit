@@ -24,12 +24,20 @@
  */
 "use strict";
 
+let _lastInvocationDidTrap;
+
 // This is a combined LHS/RHS evaluator that passes around EPtr's to everything.
 class Evaluator extends Visitor {
     constructor(program)
     {
         super();
         this._program = program;
+        _lastInvocationDidTrap = false;
+    }
+
+    static lastInvocationDidTrap()
+    {
+        return lastInvocationDidTrap;
     }
     
     // You must snapshot if you use a value in rvalue context. For example, a call expression will
@@ -51,10 +59,10 @@ class Evaluator extends Visitor {
     runFunc(func)
     {
         return EBuffer.disallowAllocation(
-            () => this._runBody(func.returnType, func.returnEPtr, func.body));
+            () => this._runBody(func.returnType, func.returnEPtr, func.body, func.isEntryPoint));
     }
     
-    _runBody(type, ptr, block)
+    _runBody(type, ptr, block, isEntryPoint)
     {
         if (!ptr)
             throw new Error("Null ptr");
@@ -66,9 +74,14 @@ class Evaluator extends Visitor {
         } catch (e) {
             if (e == BreakException || e == ContinueException)
                 throw new Error("Should not see break/continue at function scope");
-            if (e instanceof ReturnException) {
-                let result = this._snapshot(type, ptr, e.value);
-                return result;
+            if (e instanceof ReturnException)
+                return this._snapshot(type, ptr, e.value);
+            if (e instanceof WTrapError) {
+                if (isEntryPoint) {
+                    _lastInvocationDidTrap = true;
+                    type.populateDefaultValue(ptr.buffer, ptr.offset);
+                    return ptr;
+                }
             }
             throw e;
         }
@@ -90,17 +103,17 @@ class Evaluator extends Visitor {
         return callArguments;
     }
 
-    _evaluateFunction(node, argumentList, parameterList, funcBody, returnType, returnEPtr)
+    _evaluateFunction(node, argumentList, parameterList, funcBody, returnType, returnEPtr, isEntryPoint)
     {
         const argumentValues = this._evaluateArguments(argumentList, parameterList);
         for (let i = 0; i < node.argumentList.length; ++i)
             parameterList[i].ePtr.copyFrom(argumentValues[i], parameterList[i].type.size);
-        return EBuffer.allowAllocation(() => this._runBody(returnType, returnEPtr, funcBody));
+        return EBuffer.allowAllocation(() => this._runBody(returnType, returnEPtr, funcBody, isEntryPoint));
     }
 
     visitFunctionLikeBlock(node)
     {
-        return this._evaluateFunction(node, node.argumentList, node.parameters, node.body, node.returnType, node.returnEPtr);
+        return this._evaluateFunction(node, node.argumentList, node.parameters, node.body, node.returnType, node.returnEPtr, false);
     }
     
     visitReturn(node)
@@ -334,7 +347,7 @@ class Evaluator extends Visitor {
             const callArguments = this._evaluateArguments(node.argumentList, node.func.parameters);
             return EBuffer.allowAllocation(() => this._snapshot(node.func.returnType, node.resultEPtr, node.func.implementation(callArguments, node)));
         } else
-            return this._evaluateFunction(node, node.argumentList, node.func.parameters, node.func.body, node.func.returnType, node.resultEPtr);
+            return this._evaluateFunction(node, node.argumentList, node.func.parameters, node.func.body, node.func.returnType, node.resultEPtr, false);
     }
 }
 

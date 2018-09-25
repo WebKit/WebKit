@@ -29,7 +29,7 @@ class MSLFunctionDefinition extends MSLFunctionDeclaration
     {
         let src = this.commentLine() + "\n" + super.toString();
         src += "\n{\n";
-        let emitter = new MSLStatementEmitter(this.funcMangler, this.typeUnifier, this.func, this.paramMap, this.func.name, this.typeAttributes);
+        let emitter = new MSLStatementEmitter(this.program, this.funcMangler, this.typeUnifier, this.func, this.paramMap, this.func.name, this.typeAttributes);
         src += emitter.indentedSource();
         src += "}";
         return src;

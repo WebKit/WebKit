@@ -314,6 +314,16 @@ function checkFail(callback, predicate)
     }
 }
 
+function checkTrap(program, callback, checkFunction)
+{
+    const result = callback();
+    // FIXME: Rewrite tests so that they return non-zero values in the case that they didn't trap.
+    // The check function is optional in the case of a void return type.
+    checkFunction(program, result, 0);
+    if (!Evaluator.lastInvocationDidTrap)
+        throw new Error("Did not trap");
+}
+
 let tests;
 let okToTest = false;
 
@@ -928,9 +938,7 @@ tests.dereferenceDefaultNull = function()
             return *p;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 }
 
 tests.defaultInitializedNull = function()
@@ -942,9 +950,7 @@ tests.defaultInitializedNull = function()
             return *p;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 }
 
 tests.passNullToPtrMonomorphic = function()
@@ -959,9 +965,7 @@ tests.passNullToPtrMonomorphic = function()
             return foo(null);
         }
     `);
-    checkFail(
-        () => callFunction(program, "bar", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "bar", []), checkInt);
 }
 
 tests.loadNullArrayRef = function()
@@ -1006,9 +1010,7 @@ tests.dereferenceDefaultNullArrayRef = function()
             return p[0u];
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 }
 
 tests.defaultInitializedNullArrayRef = function()
@@ -1020,9 +1022,7 @@ tests.defaultInitializedNullArrayRef = function()
             return p[0u];
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 }
 
 tests.defaultInitializedNullArrayRefIntLiteral = function()
@@ -1034,9 +1034,7 @@ tests.defaultInitializedNullArrayRefIntLiteral = function()
             return p[0];
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 }
 
 tests.passNullToPtrMonomorphicArrayRef = function()
@@ -1051,9 +1049,7 @@ tests.passNullToPtrMonomorphicArrayRef = function()
             return foo(null);
         }
     `);
-    checkFail(
-        () => callFunction(program, "bar", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "bar", []), checkInt);
 }
 
 tests.returnIntLiteralUint = function()
@@ -2501,7 +2497,7 @@ tests.lotsOfLocalVariables = function()
     let src = "test int sum() {\n";
     src += "    int i = 0;\n";
     let target = 0;
-    const numVars = 1024;
+    const numVars = 50;
     for (let i = 0; i < numVars; i++) {
         const value = i * 3;
         src += `   i = ${i};\n`;
@@ -3880,16 +3876,15 @@ tests.trap = function()
             trap;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        e => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
     checkInt(program, callFunction(program, "foo2", [makeInt(program, 1)]), 4);
-    checkFail(
-        () => callFunction(program, "foo2", [makeInt(program, 3)]),
-        e => e instanceof WTrapError);
-    checkFail(
-        () => callFunction(program, "foo3", []),
-        e => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo2", [makeInt(program, 3)]), checkInt);
+    checkTrap(program, () => callFunction(program, "foo3", []), (progam, result, expected) => {
+        for (let i = 0; i < 4; i++) {
+            if (result.ePtr.get(i) != expected)
+                throw new Error(`Non-zero return value at offset ${i}`);
+        }
+    });
 }
 
 /*
@@ -4651,9 +4646,7 @@ tests.mutuallyRecursiveStructWithPointersBroken = function()
             return foo.bar->bar - bar.foo->foo;
         }
     `);
-    checkFail(
-        () => checkInt(program, callFunction(program, "foo", []), -511),
-        e => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 }
 
 tests.mutuallyRecursiveStructWithPointers = function()
@@ -6346,164 +6339,148 @@ tests.atomicsNull = function()
     checkInt(program, callFunction(program, "foo", [makeInt(program, 3), makeInt(program, 4), makeInt(program, 5)]), 3);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_int* x = null;
             InterlockedAdd(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_uint* x = null;
             InterlockedAdd(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_int* x = null;
             InterlockedAnd(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_uint* x = null;
             InterlockedAnd(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_int* x = null;
             InterlockedExchange(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_uint* x = null;
             InterlockedExchange(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_int* x = null;
             InterlockedMax(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_uint* x = null;
             InterlockedMax(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_int* x = null;
             InterlockedMin(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_uint* x = null;
             InterlockedMin(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_int* x = null;
             InterlockedOr(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_uint* x = null;
             InterlockedOr(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_int* x = null;
             InterlockedXor(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_uint* x = null;
             InterlockedXor(x, 1, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_int* x = null;
             InterlockedCompareExchange(x, 1, 2, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 
     program = doPrep(`
-        test void foo() {
+        test int foo() {
             thread atomic_uint* x = null;
             InterlockedCompareExchange(x, 1, 2, null);
+            return 1;
         }
     `);
-    checkFail(
-        () => callFunction(program, "foo", []),
-        (e) => e instanceof WTrapError);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 }
 
 tests.selfCasts = function()
@@ -9153,6 +9130,120 @@ tests.referenceTakenToLocalVariableInEntryPointShouldntMoveAnything = () => {
     `);
 
     checkInt(program, callFunction(program, "foo", []), 42);
+};
+
+tests.passingArrayToFunction = function()
+{
+    let program = doPrep(`
+        test int foo()
+        {
+            int[10] arr;
+            for (uint i = 0; i < arr.length; i++)
+                arr[i] = int(i) + 1;
+            return sum(arr);
+        }
+
+        int sum(int[10] xs)
+        {
+            int t = 0;
+            for (uint i = 0; i < xs.length; i++)
+                t = t + xs[i];
+            return t;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", []), 55);
+}
+
+tests.returnAnArrayFromAFunction = function()
+{
+    let program = doPrep(`
+        test int foo()
+        {
+            int[5] ys = bar();
+            return ys[0] + ys[1] + ys[2] + ys[3] + ys[4];
+        }
+
+        int[5] bar()
+        {
+            int[5] xs;
+            xs[0] = 1;
+            xs[1] = 2;
+            xs[2] = 3;
+            xs[3] = 4;
+            xs[4] = 5;
+            return xs;
+        }
+    `);
+}
+
+tests.copyArray = function()
+{
+    let program = doPrep(`
+        test int foo()
+        {
+            int[10] xs;
+            for (uint i = 0; i < xs.length; i++)
+                xs[i] = int(i) + 1;
+            int[10] ys = xs;
+            for (uint i = 0; i < xs.length; i++)
+                xs[i] = 0;
+            int sum = 0;
+            for (uint i = 0; i < ys.length; i++)
+                sum = sum + ys[i];
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", []), 55);
+}
+
+tests.settingAnArrayInsideAStruct = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int[1] array;
+        }
+        test int foo()
+        {
+            Foo foo;
+            thread Foo* bar = &foo;
+            bar->array[0] = 21;
+            return foo.array[0];
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", []), 21);
+}
+
+tests.trapBecauseOfIndexAcesss = () => {
+    const program = doPrep(`
+        test int foo()
+        {
+            int[5] array;
+            array[6] = 42;
+            return array[6];
+        }
+    `);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
+}
+
+tests.trapTransitively = () => {
+    const program = doPrep(`
+        test int foo()
+        {
+            willTrapTransitively();
+            return 42;
+        }
+
+        void willTrapTransitively()
+        {
+            doTrap();
+        }
+
+        void doTrap()
+        {
+            trap;
+        }
+    `);
+    checkTrap(program, () => callFunction(program, "foo", []), checkInt);
 };
 
 okToTest = true;

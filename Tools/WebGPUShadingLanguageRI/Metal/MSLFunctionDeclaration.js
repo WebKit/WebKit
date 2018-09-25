@@ -26,12 +26,18 @@
 // Emits code for the first line of a function declaration or definition.
 class MSLFunctionDeclaration {
 
-    constructor(funcMangler, funcDef, typeUnifier, typeAttributes)
+    constructor(program, funcMangler, funcDef, typeUnifier, typeAttributes)
     {
+        this._program = program;
         this._funcMangler = funcMangler;
         this._func = funcDef;
         this._typeUnifier = typeUnifier;
         this._typeAttributes = typeAttributes;
+    }
+
+    get program()
+    {
+        return this._program;
     }
 
     get funcMangler()
