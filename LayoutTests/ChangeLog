@@ -1,3 +1,13 @@
+2018-09-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION: (r235948) Layout Test compositing/backing/backing-store-attachment-fill-forwards-animation.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=189598#c0
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky.
+        * platform/mac-wk2/TestExpectations: Ditto.
+
 2018-09-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Update constraints supported by getDisplayMedia

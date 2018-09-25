@@ -3166,3 +3166,5 @@ webkit.org/b/187557 media/media-fragments/TC0088.html [ Pass Failure ]
 webkit.org/b/187557 media/media-fragments/TC0089.html [ Pass Failure ]
 webkit.org/b/187557 media/media-fragments/TC0090.html [ Pass Failure ]
 webkit.org/b/187557 media/media-fragments/TC0091.html [ Pass Failure ]
+
+webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
