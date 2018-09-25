@@ -333,13 +333,6 @@ tests.ternaryExpression = function() {
         {
             return x < 3 ? 4 : 5;
         }
-        test int bar(int x)
-        {
-            int y = 1;
-            int z = 2;
-            (x < 3 ? y : z) = 7;
-            return y;
-        }
         test int baz(int x)
         {
             return x < 10 ? 11 : x < 12 ? 14 : 15;
@@ -351,8 +344,6 @@ tests.ternaryExpression = function() {
     `);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 767)]), 5);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 2)]), 4);
-    checkInt(program, callFunction(program, "bar", [makeInt(program, 2)]), 7);
-    checkInt(program, callFunction(program, "bar", [makeInt(program, 8)]), 1);
     checkInt(program, callFunction(program, "baz", [makeInt(program, 8)]), 11);
     checkInt(program, callFunction(program, "baz", [makeInt(program, 9)]), 11);
     checkInt(program, callFunction(program, "baz", [makeInt(program, 10)]), 14);
@@ -374,6 +365,39 @@ tests.ternaryExpression = function() {
             int foo()
             {
                 int x;
+                int y;
+                (0 < 1 ? x : y) = 42;
+                return x;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("not an LValue") != -1);
+    checkFail(
+        () => doPrep(`
+            int foo()
+            {
+                int x;
+                int y;
+                thread int* z = &(0 < 1 ? x : y);
+                return *z;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("not an LValue") != -1);
+    checkFail(
+        () => doPrep(`
+            int foo()
+            {
+                int x;
+                int y;
+                thread int[] z = @(0 < 1 ? x : y);
+                return *z;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("not an LValue") != -1);
+    checkFail(
+        () => doPrep(`
+            int foo()
+            {
+                int x;
                 float y;
                 return 4 < 5 ? x : y;
             }
@@ -387,29 +411,6 @@ tests.ternaryExpression = function() {
             }
         `),
         (e) => e instanceof WTypeError);
-}
-
-tests.ternaryExpressionIsLValue = function() {
-    function ternaryExpressionIsLValue(node)
-    {
-        let isLValue;
-        class TernaryExpressionVisitor extends Visitor {
-            visitTernaryExpression(node)
-            {
-                isLValue = node.isLValue;
-            }
-        }
-        node.visit(new TernaryExpressionVisitor());
-        return isLValue;
-    }
-
-    let program = doPrep(`int foo() { return 0 < 1 ? 0 : 1; }`);
-    if (ternaryExpressionIsLValue(program))
-        throw new Error(`r-value ternary expression incorrectly parsed as l-value`);
-
-    program = doPrep(`void foo() { int x; int y; (0 < 1 ? x : y) = 1; }`);
-    if (!ternaryExpressionIsLValue(program))
-        throw new Error(`l-value ternary expression incorrectly parsed as r-value`);
 }
 
 tests.literalBool = function() {

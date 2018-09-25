@@ -31,15 +31,14 @@ class TernaryExpression extends Expression {
         this._predicate = predicate;
         this._bodyExpression = bodyExpression;
         this._elseExpression = elseExpression;
-        this._isLValue = null; // We use null to indicate that we don't know yet.
     }
     
     get predicate() { return this._predicate; }
     get bodyExpression() { return this._bodyExpression; }
     get elseExpression() { return this._elseExpression; }
-    get isLValue() { return this._isLValue; }
-    set isLValue(value) { this._isLValue = value; }
     
+    // Like in C, it is not never possible to use a ternary expression as an lValue.
+
     toString()
     {
         return "(" + this.predicate + ") ? (" + this.bodyExpression + ") : (" + this.elseExpression + ")";

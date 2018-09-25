@@ -688,7 +688,6 @@ class Checker extends Visitor {
             throw new Error("Ternary expression else has no type: " + node.elseExpression);
         if (!bodyType.equalsWithCommit(elseType))
             throw new WTypeError("Body and else clause of ternary statement don't have the same type: " + node);
-        node.isLValue = node.bodyExpression.isLValue && node.elseExpression.isLValue;
         return bodyType;
     }
     

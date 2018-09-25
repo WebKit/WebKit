@@ -1,3 +1,32 @@
+2018-09-24  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] It shouldn’t be possible to use ternary expressions as l-values
+        https://bugs.webkit.org/show_bug.cgi?id=189290
+
+        Reviewed by Myles C. Maxfield.
+
+        It is no longer possible for a ternary expression to be treated as an
+        l-value. This patch adds several test cases to verify that this is the
+        case.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitTernaryExpression): No longer check isLValue.
+        * WebGPUShadingLanguageRI/NormalUsePropertyResolver:
+        (NormalUsePropertyResolver.visitTernaryExpression): Deleted.
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitTernaryExpression): No longer copy isLValue.
+        * WebGPUShadingLanguageRI/TernaryExpression.js:
+        (TernaryExpression):
+        (TernaryExpression.prototype.get elseExpression):
+        (TernaryExpression.prototype.get isLValue): Deleted.
+        (TernaryExpression.prototype.set isLValue): Deleted.
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.ternaryExpression): Add checks for failure if a failure is used
+        as an l-value.
+        (ternaryExpressionIsLValue.node.TernaryExpressionVisitor.prototype.visitTernaryExpression): Deleted.
+        (ternaryExpressionIsLValue.node.TernaryExpressionVisitor): Deleted.
+        (tests.ternaryExpressionIsLValue): Deleted.
+
 2018-09-24  Jer Noble  <jer.noble@apple.com>
 
         SharedBuffer should have an equality test
