@@ -1,3 +1,30 @@
+2018-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Revert some of the changes in r236471
+        https://bugs.webkit.org/show_bug.cgi?id=189973
+
+        Reviewed by Alex Christensen.
+
+        Revert some of the changes in r236471 as they should not be needed. In particular,
+        it should not be possible for the DecidePolicyForNavigationActionSync IPC to get
+        processed *before* the DidCreateMainFrame / DidCreateSubframe ones because those
+        use IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply. They are thus
+        processed early when necessary, the same way as synchronous IPC messages.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+
 2018-09-25  Sihui Liu  <sihui_liu@apple.com>
 
         Move Service Worker Management from Storage Process to Network Process
