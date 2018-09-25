@@ -1,3 +1,48 @@
+2018-09-24  John Wilander  <wilander@apple.com>
+
+        Cap lifetime of persistent cookies created client-side through document.cookie
+        https://bugs.webkit.org/show_bug.cgi?id=189933
+        <rdar://problem/44741888>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/tests/cookies/capped-lifetime-for-cookie-set-in-js.html
+
+        As pointed out in https://github.com/mikewest/http-state-tokens:
+
+        1) Cookies are available to JavaScript by default via document.cookie, which
+        enables a smooth upgrade from one-time XSS to theft of persistent credentials
+        and also makes cookies available to Spectre-like attacks on memory.
+
+        2) Though the HttpOnly attribute was introduced well over a decade ago, only
+        ~8.31% of Set-Cookie operations use it today (stats from Chrome). We need
+        developer incentives to put proper protections in place.
+
+        3) The median (uncompressed) Cookie request header is 409 bytes, while the 90th
+        percentile is 1,589 bytes, the 95th 2,549 bytes, the 99th 4,601 bytes, and
+        ~0.1% of Cookie headers are over 10kB (stats from Chrome). This is bad for load
+        performance.
+
+        In addition to this, third-party scripts running in first-party contexts can
+        read user data through document.cookie and even store cross-site tracking data
+        in them.
+
+        Authentication cookies should be HttpOnly and thus not be affected by
+        restrictions to document.cookie. Cookies that persist for a long time should
+        be Secure, HttpOnly, and SameSite to provide good security and privacy.
+
+        By capping the lifetime of persistent cookies set through document.cookie we
+        embark on a journey towards better cookie management on the web.
+
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::filterCookies):
+            Now caps the life time of persistent cookies to one week (seven days).
+        * testing/Internals.cpp:
+        (WebCore::Internals::getCookies const):
+            New test function to get to cookie meta data such as expiry.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Remove filterRes parameter from SVG filters

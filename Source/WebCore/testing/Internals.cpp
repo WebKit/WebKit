@@ -48,6 +48,7 @@
 #include "Chrome.h"
 #include "ClientOrigin.h"
 #include "ComposedTreeIterator.h"
+#include "CookieJar.h"
 #include "Cursor.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
@@ -4759,6 +4760,19 @@ bool Internals::supportsVCPEncoder()
 std::optional<HEVCParameterSet> Internals::parseHEVCCodecParameters(const String& codecString)
 {
     return WebCore::parseHEVCCodecParameters(codecString);
+}
+
+auto Internals::getCookies() const -> Vector<CookieData>
+{
+    auto* document = contextDocument();
+    if (!document)
+        return { };
+
+    Vector<Cookie> cookies;
+    getRawCookies(*document, document->cookieURL(), cookies);
+    return WTF::map(cookies, [](auto& cookie) {
+        return CookieData { cookie };
+    });
 }
 
 } // namespace WebCore

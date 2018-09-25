@@ -1,3 +1,22 @@
+2018-09-24  John Wilander  <wilander@apple.com>
+
+        Cap lifetime of persistent cookies created client-side through document.cookie
+        https://bugs.webkit.org/show_bug.cgi?id=189933
+        <rdar://problem/44741888>
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+            Skipped the new test by default since the behavior change is for
+            Cocoa platforms only.
+        * http/tests/cookies/capped-lifetime-for-cookie-set-in-js-expected.txt: Added.
+        * http/tests/cookies/capped-lifetime-for-cookie-set-in-js.html: Added.
+        * http/tests/cookies/resources/cookie-utilities.js:
+        * platform/ios/TestExpectations:
+            Marked the new test as [ Pass ].
+        * platform/mac-wk2/TestExpectations:
+            Marked the new test as [ Pass ].
+
 2018-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Remove filterRes parameter from filters

@@ -239,3 +239,10 @@ function setCookieUsingWebSocketFromHost(host)
     });
     return promise;
 }
+
+function createExpiresDateFromMaxAge(maxAgeInSeconds)
+{
+    let date = new Date();
+    date.setTime(date.getTime() + (maxAgeInSeconds * 1000));
+    return date.toUTCString();
+}

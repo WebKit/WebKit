@@ -266,6 +266,7 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
     NSUInteger count = [unfilteredCookies count];
     RetainPtr<NSMutableArray> filteredCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:count]);
 
+    const NSTimeInterval secondsPerWeek = 7 * 24 * 60 * 60;
     for (NSUInteger i = 0; i < count; ++i) {
         NSHTTPCookie *cookie = (NSHTTPCookie *)[unfilteredCookies objectAtIndex:i];
 
@@ -278,6 +279,16 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
 
         if ([cookie isHTTPOnly])
             continue;
+
+        // Cap lifetime of persistent, client-side cookies to a week.
+        if (![cookie isSessionOnly]) {
+            if (!cookie.expiresDate || cookie.expiresDate.timeIntervalSinceNow > secondsPerWeek) {
+                RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> properties = adoptNS([[cookie properties] mutableCopy]);
+                RetainPtr<NSDate> dateInAWeek = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:secondsPerWeek]);
+                [properties setObject:dateInAWeek.get() forKey:NSHTTPCookieExpires];
+                cookie = [NSHTTPCookie cookieWithProperties:properties.get()];
+            }
+        }
 
         [filteredCookies.get() addObject:cookie];
     }

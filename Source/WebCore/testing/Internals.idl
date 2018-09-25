@@ -145,6 +145,21 @@ enum CompositingPolicy {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary CookieData {
+    DOMString name;
+    DOMString value;
+    DOMString domain;
+    double expires;
+    boolean isHttpOnly;
+    boolean isSecure;
+    boolean isSession;
+    boolean isSameSiteLax;
+    boolean isSameSiteStrict;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     NoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
@@ -699,4 +714,6 @@ enum CompositingPolicy {
     boolean supportsVCPEncoder();
 
     HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);
+
+    sequence<CookieData> getCookies();
 };
