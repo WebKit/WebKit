@@ -1,3 +1,26 @@
+2018-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Fix the open source iOS 12 build after r236445
+        https://bugs.webkit.org/show_bug.cgi?id=189953
+
+        Reviewed by Alex Christensen.
+
+        Remove soft-linking macros from several sources in WebCore, and instead import UIKitSoftLink from PAL. This
+        allows different WebCore sources to soft-link UIKit (and its classes and symbols) without reimplementing
+        WebCore::UIKitLibrary.
+
+        * editing/cocoa/FontAttributesCocoa.mm:
+        * editing/cocoa/FontShadowCocoa.mm:
+        (WebCore::FontShadow::createShadow const):
+        * platform/graphics/cocoa/ColorCocoa.mm:
+        (WebCore::platformColor):
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenHasInvertedColors):
+        (WebCore::screenSize):
+        (WebCore::availableScreenSize):
+        (WebCore::screenScaleFactor):
+
 2018-09-25  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK][WebRTC] Fixup VP8 encoding support

@@ -27,13 +27,10 @@
 #import "ColorCocoa.h"
 
 #import "ColorMac.h"
-#import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS)
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
-
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, UIKit)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIKit, UIColor)
 #endif
 
 namespace WebCore {
@@ -51,7 +48,7 @@ NSColor *platformColor(const Color& color)
 
 UIColor *platformColor(const Color& color)
 {
-    return [get_UIKit_UIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color)];
+    return [PAL::get_UIKit_UIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color)];
 }
 
 #endif

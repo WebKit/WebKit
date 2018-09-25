@@ -38,15 +38,9 @@
 #import "IntRect.h"
 #import "WAKWindow.h"
 #import "Widget.h"
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, UIKit)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIKit, UIApplication)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIKit, UIScreen)
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, UIKit, UIAccessibilityIsGrayscaleEnabled, BOOL, (void), ())
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, UIKit, UIAccessibilityIsInvertColorsEnabled, BOOL, (void), ())
 
 namespace WebCore {
 
@@ -64,12 +58,12 @@ int screenDepthPerComponent(Widget*)
 
 bool screenIsMonochrome(Widget*)
 {
-    return softLinkUIKitUIAccessibilityIsGrayscaleEnabled();
+    return PAL::softLinkUIKitUIAccessibilityIsGrayscaleEnabled();
 }
 
 bool screenHasInvertedColors()
 {
-    return softLinkUIKitUIAccessibilityIsInvertColorsEnabled();
+    return PAL::softLinkUIKitUIAccessibilityIsInvertColorsEnabled();
 }
 
 bool screenSupportsExtendedColor(Widget*)
@@ -135,16 +129,16 @@ float screenPPIFactor()
 
 FloatSize screenSize()
 {
-    if (deviceHasIPadCapability() && [[get_UIKit_UIApplicationClass() sharedApplication] _isClassic])
+    if (deviceHasIPadCapability() && [[PAL::get_UIKit_UIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
-    return FloatSize([[get_UIKit_UIScreenClass() mainScreen] _referenceBounds].size);
+    return FloatSize([[PAL::get_UIKit_UIScreenClass() mainScreen] _referenceBounds].size);
 }
 
 FloatSize availableScreenSize()
 {
-    if (deviceHasIPadCapability() && [[get_UIKit_UIApplicationClass() sharedApplication] _isClassic])
+    if (deviceHasIPadCapability() && [[PAL::get_UIKit_UIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
-    return FloatSize([get_UIKit_UIScreenClass() mainScreen].bounds.size);
+    return FloatSize([PAL::get_UIKit_UIScreenClass() mainScreen].bounds.size);
 }
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenIOS.mm>)
@@ -159,7 +153,7 @@ FloatSize overrideScreenSize()
 float screenScaleFactor(UIScreen *screen)
 {
     if (!screen)
-        screen = [get_UIKit_UIScreenClass() mainScreen];
+        screen = [PAL::get_UIKit_UIScreenClass() mainScreen];
 
     return screen.scale;
 }

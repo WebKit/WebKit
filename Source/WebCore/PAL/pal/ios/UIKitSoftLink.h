@@ -23,29 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FontShadow.h"
-
-#import "ColorCocoa.h"
-#import "ColorMac.h"
+#pragma once
 
 #if PLATFORM(IOS)
-#import <pal/ios/UIKitSoftLink.h>
+
+#import <pal/spi/ios/UIKitSPI.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, UIKit)
+
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIKit, NSShadow)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIKit, UIApplication)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIKit, UIScreen)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIKit, UIColor)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsGrayscaleEnabled, BOOL, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsInvertColorsEnabled, BOOL, (void), ())
+
 #endif
-
-namespace WebCore {
-
-RetainPtr<NSShadow> FontShadow::createShadow() const
-{
-#if USE(APPKIT)
-    auto shadow = adoptNS([NSShadow new]);
-#elif PLATFORM(IOS)
-    auto shadow = adoptNS([PAL::get_UIKit_NSShadowClass() new]);
-#endif
-    [shadow setShadowColor:platformColor(color)];
-    [shadow setShadowOffset:offset];
-    [shadow setShadowBlurRadius:blurRadius];
-    return shadow;
-}
-
-}

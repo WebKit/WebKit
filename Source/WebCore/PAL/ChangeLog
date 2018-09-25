@@ -1,3 +1,16 @@
+2018-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Fix the open source iOS 12 build after r236445
+        https://bugs.webkit.org/show_bug.cgi?id=189953
+
+        Reviewed by Alex Christensen.
+
+        Introduce a single UIKit soft-linking header in PAL.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/ios/UIKitSoftLink.h: Copied from Source/WebCore/platform/graphics/cocoa/ColorCocoa.mm.
+        * pal/ios/UIKitSoftLink.mm: Copied from Source/WebCore/platform/graphics/cocoa/ColorCocoa.mm.
+
 2018-09-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor Editor::fontAttributesForSelectionStart to be platform-agnostic

@@ -27,7 +27,6 @@
 #import "FontAttributes.h"
 
 #import "ColorCocoa.h"
-#import <wtf/SoftLinking.h>
 
 namespace WebCore {
 
