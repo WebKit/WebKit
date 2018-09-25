@@ -72,7 +72,6 @@ var Statistics = new (function () {
         let sum = 0;
         let squareSum = 0;
         let size = 0;
-        console.log(samples);
         for (const sample of samples) {
             sum += sample.sum;
             squareSum += sample.squareSum;

@@ -14,10 +14,14 @@ function exit_with_error($status, $details = array()) {
     exit(1);
 }
 
-function success_json($details = array()) {
+function set_successful(&$details = array()) {
     $details['status'] = 'OK';
     merge_additional_details($details);
+    return $details;
+}
 
+function success_json($details = array()) {
+    set_successful($details);
     return json_encode($details);
 }
 

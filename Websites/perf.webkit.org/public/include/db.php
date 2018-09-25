@@ -44,10 +44,33 @@ function config_path($key, $path) {
     return CONFIG_DIR . '/' . config($key) . '/' . $path;
 }
 
-function generate_data_file($filename, $content) {
-    if (!assert(ctype_alnum(str_replace(array('-', '_', '.'), '', $filename))))
+function same_till_last_occurrence_of_string($main_string, $comparing_string, $compare_to_last_position_string) {
+    if (!$compare_to_last_position_string)
+        return !strcmp($main_string, $comparing_string);
+
+    $position_in_main_string = strrpos($main_string, $compare_to_last_position_string);
+    $position_in_comparing_string = strrpos($comparing_string, $compare_to_last_position_string);
+    if ($position_in_main_string !== $position_in_comparing_string)
         return FALSE;
-    return file_put_contents(config_path('dataDirectory', $filename), $content, LOCK_EX);
+    if ($position_in_main_string === FALSE)
+        return !strcmp($main_string, $comparing_string);
+    return !substr_compare($main_string, $comparing_string, 0, $position_in_main_string);
+}
+
+function generate_json_data_with_elapsed_time_if_needed($filename, $object, $elapsed_time) {
+    if (!assert(ctype_alnum(str_replace(array('-', '_', '.'), '', $filename))))
+        return NULL;
+
+    $target_file_path = config_path('dataDirectory', $filename);
+    $object['elapsedTime'] = $elapsed_time;
+    $content = json_encode($object);
+
+    if (file_exists($target_file_path) && same_till_last_occurrence_of_string(file_get_contents($target_file_path), $content, 'elapsedTime'))
+        return $content;
+
+    $temp_file_path = tempnam(config_path('dataDirectory', ''), $filename . '-temp-');
+    file_put_contents($temp_file_path, $content, LOCK_EX);
+    return rename($temp_file_path, $target_file_path) ?  $content : NULL;
 }
 
 if (config('debug')) {

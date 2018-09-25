@@ -39,9 +39,13 @@ function main($path) {
     foreach ($config_rows as $config)
         $generator->fetch_runs($config['config_type'], $config['config_id'], $config['config_runs_last_modified']);
 
-    $content = success_json($generator->results());
+    $results = set_successful($generator->results());
     if (!$test_group_id)
-        generate_data_file("$platform_id-$metric_id.json", $content);
+        $content = generate_json_data_with_elapsed_time_if_needed("$platform_id-$metric_id.json", $results,  $generator->elapsed_time);
+    else {
+        $results['elapsedTime'] = $generator->elapsed_time;
+        $content = json_encode($results);
+    }
     echo $content;
 }
 
@@ -51,13 +55,15 @@ class RunsGenerator {
         $this->results = array();
         $this->last_modified = 0;
         $this->start_time = microtime(true);
+        $this->elapsed_time = NULL;
     }
 
     function results() {
+        $this->elapsed_time = (microtime(true) - $this->start_time) * 1000;
         return array(
             'configurations' => &$this->results,
-            'lastModified' => $this->last_modified,
-            'elapsedTime' => (microtime(true) - $this->start_time) * 1000);
+            'lastModified' => $this->last_modified
+        );
     }
 
     function fetch_runs($name, $config_id, $last_modified) {

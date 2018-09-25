@@ -37,18 +37,19 @@ function main() {
     }
 
     $cluster_count = 0;
+    $elapsed_time = NULL;
     while (!$fetcher->at_end()) {
         $content = $fetcher->fetch_next_cluster();
         $cluster_count++;
         if ($fetcher->at_end()) {
             $cache_filename = "measurement-set-$platform_id-$metric_id.json";
             $content['clusterCount'] = $cluster_count;
-            $content['elapsedTime'] = (microtime(true) - $program_start_time) * 1000;
+            $elapsed_time = (microtime(true) - $program_start_time) * 1000;
         } else
             $cache_filename = "measurement-set-$platform_id-$metric_id-{$content['endTime']}.json";
 
-        $json = success_json($content);
-        generate_data_file($cache_filename, $json);
+        set_successful($content);
+        $json = generate_json_data_with_elapsed_time_if_needed($cache_filename, $content, $elapsed_time);
     }
 
     echo $json;
