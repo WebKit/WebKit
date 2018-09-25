@@ -81,7 +81,7 @@ public:
         auto caps = adoptGRef(gst_caps_copy(m_restrictionCaps.get()));
         gst_caps_set_simple(caps.get(), "framerate", GST_TYPE_FRACTION, frameRate, 1, nullptr);
 
-        SetRestrictionCaps(caps);
+        SetRestrictionCaps(WTFMove(caps));
 
         if (m_bitrateSetter && m_encoder)
             m_bitrateSetter(m_encoder, newBitrate);
@@ -109,7 +109,7 @@ public:
 
         m_encodedFrame._size = codecSettings->width * codecSettings->height * 3;
         m_encodedFrame._buffer = new uint8_t[m_encodedFrame._size];
-        encoded_image_buffer_.reset(m_encodedFrame._buffer);
+        m_encodedImageBuffer.reset(m_encodedFrame._buffer);
         m_encodedFrame._completeFrame = true;
         m_encodedFrame._encodedWidth = 0;
         m_encodedFrame._encodedHeight = 0;
@@ -159,7 +159,7 @@ public:
     int32_t Release() final
     {
         m_encodedFrame._buffer = nullptr;
-        encoded_image_buffer_.reset();
+        m_encodedImageBuffer.reset();
         GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
         gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
 
@@ -230,7 +230,7 @@ public:
         auto caps = gst_sample_get_caps(sample.get());
 
         webrtc::RTPFragmentationHeader fragmentationInfo;
-        Fragmentize(&m_encodedFrame, &encoded_image_buffer_, buffer, &fragmentationInfo);
+        Fragmentize(&m_encodedFrame, &m_encodedImageBuffer, &m_encodedImageBufferSize, buffer, &fragmentationInfo);
         if (!m_encodedFrame._size)
             return GST_FLOW_OK;
 
@@ -249,12 +249,8 @@ public:
         PopulateCodecSpecific(&codecSpecifiInfos, buffer);
 
         webrtc::EncodedImageCallback::Result result = m_imageReadyCb->OnEncodedImage(m_encodedFrame, &codecSpecifiInfos, &fragmentationInfo);
-        if (result.error != webrtc::EncodedImageCallback::Result::OK) {
-            GST_ELEMENT_ERROR(m_pipeline.get(), LIBRARY, FAILED, (nullptr),
-                ("Encode callback failed: %d", result.error));
-
-            return GST_FLOW_ERROR;
-        }
+        if (result.error != webrtc::EncodedImageCallback::Result::OK)
+            GST_ERROR_OBJECT(m_pipeline.get(), "Encode callback failed: %d", result.error);
 
         return GST_FLOW_OK;
     }
@@ -359,23 +355,25 @@ public:
 
     virtual void PopulateCodecSpecific(webrtc::CodecSpecificInfo*, GstBuffer*) = 0;
 
-    virtual void Fragmentize(webrtc::EncodedImage* encodedImage, std::unique_ptr<uint8_t[]>* encoded_image_buffer, GstBuffer* buffer,
-        webrtc::RTPFragmentationHeader* fragmentationInfo)
+    virtual void Fragmentize(webrtc::EncodedImage* encodedImage, std::unique_ptr<uint8_t[]>* encodedImageBuffer,
+        size_t* bufferSize, GstBuffer* buffer, webrtc::RTPFragmentationHeader* fragmentationInfo)
     {
-        GstMapInfo map;
+        GstMappedBuffer map(buffer, GST_MAP_READ);
 
-        gst_buffer_map(buffer, &map, GST_MAP_READ);
-        if (encodedImage->_size < map.size) {
-            encodedImage->_size = map.size;
+        if (*bufferSize < map.size()) {
+            encodedImage->_size = map.size();
             encodedImage->_buffer = new uint8_t[encodedImage->_size];
-            encoded_image_buffer->reset(encodedImage->_buffer);
-            memcpy(encodedImage->_buffer, map.data, map.size);
+            encodedImageBuffer->reset(encodedImage->_buffer);
+            *bufferSize = map.size();
         }
-        gst_buffer_unmap(buffer, &map);
+
+        memcpy(encodedImage->_buffer, map.data(), map.size());
+        encodedImage->_length = map.size();
+        encodedImage->_size = map.size();
 
         fragmentationInfo->VerifyAndAllocateFragmentationHeader(1);
         fragmentationInfo->fragmentationOffset[0] = 0;
-        fragmentationInfo->fragmentationLength[0] = gst_buffer_get_size(buffer);
+        fragmentationInfo->fragmentationLength[0] = map.size();
         fragmentationInfo->fragmentationPlType[0] = 0;
         fragmentationInfo->fragmentationTimeDiff[0] = 0;
     }
@@ -392,7 +390,7 @@ public:
     void SetRestrictionCaps(GRefPtr<GstCaps> caps)
     {
         if (caps && m_profile.get() && gst_caps_is_equal(m_restrictionCaps.get(), caps.get()))
-            g_object_set(m_profile.get(), "restriction-caps", caps, nullptr);
+            g_object_set(m_profile.get(), "restriction-caps", caps.get(), nullptr);
 
         m_restrictionCaps = caps;
     }
@@ -413,7 +411,8 @@ private:
     GRefPtr<GstEncodingProfile> m_profile;
     BitrateSetter m_bitrateSetter;
     webrtc::EncodedImage m_encodedFrame;
-    std::unique_ptr<uint8_t[]> encoded_image_buffer_;
+    std::unique_ptr<uint8_t[]> m_encodedImageBuffer;
+    size_t m_encodedImageBufferSize;
 };
 
 class H264Encoder : public GStreamerVideoEncoder {
@@ -431,10 +430,9 @@ public:
     }
 
     // FIXME - MT. safety!
-    void Fragmentize(webrtc::EncodedImage* encodedImage, std::unique_ptr<uint8_t[]>* encoded_image_buffer,
+    void Fragmentize(webrtc::EncodedImage* encodedImage, std::unique_ptr<uint8_t[]>* encodedImageBuffer, size_t *bufferSize,
         GstBuffer* gstbuffer, webrtc::RTPFragmentationHeader* fragmentationHeader) final
     {
-        GstMapInfo map;
         GstH264NalUnit nalu;
         auto parserResult = GST_H264_PARSER_OK;
 
@@ -444,9 +442,9 @@ public:
         std::vector<GstH264NalUnit> nals;
 
         const uint8_t startCode[4] = { 0, 0, 0, 1 };
-        gst_buffer_map(gstbuffer, &map, GST_MAP_READ);
+        GstMappedBuffer map(gstbuffer, GST_MAP_READ);
         while (parserResult == GST_H264_PARSER_OK) {
-            parserResult = gst_h264_parser_identify_nalu(m_parser, map.data, offset, map.size, &nalu);
+            parserResult = gst_h264_parser_identify_nalu(m_parser, map.data(), offset, map.size(), &nalu);
 
             nalu.sc_offset = offset;
             nalu.offset = offset + sizeof(startCode);
@@ -461,7 +459,8 @@ public:
         if (encodedImage->_size < requiredSize) {
             encodedImage->_size = requiredSize;
             encodedImage->_buffer = new uint8_t[encodedImage->_size];
-            encoded_image_buffer->reset(encodedImage->_buffer);
+            encodedImageBuffer->reset(encodedImage->_buffer);
+            *bufferSize = map.size();
         }
 
         // Iterate nal units and fill the Fragmentation info.
@@ -470,20 +469,18 @@ public:
         encodedImage->_length = 0;
         for (std::vector<GstH264NalUnit>::iterator nal = nals.begin(); nal != nals.end(); ++nal, fragmentIndex++) {
 
-            ASSERT(map.data[nal->sc_offset + 0] == startCode[0]);
-            ASSERT(map.data[nal->sc_offset + 1] == startCode[1]);
-            ASSERT(map.data[nal->sc_offset + 2] == startCode[2]);
-            ASSERT(map.data[nal->sc_offset + 3] == startCode[3]);
+            ASSERT(map.data()[nal->sc_offset + 0] == startCode[0]);
+            ASSERT(map.data()[nal->sc_offset + 1] == startCode[1]);
+            ASSERT(map.data()[nal->sc_offset + 2] == startCode[2]);
+            ASSERT(map.data()[nal->sc_offset + 3] == startCode[3]);
 
             fragmentationHeader->fragmentationOffset[fragmentIndex] = nal->offset;
             fragmentationHeader->fragmentationLength[fragmentIndex] = nal->size;
 
-            memcpy(encodedImage->_buffer + encodedImage->_length, &map.data[nal->sc_offset],
+            memcpy(encodedImage->_buffer + encodedImage->_length, &map.data()[nal->sc_offset],
                 sizeof(startCode) + nal->size);
             encodedImage->_length += nal->size + sizeof(startCode);
         }
-
-        gst_buffer_unmap(gstbuffer, &map);
     }
 
     GstElement* CreateFilter() final
