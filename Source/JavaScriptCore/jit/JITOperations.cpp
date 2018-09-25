@@ -2462,10 +2462,10 @@ void JIT_OPERATION operationExceptionFuzz(ExecState* exec)
     NativeCallFrameTracer tracer(vm, exec);
     auto scope = DECLARE_THROW_SCOPE(*vm);
     UNUSED_PARAM(scope);
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
     void* returnPC = __builtin_return_address(0);
     doExceptionFuzzing(exec, scope, "JITOperations", returnPC);
-#endif // COMPILER(GCC_OR_CLANG)
+#endif // COMPILER(GCC_COMPATIBLE)
 }
 
 ALWAYS_INLINE static EncodedJSValue unprofiledAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

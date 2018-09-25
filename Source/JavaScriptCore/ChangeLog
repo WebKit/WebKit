@@ -1,3 +1,30 @@
+2018-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Rename WTF_COMPILER_GCC_OR_CLANG to WTF_COMPILER_GCC_COMPATIBLE
+        https://bugs.webkit.org/show_bug.cgi?id=189733
+
+        Reviewed by Michael Catanzaro.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::cacheFlush):
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::isVFPPresent):
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/MacroAssemblerARMv7.cpp:
+        * assembler/MacroAssemblerMIPS.cpp:
+        * assembler/MacroAssemblerX86Common.cpp:
+        * heap/HeapCell.cpp:
+        * heap/HeapCell.h:
+        * jit/HostCallReturnValue.h:
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        * jit/ThunkGenerators.cpp:
+        * runtime/ArrayConventions.cpp:
+        (JSC::clearArrayMemset):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::digitDiv):
+
 2018-09-24  Saam Barati  <sbarati@apple.com>
 
         Array.prototype.indexOf fast path needs to ensure the length is still valid after performing effects

@@ -327,7 +327,7 @@
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
 /* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
 #if __SIZEOF_POINTER__ == 8
 #define WTF_CPU_ADDRESS64 1
@@ -437,7 +437,7 @@
 
 /* CPU(BIG_ENDIAN) or CPU(MIDDLE_ENDIAN) or neither, as appropriate. */
 
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #define WTF_CPU_BIG_ENDIAN 1
 #elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -912,7 +912,7 @@
 /* Configure the JIT */
 #if CPU(X86) && COMPILER(MSVC)
 #define JSC_HOST_CALL __fastcall
-#elif CPU(X86) && COMPILER(GCC_OR_CLANG)
+#elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
 #define JSC_HOST_CALL __attribute__ ((fastcall))
 #else
 #define JSC_HOST_CALL
@@ -951,7 +951,7 @@
 #endif
 
 /* Configure the interpreter */
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
 #define HAVE_COMPUTED_GOTO 1
 #endif
 

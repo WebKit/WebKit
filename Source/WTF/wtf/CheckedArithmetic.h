@@ -270,7 +270,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 
     static inline bool add(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_add_overflow(lhs, rhs, &temp))
             return false;
@@ -294,7 +294,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 
     static inline bool sub(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_sub_overflow(lhs, rhs, &temp))
             return false;
@@ -317,7 +317,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_mul_overflow(lhs, rhs, &temp))
             return false;
@@ -356,7 +356,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     // LHS and RHS are unsigned types so bounds checks are nice and easy
     static inline bool add(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_add_overflow(lhs, rhs, &temp))
             return false;
@@ -373,7 +373,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 
     static inline bool sub(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_sub_overflow(lhs, rhs, &temp))
             return false;
@@ -390,7 +390,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_mul_overflow(lhs, rhs, &temp))
             return false;
@@ -415,7 +415,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 template <typename ResultType> struct ArithmeticOperations<int, unsigned, ResultType, true, false> {
     static inline bool add(int64_t lhs, int64_t rhs, ResultType& result)
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_add_overflow(lhs, rhs, &temp))
             return false;
@@ -434,7 +434,7 @@ template <typename ResultType> struct ArithmeticOperations<int, unsigned, Result
     
     static inline bool sub(int64_t lhs, int64_t rhs, ResultType& result)
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_sub_overflow(lhs, rhs, &temp))
             return false;
@@ -453,7 +453,7 @@ template <typename ResultType> struct ArithmeticOperations<int, unsigned, Result
 
     static inline bool multiply(int64_t lhs, int64_t rhs, ResultType& result)
     {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
         if (__builtin_mul_overflow(lhs, rhs, &temp))
             return false;

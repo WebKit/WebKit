@@ -55,7 +55,7 @@
 #include <type_traits>
 
 #if OS(WINDOWS)
-#if !COMPILER(GCC_OR_CLANG)
+#if !COMPILER(GCC_COMPATIBLE)
 extern "C" void _ReadWriteBarrier(void);
 #pragma intrinsic(_ReadWriteBarrier)
 #endif
@@ -102,7 +102,7 @@ extern "C" void _ReadWriteBarrier(void);
 #define RELEASE_LOG_DISABLED !(USE(OS_LOG))
 #endif
 
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
 #define WTF_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #else
 #define WTF_PRETTY_FUNCTION __FUNCTION__
@@ -111,7 +111,7 @@ extern "C" void _ReadWriteBarrier(void);
 #if COMPILER(MINGW)
 /* By default MinGW emits warnings when C99 format attributes are used, even if __USE_MINGW_ANSI_STDIO is defined */
 #define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(gnu_printf, formatStringArgument, extraArguments)))
-#elif COMPILER(GCC_OR_CLANG) && !defined(__OBJC__)
+#elif COMPILER(GCC_COMPATIBLE) && !defined(__OBJC__)
 /* WTF logging functions can process %@ in the format string to log a NSObject* but the printf format attribute
    emits a warning when %@ is used in the format string.  Until <rdar://problem/5195437> is resolved we can't include
    the attribute when being used from Objective-C code in case it decides to use %@. */
@@ -141,7 +141,7 @@ extern "C" {
 
    Signals are ignored by the crash reporter on OS X so we must do better.
 */
-#if COMPILER(GCC_OR_CLANG) || COMPILER(MSVC)
+#if COMPILER(GCC_COMPATIBLE) || COMPILER(MSVC)
 #define NO_RETURN_DUE_TO_CRASH NO_RETURN
 #else
 #define NO_RETURN_DUE_TO_CRASH
@@ -564,7 +564,7 @@ void isIntegralType(T, Types... types)
 
 inline void compilerFenceForCrash()
 {
-#if OS(WINDOWS) && !COMPILER(GCC_OR_CLANG)
+#if OS(WINDOWS) && !COMPILER(GCC_COMPATIBLE)
     _ReadWriteBarrier();
 #else
     asm volatile("" ::: "memory");

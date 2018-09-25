@@ -81,7 +81,7 @@
  * - https://bugs.webkit.org/show_bug.cgi?id=38045
  * - http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43976
  */
-#if (CPU(ARM) || CPU(MIPS)) && COMPILER(GCC_OR_CLANG)
+#if (CPU(ARM) || CPU(MIPS)) && COMPILER(GCC_COMPATIBLE)
 template<typename Type>
 inline bool isPointerTypeAlignmentOkay(Type* ptr)
 {
@@ -168,7 +168,7 @@ inline size_t bitCount(uint64_t bits)
 // Macro that returns a compile time constant with the length of an array, but gives an error if passed a non-array.
 template<typename T, size_t Size> char (&ArrayLengthHelperFunction(T (&)[Size]))[Size];
 // GCC needs some help to deduce a 0 length array.
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
 template<typename T> char (&ArrayLengthHelperFunction(T (&)[0]))[0];
 #endif
 #define WTF_ARRAY_LENGTH(array) sizeof(::WTF::ArrayLengthHelperFunction(array))

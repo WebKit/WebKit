@@ -47,7 +47,7 @@ extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWi
     return JSValue::encode(exec->vm().hostCallReturnValue);
 }
 
-#if COMPILER(GCC_OR_CLANG) && CPU(X86_64)
+#if COMPILER(GCC_COMPATIBLE) && CPU(X86_64)
 asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
@@ -56,7 +56,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
-#elif COMPILER(GCC_OR_CLANG) && CPU(X86)
+#elif COMPILER(GCC_COMPATIBLE) && CPU(X86)
 asm (
 ".text" "\n" \
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
@@ -72,7 +72,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "ret\n"
 );
 
-#elif COMPILER(GCC_OR_CLANG) && CPU(ARM_THUMB2)
+#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM_THUMB2)
 asm (
 ".text" "\n"
 ".align 2" "\n"
@@ -85,7 +85,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
-#elif COMPILER(GCC_OR_CLANG) && CPU(ARM_TRADITIONAL)
+#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM_TRADITIONAL)
 asm (
 ".text" "\n"
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
@@ -107,7 +107,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
      "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
-#elif COMPILER(GCC_OR_CLANG) && CPU(MIPS)
+#elif COMPILER(GCC_COMPATIBLE) && CPU(MIPS)
 
 #if WTF_MIPS_PIC
 #define LOAD_FUNCTION_TO_T9(function) \

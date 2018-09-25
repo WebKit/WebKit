@@ -1,3 +1,18 @@
+2018-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Rename WTF_COMPILER_GCC_OR_CLANG to WTF_COMPILER_GCC_COMPATIBLE
+        https://bugs.webkit.org/show_bug.cgi?id=189733
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests (No behavior change).
+
+        * platform/graphics/cpu/arm/filters/FELightingNEON.cpp:
+        * platform/graphics/cpu/arm/filters/FELightingNEON.h:
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApply):
+        * platform/graphics/filters/FELighting.h:
+
 2018-09-24  John Wilander  <wilander@apple.com>
 
         Cap lifetime of persistent cookies created client-side through document.cookie

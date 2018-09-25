@@ -1164,7 +1164,7 @@ namespace JSC {
             return AL | B | (offset & BranchOffsetMask);
         }
 
-#if OS(LINUX) && COMPILER(GCC_OR_CLANG)
+#if OS(LINUX) && COMPILER(GCC_COMPATIBLE)
         static inline void linuxPageFlush(uintptr_t begin, uintptr_t end)
         {
             asm volatile(
@@ -1184,7 +1184,7 @@ namespace JSC {
 
         static void cacheFlush(void* code, size_t size)
         {
-#if OS(LINUX) && COMPILER(GCC_OR_CLANG)
+#if OS(LINUX) && COMPILER(GCC_COMPATIBLE)
             size_t page = pageSize();
             uintptr_t current = reinterpret_cast<uintptr_t>(code);
             uintptr_t end = current + size;

@@ -1,3 +1,36 @@
+2018-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Rename WTF_COMPILER_GCC_OR_CLANG to WTF_COMPILER_GCC_COMPATIBLE
+        https://bugs.webkit.org/show_bug.cgi?id=189733
+
+        Reviewed by Michael Catanzaro.
+
+        Clang for Windows build enables WTF_COMPILER_CLANG and
+        WTF_COMPILER_MSVC, but disables WTF_COMPILER_GCC_OR_CLANG. It is
+        strange WTF_COMPILER_GCC_OR_CLANG is not enabled even though
+        WTF_COMPILER_CLANG is enabled. However, Clang for Windows imitates
+        MSVC, and codes for COMPILER(GCC_OR_CLANG) are for non MSVC. At
+        least at the moment, it is not feasible to define
+        WTF_COMPILER_GCC_OR_CLANG for Clang for Windows.
+
+        To solve the issue, this change renames WTF_COMPILER_GCC_OR_CLANG
+        to WTF_COMPILER_GCC_COMPATIBLE.
+
+        As an exception, I'd like to use IGNORE_WARNINGS_* macros even in
+        Clang for Windows builds.
+
+        * wtf/Assertions.cpp: Replaced COMPILER(GCC_OR_CLANG) with COMPILER(GCC_COMPATIBLE).
+        * wtf/Assertions.h: Ditto.
+        * wtf/Atomics.h: Ditto.
+        * wtf/CheckedArithmetic.h: Ditto.
+        * wtf/FastMalloc.h: Ditto.
+        * wtf/MathExtras.h: Ditto.
+        * wtf/Platform.h: Ditto.
+        * wtf/StdLibExtras.h: Ditto.
+        * wtf/Vector.h: Ditto.
+        * wtf/text/ASCIIFastPath.h: Ditto.
+        * wtf/Compiler.h:  Ditto. Replaced "COMPILER(GCC_OR_CLANG)" with "COMPILER(GCC) || COMPILER(CLANG)" of IGNORE_WARNINGS_* macros.
+
 2018-09-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Enable LLInt ASM interpreter on X64 and ARM64 in non JIT configuration

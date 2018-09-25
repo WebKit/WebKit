@@ -526,7 +526,7 @@ void shuffleVector(VectorType& vector, const RandomFunc& randomFunc)
 
 inline unsigned clz32(uint32_t number)
 {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
     if (number)
         return __builtin_clz(number);
     return 32;
@@ -551,7 +551,7 @@ inline unsigned clz32(uint32_t number)
 
 inline unsigned clz64(uint64_t number)
 {
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
     if (number)
         return __builtin_clzll(number);
     return 64;

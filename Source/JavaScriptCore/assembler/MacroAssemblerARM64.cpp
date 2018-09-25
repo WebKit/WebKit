@@ -44,7 +44,7 @@ extern "C" void ctiMasmProbeTrampoline();
 
 using namespace ARM64Registers;
 
-#if COMPILER(GCC_OR_CLANG)
+#if COMPILER(GCC_COMPATIBLE)
 
 // The following are offsets for Probe::State fields accessed
 // by the ctiMasmProbeTrampoline stub.
@@ -509,7 +509,7 @@ asm (
     "ldp       x29, x30, [sp], #" STRINGIZE_VALUE_OF(2 * PTR_SIZE) "\n"
     "ret" "\n"
 );
-#endif // COMPILER(GCC_OR_CLANG)
+#endif // COMPILER(GCC_COMPATIBLE)
 
 void MacroAssembler::probe(Probe::Function function, void* arg)
 {

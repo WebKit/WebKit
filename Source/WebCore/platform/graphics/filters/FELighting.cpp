@@ -380,7 +380,7 @@ void FELighting::platformApplyGeneric(const LightingData& data, const LightSourc
 inline void FELighting::platformApply(const LightingData& data, const LightSource::PaintingData& paintingData)
 {
     // The selection here eventually should happen dynamically on some platforms.
-#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_OR_CLANG)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE)
     platformApplyNeon(data, paintingData);
 #else
     platformApplyGeneric(data, paintingData);

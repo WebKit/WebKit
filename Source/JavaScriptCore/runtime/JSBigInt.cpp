@@ -468,7 +468,7 @@ inline JSBigInt::Digit JSBigInt::digitPow(Digit base, Digit exponent)
 inline JSBigInt::Digit JSBigInt::digitDiv(Digit high, Digit low, Digit divisor, Digit& remainder)
 {
     ASSERT(high < divisor);
-#if CPU(X86_64) && COMPILER(GCC_OR_CLANG)
+#if CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
     Digit quotient;
     Digit rem;
     __asm__("divq  %[divisor]"
@@ -479,7 +479,7 @@ inline JSBigInt::Digit JSBigInt::digitDiv(Digit high, Digit low, Digit divisor, 
         : "d"(high), "a"(low), [divisor] "rm"(divisor));
     remainder = rem;
     return quotient;
-#elif CPU(X86) && COMPILER(GCC_OR_CLANG)
+#elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
     Digit quotient;
     Digit rem;
     __asm__("divl  %[divisor]"

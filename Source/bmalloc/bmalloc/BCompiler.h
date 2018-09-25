@@ -38,15 +38,15 @@
 
 #define BASAN_ENABLED BCOMPILER_HAS_CLANG_FEATURE(address_sanitizer)
 
-/* BCOMPILER(GCC_OR_CLANG) - GNU Compiler Collection or Clang */
+/* BCOMPILER(GCC_COMPATIBLE) - GNU Compiler Collection or compatibles */
 
 #if defined(__GNUC__)
-#define BCOMPILER_GCC_OR_CLANG 1
+#define BCOMPILER_GCC_COMPATIBLE 1
 #endif
 
 /* BNO_RETURN */
 
-#if !defined(BNO_RETURN) && BCOMPILER(GCC_OR_CLANG)
+#if !defined(BNO_RETURN) && BCOMPILER(GCC_COMPATIBLE)
 #define BNO_RETURN __attribute((__noreturn__))
 #endif
 

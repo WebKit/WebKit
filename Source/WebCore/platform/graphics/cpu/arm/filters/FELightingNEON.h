@@ -27,7 +27,7 @@
 #ifndef FELightingNEON_h
 #define FELightingNEON_h
 
-#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_OR_CLANG)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE)
 
 #include "FELighting.h"
 #include "PointLightSource.h"
@@ -196,6 +196,6 @@ inline void FELighting::platformApplyNeon(const LightingData& data, const LightS
 
 } // namespace WebCore
 
-#endif // CPU(ARM_NEON) && COMPILER(GCC_OR_CLANG)
+#endif // CPU(ARM_NEON) && COMPILER(GCC_COMPATIBLE)
 
 #endif // FELightingNEON_h

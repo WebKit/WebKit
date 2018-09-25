@@ -42,7 +42,7 @@ bool HeapCell::isLive()
     return markedBlockHandle.isLive(this);
 }
 
-#if !COMPILER(GCC_OR_CLANG)
+#if !COMPILER(GCC_COMPATIBLE)
 void HeapCell::use() const
 {
 }
