@@ -1,3 +1,13 @@
+2018-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Allow for suffixes to com.apple.WebKit.WebContent
+        https://bugs.webkit.org/show_bug.cgi?id=189972
+
+        Reviewed by Chris Dumez.
+
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::isInWebProcess):
+
 2018-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Fix the open source iOS 12 build after r236445

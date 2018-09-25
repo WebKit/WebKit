@@ -86,9 +86,7 @@ uint32_t applicationSDKVersion()
 
 bool isInWebProcess()
 {
-    static bool mainBundleIsWebProcess = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent.Development"]
-        || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent"]
-        || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebProcess"];
+    static bool mainBundleIsWebProcess = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple.WebKit.WebContent"];
     return mainBundleIsWebProcess;
 }
 

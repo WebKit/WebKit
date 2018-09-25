@@ -38,9 +38,7 @@ bool gigacageEnabledForProcess()
 
     NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
     if (appName) {
-        bool isWebProcess = [appName isEqualToString:@"com.apple.WebKit.WebContent.Development"]
-            || [appName isEqualToString:@"com.apple.WebKit.WebContent"]
-            || [appName isEqualToString:@"com.apple.WebProcess"];
+        bool isWebProcess = [appName hasPrefix:@"com.apple.WebKit.WebContent"];
         return isWebProcess;
     }
 
