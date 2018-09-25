@@ -1,3 +1,10 @@
+2018-08-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Speculative build fix for WPE after r235531.
+
+        * platform/graphics/filters/PointLightSource.cpp:
+        Add missing include.
+
 2018-09-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [ARM] Building FELightingNEON.cpp fails due to missing lightVector member
