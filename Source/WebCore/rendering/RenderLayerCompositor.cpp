@@ -2663,7 +2663,7 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
     if (layer.isRenderViewLayer() && hasCoordinatedScrolling())
         return true;
 
-    return layer.usesAcceleratedScrolling();
+    return layer.hasTouchScrollableOverflow();
 }
 
 bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObject& renderer, const RenderLayer& layer, RenderLayer::ViewportConstrainedNotCompositedReason* viewportConstrainedNotCompositedReason) const
@@ -2748,7 +2748,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const RenderLayer& layer) const
 {
 #if PLATFORM(IOS)
-    if (!layer.hasAcceleratedTouchScrolling())
+    if (!layer.canUseAcceleratedTouchScrolling())
         return false;
 
     if (!m_inPostLayoutUpdate) {

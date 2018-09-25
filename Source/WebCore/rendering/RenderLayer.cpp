@@ -1948,14 +1948,10 @@ LayoutSize RenderLayer::offsetFromAncestor(const RenderLayer* ancestorLayer, Col
     return toLayoutSize(convertToLayerCoords(ancestorLayer, LayoutPoint(), adjustForColumns));
 }
 
-#if PLATFORM(IOS)
-bool RenderLayer::hasAcceleratedTouchScrolling() const
+bool RenderLayer::canUseAcceleratedTouchScrolling() const
 {
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
-    if (!scrollsOverflow())
-        return false;
-
-    return renderer().style().useTouchOverflowScrolling() || renderer().settings().alwaysUseAcceleratedOverflowScroll();
+#if PLATFORM(IOS) && ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    return scrollsOverflow() && (renderer().style().useTouchOverflowScrolling() || renderer().settings().alwaysUseAcceleratedOverflowScroll());
 #else
     return false;
 #endif
@@ -1963,31 +1959,19 @@ bool RenderLayer::hasAcceleratedTouchScrolling() const
 
 bool RenderLayer::hasTouchScrollableOverflow() const
 {
-    return hasAcceleratedTouchScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
+    return canUseAcceleratedTouchScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
 }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 bool RenderLayer::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {
     // If we have accelerated scrolling, let the scrolling be handled outside of WebKit.
-    if (usesAcceleratedScrolling())
+    if (hasTouchScrollableOverflow())
         return false;
 
     return ScrollableArea::handleTouchEvent(touchEvent);
 }
-#endif
-#endif // PLATFORM(IOS)
 
-bool RenderLayer::usesAcceleratedScrolling() const
-{
-#if PLATFORM(IOS)
-    return hasTouchScrollableOverflow();
-#else
-    return false;
-#endif
-}
-
-#if ENABLE(IOS_TOUCH_EVENTS)
 void RenderLayer::registerAsTouchEventListenerForScrolling()
 {
     if (!renderer().element() || m_registeredAsTouchEventListenerForScrolling)
@@ -2007,14 +1991,16 @@ void RenderLayer::unregisterAsTouchEventListenerForScrolling()
 }
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
+// FIXME: this is only valid after we've made layers.
 bool RenderLayer::usesCompositedScrolling() const
 {
     return isComposited() && backing()->hasScrollingLayer();
 }
 
+// FIXME: this is only valid after we've made layers.
 bool RenderLayer::usesAsyncScrolling() const
 {
-    return hasAcceleratedTouchScrolling() && usesCompositedScrolling();
+    return canUseAcceleratedTouchScrolling() && usesCompositedScrolling();
 }
 
 static inline int adjustedScrollDelta(int beginningDelta)
@@ -3388,7 +3374,7 @@ bool RenderLayer::showsOverflowControls() const
 {
 #if PLATFORM(IOS)
     // Don't render (custom) scrollbars if we have accelerated scrolling.
-    if (hasAcceleratedTouchScrolling())
+    if (canUseAcceleratedTouchScrolling())
         return false;
 #endif
 
@@ -6080,7 +6066,7 @@ static bool createsStackingContext(const RenderLayer& layer)
         || renderer.hasReflection()
         || renderer.style().hasIsolation()
 #if PLATFORM(IOS)
-        || layer.hasAcceleratedTouchScrolling()
+        || layer.canUseAcceleratedTouchScrolling()
 #endif
         || (renderer.style().willChange() && renderer.style().willChange()->canCreateStackingContext());
 }
@@ -6414,7 +6400,7 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     if (addedOrRemoved) {
-        if (isScrollable && !hasAcceleratedTouchScrolling())
+        if (isScrollable && !canUseAcceleratedTouchScrolling())
             registerAsTouchEventListenerForScrolling();
         else {
             // We only need the touch listener for unaccelerated overflow scrolling, so if we became

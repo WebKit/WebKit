@@ -560,7 +560,7 @@ void RenderLayerBacking::updateCustomAppearance(const RenderStyle& style)
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
 {
     for (auto* curr = &layer; curr; curr = curr->parent()) {
-        if (curr->hasTransform() || curr->usesAcceleratedScrolling())
+        if (curr->hasTransform() || curr->hasTouchScrollableOverflow())
             return true;
     }
 
@@ -686,7 +686,7 @@ bool RenderLayerBacking::updateConfiguration()
     bool needsDescendantsClippingLayer = compositor().clipsCompositingDescendants(m_owningLayer);
 
     if (!renderer().view().needsLayout()) {
-        bool usesCompositedScrolling = m_owningLayer.usesAcceleratedScrolling();
+        bool usesCompositedScrolling = m_owningLayer.hasTouchScrollableOverflow();
 
         // Our scrolling layer will clip.
         if (usesCompositedScrolling)

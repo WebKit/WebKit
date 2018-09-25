@@ -251,7 +251,7 @@ public:
 #endif
 
 #if PLATFORM(IOS)
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     bool handleTouchEvent(const PlatformTouchEvent&) override;
 #endif
     
@@ -264,16 +264,12 @@ public:
 
     bool requiresScrollBoundsOriginUpdate() const { return m_requiresScrollBoundsOriginUpdate; }
     void setRequiresScrollBoundsOriginUpdate(bool requiresUpdate = true) { m_requiresScrollBoundsOriginUpdate = requiresUpdate; }
+#endif
 
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
-    bool hasAcceleratedTouchScrolling() const;
+    bool canUseAcceleratedTouchScrolling() const;
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
     bool hasTouchScrollableOverflow() const;
-#else
-    bool hasAcceleratedTouchScrolling() const { return false; }
-    bool hasTouchScrollableOverflow() const { return false; }
-#endif
-    bool usesAcceleratedScrolling() const;
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
@@ -896,7 +892,7 @@ private:
     bool usesMockScrollAnimator() const override;
     void logMockScrollAnimatorMessage(const String&) const override;
 
-#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     void registerAsTouchEventListenerForScrolling();
     void unregisterAsTouchEventListenerForScrolling();
 #endif

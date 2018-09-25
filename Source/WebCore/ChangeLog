@@ -1,3 +1,42 @@
+2018-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up code around RenderLayer's "has accelerated scrolling" functions
+        https://bugs.webkit.org/show_bug.cgi?id=189932
+
+        Reviewed by Zalan Bujtas.
+        
+        RenderLayer had:
+        
+        bool hasAcceleratedTouchScrolling()
+        bool hasTouchScrollableOverflow()
+        bool usesAcceleratedScrolling()
+        bool usesCompositedScrolling()
+        bool usesAsyncScrolling()
+        
+        which are hard to keep in your head. Removed usesAcceleratedScrolling() since it just returns hasTouchScrollableOverflow().
+        Renamed hasAcceleratedTouchScrolling() to canUseAcceleratedTouchScrolling() to indicate that it just looks at style,
+        not whether layout has given the layer scrollable overflow yet. Tidy up some #ifdefs.
+        
+        usesCompositedScrolling() and usesAsyncScrolling() are ScrollableArea overrides, and
+        look at backing layers, so require that compositing has run already. Note this in comments.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::canUseAcceleratedTouchScrolling const):
+        (WebCore::RenderLayer::hasTouchScrollableOverflow const):
+        (WebCore::RenderLayer::handleTouchEvent):
+        (WebCore::RenderLayer::usesAsyncScrolling const):
+        (WebCore::RenderLayer::showsOverflowControls const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::RenderLayer::hasAcceleratedTouchScrolling const): Deleted.
+        (WebCore::RenderLayer::usesAcceleratedScrolling const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::layerOrAncestorIsTransformedOrUsingCompositedScrolling):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::useCoordinatedScrollingForLayer const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForOverflowScrolling const):
+
 2018-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Rename WTF_COMPILER_GCC_OR_CLANG to WTF_COMPILER_GCC_COMPATIBLE
