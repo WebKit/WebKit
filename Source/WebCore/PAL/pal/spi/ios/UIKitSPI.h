@@ -27,6 +27,7 @@
 
 #import <UIKit/UIApplicationSceneConstants.h>
 #import <UIKit/UIApplication_Private.h>
+#import <UIKit/UIColor_Private.h>
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/UIViewController_Private.h>
@@ -73,6 +74,8 @@ typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
 + (UIColor *)systemPinkColor;
 + (UIColor *)systemRedColor;
 + (UIColor *)systemYellowColor;
+
++ (UIColor *)_disambiguated_due_to_CIImage_colorWithCGColor:(CGColorRef)cgColor;
 
 @end
 

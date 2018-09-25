@@ -1,3 +1,16 @@
+2018-09-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor Editor::fontAttributesForSelectionStart to be platform-agnostic
+        https://bugs.webkit.org/show_bug.cgi?id=189918
+        Work towards <rdar://problem/44648705>
+
+        Reviewed by Tim Horton.
+
+        Add `+_disambiguated_due_to_CIImage_colorWithCGColor:` as a UIColor SPI definition. Also, import
+        `UIColor_Private.h` directly when the Apple internal SDK is used.
+
+        * pal/spi/ios/UIKitSPI.h:
+
 2018-09-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Sierra Build Fix; ensure AVVideoPerformanceMetrics are defined on Sierra.

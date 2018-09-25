@@ -1,3 +1,82 @@
+2018-09-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor Editor::fontAttributesForSelectionStart to be platform-agnostic
+        https://bugs.webkit.org/show_bug.cgi?id=189918
+        Work towards <rdar://problem/44648705>
+
+        Reviewed by Tim Horton.
+
+        Refactors the functionality in Editor::fontAttributesForSelectionStart to not be Cocoa-only. Rename this to
+        fontAttributesAtSelectionStart (to be consistent with `EditingStyle::styleAtSelectionStart`) and move it from
+        EditorCocoa.mm to Editor.cpp; instead of creating and populating an NSDictionary with font attribute
+        information, create and populate a new `FontAttributes` struct that contains the same information. Cocoa clients
+        in WebKitLegacy may then create an `NSDictionary` as needed from the `FontAttributes`.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::Editor::platformFontAttributesAtSelectionStart const):
+
+        Add a hook to allow platforms to supply additional information in FontAttributes. On Cocoa, this adds a UIFont
+        or NSFont to FontAttributes; otherwise, this is a no-op.
+
+        (WebCore::Editor::fontAttributesAtSelectionStart const):
+        * editing/Editor.h:
+        * editing/FontAttributeChanges.cpp:
+        (WebCore::cssValueListForShadow):
+        * editing/FontAttributeChanges.h:
+        (): Deleted.
+        (WebCore::FontShadow::encode const): Deleted.
+        (WebCore::FontShadow::decode): Deleted.
+        * editing/FontAttributes.h: Added.
+
+        Introduce a new struct that contains font attribute information. May be converted into an NSDictionary for use
+        by Cocoa clients in WebKitLegacy and WebKit. In a future patch, this will become serializable over IPC for use
+        in WebKit2.
+
+        * editing/FontShadow.h: Added.
+
+        Move FontShadow out into a separate header file, included in `FontAttributeChanges.h` and `FontAttributes.h`.
+
+        (WebCore::FontShadow::encode const):
+        (WebCore::FontShadow::decode):
+        * editing/cocoa/EditorCocoa.mm:
+
+        Add a helper function to convert a WebCore::Color to either `UIColor` on iOS or `NSColor` when AppKit is being
+        used.
+
+        (WebCore::Editor::platformFontAttributesAtSelectionStart const):
+        (WebCore::Editor::getTextDecorationAttributesRespectingTypingStyle const): Deleted.
+
+        Remove a helper function that was only used to compute text decoration attributes in
+        fontAttributesForSelectionStart.
+
+        (WebCore::Editor::fontAttributesForSelectionStart const): Deleted.
+        * editing/cocoa/FontAttributesCocoa.mm: Added.
+        (WebCore::FontAttributes::createDictionary const):
+        * editing/cocoa/FontShadowCocoa.mm: Added.
+        (WebCore::FontShadow::createShadow const):
+        * editing/cocoa/HTMLConverter.mm:
+        (_webKitBundle):
+        (HTMLConverter::_colorForElement):
+        (_platformColor): Deleted.
+
+        Adopt platformColor().
+
+        * platform/graphics/cocoa/ColorCocoa.h: Added.
+        * platform/graphics/cocoa/ColorCocoa.mm: Added.
+        (WebCore::platformColor):
+        * platform/graphics/metal/GPURenderPassDescriptorMetal.mm:
+
+        Build fix due to changes in unified sources.
+
+        * platform/mac/WebCoreNSFontManagerExtras.mm:
+        (WebCore::computedFontAttributeChanges):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+
+        More build fixes due to changes in unified sources.
+
 2018-09-24  Jer Noble  <jer.noble@apple.com>
 
         SharedBuffer should have an equality test

@@ -36,6 +36,7 @@
 #import "Editing.h"
 #import "EditingStyle.h"
 #import "EditorClient.h"
+#import "FontAttributes.h"
 #import "FontCascade.h"
 #import "Frame.h"
 #import "FrameLoader.h"
@@ -58,89 +59,10 @@
 
 namespace WebCore {
 
-void Editor::getTextDecorationAttributesRespectingTypingStyle(const RenderStyle& style, NSMutableDictionary* result) const
+void Editor::platformFontAttributesAtSelectionStart(FontAttributes& attributes, const RenderStyle& style) const
 {
-    RefPtr<EditingStyle> typingStyle = m_frame.selection().typingStyle();
-    if (typingStyle && typingStyle->style()) {
-        RefPtr<CSSValue> value = typingStyle->style()->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
-        if (value && value->isValueList()) {
-            CSSValueList& valueList = downcast<CSSValueList>(*value);
-            if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough).ptr()))
-                [result setObject:@(NSUnderlineStyleSingle) forKey:NSStrikethroughStyleAttributeName];
-            if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueUnderline).ptr()))
-                [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
-        }
-    } else {
-        auto decoration = style.textDecorationsInEffect();
-        if (decoration & TextDecoration::LineThrough)
-            [result setObject:@(NSUnderlineStyleSingle) forKey:NSStrikethroughStyleAttributeName];
-        if (decoration & TextDecoration::Underline)
-            [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
-    }
-}
-
-RetainPtr<NSDictionary> Editor::fontAttributesForSelectionStart() const
-{
-    Node* nodeToRemove;
-    auto* style = styleForSelectionStart(&m_frame, nodeToRemove);
-    if (!style)
-        return nil;
-
-    RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
-
-    if (auto ctFont = style->fontCascade().primaryFont().getCTFont())
-        [attributes setObject:(__bridge id)ctFont forKey:NSFontAttributeName];
-
-    // FIXME: Why would we not want to retrieve these attributes on iOS?
-#if PLATFORM(MAC)
-    // FIXME: for now, always report the colors after applying -apple-color-filter. In future not all clients
-    // may want this, so we may have to add a setting to control it. See also editingAttributedStringFromRange().
-    Color backgroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-    if (backgroundColor.isVisible())
-        [attributes setObject:nsColor(backgroundColor) forKey:NSBackgroundColorAttributeName];
-
-    Color foregroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyColor);
-    // FIXME: isBlackColor not suitable for dark mode.
-    if (foregroundColor.isValid() && !Color::isBlackColor(foregroundColor))
-        [attributes setObject:nsColor(foregroundColor) forKey:NSForegroundColorAttributeName];
-
-    const ShadowData* shadowData = style->textShadow();
-    if (shadowData) {
-        RetainPtr<NSShadow> platformShadow = adoptNS([[NSShadow alloc] init]);
-        [platformShadow setShadowOffset:NSMakeSize(shadowData->x(), shadowData->y())];
-        [platformShadow setShadowBlurRadius:shadowData->radius()];
-        [platformShadow setShadowColor:nsColor(shadowData->color())];
-        [attributes setObject:platformShadow.get() forKey:NSShadowAttributeName];
-    }
-
-    int superscriptInt = 0;
-    switch (style->verticalAlign()) {
-    case VerticalAlign::Baseline:
-    case VerticalAlign::Bottom:
-    case VerticalAlign::BaselineMiddle:
-    case VerticalAlign::Length:
-    case VerticalAlign::Middle:
-    case VerticalAlign::TextBottom:
-    case VerticalAlign::TextTop:
-    case VerticalAlign::Top:
-        break;
-    case VerticalAlign::Sub:
-        superscriptInt = -1;
-        break;
-    case VerticalAlign::Super:
-        superscriptInt = 1;
-        break;
-    }
-    if (superscriptInt)
-        [attributes setObject:@(superscriptInt) forKey:NSSuperscriptAttributeName];
-#endif
-
-    getTextDecorationAttributesRespectingTypingStyle(*style, attributes.get());
-
-    if (nodeToRemove)
-        nodeToRemove->remove();
-
-    return attributes;
+    if (auto ctFont = style.fontCascade().primaryFont().getCTFont())
+        attributes.font = (__bridge id)ctFont;
 }
 
 static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *attributedString)

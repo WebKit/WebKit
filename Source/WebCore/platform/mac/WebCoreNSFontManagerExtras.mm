@@ -136,8 +136,8 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
 
     NSShadow *convertedShadow = [convertedAttributesA objectForKey:NSShadowAttributeName];
     if (convertedShadow) {
-        auto offset = convertedShadow.shadowOffset;
-        changes.setShadow({ colorFromNSColor(convertedShadow.shadowColor ?: NSColor.blackColor), offset.width, offset.height, convertedShadow.shadowBlurRadius });
+        FloatSize offset { static_cast<float>(convertedShadow.shadowOffset.width), static_cast<float>(convertedShadow.shadowOffset.height) };
+        changes.setShadow({ colorFromNSColor(convertedShadow.shadowColor ?: NSColor.blackColor), offset, convertedShadow.shadowBlurRadius });
     } else if (![convertedAttributesB objectForKey:NSShadowAttributeName])
         changes.setShadow({ });
 

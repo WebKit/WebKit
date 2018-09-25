@@ -48,6 +48,7 @@
 #include "EventNames.h"
 #include "File.h"
 #include "FocusController.h"
+#include "FontAttributes.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
@@ -3849,6 +3850,83 @@ RefPtr<Range> Editor::rangeForTextCheckingResult(const TextCheckingResult& resul
 void Editor::scheduleEditorUIUpdate()
 {
     m_editorUIUpdateTimer.startOneShot(0_s);
+}
+
+#if !PLATFORM(COCOA)
+
+void Editor::platformFontAttributesAtSelectionStart(FontAttributes&, const RenderStyle&) const
+{
+}
+
+#endif
+
+FontAttributes Editor::fontAttributesAtSelectionStart() const
+{
+    FontAttributes attributes;
+    Node* nodeToRemove = nullptr;
+    auto* style = styleForSelectionStart(&m_frame, nodeToRemove);
+    if (!style) {
+        if (nodeToRemove)
+            nodeToRemove->remove();
+        return attributes;
+    }
+
+    platformFontAttributesAtSelectionStart(attributes, *style);
+
+    // FIXME: for now, always report the colors after applying -apple-color-filter. In future not all clients
+    // may want this, so we may have to add a setting to control it. See also editingAttributedStringFromRange().
+    auto backgroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    if (backgroundColor.isVisible())
+        attributes.backgroundColor = backgroundColor;
+
+    auto foregroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyColor);
+    // FIXME: isBlackColor not suitable for dark mode.
+    if (foregroundColor.isValid() && !Color::isBlackColor(foregroundColor))
+        attributes.foregroundColor = foregroundColor;
+
+    if (auto* shadowData = style->textShadow())
+        attributes.fontShadow = { shadowData->color(), { static_cast<float>(shadowData->x()), static_cast<float>(shadowData->y()) }, static_cast<double>(shadowData->radius()) };
+
+    switch (style->verticalAlign()) {
+    case VerticalAlign::Baseline:
+    case VerticalAlign::Bottom:
+    case VerticalAlign::BaselineMiddle:
+    case VerticalAlign::Length:
+    case VerticalAlign::Middle:
+    case VerticalAlign::TextBottom:
+    case VerticalAlign::TextTop:
+    case VerticalAlign::Top:
+        break;
+    case VerticalAlign::Sub:
+        attributes.subscriptOrSuperscript = SubscriptOrSuperscript::Subscript;
+        break;
+    case VerticalAlign::Super:
+        attributes.subscriptOrSuperscript = SubscriptOrSuperscript::Superscript;
+        break;
+    }
+
+    auto typingStyle = makeRefPtr(m_frame.selection().typingStyle());
+    if (typingStyle && typingStyle->style()) {
+        auto value = typingStyle->style()->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+        if (value && value->isValueList()) {
+            CSSValueList& valueList = downcast<CSSValueList>(*value);
+            if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough).ptr()))
+                attributes.hasStrikeThrough = true;
+            if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueUnderline).ptr()))
+                attributes.hasUnderline = true;
+        }
+    } else {
+        auto decoration = style->textDecorationsInEffect();
+        if (decoration & TextDecoration::LineThrough)
+            attributes.hasStrikeThrough = true;
+        if (decoration & TextDecoration::Underline)
+            attributes.hasUnderline = true;
+    }
+
+    if (nodeToRemove)
+        nodeToRemove->remove();
+
+    return attributes;
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

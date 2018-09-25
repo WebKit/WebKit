@@ -4843,6 +4843,9 @@
 		F48223101E3869B80066FC79 /* WebItemProviderPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */; };
 		F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F48223121E386E240066FC79 /* AbstractPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F48D2A6C215623B400C6752B /* FontShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A6A215623B400C6752B /* FontShadow.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F48D2A7E2157182600C6752B /* FontAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A712156DC0A00C6752B /* FontAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F48D2AA52159740D00C6752B /* ColorCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2AA32159740D00C6752B /* ColorCocoa.h */; };
 		F49786881FF45FA500E060AB /* PasteboardItemInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F49786871FF45FA500E060AB /* PasteboardItemInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4BFB9851E1DDF9B00862C24 /* DumpEditingHistory.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */; };
 		F4BFB9861E1DDF9B00862C24 /* EditingHistoryUtil.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */; };
@@ -14583,6 +14586,12 @@
 		F48223121E386E240066FC79 /* AbstractPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPasteboard.h; sourceTree = "<group>"; };
 		F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = DumpEditingHistory.js; path = Scripts/DumpEditingHistory.js; sourceTree = "<group>"; };
 		F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = EditingHistoryUtil.js; path = Scripts/EditingHistoryUtil.js; sourceTree = "<group>"; };
+		F48D2A6A215623B400C6752B /* FontShadow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontShadow.h; sourceTree = "<group>"; };
+		F48D2A712156DC0A00C6752B /* FontAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontAttributes.h; sourceTree = "<group>"; };
+		F48D2A752156FE5700C6752B /* FontAttributesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FontAttributesCocoa.mm; sourceTree = "<group>"; };
+		F48D2A7A2157051E00C6752B /* FontShadowCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FontShadowCocoa.mm; sourceTree = "<group>"; };
+		F48D2AA32159740D00C6752B /* ColorCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorCocoa.h; sourceTree = "<group>"; };
+		F48D2AA42159740D00C6752B /* ColorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorCocoa.mm; sourceTree = "<group>"; };
 		F49786871FF45FA500E060AB /* PasteboardItemInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardItemInfo.h; sourceTree = "<group>"; };
 		F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontAttributeChanges.h; sourceTree = "<group>"; };
 		F4E57EDF213F434A004EA98E /* WebCoreNSFontManagerExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreNSFontManagerExtras.h; sourceTree = "<group>"; };
@@ -19941,6 +19950,8 @@
 				C5227DF01C3C6DD700F5ED54 /* DataDetection.mm */,
 				9B55EEE81B3E8898005342BC /* EditorCocoa.mm */,
 				F42CEB54214031EE002DCA72 /* FontAttributeChangesCocoa.mm */,
+				F48D2A752156FE5700C6752B /* FontAttributesCocoa.mm */,
+				F48D2A7A2157051E00C6752B /* FontShadowCocoa.mm */,
 				7C3E510818DF8F3500C112F7 /* HTMLConverter.h */,
 				7C3E510918DF8F3500C112F7 /* HTMLConverter.mm */,
 				E18536811F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.h */,
@@ -20245,6 +20256,8 @@
 				372C00D8129619F8005C9575 /* FindOptions.h */,
 				F442850B2140412500CCDA22 /* FontAttributeChanges.cpp */,
 				F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */,
+				F48D2A712156DC0A00C6752B /* FontAttributes.h */,
+				F48D2A6A215623B400C6752B /* FontShadow.h */,
 				D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */,
 				D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */,
 				93309DBE099E64910056E581 /* FrameSelection.cpp */,
@@ -23945,6 +23958,8 @@
 		B5320D68122A24E9002D1440 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				F48D2AA32159740D00C6752B /* ColorCocoa.h */,
+				F48D2AA42159740D00C6752B /* ColorCocoa.mm */,
 				1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */,
 				C2458E611FE8979E00594759 /* FontCacheCoreText.h */,
 				B2AFFC780D00A5C10030074D /* FontCascadeCocoa.mm */,
@@ -27466,6 +27481,7 @@
 				B27535670B053814002CE64F /* Color.h in Headers */,
 				C330A22313EC196B0000B45B /* ColorChooser.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
+				F48D2AA52159740D00C6752B /* ColorCocoa.h in Headers */,
 				3103B7DF1DB01567008BB890 /* ColorHash.h in Headers */,
 				F55B3DB41251F12D003EF269 /* ColorInputType.h in Headers */,
 				EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */,
@@ -28064,6 +28080,7 @@
 				B2C3DA650D006CD600EF6F26 /* Font.h in Headers */,
 				1AC2D89D1B1E291F00D52E87 /* FontAntialiasingStateSaver.h in Headers */,
 				F4E57EDC213F3F5F004EA98E /* FontAttributeChanges.h in Headers */,
+				F48D2A7E2157182600C6752B /* FontAttributes.h in Headers */,
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
 				B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */,
 				C2458E631FE897B000594759 /* FontCacheCoreText.h in Headers */,
@@ -28080,6 +28097,7 @@
 				C2AB0AF71E6B3C6C001348C5 /* FontSelectionAlgorithm.h in Headers */,
 				B2C3DA6B0D006CD600EF6F26 /* FontSelector.h in Headers */,
 				E419041F1CC6486B00C35F5D /* FontSelectorClient.h in Headers */,
+				F48D2A6C215623B400C6752B /* FontShadow.h in Headers */,
 				4A6E9FC813C17D570046A7F8 /* FontTaggedSettings.h in Headers */,
 				C2015C0A1BE6FEB200822389 /* FontVariantBuilder.h in Headers */,
 				4A0DA2FF129B241900AB61E1 /* FormAssociatedElement.h in Headers */,

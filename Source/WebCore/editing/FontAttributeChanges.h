@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "FontShadow.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
@@ -67,16 +68,6 @@ private:
     std::optional<double> m_fontSizeDelta;
     std::optional<bool> m_bold;
     std::optional<bool> m_italic;
-};
-
-struct FontShadow {
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, FontShadow&);
-
-    Color color;
-    double width { 0 };
-    double height { 0 };
-    double blurRadius { 0 };
 };
 
 class FontAttributeChanges {
@@ -134,30 +125,6 @@ bool FontChanges::decode(Decoder& decoder, FontChanges& changes)
         return false;
 
     ASSERT(!changes.m_fontSize || !changes.m_fontSizeDelta);
-    return true;
-}
-
-template<class Encoder>
-void FontShadow::encode(Encoder& encoder) const
-{
-    encoder << color << width << height << blurRadius;
-}
-
-template<class Decoder>
-bool FontShadow::decode(Decoder& decoder, FontShadow& shadow)
-{
-    if (!decoder.decode(shadow.color))
-        return false;
-
-    if (!decoder.decode(shadow.width))
-        return false;
-
-    if (!decoder.decode(shadow.height))
-        return false;
-
-    if (!decoder.decode(shadow.blurRadius))
-        return false;
-
     return true;
 }
 

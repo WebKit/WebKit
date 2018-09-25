@@ -32,6 +32,7 @@
 #include "RealtimeIncomingVideoSource.h"
 
 using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
+using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore {

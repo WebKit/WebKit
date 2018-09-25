@@ -144,6 +144,7 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FontAttributes.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
@@ -8623,9 +8624,8 @@ FORWARD(toggleUnderline)
 
 - (NSDictionary *)typingAttributes
 {
-    Frame* coreFrame = core([self _selectedOrMainFrame]);
-    if (coreFrame)
-        return coreFrame->editor().fontAttributesForSelectionStart().autorelease();
+    if (auto* coreFrame = core([self _selectedOrMainFrame]))
+        return coreFrame->editor().fontAttributesAtSelectionStart().createDictionary().autorelease();
     
     return nil;
 }

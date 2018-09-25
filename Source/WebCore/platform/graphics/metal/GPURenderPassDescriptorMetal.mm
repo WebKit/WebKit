@@ -32,6 +32,7 @@
 #import "GPURenderPassDepthAttachmentDescriptor.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
+#import <wtf/Vector.h>
 
 namespace WebCore {
 

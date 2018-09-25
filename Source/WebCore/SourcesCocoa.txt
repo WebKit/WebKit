@@ -79,6 +79,8 @@ editing/SmartReplaceCF.cpp
 editing/cocoa/DataDetection.mm
 editing/cocoa/EditorCocoa.mm
 editing/cocoa/FontAttributeChangesCocoa.mm
+editing/cocoa/FontAttributesCocoa.mm
+editing/cocoa/FontShadowCocoa.mm
 editing/cocoa/HTMLConverter.mm @no-unify
 editing/cocoa/WebArchiveResourceFromNSAttributedString.mm
 editing/cocoa/WebArchiveResourceWebResourceHandler.mm
@@ -293,6 +295,7 @@ platform/graphics/cg/SubimageCacheWithTimer.cpp
 platform/graphics/cg/TransformationMatrixCG.cpp
 platform/graphics/cg/UTIRegistry.cpp
 
+platform/graphics/cocoa/ColorCocoa.mm
 platform/graphics/cocoa/GraphicsContext3DCocoa.mm
 platform/graphics/cocoa/GraphicsContextCocoa.mm
 platform/graphics/cocoa/FontCacheCoreText.cpp

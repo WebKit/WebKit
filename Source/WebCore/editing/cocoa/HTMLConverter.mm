@@ -32,6 +32,7 @@
 #import "CSSPrimitiveValue.h"
 #import "CachedImage.h"
 #import "CharacterData.h"
+#import "ColorCocoa.h"
 #import "ColorMac.h"
 #import "Document.h"
 #import "DocumentLoader.h"
@@ -205,7 +206,6 @@ typedef NSUInteger NSTextTabType;
 @interface UIColor : NSObject
 + (UIColor *)clearColor;
 - (CGFloat)alphaComponent;
-+ (UIColor *)_disambiguated_due_to_CIImage_colorWithCGColor:(CGColorRef)cgColor;
 @end
 
 @interface NSColor : UIColor
@@ -863,16 +863,6 @@ static NSBundle *_webKitBundle()
         bundle = [NSBundle bundleWithPath:[_NSSystemLibraryPath() stringByAppendingPathComponent:@"Frameworks/WebKit.framework"]];
     return bundle;
 }
-
-static inline UIColor *_platformColor(Color color)
-{
-    return [getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color)];
-}
-#else
-static inline NSColor *_platformColor(Color color)
-{
-    return nsColor(color);
-}
 #endif
 
 static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
@@ -1020,7 +1010,7 @@ PlatformColor *HTMLConverter::_colorForElement(Element& element, CSSPropertyID p
     Color result = _caches->colorPropertyValueForNode(element, propertyId);
     if (!result.isValid())
         return nil;
-    PlatformColor *platformResult = _platformColor(result);
+    PlatformColor *platformResult = platformColor(result);
     if ([[PlatformColorClass clearColor] isEqual:platformResult] || ([platformResult alphaComponent] == 0.0))
         return nil;
     return platformResult;

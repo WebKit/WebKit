@@ -81,6 +81,7 @@ class Text;
 class TextCheckerClient;
 class TextEvent;
 
+struct FontAttributes;
 struct PasteboardPlainText;
 struct PasteboardURL;
 struct TextCheckingResult;
@@ -469,10 +470,9 @@ public:
 
     WEBCORE_EXPORT const Font* fontForSelection(bool& hasMultipleFonts) const;
     WEBCORE_EXPORT static const RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
+    WEBCORE_EXPORT FontAttributes fontAttributesAtSelectionStart() const;
 
 #if PLATFORM(COCOA)
-    void getTextDecorationAttributesRespectingTypingStyle(const RenderStyle&, NSMutableDictionary*) const;
-    WEBCORE_EXPORT RetainPtr<NSDictionary> fontAttributesForSelectionStart() const;
     WEBCORE_EXPORT String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
 #if !PLATFORM(IOS)
@@ -562,6 +562,7 @@ private:
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
+    void platformFontAttributesAtSelectionStart(FontAttributes&, const RenderStyle&) const;
 
     void scheduleEditorUIUpdate();
 

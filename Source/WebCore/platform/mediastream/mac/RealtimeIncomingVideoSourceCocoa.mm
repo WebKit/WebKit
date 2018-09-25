@@ -32,6 +32,7 @@
 
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
+#include "RealtimeVideoUtilities.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN

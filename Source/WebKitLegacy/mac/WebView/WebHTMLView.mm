@@ -96,6 +96,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Font.h>
 #import <WebCore/FontAttributeChanges.h>
+#import <WebCore/FontAttributes.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
@@ -5057,7 +5058,7 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 {
     Frame* coreFrame = core([self _frame]);
     auto string = adoptNS([[NSAttributedString alloc] initWithString:@"x"
-        attributes:coreFrame ? coreFrame->editor().fontAttributesForSelectionStart().get() : nil]);
+        attributes:coreFrame ? coreFrame->editor().fontAttributesAtSelectionStart().createDictionary().get() : nil]);
     return [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
 }
 
@@ -5704,7 +5705,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (Frame* coreFrame = core([self _frame])) {
         if (const Font* fd = coreFrame->editor().fontForSelection(multipleFonts))
             font = (NSFont *)fd->platformData().registeredFont();
-        attributes = coreFrame->editor().fontAttributesForSelectionStart();
+        attributes = coreFrame->editor().fontAttributesAtSelectionStart().createDictionary();
     }
 
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
