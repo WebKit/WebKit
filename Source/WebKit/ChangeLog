@@ -1,3 +1,11 @@
+2018-09-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a quick fix after r236481.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setMockWebAuthenticationConfiguration):
+        Add an early return, so we don't end up with setting MockWebAuthenticationConfiguration twice.
+
 2018-09-25  John Wilander  <wilander@apple.com>
 
         Change from HAVE(CFNETWORK_STORAGE_PARTITIONING) to ENABLE(RESOURCE_LOAD_STATISTICS)

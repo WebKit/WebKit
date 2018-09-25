@@ -1662,8 +1662,10 @@ void WebsiteDataStore::addSecKeyProxyStore(Ref<SecKeyProxyStore>&& store)
 #if ENABLE(WEB_AUTHN)
 void WebsiteDataStore::setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration&& configuration)
 {
-    if (!m_authenticatorManager->isMock())
+    if (!m_authenticatorManager->isMock()) {
         m_authenticatorManager = makeUniqueRef<MockAuthenticatorManager>(WTFMove(configuration));
+        return;
+    }
     static_cast<MockAuthenticatorManager*>(&m_authenticatorManager)->setTestConfiguration(WTFMove(configuration));
 }
 #endif
