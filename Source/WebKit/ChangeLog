@@ -1,5 +1,37 @@
 2018-09-25  Chris Dumez  <cdumez@apple.com>
 
+        UIProcess should process incoming sync IPC from WebProcess when waiting for a sync IPC reply from it
+        https://bugs.webkit.org/show_bug.cgi?id=189927
+
+        Reviewed by Alex Christensen.
+
+        UIProcess should process incoming sync IPC from WebProcess when waiting for a sync IPC reply from it
+        in order to avoid deadlocks. This is not an issue currently because the WebProcess does process
+        incoming sync IPC when waiting for a sync IPC reply. However, we plan to change this in the future
+        in order to avoid bugs caused by re-entering WebCore at unsafe times.
+
+        The reason the UIProcess previously did not do out of order sync IPC process was to avoid processing
+        a synchronous policy decision IPC for a frameID it did not know about yet, due to the DidCreateMainFrame /
+        DidCreateSubframe IPC messages being asynchronous. To address this issue, the decidePolicyForNavigationActionSync
+        IPC handler now calls didCreateMainFrame() / didCreateSubframe() as needed if it does not know about
+        the frame yet. Note that synchronous policy decisions are rare and are currently only needed by initial
+        about:blank and fragment navigations.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+
+2018-09-25  Chris Dumez  <cdumez@apple.com>
+
         Extending the lifetime of a NetworkProcessProxy / StorageProcessProxy may cause it to have a stale WebProcessPool pointer
         https://bugs.webkit.org/show_bug.cgi?id=189851
         <rdar://problem/44696263>
