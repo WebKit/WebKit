@@ -3,6 +3,16 @@
         Import libvpx source code
         https://bugs.webkit.org/show_bug.cgi?id=189954
 
+        Unreviewed, internal build fix.
+
+        * Source/third_party/libvpx/source/libvpx/_iosbuild: Removed.
+        Folder is unneeded.
+
+2018-09-25  Youenn Fablet  <youenn@apple.com>
+
+        Import libvpx source code
+        https://bugs.webkit.org/show_bug.cgi?id=189954
+
         Reviewed by Eric Carlson.
 
         * Source/third_party/libvpx: Added.
