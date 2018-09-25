@@ -120,7 +120,7 @@ ExceptionOr<void> MediaDevices::getDisplayMedia(const StreamConstraints& constra
     if (!document)
         return Exception { InvalidStateError };
 
-    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, createMediaConstraints(constraints.audio), createMediaConstraints(constraints.video) }, WTFMove(promise));
+    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, createMediaConstraints(constraints.video) }, WTFMove(promise));
     if (request)
         request->start();
 

@@ -100,6 +100,15 @@ protected:
     CaptureDeviceManager* m_audioCaptureDeviceManager { nullptr };
     CaptureDeviceManager* m_videoCaptureDeviceManager { nullptr };
 
+private:
+    struct DeviceInfo {
+        unsigned fitnessScore;
+        CaptureDevice device;
+    };
+
+    void getDisplayMediaDevices(const MediaStreamRequest&, Vector<DeviceInfo>&, String&);
+    void getUserMediaDevices(const MediaStreamRequest&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, String&);
+
     WTF::Function<void()> m_deviceChangedObserver;
 };
 

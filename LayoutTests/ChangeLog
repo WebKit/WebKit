@@ -1,3 +1,13 @@
+2018-09-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Update constraints supported by getDisplayMedia
+        https://bugs.webkit.org/show_bug.cgi?id=189930
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/media/media-stream/get-display-media-prompt-expected.txt:
+        * http/tests/media/media-stream/get-display-media-prompt.html:
+
 2018-09-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         [resource-timing] imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html times out on WK1

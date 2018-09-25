@@ -5,26 +5,49 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 0
 
-** Request an audio-only stream, the user should be prompted **
-PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 1
-PASS stream.getAudioTracks().length is 1
-PASS stream.getVideoTracks().length is 0
+** Request an audio-only stream, the user should not be prompted **
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 0
+PASS stream is undefined.
+PASS err instanceof Error  is true
+PASS err.name is "TypeError"
 
 ** Request an video-only stream, the user should be prompted **
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 1
+PASS stream.getAudioTracks().length is 0
+PASS stream.getVideoTracks().length is 1
+
+** Request a stream with audio and video, the user should be prompted but no audio track should be created **
 PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 2
 PASS stream.getAudioTracks().length is 0
 PASS stream.getVideoTracks().length is 1
 
-** Request a stream with audio and video, the user should be prompted **
+** Request a stream with 'max' constraints, the user should not be prompted **
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 2
+PASS stream is undefined.
+PASS err instanceof Error  is true
+PASS err.name is "TypeError"
+
+** Request a stream with 'min' constraints, the user should not be prompted **
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 2
+PASS stream is undefined.
+PASS err instanceof Error  is true
+PASS err.name is "TypeError"
+
+** Request a stream with 'advanced' constraints, the user should not be prompted **
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 2
+PASS stream is undefined.
+PASS err instanceof Error  is true
+PASS err.name is "TypeError"
+
+** Request a stream with valid constraints, the user should be prompted **
 PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 3
-PASS stream.getAudioTracks().length is 1
+PASS stream.getAudioTracks().length is 0
 PASS stream.getVideoTracks().length is 1
 
-** Request a stream with invalid constraints, the user should not be prompted **
-PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 3
-PASS stream is null
-PASS err instanceof Error  is true
-PASS err.name is "InvalidAccessError"
+** Request a stream with an exact audio constraint, it should be ignored **
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 4
+PASS stream.getAudioTracks().length is 0
+PASS stream.getVideoTracks().length is 1
 
 PASS successfullyParsed is true
 

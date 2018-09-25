@@ -18,44 +18,90 @@
     }
     
     async function promptForAudioOnly() {
-        debug("<br>** Request an audio-only stream, the user should be prompted **");
-        stream = await navigator.mediaDevices.getDisplayMedia({ audio: true });
-        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "1");
-        shouldBe("stream.getAudioTracks().length", "1");
-        shouldBe("stream.getVideoTracks().length", "0");
+        debug("<br>** Request an audio-only stream, the user should not be prompted **");
+        stream = await navigator.mediaDevices.getDisplayMedia({ audio: true })
+            .catch((e) => { err = e; });
+        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "0");
+        shouldBeUndefined("stream");
+        shouldBeTrue("err instanceof Error ");
+        shouldBeEqualToString("err.name", "TypeError");
     }
 
     async function promptForVideoOnly() {
         debug("<br>** Request an video-only stream, the user should be prompted **");
         stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "2");
+        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "1");
         shouldBe("stream.getAudioTracks().length", "0");
         shouldBe("stream.getVideoTracks().length", "1");
     }
 
     async function promptForAudioAndVideo() {
-        debug("<br>** Request a stream with audio and video, the user should be prompted **");
+        debug("<br>** Request a stream with audio and video, the user should be prompted but no audio track should be created **");
         stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "3");
-        shouldBe("stream.getAudioTracks().length", "1");
+        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "2");
+        shouldBe("stream.getAudioTracks().length", "0");
         shouldBe("stream.getVideoTracks().length", "1");
     }
     
-    async function promptWithMediaTrackConstraints() {
-        debug("<br>** Request a stream with invalid constraints, the user should not be prompted **");
+    async function promptWithExactVideoConstraints() {
+        debug("<br>** Request a stream with 'max' constraints, the user should not be prompted **");
+
         stream = null;
-        try {
-            stream = await navigator.mediaDevices.getDisplayMedia({ video: {width: {exact: 640}, height: {exact: 480}} });
-        } catch (e) {
-            err = e;
-        }
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: {width: {exact: 640}, height: {exact: 480}} })
+            .catch((e) => { err = e; });
         
-        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "3");
-        shouldBeNull("stream");
-        shouldBeTrue("err instanceof Error "); 
-        shouldBeEqualToString("err.name", "InvalidAccessError");
+        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "2");
+        shouldBeUndefined("stream");
+        shouldBeTrue("err instanceof Error ");
+        shouldBeEqualToString("err.name", "TypeError");
     }
 
+    async function promptWithMinVideoConstraints() {
+        debug("<br>** Request a stream with 'min' constraints, the user should not be prompted **");
+
+        stream = null;
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: {width: {min: 640}, height: {min: 480}} })
+            .catch((e) => { err = e; });
+        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "2");
+        shouldBeUndefined("stream");
+        shouldBeTrue("err instanceof Error ");
+        shouldBeEqualToString("err.name", "TypeError");
+    }
+
+    async function promptWithAdvancedVideoConstraints() {
+        debug("<br>** Request a stream with 'advanced' constraints, the user should not be prompted **");
+
+        stream = null;
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: { width: 640, height: 480, advanced: [ { width: 1920, height: 1280 } ] } })
+            .catch((e) => { err = e; });
+        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "2");
+        shouldBeUndefined("stream");
+        shouldBeTrue("err instanceof Error ");
+        shouldBeEqualToString("err.name", "TypeError");
+    }
+
+    async function promptWithValidVideoConstraints() {
+        debug("<br>** Request a stream with valid constraints, the user should be prompted **");
+
+        stream = null;
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: {width: 640, height: 480} })
+            .catch((e) => { err = e; });
+        
+        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "3");
+        shouldBe("stream.getAudioTracks().length", "0");
+        shouldBe("stream.getVideoTracks().length", "1");
+    }
+
+    async function promptWithInvalidAudioConstraint() {
+        debug("<br>** Request a stream with an exact audio constraint, it should be ignored **");
+
+        stream = null;
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: { volume: { exact: 0.5 } } });
+        shouldBe("numberOfTimesGetUserMediaPromptHasBeenCalled()", "4");
+        shouldBe("stream.getAudioTracks().length", "0");
+        shouldBe("stream.getVideoTracks().length", "1");
+    }
+    
     (async function() {
         description('Test basic getDisplayMedia prompting behavior');
         jsTestIsAsync = true;
@@ -68,7 +114,11 @@
         await promptForAudioOnly();
         await promptForVideoOnly();
         await promptForAudioAndVideo();
-        await promptWithMediaTrackConstraints();
+        await promptWithExactVideoConstraints();
+        await promptWithMinVideoConstraints();
+        await promptWithAdvancedVideoConstraints();
+        await promptWithValidVideoConstraints();
+        await promptWithInvalidAudioConstraint();
 
         debug("");
         finishJSTest();
