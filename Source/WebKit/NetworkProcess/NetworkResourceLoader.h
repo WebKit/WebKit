@@ -111,7 +111,7 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     static bool shouldLogCookieInformation();
     static void logCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::SameSiteInfo&, const WebCore::URL&, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier);
 #endif
@@ -159,7 +159,7 @@ private:
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     void logCookieInformation() const;
 #endif
 

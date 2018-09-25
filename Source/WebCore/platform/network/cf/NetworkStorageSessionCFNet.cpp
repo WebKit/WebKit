@@ -220,7 +220,7 @@ void NetworkStorageSession::setStorageAccessAPIEnabled(bool enabled)
     storageAccessAPIEnabled = enabled;
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 
 static inline String getPartitioningDomain(const URL& url)
 {
@@ -386,7 +386,7 @@ void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
 {
     m_cacheMaxAgeCapForPrevalentResources = std::nullopt;
 }
-#endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#endif //  ENABLE(RESOURCE_LOAD_STATISTICS)
 
 #if !PLATFORM(COCOA)
 void NetworkStorageSession::setCookies(const Vector<Cookie>&, const URL&, const URL&)

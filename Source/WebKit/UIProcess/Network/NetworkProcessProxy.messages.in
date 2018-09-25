@@ -41,7 +41,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     LogDiagnosticMessageWithResult(uint64_t pageID, String message, String description, uint32_t result, enum WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithValue(uint64_t pageID, String message, String description, double value, unsigned significantFigures, enum WebCore::ShouldSample shouldSample)
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     DidUpdateBlockCookies(uint64_t callbackId)
     StorageAccessRequestResult(bool wasGranted, uint64_t contextId)
     AllStorageAccessEntriesResult(Vector<String> domains, uint64_t contextId)

@@ -526,7 +526,7 @@ messages -> WebPageProxy {
     StopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, IPC::DataReference data) Delayed
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     HasStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t contextID)
     RequestStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t contextID, bool prompt)
 #endif

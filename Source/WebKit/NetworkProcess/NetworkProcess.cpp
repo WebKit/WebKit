@@ -303,7 +303,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     m_logCookieInformation = parameters.logCookieInformation;
 #endif
 
@@ -480,7 +480,7 @@ void NetworkProcess::writeBlobToFilePath(const WebCore::URL& url, const String& 
     });
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkProcess::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, bool shouldClearFirst, uint64_t contextId)
 {
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))

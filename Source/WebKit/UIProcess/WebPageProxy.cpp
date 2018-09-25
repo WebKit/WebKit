@@ -214,7 +214,7 @@
 #include "WebAuthenticatorCoordinatorProxy.h"
 #endif
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 #include "WebResourceLoadStatisticsStore.h"
 #endif
 
@@ -7656,7 +7656,7 @@ void WebPageProxy::loadSynchronousURLSchemeTask(URLSchemeTaskParameters&& parame
     iterator->value->startTask(*this, parameters.taskIdentifier, WTFMove(parameters.request), WTFMove(reply));
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId)
 {
     m_websiteDataStore->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, m_pageID, [this, webProcessContextId] (bool hasAccess) {

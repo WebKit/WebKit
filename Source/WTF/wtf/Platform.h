@@ -694,7 +694,7 @@
 #endif /* OS(DARWIN) */
 
 #if PLATFORM(COCOA)
-#define HAVE_CFNETWORK_STORAGE_PARTITIONING 1
+#define ENABLE_RESOURCE_LOAD_STATISTICS 1
 #endif
 
 #if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || defined(__GLIBC__) || defined(__BIONIC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))

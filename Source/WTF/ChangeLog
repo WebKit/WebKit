@@ -1,3 +1,14 @@
+2018-09-25  John Wilander  <wilander@apple.com>
+
+        Change from HAVE(CFNETWORK_STORAGE_PARTITIONING) to ENABLE(RESOURCE_LOAD_STATISTICS)
+        https://bugs.webkit.org/show_bug.cgi?id=189959
+        <rdar://problem/44767642>
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Platform.h:
+            Enables RESOURCE_LOAD_STATISTICS for Cocoa platforms.
+
 2018-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Rename WTF_COMPILER_GCC_OR_CLANG to WTF_COMPILER_GCC_COMPATIBLE

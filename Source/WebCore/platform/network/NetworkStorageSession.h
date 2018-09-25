@@ -99,7 +99,7 @@ public:
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
     WEBCORE_EXPORT static void setStorageAccessAPIEnabled(bool);
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
     WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
     WEBCORE_EXPORT void setPrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, bool clearFirst);
@@ -185,7 +185,7 @@ private:
 
     CredentialStorage m_credentialStorage;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool shouldBlockThirdPartyCookies(const String& topPrivatelyControlledDomain) const;
     HashSet<String> m_topPrivatelyControlledDomainsToBlock;
     HashMap<uint64_t, HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;

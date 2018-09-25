@@ -112,8 +112,7 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     nsRequest = mutableRequest.autorelease();
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 NSHTTPCookieStorage *NetworkDataTaskCocoa::statelessCookieStorage()
 {
     static NeverDestroyed<RetainPtr<NSHTTPCookieStorage>> statelessCookieStorage;
@@ -142,7 +141,6 @@ void NetworkDataTaskCocoa::applyCookieBlockingPolicy(bool shouldBlock)
     [m_task _setExplicitCookieStorage:storage._cookieStorage];
     m_hasBeenSetToUseStatelessCookieStorage = shouldBlock;
 }
-
 #endif
 
 bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request)
@@ -197,7 +195,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
 
     bool shouldBlockCookies = false;
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     shouldBlockCookies = session.networkStorageSession().shouldBlockCookies(request, frameID, pageID);
 #endif
     if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
@@ -230,7 +228,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
     }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (shouldBlockCookies) {
 #if !RELEASE_LOG_DISABLED
         if (NetworkProcess::singleton().shouldLogCookieInformation())
@@ -347,7 +345,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.setFirstPartyForCookies(request.url());
 
     bool shouldBlockCookies = false;
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     shouldBlockCookies = m_session->networkStorageSession().shouldBlockCookies(request, m_frameID, m_pageID);
 #if !RELEASE_LOG_DISABLED
     if (NetworkProcess::singleton().shouldLogCookieInformation())
@@ -360,7 +358,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
         request.setExistingHTTPReferrerToOriginString();
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     // Always apply the policy since blocking may need to be turned on or off in a redirect.
     applyCookieBlockingPolicy(shouldBlockCookies);
 

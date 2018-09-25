@@ -394,7 +394,7 @@ void NetworkProcessProxy::logDiagnosticMessageWithValue(uint64_t pageID, const S
     page->logDiagnosticMessageWithValue(message, description, value, significantFigures, shouldSample);
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

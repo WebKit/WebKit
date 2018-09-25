@@ -58,7 +58,7 @@
 #include <WebCore/SynchronousLoaderClient.h>
 #include <wtf/RunLoop.h>
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
 #include <WebCore/NetworkStorageSession.h>
 #endif
 
@@ -538,7 +538,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
         return;
     }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (shouldLogCookieInformation())
         logCookieInformation();
 #endif
@@ -847,7 +847,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     }
 #endif
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (shouldLogCookieInformation())
         logCookieInformation();
 #endif
@@ -946,7 +946,7 @@ bool NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics() const
     return m_connection->captureExtraNetworkLoadMetricsEnabled();
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
 bool NetworkResourceLoader::shouldLogCookieInformation()
 {
     return NetworkProcess::singleton().shouldLogCookieInformation();

@@ -7823,7 +7823,7 @@ void Document::hasStorageAccess(Ref<DeferredPromise>&& promise)
 {
     ASSERT(settings().storageAccessAPIEnabled());
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_frame && hasFrameSpecificStorageAccess()) {
         promise->resolve<IDLBoolean>(true);
         return;
@@ -7874,7 +7874,7 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
 {
     ASSERT(settings().storageAccessAPIEnabled());
     
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_frame && hasFrameSpecificStorageAccess()) {
         promise->resolve();
         return;
@@ -8024,7 +8024,7 @@ void Document::updateMainArticleElementAfterLayout()
     m_mainArticleElement = tallestArticle;
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 bool Document::hasFrameSpecificStorageAccess() const
 {
     return m_frame->loader().client().hasFrameSpecificStorageAccess();
@@ -8044,7 +8044,6 @@ void Document::setHasRequestedPageSpecificStorageAccessWithUserInteraction(const
 {
     m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction = primaryDomain;
 }
-
 #endif
 
 void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)

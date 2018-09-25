@@ -1227,7 +1227,7 @@ void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<Webs
     });
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
@@ -1323,7 +1323,7 @@ void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFra
 
 void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1338,7 +1338,7 @@ void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, C
 
 void WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&& completionHandler)
 {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1352,7 +1352,7 @@ void WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources(CompletionHandle
 
 void WebsiteDataStore::networkProcessDidCrash()
 {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->scheduleCookieBlockingStateReset();
 #endif

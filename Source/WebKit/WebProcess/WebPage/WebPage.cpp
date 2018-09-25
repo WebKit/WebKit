@@ -6049,7 +6049,7 @@ void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remote
         close();
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 static uint64_t nextRequestStorageAccessContextId()
 {
     static uint64_t nextContextId = 0;

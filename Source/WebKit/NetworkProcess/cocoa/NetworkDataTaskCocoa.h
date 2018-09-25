@@ -89,7 +89,7 @@ private:
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(__strong NSURLRequest*&, bool shouldContentSniff, bool shouldContentEncodingSniff);
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     static NSHTTPCookieStorage *statelessCookieStorage();
     void applyCookieBlockingPolicy(bool shouldBlock);
 #endif
@@ -102,7 +102,7 @@ private:
     uint64_t m_frameID;
     uint64_t m_pageID;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
 #endif
 

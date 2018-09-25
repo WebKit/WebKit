@@ -171,7 +171,7 @@ void WebFrameLoaderClient::detachedFromParent2()
     if (!webPage)
         return;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_hasFrameSpecificStorageAccess) {
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(sessionID(), frameID().value(), pageID().value()), 0);
         m_hasFrameSpecificStorageAccess = false;
@@ -386,7 +386,7 @@ void WebFrameLoaderClient::dispatchDidChangeMainDocument()
 
 void WebFrameLoaderClient::dispatchWillChangeDocument(const URL& currentUrl, const URL& newUrl)
 {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_frame->isMainFrame())
         return;
 

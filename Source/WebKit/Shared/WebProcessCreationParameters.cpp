@@ -149,7 +149,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << proxySettings;
 #endif
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     encoder << shouldLogUserInteraction;
 #endif
 
@@ -402,7 +402,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #endif
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (!decoder.decode(parameters.shouldLogUserInteraction))
         return false;
 #endif

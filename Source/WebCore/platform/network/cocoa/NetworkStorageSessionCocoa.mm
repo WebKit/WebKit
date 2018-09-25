@@ -298,7 +298,7 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
 
 static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID)
 {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (session.shouldBlockCookies(firstParty, url, frameID, pageID))
         return nil;
 #else
@@ -407,7 +407,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies);
     ASSERT([filteredCookies.get() count] <= 1);
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (shouldBlockCookies(firstParty, url, frameID, pageID))
         return;
 #else

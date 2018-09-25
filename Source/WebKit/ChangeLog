@@ -1,3 +1,76 @@
+2018-09-25  John Wilander  <wilander@apple.com>
+
+        Change from HAVE(CFNETWORK_STORAGE_PARTITIONING) to ENABLE(RESOURCE_LOAD_STATISTICS)
+        https://bugs.webkit.org/show_bug.cgi?id=189959
+        <rdar://problem/44767642>
+
+        Reviewed by Chris Dumez.
+
+        We no longer make use of CFNetwork's cookie partitioning so we should
+        change the compile-time flag to something that makes sense. This should
+        also make it easier/cleaner for other ports.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForFrame):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applyCookieBlockingPolicy):
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler):
+        (WebKit::WebResourceLoadStatisticsStore::callGrantStorageAccessHandler):
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::setCacheMaxAgeCap):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        (WebKit::WebResourceLoadStatisticsStore::callRemoveDomainsHandler):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::networkProcessDidCrash):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2018-09-25  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Export jsc_ symbols

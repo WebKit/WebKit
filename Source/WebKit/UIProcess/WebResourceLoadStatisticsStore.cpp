@@ -239,7 +239,7 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const S
 {
     ASSERT(RunLoop::isMain());
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore) {
         m_websiteDataStore->hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
         return;
@@ -312,7 +312,7 @@ void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const String&
 {
     ASSERT(RunLoop::isMain());
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore) {
         m_websiteDataStore->grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
         return;
@@ -325,7 +325,7 @@ void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<vo
 {
     ASSERT(RunLoop::isMain());
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore)
         m_websiteDataStore->removeAllStorageAccessHandler(WTFMove(completionHandler));
     else
@@ -748,7 +748,7 @@ void WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains(const 
     });
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebResourceLoadStatisticsStore::scheduleCookieBlockingStateReset()
 {
     ASSERT(RunLoop::isMain());
@@ -827,7 +827,7 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
     ASSERT(RunLoop::isMain());
     ASSERT(seconds >= 0_s);
     
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore) {
         m_websiteDataStore->setCacheMaxAgeCapForPrevalentResources(seconds, WTFMove(completionHandler));
         return;
@@ -840,7 +840,7 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
 {
     ASSERT(RunLoop::isMain());
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore) {
         m_websiteDataStore->updatePrevalentDomainsToBlockCookiesFor(domainsToBlock, shouldClearFirst, WTFMove(completionHandler));
         return;
@@ -853,7 +853,7 @@ void WebResourceLoadStatisticsStore::callRemoveDomainsHandler(const Vector<Strin
 {
     ASSERT(RunLoop::isMain());
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore)
         m_websiteDataStore->removePrevalentDomains(domains);
 #endif

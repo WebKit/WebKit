@@ -65,7 +65,7 @@ struct StorageProcessCreationParameters;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 enum class StorageAccessStatus;
 enum class StorageAccessPromptStatus;
 #endif
@@ -135,7 +135,7 @@ public:
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, Function<void()>&& completionHandler);
     void removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyControlledDomains, Function<void(HashSet<String>&&)>&& completionHandler);
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     void updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, ShouldClearFirst, CompletionHandler<void()>&&);
     void hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&&);
     void getAllStorageAccessEntries(uint64_t pageID, CompletionHandler<void(Vector<String>&& domains)>&&);

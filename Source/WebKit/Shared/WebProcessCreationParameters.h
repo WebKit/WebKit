@@ -192,7 +192,7 @@ struct WebProcessCreationParameters {
     Vector<String> mediaMIMETypes;
 #endif
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     bool shouldLogUserInteraction { false };
 #endif
 

@@ -1069,7 +1069,7 @@ public:
     void sendPartialEditorStateAndSchedulePostLayoutUpdate();
     void flushPendingEditorStateUpdate();
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, CompletionHandler<void(bool)>&& callback);
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, CompletionHandler<void(bool)>&& callback);
     void storageAccessResponse(bool wasGranted, uint64_t contextId);

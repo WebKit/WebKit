@@ -508,7 +508,7 @@ messages -> WebPage LegacyReceiver {
     SetIsSuspended(bool suspended)
     TearDownDrawingAreaForSuspend();
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     StorageAccessResponse(bool wasGranted, uint64_t contextId)
 #endif
 

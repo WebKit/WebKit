@@ -55,7 +55,7 @@ public:
     std::optional<uint64_t> frameID() const final;
     PAL::SessionID sessionID() const final;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool hasFrameSpecificStorageAccess() { return m_hasFrameSpecificStorageAccess; }
     void setHasFrameSpecificStorageAccess(bool value) { m_hasFrameSpecificStorageAccess = value; };
 #endif
@@ -283,7 +283,7 @@ private:
     bool m_frameHasCustomContentProvider;
     bool m_frameCameFromPageCache;
     bool m_useIconLoadingClient { false };
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool m_hasFrameSpecificStorageAccess { false };
 #endif
 };

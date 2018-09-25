@@ -375,7 +375,7 @@ public:
     virtual void finishedLoadingApplicationManifest(uint64_t, const std::optional<ApplicationManifest>&) { }
 #endif
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     virtual bool hasFrameSpecificStorageAccess() { return false; }
     virtual void setHasFrameSpecificStorageAccess(bool) { }
 #endif

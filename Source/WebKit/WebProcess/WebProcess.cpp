@@ -415,7 +415,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     JSC::Wasm::enableFastMemory();
 #endif
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     ResourceLoadObserver::shared().setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
 

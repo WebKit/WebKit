@@ -341,7 +341,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
         auto entry = Entry::decodeStorageRecord(*record);
 
         std::optional<Seconds> maxAgeCap;
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
         if (auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID))
             maxAgeCap = networkStorageSession->maxAgeCacheCap(request);
 #endif

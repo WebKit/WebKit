@@ -1478,7 +1478,7 @@ public:
     bool handlingTouchEvent() const { return m_handlingTouchEvent; }
 #endif
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool hasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
     void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
 #endif
@@ -1826,7 +1826,7 @@ private:
 
     void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool hasFrameSpecificStorageAccess() const;
     void setHasFrameSpecificStorageAccess(bool);
 #endif
@@ -2021,7 +2021,7 @@ private:
 
     HashSet<ApplicationStateChangeListener*> m_applicationStateChangeListeners;
     
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     String m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
 #endif
     

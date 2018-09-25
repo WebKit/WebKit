@@ -179,7 +179,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     statistics.lastSeen = newTime;
     statistics.mostRecentUserInteractionTime = newTime;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* opener = document.frame()->loader().opener()) {
         if (auto* openerDocument = opener->document()) {
             if (auto* openerFrame = openerDocument->frame()) {
@@ -194,7 +194,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     m_notificationTimer.stop();
     notifyObserver();
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (shouldLogUserInteraction()) {
         auto counter = ++m_loggingCounter;
 #define LOCAL_LOG(str, ...) \
@@ -218,7 +218,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
 
 void ResourceLoadObserver::logWindowCreation(const URL& popupUrl, uint64_t openerPageID, Document& openerDocument)
 {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     requestStorageAccessUnderOpener(primaryDomain(popupUrl), openerPageID, openerDocument, false);
 #else
     UNUSED_PARAM(popupUrl);
@@ -227,7 +227,7 @@ void ResourceLoadObserver::logWindowCreation(const URL& popupUrl, uint64_t opene
 #endif
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 void ResourceLoadObserver::requestStorageAccessUnderOpener(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument, bool isTriggeredByUserGesture)
 {
     auto openerUrl = openerDocument.url();

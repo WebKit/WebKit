@@ -1305,7 +1305,7 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
     m_page.findController().didInvalidateDocumentMarkerRects();
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebChromeClient::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t, CompletionHandler<void(bool)>&& callback)
 {
     m_page.hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, WTFMove(callback));

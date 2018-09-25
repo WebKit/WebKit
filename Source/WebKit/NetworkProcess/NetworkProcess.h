@@ -156,7 +156,7 @@ public:
 
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<String>& domainsToBlock, bool shouldClearFirst, uint64_t contextId);
     void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId);
     void getAllStorageAccessEntries(PAL::SessionID, uint64_t contextId);
@@ -174,7 +174,7 @@ public:
 
     void preconnectTo(const WebCore::URL&, WebCore::StoredCredentialsPolicy);
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     bool shouldLogCookieInformation() const { return m_logCookieInformation; }
 #endif
 
@@ -362,7 +362,7 @@ private:
     bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
     Seconds m_loadThrottleLatency;
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     bool m_logCookieInformation { false };
 #endif
 

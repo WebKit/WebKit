@@ -449,7 +449,7 @@ void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, cons
 {
     auto& networkStorageSession = storageSession(sessionID);
     std::tie(cookieString, secureCookiesAccessed) = networkStorageSession.cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (NetworkProcess::singleton().shouldLogCookieInformation())
         NetworkResourceLoader::logCookieInformation("NetworkConnectionToWebProcess::cookiesForDOM", reinterpret_cast<const void*>(this), networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, std::nullopt);
 #endif
@@ -459,7 +459,7 @@ void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, 
 {
     auto& networkStorageSession = storageSession(sessionID);
     networkStorageSession.setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, cookieString);
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (NetworkProcess::singleton().shouldLogCookieInformation())
         NetworkResourceLoader::logCookieInformation("NetworkConnectionToWebProcess::setCookiesFromDOM", reinterpret_cast<const void*>(this), networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, std::nullopt);
 #endif
@@ -585,7 +585,7 @@ void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
 
 void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
 {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         storageSession->removeStorageAccessForFrame(frameID, pageID);
 #else
@@ -597,7 +597,7 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID s
 
 void NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID)
 {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         storageSession->removeStorageAccessForAllFramesOnPage(pageID);
 #else
