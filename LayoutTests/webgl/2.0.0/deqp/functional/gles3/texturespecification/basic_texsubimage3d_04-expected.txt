@@ -1,5 +1,18 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_texsubimage3d_04.html
-[ PASS ] All tests passed
+[ 1: PASS ] specification.basic_texsubimage3d.rgba16i_3d: Passed
+[ 2: FAIL ] specification.basic_texsubimage3d.srgb8_alpha8_3d: Image comparison failed
+[ 3: FAIL ] specification.basic_texsubimage3d.srgb8_alpha8_3d: Verification failed
+[ 4: PASS ] specification.basic_texsubimage3d.rgba8_snorm_3d: Passed
+[ 5: PASS ] specification.basic_texsubimage3d.rgb32i_3d: Passed
+[ 6: PASS ] specification.basic_texsubimage3d.rgb8_snorm_3d: Passed
+[ 7: PASS ] specification.basic_texsubimage3d.rg32f_3d: Passed
+[ 8: FAIL ] specification.basic_texsubimage3d.rg16ui_3d: Image comparison failed
+[ 9: FAIL ] specification.basic_texsubimage3d.rg16ui_3d: Verification failed
+[ 10: PASS ] specification.basic_texsubimage3d.r32f_3d: Passed
+[ 11: FAIL ] specification.basic_texsubimage3d.r16ui_3d: Image comparison failed
+[ 12: FAIL ] specification.basic_texsubimage3d.r16ui_3d: Verification failed
+[ 13: PASS ] specification.basic_texsubimage3d.r16ui_3d: successfullyParsed is true
+[ FAIL ] 6 failures reported
 

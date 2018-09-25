@@ -1,3 +1,14 @@
+2018-09-25  Justin Fan  <justin_fan@apple.com>
+
+        WebGL 2 conformance: expected test results for the deqp suite (mac-mojave-wk2)
+        https://bugs.webkit.org/show_bug.cgi?id=189942
+
+        Reviewed by Jon Lee.
+
+        Add expected results for the deqp suite with the new detailed format, for this spade for macOS Mojave.
+
+        * webgl/2.0.0/deqp/.../*-expected.txt: Added expected results.
+
 2018-09-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Make AuthenticatorManager

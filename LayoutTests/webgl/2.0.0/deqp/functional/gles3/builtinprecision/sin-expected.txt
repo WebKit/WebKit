@@ -1,5 +1,30 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/sin.html
-[ PASS ] All tests passed
+[ 1: FAIL ] precision.sin.lowp_vertex.scalar: bindBuffer
+[ 2: FAIL ] precision.sin.lowp_vertex.vec2: bindBuffer
+[ 3: FAIL ] precision.sin.lowp_vertex.vec3: bindBuffer
+[ 4: FAIL ] precision.sin.lowp_vertex.vec4: bindBuffer
+[ 5: FAIL ] precision.sin.lowp_fragment.scalar: 15647/16404 inputs failed.
+[ 6: FAIL ] precision.sin.lowp_fragment.vec2: 16375/16404 inputs failed.
+[ 7: FAIL ] precision.sin.lowp_fragment.vec3: 16396/16404 inputs failed.
+[ 8: FAIL ] precision.sin.lowp_fragment.vec4: 16399/16404 inputs failed.
+[ 9: FAIL ] precision.sin.mediump_vertex.scalar: bindBuffer
+[ 10: FAIL ] precision.sin.mediump_vertex.vec2: bindBuffer
+[ 11: FAIL ] precision.sin.mediump_vertex.vec3: bindBuffer
+[ 12: FAIL ] precision.sin.mediump_vertex.vec4: bindBuffer
+[ 13: FAIL ] precision.sin.mediump_fragment.scalar: 15649/16404 inputs failed.
+[ 14: FAIL ] precision.sin.mediump_fragment.vec2: 16377/16404 inputs failed.
+[ 15: FAIL ] precision.sin.mediump_fragment.vec3: 16398/16404 inputs failed.
+[ 16: FAIL ] precision.sin.mediump_fragment.vec4: 16401/16404 inputs failed.
+[ 17: FAIL ] precision.sin.highp_vertex.scalar: bindBuffer
+[ 18: FAIL ] precision.sin.highp_vertex.vec2: bindBuffer
+[ 19: FAIL ] precision.sin.highp_vertex.vec3: bindBuffer
+[ 20: FAIL ] precision.sin.highp_vertex.vec4: bindBuffer
+[ 21: FAIL ] precision.sin.highp_fragment.scalar: 15649/16404 inputs failed.
+[ 22: FAIL ] precision.sin.highp_fragment.vec2: 16377/16404 inputs failed.
+[ 23: FAIL ] precision.sin.highp_fragment.vec3: 16398/16404 inputs failed.
+[ 24: FAIL ] precision.sin.highp_fragment.vec4: 16401/16404 inputs failed.
+[ 25: PASS ] precision.sin.highp_fragment.vec4: successfullyParsed is true
+[ FAIL ] 24 failures reported
 

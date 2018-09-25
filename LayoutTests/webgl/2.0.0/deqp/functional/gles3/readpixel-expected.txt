@@ -1,5 +1,54 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/readpixel.html
-[ PASS ] All tests passed
+[ 1: PASS ] read_pixels.alignment.rgba_ubyte_1: Pass
+[ 2: FAIL ] read_pixels.alignment.rgba_ubyte_2: gl.createProgram()
+[ 3: PASS ] read_pixels.alignment.rgba_ubyte_4: Pass
+[ 4: FAIL ] read_pixels.alignment.rgba_ubyte_8: gl.createProgram()
+[ 5: FAIL ] read_pixels.alignment.rgba_int_1: Fail
+[ 6: FAIL ] read_pixels.alignment.rgba_int_2: gl.createProgram()
+[ 7: FAIL ] read_pixels.alignment.rgba_int_4: Fail
+[ 8: FAIL ] read_pixels.alignment.rgba_int_8: gl.createProgram()
+[ 9: FAIL ] read_pixels.alignment.rgba_uint_1: Fail
+[ 10: FAIL ] read_pixels.alignment.rgba_uint_2: gl.createProgram()
+[ 11: FAIL ] read_pixels.alignment.rgba_uint_4: Fail
+[ 12: FAIL ] read_pixels.alignment.rgba_uint_8: gl.createProgram()
+[ 13: FAIL ] read_pixels.alignment.choose_1: Can't map GL pixel format (-800060760, LINE_STRIP) to texture format
+[ 14: FAIL ] read_pixels.alignment.choose_2: Can't map GL pixel format (-495044384, -495044384) to texture format
+[ 15: FAIL ] read_pixels.alignment.choose_4: Can't map GL pixel format (-800060408, -495043992) to texture format
+[ 16: FAIL ] read_pixels.alignment.choose_8: Can't map GL pixel format (-800060232, -495043992) to texture format
+[ 17: FAIL ] read_pixels.rowlength.rgba_ubyte_17: gl.createProgram()
+[ 18: PASS ] read_pixels.rowlength.rgba_ubyte_19: Pass
+[ 19: FAIL ] read_pixels.rowlength.rgba_ubyte_23: gl.createProgram()
+[ 20: PASS ] read_pixels.rowlength.rgba_ubyte_29: Pass
+[ 21: FAIL ] read_pixels.rowlength.rgba_int_17: gl.createProgram()
+[ 22: FAIL ] read_pixels.rowlength.rgba_int_19: Fail
+[ 23: FAIL ] read_pixels.rowlength.rgba_int_23: gl.createProgram()
+[ 24: FAIL ] read_pixels.rowlength.rgba_int_29: Fail
+[ 25: FAIL ] read_pixels.rowlength.rgba_uint_17: gl.createProgram()
+[ 26: FAIL ] read_pixels.rowlength.rgba_uint_19: Fail
+[ 27: FAIL ] read_pixels.rowlength.rgba_uint_23: gl.createProgram()
+[ 28: FAIL ] read_pixels.rowlength.rgba_uint_29: Fail
+[ 29: FAIL ] read_pixels.rowlength.choose_17: gl.createProgram()
+[ 30: PASS ] read_pixels.rowlength.choose_19: Pass
+[ 31: FAIL ] read_pixels.rowlength.choose_23: gl.createProgram()
+[ 32: PASS ] read_pixels.rowlength.choose_29: Pass
+[ 33: FAIL ] read_pixels.skip.rgba_ubyte_0_3: gl.createProgram()
+[ 34: PASS ] read_pixels.skip.rgba_ubyte_3_0: Pass
+[ 35: FAIL ] read_pixels.skip.rgba_ubyte_3_3: gl.createProgram()
+[ 36: PASS ] read_pixels.skip.rgba_ubyte_3_5: Pass
+[ 37: FAIL ] read_pixels.skip.rgba_int_0_3: gl.createProgram()
+[ 38: FAIL ] read_pixels.skip.rgba_int_3_0: Fail
+[ 39: FAIL ] read_pixels.skip.rgba_int_3_3: gl.createProgram()
+[ 40: FAIL ] read_pixels.skip.rgba_int_3_5: Fail
+[ 41: FAIL ] read_pixels.skip.rgba_uint_0_3: gl.createProgram()
+[ 42: FAIL ] read_pixels.skip.rgba_uint_3_0: Fail
+[ 43: FAIL ] read_pixels.skip.rgba_uint_3_3: gl.createProgram()
+[ 44: FAIL ] read_pixels.skip.rgba_uint_3_5: Fail
+[ 45: FAIL ] read_pixels.skip.choose_0_3: gl.createProgram()
+[ 46: PASS ] read_pixels.skip.choose_3_0: Pass
+[ 47: FAIL ] read_pixels.skip.choose_3_3: gl.createProgram()
+[ 48: PASS ] read_pixels.skip.choose_3_5: Pass
+[ 49: PASS ] read_pixels.skip.choose_3_5: successfullyParsed is true
+[ FAIL ] 38 failures reported
 

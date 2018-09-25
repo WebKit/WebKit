@@ -1,5 +1,32 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage2d_format_size.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.texstorage2d.size.2d_1x1_1_levels: Image comparison failed
+[ 2: FAIL ] specification.texstorage2d.size.2d_1x1_1_levels: Verification failed
+[ 3: FAIL ] specification.texstorage2d.size.2d_2x2_2_levels: Image comparison failed
+[ 4: FAIL ] specification.texstorage2d.size.2d_2x2_2_levels: Verification failed
+[ 5: FAIL ] specification.texstorage2d.size.2d_64x32_7_levels: Image comparison failed
+[ 6: FAIL ] specification.texstorage2d.size.2d_64x32_7_levels: Verification failed
+[ 7: FAIL ] specification.texstorage2d.size.2d_32x64_4_levels: Image comparison failed
+[ 8: FAIL ] specification.texstorage2d.size.2d_32x64_4_levels: Verification failed
+[ 9: FAIL ] specification.texstorage2d.size.2d_57x63_1_levels: Image comparison failed
+[ 10: FAIL ] specification.texstorage2d.size.2d_57x63_1_levels: Verification failed
+[ 11: FAIL ] specification.texstorage2d.size.2d_57x63_2_levels: Image comparison failed
+[ 12: FAIL ] specification.texstorage2d.size.2d_57x63_2_levels: Verification failed
+[ 13: FAIL ] specification.texstorage2d.size.2d_57x63_6_levels: Image comparison failed
+[ 14: FAIL ] specification.texstorage2d.size.2d_57x63_6_levels: Verification failed
+[ 15: PASS ] specification.texstorage2d.size.cube_1x1_1_levels: Passed
+[ 16: PASS ] specification.texstorage2d.size.cube_2x2_2_levels: Passed
+[ 17: FAIL ] specification.texstorage2d.size.cube_57x57_1_levels: Image comparison failed
+[ 18: FAIL ] specification.texstorage2d.size.cube_57x57_1_levels: Verification failed
+[ 19: FAIL ] specification.texstorage2d.size.cube_57x57_2_levels: Image comparison failed
+[ 20: FAIL ] specification.texstorage2d.size.cube_57x57_2_levels: Verification failed
+[ 21: FAIL ] specification.texstorage2d.size.cube_57x57_6_levels: Image comparison failed
+[ 22: FAIL ] specification.texstorage2d.size.cube_57x57_6_levels: Verification failed
+[ 23: FAIL ] specification.texstorage2d.size.cube_64x64_4_levels: Image comparison failed
+[ 24: FAIL ] specification.texstorage2d.size.cube_64x64_4_levels: Verification failed
+[ 25: FAIL ] specification.texstorage2d.size.cube_64x64_7_levels: Image comparison failed
+[ 26: FAIL ] specification.texstorage2d.size.cube_64x64_7_levels: Verification failed
+[ 27: PASS ] specification.texstorage2d.size.cube_64x64_7_levels: successfullyParsed is true
+[ FAIL ] 24 failures reported
 

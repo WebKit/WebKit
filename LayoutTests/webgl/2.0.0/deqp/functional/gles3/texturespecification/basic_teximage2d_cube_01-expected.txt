@@ -1,5 +1,20 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_teximage2d_cube_01.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.basic_teximage2d.rgba32i_cube: Image comparison failed
+[ 2: FAIL ] specification.basic_teximage2d.rgba32i_cube: Verification failed
+[ 3: FAIL ] specification.basic_teximage2d.rgba8_cube: Image comparison failed
+[ 4: FAIL ] specification.basic_teximage2d.rgba8_cube: Verification failed
+[ 5: FAIL ] specification.basic_teximage2d.rgb10_a2ui_cube: Image comparison failed
+[ 6: FAIL ] specification.basic_teximage2d.rgb10_a2ui_cube: Verification failed
+[ 7: PASS ] specification.basic_teximage2d.rgb565_cube: Passed
+[ 8: FAIL ] specification.basic_teximage2d.rgb16f_cube: Image comparison failed
+[ 9: FAIL ] specification.basic_teximage2d.rgb16f_cube: Verification failed
+[ 10: PASS ] specification.basic_teximage2d.rgb8ui_cube: Passed
+[ 11: PASS ] specification.basic_teximage2d.rg32ui_cube: Passed
+[ 12: PASS ] specification.basic_teximage2d.rg8i_cube: Passed
+[ 13: PASS ] specification.basic_teximage2d.r32ui_cube: Passed
+[ 14: PASS ] specification.basic_teximage2d.r8i_cube: Passed
+[ 15: PASS ] specification.basic_teximage2d.r8i_cube: successfullyParsed is true
+[ FAIL ] 8 failures reported
 

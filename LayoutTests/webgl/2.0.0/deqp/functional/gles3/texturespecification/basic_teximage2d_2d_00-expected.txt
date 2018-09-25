@@ -1,5 +1,39 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_teximage2d_2d_00.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.basic_teximage2d.rgba32f_2d: Image comparison failed
+[ 2: FAIL ] specification.basic_teximage2d.rgba32f_2d: Verification failed
+[ 3: FAIL ] specification.basic_teximage2d.rgba32ui_2d: Image comparison failed
+[ 4: FAIL ] specification.basic_teximage2d.rgba32ui_2d: Verification failed
+[ 5: FAIL ] specification.basic_teximage2d.rgba16i_2d: Image comparison failed
+[ 6: FAIL ] specification.basic_teximage2d.rgba16i_2d: Verification failed
+[ 7: FAIL ] specification.basic_teximage2d.rgba8_2d: Image comparison failed
+[ 8: FAIL ] specification.basic_teximage2d.rgba8_2d: Verification failed
+[ 9: FAIL ] specification.basic_teximage2d.rgba8ui_2d: Image comparison failed
+[ 10: FAIL ] specification.basic_teximage2d.rgba8ui_2d: Verification failed
+[ 11: FAIL ] specification.basic_teximage2d.rgb10_a2_2d: Image comparison failed
+[ 12: FAIL ] specification.basic_teximage2d.rgb10_a2_2d: Verification failed
+[ 13: FAIL ] specification.basic_teximage2d.rgba4_2d: Image comparison failed
+[ 14: FAIL ] specification.basic_teximage2d.rgba4_2d: Verification failed
+[ 15: FAIL ] specification.basic_teximage2d.rgba8_snorm_2d: Image comparison failed
+[ 16: FAIL ] specification.basic_teximage2d.rgba8_snorm_2d: Verification failed
+[ 17: PASS ] specification.basic_teximage2d.rgb565_2d: Passed
+[ 18: PASS ] specification.basic_teximage2d.rgb32f_2d: Passed
+[ 19: PASS ] specification.basic_teximage2d.rgb32ui_2d: Passed
+[ 20: PASS ] specification.basic_teximage2d.rgb16i_2d: Passed
+[ 21: PASS ] specification.basic_teximage2d.rgb8_snorm_2d: Passed
+[ 22: PASS ] specification.basic_teximage2d.rgb8ui_2d: Passed
+[ 23: PASS ] specification.basic_teximage2d.rgb9_e5_2d: Passed
+[ 24: PASS ] specification.basic_teximage2d.rg32i_2d: Passed
+[ 25: PASS ] specification.basic_teximage2d.rg16f_2d: Passed
+[ 26: PASS ] specification.basic_teximage2d.rg16ui_2d: Passed
+[ 27: PASS ] specification.basic_teximage2d.rg8i_2d: Passed
+[ 28: PASS ] specification.basic_teximage2d.rg8_snorm_2d: Passed
+[ 29: PASS ] specification.basic_teximage2d.r32i_2d: Passed
+[ 30: PASS ] specification.basic_teximage2d.r16f_2d: Passed
+[ 31: PASS ] specification.basic_teximage2d.r16ui_2d: Passed
+[ 32: PASS ] specification.basic_teximage2d.r8i_2d: Passed
+[ 33: PASS ] specification.basic_teximage2d.r8_snorm_2d: Passed
+[ 34: PASS ] specification.basic_teximage2d.r8_snorm_2d: successfullyParsed is true
+[ FAIL ] 16 failures reported
 

@@ -1,5 +1,15 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/fbostencilbuffer.html
-[ PASS ] All tests passed
+[ 1: FAIL ] stencil.basic.depth32f_stencil8: glError: INVALID_ENUM
+[ 2: FAIL ] stencil.basic.depth32f_stencil8_depth: glError: INVALID_ENUM
+[ 3: FAIL ] stencil.basic.depth24_stencil8: glError: INVALID_ENUM
+[ 4: FAIL ] stencil.basic.depth24_stencil8_depth: glError: INVALID_ENUM
+[ 5: FAIL ] stencil.basic.stencil_index8:
+[ 6: FAIL ] stencil.attach.depth_only: glError: INVALID_ENUM
+[ 7: FAIL ] stencil.attach.stencil_only: glError: INVALID_ENUM
+[ 8: FAIL ] stencil.attach.depth_stencil_separate: glError: INVALID_ENUM
+[ 9: FAIL ] stencil.attach.depth_stencil_attachment: glError: INVALID_ENUM
+[ 10: PASS ] stencil.attach.depth_stencil_attachment: successfullyParsed is true
+[ FAIL ] 9 failures reported
 

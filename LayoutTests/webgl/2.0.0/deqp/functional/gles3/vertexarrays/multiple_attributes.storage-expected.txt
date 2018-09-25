@@ -1,5 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/vertexarrays/multiple_attributes.storage.html
-[ PASS ] All tests passed
+[ 1: FAIL ] vertex_arrays.multiple_attributes.storage.3_buffer_buffer_buffer: Could not map pixel format:[object Object]
+[ 2: PASS ] vertex_arrays.multiple_attributes.storage.3_buffer_buffer_buffer: successfullyParsed is true
+[ FAIL ] 1 failure reported
 

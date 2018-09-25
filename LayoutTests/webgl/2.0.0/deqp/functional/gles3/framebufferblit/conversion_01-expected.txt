@@ -1,5 +1,16 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/framebufferblit/conversion_01.html
-[ PASS ] All tests passed
+[ 1: PASS ] blit.conversion.rgba32ui_to_rgba32ui:
+[ 2: PASS ] blit.conversion.rgba32ui_to_rgba16ui:
+[ 3: PASS ] blit.conversion.rgba32ui_to_rgba8ui:
+[ 4: FAIL ] blit.conversion.rgba32ui_to_rgb10_a2ui: glError: [object Object]
+[ 5: FAIL ] blit.conversion.rgba32ui_to_rg32ui:
+[ 6: FAIL ] blit.conversion.rgba32ui_to_rg16ui:
+[ 7: FAIL ] blit.conversion.rgba32ui_to_rg8ui:
+[ 8: FAIL ] blit.conversion.rgba32ui_to_r32ui:
+[ 9: FAIL ] blit.conversion.rgba32ui_to_r16ui:
+[ 10: FAIL ] blit.conversion.rgba32ui_to_r8ui:
+[ 11: PASS ] blit.conversion.rgba32ui_to_r8ui: successfullyParsed is true
+[ FAIL ] 7 failures reported
 

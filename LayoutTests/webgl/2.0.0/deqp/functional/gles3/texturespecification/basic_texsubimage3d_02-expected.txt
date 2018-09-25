@@ -1,5 +1,22 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_texsubimage3d_02.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.basic_texsubimage3d.rgba32ui_3d: Image comparison failed
+[ 2: FAIL ] specification.basic_texsubimage3d.rgba32ui_3d: Verification failed
+[ 3: PASS ] specification.basic_texsubimage3d.rgba8i_3d: Passed
+[ 4: FAIL ] specification.basic_texsubimage3d.rgba4_3d: Image comparison failed
+[ 5: FAIL ] specification.basic_texsubimage3d.rgba4_3d: Verification failed
+[ 6: FAIL ] specification.basic_texsubimage3d.r11f_g11f_b10f_3d: Image comparison failed
+[ 7: FAIL ] specification.basic_texsubimage3d.r11f_g11f_b10f_3d: Verification failed
+[ 8: PASS ] specification.basic_texsubimage3d.rgb16i_3d: Passed
+[ 9: FAIL ] specification.basic_texsubimage3d.srgb8_3d: Image comparison failed
+[ 10: FAIL ] specification.basic_texsubimage3d.srgb8_3d: Verification failed
+[ 11: PASS ] specification.basic_texsubimage3d.rg16f_3d: Passed
+[ 12: FAIL ] specification.basic_texsubimage3d.rg8ui_3d: Image comparison failed
+[ 13: FAIL ] specification.basic_texsubimage3d.rg8ui_3d: Verification failed
+[ 14: PASS ] specification.basic_texsubimage3d.r16f_3d: Passed
+[ 15: FAIL ] specification.basic_texsubimage3d.r8ui_3d: Image comparison failed
+[ 16: FAIL ] specification.basic_texsubimage3d.r8ui_3d: Verification failed
+[ 17: PASS ] specification.basic_texsubimage3d.r8ui_3d: successfullyParsed is true
+[ FAIL ] 12 failures reported
 

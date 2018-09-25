@@ -1,5 +1,8 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturefiltering/cube_no_edges_visible.html
-[ PASS ] All tests passed
+[ 1: FAIL ] filtering.cube_no_edges_visible.nearest: gl.createProgram()
+[ 2: FAIL ] filtering.cube_no_edges_visible.linear: gl.createProgram()
+[ 3: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

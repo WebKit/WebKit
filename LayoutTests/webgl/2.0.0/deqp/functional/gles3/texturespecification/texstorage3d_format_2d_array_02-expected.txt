@@ -1,5 +1,34 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage3d_format_2d_array_02.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.texstorage3d.format.rgba32ui_2d_array: Image comparison failed
+[ 2: FAIL ] specification.texstorage3d.format.rgba32ui_2d_array: Verification failed
+[ 3: FAIL ] specification.texstorage3d.format.rgba16ui_2d_array: Image comparison failed
+[ 4: FAIL ] specification.texstorage3d.format.rgba16ui_2d_array: Verification failed
+[ 5: FAIL ] specification.texstorage3d.format.rgba8ui_2d_array: Image comparison failed
+[ 6: FAIL ] specification.texstorage3d.format.rgba8ui_2d_array: Verification failed
+[ 7: FAIL ] specification.texstorage3d.format.rgb10_a2ui_2d_array: Image comparison failed
+[ 8: FAIL ] specification.texstorage3d.format.rgb10_a2ui_2d_array: Verification failed
+[ 9: PASS ] specification.texstorage3d.format.rgba8_snorm_2d_array: Passed
+[ 10: FAIL ] specification.texstorage3d.format.r11f_g11f_b10f_2d_array: Image comparison failed
+[ 11: FAIL ] specification.texstorage3d.format.r11f_g11f_b10f_2d_array: Verification failed
+[ 12: FAIL ] specification.texstorage3d.format.rgb32ui_2d_array: Image comparison failed
+[ 13: FAIL ] specification.texstorage3d.format.rgb32ui_2d_array: Verification failed
+[ 14: FAIL ] specification.texstorage3d.format.rgb16ui_2d_array: Image comparison failed
+[ 15: FAIL ] specification.texstorage3d.format.rgb16ui_2d_array: Verification failed
+[ 16: FAIL ] specification.texstorage3d.format.rgb8ui_2d_array: Image comparison failed
+[ 17: FAIL ] specification.texstorage3d.format.rgb8ui_2d_array: Verification failed
+[ 18: PASS ] specification.texstorage3d.format.rg32f_2d_array: Passed
+[ 19: PASS ] specification.texstorage3d.format.rg16f_2d_array: Passed
+[ 20: FAIL ] specification.texstorage3d.format.rg8_2d_array: Image comparison failed
+[ 21: FAIL ] specification.texstorage3d.format.rg8_2d_array: Verification failed
+[ 22: PASS ] specification.texstorage3d.format.rg8_snorm_2d_array: Passed
+[ 23: FAIL ] specification.texstorage3d.format.r32ui_2d_array: Image comparison failed
+[ 24: FAIL ] specification.texstorage3d.format.r32ui_2d_array: Verification failed
+[ 25: FAIL ] specification.texstorage3d.format.r16ui_2d_array: Image comparison failed
+[ 26: FAIL ] specification.texstorage3d.format.r16ui_2d_array: Verification failed
+[ 27: FAIL ] specification.texstorage3d.format.r8ui_2d_array: Image comparison failed
+[ 28: FAIL ] specification.texstorage3d.format.r8ui_2d_array: Verification failed
+[ 29: PASS ] specification.texstorage3d.format.r8ui_2d_array: successfullyParsed is true
+[ FAIL ] 24 failures reported
 

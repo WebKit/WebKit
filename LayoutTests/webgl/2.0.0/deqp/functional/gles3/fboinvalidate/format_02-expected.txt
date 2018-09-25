@@ -1,5 +1,17 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fboinvalidate/format_02.html
-[ PASS ] All tests passed
+[ 1: FAIL ] invalidate.format.rgba16i: gl.createProgram()
+[ 2: FAIL ] invalidate.format.rgba8i:
+[ 3: FAIL ] invalidate.format.rgb10_a2:
+[ 4: PASS ] invalidate.format.rgb5_a1:
+[ 5: PASS ] invalidate.format.rg32i:
+[ 6: PASS ] invalidate.format.rg16ui:
+[ 7: PASS ] invalidate.format.rg8ui:
+[ 8: PASS ] invalidate.format.r16i:
+[ 9: PASS ] invalidate.format.r8i:
+[ 10: PASS ] invalidate.format.depth_component16:
+[ 11: FAIL ] invalidate.format.stencil_index8:
+[ 12: PASS ] invalidate.format.stencil_index8: successfullyParsed is true
+[ FAIL ] 4 failures reported
 

@@ -1,5 +1,73 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/textureformat/sized_color_cube_npot_01.html
-[ PASS ] All tests passed
+[ 1: PASS ] texture_format.sized.rgba32i_npot: Face: 0 gl.RGBA32I gl.TEXTURE_CUBE_MAP
+[ 2: PASS ] texture_format.sized.rgba32i_npot: Face: 1 gl.RGBA32I gl.TEXTURE_CUBE_MAP
+[ 3: PASS ] texture_format.sized.rgba32i_npot: Face: 2 gl.RGBA32I gl.TEXTURE_CUBE_MAP
+[ 4: PASS ] texture_format.sized.rgba32i_npot: Face: 3 gl.RGBA32I gl.TEXTURE_CUBE_MAP
+[ 5: PASS ] texture_format.sized.rgba32i_npot: Face: 4 gl.RGBA32I gl.TEXTURE_CUBE_MAP
+[ 6: PASS ] texture_format.sized.rgba32i_npot: Face: 5 gl.RGBA32I gl.TEXTURE_CUBE_MAP
+[ 7: PASS ] texture_format.sized.rgba16ui_npot: Face: 0 gl.RGBA16UI gl.TEXTURE_CUBE_MAP
+[ 8: PASS ] texture_format.sized.rgba16ui_npot: Face: 1 gl.RGBA16UI gl.TEXTURE_CUBE_MAP
+[ 9: PASS ] texture_format.sized.rgba16ui_npot: Face: 2 gl.RGBA16UI gl.TEXTURE_CUBE_MAP
+[ 10: PASS ] texture_format.sized.rgba16ui_npot: Face: 3 gl.RGBA16UI gl.TEXTURE_CUBE_MAP
+[ 11: PASS ] texture_format.sized.rgba16ui_npot: Face: 4 gl.RGBA16UI gl.TEXTURE_CUBE_MAP
+[ 12: PASS ] texture_format.sized.rgba16ui_npot: Face: 5 gl.RGBA16UI gl.TEXTURE_CUBE_MAP
+[ 13: PASS ] texture_format.sized.srgb8_alpha8_npot: Face: 0 gl.SRGB8_ALPHA8 gl.TEXTURE_CUBE_MAP
+[ 14: PASS ] texture_format.sized.srgb8_alpha8_npot: Face: 1 gl.SRGB8_ALPHA8 gl.TEXTURE_CUBE_MAP
+[ 15: PASS ] texture_format.sized.srgb8_alpha8_npot: Face: 2 gl.SRGB8_ALPHA8 gl.TEXTURE_CUBE_MAP
+[ 16: PASS ] texture_format.sized.srgb8_alpha8_npot: Face: 3 gl.SRGB8_ALPHA8 gl.TEXTURE_CUBE_MAP
+[ 17: PASS ] texture_format.sized.srgb8_alpha8_npot: Face: 4 gl.SRGB8_ALPHA8 gl.TEXTURE_CUBE_MAP
+[ 18: PASS ] texture_format.sized.srgb8_alpha8_npot: Face: 5 gl.SRGB8_ALPHA8 gl.TEXTURE_CUBE_MAP
+[ 19: PASS ] texture_format.sized.rgb5_a1_npot: Face: 0 gl.RGB5_A1 gl.TEXTURE_CUBE_MAP
+[ 20: PASS ] texture_format.sized.rgb5_a1_npot: Face: 1 gl.RGB5_A1 gl.TEXTURE_CUBE_MAP
+[ 21: PASS ] texture_format.sized.rgb5_a1_npot: Face: 2 gl.RGB5_A1 gl.TEXTURE_CUBE_MAP
+[ 22: PASS ] texture_format.sized.rgb5_a1_npot: Face: 3 gl.RGB5_A1 gl.TEXTURE_CUBE_MAP
+[ 23: PASS ] texture_format.sized.rgb5_a1_npot: Face: 4 gl.RGB5_A1 gl.TEXTURE_CUBE_MAP
+[ 24: PASS ] texture_format.sized.rgb5_a1_npot: Face: 5 gl.RGB5_A1 gl.TEXTURE_CUBE_MAP
+[ 25: PASS ] texture_format.sized.r11f_g11f_b10f_npot: Face: 0 gl.R11F_G11F_B10F gl.TEXTURE_CUBE_MAP
+[ 26: PASS ] texture_format.sized.r11f_g11f_b10f_npot: Face: 1 gl.R11F_G11F_B10F gl.TEXTURE_CUBE_MAP
+[ 27: PASS ] texture_format.sized.r11f_g11f_b10f_npot: Face: 2 gl.R11F_G11F_B10F gl.TEXTURE_CUBE_MAP
+[ 28: PASS ] texture_format.sized.r11f_g11f_b10f_npot: Face: 3 gl.R11F_G11F_B10F gl.TEXTURE_CUBE_MAP
+[ 29: PASS ] texture_format.sized.r11f_g11f_b10f_npot: Face: 4 gl.R11F_G11F_B10F gl.TEXTURE_CUBE_MAP
+[ 30: PASS ] texture_format.sized.r11f_g11f_b10f_npot: Face: 5 gl.R11F_G11F_B10F gl.TEXTURE_CUBE_MAP
+[ 31: FAIL ] texture_format.sized.rgb16f_npot: Texture upload failed
+[ 32: PASS ] texture_format.sized.rgb8i_npot: Face: 0 gl.RGB8I gl.TEXTURE_CUBE_MAP
+[ 33: PASS ] texture_format.sized.rgb8i_npot: Face: 1 gl.RGB8I gl.TEXTURE_CUBE_MAP
+[ 34: PASS ] texture_format.sized.rgb8i_npot: Face: 2 gl.RGB8I gl.TEXTURE_CUBE_MAP
+[ 35: PASS ] texture_format.sized.rgb8i_npot: Face: 3 gl.RGB8I gl.TEXTURE_CUBE_MAP
+[ 36: PASS ] texture_format.sized.rgb8i_npot: Face: 4 gl.RGB8I gl.TEXTURE_CUBE_MAP
+[ 37: PASS ] texture_format.sized.rgb8i_npot: Face: 5 gl.RGB8I gl.TEXTURE_CUBE_MAP
+[ 38: PASS ] texture_format.sized.rg32f_npot: Face: 0 gl.RG32F gl.TEXTURE_CUBE_MAP
+[ 39: PASS ] texture_format.sized.rg32f_npot: Face: 1 gl.RG32F gl.TEXTURE_CUBE_MAP
+[ 40: PASS ] texture_format.sized.rg32f_npot: Face: 2 gl.RG32F gl.TEXTURE_CUBE_MAP
+[ 41: PASS ] texture_format.sized.rg32f_npot: Face: 3 gl.RG32F gl.TEXTURE_CUBE_MAP
+[ 42: PASS ] texture_format.sized.rg32f_npot: Face: 4 gl.RG32F gl.TEXTURE_CUBE_MAP
+[ 43: PASS ] texture_format.sized.rg32f_npot: Face: 5 gl.RG32F gl.TEXTURE_CUBE_MAP
+[ 44: PASS ] texture_format.sized.rg16i_npot: Face: 0 gl.RG16I gl.TEXTURE_CUBE_MAP
+[ 45: PASS ] texture_format.sized.rg16i_npot: Face: 1 gl.RG16I gl.TEXTURE_CUBE_MAP
+[ 46: PASS ] texture_format.sized.rg16i_npot: Face: 2 gl.RG16I gl.TEXTURE_CUBE_MAP
+[ 47: PASS ] texture_format.sized.rg16i_npot: Face: 3 gl.RG16I gl.TEXTURE_CUBE_MAP
+[ 48: PASS ] texture_format.sized.rg16i_npot: Face: 4 gl.RG16I gl.TEXTURE_CUBE_MAP
+[ 49: PASS ] texture_format.sized.rg16i_npot: Face: 5 gl.RG16I gl.TEXTURE_CUBE_MAP
+[ 50: PASS ] texture_format.sized.rg8ui_npot: Face: 0 gl.RG8UI gl.TEXTURE_CUBE_MAP
+[ 51: PASS ] texture_format.sized.rg8ui_npot: Face: 1 gl.RG8UI gl.TEXTURE_CUBE_MAP
+[ 52: PASS ] texture_format.sized.rg8ui_npot: Face: 2 gl.RG8UI gl.TEXTURE_CUBE_MAP
+[ 53: PASS ] texture_format.sized.rg8ui_npot: Face: 3 gl.RG8UI gl.TEXTURE_CUBE_MAP
+[ 54: PASS ] texture_format.sized.rg8ui_npot: Face: 4 gl.RG8UI gl.TEXTURE_CUBE_MAP
+[ 55: PASS ] texture_format.sized.rg8ui_npot: Face: 5 gl.RG8UI gl.TEXTURE_CUBE_MAP
+[ 56: PASS ] texture_format.sized.r32ui_npot: Face: 0 gl.R32UI gl.TEXTURE_CUBE_MAP
+[ 57: PASS ] texture_format.sized.r32ui_npot: Face: 1 gl.R32UI gl.TEXTURE_CUBE_MAP
+[ 58: PASS ] texture_format.sized.r32ui_npot: Face: 2 gl.R32UI gl.TEXTURE_CUBE_MAP
+[ 59: PASS ] texture_format.sized.r32ui_npot: Face: 3 gl.R32UI gl.TEXTURE_CUBE_MAP
+[ 60: PASS ] texture_format.sized.r32ui_npot: Face: 4 gl.R32UI gl.TEXTURE_CUBE_MAP
+[ 61: PASS ] texture_format.sized.r32ui_npot: Face: 5 gl.R32UI gl.TEXTURE_CUBE_MAP
+[ 62: PASS ] texture_format.sized.r8_npot: Face: 0 gl.R8 gl.TEXTURE_CUBE_MAP
+[ 63: PASS ] texture_format.sized.r8_npot: Face: 1 gl.R8 gl.TEXTURE_CUBE_MAP
+[ 64: PASS ] texture_format.sized.r8_npot: Face: 2 gl.R8 gl.TEXTURE_CUBE_MAP
+[ 65: PASS ] texture_format.sized.r8_npot: Face: 3 gl.R8 gl.TEXTURE_CUBE_MAP
+[ 66: PASS ] texture_format.sized.r8_npot: Face: 4 gl.R8 gl.TEXTURE_CUBE_MAP
+[ 67: PASS ] texture_format.sized.r8_npot: Face: 5 gl.R8 gl.TEXTURE_CUBE_MAP
+[ 68: PASS ] texture_format.sized.r8_npot: successfullyParsed is true
+[ FAIL ] 1 failure reported
 

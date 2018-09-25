@@ -1,5 +1,16 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_copyteximage2d.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.basic_copyteximage2d.2d_alpha: gl.createProgram()
+[ 2: FAIL ] specification.basic_copyteximage2d.2d_luminance: gl.createProgram()
+[ 3: FAIL ] specification.basic_copyteximage2d.2d_luminance_alpha: gl.createProgram()
+[ 4: FAIL ] specification.basic_copyteximage2d.2d_rgb: gl.createProgram()
+[ 5: FAIL ] specification.basic_copyteximage2d.2d_rgba: gl.createProgram()
+[ 6: FAIL ] specification.basic_copyteximage2d.cube_alpha: gl.createProgram()
+[ 7: FAIL ] specification.basic_copyteximage2d.cube_luminance: gl.createProgram()
+[ 8: FAIL ] specification.basic_copyteximage2d.cube_luminance_alpha: gl.createProgram()
+[ 9: FAIL ] specification.basic_copyteximage2d.cube_rgb: gl.createProgram()
+[ 10: FAIL ] specification.basic_copyteximage2d.cube_rgba: gl.createProgram()
+[ 11: PASS ] successfullyParsed is true
+[ FAIL ] 10 failures reported
 

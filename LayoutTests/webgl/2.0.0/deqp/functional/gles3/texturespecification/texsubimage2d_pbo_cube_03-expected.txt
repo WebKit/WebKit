@@ -1,5 +1,16 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_cube_03.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.texsubimage2d_pbo.rgba16f_cube: gl.createProgram()
+[ 2: FAIL ] specification.texsubimage2d_pbo.rgba8ui_cube: gl.createProgram()
+[ 3: FAIL ] specification.texsubimage2d_pbo.rgb5_a1_cube: gl.createProgram()
+[ 4: FAIL ] specification.texsubimage2d_pbo.rgb32f_cube: gl.createProgram()
+[ 5: FAIL ] specification.texsubimage2d_pbo.rgb16ui_cube: gl.createProgram()
+[ 6: FAIL ] specification.texsubimage2d_pbo.rgb9_e5_cube: gl.createProgram()
+[ 7: FAIL ] specification.texsubimage2d_pbo.rg16i_cube: gl.createProgram()
+[ 8: FAIL ] specification.texsubimage2d_pbo.rg8_snorm_cube: gl.createProgram()
+[ 9: FAIL ] specification.texsubimage2d_pbo.r16i_cube: gl.createProgram()
+[ 10: FAIL ] specification.texsubimage2d_pbo.r8_snorm_cube: gl.createProgram()
+[ 11: PASS ] successfullyParsed is true
+[ FAIL ] 10 failures reported
 

@@ -1,5 +1,21 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/fbostatequery.html
-[ PASS ] All tests passed
+[ 1: FAIL ] fbo.draw_framebuffer_default_framebuffer:
+[ 2: FAIL ] fbo.read_framebuffer_default_framebuffer:
+[ 3: PASS ] fbo.framebuffer_attachment_object: Passed
+[ 4: PASS ] fbo.framebuffer_attachment_texture_level: Passed
+[ 5: PASS ] fbo.framebuffer_attachment_texture_cube_map_face: Passed
+[ 6: FAIL ] fbo.framebuffer_attachment_texture_layer:
+[ 7: PASS ] fbo.framebuffer_attachment_color_encoding: Passed
+[ 8: PASS ] fbo.framebuffer_attachment_component_type: Passed
+[ 9: PASS ] fbo.framebuffer_attachment_x_size_initial: Passed
+[ 10: PASS ] fbo.framebuffer_attachment_x_size_rbo: Passed
+[ 11: PASS ] fbo.framebuffer_attachment_x_size_texture: Passed
+[ 12: PASS ] fbo.framebuffer_unspecified_attachment_color_encoding: Passed
+[ 13: PASS ] fbo.framebuffer_unspecified_attachment_component_type: Passed
+[ 14: PASS ] fbo.framebuffer_unspecified_attachment_x_size_rbo: Passed
+[ 15: PASS ] fbo.framebuffer_unspecified_attachment_x_size_texture: Passed
+[ 16: PASS ] fbo.framebuffer_unspecified_attachment_x_size_texture: successfullyParsed is true
+[ FAIL ] 3 failures reported
 

@@ -1,5 +1,50 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/pixelbufferobject.html
-[ PASS ] All tests passed
+[ 1: FAIL ] pixel_buffer_object.native.clears: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 2: FAIL ] pixel_buffer_object.native.triangles: gl.createProgram()
+[ 3: FAIL ] pixel_buffer_object.renderbuffer.rgba8_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 4: FAIL ] pixel_buffer_object.renderbuffer.rgba8_clears: gl.createProgram()
+[ 5: FAIL ] pixel_buffer_object.renderbuffer.rgba8i_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 6: FAIL ] pixel_buffer_object.renderbuffer.rgba8i_clears: gl.createProgram()
+[ 7: FAIL ] pixel_buffer_object.renderbuffer.rgba8ui_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 8: FAIL ] pixel_buffer_object.renderbuffer.rgba8ui_clears: gl.createProgram()
+[ 9: FAIL ] pixel_buffer_object.renderbuffer.rgba16i_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 10: FAIL ] pixel_buffer_object.renderbuffer.rgba16i_clears: gl.createProgram()
+[ 11: FAIL ] pixel_buffer_object.renderbuffer.rgba16ui_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 12: FAIL ] pixel_buffer_object.renderbuffer.rgba16ui_clears: gl.createProgram()
+[ 13: FAIL ] pixel_buffer_object.renderbuffer.rgba32i_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 14: FAIL ] pixel_buffer_object.renderbuffer.rgba32i_clears: gl.createProgram()
+[ 15: FAIL ] pixel_buffer_object.renderbuffer.rgba32ui_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 16: FAIL ] pixel_buffer_object.renderbuffer.rgba32ui_clears: gl.createProgram()
+[ 17: FAIL ] pixel_buffer_object.renderbuffer.srgb8_alpha8_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 18: FAIL ] pixel_buffer_object.renderbuffer.srgb8_alpha8_clears: gl.createProgram()
+[ 19: FAIL ] pixel_buffer_object.renderbuffer.rgb10_a2_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 20: FAIL ] pixel_buffer_object.renderbuffer.rgb10_a2_clears: gl.createProgram()
+[ 21: FAIL ] pixel_buffer_object.renderbuffer.rgb10_a2ui_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 22: FAIL ] pixel_buffer_object.renderbuffer.rgb10_a2ui_clears: gl.createProgram()
+[ 23: FAIL ] pixel_buffer_object.renderbuffer.rgba4_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 24: FAIL ] pixel_buffer_object.renderbuffer.rgba4_clears: gl.createProgram()
+[ 25: FAIL ] pixel_buffer_object.renderbuffer.rgb5_a1_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 26: FAIL ] pixel_buffer_object.renderbuffer.rgb5_a1_clears: gl.createProgram()
+[ 27: FAIL ] pixel_buffer_object.renderbuffer.rgb8_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 28: FAIL ] pixel_buffer_object.renderbuffer.rgb8_clears: gl.createProgram()
+[ 29: FAIL ] pixel_buffer_object.renderbuffer.rgb565_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 30: FAIL ] pixel_buffer_object.renderbuffer.rgb565_clears: gl.createProgram()
+[ 31: FAIL ] pixel_buffer_object.renderbuffer.rg8_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 32: FAIL ] pixel_buffer_object.renderbuffer.rg8_clears: gl.createProgram()
+[ 33: FAIL ] pixel_buffer_object.renderbuffer.rg8i_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 34: FAIL ] pixel_buffer_object.renderbuffer.rg8i_clears: gl.createProgram()
+[ 35: FAIL ] pixel_buffer_object.renderbuffer.rg8ui_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 36: FAIL ] pixel_buffer_object.renderbuffer.rg8ui_clears: gl.createProgram()
+[ 37: FAIL ] pixel_buffer_object.renderbuffer.rg16i_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 38: FAIL ] pixel_buffer_object.renderbuffer.rg16i_clears: gl.createProgram()
+[ 39: FAIL ] pixel_buffer_object.renderbuffer.rg16ui_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 40: FAIL ] pixel_buffer_object.renderbuffer.rg16ui_clears: gl.createProgram()
+[ 41: FAIL ] pixel_buffer_object.renderbuffer.rg32i_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 42: FAIL ] pixel_buffer_object.renderbuffer.rg32i_clears: gl.createProgram()
+[ 43: FAIL ] pixel_buffer_object.renderbuffer.rg32ui_triangles: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
+[ 44: FAIL ] pixel_buffer_object.renderbuffer.rg32ui_clears: gl.createProgram()
+[ 45: PASS ] successfullyParsed is true
+[ FAIL ] 44 failures reported
 

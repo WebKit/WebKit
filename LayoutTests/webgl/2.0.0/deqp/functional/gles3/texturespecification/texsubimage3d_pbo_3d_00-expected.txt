@@ -1,5 +1,42 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage3d_pbo_3d_00.html
-[ PASS ] All tests passed
+[ 1: PASS ] specification.texsubimage3d_pbo.rgba32f_3d: Passed
+[ 2: FAIL ] specification.texsubimage3d_pbo.rgba32ui_3d: Image comparison failed
+[ 3: FAIL ] specification.texsubimage3d_pbo.rgba32ui_3d: Verification failed
+[ 4: PASS ] specification.texsubimage3d_pbo.rgba16i_3d: Passed
+[ 5: FAIL ] specification.texsubimage3d_pbo.rgba8_3d: Image comparison failed
+[ 6: FAIL ] specification.texsubimage3d_pbo.rgba8_3d: Verification failed
+[ 7: FAIL ] specification.texsubimage3d_pbo.rgba8ui_3d: Image comparison failed
+[ 8: FAIL ] specification.texsubimage3d_pbo.rgba8ui_3d: Verification failed
+[ 9: FAIL ] specification.texsubimage3d_pbo.rgb10_a2_3d: Image comparison failed
+[ 10: FAIL ] specification.texsubimage3d_pbo.rgb10_a2_3d: Verification failed
+[ 11: FAIL ] specification.texsubimage3d_pbo.rgba4_3d: Image comparison failed
+[ 12: FAIL ] specification.texsubimage3d_pbo.rgba4_3d: Verification failed
+[ 13: PASS ] specification.texsubimage3d_pbo.rgba8_snorm_3d: Passed
+[ 14: FAIL ] specification.texsubimage3d_pbo.rgb565_3d: Image comparison failed
+[ 15: FAIL ] specification.texsubimage3d_pbo.rgb565_3d: Verification failed
+[ 16: PASS ] specification.texsubimage3d_pbo.rgb32f_3d: Passed
+[ 17: FAIL ] specification.texsubimage3d_pbo.rgb32ui_3d: Image comparison failed
+[ 18: FAIL ] specification.texsubimage3d_pbo.rgb32ui_3d: Verification failed
+[ 19: PASS ] specification.texsubimage3d_pbo.rgb16i_3d: Passed
+[ 20: PASS ] specification.texsubimage3d_pbo.rgb8_snorm_3d: Passed
+[ 21: FAIL ] specification.texsubimage3d_pbo.rgb8ui_3d: Image comparison failed
+[ 22: FAIL ] specification.texsubimage3d_pbo.rgb8ui_3d: Verification failed
+[ 23: FAIL ] specification.texsubimage3d_pbo.rgb9_e5_3d: Image comparison failed
+[ 24: FAIL ] specification.texsubimage3d_pbo.rgb9_e5_3d: Verification failed
+[ 25: PASS ] specification.texsubimage3d_pbo.rg32i_3d: Passed
+[ 26: PASS ] specification.texsubimage3d_pbo.rg16f_3d: Passed
+[ 27: FAIL ] specification.texsubimage3d_pbo.rg16ui_3d: Image comparison failed
+[ 28: FAIL ] specification.texsubimage3d_pbo.rg16ui_3d: Verification failed
+[ 29: PASS ] specification.texsubimage3d_pbo.rg8i_3d: Passed
+[ 30: PASS ] specification.texsubimage3d_pbo.rg8_snorm_3d: Passed
+[ 31: PASS ] specification.texsubimage3d_pbo.r32i_3d: Passed
+[ 32: PASS ] specification.texsubimage3d_pbo.r16f_3d: Passed
+[ 33: FAIL ] specification.texsubimage3d_pbo.r16ui_3d: Image comparison failed
+[ 34: FAIL ] specification.texsubimage3d_pbo.r16ui_3d: Verification failed
+[ 35: PASS ] specification.texsubimage3d_pbo.r8i_3d: Passed
+[ 36: PASS ] specification.texsubimage3d_pbo.r8_snorm_3d: Passed
+[ 37: PASS ] specification.texsubimage3d_pbo.r8_snorm_3d: successfullyParsed is true
+[ FAIL ] 22 failures reported
 

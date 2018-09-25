@@ -1,5 +1,24 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/transformfeedback/interpolation_flat.html
-[ PASS ] All tests passed
+[ 1: FAIL ] transform_feedback.interpolation.flat.lowp_vec4_points_separate: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
+[ 2: FAIL ] transform_feedback.interpolation.flat.lowp_vec4_points_interleaved: gl.createProgram()
+[ 3: FAIL ] transform_feedback.interpolation.flat.lowp_vec4_lines_separate: gl.createProgram()
+[ 4: FAIL ] transform_feedback.interpolation.flat.lowp_vec4_lines_interleaved: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
+[ 5: FAIL ] transform_feedback.interpolation.flat.lowp_vec4_triangles_separate: gl.createProgram()
+[ 6: FAIL ] transform_feedback.interpolation.flat.lowp_vec4_triangles_interleaved: gl.createProgram()
+[ 7: FAIL ] transform_feedback.interpolation.flat.mediump_vec4_points_separate: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
+[ 8: FAIL ] transform_feedback.interpolation.flat.mediump_vec4_points_interleaved: gl.createProgram()
+[ 9: FAIL ] transform_feedback.interpolation.flat.mediump_vec4_lines_separate: gl.createProgram()
+[ 10: FAIL ] transform_feedback.interpolation.flat.mediump_vec4_lines_interleaved: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
+[ 11: FAIL ] transform_feedback.interpolation.flat.mediump_vec4_triangles_separate: gl.createProgram()
+[ 12: FAIL ] transform_feedback.interpolation.flat.mediump_vec4_triangles_interleaved: gl.createProgram()
+[ 13: FAIL ] transform_feedback.interpolation.flat.highp_vec4_points_separate: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
+[ 14: FAIL ] transform_feedback.interpolation.flat.highp_vec4_points_interleaved: gl.createProgram()
+[ 15: FAIL ] transform_feedback.interpolation.flat.highp_vec4_lines_separate: gl.createProgram()
+[ 16: FAIL ] transform_feedback.interpolation.flat.highp_vec4_lines_interleaved: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
+[ 17: FAIL ] transform_feedback.interpolation.flat.highp_vec4_triangles_separate: gl.createProgram()
+[ 18: FAIL ] transform_feedback.interpolation.flat.highp_vec4_triangles_interleaved: gl.createProgram()
+[ 19: PASS ] successfullyParsed is true
+[ FAIL ] 18 failures reported
 

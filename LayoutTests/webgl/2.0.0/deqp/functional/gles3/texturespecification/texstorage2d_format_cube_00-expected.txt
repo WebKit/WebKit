@@ -1,5 +1,19 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage2d_format_cube_00.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.texstorage2d.format.rgba32f_cube: Image comparison failed
+[ 2: FAIL ] specification.texstorage2d.format.rgba32f_cube: Verification failed
+[ 3: FAIL ] specification.texstorage2d.format.rgba16ui_cube: Image comparison failed
+[ 4: FAIL ] specification.texstorage2d.format.rgba16ui_cube: Verification failed
+[ 5: FAIL ] specification.texstorage2d.format.rgb10_a2_cube: Image comparison failed
+[ 6: FAIL ] specification.texstorage2d.format.rgb10_a2_cube: Verification failed
+[ 7: PASS ] specification.texstorage2d.format.rgb8_cube: Passed
+[ 8: PASS ] specification.texstorage2d.format.rgb32ui_cube: Passed
+[ 9: PASS ] specification.texstorage2d.format.rgb8i_cube: Passed
+[ 10: PASS ] specification.texstorage2d.format.rg32i_cube: Passed
+[ 11: PASS ] specification.texstorage2d.format.rg8_cube: Passed
+[ 12: PASS ] specification.texstorage2d.format.r32i_cube: Passed
+[ 13: PASS ] specification.texstorage2d.format.r8_cube: Passed
+[ 14: PASS ] specification.texstorage2d.format.r8_cube: successfullyParsed is true
+[ FAIL ] 6 failures reported
 

@@ -1,5 +1,11 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/stringquery.html
-[ PASS ] All tests passed
+[ 1: PASS ] string.renderer: Passed
+[ 2: PASS ] string.vendor: Passed
+[ 3: PASS ] string.version: Passed
+[ 4: FAIL ] string.shading_language_version: Got invalid string prefix
+[ 5: FAIL ] string.extensions: Advertised extension WEBKIT_EXT_texture_filter_anisotropic not found
+[ 6: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

@@ -1,5 +1,12 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturefiltering/cube_sizes_02.html
-[ PASS ] All tests passed
+[ 1: FAIL ] filtering.cube_sizes.128x128_nearest: gl.createProgram()
+[ 2: FAIL ] filtering.cube_sizes.128x128_linear: gl.createProgram()
+[ 3: FAIL ] filtering.cube_sizes.128x128_nearest_mipmap_nearest: gl.createProgram()
+[ 4: FAIL ] filtering.cube_sizes.128x128_linear_mipmap_nearest: gl.createProgram()
+[ 5: FAIL ] filtering.cube_sizes.128x128_nearest_mipmap_linear: gl.createProgram()
+[ 6: FAIL ] filtering.cube_sizes.128x128_linear_mipmap_linear: gl.createProgram()
+[ 7: PASS ] successfullyParsed is true
+[ FAIL ] 6 failures reported
 

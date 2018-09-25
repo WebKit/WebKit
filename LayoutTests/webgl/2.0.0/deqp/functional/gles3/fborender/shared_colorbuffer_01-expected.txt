@@ -1,5 +1,10 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fborender/shared_colorbuffer_01.html
-[ PASS ] All tests passed
+[ 1: FAIL ] render.shared_colorbuffer.tex2d_rg8_depth_rbo_depth24_stencil8: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 2: FAIL ] render.shared_colorbuffer.rbo_rg8_depth_rbo_depth24_stencil8: gl.createProgram()
+[ 3: FAIL ] render.shared_colorbuffer.tex2d_r8_depth_rbo_depth24_stencil8: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 4: FAIL ] render.shared_colorbuffer.rbo_r8_depth_rbo_depth24_stencil8: gl.createProgram()
+[ 5: PASS ] successfullyParsed is true
+[ FAIL ] 4 failures reported
 

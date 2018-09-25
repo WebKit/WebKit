@@ -1,5 +1,17 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fboinvalidate/sub.html
-[ PASS ] All tests passed
+[ 1: FAIL ] invalidate.sub.render_none: gl.createProgram()
+[ 2: FAIL ] invalidate.sub.render_color: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 3: FAIL ] invalidate.sub.render_depth: gl.createProgram()
+[ 4: FAIL ] invalidate.sub.render_stencil: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 5: FAIL ] invalidate.sub.render_depth_stencil: gl.createProgram()
+[ 6: FAIL ] invalidate.sub.render_all: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 7: FAIL ] invalidate.sub.unbind_read_color: gl.createProgram()
+[ 8: FAIL ] invalidate.sub.unbind_read_depth: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
+[ 9: FAIL ] invalidate.sub.unbind_read_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
+[ 10: FAIL ] invalidate.sub.unbind_read_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
+[ 11: FAIL ] invalidate.sub.unbind_read_color_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
+[ 12: PASS ] invalidate.sub.unbind_read_color_stencil: successfullyParsed is true
+[ FAIL ] 11 failures reported
 

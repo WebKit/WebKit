@@ -1,5 +1,16 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/vertexarrayobject.html
-[ PASS ] All tests passed
+[ 1: PASS ] vertex_array_objects.diff_buffer: Pass
+[ 2: PASS ] vertex_array_objects.diff_size: Pass
+[ 3: PASS ] vertex_array_objects.diff_stride: Pass
+[ 4: PASS ] vertex_array_objects.diff_type: Pass
+[ 5: FAIL ] vertex_array_objects.diff_integer: Result comparison failed
+[ 6: FAIL ] vertex_array_objects.diff_divisor: gl.createProgram()
+[ 7: PASS ] vertex_array_objects.diff_offset: Pass
+[ 8: PASS ] vertex_array_objects.diff_normalize: Pass
+[ 9: PASS ] vertex_array_objects.diff_indices: Pass
+[ 10: PASS ] vertex_array_objects.all_attributes: Pass
+[ 11: PASS ] vertex_array_objects.all_attributes: successfullyParsed is true
+[ FAIL ] 2 failures reported
 

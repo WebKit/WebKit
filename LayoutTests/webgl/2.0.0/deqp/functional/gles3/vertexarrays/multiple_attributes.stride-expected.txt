@@ -1,5 +1,33 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/vertexarrays/multiple_attributes.stride.html
-[ PASS ] All tests passed
+[ 1: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_0_float2_0: Could not map pixel format:[object Object]
+[ 2: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_0_float2_8: Could not map pixel format:[object Object]
+[ 3: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_0_float2_32: Could not map pixel format:[object Object]
+[ 4: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_8_float2_0: Could not map pixel format:[object Object]
+[ 5: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_8_float2_8: Could not map pixel format:[object Object]
+[ 6: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_8_float2_32: Could not map pixel format:[object Object]
+[ 7: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_32_float2_0: Could not map pixel format:[object Object]
+[ 8: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_32_float2_8: Could not map pixel format:[object Object]
+[ 9: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_0_float2_32_float2_32: Could not map pixel format:[object Object]
+[ 10: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_0_float2_0: Could not map pixel format:[object Object]
+[ 11: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_0_float2_8: Could not map pixel format:[object Object]
+[ 12: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_0_float2_32: Could not map pixel format:[object Object]
+[ 13: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_8_float2_0: Could not map pixel format:[object Object]
+[ 14: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_8_float2_8: Could not map pixel format:[object Object]
+[ 15: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_8_float2_32: Could not map pixel format:[object Object]
+[ 16: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_32_float2_0: Could not map pixel format:[object Object]
+[ 17: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_32_float2_8: Could not map pixel format:[object Object]
+[ 18: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_8_float2_32_float2_32: Could not map pixel format:[object Object]
+[ 19: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_0_float2_0: Could not map pixel format:[object Object]
+[ 20: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_0_float2_8: Could not map pixel format:[object Object]
+[ 21: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_0_float2_32: Could not map pixel format:[object Object]
+[ 22: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_8_float2_0: Could not map pixel format:[object Object]
+[ 23: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_8_float2_8: Could not map pixel format:[object Object]
+[ 24: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_8_float2_32: Could not map pixel format:[object Object]
+[ 25: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_32_float2_0: Could not map pixel format:[object Object]
+[ 26: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_32_float2_8: Could not map pixel format:[object Object]
+[ 27: FAIL ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_32_float2_32: Could not map pixel format:[object Object]
+[ 28: PASS ] vertex_arrays.multiple_attributes.stride.3_float2_32_float2_32_float2_32: successfullyParsed is true
+[ FAIL ] 27 failures reported
 

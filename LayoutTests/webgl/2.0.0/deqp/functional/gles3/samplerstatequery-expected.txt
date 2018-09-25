@@ -1,5 +1,15 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/samplerstatequery.html
-[ PASS ] All tests passed
+[ 1: FAIL ] sampler.sampler_texture_wrap_s: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 2: FAIL ] sampler.sampler_texture_wrap_t: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 3: FAIL ] sampler.sampler_texture_wrap_r: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 4: FAIL ] sampler.sampler_texture_mag_filter: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 5: FAIL ] sampler.sampler_texture_min_filter: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 6: FAIL ] sampler.sampler_texture_min_lod: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 7: FAIL ] sampler.sampler_texture_max_lod: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 8: FAIL ] sampler.sampler_texture_compare_mode: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 9: FAIL ] sampler.sampler_texture_compare_func: Argument 1 ('sampler') to WebGL2RenderingContext.getSamplerParameter must be an instance of WebGLSampler
+[ 10: PASS ] sampler.sampler_texture_compare_func: successfullyParsed is true
+[ FAIL ] 9 failures reported
 

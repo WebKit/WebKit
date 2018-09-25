@@ -1,5 +1,24 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/fragdepth.html
-[ PASS ] All tests passed
+[ 1: FAIL ] fragdepth.write.no_write: Depth buffer is required
+[ 2: FAIL ] fragdepth.write.const: Depth buffer is required
+[ 3: FAIL ] fragdepth.write.uniform: Depth buffer is required
+[ 4: FAIL ] fragdepth.write.dynamic: Depth buffer is required
+[ 5: FAIL ] fragdepth.write.fragcoord_z: Depth buffer is required
+[ 6: FAIL ] fragdepth.write.uniform_conditional_write: Depth buffer is required
+[ 7: FAIL ] fragdepth.write.dynamic_conditional_write: Depth buffer is required
+[ 8: FAIL ] fragdepth.write.uniform_loop_write: Depth buffer is required
+[ 9: FAIL ] fragdepth.write.write_in_function: Depth buffer is required
+[ 10: FAIL ] fragdepth.compare.no_write: Depth buffer is required
+[ 11: FAIL ] fragdepth.compare.const: Depth buffer is required
+[ 12: FAIL ] fragdepth.compare.uniform: Depth buffer is required
+[ 13: FAIL ] fragdepth.compare.dynamic: Depth buffer is required
+[ 14: FAIL ] fragdepth.compare.fragcoord_z: Depth buffer is required
+[ 15: FAIL ] fragdepth.compare.uniform_conditional_write: Depth buffer is required
+[ 16: FAIL ] fragdepth.compare.dynamic_conditional_write: Depth buffer is required
+[ 17: FAIL ] fragdepth.compare.uniform_loop_write: Depth buffer is required
+[ 18: FAIL ] fragdepth.compare.write_in_function: Depth buffer is required
+[ 19: PASS ] fragdepth.compare.write_in_function: successfullyParsed is true
+[ FAIL ] 18 failures reported
 

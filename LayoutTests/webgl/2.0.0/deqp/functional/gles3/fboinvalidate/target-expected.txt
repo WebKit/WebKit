@@ -1,5 +1,33 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fboinvalidate/target.html
-[ PASS ] All tests passed
+[ 1: FAIL ] invalidate.target.framebuffer_framebuffer_color: gl.createProgram()
+[ 2: FAIL ] invalidate.target.framebuffer_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 3: FAIL ] invalidate.target.framebuffer_framebuffer_all: gl.createProgram()
+[ 4: FAIL ] invalidate.target.framebuffer_read_framebuffer_color: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 5: FAIL ] invalidate.target.framebuffer_read_framebuffer_depth_stencil: gl.createProgram()
+[ 6: FAIL ] invalidate.target.framebuffer_read_framebuffer_all: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 7: FAIL ] invalidate.target.framebuffer_draw_framebuffer_color: gl.createProgram()
+[ 8: FAIL ] invalidate.target.framebuffer_draw_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 9: FAIL ] invalidate.target.framebuffer_draw_framebuffer_all: gl.createProgram()
+[ 10: FAIL ] invalidate.target.read_framebuffer_framebuffer_color: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 11: FAIL ] invalidate.target.read_framebuffer_framebuffer_depth_stencil: gl.createProgram()
+[ 12: FAIL ] invalidate.target.read_framebuffer_framebuffer_all: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 13: FAIL ] invalidate.target.read_framebuffer_read_framebuffer_color: gl.createProgram()
+[ 14: FAIL ] invalidate.target.read_framebuffer_read_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 15: FAIL ] invalidate.target.read_framebuffer_read_framebuffer_all: gl.createProgram()
+[ 16: FAIL ] invalidate.target.read_framebuffer_draw_framebuffer_color: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 17: FAIL ] invalidate.target.read_framebuffer_draw_framebuffer_depth_stencil: gl.createProgram()
+[ 18: FAIL ] invalidate.target.read_framebuffer_draw_framebuffer_all: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 19: FAIL ] invalidate.target.draw_framebuffer_framebuffer_color: gl.createProgram()
+[ 20: FAIL ] invalidate.target.draw_framebuffer_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 21: FAIL ] invalidate.target.draw_framebuffer_framebuffer_all: gl.createProgram()
+[ 22: FAIL ] invalidate.target.draw_framebuffer_read_framebuffer_color: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 23: FAIL ] invalidate.target.draw_framebuffer_read_framebuffer_depth_stencil: gl.createProgram()
+[ 24: FAIL ] invalidate.target.draw_framebuffer_read_framebuffer_all: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 25: FAIL ] invalidate.target.draw_framebuffer_draw_framebuffer_color: gl.createProgram()
+[ 26: FAIL ] invalidate.target.draw_framebuffer_draw_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 27: FAIL ] invalidate.target.draw_framebuffer_draw_framebuffer_all: gl.createProgram()
+[ 28: PASS ] successfullyParsed is true
+[ FAIL ] 27 failures reported
 

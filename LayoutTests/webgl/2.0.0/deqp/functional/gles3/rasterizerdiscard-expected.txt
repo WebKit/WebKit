@@ -1,5 +1,57 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/rasterizerdiscard.html
-[ PASS ] All tests passed
+[ 1: PASS ] rasterizer_discard.basic.write_depth_points: Passed
+[ 2: PASS ] rasterizer_discard.basic.write_depth_lines: Passed
+[ 3: PASS ] rasterizer_discard.basic.write_depth_line_strip: Passed
+[ 4: PASS ] rasterizer_discard.basic.write_depth_line_loop: Passed
+[ 5: PASS ] rasterizer_discard.basic.write_depth_triangles: Passed
+[ 6: PASS ] rasterizer_discard.basic.write_depth_triangle_strip: Passed
+[ 7: PASS ] rasterizer_discard.basic.write_depth_triangle_fan: Passed
+[ 8: PASS ] rasterizer_discard.basic.write_stencil_points: Passed
+[ 9: PASS ] rasterizer_discard.basic.write_stencil_lines: Passed
+[ 10: PASS ] rasterizer_discard.basic.write_stencil_line_strip: Passed
+[ 11: PASS ] rasterizer_discard.basic.write_stencil_line_loop: Passed
+[ 12: PASS ] rasterizer_discard.basic.write_stencil_triangles: Passed
+[ 13: PASS ] rasterizer_discard.basic.write_stencil_triangle_strip: Passed
+[ 14: PASS ] rasterizer_discard.basic.write_stencil_triangle_fan: Passed
+[ 15: PASS ] rasterizer_discard.basic.clear_color: Passed
+[ 16: PASS ] rasterizer_discard.basic.clear_depth: Passed
+[ 17: PASS ] rasterizer_discard.basic.clear_stencil: Passed
+[ 18: PASS ] rasterizer_discard.scissor.write_depth_points: Passed
+[ 19: PASS ] rasterizer_discard.scissor.write_depth_lines: Passed
+[ 20: PASS ] rasterizer_discard.scissor.write_depth_line_strip: Passed
+[ 21: PASS ] rasterizer_discard.scissor.write_depth_line_loop: Passed
+[ 22: PASS ] rasterizer_discard.scissor.write_depth_triangles: Passed
+[ 23: PASS ] rasterizer_discard.scissor.write_depth_triangle_strip: Passed
+[ 24: PASS ] rasterizer_discard.scissor.write_depth_triangle_fan: Passed
+[ 25: PASS ] rasterizer_discard.scissor.write_stencil_points: Passed
+[ 26: PASS ] rasterizer_discard.scissor.write_stencil_lines: Passed
+[ 27: PASS ] rasterizer_discard.scissor.write_stencil_line_strip: Passed
+[ 28: PASS ] rasterizer_discard.scissor.write_stencil_line_loop: Passed
+[ 29: PASS ] rasterizer_discard.scissor.write_stencil_triangles: Passed
+[ 30: PASS ] rasterizer_discard.scissor.write_stencil_triangle_strip: Passed
+[ 31: PASS ] rasterizer_discard.scissor.write_stencil_triangle_fan: Passed
+[ 32: PASS ] rasterizer_discard.scissor.clear_color: Passed
+[ 33: PASS ] rasterizer_discard.scissor.clear_depth: Passed
+[ 34: PASS ] rasterizer_discard.scissor.clear_stencil: Passed
+[ 35: FAIL ] rasterizer_discard.fbo.write_depth_points: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 36: FAIL ] rasterizer_discard.fbo.write_depth_lines: gl.createProgram()
+[ 37: FAIL ] rasterizer_discard.fbo.write_depth_line_strip: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 38: FAIL ] rasterizer_discard.fbo.write_depth_line_loop: gl.createProgram()
+[ 39: FAIL ] rasterizer_discard.fbo.write_depth_triangles: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 40: FAIL ] rasterizer_discard.fbo.write_depth_triangle_strip: gl.createProgram()
+[ 41: FAIL ] rasterizer_discard.fbo.write_depth_triangle_fan: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 42: FAIL ] rasterizer_discard.fbo.write_stencil_points: gl.createProgram()
+[ 43: FAIL ] rasterizer_discard.fbo.write_stencil_lines: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 44: FAIL ] rasterizer_discard.fbo.write_stencil_line_strip: gl.createProgram()
+[ 45: FAIL ] rasterizer_discard.fbo.write_stencil_line_loop: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 46: FAIL ] rasterizer_discard.fbo.write_stencil_triangles: gl.createProgram()
+[ 47: FAIL ] rasterizer_discard.fbo.write_stencil_triangle_strip: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 48: FAIL ] rasterizer_discard.fbo.write_stencil_triangle_fan: gl.createProgram()
+[ 49: FAIL ] rasterizer_discard.fbo.clear_color: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 50: FAIL ] rasterizer_discard.fbo.clear_depth: gl.createProgram()
+[ 51: FAIL ] rasterizer_discard.fbo.clear_stencil: Failed to create framebuffer object: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 52: PASS ] rasterizer_discard.fbo.clear_stencil: successfullyParsed is true
+[ FAIL ] 17 failures reported
 

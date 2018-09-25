@@ -1,5 +1,30 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/inversesqrt.html
-[ PASS ] All tests passed
+[ 1: FAIL ] precision.inversesqrt.lowp_vertex.scalar: bindBuffer
+[ 2: FAIL ] precision.inversesqrt.lowp_vertex.vec2: bindBuffer
+[ 3: FAIL ] precision.inversesqrt.lowp_vertex.vec3: bindBuffer
+[ 4: FAIL ] precision.inversesqrt.lowp_vertex.vec4: bindBuffer
+[ 5: FAIL ] precision.inversesqrt.lowp_fragment.scalar: 11603/16404 inputs failed.
+[ 6: FAIL ] precision.inversesqrt.lowp_fragment.vec2: 15002/16404 inputs failed.
+[ 7: FAIL ] precision.inversesqrt.lowp_fragment.vec3: 15996/16404 inputs failed.
+[ 8: FAIL ] precision.inversesqrt.lowp_fragment.vec4: 16247/16404 inputs failed.
+[ 9: FAIL ] precision.inversesqrt.mediump_vertex.scalar: bindBuffer
+[ 10: FAIL ] precision.inversesqrt.mediump_vertex.vec2: bindBuffer
+[ 11: FAIL ] precision.inversesqrt.mediump_vertex.vec3: bindBuffer
+[ 12: FAIL ] precision.inversesqrt.mediump_vertex.vec4: bindBuffer
+[ 13: FAIL ] precision.inversesqrt.mediump_fragment.scalar: 11675/16404 inputs failed.
+[ 14: FAIL ] precision.inversesqrt.mediump_fragment.vec2: 15062/16404 inputs failed.
+[ 15: FAIL ] precision.inversesqrt.mediump_fragment.vec3: 16014/16404 inputs failed.
+[ 16: FAIL ] precision.inversesqrt.mediump_fragment.vec4: 16267/16404 inputs failed.
+[ 17: FAIL ] precision.inversesqrt.highp_vertex.scalar: bindBuffer
+[ 18: FAIL ] precision.inversesqrt.highp_vertex.vec2: bindBuffer
+[ 19: FAIL ] precision.inversesqrt.highp_vertex.vec3: bindBuffer
+[ 20: FAIL ] precision.inversesqrt.highp_vertex.vec4: bindBuffer
+[ 21: FAIL ] precision.inversesqrt.highp_fragment.scalar: 11813/16404 inputs failed.
+[ 22: FAIL ] precision.inversesqrt.highp_fragment.vec2: 15130/16404 inputs failed.
+[ 23: FAIL ] precision.inversesqrt.highp_fragment.vec3: 16044/16404 inputs failed.
+[ 24: FAIL ] precision.inversesqrt.highp_fragment.vec4: 16279/16404 inputs failed.
+[ 25: PASS ] precision.inversesqrt.highp_fragment.vec4: successfullyParsed is true
+[ FAIL ] 24 failures reported
 

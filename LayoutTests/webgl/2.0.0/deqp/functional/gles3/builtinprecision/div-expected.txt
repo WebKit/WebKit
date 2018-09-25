@@ -1,5 +1,30 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/div.html
-[ PASS ] All tests passed
+[ 1: FAIL ] precision.div.lowp_vertex.scalar: bindBuffer
+[ 2: FAIL ] precision.div.lowp_vertex.vec2: bindBuffer
+[ 3: FAIL ] precision.div.lowp_vertex.vec3: bindBuffer
+[ 4: FAIL ] precision.div.lowp_vertex.vec4: bindBuffer
+[ 5: FAIL ] precision.div.lowp_fragment.scalar: 436/16784 inputs failed.
+[ 6: FAIL ] precision.div.lowp_fragment.vec2: 819/16784 inputs failed.
+[ 7: FAIL ] precision.div.lowp_fragment.vec3: 1181/16784 inputs failed.
+[ 8: FAIL ] precision.div.lowp_fragment.vec4: 1570/16784 inputs failed.
+[ 9: FAIL ] precision.div.mediump_vertex.scalar: bindBuffer
+[ 10: FAIL ] precision.div.mediump_vertex.vec2: bindBuffer
+[ 11: FAIL ] precision.div.mediump_vertex.vec3: bindBuffer
+[ 12: FAIL ] precision.div.mediump_vertex.vec4: bindBuffer
+[ 13: FAIL ] precision.div.mediump_fragment.scalar: 14411/16784 inputs failed.
+[ 14: FAIL ] precision.div.mediump_fragment.vec2: 16284/16784 inputs failed.
+[ 15: FAIL ] precision.div.mediump_fragment.vec3: 16499/16784 inputs failed.
+[ 16: FAIL ] precision.div.mediump_fragment.vec4: 16546/16784 inputs failed.
+[ 17: FAIL ] precision.div.highp_vertex.scalar: bindBuffer
+[ 18: FAIL ] precision.div.highp_vertex.vec2: bindBuffer
+[ 19: FAIL ] precision.div.highp_vertex.vec3: bindBuffer
+[ 20: FAIL ] precision.div.highp_vertex.vec4: bindBuffer
+[ 21: FAIL ] precision.div.highp_fragment.scalar: 15582/16784 inputs failed.
+[ 22: FAIL ] precision.div.highp_fragment.vec2: 16545/16784 inputs failed.
+[ 23: FAIL ] precision.div.highp_fragment.vec3: 16600/16784 inputs failed.
+[ 24: FAIL ] precision.div.highp_fragment.vec4: 16606/16784 inputs failed.
+[ 25: PASS ] precision.div.highp_fragment.vec4: successfullyParsed is true
+[ FAIL ] 24 failures reported
 

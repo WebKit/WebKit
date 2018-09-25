@@ -1,5 +1,30 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage2d_empty_tex.html
-[ PASS ] All tests passed
+[ 1: PASS ] specification.texsubimage2d_empty_tex.alpha_unsigned_byte_2d: Passed
+[ 2: PASS ] specification.texsubimage2d_empty_tex.alpha_unsigned_byte_cube: Passed
+[ 3: FAIL ] specification.texsubimage2d_empty_tex.luminance_unsigned_byte_2d: Image comparison failed
+[ 4: FAIL ] specification.texsubimage2d_empty_tex.luminance_unsigned_byte_2d: Verification failed
+[ 5: FAIL ] specification.texsubimage2d_empty_tex.luminance_unsigned_byte_cube: Image comparison failed
+[ 6: FAIL ] specification.texsubimage2d_empty_tex.luminance_unsigned_byte_cube: Verification failed
+[ 7: FAIL ] specification.texsubimage2d_empty_tex.luminance_alpha_unsigned_byte_2d: Image comparison failed
+[ 8: FAIL ] specification.texsubimage2d_empty_tex.luminance_alpha_unsigned_byte_2d: Verification failed
+[ 9: FAIL ] specification.texsubimage2d_empty_tex.luminance_alpha_unsigned_byte_cube: Image comparison failed
+[ 10: FAIL ] specification.texsubimage2d_empty_tex.luminance_alpha_unsigned_byte_cube: Verification failed
+[ 11: PASS ] specification.texsubimage2d_empty_tex.rgb_unsigned_short_5_6_5_2d: Passed
+[ 12: PASS ] specification.texsubimage2d_empty_tex.rgb_unsigned_short_5_6_5_cube: Passed
+[ 13: PASS ] specification.texsubimage2d_empty_tex.rgb_unsigned_byte_2d: Passed
+[ 14: PASS ] specification.texsubimage2d_empty_tex.rgb_unsigned_byte_cube: Passed
+[ 15: FAIL ] specification.texsubimage2d_empty_tex.rgba_unsigned_short_4_4_4_4_2d: Image comparison failed
+[ 16: FAIL ] specification.texsubimage2d_empty_tex.rgba_unsigned_short_4_4_4_4_2d: Verification failed
+[ 17: FAIL ] specification.texsubimage2d_empty_tex.rgba_unsigned_short_4_4_4_4_cube: Image comparison failed
+[ 18: FAIL ] specification.texsubimage2d_empty_tex.rgba_unsigned_short_4_4_4_4_cube: Verification failed
+[ 19: PASS ] specification.texsubimage2d_empty_tex.rgba_unsigned_short_5_5_5_1_2d: Passed
+[ 20: PASS ] specification.texsubimage2d_empty_tex.rgba_unsigned_short_5_5_5_1_cube: Passed
+[ 21: FAIL ] specification.texsubimage2d_empty_tex.rgba_unsigned_byte_2d: Image comparison failed
+[ 22: FAIL ] specification.texsubimage2d_empty_tex.rgba_unsigned_byte_2d: Verification failed
+[ 23: FAIL ] specification.texsubimage2d_empty_tex.rgba_unsigned_byte_cube: Image comparison failed
+[ 24: FAIL ] specification.texsubimage2d_empty_tex.rgba_unsigned_byte_cube: Verification failed
+[ 25: PASS ] specification.texsubimage2d_empty_tex.rgba_unsigned_byte_cube: successfullyParsed is true
+[ FAIL ] 16 failures reported
 

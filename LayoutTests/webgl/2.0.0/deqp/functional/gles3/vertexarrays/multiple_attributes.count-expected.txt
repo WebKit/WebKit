@@ -1,5 +1,13 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/vertexarrays/multiple_attributes.count.html
-[ PASS ] All tests passed
+[ 1: FAIL ] vertex_arrays.multiple_attributes.attribute_count.2: Could not map pixel format:[object Object]
+[ 2: FAIL ] vertex_arrays.multiple_attributes.attribute_count.3: Could not map pixel format:[object Object]
+[ 3: FAIL ] vertex_arrays.multiple_attributes.attribute_count.4: Could not map pixel format:[object Object]
+[ 4: FAIL ] vertex_arrays.multiple_attributes.attribute_count.5: Could not map pixel format:[object Object]
+[ 5: FAIL ] vertex_arrays.multiple_attributes.attribute_count.6: Could not map pixel format:[object Object]
+[ 6: FAIL ] vertex_arrays.multiple_attributes.attribute_count.7: Could not map pixel format:[object Object]
+[ 7: FAIL ] vertex_arrays.multiple_attributes.attribute_count.8: Could not map pixel format:[object Object]
+[ 8: PASS ] vertex_arrays.multiple_attributes.attribute_count.8: successfullyParsed is true
+[ FAIL ] 7 failures reported
 

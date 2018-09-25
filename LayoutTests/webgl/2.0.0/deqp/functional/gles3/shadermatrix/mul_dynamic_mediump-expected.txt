@@ -1,5 +1,5 @@
-This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 92601)
+FAIL: Timed out waiting for notifyDone to be called
 
-Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/shadermatrix/mul_dynamic_mediump.html
-[ PASS ] All tests passed
-
+#EOF
+#EOF

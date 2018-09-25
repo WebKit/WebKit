@@ -1,5 +1,30 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_2d_01.html
-[ PASS ] All tests passed
+[ 1: PASS ] specification.texsubimage2d_pbo.rgba32i_2d: Passed
+[ 2: FAIL ] specification.texsubimage2d_pbo.rgba16f_2d: gl.createProgram()
+[ 3: FAIL ] specification.texsubimage2d_pbo.rgba16ui_2d: gl.createProgram()
+[ 4: FAIL ] specification.texsubimage2d_pbo.rgba8i_2d: gl.createProgram()
+[ 5: FAIL ] specification.texsubimage2d_pbo.srgb8_alpha8_2d: gl.createProgram()
+[ 6: FAIL ] specification.texsubimage2d_pbo.rgb10_a2ui_2d: gl.createProgram()
+[ 7: FAIL ] specification.texsubimage2d_pbo.rgb5_a1_2d: gl.createProgram()
+[ 8: FAIL ] specification.texsubimage2d_pbo.rgb8_2d: gl.createProgram()
+[ 9: FAIL ] specification.texsubimage2d_pbo.r11f_g11f_b10f_2d: gl.createProgram()
+[ 10: FAIL ] specification.texsubimage2d_pbo.rgb32i_2d: gl.createProgram()
+[ 11: FAIL ] specification.texsubimage2d_pbo.rgb16f_2d: gl.createProgram()
+[ 12: FAIL ] specification.texsubimage2d_pbo.rgb16ui_2d: gl.createProgram()
+[ 13: FAIL ] specification.texsubimage2d_pbo.rgb8i_2d: gl.createProgram()
+[ 14: FAIL ] specification.texsubimage2d_pbo.srgb8_2d: gl.createProgram()
+[ 15: FAIL ] specification.texsubimage2d_pbo.rg32f_2d: gl.createProgram()
+[ 16: FAIL ] specification.texsubimage2d_pbo.rg32ui_2d: gl.createProgram()
+[ 17: FAIL ] specification.texsubimage2d_pbo.rg16i_2d: gl.createProgram()
+[ 18: FAIL ] specification.texsubimage2d_pbo.rg8_2d: gl.createProgram()
+[ 19: FAIL ] specification.texsubimage2d_pbo.rg8ui_2d: gl.createProgram()
+[ 20: FAIL ] specification.texsubimage2d_pbo.r32f_2d: gl.createProgram()
+[ 21: FAIL ] specification.texsubimage2d_pbo.r32ui_2d: gl.createProgram()
+[ 22: FAIL ] specification.texsubimage2d_pbo.r16i_2d: gl.createProgram()
+[ 23: FAIL ] specification.texsubimage2d_pbo.r8_2d: gl.createProgram()
+[ 24: FAIL ] specification.texsubimage2d_pbo.r8ui_2d: gl.createProgram()
+[ 25: PASS ] successfullyParsed is true
+[ FAIL ] 23 failures reported
 

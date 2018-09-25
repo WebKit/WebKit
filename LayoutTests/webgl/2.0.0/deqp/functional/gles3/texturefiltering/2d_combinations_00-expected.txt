@@ -1,5 +1,51 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturefiltering/2d_combinations_00.html
-[ PASS ] All tests passed
+[ 1: FAIL ] filtering.2d_combinations.nearest_nearest_clamp_clamp: gl.createProgram()
+[ 2: FAIL ] : gl.createProgram()
+[ 3: FAIL ] : gl.createProgram()
+[ 4: PASS ] Verified
+[ 5: FAIL ] filtering.2d_combinations.nearest_nearest_clamp_repeat: Setting pixel store failed
+[ 6: FAIL ] filtering.2d_combinations.nearest_nearest_clamp_mirror: gl.createProgram()
+[ 7: FAIL ] : gl.createProgram()
+[ 8: FAIL ] : gl.createProgram()
+[ 9: PASS ] Verified
+[ 10: FAIL ] filtering.2d_combinations.nearest_nearest_repeat_clamp: Setting pixel store failed
+[ 11: FAIL ] filtering.2d_combinations.nearest_nearest_repeat_repeat: gl.createProgram()
+[ 12: FAIL ] : gl.createProgram()
+[ 13: FAIL ] : gl.createProgram()
+[ 14: PASS ] Verified
+[ 15: FAIL ] filtering.2d_combinations.nearest_nearest_repeat_mirror: Setting pixel store failed
+[ 16: FAIL ] filtering.2d_combinations.nearest_nearest_mirror_clamp: gl.createProgram()
+[ 17: FAIL ] : gl.createProgram()
+[ 18: FAIL ] : gl.createProgram()
+[ 19: PASS ] Verified
+[ 20: FAIL ] filtering.2d_combinations.nearest_nearest_mirror_repeat: Setting pixel store failed
+[ 21: FAIL ] filtering.2d_combinations.nearest_nearest_mirror_mirror: gl.createProgram()
+[ 22: FAIL ] : gl.createProgram()
+[ 23: FAIL ] : gl.createProgram()
+[ 24: PASS ] Verified
+[ 25: FAIL ] filtering.2d_combinations.nearest_linear_clamp_clamp: Setting pixel store failed
+[ 26: FAIL ] filtering.2d_combinations.nearest_linear_clamp_repeat: gl.createProgram()
+[ 27: FAIL ] : gl.createProgram()
+[ 28: FAIL ] : gl.createProgram()
+[ 29: PASS ] Verified
+[ 30: FAIL ] filtering.2d_combinations.nearest_linear_clamp_mirror: Setting pixel store failed
+[ 31: FAIL ] filtering.2d_combinations.nearest_linear_repeat_clamp: gl.createProgram()
+[ 32: FAIL ] : gl.createProgram()
+[ 33: FAIL ] : gl.createProgram()
+[ 34: PASS ] Verified
+[ 35: FAIL ] filtering.2d_combinations.nearest_linear_repeat_repeat: Setting pixel store failed
+[ 36: FAIL ] filtering.2d_combinations.nearest_linear_repeat_mirror: gl.createProgram()
+[ 37: FAIL ] : gl.createProgram()
+[ 38: FAIL ] : gl.createProgram()
+[ 39: PASS ] Verified
+[ 40: FAIL ] filtering.2d_combinations.nearest_linear_mirror_clamp: Setting pixel store failed
+[ 41: FAIL ] filtering.2d_combinations.nearest_linear_mirror_repeat: gl.createProgram()
+[ 42: FAIL ] : gl.createProgram()
+[ 43: FAIL ] : gl.createProgram()
+[ 44: PASS ] Verified
+[ 45: FAIL ] filtering.2d_combinations.nearest_linear_mirror_mirror: Setting pixel store failed
+[ 46: PASS ] successfullyParsed is true
+[ FAIL ] 36 failures reported
 

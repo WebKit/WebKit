@@ -1,5 +1,26 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/vertexarrays/single_attribute.usage.stream_draw.html
-[ PASS ] All tests passed
+[ 1: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride0_float_quads1: Could not map pixel format:[object Object]
+[ 2: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride8_float_quads1: Could not map pixel format:[object Object]
+[ 3: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride32_float_quads1: Could not map pixel format:[object Object]
+[ 4: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride0_float_quads256: Could not map pixel format:[object Object]
+[ 5: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride8_float_quads256: Could not map pixel format:[object Object]
+[ 6: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride32_float_quads256: Could not map pixel format:[object Object]
+[ 7: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride0_short_quads1: Could not map pixel format:[object Object]
+[ 8: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride4_short_quads1: Could not map pixel format:[object Object]
+[ 9: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride32_short_quads1: Could not map pixel format:[object Object]
+[ 10: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride0_short_quads256: Could not map pixel format:[object Object]
+[ 11: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride4_short_quads256: Could not map pixel format:[object Object]
+[ 12: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride32_short_quads256: Could not map pixel format:[object Object]
+[ 13: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride0_byte_quads1: Could not map pixel format:[object Object]
+[ 14: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride2_byte_quads1: Could not map pixel format:[object Object]
+[ 15: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride17_byte_quads1: Could not map pixel format:[object Object]
+[ 16: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride32_byte_quads1: Could not map pixel format:[object Object]
+[ 17: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride0_byte_quads256: Could not map pixel format:[object Object]
+[ 18: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride2_byte_quads256: Could not map pixel format:[object Object]
+[ 19: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride17_byte_quads256: Could not map pixel format:[object Object]
+[ 20: FAIL ] vertex_arrays.single_attribute.usages.stream_draw.stride32_byte_quads256: Could not map pixel format:[object Object]
+[ 21: PASS ] vertex_arrays.single_attribute.usages.stream_draw.stride32_byte_quads256: successfullyParsed is true
+[ FAIL ] 20 failures reported
 

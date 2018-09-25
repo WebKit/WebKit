@@ -1,5 +1,24 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturefiltering/cube_combinations_01.html
-[ PASS ] All tests passed
+[ 1: FAIL ] filtering.cube_combinations.linear_nearest_clamp_clamp: gl.createProgram()
+[ 2: FAIL ] filtering.cube_combinations.linear_nearest_clamp_repeat: gl.createProgram()
+[ 3: FAIL ] filtering.cube_combinations.linear_nearest_clamp_mirror: gl.createProgram()
+[ 4: FAIL ] filtering.cube_combinations.linear_nearest_repeat_clamp: gl.createProgram()
+[ 5: FAIL ] filtering.cube_combinations.linear_nearest_repeat_repeat: gl.createProgram()
+[ 6: FAIL ] filtering.cube_combinations.linear_nearest_repeat_mirror: gl.createProgram()
+[ 7: FAIL ] filtering.cube_combinations.linear_nearest_mirror_clamp: gl.createProgram()
+[ 8: FAIL ] filtering.cube_combinations.linear_nearest_mirror_repeat: gl.createProgram()
+[ 9: FAIL ] filtering.cube_combinations.linear_nearest_mirror_mirror: gl.createProgram()
+[ 10: FAIL ] filtering.cube_combinations.linear_linear_clamp_clamp: gl.createProgram()
+[ 11: FAIL ] filtering.cube_combinations.linear_linear_clamp_repeat: gl.createProgram()
+[ 12: FAIL ] filtering.cube_combinations.linear_linear_clamp_mirror: gl.createProgram()
+[ 13: FAIL ] filtering.cube_combinations.linear_linear_repeat_clamp: gl.createProgram()
+[ 14: FAIL ] filtering.cube_combinations.linear_linear_repeat_repeat: gl.createProgram()
+[ 15: FAIL ] filtering.cube_combinations.linear_linear_repeat_mirror: gl.createProgram()
+[ 16: FAIL ] filtering.cube_combinations.linear_linear_mirror_clamp: gl.createProgram()
+[ 17: FAIL ] filtering.cube_combinations.linear_linear_mirror_repeat: gl.createProgram()
+[ 18: FAIL ] filtering.cube_combinations.linear_linear_mirror_mirror: gl.createProgram()
+[ 19: PASS ] successfullyParsed is true
+[ FAIL ] 18 failures reported
 

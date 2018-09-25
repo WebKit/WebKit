@@ -1,5 +1,42 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/vertexarrays/single_attribute.output_type.unsigned_byte.html
-[ PASS ] All tests passed
+[ 1: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_vec2_quads1: Could not map pixel format:[object Object]
+[ 2: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_vec2_quads256: Could not map pixel format:[object Object]
+[ 3: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_vec2_quads1: Could not map pixel format:[object Object]
+[ 4: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_vec2_quads256: Could not map pixel format:[object Object]
+[ 5: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_vec2_quads1: Could not map pixel format:[object Object]
+[ 6: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_vec2_quads256: Could not map pixel format:[object Object]
+[ 7: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_vec3_quads1: Could not map pixel format:[object Object]
+[ 8: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_vec3_quads256: Could not map pixel format:[object Object]
+[ 9: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_vec3_quads1: Could not map pixel format:[object Object]
+[ 10: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_vec3_quads256: Could not map pixel format:[object Object]
+[ 11: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_vec3_quads1: Could not map pixel format:[object Object]
+[ 12: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_vec3_quads256: Could not map pixel format:[object Object]
+[ 13: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_vec4_quads1: Could not map pixel format:[object Object]
+[ 14: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_vec4_quads256: Could not map pixel format:[object Object]
+[ 15: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_vec4_quads1: Could not map pixel format:[object Object]
+[ 16: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_vec4_quads256: Could not map pixel format:[object Object]
+[ 17: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_vec4_quads1: Could not map pixel format:[object Object]
+[ 18: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_vec4_quads256: Could not map pixel format:[object Object]
+[ 19: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_uvec2_quads1: Could not map pixel format:[object Object]
+[ 20: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_uvec2_quads256: Could not map pixel format:[object Object]
+[ 21: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_uvec2_quads1: Could not map pixel format:[object Object]
+[ 22: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_uvec2_quads256: Could not map pixel format:[object Object]
+[ 23: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_uvec2_quads1: Could not map pixel format:[object Object]
+[ 24: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_uvec2_quads256: Could not map pixel format:[object Object]
+[ 25: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_uvec3_quads1: Could not map pixel format:[object Object]
+[ 26: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_uvec3_quads256: Could not map pixel format:[object Object]
+[ 27: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_uvec3_quads1: Could not map pixel format:[object Object]
+[ 28: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_uvec3_quads256: Could not map pixel format:[object Object]
+[ 29: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_uvec3_quads1: Could not map pixel format:[object Object]
+[ 30: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_uvec3_quads256: Could not map pixel format:[object Object]
+[ 31: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_uvec4_quads1: Could not map pixel format:[object Object]
+[ 32: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components2_uvec4_quads256: Could not map pixel format:[object Object]
+[ 33: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_uvec4_quads1: Could not map pixel format:[object Object]
+[ 34: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components3_uvec4_quads256: Could not map pixel format:[object Object]
+[ 35: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_uvec4_quads1: Could not map pixel format:[object Object]
+[ 36: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_uvec4_quads256: Could not map pixel format:[object Object]
+[ 37: PASS ] vertex_arrays.single_attribute.output_types.unsigned_byte.components4_uvec4_quads256: successfullyParsed is true
+[ FAIL ] 36 failures reported
 

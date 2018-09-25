@@ -1,5 +1,30 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/atan2.html
-[ PASS ] All tests passed
+[ 1: FAIL ] precision.atan2.lowp_vertex.scalar: bindBuffer
+[ 2: FAIL ] precision.atan2.lowp_vertex.vec2: bindBuffer
+[ 3: FAIL ] precision.atan2.lowp_vertex.vec3: bindBuffer
+[ 4: FAIL ] precision.atan2.lowp_vertex.vec4: bindBuffer
+[ 5: FAIL ] precision.atan2.lowp_fragment.scalar: 15128/16784 inputs failed.
+[ 6: FAIL ] precision.atan2.lowp_fragment.vec2: 16475/16784 inputs failed.
+[ 7: FAIL ] precision.atan2.lowp_fragment.vec3: 16584/16784 inputs failed.
+[ 8: FAIL ] precision.atan2.lowp_fragment.vec4: 16606/16784 inputs failed.
+[ 9: FAIL ] precision.atan2.mediump_vertex.scalar: bindBuffer
+[ 10: FAIL ] precision.atan2.mediump_vertex.vec2: bindBuffer
+[ 11: FAIL ] precision.atan2.mediump_vertex.vec3: bindBuffer
+[ 12: FAIL ] precision.atan2.mediump_vertex.vec4: bindBuffer
+[ 13: FAIL ] precision.atan2.mediump_fragment.scalar: 15169/16784 inputs failed.
+[ 14: FAIL ] precision.atan2.mediump_fragment.vec2: 16512/16784 inputs failed.
+[ 15: FAIL ] precision.atan2.mediump_fragment.vec3: 16624/16784 inputs failed.
+[ 16: FAIL ] precision.atan2.mediump_fragment.vec4: 16647/16784 inputs failed.
+[ 17: FAIL ] precision.atan2.highp_vertex.scalar: bindBuffer
+[ 18: FAIL ] precision.atan2.highp_vertex.vec2: bindBuffer
+[ 19: FAIL ] precision.atan2.highp_vertex.vec3: bindBuffer
+[ 20: FAIL ] precision.atan2.highp_vertex.vec4: bindBuffer
+[ 21: FAIL ] precision.atan2.highp_fragment.scalar: 16201/16784 inputs failed.
+[ 22: FAIL ] precision.atan2.highp_fragment.vec2: 16703/16784 inputs failed.
+[ 23: FAIL ] precision.atan2.highp_fragment.vec3: 16718/16784 inputs failed.
+[ 24: FAIL ] precision.atan2.highp_fragment.vec4: 16720/16784 inputs failed.
+[ 25: PASS ] precision.atan2.highp_fragment.vec4: successfullyParsed is true
+[ FAIL ] 24 failures reported
 

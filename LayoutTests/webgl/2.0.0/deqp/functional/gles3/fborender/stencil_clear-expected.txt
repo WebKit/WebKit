@@ -1,5 +1,9 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fborender/stencil_clear.html
-[ PASS ] All tests passed
+[ 1: FAIL ] render.stencil_clear.tex2d_rgba8_stencil_rbo_depth32f_stencil8: FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 2: FAIL ] render.stencil_clear.tex2d_rgba8_stencil_rbo_depth24_stencil8: gl.createProgram()
+[ 3: FAIL ] render.stencil_clear.tex2d_rgba8_stencil_rbo_stencil_index8: Image comparison failed
+[ 4: PASS ] successfullyParsed is true
+[ FAIL ] 3 failures reported
 

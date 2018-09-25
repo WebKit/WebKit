@@ -1,5 +1,20 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/random_teximage2d_2d.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.random_teximage2d.2d.rgba32ui: Image comparison failed
+[ 2: FAIL ] specification.random_teximage2d.2d.rgba32ui: Verification failed
+[ 3: FAIL ] specification.random_teximage2d.2d.rgba32ui: Image comparison failed
+[ 4: FAIL ] specification.random_teximage2d.2d.rgba32ui: Verification failed
+[ 5: FAIL ] specification.random_teximage2d.2d.rgb10_a2ui: Image comparison failed
+[ 6: FAIL ] specification.random_teximage2d.2d.rgb10_a2ui: Verification failed
+[ 7: FAIL ] specification.random_teximage2d.2d.rgb10_a2: Image comparison failed
+[ 8: FAIL ] specification.random_teximage2d.2d.rgb10_a2: Verification failed
+[ 9: PASS ] specification.random_teximage2d.2d.r16ui: Passed
+[ 10: PASS ] specification.random_teximage2d.2d.rgb8ui: Passed
+[ 11: PASS ] specification.random_teximage2d.2d.rgb8i: Passed
+[ 12: PASS ] specification.random_teximage2d.2d.rgb32ui: Passed
+[ 13: PASS ] specification.random_teximage2d.2d.rg8ui: Passed
+[ 14: PASS ] specification.random_teximage2d.2d.r32ui: Passed
+[ 15: PASS ] specification.random_teximage2d.2d.r32ui: successfullyParsed is true
+[ FAIL ] 8 failures reported
 

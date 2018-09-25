@@ -1,5 +1,30 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/acos.html
-[ PASS ] All tests passed
+[ 1: FAIL ] precision.acos.lowp_vertex.scalar: bindBuffer
+[ 2: FAIL ] precision.acos.lowp_vertex.vec2: bindBuffer
+[ 3: FAIL ] precision.acos.lowp_vertex.vec3: bindBuffer
+[ 4: FAIL ] precision.acos.lowp_vertex.vec4: bindBuffer
+[ 5: FAIL ] precision.acos.lowp_fragment.scalar: 3958/16404 inputs failed.
+[ 6: FAIL ] precision.acos.lowp_fragment.vec2: 6876/16404 inputs failed.
+[ 7: FAIL ] precision.acos.lowp_fragment.vec3: 9127/16404 inputs failed.
+[ 8: FAIL ] precision.acos.lowp_fragment.vec4: 10827/16404 inputs failed.
+[ 9: FAIL ] precision.acos.mediump_vertex.scalar: bindBuffer
+[ 10: FAIL ] precision.acos.mediump_vertex.vec2: bindBuffer
+[ 11: FAIL ] precision.acos.mediump_vertex.vec3: bindBuffer
+[ 12: FAIL ] precision.acos.mediump_vertex.vec4: bindBuffer
+[ 13: FAIL ] precision.acos.mediump_fragment.scalar: 5870/16404 inputs failed.
+[ 14: FAIL ] precision.acos.mediump_fragment.vec2: 9650/16404 inputs failed.
+[ 15: FAIL ] precision.acos.mediump_fragment.vec3: 12055/16404 inputs failed.
+[ 16: FAIL ] precision.acos.mediump_fragment.vec4: 13596/16404 inputs failed.
+[ 17: FAIL ] precision.acos.highp_vertex.scalar: bindBuffer
+[ 18: FAIL ] precision.acos.highp_vertex.vec2: bindBuffer
+[ 19: FAIL ] precision.acos.highp_vertex.vec3: bindBuffer
+[ 20: FAIL ] precision.acos.highp_vertex.vec4: bindBuffer
+[ 21: FAIL ] precision.acos.highp_fragment.scalar: 6926/16404 inputs failed.
+[ 22: FAIL ] precision.acos.highp_fragment.vec2: 10912/16404 inputs failed.
+[ 23: FAIL ] precision.acos.highp_fragment.vec3: 13251/16404 inputs failed.
+[ 24: FAIL ] precision.acos.highp_fragment.vec4: 14619/16404 inputs failed.
+[ 25: PASS ] precision.acos.highp_fragment.vec4: successfullyParsed is true
+[ FAIL ] 24 failures reported
 

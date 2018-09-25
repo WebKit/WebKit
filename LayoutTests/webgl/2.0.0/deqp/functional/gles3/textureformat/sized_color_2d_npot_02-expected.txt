@@ -1,5 +1,18 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/textureformat/sized_color_2d_npot_02.html
-[ PASS ] All tests passed
+[ 1: PASS ] texture_format.sized.rgba32ui_npot: gl.RGBA32UI gl.TEXTURE_2D
+[ 2: PASS ] texture_format.sized.rgba8_npot: gl.RGBA8 gl.TEXTURE_2D
+[ 3: PASS ] texture_format.sized.rgb10_a2_npot: gl.RGB10_A2 gl.TEXTURE_2D
+[ 4: PASS ] texture_format.sized.rgba8_snorm_npot: gl.RGBA8_SNORM gl.TEXTURE_2D
+[ 5: PASS ] texture_format.sized.rgb32f_npot: gl.RGB32F gl.TEXTURE_2D
+[ 6: PASS ] texture_format.sized.rgb16i_npot: gl.RGB16I gl.TEXTURE_2D
+[ 7: PASS ] texture_format.sized.rgb8ui_npot: gl.RGB8UI gl.TEXTURE_2D
+[ 8: PASS ] texture_format.sized.rg32i_npot: gl.RG32I gl.TEXTURE_2D
+[ 9: PASS ] texture_format.sized.rg16ui_npot: gl.RG16UI gl.TEXTURE_2D
+[ 10: PASS ] texture_format.sized.rg8_snorm_npot: gl.RG8_SNORM gl.TEXTURE_2D
+[ 11: FAIL ] texture_format.sized.r16f_npot: Texture upload failed
+[ 12: PASS ] texture_format.sized.r8i_npot: gl.R8I gl.TEXTURE_2D
+[ 13: PASS ] texture_format.sized.r8i_npot: successfullyParsed is true
+[ FAIL ] 1 failure reported
 

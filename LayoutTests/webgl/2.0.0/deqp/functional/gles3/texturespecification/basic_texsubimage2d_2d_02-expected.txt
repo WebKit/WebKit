@@ -1,5 +1,27 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_texsubimage2d_2d_02.html
-[ PASS ] All tests passed
+[ 1: FAIL ] specification.basic_texsubimage2d.rgba32ui_2d: Image comparison failed
+[ 2: FAIL ] specification.basic_texsubimage2d.rgba32ui_2d: Verification failed
+[ 3: FAIL ] specification.basic_texsubimage2d.rgba16ui_2d: Image comparison failed
+[ 4: FAIL ] specification.basic_texsubimage2d.rgba16ui_2d: Verification failed
+[ 5: FAIL ] specification.basic_texsubimage2d.rgba8ui_2d: Image comparison failed
+[ 6: FAIL ] specification.basic_texsubimage2d.rgba8ui_2d: Verification failed
+[ 7: FAIL ] specification.basic_texsubimage2d.rgb10_a2ui_2d: Image comparison failed
+[ 8: FAIL ] specification.basic_texsubimage2d.rgb10_a2ui_2d: Verification failed
+[ 9: FAIL ] specification.basic_texsubimage2d.rgba8_snorm_2d: Image comparison failed
+[ 10: FAIL ] specification.basic_texsubimage2d.rgba8_snorm_2d: Verification failed
+[ 11: PASS ] specification.basic_texsubimage2d.r11f_g11f_b10f_2d: Passed
+[ 12: PASS ] specification.basic_texsubimage2d.rgb32ui_2d: Passed
+[ 13: PASS ] specification.basic_texsubimage2d.rgb16ui_2d: Passed
+[ 14: PASS ] specification.basic_texsubimage2d.rgb8ui_2d: Passed
+[ 15: PASS ] specification.basic_texsubimage2d.rg32f_2d: Passed
+[ 16: FAIL ] specification.basic_texsubimage2d.rg16f_2d: gl.createProgram()
+[ 17: PASS ] specification.basic_texsubimage2d.rg8_2d: Passed
+[ 18: PASS ] specification.basic_texsubimage2d.rg8_snorm_2d: Passed
+[ 19: PASS ] specification.basic_texsubimage2d.r32ui_2d: Passed
+[ 20: PASS ] specification.basic_texsubimage2d.r16ui_2d: Passed
+[ 21: PASS ] specification.basic_texsubimage2d.r8ui_2d: Passed
+[ 22: PASS ] specification.basic_texsubimage2d.r8ui_2d: successfullyParsed is true
+[ FAIL ] 11 failures reported
 

@@ -1,5 +1,17 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/floatstatequery.html
-[ PASS ] All tests passed
+[ 1: PASS ] floats.depth_range: Passed
+[ 2: PASS ] floats.line_width: Passed
+[ 3: PASS ] floats.polygon_offset_factor: Passed
+[ 4: PASS ] floats.polygon_offset_units: Passed
+[ 5: PASS ] floats.sample_coverage_value: Passed
+[ 6: PASS ] floats.blend_color: Passed
+[ 7: PASS ] floats.color_clear_value: Passed
+[ 8: PASS ] floats.depth_clear_value: Passed
+[ 9: PASS ] floats.max_texture_lod_bias: Passed
+[ 10: FAIL ] floats.aliased_point_size_range:
+[ 11: PASS ] floats.aliased_line_width_range: Passed
+[ 12: PASS ] floats.aliased_line_width_range: successfullyParsed is true
+[ FAIL ] 1 failure reported
 
