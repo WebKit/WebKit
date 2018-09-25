@@ -1,3 +1,14 @@
+2018-09-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Update constraints supported by getDisplayMedia
+        https://bugs.webkit.org/show_bug.cgi?id=189930
+        <rdar://problem/44740305>
+
+        Unreviewed, fix test broken by r236465.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMedia.mm:
+        (TestWebKitAPI::TEST_F):
+
 2018-09-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHSL] Implement semantics

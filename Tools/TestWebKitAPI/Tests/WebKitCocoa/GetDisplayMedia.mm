@@ -152,16 +152,17 @@ public:
 TEST_F(GetDisplayMediaTest, BasicPrompt)
 {
     promptForCapture(@"{ audio: true, video: true }", true);
-    promptForCapture(@"{ audio: true, video: false }", true);
+    promptForCapture(@"{ audio: true, video: false }", false);
     promptForCapture(@"{ audio: false, video: true }", true);
     promptForCapture(@"{ audio: false, video: false }", false);
 }
 
 TEST_F(GetDisplayMediaTest, Constraints)
 {
-    promptForCapture(@"{ video: {width: 640} }", false);
-    promptForCapture(@"{ video: true, audio: { volume: 0.5 } }", false);
-    promptForCapture(@"{ video: {height: 480}, audio: true }", false);
+    promptForCapture(@"{ video: {width: 640} }", true);
+    promptForCapture(@"{ video: true, audio: { volume: 0.5 } }", true);
+    promptForCapture(@"{ video: {height: 480}, audio: true }", true);
+    promptForCapture(@"{ video: {width: { exact: 640} } }", false);
 }
 
 } // namespace TestWebKitAPI
