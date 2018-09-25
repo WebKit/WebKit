@@ -226,7 +226,10 @@ class ObjCHeaderGenerator(ObjCGenerator):
         pairs = []
         for parameter in command.return_parameters:
             pairs.append(join_type_and_name(self.objc_type_for_param(domain, command.command_name, parameter), parameter.parameter_name))
-        return 'void(^)(%s)' % ', '.join(pairs)
+        params = 'void'
+        if pairs:
+            params = ', '.join(pairs)
+        return 'void(^)(%s)' % params
 
     def _generate_event_interfaces(self, domain):
         lines = []

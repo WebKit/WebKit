@@ -1162,18 +1162,18 @@ typedef NS_ENUM(NSInteger, TestProtocolPlatform) {
 
 @protocol TestProtocolNetwork1DomainHandler <NSObject>
 @required
-- (void)loadResource1WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
+- (void)loadResource1WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 @end
 
 @protocol TestProtocolNetwork3DomainHandler <NSObject>
 @required
-- (void)loadResource1WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
-- (void)loadResource2WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
-- (void)loadResource3WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
-- (void)loadResource4WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
-- (void)loadResource5WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
-- (void)loadResource6WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
-- (void)loadResource7WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
+- (void)loadResource1WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
+- (void)loadResource2WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
+- (void)loadResource3WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
+- (void)loadResource4WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
+- (void)loadResource5WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
+- (void)loadResource6WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
+- (void)loadResource7WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 @end
 
 

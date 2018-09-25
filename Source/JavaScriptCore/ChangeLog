@@ -1,3 +1,23 @@
+2018-09-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stricter block syntax in generated ObjC protocol interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=189962
+        <rdar://problem/44648287>
+
+        Reviewed by Brian Burg.
+
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator._callback_block_for_command):
+        If there are no return parameters include "void" in the block signature.
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/domain-availability.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/worker-supported-domains.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        Rebaseline test results.
+
 2018-09-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove AUTHORS and THANKS files which are stale

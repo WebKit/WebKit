@@ -942,7 +942,7 @@ __attribute__((visibility ("default")))
 
 @protocol TestProtocolNetwork1DomainHandler <NSObject>
 @required
-- (void)loadResourceWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
+- (void)loadResourceWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 @end
 
 __attribute__((visibility ("default")))

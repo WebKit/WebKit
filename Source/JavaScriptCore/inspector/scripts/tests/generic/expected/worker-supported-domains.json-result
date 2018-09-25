@@ -906,12 +906,12 @@ typedef NS_ENUM(NSInteger, TestProtocolPlatform) {
 
 @protocol TestProtocolDomainADomainHandler <NSObject>
 @required
-- (void)enableWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
+- (void)enableWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 @end
 
 @protocol TestProtocolDomainBDomainHandler <NSObject>
 @required
-- (void)enableWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
+- (void)enableWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 @end
 
 
