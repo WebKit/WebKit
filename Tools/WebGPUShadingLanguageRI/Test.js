@@ -3107,133 +3107,262 @@ tests.typedefArray = function()
 
 tests.shaderTypes = function()
 {
+    doPrep(`
+        vertex float4 foo() : SV_Position {
+            return float4(0, 1, 2, 3);
+        }`);
+    doPrep(`
+        struct R {
+            float4 x : SV_Position;
+            int4 y : attribute(1);
+        }
+        vertex R foo() {
+            R z;
+            z.x = float4(1, 2, 3, 4);
+            z.y = int4(5, 6, 7, 8);
+            return z;
+        }`);
+    doPrep(`
+        struct R {
+            float4 x : SV_Position;
+            int4 y : attribute(1);
+        }
+        struct S {
+            R r;
+            float3 z : attribute(2);
+        }
+        vertex S foo() {
+            S w;
+            w.r.x = float4(1, 2, 3, 4);
+            w.r.y = int4(5, 6, 7, 8);
+            w.z = float3(9, 10, 11);
+            return w;
+        }`);
+    doPrep(`
+        vertex float4 foo(constant float* buffer : register(b0)) : SV_Position {
+            return float4(*buffer, *buffer, *buffer, *buffer);
+        }`);
+    doPrep(`
+        vertex float4 foo(constant float* buffer : register(b0, space0)) : SV_Position {
+            return float4(*buffer, *buffer, *buffer, *buffer);
+        }`);
+    doPrep(`
+        vertex float4 foo(constant float* buffer : register(b0, space1)) : SV_Position {
+            return float4(*buffer, *buffer, *buffer, *buffer);
+        }`);
+    doPrep(`
+        vertex float4 foo(constant float[] buffer : register(b0)) : SV_Position {
+            return float4(buffer[0], buffer[1], buffer[2], buffer[3]);
+        }`);
+    doPrep(`
+        vertex float4 foo(float[5] buffer : register(b0)) : SV_Position {
+            return float4(buffer[0], buffer[1], buffer[2], buffer[3]);
+        }`);
+    doPrep(`
+        vertex float4 foo(device float* buffer : register(u0)) : SV_Position {
+            return float4(*buffer, *buffer, *buffer, *buffer);
+        }`);
+    doPrep(`
+        vertex float4 foo(device float[] buffer : register(u0)) : SV_Position {
+            return float4(buffer[0], buffer[1], buffer[2], buffer[3]);
+        }`);
+    doPrep(`
+        vertex float4 foo(uint x : SV_InstanceID) : SV_Position {
+            return float4(float(x), float(x), float(x), float(x));
+        }`);
+    doPrep(`
+        fragment float4 foo(bool x : SV_IsFrontFace) : SV_Target0 {
+            return float4(1, 2, 3, 4);
+        }`);
+    doPrep(`
+        fragment float4 foo(int x : specialized) : SV_Target0 {
+            return float4(1, 2, 3, 4);
+        }`);
+    doPrep(`
+        fragment float4 foo(Texture1D<float4> t : register(t0), sampler s : register(s0)) : SV_Target0 {
+            return Sample(t, s, 0.4);
+        }`);
     checkFail(
         () => doPrep(`
-            struct Foo {
-                float4 x;
-            }
-            vertex Foo bar()
-            {
-                Foo result;
-                result.x = float4();
-                return result;
-            }
-            Foo foo() {
-                return bar();
+            vertex void foo() : SV_Position {
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            vertex float bar()
-            {
-                return 4.;
+            vertex float4 foo(float x : PSIZE) : SV_Position {
+                return float4(x, x, x, x);
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            struct Foo {
-                float4 x;
-            }
-            vertex Foo bar(device Foo* x)
-            {
-                return Foo();
+            vertex float4 foo(int x : SV_InstanceID) : SV_Position {
+                return float4(float(x), float(x), float(x), float(x));
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            struct Boo {
-                float4 x;
-            }
-            struct Foo {
-                float4 x;
-                device Boo* y;
-            }
-            vertex Foo bar()
-            {
-                return Foo();
+            vertex float4 foo(float x) : SV_Position {
+                return float4(x, x, x, x);
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            struct Foo {
-                float4 x;
-            }
-            struct Boo {
-                device Foo* y;
-            }
-            vertex Foo bar(Boo b)
-            {
-                return Foo();
+            fragment float4 foo(bool x : SV_IsFrontFace, bool y : SV_IsFrontFace) : SV_Target0 {
+                return float4(1, 2, 3, 4);
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            struct Foo {
-                float4 x;
+            struct R {
+                float4 x : SV_Target0;
             }
-            vertex Foo bar(device Foo* x)
-            {
-                return Foo();
+            fragment R foo(bool x : SV_IsFrontFace) : SV_Depth {
+                R y;
+                y.x = float4(1, 2, 3, 4);
+                return y;
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            struct Foo {
-                float4 x;
+            struct R {
+                bool x : SV_IsFrontFace;
             }
-            fragment Foo bar(Foo foo)
-            {
-                return Foo();
+            fragment float4 foo(R x : SV_SampleIndex) : SV_Target0 {
+                return float4(1, 2, 3, 4);
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            struct Foo {
-                float4 x;
+            struct R {
+                bool x : SV_IsFrontFace;
             }
-            fragment Foo bar(device Foo* stageIn)
-            {
-                return Foo();
+            struct S {
+                R r;
+                bool y : SV_IsFrontFace;
+            }
+            fragment float4 foo(S x) : SV_Target0 {
+                return float4(1, 2, 3, 4);
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            struct Boo {
-                float4 x;
+            struct R {
+                float x : SV_IsFrontFace;
             }
-            struct Foo {
-                float4 x;
-                device Boo* y;
-            }
-            fragment Boo bar(Foo stageIn)
-            {
-                return Boo();
+            fragment float4 foo(R x) : SV_Target0 {
+                return float4(1, 2, 3, 4);
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            struct Boo {
-                float4 x;
+            struct R {
+                float x : SV_IsFrontFace;
             }
-            struct Foo {
-                float4 x;
-                device Boo* y;
-            }
-            fragment Foo bar(Boo stageIn)
-            {
-                return Foo();
+            vertex uint foo() : SV_VertexID {
+                return 7;
             }
         `),
-        (e) => e instanceof WTypeError);
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            typedef A = thread float*;
+            vertex float4 foo(device A[] x : register(u0)) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            typedef A = thread float*;
+            vertex float4 foo(device A* x : register(u0)) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            typedef A = thread float*;
+            vertex float4 foo(A[4] x : register(u0)) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            enum Foo {
+                f, g
+            }
+            vertex float4 foo(Foo x : specialized) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            [numthreads(1, 1, 1)]
+            compute float foo() : attribute(0) {
+                return 5;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            fragment float foo() : attribute(0) {
+                return 5;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            vertex float foo(device float* x : attribute(0)) : attribute(0) {
+                return 5;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            vertex float4 foo(device float* x : register(b0)) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            vertex float4 foo(float x : register(b0)) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            vertex float4 foo(device float* x : register(t0)) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            vertex float4 foo(Texture2D<float> x : register(b0)) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            vertex float4 foo(constant float[] x : register(s0)) : SV_Position {
+                return float4(1, 2, 3, 4);
+            }
+        `),
+        e => e instanceof WTypeError);
 }
 
 tests.vectorTypeSyntax = function()
@@ -5757,7 +5886,7 @@ tests.shaderStages = function()
 {
     doPrep(`
         struct Result {
-            float4 output;
+            float4 output : SV_Target0;
         }
         fragment Result foo()
         {
@@ -5781,7 +5910,7 @@ tests.shaderStages = function()
     checkFail(
         () => doPrep(`
             struct Result {
-                float4 output;
+                float4 output : SV_Position;
             }
             vertex Result foo()
             {
@@ -5797,7 +5926,7 @@ tests.shaderStages = function()
     checkFail(
         () => doPrep(`
             struct Result {
-                float4 output;
+                float4 output : SV_Position;
             }
             vertex Result foo()
             {
@@ -5811,7 +5940,7 @@ tests.shaderStages = function()
     checkFail(
         () => doPrep(`
             struct Result {
-                float4 output;
+                float4 output : SV_Target0;
             }
             fragment Result foo()
             {
@@ -5825,7 +5954,7 @@ tests.shaderStages = function()
     checkFail(
         () => doPrep(`
             struct Result {
-                float4 output;
+                float4 output : SV_Position;
             }
             vertex Result foo()
             {
@@ -5839,7 +5968,7 @@ tests.shaderStages = function()
     checkFail(
         () => doPrep(`
             struct Result {
-                float4 output;
+                float4 output : SV_Target0;
             }
             fragment Result foo()
             {
@@ -5853,7 +5982,7 @@ tests.shaderStages = function()
     checkFail(
         () => doPrep(`
             struct Result {
-                float4 output;
+                float4 output : SV_Position;
             }
             vertex Result foo()
             {
@@ -5867,7 +5996,7 @@ tests.shaderStages = function()
     checkFail(
         () => doPrep(`
             struct Result {
-                float4 output;
+                float4 output : SV_Target0;
             }
             fragment Result foo()
             {
@@ -6895,18 +7024,10 @@ tests.numThreads = function() {
         compute void foo() {
         }
 
-        [numthreads(6, 7, 8)]
-        compute void bar() {
-        }
-
-        [numthreads(9, 10, 11)]
-        compute void bar(device float[] buffer) {
-        }
-
         struct R {
-            float4 position;
+            float4 position : SV_Position;
         }
-        vertex R baz() {
+        vertex R bar() {
             R r;
             r.position = float4(1, 2, 3, 4);
             return r;
@@ -6925,45 +7046,10 @@ tests.numThreads = function() {
     if (foo.attributeBlock[0].z != 5)
         throw new Error("'foo' numthreads z is not 5");
 
-    if (program.functions.get("bar").length != 2)
+    if (program.functions.get("bar").length != 1)
         throw new Error("Cannot find function named 'bar'");
-    let bar1 = null;
-    let bar2 = null;
-    for (let bar of program.functions.get("bar")) {
-        if (bar.parameters.length == 0)
-            bar1 = bar;
-        else if (bar.parameters.length == 1)
-            bar2 = bar;
-        else
-            throw new Error("Unexpected 'bar' function.");
-    }
-    if (!bar1)
-        throw new Error("Could not find appropriate 'bar' function");
-    if (!bar2)
-        throw new Error("Could not find appropriate 'bar' function");
-
-    if (bar1.attributeBlock.length != 1)
-        throw new Error("'bar1' doesn't have numthreads attribute");
-    if (bar1.attributeBlock[0].x != 6)
-        throw new Error("'bar1' numthreads x is not 6");
-    if (bar1.attributeBlock[0].y != 7)
-        throw new Error("'bar1' numthreads y is not 7");
-    if (bar1.attributeBlock[0].z != 8)
-        throw new Error("'bar1' numthreads z is not 8");
-
-    if (bar2.attributeBlock.length != 1)
-        throw new Error("'bar2' doesn't have numthreads attribute");
-    if (bar2.attributeBlock[0].x != 9)
-        throw new Error("'bar2' numthreads x is not 9");
-    if (bar2.attributeBlock[0].y != 10)
-        throw new Error("'bar2' numthreads y is not 10");
-    if (bar2.attributeBlock[0].z != 11)
-        throw new Error("'bar2' numthreads z is not 11");
-
-    if (program.functions.get("baz").length != 1)
-        throw new Error("Cannot find function named 'baz'");
-    let baz = program.functions.get("baz")[0];
-    if (baz.attributeBlock != null)
+    let bar = program.functions.get("bar")[0];
+    if (bar.attributeBlock != null)
         throw new Error("'baz' has attribute block");
 
     checkFail(() => doPrep(`
@@ -9060,7 +9146,7 @@ tests.evaluationOrderForArguments = () => {
 
 tests.cannotCallAnotherEntryPoint = () => {
     checkFail(() => doPrep(`
-        struct Foo { int x; }
+        struct Foo { int x : attribute(0); }
         vertex Foo foo() { return bar(); }
         vertex Foo bar() { return Foo(); }
     `), e => e instanceof WTypeError && e.message.indexOf("it cannot be called from within an existing shader") !== -1);

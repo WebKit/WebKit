@@ -52,7 +52,7 @@ function synthesizeCopyConstructorOperator(program)
     for (let type of types) {
         let nativeFunc = new NativeFunc(type.origin, "operator cast", TypeRef.wrap(type), [
             new FuncParameter(type.origin, null, TypeRef.wrap(type))
-        ], true, null);
+        ], true);
         nativeFunc.implementation = ([arg], node) => {
             let result = new EPtr(new EBuffer(type.size), 0);
             result.copyFrom(arg, type.size);

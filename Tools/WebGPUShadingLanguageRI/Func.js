@@ -25,7 +25,7 @@
 "use strict";
 
 class Func extends Node {
-    constructor(origin, name, returnType, parameters, isCast, shaderType, attributeBlock = null)
+    constructor(origin, name, returnType, parameters, isCast, shaderType = null, semantic = null, attributeBlock = null)
     {
         if (!(origin instanceof LexerToken))
             throw new Error("Bad origin: " + origin);
@@ -42,6 +42,7 @@ class Func extends Node {
         this._parameters = parameters;
         this._isCast = isCast;
         this._shaderType = shaderType;
+        this._semantic = semantic;
         this._attributeBlock = attributeBlock;
     }
     
@@ -52,6 +53,7 @@ class Func extends Node {
     get parameterTypes() { return this.parameters.map(parameter => parameter.type); }
     get isCast() { return this._isCast; }
     get shaderType() { return this._shaderType; }
+    get semantic() { return this._semantic; }
     get attributeBlock() { return this._attributeBlock; }
     get isEntryPoint() { return this.shaderType != null; }
     get returnTypeForOverloadResolution() { return this.isCast ? this.returnType : null; }
@@ -72,7 +74,10 @@ class Func extends Node {
             result += `operator ${this.returnType}`;
         else
             result += `${this.returnType} ${this.name}`;
-        return result + "(" + this.parameters + ")";
+        result += "(" + this.parameters + ")";
+        if (this.semantic)
+            result += ": " + this.semantic;
+        return result;
     }
     
     toString()

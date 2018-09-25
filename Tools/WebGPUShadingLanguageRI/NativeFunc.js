@@ -25,9 +25,9 @@
 "use strict";
 
 class NativeFunc extends Func {
-    constructor(origin, name, returnType, parameters, isCast, shaderType, stage = null)
+    constructor(origin, name, returnType, parameters, isCast, stage = null)
     {
-        super(origin, name, returnType, parameters, isCast, shaderType);
+        super(origin, name, returnType, parameters, isCast);
         this._stage = stage;
         this.isRestricted = false;
         this.implementation = null;

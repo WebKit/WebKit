@@ -60,7 +60,7 @@ class Rewriter {
     
     visitFuncParameter(node)
     {
-        let result = new FuncParameter(node.origin, node.name, node.type.visit(this));
+        let result = new FuncParameter(node.origin, node.name, node.type.visit(this), Node.visit(node.semantic, this));
         this._mapNode(node, result);
         result.ePtr = node.ePtr;
         return result;
@@ -105,7 +105,7 @@ class Rewriter {
     
     visitField(node)
     {
-        return new Field(node.origin, node.name, node.type.visit(this));
+        return new Field(node.origin, node.name, node.type.visit(this), Node.visit(node.semantic, this));
     }
     
     visitEnumMember(node)
@@ -399,6 +399,26 @@ class Rewriter {
     {
         const matType = new MatrixType(node.origin, node.name, node.typeArguments.map(argument => argument.visit(this)));
         return matType;
+    }
+
+    visitBuiltInSemantic(node)
+    {
+        return new BuiltInSemantic(node.origin, node.name, ...node.extraArguments);
+    }
+
+    visitResourceSemantic(node)
+    {
+        return new ResourceSemantic(node.origin, node.resourceMode, node.index, node.space);
+    }
+
+    visitStageInOutSemantic(node)
+    {
+        return new StageInOutSemantic(node.origin, node.index);
+    }
+
+    visitSpecializationConstantSemantic(node)
+    {
+        return new SpecializationConstantSemantic(node.origin);
     }
 }
 

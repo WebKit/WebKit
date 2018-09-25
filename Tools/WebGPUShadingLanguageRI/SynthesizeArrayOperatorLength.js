@@ -58,7 +58,7 @@ function synthesizeArrayOperatorLength(program)
         let nativeFunc = new NativeFunc(
             arrayType.origin, "operator.length", uint,
             [ new FuncParameter(arrayType.origin, null, paramType) ],
-            false, null);
+            false);
         nativeFunc.implementation = ([array]) => EPtr.box(arrayType.numElementsValue);
         program.add(nativeFunc);
 

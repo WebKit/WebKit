@@ -129,7 +129,7 @@ class CallExpression extends Expression {
         const func = new NativeFunc(this.origin, "operator&[]", this.resultType, [
             new FuncParameter(this.origin, null, arrayRefType),
             new FuncParameter(this.origin, null, uintType)
-        ], false, null);
+        ], false);
 
         arrayRefAccessor.instantiateImplementation(func);
 
@@ -144,7 +144,7 @@ class CallExpression extends Expression {
             const arrayType = this.argumentTypes[0];
             const func = new NativeFunc(this.origin, "operator.length", this.resultType, [
                 new FuncParameter(this.origin, null, arrayType)
-            ], false, null);
+            ], false);
             func.implementation = (args, node) => EPtr.box(arrayType.numElementsValue);
             return func;
         } else if (this.argumentTypes[0].isArrayRef) {
@@ -153,7 +153,7 @@ class CallExpression extends Expression {
             const operatorLength = new OperatorArrayRefLength(arrayRefType.toString(), addressSpace);
             const func = new NativeFunc(this.origin, "operator.length", this.resultType, [
                 new FuncParameter(this.origin, null, arrayRefType)
-            ], false, null);
+            ], false);
             operatorLength.instantiateImplementation(func);
             return func;
         } else

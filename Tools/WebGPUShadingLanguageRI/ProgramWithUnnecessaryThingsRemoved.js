@@ -41,6 +41,10 @@ function programWithUnnecessaryThingsRemoved(program)
     nameFinder.add("void");
     nameFinder.add("bool");
     nameFinder.add("int");
+    nameFinder.add("uint");
+    nameFinder.add("float");
+    nameFinder.add("vector");
+    nameFinder.add("sampler");
     
     // Pull in things as necessary.
     while (nameFinder.worklist.length) {

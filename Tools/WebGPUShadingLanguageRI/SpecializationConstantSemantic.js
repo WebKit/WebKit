@@ -24,33 +24,25 @@
  */
 "use strict";
 
-class FuncParameter extends Value {
-    // The name is optional. It's OK for it to be null!
-    constructor(origin, name, type, semantic = null)
+class SpecializationConstantSemantic extends Semantic {
+    constructor(origin)
     {
-        super();
-        this._origin = origin;
-        this._name = name;
-        this._type = type;
-        this._semantic = semantic;
+        super(origin);
     }
-    
-    get origin() { return this._origin; }
-    get name() { return this._name; }
-    get type() { return this._type; }
-    get semantic() { return this._semantic; }
-    get varIsLValue() { return true; }
-    
+
+    isAcceptableType(type, program)
+    {
+        return type.isNumber;
+    }
+
+    isAcceptableForShaderType(direction, shaderType)
+    {
+        return direction == "input";
+    }
+
     toString()
     {
-        let result;
-        if (!this.name)
-            result = "" + this.type;
-        else
-            result = this.type + " " + this.name;
-        if (this.semantic)
-            result += ": " + this.semantic;
-        return result;
+        return "specialized";
     }
 }
 

@@ -62,7 +62,7 @@ function synthesizeDefaultConstructorOperator(program)
     program.visit(new FindAllTypes());
 
     for (let type of types) {
-        let nativeFunc = new NativeFunc(type.origin, "operator cast", TypeRef.wrap(type), [], true, null);
+        let nativeFunc = new NativeFunc(type.origin, "operator cast", TypeRef.wrap(type), [], true);
         nativeFunc.implementation = ([], node) => {
             let result = new EPtr(new EBuffer(type.size), 0);
             node.type.populateDefaultValue(result.buffer, 0);

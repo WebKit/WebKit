@@ -1,3 +1,211 @@
+2018-09-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHSL] Implement semantics
+        https://bugs.webkit.org/show_bug.cgi?id=189134
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds parsing support and adds the checks required to support HLSL-style semantics.
+
+        There are 3 places where semantics are allowed:
+
+        1. In a field in a struct. E.g.
+
+        struct R {
+            float4 position : SV_Position;
+        }
+        vertex R foo() {
+            ...
+        }
+
+        2. In a parameter of a function. If the function is not an entry point, the semantic is ignored.
+
+        compute void foo(device float[] data : buffer(u0)) {
+            ...
+        }
+
+        3. On a function. This is so you don't have to create structs for the return types of simple vertex shaders.
+
+        vertex float4 foo() : SV_Position {
+            ...
+        }
+
+        The semantics are partitioned into 4 types:
+
+        1. Built-in variables. For example, : SV_Position.
+        2. Resources. For example, : register(u0).
+        3. Stage-in / stage-out variables. For example, : attribute(0).
+        4. Specialization constants. For example, : specialized.
+
+        The semantics are validated according to a collection of rules:
+
+        - The same entry point can't list the same semantic twice
+        - Each built-in type has an appropriate type that is listed in the spec. 
+        - Each built-in is appropriate as either an input or an output of a particular shader stage
+        - Resource semantics have to have the appropriate type (e.g. can't use register(s0) on a buffer)
+        - Resources can't be output from entry points
+        - The resource semantic mode must match the address space of the resource
+        - Stage-in and stage-out variables have to be POD
+        - Specialization constants can't be output from entry points, and have to be numbers
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/BuiltInSemantic.js: Added.
+        (BuiltInSemantic):
+        (BuiltInSemantic.prototype.get name):
+        (BuiltInSemantic.prototype.get extraArguments):
+        (BuiltInSemantic.prototype.isAcceptableType):
+        (BuiltInSemantic.prototype.isAcceptableForShaderType):
+        (BuiltInSemantic.prototype.toString):
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.prototype._resolveWithOperatorAnderIndexer):
+        (CallExpression.prototype._resolveWithOperatorLength):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker):
+        (Checker.prototype.visitProgram):
+        (Checker.prototype._checkSemantics.Item):
+        (Checker.prototype._checkSemantics.Item.prototype.get type):
+        (Checker.prototype._checkSemantics.Item.prototype.get semantic):
+        (Checker.prototype._checkSemantics.Gatherer):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.reset):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.set currentSemantic):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.get currentSemantic):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.get result):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitEnumType):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitVectorType):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitMatrixType):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitNativeType):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitStructType):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitTypeRef):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitPtrType):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitArrayRefType):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitArrayType):
+        (Checker.prototype._checkSemantics.Gatherer.prototype.visitFuncParameter):
+        (Checker.prototype._checkSemantics.checkDuplicateSemantics):
+        (Checker.prototype._checkSemantics.checkSemanticTypes):
+        (Checker.prototype._checkSemantics.checkSemanticForShaderType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitEnumType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitArrayType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitVectorType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitMatrixType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitNativeType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitPtrType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitArrayRefType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitStructType):
+        (Checker.prototype._checkSemantics.PODChecker.prototype.visitTypeRef):
+        (Checker.prototype._checkSemantics.PODChecker):
+        (Checker.prototype._checkSemantics.checkPODData):
+        (Checker.prototype._checkSemantics):
+        (Checker.prototype._checkShaderType):
+        (Checker.prototype._checkOperatorOverload):
+        (Checker.prototype.visitFuncDef):
+        (Checker.prototype.visitEnumType):
+        (Checker.prototype.visitArrayType):
+        (Checker.prototype.visitMakePtrExpression):
+        (Checker.prototype.visitMakeArrayRefExpression):
+        (Checker.prototype._finishVisitingPropertyAccess):
+        (Checker.prototype.visitIndexExpression):
+        (Checker.prototype.visitReturn):
+        (Checker.prototype.visitSwitchStatement):
+        (Checker.prototype.visitTernaryExpression):
+        (Checker.prototype.visitCallExpression):
+        * WebGPUShadingLanguageRI/Field.js:
+        (Field):
+        (Field.prototype.get semantic):
+        (Field.prototype.toString):
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func):
+        (Func.prototype.get semantic):
+        (Func.prototype.toDeclString):
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef):
+        * WebGPUShadingLanguageRI/FuncParameter.js:
+        (FuncParameter):
+        (FuncParameter.prototype.get semantic):
+        (FuncParameter.prototype.toString):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        * WebGPUShadingLanguageRI/LateChecker.js:
+        (LateChecker.prototype.visitReferenceType):
+        (LateChecker):
+        (LateChecker.prototype._checkShaderType): Deleted.
+        (LateChecker.prototype.visitFuncDef): Deleted.
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseParameter):
+        (parseFuncDecl):
+        (parseFuncDef):
+        (parseStageInOutSemantic):
+        (parseResourceSemantic):
+        (parseSpecializationConstantSemantic):
+        (parseBuiltInSemantic):
+        (parseField):
+        (parseNativeFunc):
+        * WebGPUShadingLanguageRI/ProgramWithUnnecessaryThingsRemoved.js:
+        (programWithUnnecessaryThingsRemoved):
+        * WebGPUShadingLanguageRI/ResourceSemantic.js: Added.
+        (ResourceSemantic):
+        (ResourceSemantic.prototype.get resourceMode):
+        (ResourceSemantic.prototype.get index):
+        (ResourceSemantic.prototype.get space):
+        (ResourceSemantic.prototype.isAcceptableType):
+        (ResourceSemantic.prototype.isAcceptableForShaderType):
+        (ResourceSemantic.prototype.toString):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitFuncParameter):
+        (Rewriter.prototype.visitField):
+        (Rewriter.prototype.visitBuiltInSemantic):
+        (Rewriter.prototype.visitResourceSemantic):
+        (Rewriter.prototype.visitStageInOutSemantic):
+        (Rewriter.prototype.visitSpecializationConstantSemantic):
+        (Rewriter):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/Semantic.js: Added.
+        (Semantic):
+        (Semantic.prototype.get origin):
+        (Semantic.prototype.equalToOtherSemantic.Comparer.prototype.visitBuiltInSemantic):
+        (Semantic.prototype.equalToOtherSemantic.Comparer.prototype.visitResourceSemantic):
+        (Semantic.prototype.equalToOtherSemantic.Comparer.prototype.visitStageInOutSemantic):
+        (Semantic.prototype.equalToOtherSemantic.Comparer.prototype.visitSpecializationConstantSemantic):
+        (Semantic.prototype.equalToOtherSemantic.Comparer):
+        (Semantic.prototype.equalToOtherSemantic):
+        * WebGPUShadingLanguageRI/SpecializationConstantSemantic.js: Copied from Tools/WebGPUShadingLanguageRI/Field.js.
+        (SpecializationConstantSemantic):
+        (SpecializationConstantSemantic.prototype.isAcceptableType):
+        (SpecializationConstantSemantic.prototype.isAcceptableForShaderType):
+        (SpecializationConstantSemantic.prototype.toString):
+        * WebGPUShadingLanguageRI/StageInOutSemantic.js: Copied from Tools/WebGPUShadingLanguageRI/FuncDef.js.
+        (StageInOutSemantic):
+        (StageInOutSemantic.prototype.get index):
+        (StageInOutSemantic.prototype.isAcceptableType):
+        (StageInOutSemantic.prototype.isAcceptableForShaderType):
+        (StageInOutSemantic.prototype.toString):
+        * WebGPUShadingLanguageRI/StatementCloner.js:
+        (StatementCloner.prototype.visitNativeFunc):
+        * WebGPUShadingLanguageRI/SynthesizeArrayOperatorLength.js:
+        (synthesizeArrayOperatorLength):
+        * WebGPUShadingLanguageRI/SynthesizeCopyConstructorOperator.js:
+        (synthesizeCopyConstructorOperator):
+        * WebGPUShadingLanguageRI/SynthesizeDefaultConstructorOperator.js:
+        (synthesizeDefaultConstructorOperator):
+        * WebGPUShadingLanguageRI/SynthesizeEnumFunctions.js:
+        (synthesizeEnumFunctions):
+        * WebGPUShadingLanguageRI/SynthesizeStructAccessors.js:
+        (setupAnder):
+        (synthesizeStructAccessorsForStructType):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.shaderTypes):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitFunc):
+        (Visitor.prototype.visitFuncParameter):
+        (Visitor.prototype.visitField):
+        (Visitor.prototype.visitBuiltInSemantic):
+        (Visitor.prototype.visitResourceSemantic):
+        (Visitor.prototype.visitStageInOutSemantic):
+        (Visitor.prototype.visitSpecializationConstantSemantic):
+        (Visitor):
+        * WebGPUShadingLanguageRI/index.html:
+
 2018-09-25  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Test suite for Metal code generation

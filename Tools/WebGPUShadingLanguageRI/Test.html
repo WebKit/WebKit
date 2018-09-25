@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>WSL Test</title>
+<title>WHLSL Test</title>
 <script src="Node.js"></script>
 <script src="Type.js"></script>
 <script src="ReferenceType.js"></script>
@@ -12,6 +12,7 @@
 <script src="CreateLiteralType.js"></script>
 <script src="PropertyAccessExpression.js"></script>
 <script src="NativeType.js"></script>
+<script src="Semantic.js"></script>
 
 <script src="AddressSpace.js"></script>
 <script src="AllocateAtEntryPoints.js"></script>
@@ -23,6 +24,7 @@
 <script src="Block.js"></script>
 <script src="BoolLiteral.js"></script>
 <script src="Break.js"></script>
+<script src="BuiltInSemantic.js"></script>
 <script src="BuiltinMatrixGetter.js"></script>
 <script src="BuiltinMatrixSetter.js"></script>
 <script src="BuiltinVectorGetter.js"></script>
@@ -118,10 +120,13 @@
 <script src="ResolveOverloadImpl.js"></script>
 <script src="ResolveProperties.js"></script>
 <script src="ResolveTypeDefs.js"></script>
+<script src="ResourceSemantic.js"></script>
 <script src="Return.js"></script>
 <script src="ReturnChecker.js"></script>
 <script src="ReturnException.js"></script>
 <script src="Sampler.js"></script>
+<script src="SpecializationConstantSemantic.js"></script>
+<script src="StageInOutSemantic.js"></script>
 <script src="StandardLibrary.js"></script>
 <script src="StatementCloner.js"></script>
 <script src="StructLayoutBuilder.js"></script>
@@ -170,7 +175,7 @@ function doTestInBrowser()
             if (tester.next().done)
                 return;
         } catch (e) {
-            print("ERROR: " + e.message);
+            print("ERROR: " + (e.payload ? e.payload : e.message));
             print(e.stack);
             return;
         }

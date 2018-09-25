@@ -24,33 +24,39 @@
  */
 "use strict";
 
-class FuncParameter extends Value {
-    // The name is optional. It's OK for it to be null!
-    constructor(origin, name, type, semantic = null)
+class StageInOutSemantic extends Semantic {
+    constructor(origin, index)
     {
-        super();
-        this._origin = origin;
-        this._name = name;
-        this._type = type;
-        this._semantic = semantic;
+         super(origin);
+         this._index = index;
     }
-    
-    get origin() { return this._origin; }
-    get name() { return this._name; }
-    get type() { return this._type; }
-    get semantic() { return this._semantic; }
-    get varIsLValue() { return true; }
-    
+
+    get index() { return this._index; }
+
+    isAcceptableType(type, program)
+    {
+        return type instanceof EnumType || type instanceof ArrayType || type instanceof VectorType || type instanceof MatrixType || type.isNumber;
+    }
+
+    isAcceptableForShaderType(direction, shaderType)
+    {
+        switch (shaderType) {
+        case "vertex":
+            return true;
+        case "fragment":
+            return direction == "input";
+        case "compute":
+            return false;
+        case "test":
+            return true;
+        default:
+            throw new Error(`Unknown shader type: ${shaderType}`);
+        }
+    }
+
     toString()
     {
-        let result;
-        if (!this.name)
-            result = "" + this.type;
-        else
-            result = this.type + " " + this.name;
-        if (this.semantic)
-            result += ": " + this.semantic;
-        return result;
+        return `attribute(${this.index})`;
     }
 }
 

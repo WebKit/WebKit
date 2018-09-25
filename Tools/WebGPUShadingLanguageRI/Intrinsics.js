@@ -276,6 +276,7 @@ class Intrinsics {
                     type => {
                         this[`${textureType}<${typeArgument}>`] = type;
                         type.size = 1;
+                        type.isTexture = true;
                         type.populateDefaultValue = (buffer, offset) => buffer.set(offset, {});
                     });
                 for (let i = 2; i <= 4; ++i) {
@@ -284,6 +285,7 @@ class Intrinsics {
                         type => {
                             this[`${textureType}<${typeArgument}${i}>`] = type;
                             type.size = 1;
+                            type.isTexture = true;
                             type.populateDefaultValue = (buffer, offset) => buffer.set(offset, {});
                         });
                 }

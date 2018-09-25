@@ -33,59 +33,5 @@ class LateChecker extends Visitor {
         if (!node.elementType.isPrimitive)
             throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type: " + node);
     }
-    
-    _checkShaderType(node)
-    {
-        // FIXME: Tighten these checks. For now, we should only accept int32, uint32, float32, and float64.
-        let assertPrimitive = type => {
-            if (!type.isPrimitive)
-                throw new WTypeError(node.origin.originString, "Shader signature cannot include non-primitive type: " + type);
-        }
-        
-        if (node.shaderType == "vertex" || node.shaderType == "fragment") {
-            assertPrimitive(node.returnType);
-            // FIXME: Fragment shaders shouldn't have this restriction: https://bugs.webkit.org/show_bug.cgi?id=189387
-            if (!(node.returnType.unifyNode instanceof StructType))
-                throw new WTypeError(node.origin.originString, "Shader " + node.name + " must return a struct.");
-        }
-            
-        switch (node.shaderType) {
-        case "vertex":
-            for (let parameter of node.parameters) {
-                if (parameter.type.unifyNode instanceof StructType)
-                    assertPrimitive(parameter.type);
-                else if (!parameter.type.unifyNode.isArrayRef)
-                    throw new WTypeError(node.origin.originString, node.name + " accepts a parameter " + parameter.name + " which isn't a struct and isn't an ArrayRef.");
-            }
-            break;
-        case "fragment":
-            for (let parameter of node.parameters) {
-                if (parameter.name == "stageIn") {
-                    if (!(parameter.type.unifyNode instanceof StructType))
-                        throw new WTypeError(node.origin.originString, "Fragment entry points' stageIn parameter (of " + node.name + ") must be a struct type.");
-                    assertPrimitive(parameter.type);
-                } else {
-                    if (!parameter.type.unifyNode.isArrayRef)
-                        throw new WTypeError(node.origin.originString, "Fragment entry point's " + parameter.name + " parameter is not an array reference.");
-                }
-            }
-            break;
-        case "compute":
-            break;
-        case "compute":
-            break;
-        case "test":
-            break;
-        default:
-            throw new Error("Bad shader type: " + node.shaderType);
-        }
-    }
-    
-    visitFuncDef(node)
-    {
-        if (node.shaderType)
-            this._checkShaderType(node);
-        super.visitFuncDef(node);
-    }
 }
 

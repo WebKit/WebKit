@@ -49,13 +49,12 @@ function synthesizeStructAccessorsForStructType(program, type)
         }
 
         let isCast = false;
-        let shaderType;
         let nativeFunc;
 
         // The getter: operator.field
         nativeFunc = new NativeFunc(
             field.origin, "operator." + field.name, field.type,
-            [new FuncParameter(field.origin, null, TypeRef.wrap(type))], isCast, shaderType);
+            [new FuncParameter(field.origin, null, TypeRef.wrap(type))], isCast);
         setupImplementationData(nativeFunc, ([base], offset, structSize, fieldSize) => {
             let result = new EPtr(new EBuffer(fieldSize), 0);
             result.copyFrom(base.plus(offset), fieldSize);
@@ -70,7 +69,7 @@ function synthesizeStructAccessorsForStructType(program, type)
                 new FuncParameter(field.origin, null, TypeRef.wrap(type)),
                 new FuncParameter(field.origin, null, field.type)
             ],
-            isCast, shaderType);
+            isCast);
         setupImplementationData(nativeFunc, ([base, value], offset, structSize, fieldSize) => {
             let result = new EPtr(new EBuffer(structSize), 0);
             result.copyFrom(base, structSize);
@@ -89,7 +88,7 @@ function synthesizeStructAccessorsForStructType(program, type)
                         field.origin, null,
                         new PtrType(field.origin, addressSpace, TypeRef.wrap(type)))
                 ],
-                isCast, shaderType);
+                isCast);
             setupImplementationData(nativeFunc, ([base], offset, structSize, fieldSize) => {
                 base = base.loadValue();
                 if (!base)
