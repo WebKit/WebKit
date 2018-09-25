@@ -1,3 +1,55 @@
+2018-09-25  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Test suite for Metal code generation
+        https://bugs.webkit.org/show_bug.cgi?id=187738
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch adds an Xcode project that contains a Cocoa app that can be
+        used for running WHLSL shaders on the GPU. It also contains an Xcode
+        test suite that runs all of the tests in Test.js on the GPU.
+
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/.gitignore: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/AppDelegate.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/AppDelegate.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Assets.xcassets/AppIcon.appiconset/Contents.json: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Assets.xcassets/Contents.json: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Base.lproj/Main.storyboard: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/CompileResult.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/CompileResult.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Compiler.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Compiler.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/CustomMetalView.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/CustomMetalView.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Default.whlsl: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Julia.whlsl: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Mandelbrot.whlsl: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Info.plist: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/OffscreenRenderer.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/OffscreenRenderer.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/OnscreenRenderer.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/OnscreenRenderer.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/Renderer.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/Renderer.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestCallArgument.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestCallArgument.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestDescription.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestDescription.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestFamily.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestFamily.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestFamilyRunner.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestFamilyRunner.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/ViewController.h: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/ViewController.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/WHLSL.entitlements: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/_SharedMetal.txt: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/main.m: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/WHLSL Tests.xcodeproj/project.pbxproj: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/WHLSL ToyTests/Info.plist: Added.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/WHLSL ToyTests/WHLSL_ToyTests.m: Added.
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.lotsOfLocalVariables):
+
 2018-09-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed build fix after r236455

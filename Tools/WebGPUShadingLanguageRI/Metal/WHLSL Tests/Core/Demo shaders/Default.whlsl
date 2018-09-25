@@ -1,0 +1,26 @@
+struct VertexInput {
+    float2 position;
+    float2 uv;
+}
+
+struct VertexOutput {
+    float4 wsl_Position;
+    float4 color;
+}
+
+struct FragmentOutput {
+    float4 wsl_Color;
+}
+
+vertex VertexOutput vertexShader(VertexInput vertexInput) {
+    VertexOutput result;
+    result.wsl_Position = float4(vertexInput.position, 0., 1.);
+    result.color = float4(vertexInput.uv, 0.0, 1.0);
+    return result;
+}
+
+fragment FragmentOutput fragmentShader(VertexOutput stageIn) {
+    FragmentOutput result;
+    result.wsl_Color = stageIn.color;
+    return result;
+}

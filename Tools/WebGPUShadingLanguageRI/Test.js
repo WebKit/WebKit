@@ -9420,7 +9420,7 @@ function* doTest(testFilter)
     print("That took " + (after - before) * 1000 + " ms.");
 }
 
-if (!this.window) {
+if (!this.window && !this.runningInCocoaHost) {
     Error.stackTraceLimit = Infinity;
     for (let _ of doTest(testFilter)) { }
 }
