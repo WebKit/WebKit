@@ -584,6 +584,8 @@ webkit.org/b/112176 canvas/philip/tests/2d.path.arcTo.transformation.html [ Fail
 webkit.org/b/112176 canvas/philip/tests/2d.path.stroke.scale1.html [ Failure Pass ]
 webkit.org/b/112176 canvas/philip/tests/2d.path.stroke.skew.html [ Failure Pass ]
 webkit.org/b/112176 compositing/overflow/composited-scrolling-paint-phases.html [ Failure Pass ]
+webkit.org/b/112176 compositing/overflow/scrolling-without-painting.html [ Failure Pass ]
+webkit.org/b/112176 compositing/overflow/updating-scrolling-content.html [ Failure Pass ]
 webkit.org/b/112176 fast/canvas/canvas-composite-alpha.html [ Failure Pass ]
 webkit.org/b/112176 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
 

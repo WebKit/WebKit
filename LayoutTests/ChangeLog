@@ -1,3 +1,9 @@
+2018-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark two tests as flakey.
+
+        * platform/mac/TestExpectations:
+
 2018-09-24  John Wilander  <wilander@apple.com>
 
         Cap lifetime of persistent cookies created client-side through document.cookie
