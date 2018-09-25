@@ -1,3 +1,13 @@
+2018-09-25  Youenn Fablet  <youenn@apple.com>
+
+        Import libvpx source code
+        https://bugs.webkit.org/show_bug.cgi?id=189954
+
+        Reviewed by Eric Carlson.
+
+        * Source/third_party/libvpx: Added.
+        * .gitignore: Added.
+
 2018-09-24  Youenn Fablet  <youenn@apple.com>
 
         Enable conversion of libwebrtc internal frames as CVPixelBuffer
