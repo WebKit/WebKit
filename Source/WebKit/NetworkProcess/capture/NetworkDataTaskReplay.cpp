@@ -240,7 +240,7 @@ void NetworkDataTaskReplay::didReceiveResponse(WebCore::ResourceResponse&& respo
     DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     ASSERT(m_client);
-    m_client->didReceiveResponseNetworkSession(WTFMove(response), [this, protectedThis = makeRef(*this)](WebCore::PolicyAction policyAction) {
+    m_client->didReceiveResponse(WTFMove(response), [this, protectedThis = makeRef(*this)](WebCore::PolicyAction policyAction) {
         DEBUG_LOG("didReceiveResponse callback (%u)", static_cast<unsigned>(policyAction));
 
         if (m_state == State::Canceling || m_state == State::Completed) {

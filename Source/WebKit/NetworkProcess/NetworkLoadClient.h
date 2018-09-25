@@ -34,9 +34,12 @@ namespace WebCore {
 class NetworkLoadMetrics;
 class ProtectionSpace;
 class SharedBuffer;
+enum class PolicyAction;
 }
 
 namespace WebKit {
+
+using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
 class NetworkLoadClient {
 public:
@@ -48,8 +51,7 @@ public:
 
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) = 0;
     virtual void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) = 0;
-    enum class ShouldContinueDidReceiveResponse { No, Yes };
-    virtual ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) = 0;
+    virtual void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) = 0;
     virtual void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) = 0;
     virtual void didFinishLoading(const WebCore::NetworkLoadMetrics&) = 0;
     virtual void didFailLoading(const WebCore::ResourceError&) = 0;

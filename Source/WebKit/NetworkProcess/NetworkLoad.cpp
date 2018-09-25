@@ -121,8 +121,6 @@ NetworkLoad::~NetworkLoad()
     ASSERT(RunLoop::isMain());
     if (m_redirectCompletionHandler)
         m_redirectCompletionHandler({ });
-    if (m_responseCompletionHandler)
-        m_responseCompletionHandler(PolicyAction::Ignore);
     if (m_task)
         m_task->clearClient();
 }
@@ -176,14 +174,6 @@ void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
         redirectCompletionHandler(ResourceRequest(m_currentRequest));
 }
 
-void NetworkLoad::continueDidReceiveResponse()
-{
-    if (m_responseCompletionHandler) {
-        auto responseCompletionHandler = std::exchange(m_responseCompletionHandler, nullptr);
-        responseCompletionHandler(PolicyAction::Use);
-    }
-}
-
 bool NetworkLoad::shouldCaptureExtraNetworkLoadMetrics() const
 {
     return m_client.get().shouldCaptureExtraNetworkLoadMetrics();
@@ -194,17 +184,16 @@ bool NetworkLoad::isAllowedToAskUserForCredentials() const
     return m_client.get().isAllowedToAskUserForCredentials();
 }
 
-void NetworkLoad::convertTaskToDownload(PendingDownload& pendingDownload, const ResourceRequest& updatedRequest, const ResourceResponse& response)
+void NetworkLoad::convertTaskToDownload(PendingDownload& pendingDownload, const ResourceRequest& updatedRequest, const ResourceResponse& response, ResponseCompletionHandler&& completionHandler)
 {
     if (!m_task)
-        return;
+        return completionHandler(PolicyAction::Ignore);
 
     m_client = pendingDownload;
     m_currentRequest = updatedRequest;
     m_task->setPendingDownload(pendingDownload);
-
-    if (m_responseCompletionHandler)
-        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), std::exchange(m_responseCompletionHandler, nullptr), response);
+    
+    NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), response);
 }
 
 void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
@@ -269,7 +258,7 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Chall
         NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge, WTFMove(completionHandler));
 }
 
-void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+void NetworkLoad::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_throttle);
@@ -301,11 +290,7 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Response
     if (m_parameters.needsCertificateInfo)
         response.includeCertificateInfo();
 
-    if (m_client.get().didReceiveResponse(WTFMove(response)) == NetworkLoadClient::ShouldContinueDidReceiveResponse::No) {
-        m_responseCompletionHandler = WTFMove(completionHandler);
-        return;
-    }
-    completionHandler(PolicyAction::Use);
+    m_client.get().didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
 }
 
 void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
