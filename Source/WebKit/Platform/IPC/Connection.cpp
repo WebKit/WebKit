@@ -719,13 +719,8 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
     // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
     // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
     // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
-    {
-        LockHolder locker(m_syncReplyStateMutex);
-        // If the m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage flag is set, then our sync messages will not be processed by the destination process while it is waiting for a sync IPC reply.
-        // As a result, we need to process incoming sync messages early here, even if we're not waiting for a sync IPC reply in order to prevent deadlocks.
-        if ((m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage || !m_pendingSyncReplies.isEmpty()) && SyncMessageState::singleton().processIncomingMessage(*this, message))
-            return;
-    }
+    if (SyncMessageState::singleton().processIncomingMessage(*this, message))
+        return;
 
     // Check if we're waiting for this message.
     {
