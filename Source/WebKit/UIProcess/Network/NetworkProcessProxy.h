@@ -64,9 +64,9 @@ struct NetworkProcessCreationParameters;
 class WebUserContentControllerProxy;
 struct WebsiteData;
 
-class NetworkProcessProxy : public ChildProcessProxy, private ProcessThrottlerClient {
+class NetworkProcessProxy final : public ChildProcessProxy, private ProcessThrottlerClient {
 public:
-    static Ref<NetworkProcessProxy> create(WebProcessPool&);
+    explicit NetworkProcessProxy(WebProcessPool&);
     ~NetworkProcessProxy();
 
     void getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&&);
@@ -110,8 +110,6 @@ public:
     void removeSession(PAL::SessionID);
 
 private:
-    NetworkProcessProxy(WebProcessPool&);
-
     // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;

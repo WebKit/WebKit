@@ -47,9 +47,9 @@ class WebProcessProxy;
 enum class WebsiteDataType;
 struct WebsiteData;
 
-class StorageProcessProxy : public ChildProcessProxy {
+class StorageProcessProxy final : public ChildProcessProxy {
 public:
-    static Ref<StorageProcessProxy> create(WebProcessPool&);
+    explicit StorageProcessProxy(WebProcessPool&);
     ~StorageProcessProxy();
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData)>&&);
@@ -61,8 +61,6 @@ public:
     void terminateForTesting();
 
 private:
-    StorageProcessProxy(WebProcessPool&);
-
     // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void processWillShutDown(IPC::Connection&) override;

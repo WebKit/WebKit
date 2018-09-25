@@ -1,3 +1,45 @@
+2018-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Extending the lifetime of a NetworkProcessProxy / StorageProcessProxy may cause it to have a stale WebProcessPool pointer
+        https://bugs.webkit.org/show_bug.cgi?id=189851
+        <rdar://problem/44696263>
+
+        Reviewed by Alex Christensen.
+
+        Extending the lifetime of a NetworkProcessProxy / StorageProcessProxy may cause it to have a stale WebProcessPool pointer:
+        - NetworkProcessProxy::m_processPool
+        - StorageProcessProxy::m_processPool
+
+        Those data members are C++ references because it is expected that the WebProcessPool owns the NetworkProcessProxy and
+        StorageProcessProxy. However, since NetworkProcessProxy / StorageProcessProxy are refcounted, it has happened that code
+        extends the lifetime of those past their process pool, leading to stale prrocess pool usage. The fix for these crashes
+        so far as been to ref the WebProcessPool instead of the NetworkProcessProxy / StorageProcessProxy. However, it is very
+        tempting for people to simply ref the NetworkProcessProxy / StorageProcessProxy given that they are refcounted.
+        For this reason, this patch updates NetworkProcessProxy / StorageProcessProxy so that they are no longer RefCounted
+        and so that the WebProcessPool truly owns them via std::unique_ptr<>.
+
+        * UIProcess/ChildProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::create): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (WebKit::NetworkProcessProxy::throttler): Deleted.
+        (WebKit::NetworkProcessProxy::processPool): Deleted.
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (WebKit::PluginProcessProxy::pluginProcessAttributes const): Deleted.
+        (WebKit::PluginProcessProxy::pluginProcessToken const): Deleted.
+        (WebKit::PluginProcessProxy::isValid const): Deleted.
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::create): Deleted.
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+
 2018-09-25  Alex Christensen  <achristensen@webkit.org>
 
         NetworkLoad::didReceiveResponse should pass its completion handler to its client

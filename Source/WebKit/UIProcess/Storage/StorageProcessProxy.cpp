@@ -44,11 +44,6 @@ static uint64_t generateStorageProcessCallbackID()
     return ++callbackID;
 }
 
-Ref<StorageProcessProxy> StorageProcessProxy::create(WebProcessPool& processPool)
-{
-    return adoptRef(*new StorageProcessProxy(processPool));
-}
-
 StorageProcessProxy::StorageProcessProxy(WebProcessPool& processPool)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)

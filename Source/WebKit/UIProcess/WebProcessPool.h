@@ -626,8 +626,8 @@ private:
 
     bool m_canHandleHTTPSServerTrustEvaluation { true };
     bool m_didNetworkProcessCrash { false };
-    RefPtr<NetworkProcessProxy> m_networkProcess;
-    RefPtr<StorageProcessProxy> m_storageProcess;
+    std::unique_ptr<NetworkProcessProxy> m_networkProcess;
+    std::unique_ptr<StorageProcessProxy> m_storageProcess;
 
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
     HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;

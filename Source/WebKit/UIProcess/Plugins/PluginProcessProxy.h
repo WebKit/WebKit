@@ -66,7 +66,7 @@ int pluginProcessLatencyQOS();
 int pluginProcessThroughputQOS();
 #endif
 
-class PluginProcessProxy : public ChildProcessProxy {
+class PluginProcessProxy final : public ChildProcessProxy, public ThreadSafeRefCounted<PluginProcessProxy> {
 public:
     static Ref<PluginProcessProxy> create(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);
     ~PluginProcessProxy();

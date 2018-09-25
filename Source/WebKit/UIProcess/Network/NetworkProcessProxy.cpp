@@ -66,11 +66,6 @@ static uint64_t generateCallbackID()
     return ++callbackID;
 }
 
-Ref<NetworkProcessProxy> NetworkProcessProxy::create(WebProcessPool& processPool)
-{
-    return adoptRef(*new NetworkProcessProxy(processPool));
-}
-
 NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)
@@ -205,7 +200,7 @@ void NetworkProcessProxy::networkProcessCrashed()
     for (auto& reply : m_pendingConnectionReplies)
         pendingReplies.append(WTFMove(reply));
 
-    // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
+    // Tell the network process manager to forget about this network process proxy. This will cause us to be deleted.
     m_processPool.networkProcessCrashed(*this, WTFMove(pendingReplies));
 }
 
@@ -273,7 +268,7 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
         callback();
     m_updateBlockCookiesCallbackMap.clear();
     
-    // This may cause us to be deleted.
+    // This will cause us to be deleted.
     networkProcessCrashed();
 }
 
