@@ -96,6 +96,11 @@ const String& MediaStreamTrackPrivate::label() const
     return m_source->name();
 }
 
+void MediaStreamTrackPrivate::setContentHint(HintValue hintValue)
+{
+    m_contentHint = hintValue;
+}
+    
 bool MediaStreamTrackPrivate::muted() const
 {
     return m_source->muted();
@@ -142,6 +147,7 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
     auto clonedMediaStreamTrackPrivate = create(m_source.copyRef());
     clonedMediaStreamTrackPrivate->m_isEnabled = this->m_isEnabled;
     clonedMediaStreamTrackPrivate->m_isEnded = this->m_isEnded;
+    clonedMediaStreamTrackPrivate->m_contentHint = this->m_contentHint;
     clonedMediaStreamTrackPrivate->updateReadyState();
 
     return clonedMediaStreamTrackPrivate;

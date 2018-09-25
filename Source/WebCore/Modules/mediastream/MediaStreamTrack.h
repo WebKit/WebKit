@@ -69,6 +69,10 @@ public:
     WEBCORE_EXPORT const String& id() const;
     const String& label() const;
 
+
+    const AtomicString& contentHint() const;
+    void setContentHint(const String&);
+        
     bool enabled() const;
     void setEnabled(bool);
 

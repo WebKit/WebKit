@@ -37,6 +37,7 @@ enum MediaStreamTrackState { "live", "ended" };
     readonly attribute DOMString id;
     readonly attribute DOMString label;
     attribute boolean enabled;
+    attribute DOMString contentHint;
     readonly attribute boolean muted;
     attribute EventHandler onmute;
     attribute EventHandler onunmute;

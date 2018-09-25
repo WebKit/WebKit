@@ -1,3 +1,29 @@
+2018-09-25  YUHAN WU  <yuhan_wu@apple.com>
+
+        Implement MediaStreamTrack Content Hints
+        https://bugs.webkit.org/show_bug.cgi?id=189262
+        <rdar://problem/44101773>
+
+        Reviewed by Youenn Fablet.
+
+        contentHint is a new attribute which is stored in MediaStreamTrackPrivate.
+        https://w3c.github.io/mst-content-hint/
+
+        Covered by tests: 
+        LayoutTests/imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html
+        LayoutTests/imported/w3c/web-platform-tests/mst-content-hint/idlharness.window.html
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::contentHint const):
+        (WebCore::MediaStreamTrack::setContentHint):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::setContentHint):
+        (WebCore::MediaStreamTrackPrivate::clone):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::contentHint):
+
 2018-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Allow for suffixes to com.apple.WebKit.WebContent

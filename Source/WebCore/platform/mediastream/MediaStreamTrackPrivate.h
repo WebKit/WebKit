@@ -66,6 +66,10 @@ public:
 
     bool ended() const { return m_isEnded; }
 
+    enum class HintValue { Empty, Speech, Music, Motion, Detail, Text };
+    HintValue contentHint() const { return m_contentHint; }
+    void setContentHint(HintValue);
+    
     void startProducingData() { m_source->start(); }
     void stopProducingData() { m_source->stop(); }
     bool isProducingData() { return m_source->isProducingData(); }
@@ -129,6 +133,7 @@ private:
     bool m_isEnabled { true };
     bool m_isEnded { false };
     bool m_haveProducedData { false };
+    HintValue m_contentHint { HintValue::Empty };
     RefPtr<WebAudioSourceProvider> m_audioSourceProvider;
 };
 

@@ -92,6 +92,59 @@ const String& MediaStreamTrack::label() const
     return m_private->label();
 }
 
+const AtomicString& MediaStreamTrack::contentHint() const
+{
+    static NeverDestroyed<const AtomicString> speechHint("speech", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> musicHint("music", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> detailHint("detail", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> textHint("text", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> motionHint("motion", AtomicString::ConstructFromLiteral);
+
+    switch (m_private->contentHint()) {
+    case MediaStreamTrackPrivate::HintValue::Empty:
+        return emptyAtom();
+    case MediaStreamTrackPrivate::HintValue::Speech:
+        return speechHint;
+    case MediaStreamTrackPrivate::HintValue::Music:
+        return musicHint;
+    case MediaStreamTrackPrivate::HintValue::Motion:
+        return motionHint;
+    case MediaStreamTrackPrivate::HintValue::Detail:
+        return detailHint;
+    case MediaStreamTrackPrivate::HintValue::Text:
+        return textHint;
+    default:
+        return emptyAtom();
+    }
+}
+
+void MediaStreamTrack::setContentHint(const String& hintValue)
+{
+    MediaStreamTrackPrivate::HintValue value;
+    if (m_private->type() == RealtimeMediaSource::Type::Audio) {
+        if (hintValue == "")
+            value = MediaStreamTrackPrivate::HintValue::Empty;
+        else if (hintValue == "speech")
+            value = MediaStreamTrackPrivate::HintValue::Speech;
+        else if (hintValue == "music")
+            value = MediaStreamTrackPrivate::HintValue::Music;
+        else
+            return;
+    } else {
+        if (hintValue == "")
+            value = MediaStreamTrackPrivate::HintValue::Empty;
+        else if (hintValue == "detail")
+            value = MediaStreamTrackPrivate::HintValue::Detail;
+        else if (hintValue == "motion")
+            value = MediaStreamTrackPrivate::HintValue::Motion;
+        else if (hintValue == "text")
+            value = MediaStreamTrackPrivate::HintValue::Text;
+        else
+            return;
+    }
+    m_private->setContentHint(value);
+}
+
 bool MediaStreamTrack::enabled() const
 {
     return m_private->enabled();
