@@ -2753,12 +2753,11 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         if (UNLIKELY(!isASCII(*iterator)))
             syntaxViolation(hostBegin);
 
+        if (!U_IS_UNICODE_CHAR(*iterator))
+            return false;
         uint8_t buffer[U8_MAX_LENGTH];
         int32_t offset = 0;
-        UBool error = false;
-        U8_APPEND(buffer, offset, U8_MAX_LENGTH, *iterator, error);
-        ASSERT_WITH_SECURITY_IMPLICATION(offset <= static_cast<int32_t>(sizeof(buffer)));
-        // FIXME: Check error.
+        U8_APPEND_UNSAFE(buffer, offset, *iterator);
         utf8Encoded.append(buffer, offset);
     }
     LCharBuffer percentDecoded = percentDecode(utf8Encoded.data(), utf8Encoded.size(), hostBegin);

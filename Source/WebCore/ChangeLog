@@ -1,5 +1,20 @@
 2018-09-26  Alex Christensen  <achristensen@webkit.org>
 
+        URLs with mismatched surrogate pairs in the host should fail to parse
+        https://bugs.webkit.org/show_bug.cgi?id=190005
+
+        Reviewed by Chris Dumez.
+
+        Elsewhere in the URLParser, when we encounter mismatched surrogate pairs we use the replacement character,
+        but that just fails later on in domainToASCII, so we may as well just fail.
+        This behavior matches Chrome, but is unclear in the spec.  There are no valid uses of hosts containing mismatched surrogate pairs.
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseHostAndPort):
+
+2018-09-26  Alex Christensen  <achristensen@webkit.org>
+
         uidna_nameToASCII only needs a buffer capacity of 64
         https://bugs.webkit.org/show_bug.cgi?id=190006
 
