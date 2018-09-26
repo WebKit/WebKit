@@ -47,12 +47,6 @@
 NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSValue : NSObject
 
-#if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < JSC_MAC_VERSION_TBA) || (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED < JSC_IOS_VERSION_TBA)
-typedef NSString *JSValueProperty;
-#else
-typedef id JSValueProperty;
-#endif
-
 /*!
 @property
 @abstract The JSContext that this value originates from.
@@ -153,15 +147,6 @@ typedef id JSValueProperty;
 @result The JSValue representing the JavaScript value <code>undefined</code>.
 */
 + (JSValue *)valueWithUndefinedInContext:(JSContext *)context;
-
-/*!
- @method
- @abstract Create a new, unique, symbol object.
- @param description The description of the symbol object being created.
- @param context The JSContext to which the resulting JSValue belongs.
- @result The JSValue representing a unique JavaScript value with type symbol.
- */
-+ (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @methodgroup Converting to Objective-C Types
@@ -318,67 +303,6 @@ typedef id JSValueProperty;
 - (NSDictionary *)toDictionary;
 
 /*!
-@methodgroup Accessing Properties
-*/
-
-/*!
-@method
-@abstract Access a property of a JSValue.
-@result The JSValue for the requested property or the JSValue <code>undefined</code> 
- if the property does not exist.
-@discussion Corresponds to the JavaScript operation <code>object[property]</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
-*/
-- (JSValue *)valueForProperty:(JSValueProperty)property;
-
-/*!
-@method
-@abstract Set a property on a JSValue.
-@discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
-*/
-- (void)setValue:(id)value forProperty:(JSValueProperty)property;
-
-/*!
-@method
-@abstract Delete a property from a JSValue.
-@result YES if deletion is successful, NO otherwise.
-@discussion Corresponds to the JavaScript operation <code>delete object[property]</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
-*/
-- (BOOL)deleteProperty:(JSValueProperty)property;
-
-/*!
-@method
-@abstract Check if a JSValue has a property.
-@discussion This method has the same function as the JavaScript operator <code>in</code>.
-@result Returns YES if property is present on the value.
-@discussion Corresponds to the JavaScript operation <code>property in object</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
-*/
-- (BOOL)hasProperty:(JSValueProperty)property;
-
-/*!
-@method
-@abstract Define properties with custom descriptors on JSValues.
-@discussion This method may be used to create a data or accessor property on an object.
- This method operates in accordance with the Object.defineProperty method in the JavaScript language. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
-*/
-- (void)defineProperty:(JSValueProperty)property descriptor:(id)descriptor;
-
-/*!
-@method
-@abstract Access an indexed (numerical) property on a JSValue.
-@result The JSValue for the property at the specified index. 
- Returns the JavaScript value <code>undefined</code> if no property exists at that index. 
-*/
-- (JSValue *)valueAtIndex:(NSUInteger)index;
-
-/*!
-@method
-@abstract Set an indexed (numerical) property on a JSValue.
-@discussion For JSValues that are JavaScript arrays, indices greater than 
- UINT_MAX - 1 will not affect the length of the array.
-*/
-- (void)setValue:(id)value atIndex:(NSUInteger)index;
-
-/*!
 @functiongroup Checking JavaScript Types
 */
 
@@ -420,12 +344,6 @@ typedef id JSValueProperty;
 @abstract Check if a JSValue is an object.
 */
 @property (readonly) BOOL isObject;
-
-/*!
-@property
-@abstract Check if a JSValue is a symbol.
-*/
-@property (readonly) BOOL isSymbol JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @property
@@ -581,6 +499,68 @@ Create a JSValue from a CGRect.
 @end
 
 /*!
+ @category
+ @discussion These methods enable querying properties on a JSValue.
+ */
+@interface JSValue (PropertyAccess)
+
+/*!
+ @method
+ @abstract Access a property of a JSValue.
+ @result The JSValue for the requested property or the JSValue <code>undefined</code>
+ if the property does not exist.
+ */
+- (JSValue *)valueForProperty:(NSString *)property;
+
+/*!
+ @method
+ @abstract Set a property on a JSValue.
+ */
+- (void)setValue:(id)value forProperty:(NSString *)property;
+
+/*!
+ @method
+ @abstract Delete a property from a JSValue.
+ @result YES if deletion is successful, NO otherwise.
+ */
+- (BOOL)deleteProperty:(NSString *)property;
+
+/*!
+ @method
+ @abstract Check if a JSValue has a property.
+ @discussion This method has the same function as the JavaScript operator <code>in</code>.
+ @result Returns YES if property is present on the value.
+ */
+- (BOOL)hasProperty:(NSString *)property;
+
+/*!
+ @method
+ @abstract Define properties with custom descriptors on JSValues.
+ @discussion This method may be used to create a data or accessor property on an object.
+ This method operates in accordance with the Object.defineProperty method in the
+ JavaScript language.
+ */
+- (void)defineProperty:(NSString *)property descriptor:(id)descriptor;
+
+/*!
+ @method
+ @abstract Access an indexed (numerical) property on a JSValue.
+ @result The JSValue for the property at the specified index.
+ Returns the JavaScript value <code>undefined</code> if no property exists at that index.
+ */
+- (JSValue *)valueAtIndex:(NSUInteger)index;
+
+/*!
+ @method
+ @abstract Set an indexed (numerical) property on a JSValue.
+ @discussion For JSValues that are JavaScript arrays, indices greater than
+ UINT_MAX - 1 will not affect the length of the array.
+ */
+- (void)setValue:(id)value atIndex:(NSUInteger)index;
+
+@end
+
+/*!
 @category
 @discussion Instances of JSValue implement the following methods in order to enable
  support for subscript access by key and index, for example:
@@ -594,16 +574,13 @@ Create a JSValue from a CGRect.
 @/textblock
 
  An object key passed as a subscript will be converted to a JavaScript value,
- and then the value using the same rules as <code>valueWithObject:inContext:</code>. In macOS
- TBA and iOS TBA and below, the <code>key</code> argument of
- <code>setObject:object forKeyedSubscript:key</code> was restricted to an
- <code>NSString <NSCopying> *</code> but that restriction was never used.
+ and then the value converted to a string used as a property name.
 */
 @interface JSValue (SubscriptSupport)
 
-- (JSValue *)objectForKeyedSubscript:(JSValueProperty)key;
+- (JSValue *)objectForKeyedSubscript:(id)key;
 - (JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
-- (void)setObject:(id)object forKeyedSubscript:(JSValueProperty)key;
+- (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key;
 - (void)setObject:(id)object atIndexedSubscript:(NSUInteger)index;
 
 @end

@@ -151,15 +151,6 @@ JS_EXPORT bool JSValueIsString(JSContextRef ctx, JSValueRef value);
 */
 JS_EXPORT bool JSValueIsObject(JSContextRef ctx, JSValueRef value);
 
-/*!
-@function
-@abstract       Tests whether a JavaScript value's type is the symbol type.
-@param ctx      The execution context to use.
-@param value    The JSValue to test.
-@result         true if value's type is the symbol type, otherwise false.
-*/
-JS_EXPORT bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value) JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
-
 
 /*!
 @function
