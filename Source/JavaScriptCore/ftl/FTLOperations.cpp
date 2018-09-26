@@ -225,7 +225,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         RELEASE_ASSERT(table);
 
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
-            materialization->origin(), exec->codeBlock());
+            materialization->origin(), exec->codeBlock()->baselineAlternative());
         Structure* structure = codeBlock->globalObject()->activationStructure();
 
         // It doesn't matter what values we initialize as bottom values inside the activation constructor because
@@ -286,7 +286,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 return ClonedArguments::createWithMachineFrame(exec, exec, ArgumentsMode::Cloned);
             case PhantomCreateRest: {
                 CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
-                    materialization->origin(), exec->codeBlock());
+                    materialization->origin(), exec->codeBlock()->baselineAlternative());
 
                 unsigned numberOfArgumentsToSkip = codeBlock->numberOfArgumentsToSkip();
                 JSGlobalObject* globalObject = codeBlock->globalObject();
@@ -330,7 +330,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         RELEASE_ASSERT(callee);
         
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
-            materialization->origin(), exec->codeBlock());
+            materialization->origin(), exec->codeBlock()->baselineAlternative());
         
         // We have an inline frame and we have all of the data we need to recreate it.
         switch (materialization->type()) {
@@ -473,7 +473,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
         // For now, we use array allocation profile in the actual CodeBlock. It is OK since current NewArrayBuffer
         // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
-        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock());
+        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock()->baselineAlternative());
         Instruction* currentInstruction = &codeBlock->instructions()[materialization->origin().bytecodeIndex];
         RELEASE_ASSERT(Interpreter::getOpcodeID(currentInstruction[0].u.opcode) == op_new_array_buffer);
         auto* newArrayBuffer = bitwise_cast<OpNewArrayBuffer*>(currentInstruction);
@@ -506,7 +506,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
     case PhantomNewArrayWithSpread: {
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
-            materialization->origin(), exec->codeBlock());
+            materialization->origin(), exec->codeBlock()->baselineAlternative());
         JSGlobalObject* globalObject = codeBlock->globalObject();
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
@@ -585,7 +585,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             }
         }
         RELEASE_ASSERT(regExp);
-        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock());
+        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock()->baselineAlternative());
         Structure* structure = codeBlock->globalObject()->regExpStructure();
         return RegExpObject::create(vm, structure, regExp);
     }

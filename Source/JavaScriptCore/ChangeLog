@@ -1,3 +1,24 @@
+2018-09-25  Saam Barati  <sbarati@apple.com>
+
+        Calls to baselineCodeBlockForOriginAndBaselineCodeBlock in operationMaterializeObjectInOSR should actually pass in the baseline CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=189940
+        <rdar://problem/43640987>
+
+        Reviewed by Mark Lam.
+
+        We were calling baselineCodeBlockForOriginAndBaselineCodeBlock with the FTL
+        CodeBlock. There is nothing semantically wrong with doing that (except for
+        poor naming), however, the poor naming here led us to make a real semantic
+        mistake. We wanted the baseline CodeBlock's constant pool, but we were
+        accessing the FTL CodeBlock's constant pool accidentally. We need to
+        access the baseline CodeBlock's constant pool when we update the NewArrayBuffer
+        constant value.
+
+        * bytecode/InlineCallFrame.h:
+        (JSC::baselineCodeBlockForOriginAndBaselineCodeBlock):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+
 2018-09-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Stricter block syntax in generated ObjC protocol interfaces
