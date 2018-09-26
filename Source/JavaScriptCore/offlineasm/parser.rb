@@ -840,17 +840,28 @@ class Parser
     end
 end
 
+def readTextFile(fileName)
+    data = IO::read(fileName)
+
+    # On Windows, files may contain CRLF line endings (for example, git client might
+    # automatically replace \n with \r\n on Windows) which will fail our parsing.
+    # Thus, we'll just remove all \r from the data (keeping just the \n characters)
+    data.delete!("\r")
+
+    return data
+end
+
 def parseData(data, fileName)
     parser = Parser.new(data, SourceFile.new(fileName))
     parser.parseSequence(nil, "")
 end
 
 def parse(fileName)
-    parseData(IO::read(fileName), fileName)
+    parseData(readTextFile(fileName), fileName)
 end
 
 def parseHash(fileName)
-    parser = Parser.new(IO::read(fileName), SourceFile.new(fileName))
+    parser = Parser.new(readTextFile(fileName), SourceFile.new(fileName))
     fileList = parser.parseIncludes(nil, "")
     fileListHash(fileList)
 end

@@ -1,3 +1,12 @@
+2018-09-26  Koby Boyango  <koby.b@mce.systems>
+
+        [JSC] offlineasm parser should handle CRLF in asm files
+        https://bugs.webkit.org/show_bug.cgi?id=189949
+
+        Reviewed by Mark Lam.
+
+        * offlineasm/parser.rb:
+
 2018-09-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Array#lastIndexOf
