@@ -538,10 +538,10 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
     }
 
     if (m_baseIsFirst) {
-        m_extent = adjustPositionForEnd(m_end, startNode.ptr());
+        m_extent = adjustPositionForEnd(m_end, m_start.containerNode());
         m_end = m_extent;
     } else {
-        m_extent = adjustPositionForStart(m_start, endNode.ptr());
+        m_extent = adjustPositionForStart(m_start, m_end.containerNode());
         m_start = m_extent;
     }
 }

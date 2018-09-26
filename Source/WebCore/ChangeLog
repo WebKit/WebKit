@@ -1,3 +1,14 @@
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Selection should work across shadow boundary when initiated by a mouse drag
+        https://bugs.webkit.org/show_bug.cgi?id=151380
+        <rdar://problem/24363872>
+
+        Revert the change that I said I would from r236519.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries):
+
 2018-09-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r236511.
