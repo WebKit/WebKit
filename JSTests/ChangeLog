@@ -1,3 +1,34 @@
+2018-09-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Optimize Array#lastIndexOf
+        https://bugs.webkit.org/show_bug.cgi?id=189780
+
+        Reviewed by Saam Barati.
+
+        * stress/array-lastindexof-array-prototype-trap.js: Added.
+        (shouldBe):
+        (AncestorArray.prototype.get 2):
+        (AncestorArray):
+        * stress/array-lastindexof-have-a-bad-time-c-runtime.js: Added.
+        (shouldBe):
+        * stress/array-lastindexof-hole-nan.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * stress/array-lastindexof-infinity.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * stress/array-lastindexof-negative-zero.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * stress/array-lastindexof-own-getter.js: Added.
+        (shouldBe):
+        (throw.new.Error.get array):
+        (get array):
+        * stress/array-lastindexof-prototype-trap.js: Added.
+        (shouldBe):
+        (DerivedArray.prototype.get 2):
+        (DerivedArray):
+
 2018-09-25  Saam Barati  <sbarati@apple.com>
 
         Calls to baselineCodeBlockForOriginAndBaselineCodeBlock in operationMaterializeObjectInOSR should actually pass in the baseline CodeBlock

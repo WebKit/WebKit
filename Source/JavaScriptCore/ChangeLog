@@ -1,3 +1,16 @@
+2018-09-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Optimize Array#lastIndexOf
+        https://bugs.webkit.org/show_bug.cgi?id=189780
+
+        Reviewed by Saam Barati.
+
+        Optimize Array#lastIndexOf as the same to Array#indexOf. We add a fast path
+        for JSArray with contiguous storage.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncLastIndexOf):
+
 2018-09-25  Saam Barati  <sbarati@apple.com>
 
         Calls to baselineCodeBlockForOriginAndBaselineCodeBlock in operationMaterializeObjectInOSR should actually pass in the baseline CodeBlock
