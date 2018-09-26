@@ -1,3 +1,17 @@
+2018-09-26  Keith Miller  <keith_miller@apple.com>
+
+        We should zero unused property storage when rebalancing array storage.
+        https://bugs.webkit.org/show_bug.cgi?id=188151
+
+        Reviewed by Michael Saboff.
+
+        In unshiftCountSlowCase we sometimes will move property storage to the right even when net adding elements.
+        This can happen because we "balance" the pre/post-capacity in that code so we need to zero the unused
+        property storage.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+
 2018-09-26  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, add scope verification handling

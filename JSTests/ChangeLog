@@ -1,3 +1,12 @@
+2018-09-26  Keith Miller  <keith_miller@apple.com>
+
+        We should zero unused property storage when rebalancing array storage.
+        https://bugs.webkit.org/show_bug.cgi?id=188151
+
+        Reviewed by Michael Saboff.
+
+        * stress/splice-should-zero-property-storage-when-rebalancing.js: Added.
+
 2018-09-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Array#lastIndexOf

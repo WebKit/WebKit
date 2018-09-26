@@ -424,13 +424,14 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
         memmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
         memmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
 
+        // We don't need to zero the pre-capacity for the concurrent GC because it is not available to use as property storage.
+        memset(newButterfly->base(0, propertyCapacity), 0, (propertyCapacity - propertySize) * sizeof(JSValue));
+
         if (allocatedNewStorage) {
             // We will set the vectorLength to newVectorLength. We populated requiredVectorLength
             // (usedVectorLength + count), which is less. Clear the difference.
             for (unsigned i = requiredVectorLength; i < newVectorLength; ++i)
                 newButterfly->arrayStorage()->m_vector[i].clear();
-            // We don't need to zero the pre-capacity because it is not available to use as property storage.
-            memset(newButterfly->base(0, propertyCapacity), 0, (propertyCapacity - propertySize) * sizeof(JSValue));
         }
     } else if ((newAllocBase != butterfly->base(structure)) || (preCapacity != storage->m_indexBias)) {
         memmove(newButterfly->propertyStorage() - propertyCapacity, butterfly->propertyStorage() - propertyCapacity, sizeof(JSValue) * propertyCapacity + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
