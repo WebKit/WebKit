@@ -1,3 +1,22 @@
+2018-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236512): WKWebViewCandidateTests.SoftSpaceReplacementAfterCandidateInsertionWithoutReplacement API test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190007
+
+        Reviewed by Alex Christensen.
+
+        Drop DispatchMessageEvenWhenWaitingForSyncReply SendOption from EditorStateChanged IPC calls to restore
+        pre-r236512 behavior. Before r236512, this option had no effect on IPC from the WebContent to the UIProcess
+        because the m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage flag was set
+        on that IPC::Connection. However, after r236512, m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
+        is no longer set on the connection, and the DispatchMessageEvenWhenWaitingForSyncReply SendOption was
+        causing this message to get processed out of order with regards to other async IPC, thus causing the
+        API test failure.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendEditorStateUpdate):
+        (WebKit::WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate):
+
 2018-09-26  Alex Christensen  <achristensen@webkit.org>
 
         Fix UAF after r236463

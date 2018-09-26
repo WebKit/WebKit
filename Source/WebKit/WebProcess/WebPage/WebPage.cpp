@@ -5608,7 +5608,7 @@ void WebPage::sendEditorStateUpdate()
     // If that is the case, just send what we have (i.e. don't include post-layout data) and wait until the
     // next layer tree commit to compute and send the complete EditorState over.
     auto state = editorState();
-    send(Messages::WebPageProxy::EditorStateChanged(state), pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::WebPageProxy::EditorStateChanged(state), pageID());
 
     if (state.isMissingPostLayoutData) {
         m_hasPendingEditorStateUpdate = true;
@@ -5644,7 +5644,7 @@ void WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate()
     if (frame.editor().ignoreSelectionChanges())
         return;
 
-    send(Messages::WebPageProxy::EditorStateChanged(editorState(IncludePostLayoutDataHint::No)), pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::WebPageProxy::EditorStateChanged(editorState(IncludePostLayoutDataHint::No)), pageID());
 
     if (m_hasPendingEditorStateUpdate)
         return;
