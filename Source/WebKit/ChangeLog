@@ -1,3 +1,50 @@
+2018-09-26  Chris Dumez  <cdumez@apple.com>
+
+        UIProcess should process incoming sync IPC from WebProcess when waiting for a sync IPC reply from it
+        https://bugs.webkit.org/show_bug.cgi?id=189927
+
+        Reviewed by Geoffrey Garen.
+
+        UIProcess should process incoming sync IPC from WebProcess when waiting for a sync IPC reply from it
+        in order to avoid deadlocks. This is not an issue currently because the WebProcess does process
+        incoming sync IPC when waiting for a sync IPC reply. However, we plan to change this in the future
+        in order to avoid bugs caused by re-entering WebCore at unsafe times.
+
+        The reason the UIProcess previously did not do out of order sync IPC process was to avoid processing
+        a synchronous policy decision IPC for a frameID it did not know about yet, due to the DidCreateMainFrame /
+        DidCreateSubframe IPC messages being asynchronous. To address this issue, the decidePolicyForNavigationActionSync
+        IPC handler now calls didCreateMainFrame() / didCreateSubframe() as needed if it does not know about
+        the frame yet. Note that synchronous policy decisions are rare and are currently only needed by initial
+        about:blank and fragment navigations.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        Drop DispatchMessageEvenWhenWaitingForSyncReply SendOption when sending the
+        DidCreateMainFrame / DidCreateSubframe IPC. Previously, this SendOption has
+        no effect because the IPC::Connection would have the
+        m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
+        flag set to true. However, now that we stop setting this flag on the IPC
+        connection from the WebProcess to the UIProcess, it would lead to those
+        IPC messages getting processed out of order with regards to the
+        DecidePolicyForNavigationAsync asynchronous IPC. DidCreateMainFrame would
+        sometimes get processed *after* the DecidePolicyForNavigationAsync IPC
+        and we would not know about the frameID yet.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+
 2018-09-26  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (PSON): White or Black flash occurs when process swapping on navigation on iOS
