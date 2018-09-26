@@ -1269,7 +1269,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
     JSValue searchElement = exec->argument(0);
 
     if (isJSArray(thisObject)) {
-        if (JSValue result = fastIndexOf<IndexOfDirection::Forward>(exec, vm, asArray(thisObject), length, searchElement, index))
+        JSValue result = fastIndexOf<IndexOfDirection::Forward>(exec, vm, asArray(thisObject), length, searchElement, index);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (result)
             return JSValue::encode(result);
     }
 
@@ -1318,7 +1320,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
     JSValue searchElement = exec->argument(0);
 
     if (isJSArray(thisObject)) {
-        if (JSValue result = fastIndexOf<IndexOfDirection::Backward>(exec, vm, asArray(thisObject), length, searchElement, index))
+        JSValue result = fastIndexOf<IndexOfDirection::Backward>(exec, vm, asArray(thisObject), length, searchElement, index);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (result)
             return JSValue::encode(result);
     }
 
