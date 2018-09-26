@@ -4013,7 +4013,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const WebCo
     if (!fromAPI)
         m_pageLoadState.clearPendingAPIRequestURL(transaction);
 
-    auto* frame = m_process->webFrame(frameID);
+    WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(originalRequest.url());

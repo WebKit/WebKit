@@ -111,8 +111,6 @@ static uint64_t generateListenerID()
 Ref<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::Frame* coreFrame)
 {
     auto frame = create(std::unique_ptr<WebFrameLoaderClient>(static_cast<WebFrameLoaderClient*>(&coreFrame->loader().client())));
-    // DispatchMessageEvenWhenWaitingForSyncReply SendOption is needed to ensure that this IPC always gets received before the DecidePolicyForNavigationSync synchronous
-    // IPC for this frame.
     page->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()), page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
     frame->m_coreFrame = coreFrame;
@@ -124,8 +122,6 @@ Ref<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::Frame* c
 Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
 {
     auto frame = create(std::make_unique<WebFrameLoaderClient>());
-    // DispatchMessageEvenWhenWaitingForSyncReply SendOption is needed to ensure that this IPC always gets received before the DecidePolicyForNavigationSync synchronous
-    // IPC for this frame.
     page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()), page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
     auto coreFrame = Frame::create(page->corePage(), ownerElement, frame->m_frameLoaderClient.get());
