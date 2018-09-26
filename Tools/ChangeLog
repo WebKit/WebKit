@@ -1,3 +1,13 @@
+2018-09-26  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak] Bump to apr 1.6.5
+
+        Version 1.6.3 is no longer available on Apache's website.
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * flatpak/org.webkit.WebKit.yaml:
+
 2018-09-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Make AuthenticatorManager
