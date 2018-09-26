@@ -712,8 +712,10 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
 void NetworkResourceLoader::continueDidReceiveResponse()
 {
-    if (m_cacheEntryWaitingForContinueDidReceiveResponse)
+    if (m_cacheEntryWaitingForContinueDidReceiveResponse) {
         continueProcessingCachedEntryAfterDidReceiveResponse(WTFMove(m_cacheEntryWaitingForContinueDidReceiveResponse));
+        return;
+    }
 
     if (m_responseCompletionHandler)
         m_responseCompletionHandler(PolicyAction::Use);

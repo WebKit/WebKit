@@ -1,3 +1,16 @@
+2018-09-26  Alex Christensen  <achristensen@webkit.org>
+
+        Fix UAF after r236463
+        https://bugs.webkit.org/show_bug.cgi?id=190011
+
+        Reviewed by Chris Dumez.
+
+        I had removed an early return in NetworkResourceLoader::continueDidReceiveResponse.
+        Reading the (probably) null m_responseCompletionHandler was reading after the object had been destroyed.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueDidReceiveResponse):
+
 2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Selection should work across shadow boundary when initiated by a mouse drag
