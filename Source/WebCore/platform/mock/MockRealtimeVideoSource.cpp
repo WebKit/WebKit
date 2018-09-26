@@ -229,8 +229,6 @@ void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSet
         m_statsFontSize = m_baseFontSize * .5;
         m_imageBuffer = nullptr;
     }
-
-    RealtimeVideoSource::settingsDidChange(settings);
 }
 
 void MockRealtimeVideoSource::startCaptureTimer()

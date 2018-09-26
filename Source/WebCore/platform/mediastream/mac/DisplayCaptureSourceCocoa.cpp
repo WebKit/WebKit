@@ -117,8 +117,6 @@ void DisplayCaptureSourceCocoa::settingsDidChange(OptionSet<RealtimeMediaSourceS
     }
 
     m_currentSettings = { };
-
-    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 void DisplayCaptureSourceCocoa::startProducingData()

@@ -247,6 +247,8 @@ private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
 
+    void notifySettingsDidChangeObservers(OptionSet<RealtimeMediaSourceSettings::Flag>);
+
     void forEachObserver(const WTF::Function<void(Observer&)>&) const;
 
     bool m_muted { false };

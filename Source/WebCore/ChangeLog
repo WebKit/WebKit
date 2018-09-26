@@ -1,3 +1,36 @@
+2018-09-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Clean up RealtimeMediaSource settings change handling
+        https://bugs.webkit.org/show_bug.cgi?id=189998
+        <rdar://problem/44797884>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no change in functionality.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::notifySettingsDidChangeObservers):
+        (WebCore::RealtimeMediaSource::setSize):
+        (WebCore::RealtimeMediaSource::setFrameRate):
+        (WebCore::RealtimeMediaSource::setAspectRatio):
+        (WebCore::RealtimeMediaSource::setFacingMode):
+        (WebCore::RealtimeMediaSource::setVolume):
+        (WebCore::RealtimeMediaSource::setSampleRate):
+        (WebCore::RealtimeMediaSource::setSampleSize):
+        (WebCore::RealtimeMediaSource::setEchoCancellation):
+        (WebCore::RealtimeMediaSource::settingsDidChange): Deleted.
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::settingsDidChange):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::settingsDidChange):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::settingsDidChange):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::settingsDidChange):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::settingsDidChange):
+
 2018-09-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Ensure renderers with accelerated animations have layers

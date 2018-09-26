@@ -888,7 +888,6 @@ void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSett
     }
 
     m_currentSettings = std::nullopt;
-    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 void CoreAudioCaptureSource::scheduleReconfiguration()
