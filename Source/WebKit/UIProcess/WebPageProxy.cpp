@@ -3357,6 +3357,9 @@ void WebPageProxy::preferencesDidChange()
 
 void WebPageProxy::didCreateMainFrame(uint64_t frameID)
 {
+    // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateMainFrame one.
+    // When this happens, decidePolicyForNavigationActionSync() calls didCreateMainFrame() and we need to ignore the DidCreateMainFrame
+    // IPC when it later gets processed.
     if (m_mainFrame && m_mainFrame->frameID() == frameID)
         return;
 
@@ -3383,6 +3386,9 @@ void WebPageProxy::didCreateSubframe(uint64_t frameID)
 
     MESSAGE_CHECK(m_mainFrame);
 
+    // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
+    // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
+    // IPC when it later gets processed.
     if (m_process->webFrame(frameID))
         return;
 

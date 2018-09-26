@@ -1,5 +1,13 @@
 2018-09-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, apply post-landing review comments after r236512.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+
+2018-09-26  Chris Dumez  <cdumez@apple.com>
+
         UIProcess should process incoming sync IPC from WebProcess when waiting for a sync IPC reply from it
         https://bugs.webkit.org/show_bug.cgi?id=189927
 
