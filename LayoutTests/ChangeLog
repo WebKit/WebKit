@@ -1,3 +1,18 @@
+2018-09-25  Justin Fan  <justin_fan@apple.com>
+
+        WebGL 2 Conformance: primitive restart and draw_primitive_restart WebGL2 sample
+        https://bugs.webkit.org/show_bug.cgi?id=189625
+        <rdar://problem/42882620>
+
+        Reviewed by Dean Jackson.
+
+        Implement support for Primitive Restart Fixed Index as expected 
+        by the WebGL 2 specifications. 
+
+        * TestExpectations: Skip some flaky tests between different Mac machines under 2.0.0. 
+        * webgl/webgl2-primitive-restart.html: Canary ref test to be run as part of LayoutTests suite.
+        * webgl/webgl2-primitive-restart-expected.html:
+
 2018-09-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r236420 and r236458.

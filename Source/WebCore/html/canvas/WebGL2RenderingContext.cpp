@@ -2020,26 +2020,15 @@ bool WebGL2RenderingContext::validateIndexArrayConservative(GC3Denum type, unsig
     if (!maxIndex) {
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {
-        case GraphicsContext3D::UNSIGNED_BYTE: {
-            const GC3Dubyte* p = static_cast<const GC3Dubyte*>(buffer->data());
-            for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
+        case GraphicsContext3D::UNSIGNED_BYTE:
+            maxIndex = getMaxIndex<GC3Dubyte>(buffer, 0, numElements);
             break;
-        }
-        case GraphicsContext3D::UNSIGNED_SHORT: {
-            numElements /= sizeof(GC3Dushort);
-            const GC3Dushort* p = static_cast<const GC3Dushort*>(buffer->data());
-            for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
+        case GraphicsContext3D::UNSIGNED_SHORT:
+            maxIndex = getMaxIndex<GC3Dushort>(buffer, 0, numElements / sizeof(GC3Dushort));
             break;
-        }
-        case GraphicsContext3D::UNSIGNED_INT: {
-            numElements /= sizeof(GC3Duint);
-            const GC3Duint* p = static_cast<const GC3Duint*>(buffer->data());
-            for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
+        case GraphicsContext3D::UNSIGNED_INT:
+            maxIndex = getMaxIndex<GC3Duint>(buffer, 0, numElements / sizeof(GC3Duint));
             break;
-        }
         default:
             return false;
         }

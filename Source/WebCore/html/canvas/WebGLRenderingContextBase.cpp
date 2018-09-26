@@ -2007,7 +2007,7 @@ bool WebGLRenderingContextBase::validateElementArraySize(GC3Dsizei count, GC3Den
 bool WebGLRenderingContextBase::validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, unsigned& numElementsRequired)
 {
     ASSERT(count >= 0 && offset >= 0);
-    unsigned lastIndex = 0;
+    unsigned maxIndex = 0;
     
     RefPtr<WebGLBuffer> elementArrayBuffer = m_boundVertexArrayObject->getElementArrayBuffer();
 
@@ -2019,41 +2019,24 @@ bool WebGLRenderingContextBase::validateIndexArrayPrecise(GC3Dsizei count, GC3De
         return true;
     }
 
-    if (!elementArrayBuffer->elementArrayBuffer())
+    auto buffer = elementArrayBuffer->elementArrayBuffer();
+    if (!buffer)
         return false;
 
-    unsigned long uoffset = offset;
-    unsigned long n = count;
-
-    if (type == GraphicsContext3D::UNSIGNED_INT) {
-        // Make uoffset an element offset.
-        uoffset /= sizeof(GC3Duint);
-        const GC3Duint* p = static_cast<const GC3Duint*>(elementArrayBuffer->elementArrayBuffer()->data()) + uoffset;
-        while (n-- > 0) {
-            if (*p > lastIndex)
-                lastIndex = *p;
-            ++p;
-        }
-    } else if (type == GraphicsContext3D::UNSIGNED_SHORT) {
-        // Make uoffset an element offset.
-        uoffset /= sizeof(GC3Dushort);
-        const GC3Dushort* p = static_cast<const GC3Dushort*>(elementArrayBuffer->elementArrayBuffer()->data()) + uoffset;
-        while (n-- > 0) {
-            if (*p > lastIndex)
-                lastIndex = *p;
-            ++p;
-        }
-    } else if (type == GraphicsContext3D::UNSIGNED_BYTE) {
-        const GC3Dubyte* p = static_cast<const GC3Dubyte*>(elementArrayBuffer->elementArrayBuffer()->data()) + uoffset;
-        while (n-- > 0) {
-            if (*p > lastIndex)
-                lastIndex = *p;
-            ++p;
-        }
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_INT:
+        maxIndex = getMaxIndex<GC3Duint>(buffer, offset, count);
+        break;
+    case GraphicsContext3D::UNSIGNED_SHORT:
+        maxIndex = getMaxIndex<GC3Dushort>(buffer, offset, count);
+        break;
+    case GraphicsContext3D::UNSIGNED_BYTE:
+        maxIndex = getMaxIndex<GC3Dubyte>(buffer, offset, count);
+        break;
     }
 
-    // Then set the last index in the index array and make sure it is valid.
-    auto checkedNumElementsRequired = checkedAddAndMultiply<unsigned>(lastIndex, 1, 1);
+    // Then set the maxiumum index in the index array and make sure it is valid.
+    auto checkedNumElementsRequired = checkedAddAndMultiply<unsigned>(maxIndex, 1, 1);
     if (!checkedNumElementsRequired)
         return false;
     numElementsRequired = checkedNumElementsRequired.value();
@@ -2305,6 +2288,22 @@ void WebGLRenderingContextBase::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsiz
     markContextChangedAndNotifyCanvasObserver();
 }
 
+#if USE(OPENGL) && ENABLE(WEBGL2)
+static GC3Duint getRestartIndex(GC3Denum type)
+{
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+        return std::numeric_limits<GC3Dubyte>::max();
+    case GraphicsContext3D::UNSIGNED_SHORT:
+        return std::numeric_limits<GC3Dushort>::max();
+    case GraphicsContext3D::UNSIGNED_INT:
+        return std::numeric_limits<GC3Duint>::max();
+    }
+
+    return 0;
+}
+#endif
+
 void WebGLRenderingContextBase::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset)
 {
     unsigned numElements = 0;
@@ -2332,6 +2331,11 @@ void WebGLRenderingContextBase::drawElements(GC3Denum mode, GC3Dsizei count, GC3
     bool usesFallbackTexture = false;
     if (!isGLES2NPOTStrict())
         usesFallbackTexture = checkTextureCompleteness("drawElements", true);
+
+#if USE(OPENGL) && ENABLE(WEBGL2)
+    if (isWebGL2())
+        m_context->primitiveRestartIndex(getRestartIndex(type));
+#endif
 
     {
         InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
@@ -6438,6 +6442,11 @@ void WebGLRenderingContextBase::drawElementsInstanced(GC3Denum mode, GC3Dsizei c
     }
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawElementsInstanced", true);
+
+#if USE(OPENGL) && ENABLE(WEBGL2)
+    if (isWebGL2())
+        m_context->primitiveRestartIndex(getRestartIndex(type));
+#endif
 
     m_context->drawElementsInstanced(mode, count, type, static_cast<GC3Dintptr>(offset), primcount);
 

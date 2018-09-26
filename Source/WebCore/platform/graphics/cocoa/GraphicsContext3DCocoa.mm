@@ -264,6 +264,9 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     else
         m_contextObj = [[EAGLContext alloc] initWithAPI:api sharegroup:sharedContext->m_contextObj.sharegroup];
     makeContextCurrent();
+
+    if (m_attrs.isWebGL2)
+        ::glEnable(GraphicsContext3D::PRIMITIVE_RESTART_FIXED_INDEX);
 #else
     Vector<CGLPixelFormatAttribute> attribs;
     CGLPixelFormatObj pixelFormatObj = 0;
@@ -346,6 +349,10 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 
     // Set the current context to the one given to us.
     CGLSetCurrentContext(m_contextObj);
+
+    // WebGL 2 expects ES 3-only PRIMITIVE_RESTART_FIXED_INDEX to be enabled; we must emulate this on non-ES 3 systems.
+    if (m_isForWebGL2)
+        ::glEnable(GraphicsContext3D::PRIMITIVE_RESTART);
 
 #endif // !USE(OPENGL_ES)
     

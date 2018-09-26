@@ -1,3 +1,28 @@
+2018-09-25  Justin Fan  <justin_fan@apple.com>
+
+        WebGL 2 Conformance: primitive restart and draw_primitive_restart WebGL2 sample
+        https://bugs.webkit.org/show_bug.cgi?id=189625
+        <rdar://problem/42882620>
+
+        Reviewed by Dean Jackson.
+
+        Ref test: webgl/webgl2-primitive-restart.html.
+
+        Implement support for Primitive Restart Fixed Index as expected 
+        by the WebGL 2 specifications. 
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::validateIndexArrayConservative):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::getLastIndex): Template that must be defined in header.
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateIndexArrayPrecise):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::primitiveRestartIndex):
+
 2018-09-25  John Wilander  <wilander@apple.com>
 
         Change from HAVE(CFNETWORK_STORAGE_PARTITIONING) to ENABLE(RESOURCE_LOAD_STATISTICS)

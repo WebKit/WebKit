@@ -718,7 +718,9 @@ public:
         TEXTURE_IMMUTABLE_FORMAT = 0x912F,
         MAX_ELEMENT_INDEX = 0x8D6B,
         NUM_SAMPLE_COUNTS = 0x9380,
-        TEXTURE_IMMUTABLE_LEVELS = 0x82DF, 
+        TEXTURE_IMMUTABLE_LEVELS = 0x82DF,
+        PRIMITIVE_RESTART_FIXED_INDEX = 0x8D69,
+        PRIMITIVE_RESTART = 0x8F9D,
 
         // OpenGL ES 3 constants
         MAP_READ_BIT = 0x0001
@@ -1150,6 +1152,10 @@ public:
     void paintRenderingResultsToCanvas(ImageBuffer*);
     RefPtr<ImageData> paintRenderingResultsToImageData();
     bool paintCompositedResultsToCanvas(ImageBuffer*);
+
+#if USE(OPENGL) && ENABLE(WEBGL2)
+    void primitiveRestartIndex(GC3Duint);
+#endif
 
 #if PLATFORM(COCOA)
     bool texImageIOSurface2D(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, IOSurfaceRef, GC3Duint plane);

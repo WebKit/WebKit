@@ -2070,6 +2070,14 @@ void GraphicsContext3D::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
     getExtensions().vertexAttribDivisor(index, divisor);
 }
 
+#if USE(OPENGL) && ENABLE(WEBGL2)
+void GraphicsContext3D::primitiveRestartIndex(GC3Duint index)
+{
+    makeContextCurrent();
+    ::glPrimitiveRestartIndex(index);
+}
+#endif
+
 }
 
 #endif // ENABLE(GRAPHICS_CONTEXT_3D)
