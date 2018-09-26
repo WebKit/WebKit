@@ -1,3 +1,15 @@
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        MiniBrowser doesn't respect default enabled-ness of experimental and internal debug features
+        https://bugs.webkit.org/show_bug.cgi?id=189989
+
+        Reviewed by Simon Fraser.
+
+        When the preference isn't found in user defaults, use the default value of each feature's enabledness.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+
 2018-09-26  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] Bump to apr 1.6.5

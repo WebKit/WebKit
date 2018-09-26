@@ -109,13 +109,21 @@ static WKWebViewConfiguration *defaultConfiguration()
 #if WK_API_ENABLED
         NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
         for (_WKExperimentalFeature *feature in experimentalFeatures) {
-            BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+            BOOL enabled;
+            if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
+                enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+            else
+                enabled = [feature defaultValue];
             [configuration.preferences _setEnabled:enabled forExperimentalFeature:feature];
         }
 
         NSArray<_WKInternalDebugFeature *> *internalDebugFeatures = [WKPreferences _internalDebugFeatures];
         for (_WKInternalDebugFeature *feature in internalDebugFeatures) {
-            BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+            BOOL enabled;
+            if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
+                enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+            else
+                enabled = [feature defaultValue];
             [configuration.preferences _setEnabled:enabled forInternalDebugFeature:feature];
         }
 #endif
