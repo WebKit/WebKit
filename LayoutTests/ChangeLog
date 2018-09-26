@@ -1,3 +1,12 @@
+2018-09-26  Truitt Savell  <tsavell@apple.com>
+
+        Marking two more media-fragments/ tests as flakey after the iOS12 update
+        https://bugs.webkit.org/show_bug.cgi?id=187557
+
+        Unreviewed Test Gardening
+
+        * platform/ios/TestExpectations:
+
 2018-09-25  Justin Fan  <justin_fan@apple.com>
 
         WebGL 2 Conformance: primitive restart and draw_primitive_restart WebGL2 sample

@@ -3142,7 +3142,9 @@ webkit.org/b/189727 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/187557 media/media-fragments/TC0005.html [ Pass Failure ]
 webkit.org/b/187557 media/media-fragments/TC0006.html [ Pass Failure ]
+webkit.org/b/187557 media/media-fragments/TC0009.html [ Pass Failure ]
 webkit.org/b/187557 media/media-fragments/TC0011.html [ Pass Failure ]
+webkit.org/b/187557 media/media-fragments/TC0014.html [ Pass Failure ]
 webkit.org/b/187522 media/media-fragments/TC0015.html [ Pass Failure ]
 webkit.org/b/187557 media/media-fragments/TC0024.html [ Pass Failure ]
 webkit.org/b/187557 media/media-fragments/TC0035.html [ Pass Failure ]
