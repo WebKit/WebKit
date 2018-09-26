@@ -1,3 +1,25 @@
+2018-09-26  James Savage  <james.savage@apple.com>
+
+        Allow override of viewport configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=188772.
+        <rdar://problem/43538892>.
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setShouldIgnoreMetaViewport:]):
+        (-[WKPreferences _shouldIgnoreMetaViewport]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::viewportPropertiesDidChange): If we are ignoring the
+        <meta> viewport, short circuit calling setViewportArguments() and do not
+        do any updates.
+        (WebKit::WebPage::didCommitLoad): Ditto.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetViewportDefaultConfiguration): Select the default
+        configuration based on UIProcess setting.
+
 2018-09-26  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236512): WKWebViewCandidateTests.SoftSpaceReplacementAfterCandidateInsertionWithoutReplacement API test is failing

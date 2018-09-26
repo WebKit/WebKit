@@ -954,6 +954,10 @@ PassiveTouchListenersAsDefaultOnDocument:
   defaultValue: defaultPassiveTouchListenersAsDefaultOnDocument()
   webcoreName: passiveTouchListenersAsDefaultOnDocument
 
+ShouldIgnoreMetaViewport:
+  type: bool
+  defaultValue: false
+
 # Debug Preferences
 
 AcceleratedDrawingEnabled:

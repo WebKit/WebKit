@@ -1247,6 +1247,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.jscOptions = value;
         else if (key == "runSingly")
             testOptions.runSingly = parseBooleanTestHeaderValue(value);
+        else if (key == "shouldIgnoreMetaViewport")
+            testOptions.shouldIgnoreMetaViewport = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

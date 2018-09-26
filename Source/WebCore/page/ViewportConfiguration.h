@@ -101,6 +101,8 @@ public:
     bool allowsShrinkToFit() const;
     bool avoidsUnsafeArea() const { return m_configuration.avoidsUnsafeArea; }
 
+    // Matches a width=device-width, initial-scale=1 viewport.
+    WEBCORE_EXPORT static Parameters nativeWebpageParameters();
     WEBCORE_EXPORT static Parameters webpageParameters();
     WEBCORE_EXPORT static Parameters textDocumentParameters();
     WEBCORE_EXPORT static Parameters imageDocumentParameters();

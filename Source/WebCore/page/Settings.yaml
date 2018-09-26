@@ -763,3 +763,6 @@ incompleteImageBorderEnabled:
 
 shouldDeferAsynchronousScriptsUntilAfterDocumentLoad:
   initial: false
+
+shouldIgnoreMetaViewport:
+  initial: false

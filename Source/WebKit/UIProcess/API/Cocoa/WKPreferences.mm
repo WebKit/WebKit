@@ -809,6 +809,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->lowPowerVideoAudioBufferSizeEnabled();
 }
 
+- (void)_setShouldIgnoreMetaViewport:(BOOL)ignoreMetaViewport
+{
+    return _preferences->setShouldIgnoreMetaViewport(ignoreMetaViewport);
+}
+
+- (BOOL)_shouldIgnoreMetaViewport
+{
+    return _preferences->shouldIgnoreMetaViewport();
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {

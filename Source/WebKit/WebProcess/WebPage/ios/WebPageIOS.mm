@@ -2749,8 +2749,15 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         return;
     }
 
+    auto parametersForStandardFrame = [&] {
+        if (m_page->settings().shouldIgnoreMetaViewport())
+            return ViewportConfiguration::nativeWebpageParameters();
+
+        return ViewportConfiguration::webpageParameters();
+    };
+
     if (!frame) {
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
+        m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
         return;
     }
 
@@ -2765,7 +2772,7 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
     else if (document->isTextDocument())
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
     else
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
+        m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
 }
 
 void WebPage::viewportConfigurationChanged()

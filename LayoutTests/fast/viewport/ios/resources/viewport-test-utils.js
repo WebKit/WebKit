@@ -50,7 +50,11 @@ function tableFromJSON(value)
 
 function getViewport()
 {
-    var metaTag = document.head.querySelectorAll('meta')[0];
+    var metaTags = document.head.querySelectorAll('meta');
+    if (!metaTags.length)
+        return;
+
+    var metaTag = metaTags[0];
     document.getElementById('viewport').textContent = metaTag.getAttribute('content');
 }
 

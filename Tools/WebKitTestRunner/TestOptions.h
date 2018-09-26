@@ -62,6 +62,7 @@ struct TestOptions {
     bool punchOutWhiteBackgroundsInDarkMode { false };
     bool runSingly { false };
     bool checkForWorldLeaks { false };
+    bool shouldIgnoreMetaViewport { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;

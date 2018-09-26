@@ -1,3 +1,17 @@
+2018-09-26  James Savage  <james.savage@apple.com>
+
+        Allow override of viewport configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=188772.
+        <rdar://problem/43538892>.
+
+        Reviewed by Simon Fraser.
+
+        * page/Settings.yaml:
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::nativeWebpageParameters): Provide a viewport configuration
+        similar to width=device-width, with initial scale set to 1.
+        * page/ViewportConfiguration.h:
+
 2018-09-26  Alex Christensen  <achristensen@webkit.org>
 
         URLs with mismatched surrogate pairs in the host should fail to parse

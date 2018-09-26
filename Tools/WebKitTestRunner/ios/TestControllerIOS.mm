@@ -35,6 +35,7 @@
 #import "UIKitTestSPI.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
@@ -132,8 +133,11 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
         return;
         
     TestRunnerWKWebView *webView = mainWebView()->platformView();
+
+    if (test.options().shouldIgnoreMetaViewport)
+        webView.configuration.preferences._shouldIgnoreMetaViewport = YES;
+
     CGRect screenBounds = [UIScreen mainScreen].bounds;
-    
     CGSize oldSize = webView.bounds.size;
     mainWebView()->resizeTo(screenBounds.size.width, screenBounds.size.height, PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
     CGSize newSize = webView.bounds.size;

@@ -1,3 +1,21 @@
+2018-09-26  James Savage  <james.savage@apple.com>
+
+        Allow override of viewport configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=188772.
+        <rdar://problem/43538892>.
+
+        Reviewed by Simon Fraser.
+
+        Add test proving that a document without a meta viewport specifying
+        width=device-width still gets a layout when this setting is enabled. I also
+        added a baseline case to prove that without this setting we do not layout
+        at device width.
+
+        * fast/viewport/ios/ipad/empty-viewport-expected.txt: Added.
+        * fast/viewport/ios/ipad/empty-viewport.html: Added.
+        * fast/viewport/ios/ipad/meta-viewport-disabled-expected.txt: Added.
+        * fast/viewport/ios/ipad/meta-viewport-disabled.html: Added.
+
 2018-09-26  Alex Christensen  <achristensen@webkit.org>
 
         uidna_nameToASCII only needs a buffer capacity of 64

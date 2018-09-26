@@ -1,3 +1,18 @@
+2018-09-26  James Savage  <james.savage@apple.com>
+
+        Allow override of viewport configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=188772.
+        <rdar://problem/43538892>.
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader): Parse new test option key from comments.
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformConfigureViewForTest): Handle new test option by
+        modifying the web view's preferences accordingly.
+
 2018-09-26  Alex Christensen  <achristensen@webkit.org>
 
         URLs with mismatched surrogate pairs in the host should fail to parse

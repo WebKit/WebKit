@@ -289,6 +289,20 @@ bool ViewportConfiguration::allowsUserScalingIgnoringAlwaysScalable() const
     return shouldIgnoreScalingConstraints() || m_configuration.allowsUserScaling;
 }
 
+ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParameters()
+{
+    Parameters parameters;
+    parameters.width = ViewportArguments::ValueDeviceWidth;
+    parameters.widthIsSet = true;
+    parameters.allowsUserScaling = true;
+    parameters.allowsShrinkToFit = false;
+    parameters.minimumScale = 1;
+    parameters.maximumScale = 5;
+    parameters.initialScale = 1;
+    parameters.initialScaleIsSet = true;
+    return parameters;
+}
+
 ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()
 {
     Parameters parameters;
