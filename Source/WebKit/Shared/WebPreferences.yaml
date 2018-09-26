@@ -886,10 +886,13 @@ SystemLayoutDirection:
   defaultValue: 0
   webcoreBinding: custom
 
-FrameFlattening:
-  type: uint32_t
+FrameFlatteningEnabled:
+  type: bool
   defaultValue: DEFAULT_FRAME_FLATTENING
   webcoreBinding: custom
+  humanReadableName: "Frame flattening"
+  humanReadableDescription: "Enable frame flattening, which adjusts the height of an iframe to fit its contents"
+  category: internal
 
 StandardFontFamily:
   type: String
