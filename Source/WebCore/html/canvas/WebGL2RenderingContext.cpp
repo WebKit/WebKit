@@ -36,6 +36,7 @@
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
 #include "OESTextureFloat.h"
 #include "OESTextureFloatLinear.h"
 #include "OESTextureHalfFloat.h"
@@ -310,10 +311,12 @@ void WebGL2RenderingContext::getBufferSubData(GC3Denum target, long long srcByte
 
 void WebGL2RenderingContext::blitFramebuffer(GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] blitFramebuffer()");
 }
 
 void WebGL2RenderingContext::framebufferTextureLayer(GC3Denum, GC3Denum, WebGLTexture*, GC3Dint, GC3Dint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] framebufferTextureLayer()");
 }
 
 #if !USE(OPENGL_ES)
@@ -414,14 +417,17 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GC3Denum target, GC3
 
 void WebGL2RenderingContext::invalidateFramebuffer(GC3Denum, const Vector<GC3Denum>&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] invalidateFramebuffer()");
 }
 
 void WebGL2RenderingContext::invalidateSubFramebuffer(GC3Denum, const Vector<GC3Denum>&, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] invalidateSubFramebuffer()");
 }
 
 void WebGL2RenderingContext::readBuffer(GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] readBuffer()");
 }
 
 void WebGL2RenderingContext::renderbufferStorageMultisample(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
@@ -658,167 +664,208 @@ void WebGL2RenderingContext::texStorage2D(GC3Denum target, GC3Dsizei levels, GC3
 
 void WebGL2RenderingContext::texStorage3D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texStorage3D()");
 }
 
 void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D()");
 }
 
 void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, TexImageSource&&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D()");
 }
 
 void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D()");
 }
 
 void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
 }
 
 void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, TexImageSource&&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
 }
 
 void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
 }
 
 void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
 }
 
 void WebGL2RenderingContext::texSubImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D()");
 }
 
 void WebGL2RenderingContext::texSubImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, TexImageSource&&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D()");
 }
 
 void WebGL2RenderingContext::texSubImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D()");
 }
 
 void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D()");
 }
 
 void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D()");
 }
 
 void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, TexImageSource&&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D()");
 }
 
 void WebGL2RenderingContext::copyTexSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] copyTexSubImage3D()");
 }
 
 void WebGL2RenderingContext::compressedTexImage2D(GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Dsizei, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D()");
 }
 
 void WebGL2RenderingContext::compressedTexImage2D(GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dint, ArrayBufferView&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D()");
 }
 
 void WebGL2RenderingContext::compressedTexImage3D(GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Dsizei, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage3D()");
 }
 
 void WebGL2RenderingContext::compressedTexImage3D(GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, ArrayBufferView&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage3D()");
 }
 
 void WebGL2RenderingContext::compressedTexSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage3D()");
 }
 
 void WebGL2RenderingContext::compressedTexSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, ArrayBufferView&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage3D()");
 }
 
 GC3Dint WebGL2RenderingContext::getFragDataLocation(WebGLProgram&, const String&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getFragDataLocation()");
     return 0;
 }
 
 void WebGL2RenderingContext::uniform1ui(WebGLUniformLocation*, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform1ui()");
 }
 
 void WebGL2RenderingContext::uniform2ui(WebGLUniformLocation*, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform2ui()");
 }
 
 void WebGL2RenderingContext::uniform3ui(WebGLUniformLocation*, GC3Duint, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform3ui()");
 }
 
 void WebGL2RenderingContext::uniform4ui(WebGLUniformLocation*, GC3Duint, GC3Duint, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform4ui()");
 }
 
 void WebGL2RenderingContext::uniform1uiv(WebGLUniformLocation*, Uint32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform1uiv()");
 }
 
 void WebGL2RenderingContext::uniform2uiv(WebGLUniformLocation*, Uint32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform2uiv()");
 }
 
 void WebGL2RenderingContext::uniform3uiv(WebGLUniformLocation*, Uint32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform3uiv()");
 }
 
 void WebGL2RenderingContext::uniform4uiv(WebGLUniformLocation*, Uint32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform4uiv()");
 }
 
 void WebGL2RenderingContext::uniformMatrix2x3fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix2x3fv()");
 }
 
 void WebGL2RenderingContext::uniformMatrix3x2fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix3x2fv()");
 }
 
 void WebGL2RenderingContext::uniformMatrix2x4fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix2x4fv()");
 }
 
 void WebGL2RenderingContext::uniformMatrix4x2fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix4x2fv()");
 }
 
 void WebGL2RenderingContext::uniformMatrix3x4fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix3x4fv()");
 }
 
 void WebGL2RenderingContext::uniformMatrix4x3fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix4x3fv()");
 }
 
 void WebGL2RenderingContext::vertexAttribI4i(GC3Duint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4i()");
 }
 
 void WebGL2RenderingContext::vertexAttribI4iv(GC3Duint, Int32List&&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4iv()");
 }
 
 void WebGL2RenderingContext::vertexAttribI4ui(GC3Duint, GC3Duint, GC3Duint, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4ui()");
 }
 
 void WebGL2RenderingContext::vertexAttribI4uiv(GC3Duint, Uint32List&&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4uiv()");
 }
 
 void WebGL2RenderingContext::vertexAttribIPointer(GC3Duint, GC3Dint, GC3Denum, GC3Dsizei, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribIPointer()");
 }
 
 void WebGL2RenderingContext::clear(GC3Dbitfield mask)
@@ -869,6 +916,7 @@ void WebGL2RenderingContext::drawElementsInstanced(GC3Denum mode, GC3Dsizei coun
 
 void WebGL2RenderingContext::drawRangeElements(GC3Denum, GC3Duint, GC3Duint, GC3Dsizei, GC3Denum, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] drawRangeElements()");
 }
 
 void WebGL2RenderingContext::drawBuffers(const Vector<GC3Denum>& buffers)
@@ -995,148 +1043,180 @@ void WebGL2RenderingContext::clearBufferfi(GC3Denum buffer, GC3Dint drawbuffer, 
 
 RefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] createQuery()");
     return nullptr;
 }
 
 void WebGL2RenderingContext::deleteQuery(WebGLQuery*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] deleteQuery()");
 }
 
 GC3Dboolean WebGL2RenderingContext::isQuery(WebGLQuery*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] isQuery()");
     return false;
 }
 
 void WebGL2RenderingContext::beginQuery(GC3Denum, WebGLQuery&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] beginQuery()");
 }
 
 void WebGL2RenderingContext::endQuery(GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] endQuery()");
 }
 
 RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GC3Denum, GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getquery()");
     return nullptr;
 }
 
 WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery&, GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getQueryParameter)");
     return nullptr;
 }
 
 RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] createSampler()");
     return nullptr;
 }
 
 void WebGL2RenderingContext::deleteSampler(WebGLSampler*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] deleteSampler()");
 }
 
 GC3Dboolean WebGL2RenderingContext::isSampler(WebGLSampler*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] isSampler()");
     return false;
 }
 
 void WebGL2RenderingContext::bindSampler(GC3Duint, WebGLSampler*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindSampler()");
 }
 
 void WebGL2RenderingContext::samplerParameteri(WebGLSampler&, GC3Denum, GC3Dint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] samplerParameteri()");
 }
 
 void WebGL2RenderingContext::samplerParameterf(WebGLSampler&, GC3Denum, GC3Dfloat)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] samplerParameterf()");
 }
 
 WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler&, GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getSamplerParameter()");
     return nullptr;
 }
 
 RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GC3Denum, GC3Dbitfield)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] fenceSync()");
     return nullptr;
 }
 
 GC3Dboolean WebGL2RenderingContext::isSync(WebGLSync*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] isSync()");
     return false;
 }
 
 void WebGL2RenderingContext::deleteSync(WebGLSync*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] deleteSync()");
 }
 
 GC3Denum WebGL2RenderingContext::clientWaitSync(WebGLSync&, GC3Dbitfield, GC3Duint64)
 {
     // Note: Do not implement this function without consulting webkit-dev and WebGL
     // reviewers beforehand. Apple folks, see <rdar://problem/36666458>.
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] clientWaitSync()");
     return 0;
 }
 
 void WebGL2RenderingContext::waitSync(WebGLSync&, GC3Dbitfield, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] waitSync()");
 }
 
 WebGLAny WebGL2RenderingContext::getSyncParameter(WebGLSync&, GC3Denum)
 {
     // Note: Do not implement this function without consulting webkit-dev and WebGL
     // reviewers beforehand. Apple folks, see <rdar://problem/36666458>.
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getSyncParameter()");
     return nullptr;
 }
 
 RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] createTransformFeedback()");
     return nullptr;
 }
 
 void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] deleteTransformFeedback()");
 }
 
 GC3Dboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] isTransformFeedback()");
     return false;
 }
 
 void WebGL2RenderingContext::bindTransformFeedback(GC3Denum, WebGLTransformFeedback*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindTransformFeedback()");
 }
 
 void WebGL2RenderingContext::beginTransformFeedback(GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] beginTransformFeedback()");
 }
 
 void WebGL2RenderingContext::endTransformFeedback()
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] endTransformFeedback()");
 }
 
 void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram&, const Vector<String>&, GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] transformFeedbackVaryings()");
 }
 
 RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebGLProgram&, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getTransformFeedbackVarying()");
     return nullptr;
 }
 
 void WebGL2RenderingContext::pauseTransformFeedback()
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] pauseTransformFeedback()");
 }
 
 void WebGL2RenderingContext::resumeTransformFeedback()
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] resumeTransformFeedback()");
 }
 
 void WebGL2RenderingContext::bindBufferBase(GC3Denum, GC3Duint, WebGLBuffer*)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindBufferBase()");
 }
 
 void WebGL2RenderingContext::bindBufferRange(GC3Denum, GC3Duint, WebGLBuffer*, GC3Dint64, GC3Dint64)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindBufferRange()");
 }
 
 WebGLAny WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Duint)
@@ -1158,6 +1238,7 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Duint)
 
 std::optional<Vector<GC3Duint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram&, const Vector<String>&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getUniformIndices()");
     return std::nullopt;
 }
 
@@ -1187,21 +1268,25 @@ WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const 
 
 GC3Duint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram&, const String&)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getUniformBlockIndex()");
     return 0;
 }
 
 WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram&, GC3Duint, GC3Denum)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getActiveUniformBlockParameter()");
     return nullptr;
 }
 
 WebGLAny WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram&, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getActiveUniformBlockName()");
     return nullptr;
 }
 
 void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram&, GC3Duint, GC3Duint)
 {
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformBlockBinding()");
 }
 
 RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
