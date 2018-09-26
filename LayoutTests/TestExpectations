@@ -2872,3 +2872,5 @@ http/wpt/webauthn/public-key-credential-create-success.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-failure.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-success.https.html [ Skip ]
 http/wpt/webauthn/idl.https.html [ Skip ]
+
+webkit.org/b/189997 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]

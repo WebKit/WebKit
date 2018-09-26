@@ -1,3 +1,11 @@
+2018-09-26  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=190002
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2018-09-26  Truitt Savell  <tsavell@apple.com>
 
         Marking two more media-fragments/ tests as flakey after the iOS12 update
