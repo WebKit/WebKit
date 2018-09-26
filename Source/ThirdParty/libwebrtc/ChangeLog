@@ -1,3 +1,12 @@
+2018-09-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Import libvpx source code
+        https://bugs.webkit.org/show_bug.cgi?id=189954
+
+        Another unreviewed build fix attempt.
+
+        * Source/third_party/libvpx/source/libvpx/VPX.framework: Remove unneeded folder.
+
 2018-09-25  Youenn Fablet  <youenn@apple.com>
 
         Import libvpx source code
