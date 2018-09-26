@@ -1,3 +1,21 @@
+2018-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Ignore-opens-during-unload counter of a parent should apply to its children during beforeunload event
+        https://bugs.webkit.org/show_bug.cgi?id=189376
+        <rdar://problem/44282754>
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure the Ignore-opens-during-unload counter of a parent stays incremented while we are firing the
+        beforeunload event for its descendants, as per:
+        - https://html.spec.whatwg.org/multipage/browsing-the-web.html#prompt-to-unload-a-document
+
+        No new tests, rebaselined existing tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldClose):
+        (WebCore::FrameLoader::dispatchBeforeUnloadEvent):
+
 2018-09-26  Justin Fan  <justin_fan@apple.com>
 
         WebGL 2: Adding logging to in-progress features

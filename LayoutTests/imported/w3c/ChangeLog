@@ -1,3 +1,15 @@
+2018-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Ignore-opens-during-unload counter of a parent should apply to its children during beforeunload event
+        https://bugs.webkit.org/show_bug.cgi?id=189376
+        <rdar://problem/44282754>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing test now that one more check is passing.
+
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window-expected.txt:
+
 2018-09-25  YUHAN WU  <yuhan_wu@apple.com>
 
         Implement MediaStreamTrack Content Hints

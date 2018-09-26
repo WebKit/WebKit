@@ -3122,6 +3122,7 @@ bool FrameLoader::shouldClose()
     bool shouldClose = false;
     {
         NavigationDisabler navigationDisabler(&m_frame);
+        IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_frame.document());
         size_t i;
 
         for (i = 0; i < targetFrames.size(); i++) {
@@ -3229,7 +3230,6 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
 
     {
         ForbidPromptsScope forbidPrompts(m_frame.page());
-        IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_frame.document());
         domWindow->dispatchEvent(beforeUnloadEvent, domWindow->document());
     }
 
