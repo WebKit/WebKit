@@ -1,3 +1,34 @@
+2018-09-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure renderers with accelerated animations have layers
+        https://bugs.webkit.org/show_bug.cgi?id=189990
+        <rdar://problem/44791222>
+
+        Reviewed by Zalan Bujtas.
+
+        We have done some work already in webkit.org/b/189784 to prevent never-ending calls to DocumentTimeline::updateAnimations(). This was due to
+        the change made for webkit.org/b/186930 where we queued calls to updateAnimations() in KeyframeEffectReadOnly::applyPendingAcceleratedActions()
+        while we were waiting for a renderer with a layer backing for a given animation target. Instead of doing this, we now ensure renderers always
+        have a layer when they have an accelerated animation applied.
+
+        No new tests, this is already covered by webanimations/accelerated-animation-with-delay.html and webanimations/opacity-animation-yields-compositing-span.html
+        which respectively check that we can apply an accelerated animation to a non-positioned block and an inline element.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::runningAnimationsForElementAreAllAccelerated const): This method should have been marked const all along and it is
+        now required so it can be called through RenderBox::requiresLayer() and RenderInline::requiresLayer().
+        (WebCore::DocumentTimeline::runningAnimationsForElementAreAllAccelerated): Deleted.
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::applyPendingAcceleratedActions): Stop enqueuing the accelerated actions in case we're lacking a composited renderer
+        since this situation should no longer arise.
+        * rendering/RenderBox.h: Make requiresLayer() return true if this renderer's element is the target of accelerated animations.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasRunningAcceleratedAnimations const): Query the document timeline, if it exists, to check that this renderer's element
+        has accelerated animations applied.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderInline.h: Make requiresLayer() return true if this renderer's element is the target of accelerated animations.
+
 2018-09-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add Mac window capture source

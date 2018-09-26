@@ -1277,11 +1277,8 @@ void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
         return;
 
     auto* renderer = this->renderer();
-    if (!renderer || !renderer->isComposited()) {
-        if (m_lastRecordedAcceleratedAction != AcceleratedAction::Stop || m_pendingAcceleratedActions.last() != AcceleratedAction::Stop)
-            animation()->acceleratedStateDidChange();
+    if (!renderer || !renderer->isComposited())
         return;
-    }
 
     auto pendingAcceleratedActions = m_pendingAcceleratedActions;
     m_pendingAcceleratedActions.clear();

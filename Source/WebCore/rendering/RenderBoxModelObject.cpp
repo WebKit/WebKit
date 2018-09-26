@@ -29,6 +29,8 @@
 #include "BitmapImage.h"
 #include "BorderEdge.h"
 #include "CachedImage.h"
+#include "Document.h"
+#include "DocumentTimeline.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -2686,6 +2688,15 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
         transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
     } else
         transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+}
+
+bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const
+{
+    if (auto* node = element()) {
+        if (auto* timeline = node->document().existingTimeline())
+            return timeline->runningAnimationsForElementAreAllAccelerated(*node);
+    }
+    return false;
 }
 
 } // namespace WebCore

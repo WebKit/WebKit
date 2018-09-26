@@ -270,6 +270,8 @@ protected:
 
     DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
 
+    bool hasRunningAcceleratedAnimations() const;
+
 public:
     // For RenderBlocks and RenderInlines with m_style->styleType() == PseudoId::FirstLetter, this tracks their remaining text fragments
     RenderTextFragment* firstLetterRemainingText() const;

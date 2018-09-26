@@ -446,7 +446,7 @@ bool DocumentTimeline::resolveAnimationsForElement(Element& element, RenderStyle
     return !hasNonAcceleratedAnimations && hasPendingAcceleratedAnimations;
 }
 
-bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element)
+bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element) const
 {
     // FIXME: This will let animations run using hardware compositing even if later in the active
     // span of the current animations a new animation should require hardware compositing to be

@@ -59,7 +59,7 @@ public:
     bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
     void applyPendingAcceleratedAnimations();
-    bool runningAnimationsForElementAreAllAccelerated(Element&);
+    bool runningAnimationsForElementAreAllAccelerated(Element&) const;
     bool resolveAnimationsForElement(Element&, RenderStyle&);
     void detachFromDocument();
 
