@@ -1,3 +1,16 @@
+2018-09-26  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r236524.
+
+        Broke API tests
+
+        Reverted changeset:
+
+        "URLWithUserTypedString should return nil for URLs deemed to
+        be invalid by WebCore::URL"
+        https://bugs.webkit.org/show_bug.cgi?id=189979
+        https://trac.webkit.org/changeset/236524
+
 2018-09-26  Per Arne Vollan  <pvollan@apple.com>
 
         WebVTT cue alignment broken

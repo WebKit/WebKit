@@ -192,8 +192,6 @@ TEST(WebCore, URLExtras_ParsingError)
 
     NSString *encodedHostName = WebCore::encodeHostName(@"http://.com");
     EXPECT_TRUE(encodedHostName == nil);
-    
-    EXPECT_TRUE(WebCore::URLWithUserTypedString(@"https://a@/b", nil) == nil);
 }
 
 TEST(WebCore, URLExtras_Nil)

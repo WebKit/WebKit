@@ -853,9 +853,6 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
     } else
         result = [NSURL URLWithString:@""];
 
-    if (!WebCore::URL(result).isValid())
-        return nil;
-    
     return result;
 }
 static NSData *dataWithUserTypedString(NSString *string)
