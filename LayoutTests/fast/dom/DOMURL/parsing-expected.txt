@@ -14,6 +14,7 @@ PASS breakDownURL('data:text/html,<b>foo</b>') is 'protocol=data:, pathname=text
 PASS breakDownURL('http://a:b@c:1/e/f?g%h') is 'protocol=http:, username=a, password=b, hostname=c, host=c:1, port=1, pathname=/e/f, search=?g%h, origin=http://c:1'
 PASS breakDownURL('http://ex%61mple.com/') is 'protocol=http:, host=example.com, pathname=/, origin=http://example.com, toString=http://example.com/'
 PASS breakDownURL('http://ex%2fmple.com/') threw exception TypeError: Type error.
+PASS i is 54
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -57,4 +57,14 @@ shouldBe("breakDownURL('http://a:b@c:1/e/f?g%h')", "'protocol=http:, username=a,
 shouldBe("breakDownURL('http://ex%61mple.com/')", "'protocol=http:, host=example.com, pathname=/, origin=http://example.com, toString=http://example.com/'");
 shouldThrow("breakDownURL('http://ex%2fmple.com/')");
 
+var longUnicodeDomain = "\u1234";
+var i = 0;
+try {
+    for (i = 0; i < 100; ++i) {
+        longUnicodeDomain += "a"
+        new URL("http://" + longUnicodeDomain + "/");
+    }
+} catch (e) { }
+shouldBe("i", "54");
+
 </script>

@@ -1,5 +1,18 @@
 2018-09-26  Alex Christensen  <achristensen@webkit.org>
 
+        uidna_nameToASCII only needs a buffer capacity of 64
+        https://bugs.webkit.org/show_bug.cgi?id=190006
+
+        Reviewed by Chris Dumez.
+
+        This is specified in https://www.unicode.org/reports/tr46/#ToASCII
+        This is how Chrome and Firefox also behave with long unicode hosts.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::domainToASCII):
+
+2018-09-26  Alex Christensen  <achristensen@webkit.org>
+
         URLWithUserTypedString should return nil for URLs deemed to be invalid by WebCore::URL
         https://bugs.webkit.org/show_bug.cgi?id=189979
         <rdar://problem/44119696>

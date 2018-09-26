@@ -1,3 +1,12 @@
+2018-09-26  Alex Christensen  <achristensen@webkit.org>
+
+        uidna_nameToASCII only needs a buffer capacity of 64
+        https://bugs.webkit.org/show_bug.cgi?id=190006
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/DOMURL/parsing.html:
+
 2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Selection should work across shadow boundary when initiated by a mouse drag

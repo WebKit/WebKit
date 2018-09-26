@@ -620,7 +620,6 @@ ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterT
 template<typename CharacterType>
 void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& encoding, CodePointIterator<CharacterType> iterator)
 {
-    // FIXME: It is unclear in the spec what to do when encoding fails. The behavior should be specified and tested.
     auto encoded = encoding.encode(StringView(source.data(), source.size()), UnencodableHandling::URLEncodedEntities);
     auto* data = encoded.data();
     size_t length = encoded.size();
@@ -2568,11 +2567,12 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
         return ascii;
     }
     
-    UChar hostnameBuffer[defaultInlineBufferSize];
+    const size_t maxDomainLength = 64;
+    UChar hostnameBuffer[maxDomainLength];
     UErrorCode error = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
-    int32_t numCharactersConverted = uidna_nameToASCII(&internationalDomainNameTranscoder(), StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, defaultInlineBufferSize, &processingDetails, &error);
-    ASSERT(numCharactersConverted <= static_cast<int32_t>(defaultInlineBufferSize));
+    int32_t numCharactersConverted = uidna_nameToASCII(&internationalDomainNameTranscoder(), StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, maxDomainLength, &processingDetails, &error);
+    ASSERT(numCharactersConverted <= static_cast<int32_t>(maxDomainLength));
 
     if (U_SUCCESS(error) && !processingDetails.errors) {
         for (int32_t i = 0; i < numCharactersConverted; ++i) {
@@ -2584,8 +2584,6 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
             syntaxViolation(iteratorForSyntaxViolationPosition);
         return ascii;
     }
-
-    // FIXME: Check for U_BUFFER_OVERFLOW_ERROR and retry with an allocated buffer.
     return std::nullopt;
 }
 
