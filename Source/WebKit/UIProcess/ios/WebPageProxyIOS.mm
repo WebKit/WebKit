@@ -993,6 +993,7 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 void WebPageProxy::setAcceleratedCompositingRootLayer(LayerOrView* rootLayer)
 {
     pageClient().setAcceleratedCompositingRootLayer(rootLayer);
+    m_frozenRemoteLayerTreeHost = nullptr;
 }
 
 void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)

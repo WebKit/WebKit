@@ -85,6 +85,7 @@ class WebProcessPool;
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (void)_processDidExit;
+- (void)_processWillSwap;
 - (void)_didRelaunchProcess;
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
 

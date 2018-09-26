@@ -1654,15 +1654,11 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     return UIEdgeInsetsZero;
 }
 
-- (void)_processDidExit
+- (void)_processWillSwapOrDidExit
 {
-    RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _processDidExit]", self);
+    // FIXME: Which ones of these need to be done in the process swap case and which ones in the exit case?
     [self _hidePasswordView];
     [self _cancelAnimatedResize];
-    [_contentView setFrame:self.bounds];
-    [_scrollView setBackgroundColor:[UIColor whiteColor]];
-    [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
-    [_scrollView setZoomScale:1];
 
     _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
     _initialScaleFactor = 1;
@@ -1693,6 +1689,25 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _commitDidRestoreScrollPosition = NO;
 
     _avoidsUnsafeArea = YES;
+}
+
+- (void)_processWillSwap
+{
+    RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _processWillSwap]", self);
+    [self _processWillSwapOrDidExit];
+}
+
+- (void)_processDidExit
+{
+    RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _processDidExit]", self);
+
+    [self _processWillSwapOrDidExit];
+
+    [_contentView setFrame:self.bounds];
+    [_scrollView setBackgroundColor:[UIColor whiteColor]];
+    [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+    [_scrollView setZoomScale:1];
+    
 }
 
 - (void)_didRelaunchProcess

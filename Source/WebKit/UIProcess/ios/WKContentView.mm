@@ -521,6 +521,12 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _hideInspectorHighlight];
 }
 
+- (void)_processWillSwap
+{
+    // FIXME: Should we do something differently?
+    [self _processDidExit];
+}
+
 - (void)_didRelaunchProcess
 {
     [self _accessibilityRegisterUIProcessTokens];

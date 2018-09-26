@@ -107,7 +107,7 @@ using namespace WebCore;
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
-    , m_remoteLayerTreeHost(*this)
+    , m_remoteLayerTreeHost(std::make_unique<RemoteLayerTreeHost>(*this))
 {
 #if HAVE(IOSURFACE)
     // We don't want to pool surfaces in the UI process.
@@ -130,6 +130,14 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
     [m_displayLinkHandler invalidate];
 #endif
 }
+
+
+std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemoteLayerTreeHost()
+{
+    m_remoteLayerTreeHost->detachFromDrawingArea();
+    return WTFMove(m_remoteLayerTreeHost);
+}
+
 
 #if PLATFORM(IOS)
 WKOneShotDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxy::displayLinkHandler()
@@ -194,11 +202,11 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     if (layerTreeTransaction.hasEditorState())
         m_webPageProxy.editorStateChanged(layerTreeTransaction.editorState());
 
-    if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction)) {
+    if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
         if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
-            m_webPageProxy.setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());
+            m_webPageProxy.setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost->rootLayer());
         else
-            m_remoteLayerTreeHost.detachRootLayer();
+            m_remoteLayerTreeHost->detachRootLayer();
     }
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -329,7 +337,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator()
 void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize, bool rootLayerChanged, float scale, const IntPoint& scrollPosition)
 {
     // Make sure we're the last sublayer.
-    CALayer *rootLayer = asLayer(m_remoteLayerTreeHost.rootLayer());
+    CALayer *rootLayer = asLayer(m_remoteLayerTreeHost->rootLayer());
     [m_tileMapHostLayer removeFromSuperlayer];
     [rootLayer addSublayer:m_tileMapHostLayer.get()];
 
@@ -469,22 +477,22 @@ void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
 {
     m_transactionIDForUnhidingContent = nextLayerTreeTransactionID();
-    m_remoteLayerTreeHost.detachRootLayer();
+    m_remoteLayerTreeHost->detachRootLayer();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilAnyUpdate()
 {
-    m_remoteLayerTreeHost.detachRootLayer();
+    m_remoteLayerTreeHost->detachRootLayer();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::prepareForAppSuspension()
 {
-    m_remoteLayerTreeHost.mapAllIOSurfaceBackingStore();
+    m_remoteLayerTreeHost->mapAllIOSurfaceBackingStore();
 }
 
 bool RemoteLayerTreeDrawingAreaProxy::hasVisibleContent() const
 {
-    return m_remoteLayerTreeHost.rootLayer();
+    return m_remoteLayerTreeHost->rootLayer();
 }
 
 bool RemoteLayerTreeDrawingAreaProxy::isAlwaysOnLoggingAllowed() const
@@ -494,7 +502,7 @@ bool RemoteLayerTreeDrawingAreaProxy::isAlwaysOnLoggingAllowed() const
 
 LayerOrView* RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(uint64_t layerID) const
 {
-    return m_remoteLayerTreeHost.layerWithIDForTesting(layerID);
+    return m_remoteLayerTreeHost->layerWithIDForTesting(layerID);
 }
 
 } // namespace WebKit

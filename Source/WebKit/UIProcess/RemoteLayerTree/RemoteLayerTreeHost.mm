@@ -49,12 +49,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(m_drawingArea.isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(m_drawingArea && m_drawingArea->isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
 
 RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawingArea)
-    : m_drawingArea(drawingArea)
-    , m_rootLayer(nullptr)
-    , m_isDebugLayerTreeHost(false)
+    : m_drawingArea(&drawingArea)
 {
 }
 
@@ -68,6 +66,9 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
 
 bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
+    if (!m_drawingArea)
+        return false;
+
     for (const auto& createdLayer : transaction.createdLayers()) {
         const RemoteLayerTreeTransaction::LayerProperties* properties = transaction.changedLayerProperties().get(createdLayer.layerID);
         createLayer(createdLayer, properties);
@@ -91,7 +92,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     // Can't use the iOS code on macOS yet: rdar://problem/31247730
     auto layerContentsType = RemoteLayerBackingStore::LayerContentsType::IOSurface;
 #else
-    auto layerContentsType = m_drawingArea.hasDebugIndicator() ? RemoteLayerBackingStore::LayerContentsType::IOSurface : RemoteLayerBackingStore::LayerContentsType::CAMachPort;
+    auto layerContentsType = m_drawingArea->hasDebugIndicator() ? RemoteLayerBackingStore::LayerContentsType::IOSurface : RemoteLayerBackingStore::LayerContentsType::CAMachPort;
 #endif
     
     for (auto& changedLayer : transaction.changedLayerProperties()) {
@@ -160,6 +161,9 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLay
 
 void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation, MonotonicTime startTime)
 {
+    if (!m_drawingArea)
+        return;
+
     CALayer *layer = asLayer(getLayer(layerID));
     if (!layer)
         return;
@@ -173,11 +177,14 @@ void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLaye
     }
 
     if (!animationKey.isEmpty())
-        m_drawingArea.acceleratedAnimationDidStart(layerID, animationKey, startTime);
+        m_drawingArea->acceleratedAnimationDidStart(layerID, animationKey, startTime);
 }
 
 void RemoteLayerTreeHost::animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation)
 {
+    if (!m_drawingArea)
+        return;
+
     CALayer *layer = asLayer(getLayer(layerID));
     if (!layer)
         return;
@@ -191,7 +198,12 @@ void RemoteLayerTreeHost::animationDidEnd(WebCore::GraphicsLayer::PlatformLayerI
     }
 
     if (!animationKey.isEmpty())
-        m_drawingArea.acceleratedAnimationDidEnd(layerID, animationKey);
+        m_drawingArea->acceleratedAnimationDidEnd(layerID, animationKey);
+}
+
+void RemoteLayerTreeHost::detachFromDrawingArea()
+{
+    m_drawingArea = nullptr;
 }
 
 void RemoteLayerTreeHost::clearLayers()

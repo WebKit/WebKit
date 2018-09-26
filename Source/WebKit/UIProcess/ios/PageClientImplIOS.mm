@@ -211,8 +211,8 @@ void PageClientImpl::processDidExit()
 
 void PageClientImpl::processWillSwap()
 {
-    // FIXME: It didn't really exit.
-    processDidExit();
+    [m_contentView _processWillSwap];
+    [m_webView _processWillSwap];
 }
 
 void PageClientImpl::didRelaunchProcess()

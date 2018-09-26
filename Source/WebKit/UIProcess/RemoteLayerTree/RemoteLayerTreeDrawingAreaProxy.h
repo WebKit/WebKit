@@ -43,7 +43,8 @@ public:
     explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxy();
 
-    const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
+    const RemoteLayerTreeHost& remoteLayerTreeHost() const { return *m_remoteLayerTreeHost; }
+    std::unique_ptr<RemoteLayerTreeHost> detachRemoteLayerTreeHost();
 
     void acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key);
@@ -100,7 +101,7 @@ private:
     
     void sendUpdateGeometry();
 
-    RemoteLayerTreeHost m_remoteLayerTreeHost;
+    std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry { false };
     enum DidUpdateMessageState { DoesNotNeedDidUpdate, NeedsDidUpdate, MissedCommit };
     DidUpdateMessageState m_didUpdateMessageState { DoesNotNeedDidUpdate };

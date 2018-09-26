@@ -61,6 +61,7 @@ public:
     void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *, MonotonicTime startTime);
     void animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *);
 
+    void detachFromDrawingArea();
     void clearLayers();
 
     // Detach the root layer; it will be reattached upon the next incoming commit.
@@ -78,11 +79,11 @@ private:
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
 
-    RemoteLayerTreeDrawingAreaProxy& m_drawingArea;
-    LayerOrView *m_rootLayer;
+    RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
+    LayerOrView *m_rootLayer { nullptr };
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<LayerOrView>> m_layers;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
-    bool m_isDebugLayerTreeHost;
+    bool m_isDebugLayerTreeHost { false };
 };
 
 } // namespace WebKit

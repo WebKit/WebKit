@@ -40,6 +40,7 @@
 #import "PageClient.h"
 #import "PageClientImplMac.h"
 #import "PluginComplexTextInputState.h"
+#import "RemoteLayerTreeHost.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -458,6 +459,7 @@ void WebPageProxy::intrinsicContentSizeDidChange(const IntSize& intrinsicContent
 void WebPageProxy::setAcceleratedCompositingRootLayer(LayerOrView* rootLayer)
 {
     pageClient().setAcceleratedCompositingRootLayer(rootLayer);
+    m_frozenRemoteLayerTreeHost = nullptr;
 }
 
 LayerOrView* WebPageProxy::acceleratedCompositingRootLayer() const

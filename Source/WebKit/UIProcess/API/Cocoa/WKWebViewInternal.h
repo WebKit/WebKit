@@ -82,6 +82,7 @@ struct PrintInfo;
 
 #if PLATFORM(IOS)
 - (void)_processDidExit;
+- (void)_processWillSwap;
 - (void)_didRelaunchProcess;
 
 - (void)_didCommitLoadForMainFrame;

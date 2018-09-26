@@ -2507,7 +2507,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
         auto transaction = m_pageLoadState.transaction();
         m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
 
-        auto itemStates = m_backForwardList-> filteredItemStates([this, targetItem = item](WebBackForwardListItem& item) {
+        auto itemStates = m_backForwardList->filteredItemStates([this, targetItem = item](WebBackForwardListItem& item) {
             if (auto* page = item.suspendedPage()) {
                 if (page->process() == m_process.ptr())
                     return false;
@@ -6017,7 +6017,16 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if PLATFORM(COCOA)
     m_scrollingPerformanceData = nullptr;
 #endif
-    m_drawingArea = nullptr;
+
+    if (m_drawingArea) {
+#if PLATFORM(COCOA)
+        if (resetStateReason == ResetStateReason::NavigationSwap && is<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea)) {
+            // Keep layers around in frozen state to avoid flashing during process swaps.
+            m_frozenRemoteLayerTreeHost = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea).detachRemoteLayerTreeHost();
+        }
+#endif
+        m_drawingArea = nullptr;
+    }
     closeOverlayedViews();
 
     if (m_inspector) {
