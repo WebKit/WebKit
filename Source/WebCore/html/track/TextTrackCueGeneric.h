@@ -43,7 +43,7 @@ public:
     }
 
     ExceptionOr<void> setLine(double) final;
-    ExceptionOr<void> setPosition(double) final;
+    ExceptionOr<void> setPosition(const LineAndPositionSetting&) final;
 
     bool useDefaultPosition() const { return m_useDefaultPosition; }
 

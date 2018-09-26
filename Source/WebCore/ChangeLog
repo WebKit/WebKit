@@ -1,3 +1,34 @@
+2018-09-26  Per Arne Vollan  <pvollan@apple.com>
+
+        WebVTT cue alignment broken
+        https://bugs.webkit.org/show_bug.cgi?id=190004
+
+        Reviewed by Eric Carlson.
+
+        If the position of the queue is unspecified, the default value of 50 was used, which is incorrect.
+        This patch also updates the API according to https://w3c.github.io/webvtt/#the-vttcue-interface.
+        The position attribute should not be a double, but either a double or the "auto" keyword. Parts
+        of this patch is inspired by the associated code in the Chromium project.
+
+        Test: media/track/track-cue-left-align.html
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        (WebCore::TextTrackCueGeneric::setPosition):
+        * html/track/TextTrackCueGeneric.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+        (WebCore::VTTCue::initialize):
+        (WebCore::VTTCue::position const):
+        (WebCore::VTTCue::setPosition):
+        (WebCore::VTTCue::textPositionIsAuto const):
+        (WebCore::VTTCue::calculateComputedTextPosition const):
+        (WebCore::VTTCue::calculateDisplayParameters):
+        (WebCore::VTTCue::toJSON const):
+        * html/track/VTTCue.h:
+        (WebCore::VTTCue::position const): Deleted.
+        * html/track/VTTCue.idl:
+
 2018-09-26  James Savage  <james.savage@apple.com>
 
         Allow override of viewport configuration.

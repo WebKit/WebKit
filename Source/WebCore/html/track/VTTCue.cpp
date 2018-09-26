@@ -177,7 +177,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     if (authorFontSize)
         multiplier = m_fontSizeFromCaptionUserPrefs / authorFontSize;
 
-    double textPosition = m_cue.position();
+    double textPosition = m_cue.calculateComputedTextPosition();
     double maxSize = 100.0;
     CSSValueID alignment = m_cue.getCSSAlignment();
     if (alignment == CSSValueEnd || alignment == CSSValueRight)
@@ -285,7 +285,7 @@ void VTTCue::initialize(ScriptExecutionContext& context)
 {
     m_linePosition = undefinedPosition;
     m_computedLinePosition = undefinedPosition;
-    m_textPosition = 50;
+    m_textPosition = std::numeric_limits<double>::quiet_NaN();
     m_cueSize = 100;
     m_writingDirection = Horizontal;
     m_cueAlignment = Center;
@@ -391,20 +391,37 @@ ExceptionOr<void> VTTCue::setLine(double position)
     return { };
 }
 
-ExceptionOr<void> VTTCue::setPosition(double position)
+VTTCue::LineAndPositionSetting VTTCue::position() const
 {
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-position
-    // On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception.
-    // Otherwise, set the text track cue text position to the new value.
-    if (!(position >= 0 && position <= 100))
-        return Exception { IndexSizeError };
+    if (textPositionIsAuto())
+        return Auto;
+    return m_textPosition;
+}
 
-    // Otherwise, set the text track cue line position to the new value.
-    if (m_textPosition == position)
-        return { };
-    
+ExceptionOr<void> VTTCue::setPosition(const LineAndPositionSetting& position)
+{
+    // http://dev.w3.org/html5/webvtt/#dfn-vttcue-position
+    // On setting, if the new value is negative or greater than 100, then an
+    // IndexSizeError exception must be thrown. Otherwise, the WebVTT cue
+    // position must be set to the new value; if the new value is the string
+    // "auto", then it must be interpreted as the special value auto.
+    double textPosition = 0;
+    if (WTF::holds_alternative<AutoKeyword>(position)) {
+        if (textPositionIsAuto())
+            return { };
+        textPosition = std::numeric_limits<double>::quiet_NaN();
+    } else {
+        if (!(WTF::get<double>(position) >= 0 && WTF::get<double>(position) <= 100))
+            return Exception { IndexSizeError };
+
+        // Otherwise, set the text track cue line position to the new value.
+        textPosition = WTF::get<double>(position);
+        if (m_textPosition == textPosition)
+            return { };
+    }
+
     willChange();
-    m_textPosition = position;
+    m_textPosition = textPosition;
     didChange();
 
     return { };
@@ -609,6 +626,11 @@ static bool isCueParagraphSeparator(UChar character)
     return u_charType(character) == U_PARAGRAPH_SEPARATOR;
 }
 
+bool VTTCue::textPositionIsAuto() const
+{
+    return std::isnan(m_textPosition);
+}
+
 void VTTCue::determineTextDirection()
 {
     static NeverDestroyed<const String> rtTag(MAKE_STATIC_STRING_IMPL("rt"));
@@ -652,6 +674,35 @@ void VTTCue::determineTextDirection()
     }
 }
 
+double VTTCue::calculateComputedTextPosition() const
+{
+    // http://dev.w3.org/html5/webvtt/#dfn-cue-computed-position
+    
+    // 1. If the position is numeric, then return the value of the position and
+    // abort these steps. (Otherwise, the position is the special value auto.)
+    if (!textPositionIsAuto())
+        return m_textPosition;
+    
+    switch (m_cueAlignment) {
+    case Start:
+    case Left:
+        // 2. If the cue text alignment is start or left, return 0 and abort these
+        // steps.
+        return 0;
+    case End:
+    case Right:
+        // 3. If the cue text alignment is end or right, return 100 and abort these
+        // steps.
+        return 100;
+    case Center:
+        // 4. If the cue text alignment is center, return 50 and abort these steps.
+        return 50;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
 void VTTCue::calculateDisplayParameters()
 {
     // Steps 10.2, 10.3
@@ -667,21 +718,22 @@ void VTTCue::calculateDisplayParameters()
 
     // 10.5 Determine the value of maximum size for cue as per the appropriate
     // rules from the following list:
-    int maximumSize = m_textPosition;
+    double computedTextPosition = calculateComputedTextPosition();
+    int maximumSize = computedTextPosition;
     if ((m_writingDirection == Horizontal && m_cueAlignment == Start && m_displayDirection == CSSValueLtr)
         || (m_writingDirection == Horizontal && m_cueAlignment == End && m_displayDirection == CSSValueRtl)
         || (m_writingDirection == Horizontal && m_cueAlignment == Left)
         || (m_writingDirection == VerticalGrowingLeft && (m_cueAlignment == Start || m_cueAlignment == Left))
         || (m_writingDirection == VerticalGrowingRight && (m_cueAlignment == Start || m_cueAlignment == Left))) {
-        maximumSize = 100 - m_textPosition;
+        maximumSize = 100 - computedTextPosition;
     } else if ((m_writingDirection == Horizontal && m_cueAlignment == End && m_displayDirection == CSSValueLtr)
         || (m_writingDirection == Horizontal && m_cueAlignment == Start && m_displayDirection == CSSValueRtl)
         || (m_writingDirection == Horizontal && m_cueAlignment == Right)
         || (m_writingDirection == VerticalGrowingLeft && (m_cueAlignment == End || m_cueAlignment == Right))
         || (m_writingDirection == VerticalGrowingRight && (m_cueAlignment == End || m_cueAlignment == Right))) {
-        maximumSize = m_textPosition;
+        maximumSize = computedTextPosition;
     } else if (m_cueAlignment == Center) {
-        maximumSize = m_textPosition <= 50 ? m_textPosition : (100 - m_textPosition);
+        maximumSize = computedTextPosition <= 50 ? computedTextPosition : (100 - computedTextPosition);
         maximumSize = maximumSize * 2;
     } else
         ASSERT_NOT_REACHED();
@@ -699,33 +751,33 @@ void VTTCue::calculateDisplayParameters()
         switch (m_cueAlignment) {
         case Start:
             if (m_displayDirection == CSSValueLtr)
-                m_displayPosition.first = m_textPosition;
+                m_displayPosition.first = computedTextPosition;
             else
-                m_displayPosition.first = 100 - m_textPosition - m_displaySize;
+                m_displayPosition.first = 100 - computedTextPosition - m_displaySize;
             break;
         case End:
             if (m_displayDirection == CSSValueRtl)
-                m_displayPosition.first = 100 - m_textPosition;
+                m_displayPosition.first = 100 - computedTextPosition;
             else
-                m_displayPosition.first = m_textPosition - m_displaySize;
+                m_displayPosition.first = computedTextPosition - m_displaySize;
             break;
         case Left:
             if (m_displayDirection == CSSValueLtr)
-                m_displayPosition.first = m_textPosition;
+                m_displayPosition.first = computedTextPosition;
             else
-                m_displayPosition.first = 100 - m_textPosition;
+                m_displayPosition.first = 100 - computedTextPosition;
             break;
         case Right:
             if (m_displayDirection == CSSValueLtr)
-                m_displayPosition.first = m_textPosition - m_displaySize;
+                m_displayPosition.first = computedTextPosition - m_displaySize;
             else
-                m_displayPosition.first = 100 - m_textPosition - m_displaySize;
+                m_displayPosition.first = 100 - computedTextPosition - m_displaySize;
             break;
         case Center:
             if (m_displayDirection == CSSValueLtr)
-                m_displayPosition.first = m_textPosition - m_displaySize / 2;
+                m_displayPosition.first = computedTextPosition - m_displaySize / 2;
             else
-                m_displayPosition.first = 100 - m_textPosition - m_displaySize / 2;
+                m_displayPosition.first = 100 - computedTextPosition - m_displaySize / 2;
             break;
         case NumberOfAlignments:
             ASSERT_NOT_REACHED();
@@ -1197,7 +1249,10 @@ void VTTCue::toJSON(JSON::Object& object) const
     object.setString("vertical"_s, vertical());
     object.setBoolean("snapToLines"_s, snapToLines());
     object.setDouble("line"_s, m_linePosition);
-    object.setDouble("position"_s, position());
+    if (textPositionIsAuto())
+        object.setString("position"_s, "auto");
+    else
+        object.setDouble("position"_s, m_textPosition);
     object.setInteger("size"_s, m_cueSize);
     object.setString("align"_s, align());
     object.setString("regionId"_s, regionId());

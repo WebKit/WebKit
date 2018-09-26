@@ -88,6 +88,12 @@ public:
 
     virtual ~VTTCue();
 
+    enum AutoKeyword {
+        Auto
+    };
+    
+    using LineAndPositionSetting = Variant<double, AutoKeyword>;
+
     const String& vertical() const;
     ExceptionOr<void> setVertical(const String&);
 
@@ -97,8 +103,8 @@ public:
     double line() const { return m_linePosition; }
     virtual ExceptionOr<void> setLine(double);
 
-    double position() const { return m_textPosition; }
-    virtual ExceptionOr<void> setPosition(double);
+    LineAndPositionSetting position() const;
+    virtual ExceptionOr<void> setPosition(const LineAndPositionSetting&);
 
     int size() const { return m_cueSize; }
     ExceptionOr<void> setSize(int);
@@ -170,6 +176,8 @@ public:
 
     String toJSONString() const;
 
+    double calculateComputedTextPosition() const;
+
 protected:
     VTTCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
     VTTCue(ScriptExecutionContext&, const WebVTTCueData&);
@@ -186,6 +194,8 @@ private:
 
     void parseSettings(const String&);
 
+    bool textPositionIsAuto() const;
+    
     void determineTextDirection();
     void calculateDisplayParameters();
 

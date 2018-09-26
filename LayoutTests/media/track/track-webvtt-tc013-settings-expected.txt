@@ -5,7 +5,7 @@ Tests WebVTT settings.
 *** Testing text track 0
 EXPECTED (cues.length == '4') OK
 EXPECTED (cues[0].line == '100') OK
-EXPECTED (cues[0].position == '50') OK
+EXPECTED (cues[0].position == 'auto') OK
 EXPECTED (cues[0].align == 'start') OK
 EXPECTED (cues[0].vertical == '') OK
 EXPECTED (cues[1].line == '15') OK
@@ -17,7 +17,7 @@ EXPECTED (cues[2].position == '10') OK
 EXPECTED (cues[2].align == 'center') OK
 EXPECTED (cues[2].vertical == '') OK
 EXPECTED (cues[3].line == '95') OK
-EXPECTED (cues[3].position == '50') OK
+EXPECTED (cues[3].position == 'auto') OK
 EXPECTED (cues[3].align == 'end') OK
 EXPECTED (cues[3].vertical == 'lr') OK
 
@@ -32,7 +32,7 @@ EXPECTED (cues[1].position == '50') OK
 EXPECTED (cues[1].align == 'end') OK
 EXPECTED (cues[1].vertical == '') OK
 EXPECTED (cues[2].line == '-1') OK
-EXPECTED (cues[2].position == '50') OK
+EXPECTED (cues[2].position == 'auto') OK
 EXPECTED (cues[2].align == 'center') OK
 EXPECTED (cues[2].vertical == '') OK
 EXPECTED (cues[3].line == '-1') OK

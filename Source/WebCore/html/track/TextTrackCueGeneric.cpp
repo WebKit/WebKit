@@ -74,13 +74,15 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     RefPtr<TextTrackCueGeneric> cue = static_cast<TextTrackCueGeneric*>(getCue());
     Ref<HTMLSpanElement> cueElement = cue->element();
 
+    double textPosition = cue->calculateComputedTextPosition();
+
     CSSValueID alignment = cue->getCSSAlignment();
     float size = static_cast<float>(cue->getCSSSize());
     if (cue->useDefaultPosition()) {
         setInlineStyleProperty(CSSPropertyBottom, 0, CSSPrimitiveValue::CSS_PX);
         setInlineStyleProperty(CSSPropertyMarginBottom, 1.0, CSSPrimitiveValue::CSS_PERCENTAGE);
     } else {
-        setInlineStyleProperty(CSSPropertyLeft, static_cast<float>(cue->position()), CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyLeft, static_cast<float>(textPosition), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyTop, static_cast<float>(cue->line()), CSSPrimitiveValue::CSS_PERCENTAGE);
 
         double authorFontSize = videoSize.height() * cue->baseFontSizeRelativeToVideoHeight() / 100.0;
@@ -95,7 +97,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         if (cue->getWritingDirection() == VTTCue::Horizontal) {
             setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
             if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-                setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(cue->position() - (newCueSize - m_cue.getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+                setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(textPosition - (newCueSize - m_cue.getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
         } else {
             setInlineStyleProperty(CSSPropertyHeight, newCueSize,  CSSPrimitiveValue::CSS_PERCENTAGE);
             if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
@@ -103,7 +105,6 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         }
     }
 
-    double textPosition = m_cue.position();
     double maxSize = 100.0;
     
     if (alignment == CSSValueEnd || alignment == CSSValueRight)
@@ -169,7 +170,7 @@ ExceptionOr<void> TextTrackCueGeneric::setLine(double line)
     return result;
 }
 
-ExceptionOr<void> TextTrackCueGeneric::setPosition(double position)
+ExceptionOr<void> TextTrackCueGeneric::setPosition(const LineAndPositionSetting& position)
 {
     auto result = VTTCue::setPosition(position);
     if (!result.hasException())

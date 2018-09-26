@@ -9,7 +9,7 @@ EXPECTED (textCue.pauseOnExit == 'false') OK
 EXPECTED (textCue.vertical == '') OK
 EXPECTED (textCue.snapToLines == 'true') OK
 EXPECTED (textCue.line == '-1') OK
-EXPECTED (textCue.position == '50') OK
+EXPECTED (textCue.position == 'auto') OK
 EXPECTED (textCue.size == '100') OK
 EXPECTED (textCue.align == 'center') OK
 

@@ -6,25 +6,25 @@ Tests cue text position from settings.
 EXPECTED (cues.length == '4') OK
 EXPECTED (cues[0].position == '0') OK
 EXPECTED (cues[1].position == '49.2') OK
-EXPECTED (cues[2].position == '50') OK
+EXPECTED (cues[2].position == 'auto') OK
 EXPECTED (cues[3].position == '100') OK
 
 *** Testing text track 1
 EXPECTED (cues.length == '4') OK
 EXPECTED (cues[0].position == '0') OK
 EXPECTED (cues[1].position == '49.2') OK
-EXPECTED (cues[2].position == '50') OK
+EXPECTED (cues[2].position == 'auto') OK
 EXPECTED (cues[3].position == '100') OK
 
 *** Testing text track 2
 EXPECTED (cues.length == '8') OK
-EXPECTED (cues[0].position == '50') OK
-EXPECTED (cues[1].position == '50') OK
-EXPECTED (cues[2].position == '50') OK
-EXPECTED (cues[3].position == '50') OK
-EXPECTED (cues[4].position == '50') OK
-EXPECTED (cues[5].position == '50') OK
-EXPECTED (cues[6].position == '50') OK
-EXPECTED (cues[7].position == '50') OK
+EXPECTED (cues[0].position == 'auto') OK
+EXPECTED (cues[1].position == 'auto') OK
+EXPECTED (cues[2].position == 'auto') OK
+EXPECTED (cues[3].position == 'auto') OK
+EXPECTED (cues[4].position == 'auto') OK
+EXPECTED (cues[5].position == 'auto') OK
+EXPECTED (cues[6].position == 'auto') OK
+EXPECTED (cues[7].position == 'auto') OK
 END OF TEST
 

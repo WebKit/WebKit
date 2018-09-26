@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+enum AutoKeyword { "auto" };
+typedef (double or AutoKeyword) LineAndPositionSetting;
+
 [
     Conditional=VIDEO_TRACK,
     Constructor(double startTime, double endTime, DOMString text),
@@ -33,7 +36,7 @@
     attribute DOMString vertical;
     attribute boolean snapToLines;
     attribute double line;
-    attribute double position;
+    attribute LineAndPositionSetting position;
     attribute double size;
     attribute DOMString align;
     attribute DOMString text;

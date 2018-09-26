@@ -1,3 +1,32 @@
+2018-09-26  Per Arne Vollan  <pvollan@apple.com>
+
+        WebVTT cue alignment broken
+        https://bugs.webkit.org/show_bug.cgi?id=190004
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/left-align.vtt: Added.
+        * media/track/track-add-remove-cue-expected.txt:
+        * media/track/track-add-remove-cue.html:
+        * media/track/track-cue-left-align-expected-mismatch.html: Added.
+        * media/track/track-cue-left-align.html: Added.
+        * media/track/track-cue-mutable-expected.txt:
+        * media/track/track-cue-mutable.html:
+        * media/track/track-vttcue-expected.txt:
+        * media/track/track-vttcue.html:
+        * media/track/track-webvtt-tc013-settings-expected.txt:
+        * media/track/track-webvtt-tc013-settings.html:
+        * media/track/track-webvtt-tc015-positioning-expected.txt:
+        * media/track/track-webvtt-tc015-positioning.html:
+        * media/track/track-webvtt-tc016-align-positioning-expected.txt:
+        * media/track/track-webvtt-tc016-align-positioning.html:
+        * media/track/track-webvtt-tc018-align-text-line-position-expected.txt:
+        * media/track/track-webvtt-tc018-align-text-line-position.html:
+        * media/track/track-webvtt-tc021-valign-expected.txt:
+        * media/track/track-webvtt-tc021-valign.html:
+        * media/video-test.js:
+        (testCues):
+
 2018-09-26  James Savage  <james.savage@apple.com>
 
         Allow override of viewport configuration.

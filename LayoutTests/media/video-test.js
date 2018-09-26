@@ -377,7 +377,7 @@ function testCues(index, expected)
             var test = expected.tests[j];
             var propertyString = "cues[" + i + "]." + test.property;
             var propertyValue = eval(propertyString);
-            if (test["precision"])
+            if (test["precision"] && typeof(propertyValue) == 'number')
                 propertyValue = propertyValue.toFixed(test["precision"]);
             reportExpected(test.values[i] == propertyValue, propertyString, "==", test.values[i], propertyValue)
         }

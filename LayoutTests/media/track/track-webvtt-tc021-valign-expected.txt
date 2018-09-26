@@ -6,10 +6,10 @@ Tests cue vertical alignment (direction) from settings.
 EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].vertical == 'rl') OK
 EXPECTED (cues[0].align == 'center') OK
-EXPECTED (cues[0].position == '50') OK
+EXPECTED (cues[0].position == 'auto') OK
 EXPECTED (cues[1].vertical == 'lr') OK
 EXPECTED (cues[1].align == 'center') OK
-EXPECTED (cues[1].position == '50') OK
+EXPECTED (cues[1].position == 'auto') OK
 EXPECTED (cues[2].vertical == 'rl') OK
 EXPECTED (cues[2].align == 'start') OK
 EXPECTED (cues[2].position == '0') OK
@@ -18,10 +18,10 @@ EXPECTED (cues[2].position == '0') OK
 EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].vertical == 'rl') OK
 EXPECTED (cues[0].align == 'center') OK
-EXPECTED (cues[0].position == '50') OK
+EXPECTED (cues[0].position == 'auto') OK
 EXPECTED (cues[1].vertical == 'lr') OK
 EXPECTED (cues[1].align == 'center') OK
-EXPECTED (cues[1].position == '50') OK
+EXPECTED (cues[1].position == 'auto') OK
 EXPECTED (cues[2].vertical == 'rl') OK
 EXPECTED (cues[2].align == 'start') OK
 EXPECTED (cues[2].position == '0') OK

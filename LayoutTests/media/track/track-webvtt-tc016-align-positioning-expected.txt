@@ -15,9 +15,9 @@ EXPECTED (cues[2].align == 'end') OK
 EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].position == '10') OK
 EXPECTED (cues[0].align == 'center') OK
-EXPECTED (cues[1].position == '50') OK
+EXPECTED (cues[1].position == 'auto') OK
 EXPECTED (cues[1].align == 'center') OK
-EXPECTED (cues[2].position == '50') OK
+EXPECTED (cues[2].position == 'auto') OK
 EXPECTED (cues[2].align == 'center') OK
 END OF TEST
 
