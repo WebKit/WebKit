@@ -1,3 +1,46 @@
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Selection should work across shadow boundary when initiated by a mouse drag
+        https://bugs.webkit.org/show_bug.cgi?id=151380
+        <rdar://problem/24363872>
+
+        Reviewed by Antti Koivisto and Wenson Hsieh.
+
+        This patch adds the basic support for selecting content across shadow DOM boundaries to VisibleSelection,
+        which is enough to allow users to select content across shadow DOM boundaries via a mouse drag.
+
+        This is the first step in allowing users to select, copy and paste content across shadow DOM boundaries,
+        which is a serious user experience regression right now. The new behavior is disabled by default under
+        an interal debug feature flag: selectionAcrossShadowBoundariesEnabled.
+
+        Like Chrome, we are not going to support selecting editable content across shadow DOM boundaries since
+        we'd have to generalize every editing commands to make that work, and there aren't any HTML editors that
+        use shadow DOM boundaries within an editable region yet. For simplicity, we also don't support extending
+        a selection out of a shadow root which resides inside an editing region.
+
+        The keyboard based navigation & manipulation of selection as well as allowing copy & paste of content
+        across shadow DOM boundaries will be implemented by separate patches. DOMSelection will not expose this new
+        behavior either. This is tracked in the spec as https://github.com/w3c/webcomponents/issues/79
+
+        Tests: editing/selection/selection-across-shadow-boundaries-mixed-editability-1.html
+               editing/selection/selection-across-shadow-boundaries-mixed-editability-2.html
+               editing/selection/selection-across-shadow-boundaries-mixed-editability-3.html
+               editing/selection/selection-across-shadow-boundaries-mixed-editability-4.html
+               editing/selection/selection-across-shadow-boundaries-mixed-editability-5.html
+               editing/selection/selection-across-shadow-boundaries-readonly-1.html
+               editing/selection/selection-across-shadow-boundaries-readonly-2.html
+               editing/selection/selection-across-shadow-boundaries-readonly-3.html
+               editing/selection/selection-across-shadow-boundaries-user-select-all-1.html
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::isInUserAgentShadowRootOrHasEditableShadowAncestor): Added.
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries): When the feature is enabled,
+        allow crossing shadow DOM boundaries except when either end is inside an user agent shadow root, or one of
+        its shadow includign ancestor is inside an editable region. The latter check is needed to disallow
+        an extension of a selection starting in a shadow tree inside a non-editable region inside an editable region
+        to outside the editable region. The rest of the editing code is not ready to deal with selection like that.
+        * page/Settings.yaml: Added an internal debug feature to enable this new behavior.
+
 2018-09-26  Chris Dumez  <cdumez@apple.com>
 
         Ignore-opens-during-unload counter of a parent should apply to its children during beforeunload event

@@ -664,6 +664,7 @@ public:
 #if ENABLE(WEB_RTC)
         [NSNumber numberWithBool:YES], WebKitPeerConnectionEnabledPreferenceKey,
 #endif
+        [NSNumber numberWithBool:NO], WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey,
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
 #endif
@@ -3363,6 +3364,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setServerTimingEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitServerTimingEnabledPreferenceKey];
+}
+
+- (BOOL)selectionAcrossShadowBoundariesEnabled
+{
+    return [self _boolValueForKey:WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey];
+}
+
+- (void)setSelectionAcrossShadowBoundariesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey];
 }
 
 @end

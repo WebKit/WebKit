@@ -1257,6 +1257,14 @@ ServerTimingEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: serverTimingEnabled
 
+CSSCustomPropertiesAndValuesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Custom Properties and Values API"
+  humanReadableDescription: "Enable CSS Custom Properties and Values API"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They
@@ -1341,7 +1349,7 @@ FullScreenEnabled:
 
 AriaReflectionEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: false
   humanReadableName: "ARIA Reflection"
   humanReadableDescription: "ARIA Reflection support"
   category: internal
@@ -1355,10 +1363,10 @@ WebAPIStatisticsEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
 
-CSSCustomPropertiesAndValuesEnabled:
+SelectionAcrossShadowBoundariesEnabled:
   type: bool
-  defaultValue: false
-  humanReadableName: "CSS Custom Properties and Values API"
-  humanReadableDescription: "Enable CSS Custom Properties and Values API"
-  webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
+  defaultValue: true
+  humanReadableName: "Selection across shadow DOM"
+  humanReadableDescription: "Allow user-initiated selection across shadow DOM boundaries"
+  category: internal
+  webcoreName: selectionAcrossShadowBoundariesEnabled

@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:selectionAcrossShadowBoundariesEnabled=true ] -->
+<html>
+<body>
+<p>This tests selecting content starting in a shadow tree inside a non-editable region in an editable region to outside the editable region.<br>
+To manually test, select "hello world WebKit" below by a mouse drag from the bottom right to the top left.<br>
+WebKit should not extend the selection to outside the shadow tree.</p>
+<div id="container" contenteditable>hello <div contenteditable="false">world</div></div>
+<script>
+
+const host = document.createElement('div');
+container.lastChild.append(host);
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.textContent = ' WebKit';
+
+if (window.eventSender) {
+    eventSender.dragMode = false;
+    eventSender.mouseMoveTo(container.offsetLeft + container.offsetWidth - 5, container.offsetTop + container.offsetHeight - 5);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(container.offsetLeft + 1, container.offsetTop + 5);
+    eventSender.mouseUp();
+    if (getSelection().startContainer.getRootNode() != document)
+        document.write("The start container's root node was not the document");
+    if (getSelection().startContainer != getSelection().endContainer)
+        document.write("The end container was different from the start container");
+    if (getSelection().getRangeAt(0).startContainer.getRootNode() != document)
+        document.write("The range's start container's root node was not the document");
+    if (getSelection().getRangeAt(0).endContainer != getSelection().getRangeAt(0).startContainer)
+        document.write("The range's end container was different from its start container");
+}
+
+</script>
+</body>
+</html>

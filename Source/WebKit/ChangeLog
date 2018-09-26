@@ -1,3 +1,16 @@
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Selection should work across shadow boundary when initiated by a mouse drag
+        https://bugs.webkit.org/show_bug.cgi?id=151380
+        <rdar://problem/24363872>
+
+        Reviewed by Antti Koivisto.
+
+        Added SelectionAcrossShadowBoundariesEnabled as an internal debug feature,
+        and moved CSSCustomPropertiesAndValuesEnabled to where other experimental features are located.
+
+        * Shared/WebPreferences.yaml:
+
 2018-09-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, apply post-landing review comments after r236512.

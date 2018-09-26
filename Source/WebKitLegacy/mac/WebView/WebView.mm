@@ -3170,6 +3170,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMediaCapabilitiesEnabled([preferences mediaCapabilitiesEnabled]);
 
     RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled([preferences serverTimingEnabled]);
+
+    settings.setSelectionAcrossShadowBoundariesEnabled(preferences.selectionAcrossShadowBoundariesEnabled);
 }
 
 static inline IMP getMethod(id o, SEL s)

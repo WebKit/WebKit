@@ -582,6 +582,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setServerTimingEnabled:(BOOL)flag;
 - (BOOL)serverTimingEnabled;
 
+- (void)setSelectionAcrossShadowBoundariesEnabled:(BOOL)flag;
+- (BOOL)selectionAcrossShadowBoundariesEnabled;
+
 @property (nonatomic) BOOL visualViewportEnabled;
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewScrollingAPIEnabled;

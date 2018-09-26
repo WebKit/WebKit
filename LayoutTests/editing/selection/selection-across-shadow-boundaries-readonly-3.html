@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:selectionAcrossShadowBoundariesEnabled=true ] -->
+<html>
+<body>
+<p>This tests selecting content starting in one shadow tree and ending another shadow tree.<br>
+To manually test, select "hello world" below by a mouse drag. WebKit should select the phrase.</p>
+<div id="container"></div>
+<script>
+
+const host1 = document.createElement('div');
+const shadowRoot1 = host1.attachShadow({mode: 'closed'});
+shadowRoot1.textContent = 'hello ';
+
+const host2 = document.createElement('div');
+const shadowRoot2 = host2.attachShadow({mode: 'closed'});
+shadowRoot2.textContent = 'world';
+container.append(host1, host2);
+
+if (window.eventSender) {
+    eventSender.dragMode = false;
+    eventSender.mouseMoveTo(container.offsetLeft - 2, container.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(container.offsetLeft + container.offsetWidth - 5, container.offsetTop + container.offsetHeight - 5);
+    eventSender.mouseUp();
+    if (getSelection().startContainer.getRootNode() != document)
+        document.write("The start container's root node was not the document");
+    if (getSelection().endContainer.getRootNode() != document)
+        document.write("The end container's root node was not the document");
+    if (getSelection().getRangeAt(0).startContainer.getRootNode() != document)
+        document.write("The range's start container's root node was not the document");
+    if (getSelection().getRangeAt(0).endContainer.getRootNode() != document)
+        document.write("The range's end container's root node was not the document");
+}
+
+</script>
+</body>
+</html>

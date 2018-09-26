@@ -262,3 +262,4 @@
 #define WebKitAriaReflectionEnabledPreferenceKey @"WebKitAriaReflectionEnabled"
 #define WebKitMediaCapabilitiesEnabledPreferenceKey @"WebKitMediaCapabilitiesEnabled"
 #define WebKitServerTimingEnabledPreferenceKey @"WebKitServerTimingEnabled"
+#define WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey @"WebKitSelectionAcrossShadowBoundariesEnabled"

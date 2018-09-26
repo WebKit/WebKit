@@ -101,6 +101,15 @@ webkit.org/b/173281 http/tests/security/mixedContent/secure-redirect-to-secure-r
 webkit.org/b/173281 editing/style/set-foreColor-with-color-filter.html [ Skip ]
 webkit.org/b/173281 editing/style/set-backColor-with-color-filter.html [ Skip ]
 webkit.org/b/173281 editing/style/inverse-color-filter.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-mixed-editability-1.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-mixed-editability-2.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-mixed-editability-3.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-mixed-editability-4.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-mixed-editability-5.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-readonly-1.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-readonly-2.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-readonly-3.html [ Skip ]
+webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-user-select-all-1.html [ Skip ]
 
 # TODO HW filters not yet supported on Windows
 webkit.org/b/74716 css3/filters/effect-blur-hw.html [ Skip ]

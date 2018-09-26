@@ -389,6 +389,8 @@ smartInsertDeleteEnabled:
   initial: defaultSmartInsertDeleteEnabled
 selectTrailingWhitespaceEnabled:
   initial: defaultSelectTrailingWhitespaceEnabled
+selectionAcrossShadowBoundariesEnabled:
+  initial: false
 
 useLegacyBackgroundSizeShorthandBehavior:
   initial: false

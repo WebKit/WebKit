@@ -1,3 +1,32 @@
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Selection should work across shadow boundary when initiated by a mouse drag
+        https://bugs.webkit.org/show_bug.cgi?id=151380
+        <rdar://problem/24363872>
+
+        Reviewed by Antti Koivisto and Wenson Hsieh.
+
+        Added regression tests using ref tests since getSelection() doesn't expose any node inside a shadow tree.
+
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-1-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-1.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-2-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-2.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-3-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-3.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-4-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-4.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-5-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-5.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-readonly-1-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-readonly-1.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-readonly-2-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-readonly-2.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-readonly-3-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-readonly-3.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-user-select-all-1-expected.html: Added.
+        * editing/selection/selection-across-shadow-boundaries-user-select-all-1.html: Added.
+
 2018-09-26  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Unreviewed test gardening

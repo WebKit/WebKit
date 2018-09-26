@@ -1,5 +1,22 @@
 2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Selection should work across shadow boundary when initiated by a mouse drag
+        https://bugs.webkit.org/show_bug.cgi?id=151380
+        <rdar://problem/24363872>
+
+        Reviewed by Wenson Hsieh.
+
+        Added the support for internal:selectionAcrossShadowBoundariesEnabled test option.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        (setWebPreferencesForTestOptions):
+
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         MiniBrowser doesn't respect default enabled-ness of experimental and internal debug features
         https://bugs.webkit.org/show_bug.cgi?id=189989
 

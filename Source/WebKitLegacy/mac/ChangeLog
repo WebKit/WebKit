@@ -1,3 +1,22 @@
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Selection should work across shadow boundary when initiated by a mouse drag
+        https://bugs.webkit.org/show_bug.cgi?id=151380
+        <rdar://problem/24363872>
+
+        Reviewed by Wenson Hsieh.
+
+        Added selectionAcrossShadowBoundariesEnabled as a preference to be used in DumpRenderTree.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences selectionAcrossShadowBoundariesEnabled]):
+        (-[WebPreferences setSelectionAcrossShadowBoundariesEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2018-09-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor Editor::fontAttributesForSelectionStart to be platform-agnostic
