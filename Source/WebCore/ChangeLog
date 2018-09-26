@@ -1,3 +1,18 @@
+2018-09-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r236511.
+        https://bugs.webkit.org/show_bug.cgi?id=190008
+
+        It is breaking some WebRTC tests (Requested by youenn on
+        #webkit).
+
+        Reverted changeset:
+
+        "[MediaStream] Clean up RealtimeMediaSource settings change
+        handling"
+        https://bugs.webkit.org/show_bug.cgi?id=189998
+        https://trac.webkit.org/changeset/236511
+
 2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Selection should work across shadow boundary when initiated by a mouse drag
