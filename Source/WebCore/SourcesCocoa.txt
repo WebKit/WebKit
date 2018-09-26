@@ -552,6 +552,7 @@ platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp
 platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp
 platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp
 platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm
+platform/mediastream/mac/WindowDisplayCaptureSourceMac.mm
 
 platform/audio/mac/AudioSampleDataSource.mm
 

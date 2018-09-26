@@ -58,10 +58,12 @@ public:
         case CaptureDevice::DeviceType::Screen:
 #if PLATFORM(MAC)
             return ScreenDisplayCaptureSourceMac::create(device.persistentId(), constraints);
-            break;
+#endif
+        case CaptureDevice::DeviceType::Window:
+#if PLATFORM(MAC)
+            return WindowDisplayCaptureSourceMac::create(device.persistentId(), constraints);
 #endif
         case CaptureDevice::DeviceType::Application:
-        case CaptureDevice::DeviceType::Window:
         case CaptureDevice::DeviceType::Browser:
         case CaptureDevice::DeviceType::Microphone:
         case CaptureDevice::DeviceType::Unknown:

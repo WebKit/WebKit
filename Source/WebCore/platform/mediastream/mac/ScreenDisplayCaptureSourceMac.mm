@@ -97,7 +97,7 @@ CaptureSourceOrError ScreenDisplayCaptureSourceMac::create(const String& deviceI
 }
 
 ScreenDisplayCaptureSourceMac::ScreenDisplayCaptureSourceMac(uint32_t displayID)
-    : DisplayCaptureSourceCocoa("Screen")
+    : DisplayCaptureSourceCocoa("Screen") // FIXME: figure out what to call this
     , m_displayID(displayID)
 {
 }
@@ -126,17 +126,15 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
     }
 
     if (!m_displayStream) {
-        if (size().isEmpty()) {
-            RetainPtr<CGDisplayModeRef> displayMode = adoptCF(CGDisplayCopyDisplayMode(m_displayID));
-            auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
-            auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode.get());
-            if (!screenWidth || !screenHeight) {
-                RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream(%p), unable to get screen width/height", this);
-                captureFailed();
-                return false;
-            }
-            setSize(IntSize(screenWidth, screenHeight));
+        auto displayMode = adoptCF(CGDisplayCopyDisplayMode(m_displayID));
+        auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
+        auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode.get());
+        if (!screenWidth || !screenHeight) {
+            RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream(%p), unable to get screen width/height", this);
+            captureFailed();
+            return false;
         }
+        setIntrinsicSize(IntSize(screenWidth, screenHeight));
 
         if (!m_captureQueue)
             m_captureQueue = adoptOSObject(dispatch_queue_create("ScreenDisplayCaptureSourceMac Capture Queue", DISPATCH_QUEUE_SERIAL));
@@ -167,7 +165,8 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
             weakThis->frameAvailable(status, displayTime, frameSurface, updateRef);
         });
 
-        m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, size().width(), size().height(), kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, streamOptions.get(), m_captureQueue.get(), m_frameAvailableBlock));
+        auto size = frameSize();
+        m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, size.width(), size.height(), kCVPixelFormatType_420YpCbCr8Planar, streamOptions.get(), m_captureQueue.get(), m_frameAvailableBlock));
         if (!m_displayStream) {
             RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream(%p), CGDisplayStreamCreate failed", this);
             captureFailed();
@@ -206,10 +205,10 @@ void ScreenDisplayCaptureSourceMac::stopProducingData()
     m_isRunning = false;
 }
 
-void ScreenDisplayCaptureSourceMac::generateFrame()
+RetainPtr<CVPixelBufferRef> ScreenDisplayCaptureSourceMac::generateFrame()
 {
     if (!m_currentFrame.ioSurface())
-        return;
+        return nullptr;
 
     DisplaySurface currentFrame;
     {
@@ -217,15 +216,7 @@ void ScreenDisplayCaptureSourceMac::generateFrame()
         currentFrame = m_currentFrame.ioSurface();
     }
 
-    auto pixelBuffer = pixelBufferFromIOSurface(currentFrame.ioSurface());
-    if (!pixelBuffer)
-        return;
-
-    auto sampleBuffer = sampleBufferFromPixelBuffer(pixelBuffer.get());
-    if (!sampleBuffer)
-        return;
-
-    videoSampleAvailable(MediaSampleAVFObjC::create(sampleBuffer.get()));
+    return pixelBufferFromIOSurface(currentFrame.ioSurface());
 }
 
 void ScreenDisplayCaptureSourceMac::startDisplayStream()
