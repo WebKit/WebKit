@@ -1,3 +1,17 @@
+2018-09-25  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Enable customization of the file upload panel
+        https://bugs.webkit.org/show_bug.cgi?id=189970
+
+        Reviewed by Wenson Hsieh.
+
+        With this change, platform implementations can override, or implement in a category,
+        +[WKContentView _fileUploadPanelClass] as needed.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showRunOpenPanel:resultListener:]):
+
 2018-09-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r236420 and r236458.

@@ -404,4 +404,8 @@ DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_pasteAsQuotation)
 @end
 #endif
 
+@interface WKContentView (WKFileUploadPanel)
++ (Class)_fileUploadPanelClass;
+@end
+
 #endif // PLATFORM(IOS)

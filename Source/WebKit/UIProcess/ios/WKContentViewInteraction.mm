@@ -117,6 +117,10 @@
 #import "WKFormColorControl.h"
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKPlatformFileUploadPanel.mm>)
+#import <WebKitAdditions/WKPlatformFileUploadPanel.mm>
+#endif
+
 @interface UIEvent(UIEventInternal)
 @property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;
 @end
@@ -4731,7 +4735,14 @@ static bool isAssistableInputType(InputType type)
     if (_fileUploadPanel)
         return;
 
-    _fileUploadPanel = adoptNS([[WKFileUploadPanel alloc] initWithView:self]);
+    Class ownClass = self.class;
+    Class panelClass = nil;
+    if ([ownClass respondsToSelector:@selector(_fileUploadPanelClass)])
+        panelClass = [ownClass _fileUploadPanelClass];
+    if (!panelClass)
+        panelClass = [WKFileUploadPanel class];
+
+    _fileUploadPanel = adoptNS([[panelClass alloc] initWithView:self]);
     [_fileUploadPanel setDelegate:self];
     [_fileUploadPanel presentWithParameters:parameters resultListener:listener];
 }
