@@ -1,3 +1,17 @@
+2018-09-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: new watch expression popover has light background
+        https://bugs.webkit.org/show_bug.cgi?id=190013
+        <rdar://problem/44810000>
+
+        Reviewed by Matt Baker.
+
+        Make the background dark to match the CodeMirror editor background.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.css:
+        (@media (prefers-dark-interface)):
+        (.watch-expression-editor):
+
 2018-09-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r236237): Web Inspector: DarkMode: white background in Elements and Timelines
