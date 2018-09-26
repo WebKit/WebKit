@@ -1,3 +1,16 @@
+2018-09-26  Alex Christensen  <achristensen@webkit.org>
+
+        URLWithUserTypedString should return nil for URLs deemed to be invalid by WebCore::URL
+        https://bugs.webkit.org/show_bug.cgi?id=189979
+        <rdar://problem/44119696>
+
+        Reviewed by Chris Dumez.
+
+        Covered by an API test.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::URLWithData):
+
 2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Selection should work across shadow boundary when initiated by a mouse drag
