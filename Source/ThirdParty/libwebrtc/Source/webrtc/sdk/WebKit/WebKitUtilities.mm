@@ -31,7 +31,6 @@
 #include "api/video/video_frame.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
 #include "webrtc/sdk/objc/Framework/Native/src/objc_frame_buffer.h"
-#include "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecFactory.h"
 #include "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h"
 #include "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
 #include "webrtc/sdk/objc/Framework/Native/api/video_decoder_factory.h"
@@ -96,7 +95,7 @@ void setApplicationStatus(bool isActive)
         [[RTCUIApplicationStatusObserver sharedInstance] setInactive];
 }
 
-std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCodecSupport codecSupport)
+std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory()
 {
 #if ENABLE_VCP_ENCODER
     static std::once_flag onceFlag;
@@ -104,12 +103,12 @@ std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCo
         webrtc::VPModuleInitialize();
     });
 #endif
-    return ObjCToNativeVideoEncoderFactory(codecSupport == WebKitCodecSupport::H264AndVP8 ? [[RTCDefaultVideoEncoderFactory alloc] init] : [[RTCVideoEncoderFactoryH264 alloc] init]);
+    return ObjCToNativeVideoEncoderFactory([[RTCVideoEncoderFactoryH264 alloc] init]);
 }
 
-std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitCodecSupport codecSupport)
+std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory()
 {
-    return ObjCToNativeVideoDecoderFactory(codecSupport == WebKitCodecSupport::H264AndVP8 ? [[RTCDefaultVideoDecoderFactory alloc] init] : [[RTCVideoDecoderFactoryH264 alloc] init]);
+    return ObjCToNativeVideoDecoderFactory([[RTCVideoDecoderFactoryH264 alloc] init]);
 }
 
 static bool h264HardwareEncoderAllowed = true;

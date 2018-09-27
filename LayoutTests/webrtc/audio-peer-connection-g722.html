@@ -32,6 +32,13 @@ async function checkForHumBipBop(stream, previousResults, counter)
     return results;
 }
 
+function setCodec(sdp, codec)
+{
+    return sdp.split('\r\n').filter(line => {
+        return line.indexOf('a=fmtp') === -1 && line.indexOf('a=rtcp-fb') === -1 && (line.indexOf('a=rtpmap') === -1 || line.indexOf(codec) !== -1);
+    }).join('\r\n');
+}
+
 promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);

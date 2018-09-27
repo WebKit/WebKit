@@ -1,25 +1,25 @@
 
-FAIL Add null candidate should reject with TypeError assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Add null candidate should reject with TypeError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
 FAIL Add ICE candidate before setting remote description should reject with InvalidStateError assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS Add ICE candidate after setting remote description should succeed 
-PASS Add ICE candidate with RTCIceCandidate should succeed 
-FAIL Add candidate with only valid sdpMid should succeed promise_test: Unhandled rejection with value: object "OperationError: Expect line: candidate:<candidate-str>"
-FAIL Add candidate with only valid sdpMLineIndex should succeed promise_test: Unhandled rejection with value: object "OperationError: Expect line: candidate:<candidate-str>"
-FAIL addIceCandidate with first sdpMid and sdpMLineIndex add candidate to first media stream assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
-FAIL addIceCandidate with second sdpMid and sdpMLineIndex should add candidate to second media stream assert_true: Expect candidate line to be found after media line m=video expected true got false
-FAIL Add candidate for first media stream with null ufrag should add candidate to first media stream assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
-FAIL Adding multiple candidates should add candidates to their corresponding media stream assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
-FAIL Add with empty candidate string (end of candidate) should succeed promise_test: Unhandled rejection with value: object "OperationError: Expect line: candidate:<candidate-str>"
-PASS Add candidate with both sdpMid and sdpMLineIndex manually set to null should reject with TypeError 
-PASS Add candidate with only valid candidate string should reject with TypeError 
-PASS Add candidate with invalid candidate string and both sdpMid and sdpMLineIndex null should reject with TypeError 
-PASS Add candidate with empty dict should reject with TypeError 
-PASS Add candidate with manually filled default values should reject with TypeError 
-FAIL Add candidate with invalid sdpMid should reject with OperationError assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Add candidate with invalid sdpMLineIndex should reject with OperationError assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS Invalid sdpMLineIndex should be ignored if valid sdpMid is provided 
-FAIL Add candidate for media stream 2 with null ufrag should succeed assert_true: Expect candidate line to be found after media line m=video expected true got false
-FAIL Add candidate with invalid ufrag should reject with OperationError assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS Add candidate with invalid candidate string should reject with OperationError 
-FAIL Add candidate with sdpMid belonging to different ufrag should reject with OperationError assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Add ICE candidate after setting remote description should succeed promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add ICE candidate with RTCIceCandidate should succeed promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with only valid sdpMid should succeed promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with only valid sdpMLineIndex should succeed promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL addIceCandidate with first sdpMid and sdpMLineIndex add candidate to first media stream promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL addIceCandidate with second sdpMid and sdpMLineIndex should add candidate to second media stream promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate for first media stream with null ufrag should add candidate to first media stream promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Adding multiple candidates should add candidates to their corresponding media stream promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add with empty candidate string (end of candidate) should succeed promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with both sdpMid and sdpMLineIndex manually set to null should reject with TypeError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with only valid candidate string should reject with TypeError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with invalid candidate string and both sdpMid and sdpMLineIndex null should reject with TypeError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with empty dict should reject with TypeError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with manually filled default values should reject with TypeError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with invalid sdpMid should reject with OperationError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with invalid sdpMLineIndex should reject with OperationError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Invalid sdpMLineIndex should be ignored if valid sdpMid is provided promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate for media stream 2 with null ufrag should succeed promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with invalid ufrag should reject with OperationError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with invalid candidate string should reject with OperationError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
+FAIL Add candidate with sdpMid belonging to different ufrag should reject with OperationError promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: Failed to set remote video description send parameters."
 

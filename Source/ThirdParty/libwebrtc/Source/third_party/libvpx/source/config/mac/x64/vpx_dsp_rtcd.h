@@ -994,6 +994,9 @@ void vpx_hadamard_32x32_sse2(const int16_t* src_diff,
 void vpx_hadamard_32x32_avx2(const int16_t* src_diff,
                              ptrdiff_t src_stride,
                              tran_low_t* coeff);
+RTCD_EXTERN void (*vpx_hadamard_32x32)(const int16_t* src_diff,
+                                       ptrdiff_t src_stride,
+                                       tran_low_t* coeff);
 
 void vpx_hadamard_8x8_c(const int16_t* src_diff,
                         ptrdiff_t src_stride,
@@ -7590,21 +7593,33 @@ static void setup_rtcd_internal(void) {
   vpx_convolve8 = vpx_convolve8_sse2;
   if (flags & HAS_SSSE3)
     vpx_convolve8 = vpx_convolve8_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_convolve8 = vpx_convolve8_avx2;
   vpx_convolve8_avg = vpx_convolve8_avg_sse2;
   if (flags & HAS_SSSE3)
     vpx_convolve8_avg = vpx_convolve8_avg_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_convolve8_avg = vpx_convolve8_avg_avx2;
   vpx_convolve8_avg_horiz = vpx_convolve8_avg_horiz_sse2;
   if (flags & HAS_SSSE3)
     vpx_convolve8_avg_horiz = vpx_convolve8_avg_horiz_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_convolve8_avg_horiz = vpx_convolve8_avg_horiz_avx2;
   vpx_convolve8_avg_vert = vpx_convolve8_avg_vert_sse2;
   if (flags & HAS_SSSE3)
     vpx_convolve8_avg_vert = vpx_convolve8_avg_vert_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_convolve8_avg_vert = vpx_convolve8_avg_vert_avx2;
   vpx_convolve8_horiz = vpx_convolve8_horiz_sse2;
   if (flags & HAS_SSSE3)
     vpx_convolve8_horiz = vpx_convolve8_horiz_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_convolve8_horiz = vpx_convolve8_horiz_avx2;
   vpx_convolve8_vert = vpx_convolve8_vert_sse2;
   if (flags & HAS_SSSE3)
     vpx_convolve8_vert = vpx_convolve8_vert_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_convolve8_vert = vpx_convolve8_vert_avx2;
   vpx_d153_predictor_16x16 = vpx_d153_predictor_16x16_c;
   if (flags & HAS_SSSE3)
     vpx_d153_predictor_16x16 = vpx_d153_predictor_16x16_ssse3;
@@ -7645,18 +7660,41 @@ static void setup_rtcd_internal(void) {
   if (flags & HAS_SSSE3)
     vpx_d63_predictor_8x8 = vpx_d63_predictor_8x8_ssse3;
   vpx_get16x16var = vpx_get16x16var_sse2;
+  if (flags & HAS_AVX2)
+    vpx_get16x16var = vpx_get16x16var_avx2;
   vpx_hadamard_16x16 = vpx_hadamard_16x16_sse2;
+  if (flags & HAS_AVX2)
+    vpx_hadamard_16x16 = vpx_hadamard_16x16_avx2;
+  vpx_hadamard_32x32 = vpx_hadamard_32x32_sse2;
+  if (flags & HAS_AVX2)
+    vpx_hadamard_32x32 = vpx_hadamard_32x32_avx2;
   vpx_hadamard_8x8 = vpx_hadamard_8x8_sse2;
   if (flags & HAS_SSSE3)
     vpx_hadamard_8x8 = vpx_hadamard_8x8_ssse3;
   vpx_highbd_convolve8 = vpx_highbd_convolve8_sse2;
+  if (flags & HAS_AVX2)
+    vpx_highbd_convolve8 = vpx_highbd_convolve8_avx2;
   vpx_highbd_convolve8_avg = vpx_highbd_convolve8_avg_sse2;
+  if (flags & HAS_AVX2)
+    vpx_highbd_convolve8_avg = vpx_highbd_convolve8_avg_avx2;
   vpx_highbd_convolve8_avg_horiz = vpx_highbd_convolve8_avg_horiz_sse2;
+  if (flags & HAS_AVX2)
+    vpx_highbd_convolve8_avg_horiz = vpx_highbd_convolve8_avg_horiz_avx2;
   vpx_highbd_convolve8_avg_vert = vpx_highbd_convolve8_avg_vert_sse2;
+  if (flags & HAS_AVX2)
+    vpx_highbd_convolve8_avg_vert = vpx_highbd_convolve8_avg_vert_avx2;
   vpx_highbd_convolve8_horiz = vpx_highbd_convolve8_horiz_sse2;
+  if (flags & HAS_AVX2)
+    vpx_highbd_convolve8_horiz = vpx_highbd_convolve8_horiz_avx2;
   vpx_highbd_convolve8_vert = vpx_highbd_convolve8_vert_sse2;
+  if (flags & HAS_AVX2)
+    vpx_highbd_convolve8_vert = vpx_highbd_convolve8_vert_avx2;
   vpx_highbd_convolve_avg = vpx_highbd_convolve_avg_sse2;
+  if (flags & HAS_AVX2)
+    vpx_highbd_convolve_avg = vpx_highbd_convolve_avg_avx2;
   vpx_highbd_convolve_copy = vpx_highbd_convolve_copy_sse2;
+  if (flags & HAS_AVX2)
+    vpx_highbd_convolve_copy = vpx_highbd_convolve_copy_avx2;
   vpx_highbd_d117_predictor_16x16 = vpx_highbd_d117_predictor_16x16_c;
   if (flags & HAS_SSSE3)
     vpx_highbd_d117_predictor_16x16 = vpx_highbd_d117_predictor_16x16_ssse3;
@@ -7715,14 +7753,32 @@ static void setup_rtcd_internal(void) {
   if (flags & HAS_SSSE3)
     vpx_highbd_d63_predictor_8x8 = vpx_highbd_d63_predictor_8x8_ssse3;
   vpx_highbd_idct16x16_10_add = vpx_highbd_idct16x16_10_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct16x16_10_add = vpx_highbd_idct16x16_10_add_sse4_1;
   vpx_highbd_idct16x16_256_add = vpx_highbd_idct16x16_256_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct16x16_256_add = vpx_highbd_idct16x16_256_add_sse4_1;
   vpx_highbd_idct16x16_38_add = vpx_highbd_idct16x16_38_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct16x16_38_add = vpx_highbd_idct16x16_38_add_sse4_1;
   vpx_highbd_idct32x32_1024_add = vpx_highbd_idct32x32_1024_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct32x32_1024_add = vpx_highbd_idct32x32_1024_add_sse4_1;
   vpx_highbd_idct32x32_135_add = vpx_highbd_idct32x32_135_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct32x32_135_add = vpx_highbd_idct32x32_135_add_sse4_1;
   vpx_highbd_idct32x32_34_add = vpx_highbd_idct32x32_34_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct32x32_34_add = vpx_highbd_idct32x32_34_add_sse4_1;
   vpx_highbd_idct4x4_16_add = vpx_highbd_idct4x4_16_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct4x4_16_add = vpx_highbd_idct4x4_16_add_sse4_1;
   vpx_highbd_idct8x8_12_add = vpx_highbd_idct8x8_12_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct8x8_12_add = vpx_highbd_idct8x8_12_add_sse4_1;
   vpx_highbd_idct8x8_64_add = vpx_highbd_idct8x8_64_add_sse2;
+  if (flags & HAS_SSE4_1)
+    vpx_highbd_idct8x8_64_add = vpx_highbd_idct8x8_64_add_sse4_1;
   vpx_idct32x32_135_add = vpx_idct32x32_135_add_sse2;
   if (flags & HAS_SSSE3)
     vpx_idct32x32_135_add = vpx_idct32x32_135_add_ssse3;
@@ -7733,42 +7789,100 @@ static void setup_rtcd_internal(void) {
   if (flags & HAS_SSSE3)
     vpx_idct8x8_12_add = vpx_idct8x8_12_add_ssse3;
   vpx_lpf_horizontal_16 = vpx_lpf_horizontal_16_sse2;
+  if (flags & HAS_AVX2)
+    vpx_lpf_horizontal_16 = vpx_lpf_horizontal_16_avx2;
   vpx_lpf_horizontal_16_dual = vpx_lpf_horizontal_16_dual_sse2;
+  if (flags & HAS_AVX2)
+    vpx_lpf_horizontal_16_dual = vpx_lpf_horizontal_16_dual_avx2;
   vpx_mse16x16 = vpx_mse16x16_sse2;
+  if (flags & HAS_AVX2)
+    vpx_mse16x16 = vpx_mse16x16_avx2;
   vpx_mse16x8 = vpx_mse16x8_sse2;
+  if (flags & HAS_AVX2)
+    vpx_mse16x8 = vpx_mse16x8_avx2;
   vpx_quantize_b = vpx_quantize_b_sse2;
   if (flags & HAS_SSSE3)
     vpx_quantize_b = vpx_quantize_b_ssse3;
+  if (flags & HAS_AVX)
+    vpx_quantize_b = vpx_quantize_b_avx;
   vpx_quantize_b_32x32 = vpx_quantize_b_32x32_c;
   if (flags & HAS_SSSE3)
     vpx_quantize_b_32x32 = vpx_quantize_b_32x32_ssse3;
-  vpx_sad16x16x3 = vpx_sad16x16x3_sse3;
+  if (flags & HAS_AVX)
+    vpx_quantize_b_32x32 = vpx_quantize_b_32x32_avx;
+  vpx_sad16x16x3 = vpx_sad16x16x3_c;
+  if (flags & HAS_SSE3)
+    vpx_sad16x16x3 = vpx_sad16x16x3_sse3;
   if (flags & HAS_SSSE3)
     vpx_sad16x16x3 = vpx_sad16x16x3_ssse3;
-  vpx_sad16x16x8 = vpx_sad16x16x8_sse4_1;
-  vpx_sad16x8x3 = vpx_sad16x8x3_sse3;
+  vpx_sad16x16x8 = vpx_sad16x16x8_c;
+  if (flags & HAS_SSE4_1)
+    vpx_sad16x16x8 = vpx_sad16x16x8_sse4_1;
+  vpx_sad16x8x3 = vpx_sad16x8x3_c;
+  if (flags & HAS_SSE3)
+    vpx_sad16x8x3 = vpx_sad16x8x3_sse3;
   if (flags & HAS_SSSE3)
     vpx_sad16x8x3 = vpx_sad16x8x3_ssse3;
-  vpx_sad16x8x8 = vpx_sad16x8x8_sse4_1;
+  vpx_sad16x8x8 = vpx_sad16x8x8_c;
+  if (flags & HAS_SSE4_1)
+    vpx_sad16x8x8 = vpx_sad16x8x8_sse4_1;
   vpx_sad32x16 = vpx_sad32x16_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad32x16 = vpx_sad32x16_avx2;
   vpx_sad32x16_avg = vpx_sad32x16_avg_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad32x16_avg = vpx_sad32x16_avg_avx2;
   vpx_sad32x32 = vpx_sad32x32_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad32x32 = vpx_sad32x32_avx2;
   vpx_sad32x32_avg = vpx_sad32x32_avg_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad32x32_avg = vpx_sad32x32_avg_avx2;
   vpx_sad32x32x4d = vpx_sad32x32x4d_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad32x32x4d = vpx_sad32x32x4d_avx2;
   vpx_sad32x64 = vpx_sad32x64_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad32x64 = vpx_sad32x64_avx2;
   vpx_sad32x64_avg = vpx_sad32x64_avg_sse2;
-  vpx_sad4x4x3 = vpx_sad4x4x3_sse3;
-  vpx_sad4x4x8 = vpx_sad4x4x8_sse4_1;
+  if (flags & HAS_AVX2)
+    vpx_sad32x64_avg = vpx_sad32x64_avg_avx2;
+  vpx_sad4x4x3 = vpx_sad4x4x3_c;
+  if (flags & HAS_SSE3)
+    vpx_sad4x4x3 = vpx_sad4x4x3_sse3;
+  vpx_sad4x4x8 = vpx_sad4x4x8_c;
+  if (flags & HAS_SSE4_1)
+    vpx_sad4x4x8 = vpx_sad4x4x8_sse4_1;
   vpx_sad64x32 = vpx_sad64x32_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad64x32 = vpx_sad64x32_avx2;
   vpx_sad64x32_avg = vpx_sad64x32_avg_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad64x32_avg = vpx_sad64x32_avg_avx2;
   vpx_sad64x64 = vpx_sad64x64_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad64x64 = vpx_sad64x64_avx2;
   vpx_sad64x64_avg = vpx_sad64x64_avg_sse2;
+  if (flags & HAS_AVX2)
+    vpx_sad64x64_avg = vpx_sad64x64_avg_avx2;
   vpx_sad64x64x4d = vpx_sad64x64x4d_sse2;
-  vpx_sad8x16x3 = vpx_sad8x16x3_sse3;
-  vpx_sad8x16x8 = vpx_sad8x16x8_sse4_1;
-  vpx_sad8x8x3 = vpx_sad8x8x3_sse3;
-  vpx_sad8x8x8 = vpx_sad8x8x8_sse4_1;
+  if (flags & HAS_AVX2)
+    vpx_sad64x64x4d = vpx_sad64x64x4d_avx2;
+  vpx_sad8x16x3 = vpx_sad8x16x3_c;
+  if (flags & HAS_SSE3)
+    vpx_sad8x16x3 = vpx_sad8x16x3_sse3;
+  vpx_sad8x16x8 = vpx_sad8x16x8_c;
+  if (flags & HAS_SSE4_1)
+    vpx_sad8x16x8 = vpx_sad8x16x8_sse4_1;
+  vpx_sad8x8x3 = vpx_sad8x8x3_c;
+  if (flags & HAS_SSE3)
+    vpx_sad8x8x3 = vpx_sad8x8x3_sse3;
+  vpx_sad8x8x8 = vpx_sad8x8x8_c;
+  if (flags & HAS_SSE4_1)
+    vpx_sad8x8x8 = vpx_sad8x8x8_sse4_1;
   vpx_satd = vpx_satd_sse2;
+  if (flags & HAS_AVX2)
+    vpx_satd = vpx_satd_avx2;
   vpx_scaled_2d = vpx_scaled_2d_c;
   if (flags & HAS_SSSE3)
     vpx_scaled_2d = vpx_scaled_2d_ssse3;
@@ -7787,6 +7901,8 @@ static void setup_rtcd_internal(void) {
   vpx_sub_pixel_avg_variance32x32 = vpx_sub_pixel_avg_variance32x32_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_avg_variance32x32 = vpx_sub_pixel_avg_variance32x32_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_sub_pixel_avg_variance32x32 = vpx_sub_pixel_avg_variance32x32_avx2;
   vpx_sub_pixel_avg_variance32x64 = vpx_sub_pixel_avg_variance32x64_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_avg_variance32x64 = vpx_sub_pixel_avg_variance32x64_ssse3;
@@ -7802,6 +7918,8 @@ static void setup_rtcd_internal(void) {
   vpx_sub_pixel_avg_variance64x64 = vpx_sub_pixel_avg_variance64x64_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_avg_variance64x64 = vpx_sub_pixel_avg_variance64x64_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_sub_pixel_avg_variance64x64 = vpx_sub_pixel_avg_variance64x64_avx2;
   vpx_sub_pixel_avg_variance8x16 = vpx_sub_pixel_avg_variance8x16_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_avg_variance8x16 = vpx_sub_pixel_avg_variance8x16_ssse3;
@@ -7826,6 +7944,8 @@ static void setup_rtcd_internal(void) {
   vpx_sub_pixel_variance32x32 = vpx_sub_pixel_variance32x32_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_variance32x32 = vpx_sub_pixel_variance32x32_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_sub_pixel_variance32x32 = vpx_sub_pixel_variance32x32_avx2;
   vpx_sub_pixel_variance32x64 = vpx_sub_pixel_variance32x64_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_variance32x64 = vpx_sub_pixel_variance32x64_ssse3;
@@ -7841,6 +7961,8 @@ static void setup_rtcd_internal(void) {
   vpx_sub_pixel_variance64x64 = vpx_sub_pixel_variance64x64_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_variance64x64 = vpx_sub_pixel_variance64x64_ssse3;
+  if (flags & HAS_AVX2)
+    vpx_sub_pixel_variance64x64 = vpx_sub_pixel_variance64x64_avx2;
   vpx_sub_pixel_variance8x16 = vpx_sub_pixel_variance8x16_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_variance8x16 = vpx_sub_pixel_variance8x16_ssse3;
@@ -7851,13 +7973,29 @@ static void setup_rtcd_internal(void) {
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_variance8x8 = vpx_sub_pixel_variance8x8_ssse3;
   vpx_variance16x16 = vpx_variance16x16_sse2;
+  if (flags & HAS_AVX2)
+    vpx_variance16x16 = vpx_variance16x16_avx2;
   vpx_variance16x32 = vpx_variance16x32_sse2;
+  if (flags & HAS_AVX2)
+    vpx_variance16x32 = vpx_variance16x32_avx2;
   vpx_variance16x8 = vpx_variance16x8_sse2;
+  if (flags & HAS_AVX2)
+    vpx_variance16x8 = vpx_variance16x8_avx2;
   vpx_variance32x16 = vpx_variance32x16_sse2;
+  if (flags & HAS_AVX2)
+    vpx_variance32x16 = vpx_variance32x16_avx2;
   vpx_variance32x32 = vpx_variance32x32_sse2;
+  if (flags & HAS_AVX2)
+    vpx_variance32x32 = vpx_variance32x32_avx2;
   vpx_variance32x64 = vpx_variance32x64_sse2;
+  if (flags & HAS_AVX2)
+    vpx_variance32x64 = vpx_variance32x64_avx2;
   vpx_variance64x32 = vpx_variance64x32_sse2;
+  if (flags & HAS_AVX2)
+    vpx_variance64x32 = vpx_variance64x32_avx2;
   vpx_variance64x64 = vpx_variance64x64_sse2;
+  if (flags & HAS_AVX2)
+    vpx_variance64x64 = vpx_variance64x64_avx2;
 }
 #endif
 
