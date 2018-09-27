@@ -1,3 +1,22 @@
+2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix, remove *.o files that were committed in r236557.
+
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/copy_sse2.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/copy_sse3.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/dequantize_mmx.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_mmx.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_sse2.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/iwalsh_sse2.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_block_sse2_x86_64.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_sse2.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/mfqe_sse2.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/recon_mmx.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/recon_sse2.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_mmx.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_sse2.asm.o: Removed.
+        * Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_ssse3.asm.o: Removed.
+
 2018-09-27  Youenn Fablet  <youenn@apple.com>
 
         Add VP8 support to WebRTC
