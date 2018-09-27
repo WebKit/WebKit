@@ -1,5 +1,12 @@
 2018-09-27  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed GTK WebAudio rebaselines
+
+        * platform/gtk/TestExpectations: webaudio/audioprocessingevent.html doesn't fail.
+        * platform/gtk/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Rebaselined.
+
+2018-09-27  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] Several tests are failing since r217598
         https://bugs.webkit.org/show_bug.cgi?id=172809
 
