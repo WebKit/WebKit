@@ -1,3 +1,12 @@
+2018-09-27  Youenn Fablet  <youenn@apple.com>
+
+        Add VP8 support to WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=189976
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-expected.txt:
+
 2018-09-27  Chris Dumez  <cdumez@apple.com>
 
         document.open() should not propagate URLs to non-fully active documents

@@ -651,11 +651,7 @@ static void setup_rtcd_internal(void) {
   vp8_full_search_sad = vp8_full_search_sad_c;
   if (flags & HAS_SSE3)
     vp8_full_search_sad = vp8_full_search_sadx3;
-  if (flags & HAS_SSE4_1)
-    vp8_full_search_sad = vp8_full_search_sadx8;
   vp8_regular_quantize_b = vp8_regular_quantize_b_sse2;
-  if (flags & HAS_SSE4_1)
-    vp8_regular_quantize_b = vp8_regular_quantize_b_sse4_1;
   vp8_sixtap_predict16x16 = vp8_sixtap_predict16x16_sse2;
   if (flags & HAS_SSSE3)
     vp8_sixtap_predict16x16 = vp8_sixtap_predict16x16_ssse3;

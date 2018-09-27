@@ -1,5 +1,17 @@
 2018-09-27  Youenn Fablet  <youenn@apple.com>
 
+        Add VP8 support to WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=189976
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-peer-connection-g722.html:
+        * webrtc/routines.js:
+        * webrtc/video-mute-vp8-expected.txt: Added.
+        * webrtc/video-mute-vp8.html: Added.
+
+2018-09-27  Youenn Fablet  <youenn@apple.com>
+
         LayoutTest webrtc/video-unmute.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=172879
         <rdar://problem/32548738>

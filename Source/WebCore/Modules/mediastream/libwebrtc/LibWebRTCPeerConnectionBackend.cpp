@@ -56,6 +56,10 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
     auto* page = downcast<Document>(*peerConnection.scriptExecutionContext()).page();
     if (!page)
         return nullptr;
+
+#if USE(LIBWEBRTC)
+    page->libWebRTCProvider().supportsVP8(RuntimeEnabledFeatures::sharedFeatures().webRTCVP8CodecEnabled());
+#endif
     return std::make_unique<LibWebRTCPeerConnectionBackend>(peerConnection, page->libWebRTCProvider());
 }
 
