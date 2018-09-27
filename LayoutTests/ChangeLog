@@ -1,3 +1,21 @@
+2018-09-26  Justin Fan  <justin_fan@apple.com>
+
+        WebGL 2: updated passing test expectations for deqp/primitiverestart
+        https://bugs.webkit.org/show_bug.cgi?id=189981
+
+        Reviewed by Jon Lee.
+
+        Test-expectation updates for trac.webkit.org/changeset/236490; these are still to be skipped on ews.
+
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/02-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/03-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/04-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/05-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/06-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/07-expected.txt:
+
 2018-09-26  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r236524.
