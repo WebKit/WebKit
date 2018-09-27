@@ -1,3 +1,61 @@
+2018-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should use TextEncoding through an abstract class
+        https://bugs.webkit.org/show_bug.cgi?id=190027
+
+        Reviewed by Andy Estes.
+
+        URLParser uses TextEncoding for one call to encode, which is only used for encoding the query of URLs in documents with non-UTF encodings.
+        There are 3 call sites that specify the TextEncoding to use from the Document, and even those call sites use a UTF encoding most of the time.
+        All other URL parsing is done using a well-optimized path which assumes UTF-8 encoding and uses macros from ICU headers, not a TextEncoding.
+        Moving the logic in this way breaks URL and URLParser's dependency on TextEncoding, which makes it possible to use in a lower-level project
+        without also moving TextEncoding, TextCodec, TextCodecICU, ThreadGlobalData, and the rest of WebCore and JavaScriptCore.
+
+        There is no observable change in behavior.  There is now one virtual function call in a code path in URLParser that is not performance-sensitive,
+        and TextEncodings now have a vtable, which uses a few more bytes of memory total for WebKit.
+
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContext::completeURL const):
+        * css/parser/CSSParserIdioms.cpp:
+        (WebCore::completeURL):
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL const):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::href const):
+        Move the call to encodingForFormSubmission from the URL constructor to the 3 call sites that specify the encoding from the Document.
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::encodingForURLParsing):
+        * loader/TextResourceDecoder.h:
+        * platform/URL.cpp:
+        (WebCore::URL::URL):
+        * platform/URL.h:
+        (WebCore::URLTextEncoding::~URLTextEncoding):
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::encodeNonUTF8Query):
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::URLParser::URLParser):
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::encodeQuery): Deleted.
+        A pointer replaces the boolean isUTF8Encoding and the TextEncoding& which had a default value of UTF8Encoding.
+        Now the pointer being null means that we use UTF8, and the pointer being non-null means we use that encoding.
+        * platform/URLParser.h:
+        (WebCore::URLParser::URLParser):
+        * platform/text/TextEncoding.cpp:
+        (WebCore::UTF7Encoding):
+        (WebCore::TextEncoding::encodingForFormSubmissionOrURLParsing const):
+        (WebCore::ASCIIEncoding):
+        (WebCore::Latin1Encoding):
+        (WebCore::UTF16BigEndianEncoding):
+        (WebCore::UTF16LittleEndianEncoding):
+        (WebCore::UTF8Encoding):
+        (WebCore::WindowsLatin1Encoding):
+        (WebCore::TextEncoding::encodingForFormSubmission const): Deleted.
+        Use NeverDestroyed because TextEncoding now has a virtual destructor.
+        * platform/text/TextEncoding.h:
+        Rename encodingForFormSubmission to encodingForFormSubmissionOrURLParsing to make it more clear that we are intentionally using it for both.
+
 2018-09-27  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove temporary compatibility fix for auto-dismiss popups

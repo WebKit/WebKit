@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "TextEncoding.h"
 #include "URL.h"
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
@@ -38,7 +37,7 @@ template<typename CharacterType> class CodePointIterator;
 
 class URLParser {
 public:
-    WEBCORE_EXPORT URLParser(const String&, const URL& = { }, const TextEncoding& = UTF8Encoding());
+    WEBCORE_EXPORT URLParser(const String&, const URL& = { }, const URLTextEncoding* = nullptr);
     URL result() { return m_url; }
 
     WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
@@ -70,7 +69,7 @@ private:
     static constexpr size_t defaultInlineBufferSize = 2048;
     using LCharBuffer = Vector<LChar, defaultInlineBufferSize>;
 
-    template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
+    template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const URLTextEncoding*);
     template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool parseHostAndPort(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
@@ -107,7 +106,7 @@ private:
     void appendToASCIIBuffer(UChar32);
     void appendToASCIIBuffer(const char*, size_t);
     void appendToASCIIBuffer(const LChar* characters, size_t size) { appendToASCIIBuffer(reinterpret_cast<const char*>(characters), size); }
-    template<typename CharacterType> void encodeQuery(const Vector<UChar>& source, const TextEncoding&, CodePointIterator<CharacterType>);
+    template<typename CharacterType> void encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEncoding&, CodePointIterator<CharacterType>);
     void copyASCIIStringUntil(const String&, size_t length);
     bool copyBaseWindowsDriveLetter(const URL&);
     StringView parsedDataView(size_t start, size_t length);
@@ -127,7 +126,7 @@ private:
     void serializeIPv6(IPv6Address);
 
     enum class URLPart;
-    template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&, bool& isUTF8Encoding);
+    template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&, const URLTextEncoding*&);
     static size_t urlLengthUntilPart(const URL&, URLPart);
     void popPath();
     bool shouldPopPath(unsigned);

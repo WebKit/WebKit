@@ -659,4 +659,16 @@ String TextResourceDecoder::decodeAndFlush(const char* data, size_t length)
     return decoded + flush();
 }
 
+const TextEncoding* TextResourceDecoder::encodingForURLParsing()
+{
+    // For UTF-{7,16,32}, we want to use UTF-8 for the query part as
+    // we do when submitting a form. A form with GET method
+    // has its contents added to a URL as query params and it makes sense
+    // to be consistent.
+    auto& encoding = m_encoding.encodingForFormSubmissionOrURLParsing();
+    if (encoding == UTF8Encoding())
+        return nullptr;
+    return &encoding;
+}
+
 }

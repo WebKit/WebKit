@@ -69,7 +69,9 @@ public:
             return URL();
         if (charset.isEmpty())
             return URL(baseURL, url);
-        return URL(baseURL, url, TextEncoding(charset));
+        TextEncoding encoding(charset);
+        auto& encodingForURLParsing = encoding.encodingForFormSubmissionOrURLParsing();
+        return URL(baseURL, url, encodingForURLParsing == UTF8Encoding() ? nullptr : &encodingForURLParsing);
     }
 };
 

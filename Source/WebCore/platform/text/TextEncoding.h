@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "URL.h"
 #include <pal/text/UnencodableHandling.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class TextEncoding {
+class TextEncoding : public URLTextEncoding {
 public:
     TextEncoding() = default;
     WEBCORE_EXPORT TextEncoding(const char* name);
@@ -43,11 +44,12 @@ public:
     bool isJapanese() const;
 
     const TextEncoding& closestByteBasedEquivalent() const;
-    const TextEncoding& encodingForFormSubmission() const;
+    const TextEncoding& encodingForFormSubmissionOrURLParsing() const;
 
     WEBCORE_EXPORT String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
     String decode(const char*, size_t length) const;
-    Vector<uint8_t> encode(StringView, UnencodableHandling) const;
+    WEBCORE_EXPORT Vector<uint8_t> encode(StringView, UnencodableHandling) const;
+    Vector<uint8_t> encodeForURLParsing(StringView string) const final { return encode(string, UnencodableHandling::URLEncodedEntities); }
 
     UChar backslashAsCurrencySymbol() const;
     bool isByteBasedEncoding() const { return !isNonByteBasedEncoding(); }

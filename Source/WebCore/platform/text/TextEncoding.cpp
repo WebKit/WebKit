@@ -31,6 +31,7 @@
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
 #include <unicode/unorm.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
@@ -39,7 +40,7 @@ namespace WebCore {
 
 static const TextEncoding& UTF7Encoding()
 {
-    static TextEncoding globalUTF7Encoding("UTF-7");
+    static NeverDestroyed<TextEncoding> globalUTF7Encoding("UTF-7");
     return globalUTF7Encoding;
 }
 
@@ -173,7 +174,7 @@ const TextEncoding& TextEncoding::closestByteBasedEquivalent() const
 // byte-based encoding and can contain 0x00. By extension, the same
 // should be done for UTF-32. In case of UTF-7, it is a byte-based encoding,
 // but it's fraught with problems and we'd rather steer clear of it.
-const TextEncoding& TextEncoding::encodingForFormSubmission() const
+const TextEncoding& TextEncoding::encodingForFormSubmissionOrURLParsing() const
 {
     if (isNonByteBasedEncoding() || isUTF7Encoding())
         return UTF8Encoding();
@@ -182,38 +183,38 @@ const TextEncoding& TextEncoding::encodingForFormSubmission() const
 
 const TextEncoding& ASCIIEncoding()
 {
-    static TextEncoding globalASCIIEncoding("ASCII");
+    static NeverDestroyed<TextEncoding> globalASCIIEncoding("ASCII");
     return globalASCIIEncoding;
 }
 
 const TextEncoding& Latin1Encoding()
 {
-    static TextEncoding globalLatin1Encoding("latin1");
+    static NeverDestroyed<TextEncoding> globalLatin1Encoding("latin1");
     return globalLatin1Encoding;
 }
 
 const TextEncoding& UTF16BigEndianEncoding()
 {
-    static TextEncoding globalUTF16BigEndianEncoding("UTF-16BE");
+    static NeverDestroyed<TextEncoding> globalUTF16BigEndianEncoding("UTF-16BE");
     return globalUTF16BigEndianEncoding;
 }
 
 const TextEncoding& UTF16LittleEndianEncoding()
 {
-    static TextEncoding globalUTF16LittleEndianEncoding("UTF-16LE");
+    static NeverDestroyed<TextEncoding> globalUTF16LittleEndianEncoding("UTF-16LE");
     return globalUTF16LittleEndianEncoding;
 }
 
 const TextEncoding& UTF8Encoding()
 {
-    static TextEncoding globalUTF8Encoding("UTF-8");
-    ASSERT(globalUTF8Encoding.isValid());
+    static NeverDestroyed<TextEncoding> globalUTF8Encoding("UTF-8");
+    ASSERT(globalUTF8Encoding.get().isValid());
     return globalUTF8Encoding;
 }
 
 const TextEncoding& WindowsLatin1Encoding()
 {
-    static TextEncoding globalWindowsLatin1Encoding("WinLatin-1");
+    static NeverDestroyed<TextEncoding> globalWindowsLatin1Encoding("WinLatin-1");
     return globalWindowsLatin1Encoding;
 }
 

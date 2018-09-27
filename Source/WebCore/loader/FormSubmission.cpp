@@ -175,7 +175,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attribut
     }
 
     auto dataEncoding = isMailtoForm ? UTF8Encoding() : encodingFromAcceptCharset(copiedAttributes.acceptCharset(), document);
-    auto domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmission());
+    auto domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmissionOrURLParsing());
     StringPairVector formValues;
 
     bool containsPasswordData = false;

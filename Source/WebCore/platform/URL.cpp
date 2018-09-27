@@ -103,19 +103,9 @@ URL::URL(ParsedURLStringTag, const String& url)
 #endif
 }
 
-URL::URL(const URL& base, const String& relative)
+URL::URL(const URL& base, const String& relative, const URLTextEncoding* encoding)
 {
-    URLParser parser(relative, base);
-    *this = parser.result();
-}
-
-URL::URL(const URL& base, const String& relative, const TextEncoding& encoding)
-{
-    // For UTF-{7,16,32}, we want to use UTF-8 for the query part as
-    // we do when submitting a form. A form with GET method
-    // has its contents added to a URL as query params and it makes sense
-    // to be consistent.
-    URLParser parser(relative, base, encoding.encodingForFormSubmission());
+    URLParser parser(relative, base, encoding);
     *this = parser.result();
 }
 

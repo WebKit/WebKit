@@ -89,9 +89,8 @@ URL HTMLBaseElement::href() const
     if (attributeValue.isNull())
         return document().url();
 
-    URL url = !document().decoder() ?
-        URL(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue)) :
-        URL(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), document().decoder()->encoding());
+    auto* encoding = document().decoder() ? document().decoder()->encodingForURLParsing() : nullptr;
+    URL url(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), encoding);
 
     if (!url.isValid())
         return URL();

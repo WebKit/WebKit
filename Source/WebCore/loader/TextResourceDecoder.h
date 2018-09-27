@@ -48,6 +48,7 @@ public:
 
     void setEncoding(const TextEncoding&, EncodingSource);
     const TextEncoding& encoding() const { return m_encoding; }
+    const TextEncoding* encodingForURLParsing();
 
     bool hasEqualEncodingForCharset(const String& charset) const;
 

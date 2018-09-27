@@ -4894,7 +4894,7 @@ URL Document::completeURL(const String& url, const URL& baseURLOverride) const
     const URL& baseURL = ((baseURLOverride.isEmpty() || baseURLOverride == blankURL()) && parentDocument()) ? parentDocument()->baseURL() : baseURLOverride;
     if (!m_decoder)
         return URL(baseURL, url);
-    return URL(baseURL, url, m_decoder->encoding());
+    return URL(baseURL, url, m_decoder->encodingForURLParsing());
 }
 
 URL Document::completeURL(const String& url) const
