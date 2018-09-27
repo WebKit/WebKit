@@ -804,8 +804,6 @@ webkit.org/b/181167 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/181107 http/wpt/cache-storage/cache-put-stream.https.any.html [ Pass Failure ]
 
-webkit.org/b/172879 webrtc/video-unmute.html [ Skip ]
-
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
 
 webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
