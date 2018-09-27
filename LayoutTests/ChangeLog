@@ -1,5 +1,17 @@
 2018-09-27  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed GTK WebAudio rebaseline.
+
+        This time from the 64-bit Release bot...
+
+        * platform/gtk/webaudio/oscillator-custom-expected.wav:
+        * platform/gtk/webaudio/oscillator-sawtooth-expected.wav:
+        * platform/gtk/webaudio/oscillator-sine-expected.wav:
+        * platform/gtk/webaudio/oscillator-square-expected.wav:
+        * platform/gtk/webaudio/oscillator-triangle-expected.wav:
+
+2018-09-27  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed GTK WebAudio rebaselines
 
         * platform/gtk/TestExpectations: webaudio/audioprocessingevent.html doesn't fail.
