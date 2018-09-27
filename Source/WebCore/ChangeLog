@@ -1,3 +1,18 @@
+2018-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        URLWithUserTypedString should return nil for URLs deemed to be invalid by WebCore::URL
+        https://bugs.webkit.org/show_bug.cgi?id=189979
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::URLWithUserTypedString):
+        (WebCore::dataForURLComponentType):
+        (WebCore::URLByRemovingComponentAndSubsequentCharacter):
+        (WebCore::URLByCanonicalizingURL):
+        (WebCore::originalURLData):
+        (WebCore::userVisibleString):
+
 2018-09-27  Chris Dumez  <cdumez@apple.com>
 
         document.open() should not propagate URLs to non-fully active documents

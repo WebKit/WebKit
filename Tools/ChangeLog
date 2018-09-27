@@ -1,3 +1,14 @@
+2018-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        URLWithUserTypedString should return nil for URLs deemed to be invalid by WebCore::URL
+        https://bugs.webkit.org/show_bug.cgi?id=189979
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/URLExtras.mm:
+        (TestWebKitAPI::originalDataAsString):
+        (TestWebKitAPI::TEST):
+
 2018-09-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win][WebKit] Implement authentication dialog on MiniBrowser.
