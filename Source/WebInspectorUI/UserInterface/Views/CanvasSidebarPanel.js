@@ -319,6 +319,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (!recordingContentView)
             return;
 
+        this.contentBrowser.showContentView(recordingContentView);
+
         this._selectedRecordingActionIndex = treeElement.index;
         recordingContentView.updateActionIndex(this._selectedRecordingActionIndex);
     }

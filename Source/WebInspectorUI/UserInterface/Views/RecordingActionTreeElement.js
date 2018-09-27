@@ -400,7 +400,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
         this.element.dataset.index = this._index.toLocaleString();
 
-        if (WI.settings.experimentalRecordingHasVisualEffect.value && this.representedObject.valid && this.representedObject.isVisual && !this.representedObject.hasVisibleEffect) {
+        if (this.representedObject.valid && this.representedObject.isVisual && !this.representedObject.hasVisibleEffect) {
             this.addClassName("no-visible-effect");
 
             const title = WI.UIString("This action causes no visual change");

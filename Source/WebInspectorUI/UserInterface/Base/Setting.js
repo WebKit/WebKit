@@ -121,7 +121,6 @@ WI.settings = {
     // Experimental
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
-    experimentalRecordingHasVisualEffect: new WI.Setting("experimental-recording-has-visual-effect", false),
 
     // DebugUI
     autoLogProtocolMessages: new WI.Setting("auto-collect-protocol-messages", false),

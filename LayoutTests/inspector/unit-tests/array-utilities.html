@@ -86,6 +86,26 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Array.isTypedArray",
+        test() {
+            InspectorTest.expectFalse(Array.isTypedArray(null), "isTypedArray of non-array.");
+            InspectorTest.expectFalse(Array.isTypedArray([]), "isTypedArray of non-typed-array should be false.");
+
+            InspectorTest.expectThat(Array.isTypedArray(new Int8Array), "isTypedArray of Int8Array should be true.");
+            InspectorTest.expectThat(Array.isTypedArray(new Int16Array), "isTypedArray of Int16Array should be true.");
+            InspectorTest.expectThat(Array.isTypedArray(new Int32Array), "isTypedArray of Int32Array should be true.");
+            InspectorTest.expectThat(Array.isTypedArray(new Uint8Array), "isTypedArray of Uint8Array should be true.");
+            InspectorTest.expectThat(Array.isTypedArray(new Uint8ClampedArray), "isTypedArray of Uint8ClampedArray should be true.");
+            InspectorTest.expectThat(Array.isTypedArray(new Uint16Array), "isTypedArray of Uint16Array should be true.");
+            InspectorTest.expectThat(Array.isTypedArray(new Uint32Array), "isTypedArray of Uint32Array should be true.");
+            InspectorTest.expectThat(Array.isTypedArray(new Float32Array), "isTypedArray of Float32Array should be true.");
+            InspectorTest.expectThat(Array.isTypedArray(new Float64Array), "isTypedArray of Float64Array should be true.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "Array.shallowEqual",
         test() {
             InspectorTest.expectThat(Array.shallowEqual([], []), "shallowEqual of empty arrays should be true.");
@@ -103,6 +123,25 @@ function test()
 
             InspectorTest.expectFalse(Array.shallowEqual([], null), "shallowEqual of an array and null should be false.");
             InspectorTest.expectFalse(Array.shallowEqual([], 1.23), "shallowEqual of an array and non-array should be false.");
+
+            let typedArray1 = Int8Array.from(arr1);
+            InspectorTest.expectThat(Array.shallowEqual(typedArray1, arr1), "shallowEqual of a typed-array and it's array counterpart should be true.");
+            InspectorTest.expectThat(Array.shallowEqual(typedArray1, typedArray1), "shallowEqual of a typed-array with itself should be true.");
+
+            let typedArray2 = Int8Array.from(arr2);
+            InspectorTest.expectThat(Array.shallowEqual(typedArray1, arr2), "shallowEqual of equal typed-array and it's array counterpart should be true.");
+            InspectorTest.expectThat(Array.shallowEqual(typedArray1, typedArray2), "shallowEqual of equal typed-arrays should be true.");
+            InspectorTest.expectThat(Array.shallowEqual(typedArray2, arr1), "shallowEqual of equal typed-array and it's array counterpart should be true.");
+            InspectorTest.expectThat(Array.shallowEqual(typedArray2, typedArray1), "shallowEqual of equal typed-arrays should be true.");
+
+            let typedArray3 = Int8Array.from(arr3);
+            InspectorTest.expectFalse(Array.shallowEqual(typedArray1, arr3), "shallowEqual of unequal typed-array and it's array counterpart should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual(typedArray1, typedArray3), "shallowEqual of unequal typed-arrays should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual(typedArray3, arr1), "shallowEqual of unequal typed-array and it's array counterpart should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual(typedArray3, typedArray1), "shallowEqual of unequal typed-arrays should be false.");
+
+            InspectorTest.expectFalse(Array.shallowEqual(new Int8Array, null), "shallowEqual of a typed-array and null should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual(new Int8Array, 1.23), "shallowEqual of a typed-array and non-array should be false.");
 
             let str = "abc";
             InspectorTest.expectFalse(Array.shallowEqual(str, str), "shallowEqual of a non-array with itself should be false.");

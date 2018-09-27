@@ -33,6 +33,19 @@ PASS: partition should handle duplicates.
 PASS: partition should produce an empty list for the negative side.
 PASS: partition should produce an empty list for the positive side.
 
+-- Running test case: Array.isTypedArray
+PASS: isTypedArray of non-array.
+PASS: isTypedArray of non-typed-array should be false.
+PASS: isTypedArray of Int8Array should be true.
+PASS: isTypedArray of Int16Array should be true.
+PASS: isTypedArray of Int32Array should be true.
+PASS: isTypedArray of Uint8Array should be true.
+PASS: isTypedArray of Uint8ClampedArray should be true.
+PASS: isTypedArray of Uint16Array should be true.
+PASS: isTypedArray of Uint32Array should be true.
+PASS: isTypedArray of Float32Array should be true.
+PASS: isTypedArray of Float64Array should be true.
+
 -- Running test case: Array.shallowEqual
 PASS: shallowEqual of empty arrays should be true.
 PASS: shallowEqual of an array with itself should be true.
@@ -42,6 +55,18 @@ PASS: shallowEqual of unequal arrays should be false.
 PASS: shallowEqual of unequal arrays should be false.
 PASS: shallowEqual of an array and null should be false.
 PASS: shallowEqual of an array and non-array should be false.
+PASS: shallowEqual of a typed-array and it's array counterpart should be true.
+PASS: shallowEqual of a typed-array with itself should be true.
+PASS: shallowEqual of equal typed-array and it's array counterpart should be true.
+PASS: shallowEqual of equal typed-arrays should be true.
+PASS: shallowEqual of equal typed-array and it's array counterpart should be true.
+PASS: shallowEqual of equal typed-arrays should be true.
+PASS: shallowEqual of unequal typed-array and it's array counterpart should be false.
+PASS: shallowEqual of unequal typed-arrays should be false.
+PASS: shallowEqual of unequal typed-array and it's array counterpart should be false.
+PASS: shallowEqual of unequal typed-arrays should be false.
+PASS: shallowEqual of a typed-array and null should be false.
+PASS: shallowEqual of a typed-array and non-array should be false.
 PASS: shallowEqual of a non-array with itself should be false.
 PASS: shallowEqual of non-arrays should be false.
 

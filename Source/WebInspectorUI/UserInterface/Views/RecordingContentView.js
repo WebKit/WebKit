@@ -444,7 +444,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let activated = WI.settings.showImageGrid.value;
         this._showGridButtonNavigationItem.activated = activated;
 
-        if (!isNaN(this._index))
+        if (this.didInitialLayout && !isNaN(this._index))
             this._previewContainer.firstElementChild.classList.toggle("show-grid", activated);
     }
 

@@ -403,11 +403,35 @@ Object.defineProperty(Event.prototype, "stop",
     }
 });
 
+Object.defineProperty(Array, "isTypedArray",
+{
+    value(array)
+    {
+        if (!array)
+            return false;
+
+        let constructor = array.constructor;
+        return constructor === Int8Array
+            || constructor === Int16Array
+            || constructor === Int32Array
+            || constructor === Uint8Array
+            || constructor === Uint8ClampedArray
+            || constructor === Uint16Array
+            || constructor === Uint32Array
+            || constructor === Float32Array
+            || constructor === Float64Array;
+    }
+});
+
 Object.defineProperty(Array, "shallowEqual",
 {
     value(a, b)
     {
-        if (!Array.isArray(a) || !Array.isArray(b))
+        function isArrayLike(x) {
+            return Array.isArray(x) || Array.isTypedArray(x);
+        }
+
+        if (!isArrayLike(a) || !isArrayLike(b))
             return false;
 
         if (a === b)

@@ -1,3 +1,32 @@
+2018-09-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: determine hasVisibleEffect for each RecordingAction as it's processed
+        https://bugs.webkit.org/show_bug.cgi?id=189860
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Base/Utilities.js:
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.process.getContent):
+        (WI.RecordingAction.prototype.process):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement.prototype.onattach):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype._updateImageGrid):
+        Drive-by: don't attempt to show the image grid if we haven't called initialized yet.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._treeOutlineSelectionDidChange):
+        Drive-by: ensure that the `WI.RecordingContentView` is showing before applying the action.
+
 2018-09-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: new watch expression popover has light background

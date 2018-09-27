@@ -128,22 +128,20 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (recording.type === WI.Recording.Type.CanvasWebGL) {
             // We add each RecordingAction to the list of visualActionIndexes after it is processed.
             if (this._valid && this._isVisual) {
-                let contentBefore = recording.visualActionIndexes.length ? recording.visualActionIndexes.lastValue.snapshot : recording.initialState.content;
+                let contentBefore = recording.visualActionIndexes.length ? recording.actions[recording.visualActionIndexes.lastValue].snapshot : recording.initialState.content;
                 this._hasVisibleEffect = this._snapshot !== contentBefore;
             }
             return;
         }
 
         function getContent() {
-            if (context instanceof CanvasRenderingContext2D) {
-                let imageData = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
-                return [imageData.width, imageData.height, ...imageData.data];
-            }
+            if (context instanceof CanvasRenderingContext2D)
+                return context.getImageData(0, 0, context.canvas.width, context.canvas.height).data;
 
             if (context instanceof WebGLRenderingContext || context instanceof WebGL2RenderingContext) {
                 let pixels = new Uint8Array(context.drawingBufferWidth * context.drawingBufferHeight * 4);
                 context.readPixels(0, 0, context.canvas.width, context.canvas.height, context.RGBA, context.UNSIGNED_BYTE, pixels);
-                return [...pixels];
+                return pixels;
             }
 
             if (context.canvas instanceof HTMLCanvasElement)
@@ -154,7 +152,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         let contentBefore = null;
-        let shouldCheckHasVisualEffect = WI.settings.experimentalRecordingHasVisualEffect.value && this._valid && this._isVisual;
+        let shouldCheckHasVisualEffect = this._valid && this._isVisual;
         if (shouldCheckHasVisualEffect)
             contentBefore = getContent();
 
@@ -366,7 +364,6 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
 WI.RecordingAction.Event = {
     ValidityChanged: "recording-action-marked-invalid",
-    HasVisibleEffectChanged: "recording-action-has-visible-effect-changed",
 };
 
 WI.RecordingAction._visualNames = {
