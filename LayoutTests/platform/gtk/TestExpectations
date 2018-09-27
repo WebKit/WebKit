@@ -3283,13 +3283,6 @@ webkit.org/b/172279 fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]
 
 webkit.org/b/172280 webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
 
-webkit.org/b/172809 http/tests/xmlhttprequest/cache-override.html [ Failure ]
-webkit.org/b/172809 webaudio/oscillator-custom.html [ Failure ]
-webkit.org/b/172809 webaudio/oscillator-sawtooth.html [ Failure ]
-webkit.org/b/172809 webaudio/oscillator-sine.html [ Failure ]
-webkit.org/b/172809 webaudio/oscillator-square.html [ Failure ]
-webkit.org/b/172809 webaudio/oscillator-triangle.html [ Failure ]
-
 webkit.org/b/172811 fast/block/float/032.html [ Failure ]
 webkit.org/b/172811 fast/forms/input-text-word-wrap.html [ Failure ]
 webkit.org/b/172811 fast/css/input-search-padding.html [ Failure ]
