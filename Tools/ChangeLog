@@ -1,3 +1,16 @@
+2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        iOS Simulator bots should pass '--dedicated-simulators' to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=190042
+
+        Reviewed by Aakash Jain.
+
+        To make iOS Simulator bots resilient to issues that can arise from reusing
+        existing simulators, ensure that dedicated simulators are created for each test run.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (IOSSimulatorWK2Port.run_webkit_tests_command):
+
 2018-09-27  Alex Christensen  <achristensen@webkit.org>
 
         URLWithUserTypedString should return nil for URLs deemed to be invalid by WebCore::URL

@@ -159,6 +159,7 @@ class IOSSimulatorWK2Port(DeprecatedPort):
     def run_webkit_tests_command(self, build_style=None):
         command = super(IOSSimulatorWK2Port, self).run_webkit_tests_command(build_style)
         command.append("--ios-simulator")
+        command.append("--dedicated-simulators")
         return command
 
 
