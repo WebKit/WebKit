@@ -59,7 +59,6 @@ public:
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
     void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, bool usesEphemeralSession);
     void logUserInteractionWithReducedTimeResolution(const Document&);
-    void logWindowCreation(const URL& popupUrl, uint64_t openerPageID, Document& openerDocument);
     
     void logFontLoad(const Document&, const String& familyName, bool loadStatus);
     void logCanvasRead(const Document&);
@@ -70,7 +69,7 @@ public:
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
-    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const String&, uint64_t, const String&, bool)>&&);
+    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const String&, uint64_t, const String&)>&&);
 
     WEBCORE_EXPORT void notifyObserver();
     WEBCORE_EXPORT void clearState();
@@ -90,13 +89,13 @@ private:
     Vector<ResourceLoadStatistics> takeStatistics();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void requestStorageAccessUnderOpener(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument, bool isTriggeredByUserGesture);
+    void requestStorageAccessUnderOpener(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument);
 #endif
 
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
-    WTF::Function<void(const String&, uint64_t, const String&, bool)> m_requestStorageAccessUnderOpenerCallback;
+    WTF::Function<void(const String&, uint64_t, const String&)> m_requestStorageAccessUnderOpenerCallback;
     Timer m_notificationTimer;
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };

@@ -1,3 +1,24 @@
+2018-09-27  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove temporary compatibility fix for auto-dismiss popups
+        https://bugs.webkit.org/show_bug.cgi?id=189980
+        <rdar://problem/44780645>
+
+        Reviewed by Alex Christensen.
+
+        This test was for the temporary compatibility fix in:
+        https://bugs.webkit.org/show_bug.cgi?id=183620. This change makes it into a
+        test that the compatibility fix is no longer there.
+
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/grant-storage-access-under-opener-expected.txt.
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html: Renamed from LayoutTests/http/tests/storageAccess/grant-storage-access-under-opener.html.
+        * platform/ios-wk2/TestExpectations:
+            Removed comment and entry since https://bugs.webkit.org/show_bug.cgi?id=183714 was fixed long ago.
+        * platform/ios/TestExpectations:
+            Changed test name.
+        * platform/mac-wk2/TestExpectations:
+            Changed test name.
+
 2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236557.

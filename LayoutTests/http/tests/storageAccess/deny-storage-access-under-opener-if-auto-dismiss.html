@@ -6,7 +6,7 @@
 </head>
 <body onload="run()">
 <script>
-    description("Tests that a cross-origin window from a prevalent domain with non-recent user interaction gets immediate storage access under its opener.");
+    description("Tests that a cross-origin window from a prevalent domain with non-recent user interaction doesn't get storage access under its opener if it just loads and auto-dismisses.");
     jsTestIsAsync = true;
 
     function finishTest() {
@@ -32,7 +32,7 @@
             testFailed("Received a message from an unexpected origin: " + event.origin);
 
         newWin.close();
-        openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive first-party cookie.", finishTest);
+        openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should not receive first-party cookie.", finishTest);
     }
 
     const thirdPartyOrigin = "http://localhost:8000";

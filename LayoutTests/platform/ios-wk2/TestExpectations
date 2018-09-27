@@ -1255,9 +1255,6 @@ webkit.org/b/181821 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ P
 
 webkit.org/b/182144 [ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Skip ]
 
-# This is marked as Pass to see if additional logging can reveal the cause of the flakiness.
-webkit.org/b/183714 [ Debug ] http/tests/storageAccess/grant-storage-access-under-opener.html [ Pass ]
-
 webkit.org/b/183860 http/wpt/service-workers/third-party-registration.html [ Pass Timeout ]
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]

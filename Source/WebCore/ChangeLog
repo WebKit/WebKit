@@ -1,3 +1,30 @@
+2018-09-27  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove temporary compatibility fix for auto-dismiss popups
+        https://bugs.webkit.org/show_bug.cgi?id=189980
+        <rdar://problem/44780645>
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html
+
+        The change in https://bugs.webkit.org/show_bug.cgi?id=183620 was a temporary
+        compatibility fix as explained in:
+        https://webkit.org/blog/8311/intelligent-tracking-prevention-2-0/. We should
+        remove it.
+
+        Most of these changes remove the parameter isTriggeredByUserGesture since it's no longer needed.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::requestStorageAccessUnderOpener):
+        (WebCore::ResourceLoadObserver::logWindowCreation): Deleted.
+        * loader/ResourceLoadObserver.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+            Now no longer logs anything to ResourceLoadObserver.
+
 2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236557.
