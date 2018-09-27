@@ -120,30 +120,32 @@ void createCrashReport(EXCEPTION_POINTERS* exceptionPointers)
 }
 
 struct AuthDialogData {
-    std::wstring& username;
-    std::wstring& password;
+    const std::wstring& realm;
+    Credential credential;
 };
 
 static INT_PTR CALLBACK authDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    AuthDialogData& data = *reinterpret_cast<AuthDialogData*>(GetWindowLongPtr(hDlg, DWLP_USER));
     switch (message) {
-    case WM_INITDIALOG:
+    case WM_INITDIALOG: {
         SetWindowLongPtr(hDlg, DWLP_USER, lParam);
+        AuthDialogData& data = *reinterpret_cast<AuthDialogData*>(lParam);
+        SetDlgItemText(hDlg, IDC_REALM_TEXT, _bstr_t(data.realm.c_str()));
         return TRUE;
-
+    }
     case WM_COMMAND: {
+        AuthDialogData& data = *reinterpret_cast<AuthDialogData*>(GetWindowLongPtr(hDlg, DWLP_USER));
         int wmId = LOWORD(wParam);
         switch (wmId) {
         case IDOK: {
             TCHAR str[256];
             int strLen = GetWindowText(GetDlgItem(hDlg, IDC_AUTH_USER), str, WTF_ARRAY_LENGTH(str)-1);
             str[strLen] = 0;
-            data.username = str;
+            data.credential.username = str;
 
             strLen = GetWindowText(GetDlgItem(hDlg, IDC_AUTH_PASSWORD), str, WTF_ARRAY_LENGTH(str)-1);
             str[strLen] = 0;
-            data.password = str;
+            data.credential.password = str;
 
             EndDialog(hDlg, true);
             return TRUE;
@@ -158,11 +160,13 @@ static INT_PTR CALLBACK authDialogProc(HWND hDlg, UINT message, WPARAM wParam, L
     return FALSE;
 }
 
-HRESULT displayAuthDialog(HWND hwnd, std::wstring& username, std::wstring& password)
+std::optional<Credential> askCredential(HWND hwnd, const std::wstring& realm)
 {
-    AuthDialogData data { username, password };
+    AuthDialogData data { realm };
     auto result = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_AUTH), hwnd, authDialogProc, reinterpret_cast<LPARAM>(&data));
-    return result > 0 ? S_OK : E_FAIL;
+    if (result <= 0)
+        return std::nullopt;
+    return data.credential;
 }
 
 CommandLineOptions parseCommandLine()

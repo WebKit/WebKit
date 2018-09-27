@@ -26,17 +26,22 @@
 #include "WebKitBrowserWindow.h"
 
 #include "MiniBrowserLibResource.h"
+#include "common.h"
+#include <WebKit/WKAuthenticationChallenge.h>
+#include <WebKit/WKAuthenticationDecisionListener.h>
+#include <WebKit/WKCredential.h>
 #include <WebKit/WKInspector.h>
+#include <WebKit/WKProtectionSpace.h>
 #include <vector>
 
-std::wstring
-createString(WKStringRef wkString)
+std::wstring createString(WKStringRef wkString)
 {
     size_t maxSize = WKStringGetLength(wkString);
-
-    std::vector<WKChar> wkCharBuffer(maxSize);
-    size_t actualLength = WKStringGetCharacters(wkString, wkCharBuffer.data(), maxSize);
-    return std::wstring(wkCharBuffer.data(), actualLength);
+    std::wstring str(maxSize, '\0');
+    size_t actualLength = WKStringGetCharacters(wkString, str.data(), maxSize);
+    if (maxSize != actualLength)
+        str.resize(actualLength);
+    return std::wstring(str.data());
 }
 
 std::wstring createString(WKURLRef wkURL)
@@ -45,27 +50,31 @@ std::wstring createString(WKURLRef wkURL)
     return createString(url.get());
 }
 
-std::vector<char> toNullTerminatedUTF8(const wchar_t* src, size_t srcLength)
+std::string createUTF8String(const wchar_t* src, size_t srcLength)
 {
-    int utf8Length = WideCharToMultiByte(CP_UTF8, 0, src, srcLength, 0, 0, nullptr, nullptr);
-    std::vector<char> utf8Buffer(utf8Length + 1);
-    WideCharToMultiByte(CP_UTF8, 0, src, srcLength,
-        utf8Buffer.data(), utf8Length, nullptr, nullptr);
-    utf8Buffer[utf8Length] = '\0';
-    return utf8Buffer;
+    int length = WideCharToMultiByte(CP_UTF8, 0, src, srcLength, 0, 0, nullptr, nullptr);
+    std::string str(length, '\0');
+    int actualLength = WideCharToMultiByte(CP_UTF8, 0, src, srcLength, str.data(), length, nullptr, nullptr);
+    if (length != actualLength)
+        str.resize(actualLength);
+    return str;
 }
 
-WKRetainPtr<WKStringRef>
-createWKString(_bstr_t str)
+WKRetainPtr<WKStringRef> createWKString(_bstr_t str)
 {
-    auto utf8 = toNullTerminatedUTF8(str, str.length());
+    auto utf8 = createUTF8String(str, str.length());
     return adoptWK(WKStringCreateWithUTF8CString(utf8.data()));
 }
 
-WKRetainPtr<WKURLRef>
-createWKURL(_bstr_t str)
+WKRetainPtr<WKStringRef> createWKString(const std::wstring& str)
 {
-    auto utf8 = toNullTerminatedUTF8(str, str.length());
+    auto utf8 = createUTF8String(str.c_str(), str.length());
+    return adoptWK(WKStringCreateWithUTF8CString(utf8.data()));
+}
+
+WKRetainPtr<WKURLRef> createWKURL(_bstr_t str)
+{
+    auto utf8 = createUTF8String(str, str.length());
     return adoptWK(WKURLCreateWithUTF8CString(utf8.data()));
 }
 
@@ -94,6 +103,7 @@ WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
     WKPageNavigationClientV0 navigationClient = {{ 0, this }};
     navigationClient.didFinishNavigation = didFinishNavigation;
     navigationClient.didCommitNavigation = didCommitNavigation;
+    navigationClient.didReceiveAuthenticationChallenge = didReceiveAuthenticationChallenge;
     WKPageSetPageNavigationClient(page, &navigationClient.base);
 }
 
@@ -228,4 +238,22 @@ void WebKitBrowserWindow::didCommitNavigation(WKPageRef page, WKNavigationRef na
     WKRetainPtr<WKURLRef> wkurl = adoptWK(WKPageCopyCommittedURL(page));
     std::wstring urlString = createString(wkurl.get());
     SetWindowText(thisWindow.m_urlBarWnd, urlString.c_str());
+}
+
+void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationChallengeRef challenge, const void* clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    auto protectionSpace = WKAuthenticationChallengeGetProtectionSpace(challenge);
+    auto decisionListener = WKAuthenticationChallengeGetDecisionListener(challenge);
+
+    WKRetainPtr<WKStringRef> realm(WKProtectionSpaceCopyRealm(protectionSpace));
+    if (auto credential = askCredential(thisWindow.hwnd(), createString(realm.get()))) {
+        WKRetainPtr<WKStringRef> username = createWKString(credential->username);
+        WKRetainPtr<WKStringRef> password = createWKString(credential->password);
+        WKRetainPtr<WKCredentialRef> wkCredential(AdoptWK, WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
+        WKAuthenticationDecisionListenerUseCredential(decisionListener, wkCredential.get());
+        return;
+    }
+
+    WKAuthenticationDecisionListenerCancel(decisionListener);
 }

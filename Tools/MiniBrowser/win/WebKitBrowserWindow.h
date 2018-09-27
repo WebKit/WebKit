@@ -59,6 +59,7 @@ private:
 
     static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
+    static void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef, const void*);
 
     WKRetainPtr<WKViewRef> m_view;
     HWND m_hMainWnd { nullptr };

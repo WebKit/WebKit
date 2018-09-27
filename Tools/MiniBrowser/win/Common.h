@@ -46,11 +46,16 @@ struct CommandLineOptions {
     }
 };
 
+struct Credential {
+    std::wstring username;
+    std::wstring password;
+};
+
 void computeFullDesktopFrame();
 bool getAppDataFolder(_bstr_t& directory);
 CommandLineOptions parseCommandLine();
 void createCrashReport(EXCEPTION_POINTERS*);
-HRESULT displayAuthDialog(HWND, std::wstring& username, std::wstring& password);
+std::optional<Credential> askCredential(HWND, const std::wstring& realm);
 
 extern HINSTANCE hInst;
 extern POINT s_windowPosition;

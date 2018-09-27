@@ -1,3 +1,32 @@
+2018-09-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win][WebKit] Implement authentication dialog on MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=189846
+
+        Reviewed by Fujii Hironori.
+
+        It was implemented for WebKitLegacy, but not for WebKit.
+        Also added text field to display Realm information.
+
+        * MiniBrowser/win/Common.cpp:
+        (authDialogProc):
+        (askCredential):
+        (displayAuthDialog): Deleted.
+        * MiniBrowser/win/Common.h:
+        * MiniBrowser/win/MiniBrowserLib.rc:
+        * MiniBrowser/win/MiniBrowserLibResource.h:
+        * MiniBrowser/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge):
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (createString):
+        (createUTF8String):
+        (createWKString):
+        (createWKURL):
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        (WebKitBrowserWindow::didReceiveAuthenticationChallenge):
+        (toNullTerminatedUTF8): Deleted.
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+
 2018-09-27  Youenn Fablet  <youenn@apple.com>
 
         Enable getUserMedia in mini browser

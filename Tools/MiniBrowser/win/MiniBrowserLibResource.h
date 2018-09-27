@@ -111,6 +111,7 @@
 #define IDC_AUTH_USER                   1053
 #define IDC_AUTH_PASSWORD               1054
 #define IDC_URL_BAR                     1055
+#define IDC_REALM_TEXT                  1056
 #define IDM_NEW_WEBKIT_WINDOW           32776
 #define IDM_NEW_WEBKITLEGACY_WINDOW     32777
 #define IDC_STATIC                      -1
