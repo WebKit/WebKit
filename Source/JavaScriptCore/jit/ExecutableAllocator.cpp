@@ -106,9 +106,11 @@ static const double executablePoolReservationFraction = 0.25;
 
 JS_EXPORT_PRIVATE void* taggedStartOfFixedExecutableMemoryPool;
 JS_EXPORT_PRIVATE void* taggedEndOfFixedExecutableMemoryPool;
-JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy { false };
 
+#if !ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)
+JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy { false };
 JS_EXPORT_PRIVATE JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
+#endif
 
 #if !USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION) && HAVE(REMAP_JIT)
 static uintptr_t startOfFixedWritableMemoryPool;
@@ -143,6 +145,11 @@ public:
             ASSERT(m_reservation.size() == reservationSize);
             void* reservationBase = m_reservation.base();
 
+#if ENABLE(FAST_JIT_PERMISSIONS) && CPU(ARM64E)
+            RELEASE_ASSERT(os_thread_self_restrict_rwx_is_supported());
+            os_thread_self_restrict_rwx_to_rx();
+
+#else // not ENABLE(FAST_JIT_PERMISSIONS) or not CPU(ARM64E)
 #if ENABLE(FAST_JIT_PERMISSIONS)
             if (os_thread_self_restrict_rwx_is_supported()) {
                 useFastPermisionsJITCopy = true;
@@ -156,6 +163,7 @@ public:
                 reservationSize -= pageSize();
                 initializeSeparatedWXHeaps(m_reservation.base(), pageSize(), reservationBase, reservationSize);
             }
+#endif // not ENABLE(FAST_JIT_PERMISSIONS) or not CPU(ARM64E)
 
             addFreshFreeSpace(reservationBase, reservationSize);
 
@@ -244,7 +252,9 @@ private:
         // Zero out writableAddr to avoid leaking the address of the writable mapping.
         memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
 
+#if !ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)
         jitWriteSeparateHeapsFunction = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().executableAddress());
+#endif
     }
 
 #if CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)

@@ -1,5 +1,21 @@
 2018-09-26  Mark Lam  <mark.lam@apple.com>
 
+        Options::useSeparatedWXHeap() should always be false when ENABLE(FAST_JIT_PERMISSIONS) && CPU(ARM64E).
+        https://bugs.webkit.org/show_bug.cgi?id=190022
+        <rdar://problem/44800928>
+
+        Reviewed by Saam Barati.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
+2018-09-26  Mark Lam  <mark.lam@apple.com>
+
         Assert that performJITMemcpy() is always called with instruction size aligned addresses on ARM64.
         https://bugs.webkit.org/show_bug.cgi?id=190016
         <rdar://problem/44802875>

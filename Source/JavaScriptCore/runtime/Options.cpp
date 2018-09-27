@@ -459,7 +459,7 @@ static void recomputeDependentOptions()
         Options::useOSREntryToFTL() = false;
     }
     
-#if PLATFORM(IOS) && CPU(ARM64)
+#if PLATFORM(IOS) && CPU(ARM64) && !CPU(ARM64E)
     // Override globally for now. Longer term we'll just make the default
     // be to have this option enabled, and have platforms that don't support
     // it just silently use a single mapping.
