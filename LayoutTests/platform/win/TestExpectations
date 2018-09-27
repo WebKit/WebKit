@@ -2077,17 +2077,6 @@ webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnl
 webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
 webkit.org/b/117322 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
-# We now show a layer tree where we didn't previously
-css3/filters/composited-during-animation-layertree.html [ Failure ]
-legacy-animation-engine/css3/filters/composited-during-animation-layertree.html [ Failure ]
-css3/filters/composited-during-transition-layertree.html [ Failure ]
-legacy-animation-engine/css3/filters/composited-during-transition-layertree.html [ Failure ]
-css3/filters/should-not-have-compositing-layer.html [ Failure ]
-[ Debug ] css3/filters/filtered-compositing-descendant.html [ Failure ]
-css3/filters/css-opacity-with-drop-shadow.html [ Pass ImageOnlyFailure ]
-css3/filters/effect-reference-delete.html [ Pass ImageOnlyFailure ]
-css3/filters/filter-mask-clip-order.html [ Pass ImageOnlyFailure ]
-
 # Don't run these time-outs for now
 css3/filters/huge-region-composited.html [ Skip ]
 
@@ -2609,15 +2598,6 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 # requestAnimationFrame throttling does not work on Windows because USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) is disabled.
 webkit.org/b/144718 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Skip ]
 webkit.org/b/144718 fast/animation/request-animation-frame-throttle-subframe.html [ Skip ]
-
-# Some bugs introduced in recent work:
-webkit.org/b/149631 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html [ ImageOnlyFailure ]
-webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure ]
-webkit.org/b/149631 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure ]
-webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
-webkit.org/b/149631 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
-webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
-webkit.org/b/149631 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
 
 # Errors introduced by either r190209 or r190214:
 webkit.org/b/149632 fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Skip ]
@@ -4039,17 +4019,6 @@ webkit.org/b/183393 fast/loader/window-open-to-invalid-url-disallowed.html [ Ski
 
 webkit.org/b/183569 webanimations/css-animations.html [ Failure ]
 
-webkit.org/b/183953 imported/mozilla/css-animations/test_animation-cancel.html [ Failure ]
-webkit.org/b/183953 imported/mozilla/css-animations/test_animation-finish.html [ Failure ]
-webkit.org/b/183953 imported/mozilla/css-animations/test_effect-target.html [ Failure ]
-webkit.org/b/183953 imported/mozilla/css-transitions/test_effect-target.html [ Failure ]
-webkit.org/b/183953 imported/mozilla/css-animations/test_event-dispatch.html [ Skip ]
-webkit.org/b/183953 imported/mozilla/css-transitions/test_event-dispatch.html [ Skip ]
-webkit.org/b/183953 imported/mozilla/css-animations/test_keyframeeffect-getkeyframes.html [ Skip ]
-webkit.org/b/183953 imported/mozilla/css-animations/test_animation-computed-timing.html [ Failure ]
-webkit.org/b/183953 imported/mozilla/css-animations/test_animation-currenttime.html [ Failure ]
-webkit.org/b/183953 imported/mozilla/css-transitions/test_keyframeeffect-getkeyframes.html [ Failure ]
-
 webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Failure ]
 
 webkit.org/b/184133 transitions/opacity-transition-zindex.html [ Skip ]
@@ -4096,10 +4065,6 @@ webkit.org/b/185075 css3/color-filters/color-filter-text-emphasis.html [ ImageOn
 
 webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Skip ]
 webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Skip ]
-
-webkit.org/b/185678 animations/keyframes-dynamic.html [ Failure ]
-webkit.org/b/185678 animations/missing-from-to-transforms.html [ Failure ]
-webkit.org/b/185678 animations/missing-from-to.html [ Failure ]
 
 webkit.org/b/185765 fast/images/animated-image-mp4-crash.html [ Skip ]
 
@@ -4253,3 +4218,10 @@ webkit.org/b/189836 webanimations/accelerated-animation-suspension.html [ Skip ]
 [ Win10 ] svg/repaint/add-outline-property-on-root.html [ ImageOnlyFailure ]
 [ Win10 ] svg/repaint/remove-outline-property-on-root.html [ ImageOnlyFailure ]
 [ Win10 ] transitions/interrupted-transition-hardware.html [ ImageOnlyFailure ]
+
+webkit.org/b/190032 legacy-animation-engine [ Pass Failure ]
+webkit.org/b/190032 legacy-animation-engine/transitions/transition-hit-test-transform.html [ Pass Timeout ]
+webkit.org/b/190032 legacy-animation-engine/transitions/transition-hit-test.html [ Pass Timeout ]
+webkit.org/b/190032 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
+webkit.org/b/190032 transitions/clip-path-transitions.html [ Pass Failure ]
+webkit.org/b/190032 legacy-animation-engine/animations/stacking-context-unchanged-while-running.html [ Pass ImageOnlyFailure ]

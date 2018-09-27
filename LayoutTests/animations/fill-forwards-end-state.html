@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=false ] -->
+<!DOCTYPE html>
 <html>
 <head>
   <title>Test animation with multiple concurrent animations</title>
@@ -11,7 +11,7 @@
       width: 100px;
       background-color: blue;
       animation-fill-mode: forwards;
-      animation: anim1 2s 0.2s linear;
+      animation: anim1 2s 0.2s linear forwards;
     }
     @keyframes anim1 {
         from { left: 100px; }

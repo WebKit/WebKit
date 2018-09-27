@@ -1,3 +1,13 @@
+2018-09-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Reviewed by Dean Jackson.
+
+        * page/RuntimeEnabledFeatures.h:
+
 2018-09-26  YUHAN WU  <yuhan_wu@apple.com>
 
         Video track clone cannot preserve original property

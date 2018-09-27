@@ -1,3 +1,48 @@
+2018-09-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Reviewed by Dean Jackson.
+
+        * css-animations/test_animation-cancel.html:
+        * css-animations/test_animation-computed-timing.html:
+        * css-animations/test_animation-currenttime.html:
+        * css-animations/test_animation-finish.html:
+        * css-animations/test_animation-finished.html:
+        * css-animations/test_animation-id.html:
+        * css-animations/test_animation-pausing.html:
+        * css-animations/test_animation-playstate.html:
+        * css-animations/test_animation-ready.html:
+        * css-animations/test_animation-reverse.html:
+        * css-animations/test_animation-starttime.html:
+        * css-animations/test_animations-dynamic-changes.html:
+        * css-animations/test_cssanimation-animationname.html:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_effect-target.html:
+        * css-animations/test_element-get-animations.html:
+        * css-animations/test_event-dispatch.html:
+        * css-animations/test_event-order.html:
+        * css-animations/test_keyframeeffect-getkeyframes.html:
+        * css-animations/test_pseudoElement-get-animations.html:
+        * css-animations/test_setting-effect.html:
+        * css-transitions/test_animation-cancel.html:
+        * css-transitions/test_animation-computed-timing.html:
+        * css-transitions/test_animation-currenttime.html:
+        * css-transitions/test_animation-finished.html:
+        * css-transitions/test_animation-pausing.html:
+        * css-transitions/test_animation-ready.html:
+        * css-transitions/test_animation-starttime.html:
+        * css-transitions/test_csstransition-transitionproperty.html:
+        * css-transitions/test_document-get-animations.html:
+        * css-transitions/test_effect-target.html:
+        * css-transitions/test_element-get-animations.html:
+        * css-transitions/test_event-dispatch.html:
+        * css-transitions/test_keyframeeffect-getkeyframes.html:
+        * css-transitions/test_pseudoElement-get-animations.html:
+        * css-transitions/test_setting-effect.html:
+
 2018-09-11  Dean Jackson  <dino@apple.com>
 
         Header parsing for experimental and internal debug features

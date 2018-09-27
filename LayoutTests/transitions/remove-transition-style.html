@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=false ] -->
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -29,7 +29,7 @@
     function testTransitions()
     {
       if (window.testRunner) {
-        var numAnims = internals.numberOfActiveAnimations();
+        var numAnims = document.getAnimations().length;
         if (numAnims == 0)
           log('No running transitions: PASS');
         else

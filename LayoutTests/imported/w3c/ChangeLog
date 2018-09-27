@@ -1,3 +1,18 @@
+2018-09-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css-timing-1/frames-timing-functions-output.html:
+        * web-platform-tests/css/css-logical/animation-003.tentative.html:
+        * web-platform-tests/css/css-scoping/keyframes-001.html:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context.html:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate.html:
+        * web-platform-tests/web-animations/timing-model/animations/current-time.html:
+
 2018-09-26  YUHAN WU  <yuhan_wu@apple.com>
 
         Video track clone cannot preserve original property
