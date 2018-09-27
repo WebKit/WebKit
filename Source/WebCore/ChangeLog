@@ -1,3 +1,54 @@
+2018-09-27  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Use sentinel buffer to detect end of append
+        https://bugs.webkit.org/show_bug.cgi?id=189924
+
+        Reviewed by Philippe Normand.
+
+        This patch introduces a new mechanism to detect when an append has
+        been consumed completely by the demuxer. It takes advantage of the
+        fact that buffer pushing is synchronous: both the appsrc and the
+        demuxer live in the same streaming thread. When appsrc pushes a
+        buffer, it's actually making a qtdemux function call (it calls its
+        "chain" function). The demuxer will return from that call when it has
+        finished processing that buffer; only then the control returns to
+        appsrc, that can push the next buffer.
+
+        By pushing an additional buffer and capturing it in a probe we can
+        detect reliably when the previous buffer has been processed.
+        Because the pipeline only has one thread, at this point no more frames
+        can arrive to the appsink.
+
+        This replaces the old method of detecting end of append which relied
+        on the `need-data` event, which is more difficult to handle correctly
+        because it fires whenever the appsrc is empty (or below a given
+        level), which also happens when a buffer has not been pushed yet or
+        in response to a flush.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::EndOfAppendMeta::init):
+        (WebCore::EndOfAppendMeta::transform):
+        (WebCore::EndOfAppendMeta::free):
+        (WebCore::AppendPipeline::staticInitialization):
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::~AppendPipeline):
+        (WebCore::AppendPipeline::appsrcEndOfAppendCheckerProbe):
+        (WebCore::AppendPipeline::handleApplicationMessage):
+        (WebCore::AppendPipeline::handleEndOfAppend):
+        (WebCore::AppendPipeline::consumeAppsinkAvailableSamples):
+        (WebCore::AppendPipeline::resetPipeline):
+        (WebCore::AppendPipeline::pushNewBuffer):
+        (WebCore::AppendPipeline::handleAppsrcNeedDataReceived): Deleted.:
+        (WebCore::AppendPipeline::handleAppsrcAtLeastABufferLeft): Deleted.
+        (WebCore::AppendPipeline::checkEndOfAppend): Deleted.
+        (WebCore::AppendPipeline::setAppsrcDataLeavingProbe): Deleted.
+        (WebCore::AppendPipeline::removeAppsrcDataLeavingProbe): Deleted.
+        (WebCore::AppendPipeline::reportAppsrcAtLeastABufferLeft): Deleted.
+        (WebCore::AppendPipeline::reportAppsrcNeedDataReceived): Deleted.
+        (WebCore::appendPipelineAppsrcDataLeaving): Deleted.
+        (WebCore::appendPipelineAppsrcNeedData): Deleted.
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+
 2018-09-27  Chris Dumez  <cdumez@apple.com>
 
         The WebContent process should not process incoming IPC while waiting for a sync IPC reply
