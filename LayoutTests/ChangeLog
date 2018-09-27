@@ -1,3 +1,14 @@
+2018-09-27  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Fix unwanted sample erase from the decode queue
+        https://bugs.webkit.org/show_bug.cgi?id=180643
+
+        Reviewed by Jer Noble.
+
+        Added a test case for the fixed bug.
+
+        * media/media-source/media-source-append-acb-no-frame-lost.html: Added.
+
 2018-09-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, make fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html more deterministic to address flakiness.

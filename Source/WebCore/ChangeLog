@@ -1,3 +1,25 @@
+2018-09-27  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Fix unwanted sample erase from the decode queue
+        https://bugs.webkit.org/show_bug.cgi?id=180643
+
+        Reviewed by Jer Noble.
+
+        Test: media/media-source/media-source-append-acb-no-frame-lost.html
+
+        This bug reproduced when unordered appends were made. For instance, if
+        the application appended [0, 10) and then [20, 30), the frame at 20
+        would be wrongly discarded from the decode queue.
+
+        Later the application could append [10, 20) and the gap at [20, 21)
+        would persist in the decode queue, even if the frame remained in the
+        track buffer table.
+
+        Thanks to Daniel Zhang for reporting the issue.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::provideMediaData):
+
 2018-09-27  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should use TextEncoding through an abstract class
