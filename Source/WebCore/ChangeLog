@@ -1,3 +1,14 @@
+2018-09-27  Justin Michaud  <justin_michaud@apple.com>
+
+        Remove duplicate CSS Properties and Values feature on status page
+        https://bugs.webkit.org/show_bug.cgi?id=189909
+
+        Reviewed by Simon Fraser.
+
+        Update CSS properties and values api feature in features.json
+
+        * features.json:
+
 2018-09-27  Jer Noble  <jer.noble@apple.com>
 
         MediaPlayer should have mediaPlayerWaitingForKeyChanged() / bool waitingForKey() accessor
