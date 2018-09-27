@@ -1,3 +1,15 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        Fragment should be stripped from document URL during document.open() URL propagation
+        https://bugs.webkit.org/show_bug.cgi?id=189374
+        <rdar://problem/44282736>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test now that it is passing.
+
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-fragment.window-expected.txt:
+
 2018-09-27  Youenn Fablet  <youenn@apple.com>
 
         Add VP8 support to WebRTC

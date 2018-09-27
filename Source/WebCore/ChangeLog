@@ -1,3 +1,20 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        Fragment should be stripped from document URL during document.open() URL propagation
+        https://bugs.webkit.org/show_bug.cgi?id=189374
+        <rdar://problem/44282736>
+
+        Reviewed by Alex Christensen.
+
+        Strip the Document URL fragment during document.open() URL propagation if the entry document
+        is not the current document, as per:
+        - https://html.spec.whatwg.org/#document-open-steps (Step 11.2.)
+
+        No new tests, rebaselined existing test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+
 2018-09-27  Youenn Fablet  <youenn@apple.com>
 
         Add VP8 support to WebRTC

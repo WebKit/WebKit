@@ -2696,8 +2696,14 @@ void Document::open(Document* responsibleDocument)
     removeAllEventListeners();
 
     if (responsibleDocument && isFullyActive()) {
-        setURL(responsibleDocument->url());
-        setCookieURL(responsibleDocument->cookieURL());
+        auto newURL = responsibleDocument->url();
+        if (responsibleDocument != this)
+            newURL.removeFragmentIdentifier();
+        setURL(newURL);
+        auto newCookieURL = responsibleDocument->cookieURL();
+        if (responsibleDocument != this)
+            newCookieURL.removeFragmentIdentifier();
+        setCookieURL(newCookieURL);
         setSecurityOriginPolicy(responsibleDocument->securityOriginPolicy());
     }
 
