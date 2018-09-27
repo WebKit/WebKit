@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
 
+#include "AddressErrors.h"
 #include "ApplePayContactField.h"
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayModifier.h"
@@ -36,12 +37,14 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "JSApplePayError.h"
 #include "JSApplePayPayment.h"
 #include "JSApplePayPaymentMethod.h"
 #include "JSApplePayRequest.h"
 #include "LinkIconCollector.h"
 #include "MerchantValidationEvent.h"
 #include "Page.h"
+#include "PayerErrorFields.h"
 #include "Payment.h"
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentContact.h"
@@ -309,14 +312,67 @@ ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHan
     return ApplePaySessionPaymentRequest::TotalAndLineItems { WTFMove(total), WTFMove(lineItems) };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(PaymentRequest::UpdateReason reason, const String& error)
+static inline void appendShippingContactInvalidError(String&& message, std::optional<PaymentError::ContactField> contactField, Vector<PaymentError>& errors)
+{
+    if (!message.isNull())
+        errors.append({ PaymentError::Code::ShippingContactInvalid, WTFMove(message), WTFMove(contactField) });
+}
+
+Vector<PaymentError> ApplePayPaymentHandler::computeErrors(String&& error, AddressErrors&& addressErrors, PayerErrorFields&& payerErrors, JSC::JSObject* paymentMethodErrors) const
+{
+    Vector<PaymentError> errors;
+
+    auto& options = m_paymentRequest->paymentOptions();
+    using ContactField = PaymentError::ContactField;
+
+    if (options.requestShipping && m_paymentRequest->paymentDetails().shippingOptions.isEmpty()) {
+        appendShippingContactInvalidError(WTFMove(error), std::nullopt, errors);
+        appendShippingContactInvalidError(WTFMove(addressErrors.addressLine), ContactField::AddressLines, errors);
+        appendShippingContactInvalidError(WTFMove(addressErrors.city), ContactField::Locality, errors);
+        appendShippingContactInvalidError(WTFMove(addressErrors.country), ContactField::Country, errors);
+        appendShippingContactInvalidError(WTFMove(addressErrors.dependentLocality), ContactField::SubLocality, errors);
+        appendShippingContactInvalidError(WTFMove(addressErrors.phone), ContactField::PhoneNumber, errors);
+        appendShippingContactInvalidError(WTFMove(addressErrors.postalCode), ContactField::PostalCode, errors);
+        appendShippingContactInvalidError(WTFMove(addressErrors.recipient), ContactField::Name, errors);
+        appendShippingContactInvalidError(WTFMove(addressErrors.region), ContactField::AdministrativeArea, errors);
+    }
+
+    if (options.requestPayerName)
+        appendShippingContactInvalidError(WTFMove(payerErrors.name), ContactField::Name, errors);
+
+    if (options.requestPayerEmail)
+        appendShippingContactInvalidError(WTFMove(payerErrors.email), ContactField::EmailAddress, errors);
+
+    if (options.requestPayerPhone)
+        appendShippingContactInvalidError(WTFMove(payerErrors.phone), ContactField::PhoneNumber, errors);
+
+#if ENABLE(APPLE_PAY_SESSION_V3)
+    if (paymentMethodErrors) {
+        auto& context = *scriptExecutionContext();
+        auto throwScope = DECLARE_THROW_SCOPE(context.vm());
+        auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context.execState(), paymentMethodErrors);
+        if (!throwScope.exception()) {
+            for (auto& applePayError : applePayErrors) {
+                if (applePayError)
+                    errors.append({ applePayError->code(), applePayError->message(), applePayError->contactField() });
+            }
+        }
+    }
+#else
+    UNUSED_PARAM(paymentMethodErrors);
+#endif
+
+    return errors;
+}
+
+ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(PaymentRequest::UpdateReason reason, String&& error, AddressErrors&& addressErrors, PayerErrorFields&& payerErrors, JSC::JSObject* paymentMethodErrors)
 {
     using Reason = PaymentRequest::UpdateReason;
     switch (reason) {
     case Reason::ShowDetailsResolved:
         return { };
     case Reason::ShippingAddressChanged:
-        return shippingAddressUpdated(error);
+        return shippingAddressUpdated(computeErrors(WTFMove(error), WTFMove(addressErrors), WTFMove(payerErrors), paymentMethodErrors));
     case Reason::ShippingOptionChanged:
         return shippingOptionUpdated();
     case Reason::PaymentMethodChanged:
@@ -344,19 +400,13 @@ ExceptionOr<void> ApplePayPaymentHandler::merchantValidationCompleted(JSC::JSVal
     return { };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(const String& error)
+ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<PaymentError>&& errors)
 {
     ASSERT(m_isUpdating);
     m_isUpdating = false;
 
     ShippingContactUpdate update;
-
-    if (m_paymentRequest->paymentOptions().requestShipping && m_paymentRequest->paymentDetails().shippingOptions.isEmpty()) {
-        PaymentError paymentError;
-        paymentError.code = PaymentError::Code::ShippingContactInvalid;
-        paymentError.message = error;
-        update.errors.append(WTFMove(paymentError));
-    }
+    update.errors = WTFMove(errors);
 
     auto newTotalAndLineItems = computeTotalAndLineItems();
     if (newTotalAndLineItems.hasException())

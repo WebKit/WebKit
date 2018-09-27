@@ -151,10 +151,13 @@ void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<Shipp
 
 void MockPaymentCoordinator::completeShippingContactSelection(std::optional<ShippingContactUpdate>&& shippingContactUpdate)
 {
-    if (shippingContactUpdate)
-        updateTotalAndLineItems(shippingContactUpdate->newTotalAndLineItems);
+    if (!shippingContactUpdate)
+        return;
+
+    updateTotalAndLineItems(shippingContactUpdate->newTotalAndLineItems);
+    m_errors = WTFMove(shippingContactUpdate->errors);
 }
-    
+
 void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&& paymentMethodUpdate)
 {
     if (paymentMethodUpdate)

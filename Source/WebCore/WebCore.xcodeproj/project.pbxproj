@@ -2955,6 +2955,13 @@
 		A1AFEDE71F8BFF6D0087013F /* MockPaymentCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */; };
 		A1B5B29E1AAA846E008B6042 /* MockContentFilterSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */; };
 		A1B5B29F1AAA846F008B6042 /* MockContentFilterSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1BB859C2159AEA10067E07D /* ApplePayErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BB85992159AEA10067E07D /* ApplePayErrorCode.h */; };
+		A1BB85A32159AF570067E07D /* ApplePayErrorContactField.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BB85A02159AF570067E07D /* ApplePayErrorContactField.h */; };
+		A1BB85A92159B02C0067E07D /* MockPaymentError.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BB85A62159B02C0067E07D /* MockPaymentError.h */; };
+		A1BB85B22159B1A10067E07D /* JSApplePayErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BB85AE2159B1A00067E07D /* JSApplePayErrorCode.h */; };
+		A1BB85B32159B1A10067E07D /* JSApplePayErrorContactField.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BB85AF2159B1A00067E07D /* JSApplePayErrorContactField.h */; };
+		A1BB85B82159B3A40067E07D /* JSMockPaymentError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1BB85B42159B3890067E07D /* JSMockPaymentError.cpp */; };
+		A1BB85B92159B3AE0067E07D /* JSMockPaymentError.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BB85B52159B38A0067E07D /* JSMockPaymentError.h */; };
 		A1BF6B821AA96C7D00AF4A8A /* MockContentFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1BF6B801AA96C7D00AF4A8A /* MockContentFilter.cpp */; };
 		A1BF6B831AA96C7D00AF4A8A /* MockContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BF6B811AA96C7D00AF4A8A /* MockContentFilter.h */; };
 		A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C150781E3F2B3E0032C98C /* PreviewConverter.h */; };
@@ -11046,6 +11053,18 @@
 		A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockPaymentCoordinator.cpp; sourceTree = "<group>"; };
 		A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockContentFilterSettings.cpp; sourceTree = "<group>"; };
 		A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockContentFilterSettings.h; sourceTree = "<group>"; };
+		A1BB85992159AEA10067E07D /* ApplePayErrorCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayErrorCode.h; sourceTree = "<group>"; };
+		A1BB859B2159AEA10067E07D /* ApplePayErrorCode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayErrorCode.idl; sourceTree = "<group>"; };
+		A1BB85A02159AF570067E07D /* ApplePayErrorContactField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayErrorContactField.h; sourceTree = "<group>"; };
+		A1BB85A22159AF570067E07D /* ApplePayErrorContactField.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayErrorContactField.idl; sourceTree = "<group>"; };
+		A1BB85A62159B02C0067E07D /* MockPaymentError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockPaymentError.h; sourceTree = "<group>"; };
+		A1BB85A82159B02C0067E07D /* MockPaymentError.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockPaymentError.idl; sourceTree = "<group>"; };
+		A1BB85AC2159B19F0067E07D /* JSApplePayErrorContactField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayErrorContactField.cpp; sourceTree = "<group>"; };
+		A1BB85AD2159B1A00067E07D /* JSApplePayErrorCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayErrorCode.cpp; sourceTree = "<group>"; };
+		A1BB85AE2159B1A00067E07D /* JSApplePayErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayErrorCode.h; sourceTree = "<group>"; };
+		A1BB85AF2159B1A00067E07D /* JSApplePayErrorContactField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayErrorContactField.h; sourceTree = "<group>"; };
+		A1BB85B42159B3890067E07D /* JSMockPaymentError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockPaymentError.cpp; sourceTree = "<group>"; };
+		A1BB85B52159B38A0067E07D /* JSMockPaymentError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockPaymentError.h; sourceTree = "<group>"; };
 		A1BF6B801AA96C7D00AF4A8A /* MockContentFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockContentFilter.cpp; sourceTree = "<group>"; };
 		A1BF6B811AA96C7D00AF4A8A /* MockContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockContentFilter.h; sourceTree = "<group>"; };
 		A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewConverter.mm; sourceTree = "<group>"; };
@@ -16095,6 +16114,10 @@
 				1ADFDFD51E71D8DF008F5D34 /* ApplePayError.cpp */,
 				1ADFDFD61E71D8DF008F5D34 /* ApplePayError.h */,
 				1ADFDFD71E71D8DF008F5D34 /* ApplePayError.idl */,
+				A1BB85992159AEA10067E07D /* ApplePayErrorCode.h */,
+				A1BB859B2159AEA10067E07D /* ApplePayErrorCode.idl */,
+				A1BB85A02159AF570067E07D /* ApplePayErrorContactField.h */,
+				A1BB85A22159AF570067E07D /* ApplePayErrorContactField.idl */,
 				7C6579E21E00827000E3A27A /* ApplePayLineItem.h */,
 				7C6579E41E0082C800E3A27A /* ApplePayLineItem.idl */,
 				A1DF5AA81F8070D40058A477 /* ApplePayMerchantCapability.cpp */,
@@ -16268,6 +16291,10 @@
 				A1DF5A971F7EC8BF0058A477 /* JSApplePayContactField.h */,
 				1ADFDFE11E71DCA0008F5D34 /* JSApplePayError.cpp */,
 				1ADFDFE21E71DCA0008F5D34 /* JSApplePayError.h */,
+				A1BB85AD2159B1A00067E07D /* JSApplePayErrorCode.cpp */,
+				A1BB85AE2159B1A00067E07D /* JSApplePayErrorCode.h */,
+				A1BB85AC2159B19F0067E07D /* JSApplePayErrorContactField.cpp */,
+				A1BB85AF2159B1A00067E07D /* JSApplePayErrorContactField.h */,
 				7C6579E91E00856600E3A27A /* JSApplePayLineItem.cpp */,
 				7C6579EA1E00856600E3A27A /* JSApplePayLineItem.h */,
 				A1DF5A891F7EC0000058A477 /* JSApplePayMerchantCapability.cpp */,
@@ -17039,6 +17066,8 @@
 				A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */,
 				A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */,
 				A146D3161F99B53D00D29196 /* MockPaymentCoordinator.idl */,
+				A1BB85A62159B02C0067E07D /* MockPaymentError.h */,
+				A1BB85A82159B02C0067E07D /* MockPaymentError.idl */,
 				A1CBEF631F9F11290028DE7C /* MockPaymentMethod.h */,
 				A14061891E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp */,
 				A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */,
@@ -17079,6 +17108,8 @@
 				A146D31F1F99CA3D00D29196 /* JSMockPaymentAddress.h */,
 				A146D3191F99BCBB00D29196 /* JSMockPaymentCoordinator.cpp */,
 				A146D3181F99BCBA00D29196 /* JSMockPaymentCoordinator.h */,
+				A1BB85B42159B3890067E07D /* JSMockPaymentError.cpp */,
+				A1BB85B52159B38A0067E07D /* JSMockPaymentError.h */,
 				427DA71B13735DFA007C57FB /* JSServiceWorkerInternals.cpp */,
 				427DA71C13735DFA007C57FB /* JSServiceWorkerInternals.h */,
 				EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */,
@@ -27113,6 +27144,7 @@
 				538EC9341F99B9F7004D22A8 /* JSMockPageOverlay.h in Headers */,
 				A146D3231F99D0EF00D29196 /* JSMockPaymentAddress.h in Headers */,
 				A146D31B1F99BCFB00D29196 /* JSMockPaymentCoordinator.h in Headers */,
+				A1BB85B92159B3AE0067E07D /* JSMockPaymentError.h in Headers */,
 				427DA71E13735DFA007C57FB /* JSServiceWorkerInternals.h in Headers */,
 				EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */,
 				CDC26B41160A8CCE0026757B /* LegacyMockCDM.h in Headers */,
@@ -27207,6 +27239,8 @@
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				A1DF5A941F7EC4320058A477 /* ApplePayContactField.h in Headers */,
 				A12C59EE2035FC9B0012236B /* ApplePayError.h in Headers */,
+				A1BB859C2159AEA10067E07D /* ApplePayErrorCode.h in Headers */,
+				A1BB85A32159AF570067E07D /* ApplePayErrorContactField.h in Headers */,
 				7C6579E31E00827000E3A27A /* ApplePayLineItem.h in Headers */,
 				A1DF5A861F7EBDF20058A477 /* ApplePayMerchantCapability.h in Headers */,
 				A1F6CFFF1FE096210018078C /* ApplePayModifier.h in Headers */,
@@ -28554,6 +28588,8 @@
 				71025EDE1F99F1EC004A250C /* JSAnimationTimeline.h in Headers */,
 				A1DF5A991F7EC8C00058A477 /* JSApplePayContactField.h in Headers */,
 				A12C59F920360ACB0012236B /* JSApplePayError.h in Headers */,
+				A1BB85B22159B1A10067E07D /* JSApplePayErrorCode.h in Headers */,
+				A1BB85B32159B1A10067E07D /* JSApplePayErrorContactField.h in Headers */,
 				7C6579F01E00856600E3A27A /* JSApplePayLineItem.h in Headers */,
 				A1DF5A8E1F7EC0020058A477 /* JSApplePayMerchantCapability.h in Headers */,
 				A1F6D0121FE099B40018078C /* JSApplePayModifier.h in Headers */,
@@ -29618,6 +29654,7 @@
 				413CCD4A20DE034F0065A21A /* MockMediaDevice.h in Headers */,
 				CDF2B0131820540600F2B424 /* MockMediaPlayerMediaSource.h in Headers */,
 				CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */,
+				A1BB85A92159B02C0067E07D /* MockPaymentError.h in Headers */,
 				07D6A4F41BED5F8800174146 /* MockRealtimeAudioSource.h in Headers */,
 				4A0FFA9E1AAF5E7E0062803B /* MockRealtimeMediaSourceCenter.h in Headers */,
 				07EE76EC1BE96DB000F89133 /* MockRealtimeVideoSource.h in Headers */,
@@ -31536,6 +31573,7 @@
 				2D4150DE1C1F868C000A3BA2 /* JSMockPageOverlay.cpp in Sources */,
 				A146D3221F99D0EC00D29196 /* JSMockPaymentAddress.cpp in Sources */,
 				A146D31A1F99BCF800D29196 /* JSMockPaymentCoordinator.cpp in Sources */,
+				A1BB85B82159B3A40067E07D /* JSMockPaymentError.cpp in Sources */,
 				427DA71D13735DFA007C57FB /* JSServiceWorkerInternals.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,
 				CDC26B40160A8CC60026757B /* LegacyMockCDM.cpp in Sources */,

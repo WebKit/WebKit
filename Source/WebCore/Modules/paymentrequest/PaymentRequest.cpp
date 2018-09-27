@@ -559,7 +559,7 @@ void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMetho
         if (hasEventListeners(eventName))
             dispatchEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
         else
-            m_activePaymentHandler->detailsUpdated(UpdateReason::PaymentMethodChanged, { });
+            m_activePaymentHandler->detailsUpdated(UpdateReason::PaymentMethodChanged, { }, { }, { }, { });
     });
 }
 
@@ -627,19 +627,19 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 
     auto& context = *m_detailsPromise->scriptExecutionContext();
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
-    auto paymentDetailsUpdate = convertDictionary<PaymentDetailsUpdate>(*context.execState(), m_detailsPromise->result());
+    auto detailsUpdate = convertDictionary<PaymentDetailsUpdate>(*context.execState(), m_detailsPromise->result());
     if (throwScope.exception()) {
         abortWithException(Exception { ExistingExceptionError });
         return;
     }
 
-    auto totalResult = checkAndCanonicalizeTotal(paymentDetailsUpdate.total.amount);
+    auto totalResult = checkAndCanonicalizeTotal(detailsUpdate.total.amount);
     if (totalResult.hasException()) {
         abortWithException(totalResult.releaseException());
         return;
     }
 
-    auto detailsResult = checkAndCanonicalizeDetails(*context.execState(), paymentDetailsUpdate, m_options.requestShipping, ShouldValidatePaymentMethodIdentifier::Yes);
+    auto detailsResult = checkAndCanonicalizeDetails(*context.execState(), detailsUpdate, m_options.requestShipping, ShouldValidatePaymentMethodIdentifier::Yes);
     if (detailsResult.hasException()) {
         abortWithException(detailsResult.releaseException());
         return;
@@ -647,17 +647,17 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 
     auto shippingOptionAndModifierData = detailsResult.releaseReturnValue();
 
-    m_details.total = WTFMove(paymentDetailsUpdate.total);
-    m_details.displayItems = WTFMove(paymentDetailsUpdate.displayItems);
+    m_details.total = WTFMove(detailsUpdate.total);
+    m_details.displayItems = WTFMove(detailsUpdate.displayItems);
     if (m_options.requestShipping) {
-        m_details.shippingOptions = WTFMove(paymentDetailsUpdate.shippingOptions);
+        m_details.shippingOptions = WTFMove(detailsUpdate.shippingOptions);
         m_shippingOption = WTFMove(std::get<0>(shippingOptionAndModifierData));
     }
 
-    m_details.modifiers = WTFMove(paymentDetailsUpdate.modifiers);
+    m_details.modifiers = WTFMove(detailsUpdate.modifiers);
     m_serializedModifierData = WTFMove(std::get<1>(shippingOptionAndModifierData));
 
-    auto result = m_activePaymentHandler->detailsUpdated(reason, paymentDetailsUpdate.error);
+    auto result = m_activePaymentHandler->detailsUpdated(reason, WTFMove(detailsUpdate.error), WTFMove(detailsUpdate.shippingAddressErrors), WTFMove(detailsUpdate.payerErrors), detailsUpdate.paymentMethodErrors.get());
     if (result.hasException()) {
         abortWithException(result.releaseException());
         return;

@@ -1,0 +1,75 @@
+Test specifying errors in response to the shippingaddresschange event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing PaymentDetailsUpdate with no errors.
+PASS internals.mockPaymentCoordinator.errors.length is 0
+
+Testing PaymentDetailsUpdate with an error and shipping options.
+PASS internals.mockPaymentCoordinator.errors.length is 0
+
+Testing PaymentDetailsUpdate with an empty error.
+PASS internals.mockPaymentCoordinator.errors.length is 1
+PASS internals.mockPaymentCoordinator.errors[0].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[0].message is ''
+PASS internals.mockPaymentCoordinator.errors[0].contactField is undefined
+
+Testing PaymentDetailsUpdate with an error.
+PASS internals.mockPaymentCoordinator.errors.length is 1
+PASS internals.mockPaymentCoordinator.errors[0].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[0].message is 'single error'
+PASS internals.mockPaymentCoordinator.errors[0].contactField is undefined
+
+Testing PaymentDetailsUpdate with an error and undefined shipping address errors.
+PASS internals.mockPaymentCoordinator.errors.length is 1
+PASS internals.mockPaymentCoordinator.errors[0].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[0].message is 'single error'
+PASS internals.mockPaymentCoordinator.errors[0].contactField is undefined
+
+Testing PaymentDetailsUpdate with shipping address errors.
+PASS internals.mockPaymentCoordinator.errors.length is 8
+PASS internals.mockPaymentCoordinator.errors[0].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[0].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[0].contactField is 'addressLines'
+PASS internals.mockPaymentCoordinator.errors[1].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[1].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[1].contactField is 'locality'
+PASS internals.mockPaymentCoordinator.errors[2].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[2].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[2].contactField is 'country'
+PASS internals.mockPaymentCoordinator.errors[3].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[3].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[3].contactField is 'subLocality'
+PASS internals.mockPaymentCoordinator.errors[4].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[4].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[4].contactField is 'phoneNumber'
+PASS internals.mockPaymentCoordinator.errors[5].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[5].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[5].contactField is 'postalCode'
+PASS internals.mockPaymentCoordinator.errors[6].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[6].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[6].contactField is 'name'
+PASS internals.mockPaymentCoordinator.errors[7].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[7].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[7].contactField is 'administrativeArea'
+
+Testing PaymentDetailsUpdate with unrequested payer errors.
+PASS internals.mockPaymentCoordinator.errors.length is 0
+
+Testing PaymentDetailsUpdate with payer errors.
+PASS internals.mockPaymentCoordinator.errors.length is 3
+PASS internals.mockPaymentCoordinator.errors[0].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[0].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[0].contactField is 'name'
+PASS internals.mockPaymentCoordinator.errors[1].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[1].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[1].contactField is 'emailAddress'
+PASS internals.mockPaymentCoordinator.errors[2].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[2].message is 'error'
+PASS internals.mockPaymentCoordinator.errors[2].contactField is 'phoneNumber'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

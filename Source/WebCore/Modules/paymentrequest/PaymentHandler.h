@@ -38,6 +38,8 @@ class JSValue;
 namespace WebCore {
 
 class Document;
+struct AddressErrors;
+struct PayerErrorFields;
 
 class PaymentHandler : public virtual PaymentSessionBase {
 public:
@@ -49,7 +51,7 @@ public:
     virtual ExceptionOr<void> show() = 0;
     virtual void hide() = 0;
     virtual void canMakePayment(WTF::Function<void(bool)>&& completionHandler) = 0;
-    virtual ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, const String& error) = 0;
+    virtual ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) = 0;
     virtual ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) = 0;
     virtual void complete(std::optional<PaymentComplete>&&) = 0;
 };

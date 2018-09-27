@@ -1,3 +1,19 @@
+2018-09-27  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Support granular errors in PaymentDetailsUpdate
+        https://bugs.webkit.org/show_bug.cgi?id=189938
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/resources/payment-request.js:
+        (validPaymentDetails):
+        (updateDetailsOnShippingAddressChange):
+        * http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrors.https-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrors.https.html: Added.
+        * http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrorsV3.https-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrorsV3.https.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-27  Chris Dumez  <cdumez@apple.com>
 
         document.open() should not propagate URLs to non-fully active documents

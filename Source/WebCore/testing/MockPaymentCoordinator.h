@@ -29,6 +29,7 @@
 
 #include "ApplePayLineItem.h"
 #include "MockPaymentAddress.h"
+#include "MockPaymentError.h"
 #include "PaymentCoordinatorClient.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -50,6 +51,7 @@ public:
 
     const ApplePayLineItem& total() const { return m_total; }
     const Vector<ApplePayLineItem>& lineItems() const { return m_lineItems; }
+    const Vector<MockPaymentError>& errors() const { return m_errors; }
 
     void ref() const { }
     void deref() const { }
@@ -76,6 +78,7 @@ private:
     ApplePayPaymentContact m_shippingAddress;
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;
+    Vector<MockPaymentError> m_errors;
     HashSet<String, ASCIICaseInsensitiveHash> m_availablePaymentNetworks;
 };
 

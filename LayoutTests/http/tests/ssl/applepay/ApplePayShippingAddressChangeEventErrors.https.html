@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test specifying errors in response to the shippingaddresschange event.");
+
+window.jsTestIsAsync = true;
+
+async function runTests()
+{
+    debug("Testing PaymentDetailsUpdate with no errors.");
+    var details = validPaymentDetails();
+    await updateDetailsOnShippingAddressChange(details, { requestShipping: true }, details);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "0");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with an error and shipping options.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.error = "single error";
+    detailsUpdate.shippingOptions = [{
+        id: "option1",
+        label: "option 1",
+        amount: {
+            currency: "USD",
+            value: "1.00",
+        },
+    }];
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { requestShipping: true }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "0");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with an empty error.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.error = "";
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { requestShipping: true }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "1");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].message", "''");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].contactField", "undefined");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with an error.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.error = "single error";
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { requestShipping: true }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "1");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].message", "'single error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].contactField", "undefined");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with an error and undefined shipping address errors.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.error = "single error";
+    detailsUpdate.shippingAddressErrors = {
+    };
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { requestShipping: true }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "1");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].message", "'single error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].contactField", "undefined");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with shipping address errors.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.shippingAddressErrors = {
+        addressLine: "error",
+        city: "error",
+        country: "error",
+        dependentLocality: "error",
+        phone: "error",
+        postalCode: "error",
+        recipient: "error",
+        region: "error",
+    };
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { requestShipping: true }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "8");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].contactField", "'addressLines'");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].contactField", "'locality'");
+    shouldBe("internals.mockPaymentCoordinator.errors[2].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[2].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[2].contactField", "'country'");
+    shouldBe("internals.mockPaymentCoordinator.errors[3].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[3].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[3].contactField", "'subLocality'");
+    shouldBe("internals.mockPaymentCoordinator.errors[4].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[4].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[4].contactField", "'phoneNumber'");
+    shouldBe("internals.mockPaymentCoordinator.errors[5].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[5].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[5].contactField", "'postalCode'");
+    shouldBe("internals.mockPaymentCoordinator.errors[6].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[6].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[6].contactField", "'name'");
+    shouldBe("internals.mockPaymentCoordinator.errors[7].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[7].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[7].contactField", "'administrativeArea'");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with unrequested payer errors.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.payerErrors = {
+        name: "error",
+        email: "error",
+        phone: "error",
+    };
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "0");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with payer errors.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.payerErrors = {
+        name: "error",
+        email: "error",
+        phone: "error",
+    };
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { requestPayerName: true, requestPayerPhone: true, requestPayerEmail: true }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "3");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].contactField", "'name'");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].contactField", "'emailAddress'");
+    shouldBe("internals.mockPaymentCoordinator.errors[2].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[2].message", "'error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[2].contactField", "'phoneNumber'");
+    debug("");
+
+    finishJSTest();
+}
+
+runTests();
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

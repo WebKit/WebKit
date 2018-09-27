@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,14 @@
 
 #pragma once
 
-#if ENABLE(PAYMENT_REQUEST)
+#if ENABLE(APPLE_PAY)
 
-#include "AddressErrors.h"
-#include "PayerErrorFields.h"
-#include "PaymentDetailsBase.h"
-#include "PaymentItem.h"
-#include <wtf/text/WTFString.h>
+#include "ApplePaySessionPaymentRequest.h"
 
 namespace WebCore {
 
-struct PaymentDetailsUpdate final : PaymentDetailsBase {
-    String error;
-    PaymentItem total;
-    AddressErrors shippingAddressErrors;
-    PayerErrorFields payerErrors;
-    JSC::Strong<JSC::JSObject> paymentMethodErrors;
-};
+using ApplePayErrorCode = PaymentError::Code;
 
 } // namespace WebCore
 
-#endif // ENABLE(PAYMENT_REQUEST)
+#endif // ENABLE(APPLE_PAY)

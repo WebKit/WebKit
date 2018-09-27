@@ -1,3 +1,63 @@
+2018-09-27  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Support granular errors in PaymentDetailsUpdate
+        https://bugs.webkit.org/show_bug.cgi?id=189938
+
+        Reviewed by Youenn Fablet.
+
+        Implemented the shippingAddressErrors, payerErrors, and paymentMethodErrors properties on
+        PaymentDetailsUpdate, as specified in the Payment Request API W3C Editor's Draft of
+        26 September 2018.
+
+        When these errors are specified in a PaymentDetailsUpdate, map them to PaymentErrors. For
+        shippingAddressErrors and payerErrors, we use the "shippingContactInvalid" code and a
+        contact field that matches the shippingAddressError or payerError property specified.
+
+        For paymentMethodErrors, we interpret this as a sequence of ApplePayErrors, which are
+        converted to PaymentErrors as in Apple Pay JS.
+
+        Tests: http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrors.https.html
+               http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrorsV3.https.html
+
+        * DerivedSources.make: Removed some tabs and added new .idl files.
+        * Modules/applepay/ApplePayError.idl: Moved ApplePayErrorCode and ApplePayErrorContactField
+        into their own .idl files so they can be used in MockPaymentError.
+        * Modules/applepay/ApplePayErrorCode.h: Added.
+        * Modules/applepay/ApplePayErrorCode.idl: Added.
+        * Modules/applepay/ApplePayErrorContactField.h: Added.
+        * Modules/applepay/ApplePayErrorContactField.idl: Added.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::appendShippingContactInvalidError): Appended a "shippingContactInvalid"
+        PaymentError to errors if the message is non-null.
+        (WebCore::ApplePayPaymentHandler::computeErrors const):
+        (WebCore::ApplePayPaymentHandler::detailsUpdated):
+        (WebCore::ApplePayPaymentHandler::shippingAddressUpdated): Computed a vector of PaymentErrors
+        based on shippingAddressErrors, payerErrors, and paymentMethodErrors.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+
+        * Modules/paymentrequest/PaymentDetailsUpdate.h:
+        * Modules/paymentrequest/PaymentDetailsUpdate.idl: Defined shippingAddressErrors,
+        payerErrors, and paymentMethodErrors.
+
+        * Modules/paymentrequest/PaymentHandler.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::paymentMethodChanged):
+        (WebCore::PaymentRequest::settleDetailsPromise): Passed shippingAddressErrors, payerErrors,
+        and paymentMethodErrors to the payment handler.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::completeShippingContactSelection): Stored errors in m_errors.
+        * testing/MockPaymentCoordinator.h:
+        * testing/MockPaymentCoordinator.idl: Added an errors attribute.
+
+        * testing/MockPaymentError.h: Added.
+        * testing/MockPaymentError.idl: Added.
+
 2018-09-27  Alex Christensen  <achristensen@webkit.org>
 
         URLWithUserTypedString should return nil for URLs deemed to be invalid by WebCore::URL
