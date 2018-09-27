@@ -704,8 +704,6 @@ public:
     void pauseTimeline(AnimationTimeline&);
     void setTimelineCurrentTime(AnimationTimeline&, double);
 
-    void testIncomingSyncIPCMessageWhileWaitingForSyncReply();
-
 #if ENABLE(WEB_AUTHN)
     MockAuthenticatorCoordinator& mockAuthenticatorCoordinator() const;
 #endif

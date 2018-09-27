@@ -45,6 +45,9 @@ Ref<StorageToWebProcessConnection> StorageToWebProcessConnection::create(IPC::Co
 StorageToWebProcessConnection::StorageToWebProcessConnection(IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
 {
+    // Use this flag to force synchronous messages to be treated as asynchronous messages in the WebProcess.
+    // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
+    // reply from the storage process, which would be unsafe.
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open();
 }

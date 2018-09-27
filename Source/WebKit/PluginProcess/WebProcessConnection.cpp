@@ -67,6 +67,9 @@ WebProcessConnection::WebProcessConnection(IPC::Connection::Identifier connectio
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
     m_npRemoteObjectMap = NPRemoteObjectMap::create(m_connection.get());
 
+    // Use this flag to force synchronous messages to be treated as asynchronous messages in the WebProcess.
+    // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
+    // reply from the Plugin process, which would be unsafe.
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open();
 }

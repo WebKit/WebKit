@@ -79,6 +79,11 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Id
 #endif
 {
     RELEASE_ASSERT(RunLoop::isMain());
+
+    // Use this flag to force synchronous messages to be treated as asynchronous messages in the WebProcess.
+    // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
+    // reply from the Network process, which would be unsafe.
+    m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open();
 }
 

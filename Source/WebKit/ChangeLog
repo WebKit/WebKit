@@ -1,3 +1,65 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        The WebContent process should not process incoming IPC while waiting for a sync IPC reply
+        https://bugs.webkit.org/show_bug.cgi?id=184183
+        <rdar://problem/36800576>
+
+        Reviewed by Ryosuke Niwa.
+
+        In recent years, we have experienced re-entrancy bugs/crashes in WebCore due to the WebContent process
+        processing unrelated incoming synchronous IPC when waiting for a reply to one of its synchronous IPC
+        to another process. In order to deal with this, we introduced a DoNotProcessIncomingMessagesWhenWaitingForSyncReply
+        IPC::SendOption which we used on sendSync() calls where we knew re-entering would be unsafe. However,
+        it turns out to be needed for a lot of the WebProcess's sync IPC and it is error-prone. In order to
+        address the issue, we've decided to update the WebContent process behavior so that it processes all its
+        IPC in order (not matter if synchronous or not) and thus so that we never dispatch unrelated synchronous
+        IPC while waiting for a synchronous IPC reply, expect in cases where it would cause a deadlock.
+
+        As a result, this patch also drops support for the DoNotProcessIncomingMessagesWhenWaitingForSyncReply
+        IPC::SendOption which is no longer needed and has some code complexity.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::waitForSyncReply):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendSync):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::WebProcessConnection):
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::StorageToWebProcessConnection):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionWillOpen):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postSynchronousMessage):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::responseFromResourceLoadIdentifier):
+        (WebKit::WebLoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier):
+        (WebKit::WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::destroy):
+        (WebKit::PluginProxy::supportsSnapshotting const):
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::rootViewToScreen):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getNetworkProcessConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-09-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on

@@ -709,13 +709,6 @@ void WebChromeClient::print(Frame& frame)
     m_page.sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply(), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
 }
 
-void WebChromeClient::testIncomingSyncIPCMessageWhileWaitingForSyncReply()
-{
-    bool wasHandled = false;
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::TestIncomingSyncIPCMessageWhileWaitingForSyncReply(), Messages::WebProcessProxy::TestIncomingSyncIPCMessageWhileWaitingForSyncReply::Reply(wasHandled), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
-    RELEASE_ASSERT(wasHandled);
-}
-
 void WebChromeClient::exceededDatabaseQuota(Frame& frame, const String& databaseName, DatabaseDetails details)
 {
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);

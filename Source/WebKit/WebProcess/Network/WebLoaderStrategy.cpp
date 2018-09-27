@@ -539,7 +539,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
 
     HangDetectionDisabler hangDetectionDisabler;
 
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply)) {
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
         RELEASE_LOG_ERROR_IF_ALLOWED(loadParameters.sessionID, "loadResourceSynchronously: failed sending synchronous network process message (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", loadParameters.webPageID, loadParameters.webFrameID, loadParameters.identifier);
         if (auto* page = webPage->corePage())
             page->diagnosticLoggingClient().logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::synchronousMessageFailedKey(), WebCore::ShouldSample::No);
@@ -682,21 +682,21 @@ void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 ResourceResponse WebLoaderStrategy::responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier)
 {
     ResourceResponse response;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse::Reply { response }, 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse::Reply { response }, 0);
     return response;
 }
 
 Vector<NetworkTransactionInformation> WebLoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier)
 {
     Vector<NetworkTransactionInformation> information;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation::Reply { information }, 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation::Reply { information }, 0);
     return information;
 }
 
 NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier)
 {
     NetworkLoadMetrics networkMetrics;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics::Reply { networkMetrics }, 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics::Reply { networkMetrics }, 0);
     return networkMetrics;
 }
 

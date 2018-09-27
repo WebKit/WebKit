@@ -1381,7 +1381,7 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFram
         return;
 
     HasInsecureContent hasInsecureContent;
-    if (webPage->sendSync(Messages::WebPageProxy::HasInsecureContent(), Messages::WebPageProxy::HasInsecureContent::Reply(hasInsecureContent), Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply))
+    if (webPage->sendSync(Messages::WebPageProxy::HasInsecureContent(), Messages::WebPageProxy::HasInsecureContent::Reply(hasInsecureContent)))
         cachedFrame->setHasInsecureContent(hasInsecureContent);
 }
 

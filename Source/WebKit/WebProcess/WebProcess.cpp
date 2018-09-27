@@ -1024,10 +1024,6 @@ void WebProcess::backgroundResponsivenessPing()
     parentProcessConnection()->send(Messages::WebProcessProxy::DidReceiveBackgroundResponsivenessPing(), 0);
 }
 
-void WebProcess::syncIPCMessageWhileWaitingForSyncReplyForTesting()
-{
-}
-
 void WebProcess::didTakeAllMessagesForPort(Vector<MessageWithMessagePorts>&& messages, uint64_t messageCallbackIdentifier, uint64_t messageBatchIdentifier)
 {
     WebMessagePortChannelProvider::singleton().didTakeAllMessagesForPort(WTFMove(messages), messageCallbackIdentifier, messageBatchIdentifier);
@@ -1102,7 +1098,7 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
 static IPC::Connection::Identifier getNetworkProcessConnection(IPC::Connection& connection)
 {
     IPC::Attachment encodedConnectionIdentifier;
-    if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply)) {
+    if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0)) {
 #if PLATFORM(GTK) || PLATFORM(WPE)
         // GTK+ and WPE ports don't exit on send sync message failure.
         // In this particular case, the network process can be terminated by the UI process while the

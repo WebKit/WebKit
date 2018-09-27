@@ -1,3 +1,19 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        The WebContent process should not process incoming IPC while waiting for a sync IPC reply
+        https://bugs.webkit.org/show_bug.cgi?id=184183
+        <rdar://problem/36800576>
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop test infrastructure for the DoNotProcessIncomingMessagesWhenWaitingForSyncReply IPC::SendOption
+        given that this SendOption was removed from this patch.
+
+        * page/ChromeClient.h:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-09-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK Ubuntu LTS build fix attempt after r236396.

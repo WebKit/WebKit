@@ -139,7 +139,7 @@ std::pair<String, bool> WebPlatformStrategies::cookieRequestHeaderFieldValue(PAL
 {
     String cookieString;
     bool secureCookiesAccessed = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(sessionID, firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookieString, secureCookiesAccessed), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(sessionID, firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookieString, secureCookiesAccessed), 0))
         return { String(), false };
     return { cookieString, secureCookiesAccessed };
 }

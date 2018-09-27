@@ -1,3 +1,18 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        The WebContent process should not process incoming IPC while waiting for a sync IPC reply
+        https://bugs.webkit.org/show_bug.cgi?id=184183
+        <rdar://problem/36800576>
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop test for the DoNotProcessIncomingMessagesWhenWaitingForSyncReply IPC::SendOption as it was
+        removed in this patch. This SendOption is no longer useful because it is now the default behavior
+        for the WebContent process.
+
+        * fast/misc/testIncomingSyncIPCMessageWhileWaitingForSyncReply-expected.txt: Removed.
+        * fast/misc/testIncomingSyncIPCMessageWhileWaitingForSyncReply.html: Removed.
+
 2018-09-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK WebAudio rebaseline.

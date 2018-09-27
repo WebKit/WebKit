@@ -680,8 +680,6 @@ enum CompositingPolicy {
     [Conditional=SERVICE_WORKER] void terminateServiceWorker(ServiceWorker worker);
     [Conditional=SERVICE_WORKER] boolean hasServiceWorkerConnection();
 
-    void testIncomingSyncIPCMessageWhileWaitingForSyncReply();
-
     [EnabledAtRuntime=WebAnimations] DOMString timelineDescription(AnimationTimeline timeline);
     [EnabledAtRuntime=WebAnimations] void pauseTimeline(AnimationTimeline timeline);
     [EnabledAtRuntime=WebAnimations] void setTimelineCurrentTime(AnimationTimeline timeline, double currentTime);

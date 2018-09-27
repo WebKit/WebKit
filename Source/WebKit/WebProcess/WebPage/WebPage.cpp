@@ -2935,7 +2935,7 @@ IntPoint WebPage::screenToRootView(const IntPoint& point)
 IntRect WebPage::rootViewToScreen(const IntRect& rect)
 {
     IntRect screenRect;
-    sendSync(Messages::WebPageProxy::RootViewToScreen(rect), Messages::WebPageProxy::RootViewToScreen::Reply(screenRect), Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
+    sendSync(Messages::WebPageProxy::RootViewToScreen(rect), Messages::WebPageProxy::RootViewToScreen::Reply(screenRect));
     return screenRect;
 }
     

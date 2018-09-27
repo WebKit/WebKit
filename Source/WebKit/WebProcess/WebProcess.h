@@ -303,8 +303,6 @@ private:
     void mainThreadPing();
     void backgroundResponsivenessPing();
 
-    void syncIPCMessageWhileWaitingForSyncReplyForTesting();
-
     void didTakeAllMessagesForPort(Vector<WebCore::MessageWithMessagePorts>&& messages, uint64_t messageCallbackIdentifier, uint64_t messageBatchIdentifier);
     void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, uint64_t callbackIdentifier);
     void didCheckRemotePortForActivity(uint64_t callbackIdentifier, bool hasActivity);

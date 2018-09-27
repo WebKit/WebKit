@@ -142,8 +142,6 @@ public:
 
     VisibleWebPageToken visiblePageToken() const;
 
-    void testIncomingSyncIPCMessageWhileWaitingForSyncReply(bool& handled);
-
     void updateTextCheckerState();
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }

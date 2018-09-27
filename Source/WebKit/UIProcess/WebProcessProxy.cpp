@@ -205,6 +205,11 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
     // if one of the WebProcesses misbehaves.
     connection.enableIncomingMessagesThrottling();
 
+    // Use this flag to force synchronous messages to be treated as asynchronous messages in the WebProcess.
+    // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
+    // reply from the UIProcess, which would be unsafe.
+    connection.setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
+
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShimProxy::singleton().initializeConnection(connection);
 #endif
@@ -902,15 +907,6 @@ void WebProcessProxy::shouldTerminate(bool& shouldTerminate)
         // We know that the web process is going to terminate so start shutting it down in the UI process.
         shutDown();
     }
-}
-
-void WebProcessProxy::testIncomingSyncIPCMessageWhileWaitingForSyncReply(bool& handled)
-{
-    // Send Synchronous IPC back to the WebProcess while it is waiting for a sync reply from us.
-    // This should time out.
-    bool didSyncIPCsucceed = sendSync(Messages::WebProcess::SyncIPCMessageWhileWaitingForSyncReplyForTesting(), Messages::WebProcess::SyncIPCMessageWhileWaitingForSyncReplyForTesting::Reply(), 0, 100_ms);
-    RELEASE_ASSERT(!didSyncIPCsucceed);
-    handled = true;
 }
 
 void WebProcessProxy::updateTextCheckerState()

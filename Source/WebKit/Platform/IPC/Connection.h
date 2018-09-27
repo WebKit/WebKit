@@ -67,8 +67,6 @@ enum class SendSyncOption {
     // Use this to inform that this sync call will suspend this process until the user responds with input.
     InformPlatformProcessWillSuspend = 1 << 0,
     UseFullySynchronousModeForTesting = 1 << 1,
-
-    DoNotProcessIncomingMessagesWhenWaitingForSyncReply = 1 << 2,
 };
 
 enum class WaitForOption {
@@ -435,9 +433,6 @@ void Connection::sendWithReply(T&& message, uint64_t destinationID, FunctionDisp
 template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
-
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sendSyncOptions.contains(SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply)
-        || WebCore::ScriptDisallowedScope::isEventAllowedInMainThread());
 
     uint64_t syncRequestID = 0;
     std::unique_ptr<Encoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, syncRequestID);

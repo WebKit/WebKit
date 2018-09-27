@@ -113,8 +113,6 @@ messages -> WebProcess LegacyReceiver {
     GamepadDisconnected(unsigned index)
 #endif
 
-    SyncIPCMessageWhileWaitingForSyncReplyForTesting() -> ()
-
 #if USE(SOUP)
     SetNetworkProxySettings(struct WebCore::SoupNetworkProxySettings settings)
 #endif
