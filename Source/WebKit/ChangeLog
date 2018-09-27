@@ -1,3 +1,13 @@
+2018-09-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix IOSMAC build
+        https://bugs.webkit.org/show_bug.cgi?id=190021
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::parentProcessHasServiceWorkerEntitlement const):
+
 2018-09-27  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove temporary compatibility fix for auto-dismiss popups

@@ -150,6 +150,13 @@ void NetworkProcess::platformTerminate()
     }
 }
 
+#if PLATFORM(IOSMAC)
+bool NetworkProcess::parentProcessHasServiceWorkerEntitlement() const
+{
+    return true;
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
