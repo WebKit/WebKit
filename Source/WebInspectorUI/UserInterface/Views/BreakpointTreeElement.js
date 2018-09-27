@@ -25,7 +25,7 @@
 
 WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeElement
 {
-    constructor(breakpoint, className, title)
+    constructor(breakpoint, {className, title} = {})
     {
         console.assert(breakpoint instanceof WI.Breakpoint);
 
@@ -80,7 +80,7 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
     ondelete()
     {
         if (!WI.debuggerManager.isBreakpointRemovable(this._breakpoint))
-            return false;
+            return true;
 
         // We set this flag so that TreeOutlines that will remove this
         // BreakpointTreeElement will know whether it was deleted from

@@ -1,5 +1,21 @@
 2018-09-26  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Hide DOM and XHR breakpoint sections when they are empty
+        https://bugs.webkit.org/show_bug.cgi?id=182406
+        <rdar://problem/37131512>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise.html:
+        * inspector/debugger/break-on-uncaught-exception.html:
+        * inspector/debugger/breakpoints-disabled-expected.txt:
+        * inspector/debugger/breakpoints-disabled.html:
+        * inspector/debugger/pause-reason.html:
+        * inspector/debugger/setPauseOnAssertions.html:
+        * inspector/worker/debugger-pause.html:
+
+2018-09-26  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: determine hasVisibleEffect for each RecordingAction as it's processed
         https://bugs.webkit.org/show_bug.cgi?id=189860
 

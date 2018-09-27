@@ -8,7 +8,7 @@ TestPage.allowUncaughtExceptions = true;
 
 function test()
 {
-    WI.debuggerManager.allUncaughtExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.uncaughtExceptionsBreakpoint.disabled = false;
 
     let suite = InspectorTest.createAsyncSuite("BreakOnUncaughtException");
 

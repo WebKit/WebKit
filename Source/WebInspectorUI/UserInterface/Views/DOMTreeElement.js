@@ -1840,8 +1840,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
         if (hasBreakpoint) {
-            const allowEditing = true;
-            WI.DOMBreakpointTreeController.appendBreakpointContextMenuItems(contextMenu, this.representedObject, allowEditing);
+            WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, this.representedObject, {
+                allowEditing: true,
+            });
             return;
         }
 

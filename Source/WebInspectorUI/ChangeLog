@@ -1,5 +1,133 @@
 2018-09-26  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Hide DOM and XHR breakpoint sections when they are empty
+        https://bugs.webkit.org/show_bug.cgi?id=182406
+        <rdar://problem/37131512>
+
+        Reviewed by Joseph Pecoraro.
+
+        Combine all breakpoint sections (e.g. DOM, XHR, and Event) into the main "Breakpoints"
+        section, including all the various "+" buttons for creating different types of breakpoints.
+
+        Global breakpoints (except "All Exceptions" and "Uncaught Exceptions") are now deletable,
+        and can be re-added via the "+" button of the "Breakpoints" section. Deletable global
+        breakpoints (e.g. "Assertion Failures" and "All Requests") are able to remain visible while
+        disabled, and will only be hidden when the user specifically deletes them.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Controllers/DOMBreakpointTreeController.js: Removed.
+        * UserInterface/Controllers/EventBreakpointTreeController.js: Removed.
+        * UserInterface/Controllers/XHRBreakpointTreeController.js: Removed.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.get uncaughtExceptionsBreakpoint): Added.
+        (WI.DebuggerManager.prototype.get assertionFailuresBreakpoint): Added.
+        (WI.DebuggerManager.prototype.isBreakpointRemovable):
+        (WI.DebuggerManager.prototype.isBreakpointSpecial): Added.
+        (WI.DebuggerManager.prototype.isBreakpointEditable):
+        (WI.DebuggerManager.prototype.addBreakpoint):
+        (WI.DebuggerManager.prototype.removeBreakpoint):
+        (WI.DebuggerManager.prototype.initializeTarget):
+        (WI.DebuggerManager.prototype._breakpointDisabledStateDidChange):
+        (WI.DebuggerManager.prototype._updateBreakOnExceptionsState):
+        (WI.DebuggerManager.prototype.get allUncaughtExceptionsBreakpoint): Deleted.
+        (WI.DebuggerManager.prototype.get assertionsBreakpoint): Deleted.
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype.isBreakpointSpecial): Added.
+        (WI.DOMDebuggerManager.prototype.addDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype.addEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.addXHRBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeXHRBreakpoint):
+        (WI.DOMDebuggerManager.prototype.isBreakpointRemovable): Deleted.
+        Always fire add/remove events, including for special breakpoints, so that any listeners will
+        be able to adjust accordingly. Even though special breakpoints don't get stored in the lists
+        held by each manager, we are still able to enable/disable them, and that should be reported.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype.closed):
+        (WI.DebuggerSidebarPanel.prototype.saveStateToCookie):
+        (WI.DebuggerSidebarPanel.prototype.restoreStateFromCookie.revealAndSelect):
+        (WI.DebuggerSidebarPanel.prototype.restoreStateFromCookie):
+        (WI.DebuggerSidebarPanel.prototype.willDismissPopover):
+        (WI.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WI.DebuggerSidebarPanel.prototype._removeBreakpoint): Added.
+        (WI.DebuggerSidebarPanel.prototype._addTreeElementForSourceCodeToTreeOutline):
+        (WI.DebuggerSidebarPanel.prototype._mainResourceDidChange):
+        (WI.DebuggerSidebarPanel.prototype._breakpointRemoved):
+        (WI.DebuggerSidebarPanel.prototype._removeDebuggerTreeElement):
+        (WI.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        (WI.DebuggerSidebarPanel.prototype._addTreeElement.comparator): Added.
+        (WI.DebuggerSidebarPanel.prototype._addTreeElement): Added.
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.DebuggerSidebarPanel.prototype._domBreakpointResolvedStateDidChange): Added.
+        (WI.DebuggerSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved): Added.
+        (WI.DebuggerSidebarPanel.prototype._handleCreateBreakpointClicked): Added.
+        (WI.DebuggerSidebarPanel.prototype._compareTopLevelTreeElements.isSpecialBreakpoint): Deleted.
+        (WI.DebuggerSidebarPanel.prototype._compareTopLevelTreeElements): Deleted.
+        (WI.DebuggerSidebarPanel.prototype._domBreakpointAddedOrRemoved): Deleted.
+        (WI.DebuggerSidebarPanel.prototype._eventBreakpointAddedOrRemoved): Deleted.
+        (WI.DebuggerSidebarPanel.prototype._addEventBreakpointButtonClicked): Deleted.
+        (WI.DebuggerSidebarPanel.prototype._addXHRBreakpointButtonClicked): Deleted.
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .titles): Deleted.
+        (.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .icon): Deleted.
+        (.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node:not(:hover, .selected) .status .go-to-arrow): Deleted.
+        (.sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle): Deleted.
+        Unify the logic for adding/removing breakpoints of all types.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement):
+        (WI.BreakpointTreeElement.prototype.ondelete):
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement):
+        (WI.DOMBreakpointTreeElement.prototype.ondelete):
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WI.DOMNodeTreeElement):
+        (WI.DOMNodeTreeElement.prototype.ondelete):
+        (WI.DOMNodeTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement):
+        (WI.EventBreakpointTreeElement.prototype.ondelete):
+        (WI.EventBreakpointTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/XHRBreakpointTreeElement.js:
+        (WI.XHRBreakpointTreeElement):
+        (WI.XHRBreakpointTreeElement.prototype.ondelete):
+        (WI.XHRBreakpointTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/XHRBreakpointTreeElement.css: Added.
+        (.breakpoint.xhr .subtitle):
+        Add/remove checks for whether the associated breakpoint can be deleted.
+
+        * UserInterface/Views/DOMNodeTreeElement.css: Added.
+        (.tree-outline .item.dom-node .titles):
+        (.tree-outline .item.dom-node .icon):
+        (.tree-outline .item.dom-node:not(:hover, .selected) .status .go-to-arrow):
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        (WI.appendContextMenuItemsForDOMNodeBreakpoints): Added.
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._statusImageContextmenu):
+
+        * UserInterface/Views/XHRBreakpointPopover.js:
+        (WI.XHRBreakpointPopover):
+        (WI.XHRBreakpointPopover.prototype.get breakpoint): Added.
+        (WI.XHRBreakpointPopover.prototype.show):
+        (WI.XHRBreakpointPopover.prototype.dismiss): Added.
+        (WI.XHRBreakpointPopover.prototype._createEditor):
+        (WI.XHRBreakpointPopover.prototype._updateEditor):
+        (WI.XHRBreakpointPopover.prototype.get result): Deleted.
+        (WI.XHRBreakpointPopover.prototype.get type): Deleted.
+        (WI.XHRBreakpointPopover.prototype.get value): Deleted.
+        Drive-by: remove the erroneous usage of `WI.InputPopover.Result`.
+
+2018-09-26  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: determine hasVisibleEffect for each RecordingAction as it's processed
         https://bugs.webkit.org/show_bug.cgi?id=189860
 

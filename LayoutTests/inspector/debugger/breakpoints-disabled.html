@@ -37,8 +37,8 @@ function test()
         });
     }
 
-    addTestCase("AssertionsBreakpoint", "Should not pause on assertion failure.", "assertFalse()", WI.debuggerManager.assertionsBreakpoint);
-    addTestCase("AllUncaughtExceptionsBreakpoint", "Should not pause on uncaught exception.", "doThrow()", WI.debuggerManager.allUncaughtExceptionsBreakpoint);
+    addTestCase("AssertionFailuresBreakpoint", "Should not pause on assertion failure.", "assertFalse()", WI.debuggerManager.assertionFailuresBreakpoint);
+    addTestCase("UncaughtExceptionsBreakpoint", "Should not pause on uncaught exception.", "doThrow()", WI.debuggerManager.uncaughtExceptionsBreakpoint);
     addTestCase("AllExceptionsBreakpoint", "Should not pause on caught exception.", "testCatch()", WI.debuggerManager.allExceptionsBreakpoint);
 
     suite.runTestCasesAndFinish();

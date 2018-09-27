@@ -10,7 +10,7 @@ TestPage.needToSanitizeUncaughtExceptionURLs = true;
 function test()
 {
     WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
-    WI.debuggerManager.assertionsBreakpoint.disabled = false;
+    WI.debuggerManager.assertionFailuresBreakpoint.disabled = false;
 
     for (let script of WI.debuggerManager.dataForTarget(WI.mainTarget).scripts) {
         if (!/pause-reasons\.js$/.test(script.url))

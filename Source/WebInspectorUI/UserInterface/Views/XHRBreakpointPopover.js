@@ -29,9 +29,7 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
     {
         super(delegate);
 
-        this._result = WI.InputPopover.Result.None;
-        this._type = WI.XHRBreakpoint.Type.Text;
-        this._value = null;
+        this._breakpoint = null;
 
         this._codeMirror = null;
         this._targetElement = null;
@@ -42,9 +40,7 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
 
     // Public
 
-    get result() { return this._result; }
-    get type() { return this._type; }
-    get value() { return this._value; }
+    get breakpoint() { return this._breakpoint; }
 
     show(targetElement, preferredEdges)
     {
@@ -61,32 +57,39 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
         let editorWrapper = document.createElement("div");
         editorWrapper.classList.add("editor-wrapper");
 
-        let selectElement = document.createElement("select");
+        this._typeSelectElement = document.createElement("select");
 
-        function addOption(text, value)
-        {
-            let optionElement = document.createElement("option");
+        let createOption = (text, value) => {
+            let optionElement = this._typeSelectElement.appendChild(document.createElement("option"));
             optionElement.textContent = text;
             optionElement.value = value;
-            selectElement.append(optionElement);
-        }
+        };
 
-        addOption(WI.UIString("Containing"), WI.XHRBreakpoint.Type.Text);
-        addOption(WI.UIString("Matching"), WI.XHRBreakpoint.Type.RegularExpression);
+        createOption(WI.UIString("Containing"), WI.XHRBreakpoint.Type.Text);
+        createOption(WI.UIString("Matching"), WI.XHRBreakpoint.Type.RegularExpression);
 
-        selectElement.value = this._type;
-        selectElement.addEventListener("change", (event) => {
-            this._type = event.target.value;
+        this._typeSelectElement.value = WI.XHRBreakpoint.Type.Text;
+        this._typeSelectElement.addEventListener("change", (event) => {
             this._updateEditor();
             this._codeMirror.focus();
         });
 
-        editorWrapper.append(selectElement, this._createEditor());
+        editorWrapper.append(this._typeSelectElement, this._createEditor());
         contentElement.append(label, editorWrapper);
 
         this.content = contentElement;
 
         this._presentOverTargetElement();
+    }
+
+    dismiss()
+    {
+        let type = this._typeSelectElement.value;
+        let url = this._codeMirror.getValue();
+        if (type && url)
+            this._breakpoint = new WI.XHRBreakpoint(type, url);
+
+        super.dismiss();
     }
 
     // Private
@@ -105,8 +108,9 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
 
         this._codeMirror.addKeyMap({
             "Enter": () => {
-                this._result = WI.InputPopover.Result.Committed;
-                this._value = this._codeMirror.getValue().trim();
+                this.dismiss();
+            },
+            "Esc": () => {
                 this.dismiss();
             },
         });
@@ -120,7 +124,7 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
     {
         let placeholder;
         let mimeType;
-        if (this._type === WI.XHRBreakpoint.Type.Text) {
+        if (this._typeSelectElement.value === WI.XHRBreakpoint.Type.Text) {
             placeholder = WI.UIString("Text");
             mimeType = "text/plain";
         } else {

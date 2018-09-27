@@ -35,8 +35,8 @@ function test()
         });
     }
 
-    WI.debuggerManager.allUncaughtExceptionsBreakpoint.disabled = false;
-    WI.debuggerManager.assertionsBreakpoint.disabled = false;
+    WI.debuggerManager.uncaughtExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.assertionFailuresBreakpoint.disabled = false;
 
 
     let suite = InspectorTest.createAsyncSuite("Worker.Debugger.Pause");

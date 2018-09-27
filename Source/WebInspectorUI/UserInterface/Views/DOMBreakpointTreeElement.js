@@ -25,7 +25,7 @@
 
 WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.GeneralTreeElement
 {
-    constructor(breakpoint, className, title)
+    constructor(breakpoint, {className, title} = {})
     {
         console.assert(breakpoint instanceof WI.DOMBreakpoint);
 
@@ -35,7 +35,8 @@ WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.GeneralT
         if (!title)
             title = WI.DOMBreakpointTreeElement.displayNameForType(breakpoint.type);
 
-        super(["breakpoint", className], title, null, breakpoint);
+        const subtitle = null;
+        super(["breakpoint", "dom", className], title, subtitle, breakpoint);
 
         this._statusImageElement = document.createElement("img");
         this._statusImageElement.classList.add("status-image", "resolved");
@@ -94,6 +95,11 @@ WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.GeneralT
 
     ondelete()
     {
+        // We set this flag so that TreeOutlines that will remove this
+        // BreakpointTreeElement will know whether it was deleted from
+        // within the TreeOutline or from outside it (e.g. TextEditor).
+        this.__deletedViaDeleteKeyboardShortcut = true;
+
         WI.domDebuggerManager.removeDOMBreakpoint(this.representedObject);
         return true;
     }

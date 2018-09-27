@@ -25,7 +25,7 @@
 
 WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralTreeElement
 {
-    constructor(breakpoint, className, title)
+    constructor(breakpoint, {className, title} = {})
     {
         console.assert(breakpoint instanceof WI.XHRBreakpoint);
 
@@ -41,7 +41,7 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
                 subtitle = "/" + breakpoint.url + "/";
         }
 
-        super(["breakpoint", className], title, subtitle, breakpoint);
+        super(["breakpoint", "xhr", className], title, subtitle, breakpoint);
 
         this._statusImageElement = document.createElement("img");
         this._statusImageElement.classList.add("status-image", "resolved");
@@ -83,6 +83,11 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
 
     ondelete()
     {
+        // We set this flag so that TreeOutlines that will remove this
+        // BreakpointTreeElement will know whether it was deleted from
+        // within the TreeOutline or from outside it (e.g. TextEditor).
+        this.__deletedViaDeleteKeyboardShortcut = true;
+
         WI.domDebuggerManager.removeXHRBreakpoint(this.representedObject);
         return true;
     }
@@ -105,12 +110,11 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
         let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
         contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
 
-        if (WI.domDebuggerManager.isBreakpointRemovable(breakpoint)) {
-            contextMenu.appendSeparator();
-            contextMenu.appendItem(WI.UIString("Delete Breakpoint"), function() {
-                WI.domDebuggerManager.removeXHRBreakpoint(breakpoint);
-            });
-        }
+        contextMenu.appendSeparator();
+
+        contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
+            WI.domDebuggerManager.removeXHRBreakpoint(breakpoint);
+        });
     }
 
     // Private

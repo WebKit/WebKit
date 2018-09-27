@@ -117,6 +117,8 @@ WI.settings = {
     showCanvasPath: new WI.Setting("show-canvas-path", false),
     selectedNetworkDetailContentViewIdentifier: new WI.Setting("network-detail-content-view-identifier", "preview"),
     showRulers: new WI.Setting("show-rulers", false),
+    showAssertionFailuresBreakpoint: new WI.Setting("show-assertion-failures-breakpoint", true),
+    showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", true),
 
     // Experimental
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),

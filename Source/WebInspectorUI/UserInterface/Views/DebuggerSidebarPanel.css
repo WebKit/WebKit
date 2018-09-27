@@ -107,23 +107,6 @@ body[dir=rtl] .sidebar > .panel.navigation.debugger .tree-outline.single-thread 
     border-bottom: none;
 }
 
-.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .titles {
-    top: 3px;
-    font-family: Menlo, monospace;
-}
-
-.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node .icon {
-    content: url(../Images/DOMElement.svg);
-}
-
-.sidebar > .panel.navigation.debugger .details-section.dom-breakpoints .item.dom-node:not(:hover, .selected) .status .go-to-arrow {
-    display: none;
-}
-
-.sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle {
-    font-family: Menlo, monospace;
-}
-
 @media (prefers-dark-interface) {
     .sidebar > .panel.navigation.debugger .warning-banner {
         background-color: var(--yellow-highlight-background-color);

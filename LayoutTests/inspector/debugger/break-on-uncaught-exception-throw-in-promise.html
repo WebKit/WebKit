@@ -14,7 +14,7 @@ function test()
     // FIXME: <https://webkit.org/b/124066> Uncaught exceptions raised in promise completion functions are not printed to console
     // FIXME: <https://webkit.org/b/147502> Uncaught Exception in promise does not trigger break on uncaught exception breakpoint
 
-    WI.debuggerManager.allUncaughtExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.uncaughtExceptionsBreakpoint.disabled = false;
 
     let suite = InspectorTest.createAsyncSuite("BreakOnUncaughtException.Promise");
 

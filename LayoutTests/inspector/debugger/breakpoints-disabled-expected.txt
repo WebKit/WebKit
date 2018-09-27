@@ -7,10 +7,10 @@ Check that special breakpoints aren't hit when breakpoints are disabled.
 
 
 == Running test suite: BreakpointsDisabled
--- Running test case: AssertionsBreakpoint
+-- Running test case: AssertionFailuresBreakpoint
 PASS: Should not pause.
 
--- Running test case: AllUncaughtExceptionsBreakpoint
+-- Running test case: UncaughtExceptionsBreakpoint
 PASS: Should not pause.
 
 -- Running test case: AllExceptionsBreakpoint
