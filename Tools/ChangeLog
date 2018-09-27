@@ -1,3 +1,20 @@
+2018-09-27  Youenn Fablet  <youenn@apple.com>
+
+        Enable getUserMedia in mini browser
+        https://bugs.webkit.org/show_bug.cgi?id=190012
+
+        Reviewed by Eric Carlson.
+
+        Enable MediaDevices and mock capture devices.
+        Grant mock devices access to any getUserMedia call.
+        Covered by manual testing.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController _webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:]):
+        (-[WK2BrowserWindowController _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+
 2018-09-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on

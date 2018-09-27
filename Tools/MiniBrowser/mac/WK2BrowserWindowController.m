@@ -795,6 +795,16 @@ static NSSet *dataTypes()
 {
 }
 
+- (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler
+{
+    decisionHandler(true);
+}
+
+- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
+{
+    decisionHandler(@"", false);
+}
+
 @end
 
 #endif // WK_API_ENABLED

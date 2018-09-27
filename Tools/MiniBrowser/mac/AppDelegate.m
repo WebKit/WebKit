@@ -94,6 +94,8 @@ static WKWebViewConfiguration *defaultConfiguration()
         configuration = [[WKWebViewConfiguration alloc] init];
         configuration.preferences._fullScreenEnabled = YES;
         configuration.preferences._developerExtrasEnabled = YES;
+        configuration.preferences._mediaDevicesEnabled = YES;
+        configuration.preferences._mockCaptureDevicesEnabled = YES;
 
         _WKProcessPoolConfiguration *processConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
         processConfiguration.diskCacheSpeculativeValidationEnabled = ![SettingsController shared].networkCacheSpeculativeRevalidationDisabled;
