@@ -1,3 +1,28 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236512): fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html and editing/pasteboard/emacs-ctrl-a-k-y.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190048
+
+        Reviewed by Ryosuke Niwa.
+
+        Update editing/pasteboard/emacs-ctrl-a-k-y.html to address flakiness:
+        - Stop dumping editing callbacks as some of them may get logged in a slightly different order
+          due to IPC ordering, and those are not needed to determine that the test passes.
+        - Dump the test as text to avoid needing platform-specific results.
+
+        * editing/pasteboard/emacs-ctrl-a-k-y-expected.txt: Added.
+        * editing/pasteboard/emacs-ctrl-a-k-y.html:
+        * platform/gtk/editing/pasteboard/emacs-ctrl-a-k-y-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt: Removed.
+        * platform/ios-wk1/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt: Removed.
+        * platform/ios-wk2/editing/pasteboard/emacs-ctrl-a-k-y-expected.png: Removed.
+        * platform/ios-wk2/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/emacs-ctrl-a-k-y-expected.png: Removed.
+        * platform/mac/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt: Removed.
+        * platform/win/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt: Removed.
+        * platform/wincairo/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt: Removed.
+        * platform/wincairo/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt: Removed.
+
 2018-09-27  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Update web platform tests

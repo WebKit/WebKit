@@ -1,5 +1,10 @@
 <html>
 <head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+</script>
 <style>
 .editing { 
     border: 2px solid red; 
@@ -56,7 +61,7 @@ one two three four five
 </div>
 
 <script>
-runEditingTest();
+runEditingTestWithCallbackLogging(false);
 </script>
 
 </body>
