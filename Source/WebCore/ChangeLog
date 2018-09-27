@@ -1,3 +1,10 @@
+2018-09-27  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed watchOS build fix; Fix declaration for ports which USE(ENCRYPTED_MEDIA) but don't
+        HAVE(AVCONTENTKEYSESSION).
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+
 2018-09-27  Justin Michaud  <justin_michaud@apple.com>
 
         Remove duplicate CSS Properties and Values feature on status page
