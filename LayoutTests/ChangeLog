@@ -1,3 +1,10 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, make fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html more deterministic to address flakiness.
+
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked-expected.txt:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html:
+
 2018-09-27  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove temporary compatibility fix for auto-dismiss popups

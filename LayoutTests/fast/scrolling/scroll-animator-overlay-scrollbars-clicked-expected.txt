@@ -1,17 +1,17 @@
-CONSOLE MESSAGE: line 14: MainFrameView: didAddVerticalScrollbar
-CONSOLE MESSAGE: line 14: MainFrameView: didAddHorizontalScrollbar
-CONSOLE MESSAGE: line 14: FrameView: didAddVerticalScrollbar
-CONSOLE MESSAGE: line 14: FrameView: willRemoveVerticalScrollbar
-CONSOLE MESSAGE: line 14: MainFrameView: mouseEnteredContentArea
-CONSOLE MESSAGE: line 14: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 16: MainFrameView: mouseEnteredVerticalScrollbar
-CONSOLE MESSAGE: line 16: FrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: line 13: MainFrameView: didAddVerticalScrollbar
+CONSOLE MESSAGE: line 13: MainFrameView: didAddHorizontalScrollbar
+CONSOLE MESSAGE: line 13: FrameView: didAddVerticalScrollbar
+CONSOLE MESSAGE: line 13: FrameView: willRemoveVerticalScrollbar
+CONSOLE MESSAGE: line 16: MainFrameView: mouseEnteredContentArea
 CONSOLE MESSAGE: line 16: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 17: MainFrameView: mouseIsDownInVerticalScrollbar
-CONSOLE MESSAGE: line 18: MainFrameView: mouseIsUpInVerticalScrollbar
-CONSOLE MESSAGE: line 19: MainFrameView: mouseExitedVerticalScrollbar
-CONSOLE MESSAGE: line 19: FrameView: mouseExitedContentArea
-CONSOLE MESSAGE: line 19: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: line 18: MainFrameView: mouseEnteredVerticalScrollbar
+CONSOLE MESSAGE: line 18: FrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: line 18: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: line 19: MainFrameView: mouseIsDownInVerticalScrollbar
+CONSOLE MESSAGE: line 20: MainFrameView: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: line 21: MainFrameView: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: line 21: FrameView: mouseExitedContentArea
+CONSOLE MESSAGE: line 21: MainFrameView: mouseMovedInContentArea
 PASS successfullyParsed is true
 
 TEST COMPLETE

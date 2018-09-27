@@ -10,6 +10,8 @@
       testRunner.dumpAsText();
   }
   window.onload = function () {
+      document.body.offsetTop; // force layout.
+      setTimeout(() => {
       if (window.eventSender) {
           eventSender.mouseMoveTo(0, 0);
           // Move to a position that is over the vertical scrollbar and the iframe.
@@ -20,6 +22,7 @@
       }
       if (window.testRunner)
           testRunner.notifyDone();
+     }, 0);
   };
 </script>
 <script src="../../resources/js-test-post.js"></script>
