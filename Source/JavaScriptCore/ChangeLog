@@ -1,3 +1,33 @@
+2018-09-26  Mark Lam  <mark.lam@apple.com>
+
+        Assert that performJITMemcpy() is always called with instruction size aligned addresses on ARM64.
+        https://bugs.webkit.org/show_bug.cgi?id=190016
+        <rdar://problem/44802875>
+
+        Reviewed by Saam Barati.
+
+        Also assert in performJITMemcpy() that the entire buffer to be copied will fit in
+        JIT memory.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::fillNops):
+        (JSC::ARM64Assembler::replaceWithVMHalt):
+        (JSC::ARM64Assembler::replaceWithJump):
+        (JSC::ARM64Assembler::replaceWithLoad):
+        (JSC::ARM64Assembler::replaceWithAddressComputation):
+        (JSC::ARM64Assembler::setPointer):
+        (JSC::ARM64Assembler::repatchInt32):
+        (JSC::ARM64Assembler::repatchCompact):
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        (JSC::ARM64Assembler::linkCompareAndBranch):
+        (JSC::ARM64Assembler::linkConditionalBranch):
+        (JSC::ARM64Assembler::linkTestAndBranch):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        (JSC::LinkBuffer::linkCode):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+
 2018-09-25  Keith Miller  <keith_miller@apple.com>
 
         Move Symbol API to SPI

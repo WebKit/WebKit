@@ -88,7 +88,13 @@ extern JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy;
 
 static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
+#if CPU(ARM64)
+    static constexpr size_t instructionSize = sizeof(unsigned);
+    RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(dst) == dst);
+    RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(src) == src);
+#endif
     if (dst >= startOfFixedExecutableMemoryPool() && dst < endOfFixedExecutableMemoryPool()) {
+        RELEASE_ASSERT(reinterpret_cast<uint8_t*>(dst) + n <= endOfFixedExecutableMemoryPool());
 #if ENABLE(FAST_JIT_PERMISSIONS)
         if (useFastPermisionsJITCopy) {
             os_thread_self_restrict_rwx_to_rw();

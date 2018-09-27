@@ -113,6 +113,10 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
 
     uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.buffer());
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
+#if CPU(ARM64)
+    RELEASE_ASSERT(roundUpToMultipleOf<sizeof(unsigned)>(outData) == outData);
+    RELEASE_ASSERT(roundUpToMultipleOf<sizeof(unsigned)>(codeOutData) == codeOutData);
+#endif
 
     int readPtr = 0;
     int writePtr = 0;
@@ -213,6 +217,8 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCom
     void* code = m_code.dataLocation();
 #if CPU(ARM_TRADITIONAL)
     macroAssembler.m_assembler.prepareExecutableCopy(code);
+#elif CPU(ARM64)
+    RELEASE_ASSERT(roundUpToMultipleOf<Assembler::instructionSize>(code) == code);
 #endif
     performJITMemcpy(code, buffer.data(), buffer.codeSize());
 #if CPU(MIPS)
@@ -335,5 +341,3 @@ void LinkBuffer::dumpCode(void* code, size_t size)
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
-
-

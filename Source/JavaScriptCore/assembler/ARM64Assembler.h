@@ -266,6 +266,8 @@ static constexpr bool isZr(RegisterID reg) { return reg == zr; }
 
 class ARM64Assembler {
 public:
+    static constexpr size_t instructionSize = sizeof(unsigned);
+
     typedef ARM64Registers::RegisterID RegisterID;
     typedef ARM64Registers::SPRegisterID SPRegisterID;
     typedef ARM64Registers::FPRegisterID FPRegisterID;
@@ -1562,9 +1564,10 @@ public:
         size_t n = size / sizeof(int32_t);
         for (int32_t* ptr = static_cast<int32_t*>(base); n--;) {
             int insn = nopPseudo();
-            if (isCopyingToExecutableMemory)
+            if (isCopyingToExecutableMemory) {
+                RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(ptr) == ptr);
                 performJITMemcpy(ptr++, &insn, sizeof(int));
-            else
+            } else
                 memcpy(ptr++, &insn, sizeof(int));
         }
     }
@@ -2636,6 +2639,7 @@ public:
     {
         // This should try to write to null which should always Segfault.
         int insn = dataCacheZeroVirtualAddress(ARM64Registers::zr);
+        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
         performJITMemcpy(where, &insn, sizeof(int));
         cacheFlush(where, sizeof(int));
     }
@@ -2645,6 +2649,7 @@ public:
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(where)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
         int insn = unconditionalBranchImmediate(false, static_cast<int>(offset));
+        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
         performJITMemcpy(where, &insn, sizeof(int));
         cacheFlush(where, sizeof(int));
     }
@@ -2675,6 +2680,7 @@ public:
             ASSERT(!shift);
             ASSERT(!(imm12 & ~0xff8));
             int insn = loadStoreRegisterUnsignedImmediate(MemOpSize_64, false, MemOp_LOAD, encodePositiveImmediate<64>(imm12), rn, rd);
+            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
             performJITMemcpy(where, &insn, sizeof(int));
             cacheFlush(where, sizeof(int));
         }
@@ -2709,6 +2715,7 @@ public:
             ASSERT(opc == MemOp_LOAD);
             ASSERT(!(imm12 & ~0x1ff));
             int insn = addSubtractImmediate(Datasize_64, AddOp_ADD, DontSetFlags, 0, imm12 * sizeof(void*), rn, rt);
+            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
             performJITMemcpy(where, &insn, sizeof(int));
             cacheFlush(where, sizeof(int));
         }
@@ -2743,6 +2750,7 @@ public:
         buffer[0] = moveWideImediate(Datasize_64, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
         buffer[1] = moveWideImediate(Datasize_64, MoveWideOp_K, 1, getHalfword(value, 1), rd);
         buffer[2] = moveWideImediate(Datasize_64, MoveWideOp_K, 2, getHalfword(value, 2), rd);
+        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(address) == address);
         performJITMemcpy(address, buffer, sizeof(int) * 3);
 
         if (flush)
@@ -2770,6 +2778,7 @@ public:
             buffer[0] = moveWideImediate(Datasize_32, MoveWideOp_N, 0, ~getHalfword(value, 0), rd);
             buffer[1] = moveWideImediate(Datasize_32, MoveWideOp_K, 1, getHalfword(value, 1), rd);
         }
+        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
         performJITMemcpy(where, &buffer, sizeof(int) * 2);
 
         cacheFlush(where, sizeof(int) * 2);
@@ -2845,6 +2854,7 @@ public:
         else
             imm12 = encodePositiveImmediate<64>(value);
         int insn = loadStoreRegisterUnsignedImmediate(size, V, opc, imm12, rn, rt);
+        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
         performJITMemcpy(where, &insn, sizeof(int));
 
         cacheFlush(where, sizeof(int));
@@ -3048,6 +3058,7 @@ protected:
         ASSERT(static_cast<int>(offset) == offset);
 
         int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
+        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         performJITMemcpy(from, &insn, sizeof(int));
     }
 
@@ -3064,13 +3075,16 @@ protected:
 
         if (useDirect || isDirect) {
             int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, condition == ConditionNE, static_cast<int>(offset), rt);
+            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             performJITMemcpy(from, &insn, sizeof(int));
             if (!isDirect) {
                 insn = nopPseudo();
+                RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from + 1) == (from + 1));
                 performJITMemcpy(from + 1, &insn, sizeof(int));
             }
         } else {
             int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, invert(condition) == ConditionNE, 2, rt);
+            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             performJITMemcpy(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, fromInstruction + 1, to);
         }
@@ -3089,13 +3103,16 @@ protected:
 
         if (useDirect || isDirect) {
             int insn = conditionalBranchImmediate(static_cast<int>(offset), condition);
+            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             performJITMemcpy(from, &insn, sizeof(int));
             if (!isDirect) {
                 insn = nopPseudo();
+                RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from + 1) == (from + 1));
                 performJITMemcpy(from + 1, &insn, sizeof(int));
             }
         } else {
             int insn = conditionalBranchImmediate(2, invert(condition));
+            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             performJITMemcpy(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, fromInstruction + 1, to);
         }
@@ -3115,13 +3132,16 @@ protected:
 
         if (useDirect || isDirect) {
             int insn = testAndBranchImmediate(condition == ConditionNE, static_cast<int>(bitNumber), static_cast<int>(offset), rt);
+            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             performJITMemcpy(from, &insn, sizeof(int));
             if (!isDirect) {
                 insn = nopPseudo();
+                RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from + 1) == (from + 1));
                 performJITMemcpy(from + 1, &insn, sizeof(int));
             }
         } else {
             int insn = testAndBranchImmediate(invert(condition) == ConditionNE, static_cast<int>(bitNumber), 2, rt);
+            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             performJITMemcpy(from, &insn, sizeof(int));
             linkJumpOrCall<false>(from + 1, fromInstruction + 1, to);
         }
