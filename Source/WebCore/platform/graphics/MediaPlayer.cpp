@@ -1266,9 +1266,16 @@ void MediaPlayer::initializationDataEncountered(const String& initDataType, RefP
     client().mediaPlayerInitializationDataEncountered(initDataType, WTFMove(initData));
 }
 
-void MediaPlayer::waitingForKey()
+void MediaPlayer::waitingForKeyChanged()
 {
-    client().mediaPlayerWaitingForKey();
+    client().mediaPlayerWaitingForKeyChanged();
+}
+
+bool MediaPlayer::waitingForKey() const
+{
+    if (!m_private)
+        return false;
+    return m_private->waitingForKey();
 }
 #endif
 

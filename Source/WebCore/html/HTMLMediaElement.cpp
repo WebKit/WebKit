@@ -2787,8 +2787,28 @@ void HTMLMediaElement::mediaPlayerInitializationDataEncountered(const String& in
     m_asyncEventQueue.enqueueEvent(MediaEncryptedEvent::create(eventNames().encryptedEvent, initializer, Event::IsTrusted::Yes));
 }
 
-void HTMLMediaElement::mediaPlayerWaitingForKey()
+void HTMLMediaElement::mediaPlayerWaitingForKeyChanged()
 {
+    if (!m_player)
+        return;
+
+    if (!m_player->waitingForKey() && m_playbackBlockedWaitingForKey) {
+        // https://w3c.github.io/encrypted-media/#resume-playback
+        // W3C Editor's Draft 23 June 2017
+
+        // NOTE: continued from HTMLMediaElement::attemptToDecrypt().
+        // 4. If the user agent can advance the current playback position in the direction of playback:
+        //   4.1. Set the media element's decryption blocked waiting for key value to false.
+        // FIXME: ^
+        //   4.2. Set the media element's playback blocked waiting for key value to false.
+        m_playbackBlockedWaitingForKey = false;
+
+        //   4.3. Set the media element's readyState value to HAVE_CURRENT_DATA, HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA as appropriate.
+        setReadyState(m_player->readyState());
+
+        return;
+    }
+
     // https://www.w3.org/TR/encrypted-media/#wait-for-key
     // W3C Recommendation 18 September 2017
 
@@ -2890,14 +2910,7 @@ void HTMLMediaElement::attemptToResumePlaybackIfNecessary()
     // 3. Run the Attempt to Decrypt algorithm on the media element.
     attemptToDecrypt();
 
-    // 4. If the user agent can advance the current playback position in the direction of playback:
-    //   4.1. Set the media element's decryption blocked waiting for key value to false.
-    // FIXME: ^
-    //   4.2. Set the media element's playback blocked waiting for key value to false.
-    m_playbackBlockedWaitingForKey = false;
-
-    //   4.3. Set the media element's readyState value to HAVE_CURRENT_DATA, HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA as appropriate.
-    setReadyState(m_player->readyState());
+    // NOTE: continued in HTMLMediaElement::waitingForKeyChanged()
 }
 
 void HTMLMediaElement::cdmClientAttemptToResumePlaybackIfNecessary()

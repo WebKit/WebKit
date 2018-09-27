@@ -109,6 +109,8 @@ public:
     AVStreamDataParser* parser() const { return m_parser.get(); }
     void setCDMSession(CDMSessionMediaSourceAVFObjC*);
     void setCDMInstance(CDMInstance*);
+    void attemptToDecrypt();
+    bool waitingForKey() const { return m_waitingForKey; }
 
     void flush();
 
@@ -189,6 +191,7 @@ private:
     bool m_parsingSucceeded { true };
     bool m_parserStateWasReset { false };
     bool m_discardSamplesUntilNextInitializationSegment { false };
+    bool m_waitingForKey { true };
     int m_enabledVideoTrackID { -1 };
     int m_protectedTrackID { -1 };
 };

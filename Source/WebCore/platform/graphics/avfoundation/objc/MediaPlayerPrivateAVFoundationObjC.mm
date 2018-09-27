@@ -1784,7 +1784,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         RetainPtr<NSData> keyURIData = [keyURI dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
         auto keyURIBuffer = SharedBuffer::create(keyURIData.get());
         player()->initializationDataEncountered("skd"_s, keyURIBuffer->tryCreateArrayBuffer());
-        player()->waitingForKey();
+        setWaitingForKey(true);
 #endif
         return true;
     }
@@ -2503,6 +2503,16 @@ void MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance(CDMInstanc
             infoRequest.contentType = AVStreamingKeyDeliveryContentKeyType;
         [request finishLoading];
     }
+    setWaitingForKey(false);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setWaitingForKey(bool waitingForKey)
+{
+    if (m_waitingForKey == waitingForKey)
+        return;
+
+    m_waitingForKey = waitingForKey;
+    player()->waitingForKeyChanged();
 }
 #endif
 

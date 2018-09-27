@@ -147,6 +147,8 @@ public:
     void cdmInstanceAttached(CDMInstance&) final;
     void cdmInstanceDetached(CDMInstance&) final;
     void attemptToDecryptWithInstance(CDMInstance&) final;
+    void setWaitingForKey(bool);
+    bool waitingForKey() const final { return m_waitingForKey; }
 #endif
 
 private:
@@ -392,6 +394,7 @@ private:
     WeakPtr<CDMSessionAVFoundationObjC> m_session;
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    bool m_waitingForKey { false };
     RefPtr<CDMInstanceFairPlayStreamingAVFObjC> m_cdmInstance;
 #endif
 

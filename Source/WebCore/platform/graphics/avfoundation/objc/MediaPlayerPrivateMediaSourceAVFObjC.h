@@ -120,6 +120,9 @@ public:
     void cdmInstanceAttached(CDMInstance&) final;
     void cdmInstanceDetached(CDMInstance&) final;
     void attemptToDecryptWithInstance(CDMInstance&) final;
+    bool waitingForKey() const final;
+
+    void waitingForKeyChanged();
     CDMInstance* cdmInstance() const { return m_cdmInstance.get(); }
 #endif
 

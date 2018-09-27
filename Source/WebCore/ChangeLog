@@ -1,3 +1,55 @@
+2018-09-27  Jer Noble  <jer.noble@apple.com>
+
+        MediaPlayer should have mediaPlayerWaitingForKeyChanged() / bool waitingForKey() accessor
+        https://bugs.webkit.org/show_bug.cgi?id=189951
+
+        Reviewed by Eric Carlson.
+
+        In order to implement the "Resume Playback" section of EME, part 4, we need to be able
+        to query whether the MediaPlayer is still waiting for a key after attemptToDecrypt()
+        has been called. Currently this involves no behavioral changes, as all modern EME ports
+        will still just notify the media element that they no longer need keys after one has
+        been added, but future ports may be able to wait for multiple keys before reporting
+        that it is no longer waiting for keys.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerWaitingForKeyChanged):
+        (WebCore::HTMLMediaElement::attemptToResumePlaybackIfNecessary):
+        (WebCore::HTMLMediaElement::mediaPlayerWaitingForKey): Deleted.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::waitingForKeyChanged):
+        (WebCore::MediaPlayer::waitingForKey const):
+        (WebCore::MediaPlayer::waitingForKey): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerWaitingForKeyChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerWaitingForKey): Deleted.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::waitingForKey const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::waitingForKey const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::waitingForKeyChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::attemptToDecrypt):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::reportWaitingForKey):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setWaitingForKey):
+        (WebCore::MediaPlayerPrivateGStreamerBase::waitingForKey const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler):
+
 2018-09-27  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Fix unwanted sample erase from the decode queue

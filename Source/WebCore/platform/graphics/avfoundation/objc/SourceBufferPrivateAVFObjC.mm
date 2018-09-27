@@ -664,6 +664,9 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
         auto initDataBuffer = SharedBuffer::create(initData);
         m_mediaSource->player()->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
     }
+
+    m_waitingForKey = true;
+    m_mediaSource->player()->waitingForKeyChanged();
 #endif
 
     UNUSED_PARAM(initData);
@@ -922,6 +925,8 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
             m_hasSessionSemaphore = nullptr;
         }
     }
+    m_waitingForKey = false;
+    m_mediaSource->player()->waitingForKeyChanged();
 #else
     UNUSED_PARAM(instance);
 #endif

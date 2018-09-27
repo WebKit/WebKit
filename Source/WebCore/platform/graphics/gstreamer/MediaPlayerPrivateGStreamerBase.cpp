@@ -1353,7 +1353,21 @@ void MediaPlayerPrivateGStreamerBase::handleProtectionEvent(GstEvent* event)
 void MediaPlayerPrivateGStreamerBase::reportWaitingForKey()
 {
     GST_TRACE("waiting for key");
-    m_player->waitingForKey();
+    m_player->waitingForKeyChanged();
+}
+
+void MediaPlayerPrivateGStreamerBase::setWaitingForKey(bool waitingForKey)
+{
+    if (waitingForKey == m_waitingForKey)
+        return;
+
+    m_waitingForKey = waitingForKey;
+    reportWaitingForKey();
+}
+
+bool MediaPlayerPrivateGStreamerBase::waitingForKey() const
+{
+    return m_waitingForKey;
 }
 #endif
 

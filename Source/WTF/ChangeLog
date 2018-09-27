@@ -1,3 +1,26 @@
+2018-09-27  Jer Noble  <jer.noble@apple.com>
+
+        MediaPlayer should have mediaPlayerWaitingForKeyChanged() / bool waitingForKey() accessor
+        https://bugs.webkit.org/show_bug.cgi?id=189951
+
+        Reviewed by Eric Carlson.
+
+        Templated functions should take r-value references, as they have perfect type deduction for
+        all parameter types; references, l-value references, and r-value references in template function
+        parameters have special type deduction semantics.
+        See: <https://en.cppreference.com/w/cpp/language/reference#Forwarding_references>
+
+        Previously, const reference parameters would be copied when passed into anyOf(), and containers
+        of Ref<> would generate compile errors when passed into anyOf, as they cannot be copied. Now,
+        with r-value reference types in template parameters, a const reference is mapped to a const reference,
+        a non-const reference is mapped to a non-const reference, and a r-value reference is mapped to
+        an r-value reference.
+
+        * wtf/Algorithms.h:
+        (WTF::forEach):
+        (WTF::anyOf):
+        (WTF::allOf):
+
 2018-09-25  John Wilander  <wilander@apple.com>
 
         Change from HAVE(CFNETWORK_STORAGE_PARTITIONING) to ENABLE(RESOURCE_LOAD_STATISTICS)

@@ -28,14 +28,14 @@
 namespace WTF {
 
 template<typename ContainerType, typename ForEachFunction>
-void forEach(ContainerType container, ForEachFunction forEachFunction)
+void forEach(ContainerType&& container, ForEachFunction forEachFunction)
 {
     for (auto& value : container)
         forEachFunction(value);
 }
 
 template<typename ContainerType, typename AnyOfFunction>
-bool anyOf(ContainerType container, AnyOfFunction anyOfFunction)
+bool anyOf(ContainerType&& container, AnyOfFunction anyOfFunction)
 {
     for (auto& value : container) {
         if (anyOfFunction(value))
@@ -45,7 +45,7 @@ bool anyOf(ContainerType container, AnyOfFunction anyOfFunction)
 }
 
 template<typename ContainerType, typename AllOfFunction>
-bool allOf(ContainerType container, AllOfFunction allOfFunction)
+bool allOf(ContainerType&& container, AllOfFunction allOfFunction)
 {
     for (auto& value : container) {
         if (!allOfFunction(value))

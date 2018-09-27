@@ -152,6 +152,8 @@ public:
     void attemptToDecryptWithInstance(CDMInstance&) override;
     void dispatchCDMInstance();
     void initializationDataEncountered(GstEvent*);
+    void setWaitingForKey(bool);
+    bool waitingForKey() const;
     void reportWaitingForKey();
 #endif
 
@@ -274,6 +276,7 @@ protected:
     RefPtr<const CDMInstance> m_cdmInstance;
     HashSet<uint32_t> m_handledProtectionEvents;
     bool m_needToResendCredentials { false };
+    bool m_waitingForKey { false };
 #endif
 };
 
