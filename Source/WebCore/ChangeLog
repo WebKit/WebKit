@@ -1,3 +1,20 @@
+2018-09-27  Youenn Fablet  <youenn@apple.com>
+
+        Use kCVPixelFormatType_420YpCbCr8Planar for capturing frames
+        https://bugs.webkit.org/show_bug.cgi?id=190014
+
+        Reviewed by Eric Carlson.
+
+        On Mac, rely on the monoplanar format which can be displayed without any issue.
+        Once rendering is fixed, we should change it back to biplanar as it is closer to what libwebrtc consumes.
+        Covered by manual testing.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::avVideoCapturePixelBufferFormat):
+        (WebCore::AVVideoCaptureSource::setSizeAndFrameRateWithPreset):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        (WebCore::AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+
 2018-09-27  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Support granular errors in PaymentDetailsUpdate
