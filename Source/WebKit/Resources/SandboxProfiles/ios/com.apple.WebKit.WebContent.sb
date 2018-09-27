@@ -88,7 +88,9 @@
 ;; <rdar://problem/12030530> AX: Sandbox violation with changing Language while VO is on
 ;; and <rdar://problem/13071747>
 (mobile-preferences-read
-    "com.apple.SpeakSelection") ; Needed for WebSpeech
+    "com.apple.SpeakSelection" ; Needed for WebSpeech
+    "com.apple.VoiceOverTouch" ; Needed for non-US english language synthesis
+    "com.apple.voiceservices") ; Ditto
 
 (allow mach-lookup
     (global-name "com.apple.audio.AudioComponentPrefs")

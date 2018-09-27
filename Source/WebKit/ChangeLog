@@ -1,3 +1,15 @@
+2018-09-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Allow access to VoiceServices features needed for accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=190019
+        <rdar://problem/43621111>
+
+        Reviewed by Chris Fleizach.
+
+        Revise the sandbox to allow access to relevant WebSpeech features.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2018-09-27  Sihui Liu  <sihui_liu@apple.com>
 
         Fix IOSMAC build
