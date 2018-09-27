@@ -1,3 +1,17 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::deleteCookiesForHostnames()
+        https://bugs.webkit.org/show_bug.cgi?id=190040
+        <rdar://problem/38020368>
+
+        Reviewed by Alex Christensen.
+
+        Update NetworkStorageSession::deleteCookiesForHostnames() to properly deal with the fact
+        that NSHTTPCookie.domain can return nil.
+
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+
 2018-09-27  Youenn Fablet  <youenn@apple.com>
 
         Use kCVPixelFormatType_420YpCbCr8Planar for capturing frames

@@ -508,9 +508,12 @@ void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& host
         return;
 
     HashMap<String, Vector<RetainPtr<NSHTTPCookie>>> cookiesByDomain;
-    for (NSHTTPCookie* cookie in cookies) {
-        auto& cookies = cookiesByDomain.add(cookie.domain, Vector<RetainPtr<NSHTTPCookie>>()).iterator->value;
-        cookies.append(cookie);
+    for (NSHTTPCookie *cookie in cookies) {
+        if (!cookie.domain)
+            continue;
+        cookiesByDomain.ensure(cookie.domain, [] {
+            return Vector<RetainPtr<NSHTTPCookie>>();
+        }).iterator->value.append(cookie);
     }
 
     for (const auto& hostname : hostnames) {
