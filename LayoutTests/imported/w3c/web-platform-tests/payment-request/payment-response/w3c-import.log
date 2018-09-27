@@ -17,8 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/complete-method-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/methodName-attribute-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerEmail-attribute-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerName-attribute-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerPhone-attribute-manual.https.html

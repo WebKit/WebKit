@@ -1,3 +1,15 @@
+2018-09-27  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Update web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=190049
+
+        Reviewed by Youenn Fablet.
+
+        Updated web-platform-tests/payment-request/ to tip-of-tree from web-platform-tests.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-27  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Fix unwanted sample erase from the decode queue

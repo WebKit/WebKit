@@ -5,4 +5,10 @@ PASS MerchantValidationEvent can be dispatched, even if not trusted.
 PASS Must have a validationURL IDL attribute, which is initialized with to the validationURL dictionary value. 
 PASS Must throw TypeError if initialized with an invalid URL. 
 PASS Relative validationURLs use the document as the base. 
+FAIL Must have a methodName IDL attribute, which is initialized with to the methodName dictionary value. assert_idl_attribute: property "methodName" not found in prototype chain
+FAIL When no methodName is passed, methodName attribute defaults to the empty string assert_equals: expected (string) "" but got (undefined) undefined
+FAIL MerchantValidationEvent can be constructed with valid PMIs assert_equals: expected (string) "https://example.com/pay" but got (undefined) undefined
+FAIL MerchantValidationEvent can't be constructed with invalid PMIs assert_throws: expected to throw when constructed with invalid PMI: 'basic-💳' function "() => {
+        const event = new MerchantValidationEvent("test", { methodName });
+      }" did not throw
 

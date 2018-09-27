@@ -1,3 +1,29 @@
+2018-09-27  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Update web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=190049
+
+        Reviewed by Youenn Fablet.
+
+        Updated web-platform-tests/payment-request/ to tip-of-tree from web-platform-tests.
+
+        * web-platform-tests/payment-request/MerchantValidationEvent/complete-method.https-expected.txt: Added.
+        * web-platform-tests/payment-request/MerchantValidationEvent/complete-method.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/payment-request/MerchantValidationEvent/complete-method-manual.https.html.
+        * web-platform-tests/payment-request/MerchantValidationEvent/constructor.https-expected.txt:
+        * web-platform-tests/payment-request/MerchantValidationEvent/constructor.https.html:
+        * web-platform-tests/payment-request/MerchantValidationEvent/w3c-import.log:
+        * web-platform-tests/payment-request/PaymentAddress/attributes-and-toJSON-method-manual.https.html:
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodDetails-attribute.https-expected.txt:
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodDetails-attribute.https.html:
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodName-attribute.https-expected.txt:
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodName-attribute.https.html:
+        * web-platform-tests/payment-request/PaymentValidationErrors/retry-shows-shippingAddress-member-manual.https.html:
+        * web-platform-tests/payment-request/historical.https-expected.txt:
+        * web-platform-tests/payment-request/historical.https.html:
+        * web-platform-tests/payment-request/idlharness.https.window.js:
+        * web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute-manual.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.manual.https.html.
+        * web-platform-tests/payment-request/payment-response/w3c-import.log:
+
 2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236557.
