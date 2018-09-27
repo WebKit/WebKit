@@ -1,3 +1,25 @@
+2018-09-27  Chris Dumez  <cdumez@apple.com>
+
+        document.open() should not propagate URLs to non-fully active documents
+        https://bugs.webkit.org/show_bug.cgi?id=189375
+        <rdar://problem/44282755>
+
+        Reviewed by Youenn Fablet.
+
+        Update our document.open() to not propagate URLs to non-fully active documents, as per:
+        - https://html.spec.whatwg.org/#document-open-steps (Step 11)
+
+        A "fully active" document is defined by at:
+        - https://html.spec.whatwg.org/#fully-active
+
+        No new tests, rebaselined existing test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        (WebCore::Document::isFullyActive const):
+        * dom/Document.h:
+        * dom/Document.idl:
+
 2018-09-27  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Use sentinel buffer to detect end of append

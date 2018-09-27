@@ -2661,7 +2661,6 @@ ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(DOMWindow& activeWind
     return m_domWindow->open(activeWindow, firstWindow, url, name, features);
 }
 
-// FIXME: Add support for the 'type' and 'replace' parameters.
 ExceptionOr<Document&> Document::openForBindings(Document* responsibleDocument, const String&, const String&)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
@@ -2696,7 +2695,7 @@ void Document::open(Document* responsibleDocument)
 
     removeAllEventListeners();
 
-    if (responsibleDocument) {
+    if (responsibleDocument && isFullyActive()) {
         setURL(responsibleDocument->url());
         setCookieURL(responsibleDocument->cookieURL());
         setSecurityOriginPolicy(responsibleDocument->securityOriginPolicy());
@@ -2708,6 +2707,20 @@ void Document::open(Document* responsibleDocument)
 
     if (m_frame)
         m_frame->loader().didExplicitOpen();
+}
+
+// https://html.spec.whatwg.org/#fully-active
+bool Document::isFullyActive() const
+{
+    auto* frame = this->frame();
+    if (!frame || frame->document() != this)
+        return false;
+
+    if (frame->isMainFrame())
+        return true;
+
+    auto* parentFrame = frame->tree().parent();
+    return parentFrame && parentFrame->document() && parentFrame->document()->isFullyActive();
 }
 
 void Document::detachParser()
