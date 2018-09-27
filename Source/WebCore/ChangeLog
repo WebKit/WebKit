@@ -1,3 +1,9 @@
+2018-09-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK Ubuntu LTS build fix attempt after r236396.
+
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+
 2018-09-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on
