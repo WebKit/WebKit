@@ -1,3 +1,15 @@
+2018-09-27  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Disable test without LLInt on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=190037
+
+        Reviewed by Mark Lam.
+
+        Test runs out of executable memory on ARMv7, do not run
+        this test without LLInt enabled.
+
+        * stress/regress-169445.js:
+
 2018-09-26  Keith Miller  <keith_miller@apple.com>
 
         We should zero unused property storage when rebalancing array storage.

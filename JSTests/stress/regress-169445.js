@@ -1,3 +1,5 @@
+//@ defaultNoNoLLIntRun if $architecture == "arm"
+
 let args = new Array(0x10000);
 args.fill();
 args = args.map((_, i) => 'a' + i).join(', ');
