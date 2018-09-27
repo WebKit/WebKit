@@ -576,7 +576,7 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
     if (!basicBlock.intersectionOfCFAHasVisited)
         return;
 
-    OSREntryData* entry = m_jitCode->appendOSREntryData(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead));
+    OSREntryData* entry = m_jitCode->appendOSREntryData(basicBlock.bytecodeBegin, linkBuffer.locationOf<OSREntryPtrTag>(blockHead));
 
     entry->m_expectedValues = basicBlock.intersectionOfPastValuesAtHead;
         

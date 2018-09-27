@@ -1,5 +1,23 @@
 2018-09-27  Mark Lam  <mark.lam@apple.com>
 
+        DFG::OSREntry::m_machineCodeOffset should be a CodeLocation.
+        https://bugs.webkit.org/show_bug.cgi?id=190054
+        <rdar://problem/44803543>
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::appendOSREntryData):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::OSREntryData::dumpInContext const):
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        * runtime/JSCPtrTag.h:
+
+2018-09-27  Mark Lam  <mark.lam@apple.com>
+
         JITMathIC should not use integer offsets into machine code.
         https://bugs.webkit.org/show_bug.cgi?id=190030
         <rdar://problem/44803307>
