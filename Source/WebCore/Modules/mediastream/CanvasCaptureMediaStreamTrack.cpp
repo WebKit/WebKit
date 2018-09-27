@@ -42,7 +42,12 @@ Ref<CanvasCaptureMediaStreamTrack> CanvasCaptureMediaStreamTrack::create(ScriptE
 CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack(ScriptExecutionContext& context, Ref<HTMLCanvasElement>&& canvas, Ref<CanvasCaptureMediaStreamTrack::Source>&& source)
     : MediaStreamTrack(context, MediaStreamTrackPrivate::create(source.copyRef()))
     , m_canvas(WTFMove(canvas))
-    , m_source(WTFMove(source))
+{
+}
+
+CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack(ScriptExecutionContext& context, Ref<HTMLCanvasElement>&& canvas, Ref<MediaStreamTrackPrivate>&& privateTrack)
+    : MediaStreamTrack(context, WTFMove(privateTrack))
+    , m_canvas(WTFMove(canvas))
 {
 }
 
@@ -174,8 +179,8 @@ RefPtr<MediaStreamTrack> CanvasCaptureMediaStreamTrack::clone()
 {
     if (!scriptExecutionContext())
         return nullptr;
-
-    return CanvasCaptureMediaStreamTrack::create(*scriptExecutionContext(), m_canvas.copyRef(), m_source->frameRequestRate());
+    
+    return adoptRef(*new CanvasCaptureMediaStreamTrack(*scriptExecutionContext(), m_canvas.copyRef(), m_private->clone()));
 }
 
 }

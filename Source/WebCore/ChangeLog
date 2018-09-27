@@ -1,3 +1,22 @@
+2018-09-26  YUHAN WU  <yuhan_wu@apple.com>
+
+        Video track clone cannot preserve original property
+        https://bugs.webkit.org/show_bug.cgi?id=189872
+        <rdar://problem/44706579>
+
+        Reviewed by Youenn Fablet.
+
+        Fix the issue that the cloned track created by canvas.captureStream().getVideoTracks() cannot keep some attributes, such as enabled.
+        Updated a testcase expected result:
+        LayoutTests/imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack):
+        (WebCore::CanvasCaptureMediaStreamTrack::create):
+        (WebCore::CanvasCaptureMediaStreamTrack::clone):
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.h:
+
 2018-09-26  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r236524.

@@ -42,7 +42,7 @@ public:
     static Ref<CanvasCaptureMediaStreamTrack> create(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, std::optional<double>&& frameRequestRate);
 
     HTMLCanvasElement& canvas() { return m_canvas.get(); }
-    void requestFrame() { m_source->requestFrame(); }
+    void requestFrame() { static_cast<Source&>(source()).requestFrame(); }
 
     RefPtr<MediaStreamTrack> clone() final;
 
@@ -81,11 +81,11 @@ private:
     };
 
     CanvasCaptureMediaStreamTrack(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Ref<Source>&&);
+    CanvasCaptureMediaStreamTrack(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Ref<MediaStreamTrackPrivate>&&);
 
     bool isCanvas() const final { return true; }
 
     Ref<HTMLCanvasElement> m_canvas;
-    Ref<Source> m_source;
 };
 
 }

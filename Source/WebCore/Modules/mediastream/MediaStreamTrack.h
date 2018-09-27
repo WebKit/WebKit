@@ -149,7 +149,9 @@ protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-
+        
+    Ref<MediaStreamTrackPrivate> m_private;
+        
 private:
     explicit MediaStreamTrack(MediaStreamTrack&);
 
@@ -175,7 +177,7 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
     Vector<Observer*> m_observers;
-    Ref<MediaStreamTrackPrivate> m_private;
+    
 
     MediaTrackConstraints m_constraints;
     std::optional<DOMPromiseDeferred<void>> m_promise;
