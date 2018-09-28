@@ -381,10 +381,10 @@
 #define __has_include(path) 0
 #endif
 
-/* IGNORE_WARNINGS.* */
+/* IGNORE_WARNINGS */
 
-// Can't use WTF_CONCAT() and STRINGIZE() because they are defined in
-// StdLibExtras.h which includes us
+/* Can't use WTF_CONCAT() and STRINGIZE() because they are defined in
+ * StdLibExtras.h, which includes this file. */
 #define _COMPILER_CONCAT_I(a, b) a ## b
 #define _COMPILER_CONCAT(a, b) _COMPILER_CONCAT_I(a, b)
 

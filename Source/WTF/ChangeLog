@@ -1,3 +1,17 @@
+2018-09-28  Brian Burg  <bburg@apple.com>
+
+        Replace recently added line comments in Compiler.h
+        https://bugs.webkit.org/show_bug.cgi?id=190062
+        <rdar://problem/44838618>
+
+        Reviewed by Joseph Pecoraro.
+
+        This breaks some Apple-internal tooling. For now, work around it by
+        changing the comment style. On the other side, the issue will be fixed
+        more permanently by adopting the approach from r230213.
+
+        * wtf/Compiler.h: Use multiline comments.
+
 2018-09-28  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: eliminate raw pointer usage in Fullscreen code
