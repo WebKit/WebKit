@@ -469,7 +469,7 @@ void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete,
     // Put CF_HTML format on the pasteboard 
     if (::OpenClipboard(m_owner)) {
         Vector<char> data;
-        markupToCFHTML(createMarkup(selectedRange, nullptr, AnnotateForInterchange::Yes),
+        markupToCFHTML(serializePreservingVisualAppearance(selectedRange, nullptr, AnnotateForInterchange::Yes),
             selectedRange.startContainer().document().url().string(), data);
         HGLOBAL cbData = createGlobalData(data);
         if (!::SetClipboardData(HTMLClipboardFormat, cbData))

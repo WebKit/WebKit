@@ -1,3 +1,10 @@
+2018-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r236612.
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeSelection):
+
 2018-09-28  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove the "in-store" button type
