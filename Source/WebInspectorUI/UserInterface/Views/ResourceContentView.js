@@ -84,6 +84,8 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
     showGenericNoContentMessage()
     {
         this.showMessage(WI.UIString("Resource has no content"));
+
+        this.dispatchEventToListeners(WI.ResourceContentView.Event.ContentError);
     }
 
     showGenericErrorMessage()

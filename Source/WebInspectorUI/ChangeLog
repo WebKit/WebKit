@@ -1,3 +1,14 @@
+2018-09-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: image resources without content are still shown when the Images folder is selected
+        https://bugs.webkit.org/show_bug.cgi?id=190072
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype.showGenericNoContentMessage):
+        Treat paths that result in a "Resource has no content" message as a "content error".
+
 2018-09-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Hide DOM and XHR breakpoint sections when they are empty
