@@ -60,9 +60,9 @@ class VideoFullscreenInterfaceContext
     : public RefCounted<VideoFullscreenInterfaceContext>
     , public WebCore::VideoFullscreenModelClient {
 public:
-    static Ref<VideoFullscreenInterfaceContext> create(VideoFullscreenManager& manager, uint64_t contextId)
+    static Ref<VideoFullscreenInterfaceContext> create(WeakPtr<VideoFullscreenManager>&& manager, uint64_t contextId)
     {
-        return adoptRef(*new VideoFullscreenInterfaceContext(manager, contextId));
+        return adoptRef(*new VideoFullscreenInterfaceContext(WTFMove(manager), contextId));
     }
     virtual ~VideoFullscreenInterfaceContext();
 
@@ -86,14 +86,16 @@ public:
     bool isFullscreen() const { return m_isFullscreen; }
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
 
+    WeakPtr<WebCore::VideoFullscreenModelClient> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
+
 private:
     // VideoFullscreenModelClient
     void hasVideoChanged(bool) override;
     void videoDimensionsChanged(const WebCore::FloatSize&) override;
 
-    VideoFullscreenInterfaceContext(VideoFullscreenManager&, uint64_t contextId);
+    VideoFullscreenInterfaceContext(WeakPtr<VideoFullscreenManager>&&, uint64_t contextId);
 
-    VideoFullscreenManager* m_manager;
+    WeakPtr<VideoFullscreenManager> m_manager;
     uint64_t m_contextId;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     bool m_isAnimating { false };
@@ -101,9 +103,13 @@ private:
     WebCore::HTMLMediaElementEnums::VideoFullscreenMode m_fullscreenMode { WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone };
     bool m_fullscreenStandby { false };
     bool m_isFullscreen { false };
+    WeakPtrFactory<WebCore::VideoFullscreenModelClient> m_weakPtrFactory;
 };
 
-class VideoFullscreenManager : public RefCounted<VideoFullscreenManager>, private IPC::MessageReceiver {
+class VideoFullscreenManager
+    : public RefCounted<VideoFullscreenManager>
+    , public CanMakeWeakPtr<VideoFullscreenManager>
+    , private IPC::MessageReceiver {
 public:
     static Ref<VideoFullscreenManager> create(WebPage&, PlaybackSessionManager&);
     virtual ~VideoFullscreenManager();

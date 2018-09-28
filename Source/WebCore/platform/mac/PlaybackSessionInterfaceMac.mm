@@ -44,24 +44,18 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 namespace WebCore {
 
-Ref<PlaybackSessionInterfaceMac> PlaybackSessionInterfaceMac::create(PlaybackSessionModel& model)
+Ref<PlaybackSessionInterfaceMac> PlaybackSessionInterfaceMac::create(Ref<PlaybackSessionModel>&& model)
 {
-    auto interface = adoptRef(*new PlaybackSessionInterfaceMac(model));
-    model.addClient(interface);
-    return interface;
+    return adoptRef(*new PlaybackSessionInterfaceMac(WTFMove(model)));
 }
 
-PlaybackSessionInterfaceMac::PlaybackSessionInterfaceMac(PlaybackSessionModel& model)
-    : m_playbackSessionModel(&model)
+PlaybackSessionInterfaceMac::PlaybackSessionInterfaceMac(Ref<PlaybackSessionModel>&& model)
+    : m_playbackSessionModel(WTFMove(model))
 {
+    playbackSessionModel().addClient(m_weakPtrFactory.createWeakPtr(*this));
 }
 
-PlaybackSessionInterfaceMac::~PlaybackSessionInterfaceMac()
-{
-    invalidate();
-}
-
-PlaybackSessionModel* PlaybackSessionInterfaceMac::playbackSessionModel() const
+PlaybackSessionModel& PlaybackSessionInterfaceMac::playbackSessionModel() const
 {
     return m_playbackSessionModel;
 }
@@ -102,7 +96,7 @@ void PlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
     [controlsManager setRate:isPlaying ? playbackRate : 0.];
     [controlsManager setPlaying:isPlaying];
-    updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], playbackRate, isPlaying);
+    updatePlaybackControlsManagerTiming(playbackSessionModel().currentTime(), [[NSProcessInfo processInfo] systemUptime], playbackRate, isPlaying);
 #else
     UNUSED_PARAM(isPlaying);
     UNUSED_PARAM(playbackRate);
@@ -112,14 +106,14 @@ void PlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate
 void PlaybackSessionInterfaceMac::beginScrubbing()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], 0, false);
+    updatePlaybackControlsManagerTiming(playbackSessionModel().currentTime(), [[NSProcessInfo processInfo] systemUptime], 0, false);
 #endif
-    playbackSessionModel()->beginScrubbing();
+    playbackSessionModel().beginScrubbing();
 }
 
 void PlaybackSessionInterfaceMac::endScrubbing()
 {
-    playbackSessionModel()->endScrubbing();
+    playbackSessionModel().endScrubbing();
 }
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -198,15 +192,6 @@ void PlaybackSessionInterfaceMac::externalPlaybackChanged(bool, PlaybackSessionM
 #endif
 }
 
-void PlaybackSessionInterfaceMac::invalidate()
-{
-    if (!m_playbackSessionModel)
-        return;
-
-    m_playbackSessionModel->removeClient(*this);
-    m_playbackSessionModel = nullptr;
-}
-
 void PlaybackSessionInterfaceMac::ensureControlsManager()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -225,32 +210,27 @@ void PlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControls
 {
     m_playbackControlsManager = manager;
 
-    if (!manager || !m_playbackSessionModel)
+    if (!manager)
         return;
 
     NSTimeInterval anchorTimeStamp = ![manager rate] ? NAN : [[NSProcessInfo processInfo] systemUptime];
-    manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:m_playbackSessionModel->currentTime() anchorTimeStamp:anchorTimeStamp rate:0];
-    double duration = m_playbackSessionModel->duration();
+    manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:playbackSessionModel().currentTime() anchorTimeStamp:anchorTimeStamp rate:0];
+    double duration = playbackSessionModel().duration();
     manager.contentDuration = duration;
     manager.hasEnabledAudio = duration > 0;
     manager.hasEnabledVideo = duration > 0;
-    manager.rate = m_playbackSessionModel->isPlaying() ? m_playbackSessionModel->playbackRate() : 0.;
-    manager.seekableTimeRanges = timeRangesToArray(m_playbackSessionModel->seekableRanges()).get();
+    manager.rate = playbackSessionModel().isPlaying() ? playbackSessionModel().playbackRate() : 0.;
+    manager.seekableTimeRanges = timeRangesToArray(playbackSessionModel().seekableRanges()).get();
     manager.canTogglePlayback = YES;
-    manager.playing = m_playbackSessionModel->isPlaying();
-    [manager setAudioMediaSelectionOptions:m_playbackSessionModel->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->audioMediaSelectedIndex())];
-    [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
+    manager.playing = playbackSessionModel().isPlaying();
+    [manager setAudioMediaSelectionOptions:playbackSessionModel().audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(playbackSessionModel().audioMediaSelectedIndex())];
+    [manager setLegibleMediaSelectionOptions:playbackSessionModel().legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(playbackSessionModel().legibleMediaSelectedIndex())];
 }
 
 void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerCanTogglePictureInPicture()
 {
-    PlaybackSessionModel* model = playbackSessionModel();
-    if (!model) {
-        [playBackControlsManager() setCanTogglePictureInPicture:NO];
-        return;
-    }
-
-    [playBackControlsManager() setCanTogglePictureInPicture:model->isPictureInPictureSupported() && !model->externalPlaybackEnabled()];
+    auto& model = playbackSessionModel();
+    [playBackControlsManager() setCanTogglePictureInPicture:model.isPictureInPictureSupported() && !model.externalPlaybackEnabled()];
 }
 
 void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying)
@@ -259,16 +239,14 @@ void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double cur
     if (!manager)
         return;
 
-    PlaybackSessionModel *model = playbackSessionModel();
-    if (!model)
-        return;
+    auto& model = playbackSessionModel();
 
     double effectiveAnchorTime = playbackRate ? anchorTime : NAN;
     double effectivePlaybackRate = playbackRate;
     if (!isPlaying
-        || model->isScrubbing()
-        || (manager.rate > 0 && model->playbackStartedTime() >= currentTime)
-        || (manager.rate < 0 && model->playbackStartedTime() <= currentTime))
+        || model.isScrubbing()
+        || (manager.rate > 0 && model.playbackStartedTime() >= currentTime)
+        || (manager.rate < 0 && model.playbackStartedTime() <= currentTime))
         effectivePlaybackRate = 0;
 
     manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:effectivePlaybackRate];

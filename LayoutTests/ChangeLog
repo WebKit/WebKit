@@ -1,3 +1,18 @@
+2018-09-28  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: eliminate raw pointer usage in Fullscreen code
+        https://bugs.webkit.org/show_bug.cgi?id=188747
+        <rdar://problem/43541164>
+
+        Reviewed by Alex Christensen.
+
+        Test was causing false pass results due to the webkitPresentationMode being correctly set
+        to "inline" during the close() operation; modify the test to only perform the close()
+        operation when the presetation mode is changed to "picture-in-picture".
+
+        * media/controls/ipad/close-page-with-picture-in-picture-video-assertion-failure.html:
+        * media/controls/ipad/resources/picture-in-picture.html:
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         Drop support for cross-origin-window-policy header

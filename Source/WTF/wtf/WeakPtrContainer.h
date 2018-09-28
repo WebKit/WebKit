@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,48 @@
 
 #pragma once
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
-namespace WebCore {
+namespace WTF {
 
-class PlaybackSessionInterface {
+template <typename T>
+class WeakPtrContainer {
 public:
-    virtual ~PlaybackSessionInterface() = default;
-    virtual void resetMediaState() = 0;
+    void add(WeakPtr<T>&& ptr)
+    {
+        m_members.append(WTFMove(ptr));
+    }
+    
+    void remove(T& ptr)
+    {
+        m_members.removeAll(&ptr);
+    }
+
+    void clear()
+    {
+        m_members.clear();
+    }
+
+    bool isEmpty() const
+    {
+        return m_members.isEmpty();
+    }
+    
+    template <typename F>
+    void forEachNonNullMember(F&& f)
+    {
+        m_members.removeAllMatching([f = WTFMove(f)] (auto& member) {
+            if (!member)
+                return true;
+            f(*member);
+            return false;
+        });
+    }
+private:
+    Vector<WeakPtr<T>> m_members;
 };
 
 }
 
-#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-
+using WTF::WeakPtrContainer;

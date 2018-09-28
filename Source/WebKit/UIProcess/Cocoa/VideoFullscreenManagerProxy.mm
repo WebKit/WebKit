@@ -158,27 +158,28 @@ void VideoFullscreenManagerProxy::applicationDidBecomeActive()
 
 #pragma mark - VideoFullscreenModelContext
 
-VideoFullscreenModelContext::VideoFullscreenModelContext(VideoFullscreenManagerProxy& manager, PlaybackSessionModelContext& playbackSessionModel, uint64_t contextId)
-    : m_manager(&manager)
-    , m_playbackSessionModel(playbackSessionModel)
+Ref<VideoFullscreenModelContext> VideoFullscreenModelContext::create(WeakPtr<VideoFullscreenManagerProxy>&& manager, Ref<PlaybackSessionModelContext>&& playbackSessionModel, uint64_t contextId)
+{
+    return adoptRef(*new VideoFullscreenModelContext(WTFMove(manager), WTFMove(playbackSessionModel), contextId));
+}
+
+VideoFullscreenModelContext::VideoFullscreenModelContext(WeakPtr<VideoFullscreenManagerProxy>&& manager, Ref<PlaybackSessionModelContext>&& playbackSessionModel, uint64_t contextId)
+    : m_manager(WTFMove(manager))
+    , m_playbackSessionModel(WTFMove(playbackSessionModel))
     , m_contextId(contextId)
 {
 }
 
-VideoFullscreenModelContext::~VideoFullscreenModelContext()
-{
-}
+VideoFullscreenModelContext::~VideoFullscreenModelContext() = default;
 
-void VideoFullscreenModelContext::addClient(VideoFullscreenModelClient& client)
+void VideoFullscreenModelContext::addClient(WeakPtr<VideoFullscreenModelClient>&& client)
 {
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    m_clients.add(WTFMove(client));
 }
 
 void VideoFullscreenModelContext::removeClient(VideoFullscreenModelClient& client)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    m_clients.remove(client);
 }
 
 void VideoFullscreenModelContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
@@ -281,32 +282,37 @@ void VideoFullscreenModelContext::fullscreenMayReturnToInline()
 
 void VideoFullscreenModelContext::willEnterPictureInPicture()
 {
-    for (auto& client : m_clients)
-        client->willEnterPictureInPicture();
+    m_clients.forEachNonNullMember([] (auto& client) {
+        client.willEnterPictureInPicture();
+    });
 }
 
 void VideoFullscreenModelContext::didEnterPictureInPicture()
 {
-    for (auto& client : m_clients)
-        client->didEnterPictureInPicture();
+    m_clients.forEachNonNullMember([] (auto& client) {
+        client.didEnterPictureInPicture();
+    });
 }
 
 void VideoFullscreenModelContext::failedToEnterPictureInPicture()
 {
-    for (auto& client : m_clients)
-        client->failedToEnterPictureInPicture();
+    m_clients.forEachNonNullMember([] (auto& client) {
+        client.failedToEnterPictureInPicture();
+    });
 }
 
 void VideoFullscreenModelContext::willExitPictureInPicture()
 {
-    for (auto& client : m_clients)
-        client->willExitPictureInPicture();
+    m_clients.forEachNonNullMember([] (auto& client) {
+        client.willExitPictureInPicture();
+    });
 }
 
 void VideoFullscreenModelContext::didExitPictureInPicture()
 {
-    for (auto& client : m_clients)
-        client->didExitPictureInPicture();
+    m_clients.forEachNonNullMember([] (auto& client) {
+        client.didExitPictureInPicture();
+    });
 }
 
 #pragma mark - VideoFullscreenManagerProxy
@@ -343,7 +349,6 @@ void VideoFullscreenManagerProxy::invalidate()
         RefPtr<PlatformVideoFullscreenInterface> interface;
         std::tie(model, interface) = tuple;
 
-        interface->invalidate();
         [model->layerHostView() removeFromSuperview];
         model->setLayerHostView(nullptr);
     }
@@ -401,13 +406,12 @@ void VideoFullscreenManagerProxy::applicationDidBecomeActive()
 VideoFullscreenManagerProxy::ModelInterfaceTuple VideoFullscreenManagerProxy::createModelAndInterface(uint64_t contextId)
 {
     auto& playbackSessionModel = m_playbackSessionManagerProxy->ensureModel(contextId);
-    Ref<VideoFullscreenModelContext> model = VideoFullscreenModelContext::create(*this, playbackSessionModel, contextId);
     auto& playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
-    Ref<PlatformVideoFullscreenInterface> interface = PlatformVideoFullscreenInterface::create(playbackSessionInterface);
+    Ref<VideoFullscreenModelContext> model = VideoFullscreenModelContext::create(makeWeakPtr(this), playbackSessionModel, contextId);
+    Ref<PlatformVideoFullscreenInterface> interface = PlatformVideoFullscreenInterface::create(makeRef(playbackSessionInterface), model.copyRef());
     m_playbackSessionManagerProxy->addClientForContext(contextId);
 
-    interface->setVideoFullscreenModel(&model.get());
-    interface->setVideoFullscreenChangeObserver(&model.get());
+    interface->setVideoFullscreenChangeObserver(model->createWeakPtr());
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -446,7 +450,6 @@ void VideoFullscreenManagerProxy::removeClientForContext(uint64_t contextId)
     clientCount--;
 
     if (clientCount <= 0) {
-        ensureInterface(contextId).setVideoFullscreenModel(nullptr);
         m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);

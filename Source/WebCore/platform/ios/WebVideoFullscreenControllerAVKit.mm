@@ -99,11 +99,11 @@ class VideoFullscreenControllerContext;
 @end
 
 class VideoFullscreenControllerContext final
-    : private VideoFullscreenModel
-    , private VideoFullscreenModelClient
-    , private VideoFullscreenChangeObserver
+    : public VideoFullscreenModel
+    , public VideoFullscreenModelClient
+    , public VideoFullscreenChangeObserver
     , private PlaybackSessionModel
-    , private PlaybackSessionModelClient
+    , public PlaybackSessionModelClient
     , public ThreadSafeRefCounted<VideoFullscreenControllerContext> {
 
 public:
@@ -117,6 +117,9 @@ public:
     void exitFullscreen();
     void requestHideAndExitFullscreen();
     void invalidate();
+
+    using ThreadSafeRefCounted::ref;
+    using ThreadSafeRefCounted::deref;
 
 private:
     VideoFullscreenControllerContext() { }
@@ -137,7 +140,9 @@ private:
     void videoDimensionsChanged(const FloatSize&) override;
 
     // PlaybackSessionModel
-    void addClient(PlaybackSessionModelClient&) override;
+    void refPlaybackSessionModel() final { ref(); }
+    void derefPlaybackSessionModel() final { deref(); }
+    void addClient(WeakPtr<PlaybackSessionModelClient>&&) override;
     void removeClient(PlaybackSessionModelClient&) override;
     void play() override;
     void pause() override;
@@ -191,7 +196,9 @@ private:
     void volumeChanged(double) override;
 
     // VideoFullscreenModel
-    void addClient(VideoFullscreenModelClient&) override;
+    void refVideoFullscreenModel() final { ref(); }
+    void derefVideoFullscreenModel() final { deref(); }
+    void addClient(WeakPtr<VideoFullscreenModelClient>&&) override;
     void removeClient(VideoFullscreenModelClient&) override;
     void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     void setVideoLayerFrame(FloatRect) override;
@@ -210,14 +217,17 @@ private:
     void willExitPictureInPicture() final;
     void didExitPictureInPicture() final;
 
-    HashSet<PlaybackSessionModelClient*> m_playbackClients;
-    HashSet<VideoFullscreenModelClient*> m_fullscreenClients;
+    Vector<WeakPtr<PlaybackSessionModelClient>> m_playbackClients;
+    Vector<WeakPtr<VideoFullscreenModelClient>> m_fullscreenClients;
     RefPtr<VideoFullscreenInterfaceAVKit> m_interface;
     RefPtr<VideoFullscreenModelVideoElement> m_fullscreenModel;
     RefPtr<PlaybackSessionModelMediaElement> m_playbackModel;
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<UIView> m_videoFullscreenView;
     RetainPtr<WebVideoFullscreenController> m_controller;
+    WeakPtrFactory<PlaybackSessionModelClient> m_playbackClientFactory;
+    WeakPtrFactory<VideoFullscreenModelClient> m_fullscreenModelClientFactory;
+    WeakPtrFactory<VideoFullscreenChangeObserver> m_fullscreenChangeObserverFactory;
 };
 
 #pragma mark VideoFullscreenChangeObserver
@@ -321,8 +331,6 @@ void VideoFullscreenControllerContext::didExitFullscreen()
 void VideoFullscreenControllerContext::didCleanupFullscreen()
 {
     ASSERT(isUIThread());
-    m_interface->setVideoFullscreenModel(nullptr);
-    m_interface->setVideoFullscreenChangeObserver(nullptr);
     m_interface = nullptr;
     m_videoFullscreenView = nil;
 
@@ -331,6 +339,7 @@ void VideoFullscreenControllerContext::didCleanupFullscreen()
         m_fullscreenModel->setVideoElement(nullptr);
         m_playbackModel->setMediaElement(nullptr);
         m_playbackModel->removeClient(*this);
+        m_playbackModel = nullptr;
         m_fullscreenModel->removeClient(*this);
         m_fullscreenModel = nullptr;
         m_videoElement = nullptr;
@@ -545,16 +554,16 @@ void VideoFullscreenControllerContext::volumeChanged(double volume)
 }
 #pragma mark VideoFullscreenModel
 
-void VideoFullscreenControllerContext::addClient(VideoFullscreenModelClient& client)
+void VideoFullscreenControllerContext::addClient(WeakPtr<VideoFullscreenModelClient>&& client)
 {
-    ASSERT(!m_fullscreenClients.contains(&client));
-    m_fullscreenClients.add(&client);
+    ASSERT(!m_fullscreenClients.contains(client));
+    m_fullscreenClients.append(WTFMove(client));
 }
 
 void VideoFullscreenControllerContext::removeClient(VideoFullscreenModelClient& client)
 {
     ASSERT(m_fullscreenClients.contains(&client));
-    m_fullscreenClients.remove(&client);
+    m_fullscreenClients.removeAll(&client);
 }
 
 void VideoFullscreenControllerContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
@@ -644,35 +653,35 @@ bool VideoFullscreenControllerContext::isPictureInPictureSupported() const
 void VideoFullscreenControllerContext::willEnterPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
+    for (auto& client : m_fullscreenClients)
         client->willEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::didEnterPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
+    for (auto& client : m_fullscreenClients)
         client->didEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::failedToEnterPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
+    for (auto& client : m_fullscreenClients)
         client->failedToEnterPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::willExitPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
+    for (auto& client : m_fullscreenClients)
         client->willExitPictureInPicture();
 }
 
 void VideoFullscreenControllerContext::didExitPictureInPicture()
 {
     ASSERT(isUIThread());
-    for (auto* client : m_fullscreenClients)
+    for (auto& client : m_fullscreenClients)
         client->didExitPictureInPicture();
 }
 
@@ -684,16 +693,16 @@ FloatSize VideoFullscreenControllerContext::videoDimensions() const
 
 #pragma mark - PlaybackSessionModel
 
-void VideoFullscreenControllerContext::addClient(PlaybackSessionModelClient& client)
+void VideoFullscreenControllerContext::addClient(WeakPtr<PlaybackSessionModelClient>&& client)
 {
-    ASSERT(!m_playbackClients.contains(&client));
-    m_playbackClients.add(&client);
+    ASSERT(!m_playbackClients.contains(client));
+    m_playbackClients.append(WTFMove(client));
 }
 
 void VideoFullscreenControllerContext::removeClient(PlaybackSessionModelClient& client)
 {
     ASSERT(m_playbackClients.contains(&client));
-    m_playbackClients.remove(&client);
+    m_playbackClients.removeAll(&client);
 }
 
 void VideoFullscreenControllerContext::play()
@@ -954,11 +963,11 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
     RetainPtr<UIView> viewRef = view;
     m_videoElement = &videoElement;
     m_playbackModel = PlaybackSessionModelMediaElement::create();
-    m_playbackModel->addClient(*this);
+    m_playbackModel->addClient(m_playbackClientFactory.createWeakPtr(*this));
     m_playbackModel->setMediaElement(m_videoElement.get());
 
     m_fullscreenModel = VideoFullscreenModelVideoElement::create();
-    m_fullscreenModel->addClient(*this);
+    m_fullscreenModel->addClient(m_fullscreenModelClientFactory.createWeakPtr(*this));
     m_fullscreenModel->setVideoElement(m_videoElement.get());
 
     bool allowsPictureInPicture = m_videoElement->webkitSupportsPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
@@ -971,10 +980,8 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
         ASSERT(isUIThread());
 
         Ref<PlaybackSessionInterfaceAVKit> sessionInterface = PlaybackSessionInterfaceAVKit::create(*this);
-        m_interface = VideoFullscreenInterfaceAVKit::create(sessionInterface.get());
-        m_interface->setVideoFullscreenChangeObserver(this);
-        m_interface->setVideoFullscreenModel(this);
-        m_interface->setVideoFullscreenChangeObserver(this);
+        m_interface = VideoFullscreenInterfaceAVKit::create(sessionInterface.get(), *this);
+        m_interface->setVideoFullscreenChangeObserver(m_fullscreenChangeObserverFactory.createWeakPtr(*this));
 
         m_videoFullscreenView = adoptNS([allocUIViewInstance() init]);
 

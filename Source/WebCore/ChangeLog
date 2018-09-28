@@ -1,3 +1,164 @@
+2018-09-28  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: eliminate raw pointer usage in Fullscreen code
+        https://bugs.webkit.org/show_bug.cgi?id=188747
+        <rdar://problem/43541164>
+
+        Reviewed by Alex Christensen.
+
+        Two sources of raw pointers in the Fullscreen code:
+        - Model classes (PlaybackSessionModel and VideoFullscreenModel) aren't ref-able, so
+          they are passed around as raw references.
+        - Observer classes (PlaybackSessionModelClient and VideoFullscreenModelClient, and
+          VideoFullscreenChangeObserver) are also passed around as raw pointers, but shouldn't
+          be ref-able.
+
+        Make Model classes ref-able by adding ref() and deref() which call virtual refModel and
+        derefModel methods, overridden by implementing subclasses. Make every concrete observer
+        inherit from CanMakeWeakPtr, and every registration method take WeakPtr wrappers around
+        the client interface.
+
+        Since every Interface class now holds a strong reference to its Model classes, and each
+        Model class holds a weak reference to all its clients, no explicit invalidate() method
+        is necessary.
+
+        Notes:
+
+        - Since the weak pointer methods need to be able to downcast to the abstract base class,
+          observers need to inherit publically (rather than privately) from those base classes.
+        - Media element Models should compose EventListener rather than inheriting from it, since
+          EventListener has its own RefCount.
+        - WeakPtrs can't be held in HashSets (because they change value, and therefore hash, when
+          their underlying object is destroyed), so clients should be stored in a Vector instead.
+        - Interfaces should be given all required Refs at creation time, so that they can store
+          those parameters as Refs instead of RefPtrs.
+
+        * platform/cocoa/PlaybackSessionInterface.h:
+        (WebCore::PlaybackSessionInterface::~PlaybackSessionInterface): Deleted.
+        * platform/cocoa/PlaybackSessionModel.h:
+        (WebCore::PlaybackSessionModel::ref):
+        (WebCore::PlaybackSessionModel::deref):
+        (WebCore::PlaybackSessionModel::~PlaybackSessionModel): Deleted.
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::PlaybackSessionModelMediaElement):
+        (WebCore::PlaybackSessionModelMediaElement::~PlaybackSessionModelMediaElement):
+        (WebCore::PlaybackSessionModelMediaElement::setMediaElement):
+        (WebCore::PlaybackSessionModelMediaElement::updateForEventName):
+        (WebCore::PlaybackSessionModelMediaElement::addClient):
+        (WebCore::PlaybackSessionModelMediaElement::removeClient):
+        (WebCore::PlaybackSessionModelMediaElement::updateMediaSelectionOptions):
+        (WebCore::PlaybackSessionModelMediaElement::updateMediaSelectionIndices):
+        (WebCore::PlaybackSessionModelMediaElement::handleEvent): Deleted.
+        * platform/cocoa/VideoFullscreenChangeObserver.h:
+        (WebCore::VideoFullscreenChangeObserver::~VideoFullscreenChangeObserver): Deleted.
+        * platform/cocoa/VideoFullscreenModel.h:
+        (WebCore::VideoFullscreenModel::ref):
+        (WebCore::VideoFullscreenModel::deref):
+        (WebCore::VideoFullscreenModel::~VideoFullscreenModel): Deleted.
+        * platform/cocoa/VideoFullscreenModelVideoElement.h:
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement):
+        (VideoFullscreenModelVideoElement::setVideoElement):
+        (VideoFullscreenModelVideoElement::addClient):
+        (VideoFullscreenModelVideoElement::removeClient):
+        (VideoFullscreenModelVideoElement::setHasVideo):
+        (VideoFullscreenModelVideoElement::setVideoDimensions):
+        (VideoFullscreenModelVideoElement::willEnterPictureInPicture):
+        (VideoFullscreenModelVideoElement::didEnterPictureInPicture):
+        (VideoFullscreenModelVideoElement::failedToEnterPictureInPicture):
+        (VideoFullscreenModelVideoElement::willExitPictureInPicture):
+        (VideoFullscreenModelVideoElement::didExitPictureInPicture):
+        (VideoFullscreenModelVideoElement::handleEvent): Deleted.
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        (WebCore::PlaybackSessionInterfaceAVKit::create):
+        (WebCore::PlaybackSessionInterfaceAVKit::playbackSessionModel const):
+        (): Deleted.
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit):
+        (WebCore::PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit):
+        (WebCore::PlaybackSessionInterfaceAVKit::invalidate): Deleted.
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer layoutSublayers]):
+        (-[WebAVPlayerLayer resolveBounds]):
+        (-[WebAVPlayerLayer setVideoGravity:]):
+        (VideoFullscreenInterfaceAVKit::create):
+        (VideoFullscreenInterfaceAVKit::VideoFullscreenInterfaceAVKit):
+        (VideoFullscreenInterfaceAVKit::~VideoFullscreenInterfaceAVKit):
+        (VideoFullscreenInterfaceAVKit::setVideoFullscreenChangeObserver):
+        (VideoFullscreenInterfaceAVKit::applicationDidBecomeActive):
+        (VideoFullscreenInterfaceAVKit::setupFullscreen):
+        (VideoFullscreenInterfaceAVKit::presentingViewController):
+        (VideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen):
+        (VideoFullscreenInterfaceAVKit::preparedToExitFullscreen):
+        (VideoFullscreenInterfaceAVKit::willStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::failedToStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::willStopPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::didStopPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+        (VideoFullscreenInterfaceAVKit::doSetup):
+        (VideoFullscreenInterfaceAVKit::setMode):
+        (VideoFullscreenInterfaceAVKit::clearMode):
+        (VideoFullscreenInterfaceAVKit::setVideoFullscreenModel): Deleted.
+        (VideoFullscreenInterfaceAVKit::invalidate): Deleted.
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController delegate]):
+        (-[WebAVPlayerController playbackSessionInterface]):
+        (-[WebAVPlayerController setPlaybackSessionInterface:]):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::didCleanupFullscreen):
+        (VideoFullscreenControllerContext::addClient):
+        (VideoFullscreenControllerContext::removeClient):
+        (VideoFullscreenControllerContext::willEnterPictureInPicture):
+        (VideoFullscreenControllerContext::didEnterPictureInPicture):
+        (VideoFullscreenControllerContext::failedToEnterPictureInPicture):
+        (VideoFullscreenControllerContext::willExitPictureInPicture):
+        (VideoFullscreenControllerContext::didExitPictureInPicture):
+        (VideoFullscreenControllerContext::setUpFullscreen):
+        * platform/mac/PlaybackSessionInterfaceMac.h:
+        * platform/mac/PlaybackSessionInterfaceMac.mm:
+        (WebCore::PlaybackSessionInterfaceMac::create):
+        (WebCore::PlaybackSessionInterfaceMac::PlaybackSessionInterfaceMac):
+        (WebCore::PlaybackSessionInterfaceMac::playbackSessionModel const):
+        (WebCore::PlaybackSessionInterfaceMac::rateChanged):
+        (WebCore::PlaybackSessionInterfaceMac::beginScrubbing):
+        (WebCore::PlaybackSessionInterfaceMac::endScrubbing):
+        (WebCore::PlaybackSessionInterfaceMac::setPlayBackControlsManager):
+        (WebCore::PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming):
+        (WebCore::PlaybackSessionInterfaceMac::~PlaybackSessionInterfaceMac): Deleted.
+        (WebCore::PlaybackSessionInterfaceMac::invalidate): Deleted.
+        * platform/mac/VideoFullscreenInterfaceMac.h:
+        (WebCore::VideoFullscreenInterfaceMac::create):
+        (WebCore::VideoFullscreenInterfaceMac::videoFullscreenModel const):
+        (WebCore::VideoFullscreenInterfaceMac::playbackSessionModel const):
+        (WebCore::VideoFullscreenInterfaceMac::videoFullscreenChangeObserver const):
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC setUpPIPForVideoView:withFrame:inWindow:]):
+        (-[WebVideoFullscreenInterfaceMacObjC boundsDidChangeForVideoViewContainer:]):
+        (-[WebVideoFullscreenInterfaceMacObjC pipDidClose:]):
+        (-[WebVideoFullscreenInterfaceMacObjC pipActionPlay:]):
+        (-[WebVideoFullscreenInterfaceMacObjC pipActionPause:]):
+        (-[WebVideoFullscreenInterfaceMacObjC pipActionStop:]):
+        (WebCore::VideoFullscreenInterfaceMac::VideoFullscreenInterfaceMac):
+        (WebCore::VideoFullscreenInterfaceMac::~VideoFullscreenInterfaceMac):
+        (WebCore::VideoFullscreenInterfaceMac::setVideoFullscreenChangeObserver):
+        (WebCore::VideoFullscreenInterfaceMac::setMode):
+        (WebCore::VideoFullscreenInterfaceMac::clearMode):
+        (WebCore::VideoFullscreenInterfaceMac::invalidate):
+        (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitPiP):
+        (WebCore::VideoFullscreenInterfaceMac::setVideoFullscreenModel): Deleted.
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager seekToTime:toleranceBefore:toleranceAfter:]):
+        (-[WebPlaybackControlsManager setCurrentAudioTouchBarMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager setCurrentLegibleTouchBarMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager togglePlayback]):
+        (-[WebPlaybackControlsManager setPlaying:]):
+        (-[WebPlaybackControlsManager isPlaying]):
+        (-[WebPlaybackControlsManager togglePictureInPicture]):
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         Drop support for cross-origin-window-policy header

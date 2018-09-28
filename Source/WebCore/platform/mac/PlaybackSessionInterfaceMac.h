@@ -45,9 +45,9 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceMac final
     , public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceMac> {
 public:
-    static Ref<PlaybackSessionInterfaceMac> create(PlaybackSessionModel&);
-    virtual ~PlaybackSessionInterfaceMac();
-    PlaybackSessionModel* playbackSessionModel() const;
+    static Ref<PlaybackSessionInterfaceMac> create(Ref<PlaybackSessionModel>&&);
+    virtual ~PlaybackSessionInterfaceMac() = default;
+    PlaybackSessionModel& playbackSessionModel() const;
 
     // PlaybackSessionInterface
     void resetMediaState() final;
@@ -64,7 +64,6 @@ public:
     void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) final;
     void isPictureInPictureSupportedChanged(bool) final;
 
-    void invalidate();
     void ensureControlsManager();
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     void setPlayBackControlsManager(WebPlaybackControlsManager *);
@@ -76,8 +75,9 @@ public:
     void endScrubbing();
 
 private:
-    PlaybackSessionInterfaceMac(PlaybackSessionModel&);
-    PlaybackSessionModel* m_playbackSessionModel { nullptr };
+    PlaybackSessionInterfaceMac(Ref<PlaybackSessionModel>&&);
+    Ref<PlaybackSessionModel> m_playbackSessionModel;
+    WeakPtrFactory<PlaybackSessionModelClient> m_weakPtrFactory;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager *m_playbackControlsManager  { nullptr };
 

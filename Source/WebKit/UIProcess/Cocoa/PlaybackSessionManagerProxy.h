@@ -35,9 +35,10 @@
 #include <WebCore/TimeRanges.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakPtrContainer.h>
 
 #if PLATFORM(IOS)
 #include <WebCore/PlaybackSessionInterfaceAVKit.h>
@@ -56,18 +57,20 @@ namespace WebKit {
 class WebPageProxy;
 class PlaybackSessionManagerProxy;
 
-class PlaybackSessionModelContext final: public RefCounted<PlaybackSessionModelContext>, public WebCore::PlaybackSessionModel  {
+class PlaybackSessionModelContext final
+    : public WebCore::PlaybackSessionModel
+    , public RefCounted<PlaybackSessionModelContext> {
 public:
-    static Ref<PlaybackSessionModelContext> create(PlaybackSessionManagerProxy& manager, uint64_t contextId)
+    static Ref<PlaybackSessionModelContext> create(WeakPtr<PlaybackSessionManagerProxy>&& manager, uint64_t contextId)
     {
-        return adoptRef(*new PlaybackSessionModelContext(manager, contextId));
+        return adoptRef(*new PlaybackSessionModelContext(WTFMove(manager), contextId));
     }
     virtual ~PlaybackSessionModelContext() { }
 
     void invalidate() { m_manager = nullptr; }
 
     // PlaybackSessionModel
-    void addClient(WebCore::PlaybackSessionModelClient&) final;
+    void addClient(WeakPtr<WebCore::PlaybackSessionModelClient>&&) final;
     void removeClient(WebCore::PlaybackSessionModelClient&)final;
 
     void durationChanged(double);
@@ -88,16 +91,21 @@ public:
     void pictureInPictureSupportedChanged(bool);
     void pictureInPictureActiveChanged(bool);
 
+    using RefCounted::ref;
+    using RefCounted::deref;
+
 private:
     friend class VideoFullscreenModelContext;
 
-    PlaybackSessionModelContext(PlaybackSessionManagerProxy& manager, uint64_t contextId)
-        : m_manager(&manager)
+    PlaybackSessionModelContext(WeakPtr<PlaybackSessionManagerProxy>&& manager, uint64_t contextId)
+        : m_manager(WTFMove(manager))
         , m_contextId(contextId)
     {
     }
 
     // PlaybackSessionModel
+    void refPlaybackSessionModel() final { ref(); }
+    void derefPlaybackSessionModel() final { deref(); }
     void play() final;
     void pause() final;
     void togglePlayState() final;
@@ -139,10 +147,10 @@ private:
     double volume() const final { return m_volume; }
     bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
     bool isPictureInPictureActive() const final { return m_pictureInPictureActive; }
-
-    PlaybackSessionManagerProxy* m_manager;
+    
+    WeakPtr<PlaybackSessionManagerProxy> m_manager;
     uint64_t m_contextId;
-    HashSet<WebCore::PlaybackSessionModelClient*> m_clients;
+    WeakPtrContainer<WebCore::PlaybackSessionModelClient> m_clients;
     double m_playbackStartedTime { 0 };
     bool m_playbackStartedTimeNeedsUpdate { false };
     double m_duration { 0 };
@@ -169,7 +177,10 @@ private:
     bool m_pictureInPictureActive { false };
 };
 
-class PlaybackSessionManagerProxy : public RefCounted<PlaybackSessionManagerProxy>, private IPC::MessageReceiver {
+class PlaybackSessionManagerProxy
+    : public RefCounted<PlaybackSessionManagerProxy>
+    , private IPC::MessageReceiver
+    , public CanMakeWeakPtr<PlaybackSessionManagerProxy> {
 public:
     static RefPtr<PlaybackSessionManagerProxy> create(WebPageProxy&);
     virtual ~PlaybackSessionManagerProxy();
