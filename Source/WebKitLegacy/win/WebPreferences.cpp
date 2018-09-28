@@ -248,7 +248,6 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplaySubtitlesPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayCaptionsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayTextDescriptionsPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCrossOriginWindowPolicySupportEnabledPreferenceKey), kCFBooleanFalse);
 
     RetainPtr<CFStringRef> linkBehaviorStringRef = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebKitEditableLinkDefaultBehavior));
     CFDictionaryAddValue(defaults, CFSTR(WebKitEditableLinkBehaviorPreferenceKey), linkBehaviorStringRef.get());
@@ -2039,13 +2038,12 @@ HRESULT WebPreferences::crossOriginWindowPolicySupportEnabled(_Out_ BOOL* enable
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitCrossOriginWindowPolicySupportEnabledPreferenceKey);
+    *enabled = false;
     return S_OK;
 }
 
-HRESULT WebPreferences::setCrossOriginWindowPolicySupportEnabled(BOOL enabled)
+HRESULT WebPreferences::setCrossOriginWindowPolicySupportEnabled(BOOL)
 {
-    setBoolValue(WebKitCrossOriginWindowPolicySupportEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

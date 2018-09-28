@@ -1,5 +1,0 @@
-
-
-PASS postMessage() on Cross-origin iframe with 'Cross-Origin-Window-Policy: allow-postmessage' but current window has 'deny' option 
-PASS postMessage() on Cross-origin popup with 'Cross-Origin-Window-Policy: allow-postmessage' but current window has 'deny' option 
-

@@ -2040,16 +2040,6 @@ bool WKPreferencesGetCrossOriginResourcePolicyEnabled(WKPreferencesRef preferenc
     return toImpl(preferencesRef)->crossOriginResourcePolicyEnabled();
 }
 
-void WKPreferencesSetCrossOriginWindowPolicyEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setCrossOriginWindowPolicySupportEnabled(enabled);
-}
-
-bool WKPreferencesGetCrossOriginWindowPolicyEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->crossOriginWindowPolicySupportEnabled();
-}
-
 void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setRestrictedHTTPResponseAccess(flag);

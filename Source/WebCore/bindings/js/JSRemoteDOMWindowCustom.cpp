@@ -97,14 +97,12 @@ bool JSRemoteDOMWindow::deletePropertyByIndex(JSCell*, ExecState* state, unsigne
     return false;
 }
 
-void JSRemoteDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSRemoteDOMWindow::getOwnPropertyNames(JSObject*, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    auto* thisObject = jsCast<JSRemoteDOMWindow*>(object);
-
     // FIXME: Add scoped children indexes.
 
     if (mode.includeDontEnumProperties())
-        addCrossOriginWindowOwnPropertyNames(*exec, thisObject->wrapped(), propertyNames);
+        addCrossOriginWindowOwnPropertyNames(*exec, propertyNames);
 }
 
 bool JSRemoteDOMWindow::defineOwnProperty(JSC::JSObject*, JSC::ExecState* state, JSC::PropertyName, const JSC::PropertyDescriptor&, bool)

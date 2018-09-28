@@ -1,3 +1,42 @@
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for cross-origin-window-policy header
+        https://bugs.webkit.org/show_bug.cgi?id=190081
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop support for cross-origin-window-policy header as this was never enabled and its design has
+        some issues we have not resolved. An alternative is being worked on but will be substantially
+        different so there is not much value in keeping this code around.
+
+        * bindings/js/JSDOMBindingSecurity.cpp:
+        * bindings/js/JSDOMBindingSecurity.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::addCrossOriginWindowPropertyNames):
+        (WebCore::addScopedChildrenIndexes):
+        (WebCore::addCrossOriginWindowOwnPropertyNames):
+        (WebCore::JSDOMWindow::getOwnPropertyNames):
+        * bindings/js/JSDOMWindowCustom.h:
+        * bindings/js/JSRemoteDOMWindowCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateOperationBodyDefinition):
+        * bindings/scripts/IDLAttributes.json:
+        * dom/Document.cpp:
+        (WebCore::Document::canNavigate):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * page/AbstractDOMWindow.cpp:
+        (WebCore::AbstractDOMWindow::AbstractDOMWindow):
+        * page/AbstractDOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/Settings.yaml:
+        * platform/network/HTTPParsers.cpp:
+        * platform/network/HTTPParsers.h:
+
 2018-09-28  Daniel Bates  <dabates@apple.com>
 
         [iOS] Allow programmatic focus when hardware keyboard is attached

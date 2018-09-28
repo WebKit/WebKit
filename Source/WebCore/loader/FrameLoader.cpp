@@ -753,14 +753,6 @@ void FrameLoader::didBeginDocument(bool dispatch)
             if (!headerContentLanguage.isEmpty())
                 m_frame.document()->setContentLanguage(headerContentLanguage);
         }
-
-        if (m_frame.settings().crossOriginWindowPolicySupportEnabled()) {
-            String crossOriginWindowPolicyHeader = m_documentLoader->response().httpHeaderField(HTTPHeaderName::CrossOriginWindowPolicy);
-            if (!crossOriginWindowPolicyHeader.isNull()) {
-                ASSERT(m_frame.window());
-                m_frame.window()->setCrossOriginWindowPolicy(parseCrossOriginWindowPolicyHeader(crossOriginWindowPolicyHeader));
-            }
-        }
     }
 
     history().restoreDocumentState();

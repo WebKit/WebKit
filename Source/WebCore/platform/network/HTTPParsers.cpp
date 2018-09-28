@@ -912,19 +912,4 @@ CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header
     return CrossOriginResourcePolicy::Invalid;
 }
 
-CrossOriginWindowPolicy parseCrossOriginWindowPolicyHeader(StringView header)
-{
-    header = stripLeadingAndTrailingHTTPSpaces(header);
-    if (header.isEmpty())
-        return CrossOriginWindowPolicy::Allow;
-
-    if (equalLettersIgnoringASCIICase(header, "deny"))
-        return CrossOriginWindowPolicy::Deny;
-
-    if (equalLettersIgnoringASCIICase(header, "allow-postmessage"))
-        return CrossOriginWindowPolicy::AllowPostMessage;
-
-    return CrossOriginWindowPolicy::Allow;
-}
-
 }

@@ -1070,10 +1070,6 @@ ConstantPropertiesEnabled:
   type: bool
   defaultValue: true
 
-CrossOriginWindowPolicySupportEnabled:
-  type: bool
-  defaultValue: false
-
 SubresourceIntegrityEnabled:
   type: bool
   defaultValue: true

@@ -540,9 +540,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)cacheAPIEnabled;
 - (void)setCacheAPIEnabled:(BOOL)enabled;
 
-- (BOOL)crossOriginWindowPolicySupportEnabled;
-- (void)setCrossOriginWindowPolicySupportEnabled:(BOOL)enabled;
-
 - (void)setFetchAPIEnabled:(BOOL)flag;
 - (BOOL)fetchAPIEnabled;
 

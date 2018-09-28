@@ -750,9 +750,6 @@ clientCoordinatesRelativeToLayoutViewport:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames
 
-crossOriginWindowPolicySupportEnabled:
-  initial: false
-
 accessibilityEventsEnabled:
   initial: true
   conditional: ACCESSIBILITY_EVENTS

@@ -1,3 +1,29 @@
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for cross-origin-window-policy header
+        https://bugs.webkit.org/show_bug.cgi?id=190081
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/wpt/cross-origin-window-policy/allow-postmessage-expected.txt: Removed.
+        * http/wpt/cross-origin-window-policy/allow-postmessage-from-deny-expected.txt: Removed.
+        * http/wpt/cross-origin-window-policy/allow-postmessage-from-deny.html: Removed.
+        * http/wpt/cross-origin-window-policy/allow-postmessage-from-deny.html.headers: Removed.
+        * http/wpt/cross-origin-window-policy/allow-postmessage.html: Removed.
+        * http/wpt/cross-origin-window-policy/cross-origin-window-policy-header-expected.txt: Removed.
+        * http/wpt/cross-origin-window-policy/cross-origin-window-policy-header.html: Removed.
+        * http/wpt/cross-origin-window-policy/navigation-from-opener-via-open-target-expected.txt: Removed.
+        * http/wpt/cross-origin-window-policy/navigation-from-opener-via-open-target.html: Removed.
+        * http/wpt/cross-origin-window-policy/navigation-from-subframe-via-anchor-target-expected.txt: Removed.
+        * http/wpt/cross-origin-window-policy/navigation-from-subframe-via-anchor-target.html: Removed.
+        * http/wpt/cross-origin-window-policy/resources/cross-origin-window-policy-allow-postmessage-pong.html: Removed.
+        * http/wpt/cross-origin-window-policy/resources/cross-origin-window-policy-allow-postmessage-pong.html.headers: Removed.
+        * http/wpt/cross-origin-window-policy/resources/destination.html: Removed.
+        * http/wpt/cross-origin-window-policy/resources/navigate-parent-via-anchor.html: Removed.
+        * http/wpt/cross-origin-window-policy/resources/navigation-from-subframe-frame.py: Removed.
+        * http/wpt/cross-origin-window-policy/resources/serve-cross-origin-window-policy-header.py: Removed.
+        * http/wpt/cross-origin-window-policy/resources/utils.js: Removed.
+
 2018-09-28  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove the "in-store" button type

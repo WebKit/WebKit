@@ -1,5 +1,18 @@
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
+        Drop support for cross-origin-window-policy header
+        https://bugs.webkit.org/show_bug.cgi?id=190081
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::frameBecameRemote):
+
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
         Do not do automatic process prewarming while under memory pressure
         https://bugs.webkit.org/show_bug.cgi?id=190082
         <rdar://problem/39771424>

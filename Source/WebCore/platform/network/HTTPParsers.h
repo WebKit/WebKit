@@ -71,13 +71,6 @@ enum class CrossOriginResourcePolicy {
     Invalid
 };
 
-// Should be sorted from most restrictive to most permissive.
-enum class CrossOriginWindowPolicy {
-    Deny,
-    AllowPostMessage,
-    Allow,
-};
-
 bool isValidReasonPhrase(const String&);
 bool isValidHTTPHeaderValue(const String&);
 bool isValidAcceptHeaderValue(const String&);
@@ -118,7 +111,6 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName, const String&);
 String normalizeHTTPMethod(const String&);
 
 WEBCORE_EXPORT CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView);
-CrossOriginWindowPolicy parseCrossOriginWindowPolicyHeader(StringView);
 
 inline bool isHTTPSpace(UChar character)
 {

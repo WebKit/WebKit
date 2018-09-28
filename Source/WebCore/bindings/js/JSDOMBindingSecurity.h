@@ -36,8 +36,6 @@ class DOMWindow;
 class Frame;
 class Node;
 
-enum class CrossOriginWindowPolicy;
-
 void printErrorMessageForFrame(Frame*, const String& message);
 
 enum SecurityReportingOption { DoNotReportSecurityError, LogSecurityError, ThrowSecurityError };
@@ -55,9 +53,7 @@ bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption =
 bool shouldAllowAccessToFrame(JSC::ExecState&, Frame&, String& message);
 bool shouldAllowAccessToNode(JSC::ExecState&, Node*);
 
-bool shouldAllowAccessToDOMWindowGivenMinimumCrossOriginWindowPolicy(JSC::ExecState*, DOMWindow&, CrossOriginWindowPolicy, SecurityReportingOption = LogSecurityError);
-
-};
+}
 
 template<typename T> inline T* BindingSecurity::checkSecurityForNode(JSC::ExecState& state, T& node)
 {
