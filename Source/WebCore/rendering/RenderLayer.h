@@ -378,9 +378,6 @@ public:
     // Update our normal and z-index lists.
     void updateLayerListsIfNeeded();
 
-    // Update the normal and z-index lists of our descendants.
-    void updateDescendantsLayerListsIfNeeded(bool recursive);
-
     // FIXME: We should ASSERT(!m_visibleContentStatusDirty) here, but see https://bugs.webkit.org/show_bug.cgi?id=71044
     // ditto for hasVisibleDescendant(), see https://bugs.webkit.org/show_bug.cgi?id=71277
     bool hasVisibleContent() const { return m_hasVisibleContent; }
@@ -913,7 +910,7 @@ private:
     void dirtyAncestorChainVisibleDescendantStatus();
     void setAncestorChainHasVisibleDescendant();
 
-    void updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks = nullptr);
+    void updateDescendantDependentFlags();
 
     bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
 

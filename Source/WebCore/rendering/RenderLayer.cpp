@@ -1004,7 +1004,7 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
     }
 }
 
-void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks)
+void RenderLayer::updateDescendantDependentFlags()
 {
     if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty()) {
         bool hasVisibleDescendant = false;
@@ -1013,20 +1013,8 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
         bool hasNotIsolatedBlendingDescendants = false;
 #endif
 
-        HashSet<const RenderObject*> childOutOfFlowDescendantContainingBlocks;
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
-            childOutOfFlowDescendantContainingBlocks.clear();
-            child->updateDescendantDependentFlags(&childOutOfFlowDescendantContainingBlocks);
-
-            bool childIsOutOfFlowPositioned = child->renderer().isOutOfFlowPositioned();
-            if (childIsOutOfFlowPositioned)
-                childOutOfFlowDescendantContainingBlocks.add(child->renderer().containingBlock());
-
-            if (outOfFlowDescendantContainingBlocks) {
-                HashSet<const RenderObject*>::const_iterator it = childOutOfFlowDescendantContainingBlocks.begin();
-                for (; it != childOutOfFlowDescendantContainingBlocks.end(); ++it)
-                    outOfFlowDescendantContainingBlocks->add(*it);
-            }
+            child->updateDescendantDependentFlags();
 
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
             hasSelfPaintingLayerDescendant |= child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
@@ -1041,9 +1029,6 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
             if (allFlagsSet)
                 break;
         }
-
-        if (outOfFlowDescendantContainingBlocks)
-            outOfFlowDescendantContainingBlocks->remove(&renderer());
 
         m_hasVisibleDescendant = hasVisibleDescendant;
         m_visibleDescendantStatusDirty = false;
@@ -5965,32 +5950,6 @@ void RenderLayer::updateLayerListsIfNeeded()
     if (RenderLayer* reflectionLayer = this->reflectionLayer()) {
         reflectionLayer->updateZOrderLists();
         reflectionLayer->updateNormalFlowList();
-    }
-}
-
-void RenderLayer::updateDescendantsLayerListsIfNeeded(bool recursive)
-{
-    Vector<RenderLayer*> layersToUpdate;
-    
-    if (auto* list = negZOrderList()) {
-        for (auto* childLayer : *list)
-            layersToUpdate.append(childLayer);
-    }
-    
-    if (auto* list = normalFlowList()) {
-        for (auto* childLayer : *list)
-            layersToUpdate.append(childLayer);
-    }
-    
-    if (auto* list = posZOrderList()) {
-        for (auto* childLayer : *list)
-            layersToUpdate.append(childLayer);
-    }
-    
-    for (auto* childLayer : layersToUpdate) {
-        childLayer->updateLayerListsIfNeeded();
-        if (recursive)
-            childLayer->updateDescendantsLayerListsIfNeeded(true);
     }
 }
 
