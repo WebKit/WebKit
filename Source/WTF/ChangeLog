@@ -1,3 +1,14 @@
+2018-09-28  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: eliminate raw pointer usage in Fullscreen code
+        https://bugs.webkit.org/show_bug.cgi?id=188747
+        <rdar://problem/43541164>
+
+        Reviewed by Alex Christensen.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/WeakPtrContainer.h: Added.
+
 2018-09-28  Koby Boyango  <koby.b@mce.systems>
 
         [WTF] Add ExternalStringImpl, a StringImpl for user controlled buffers

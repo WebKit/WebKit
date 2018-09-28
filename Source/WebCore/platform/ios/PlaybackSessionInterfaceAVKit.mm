@@ -49,32 +49,36 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 namespace WebCore {
 using namespace PAL;
 
-PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
-    : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
-    , m_playbackSessionModel(&model)
+Ref<PlaybackSessionInterfaceAVKit> PlaybackSessionInterfaceAVKit::create(Ref<PlaybackSessionModel>&& model)
 {
-    model.addClient(*this);
-    [m_playerController setPlaybackSessionInterface:this];
-    [m_playerController setDelegate:&model];
+    auto interface = adoptRef(*new PlaybackSessionInterfaceAVKit(WTFMove(model)));
+    [interface->playerController() setPlaybackSessionInterface:interface.ptr()];
+    return interface;
+}
 
-    durationChanged(model.duration());
-    currentTimeChanged(model.currentTime(), [[NSProcessInfo processInfo] systemUptime]);
-    bufferedTimeChanged(model.bufferedTime());
-    rateChanged(model.isPlaying(), model.playbackRate());
-    seekableRangesChanged(model.seekableRanges(), model.seekableTimeRangesLastModifiedTime(), model.liveUpdateInterval());
-    canPlayFastReverseChanged(model.canPlayFastReverse());
-    audioMediaSelectionOptionsChanged(model.audioMediaSelectionOptions(), model.audioMediaSelectedIndex());
-    legibleMediaSelectionOptionsChanged(model.legibleMediaSelectionOptions(), model.legibleMediaSelectedIndex());
-    externalPlaybackChanged(model.externalPlaybackEnabled(), model.externalPlaybackTargetType(), model.externalPlaybackLocalizedDeviceName());
-    wirelessVideoPlaybackDisabledChanged(model.wirelessVideoPlaybackDisabled());
+PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(Ref<PlaybackSessionModel>&& model)
+    : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
+    , m_playbackSessionModel(WTFMove(model))
+{
+    m_playbackSessionModel->addClient(m_weakPtrFactory.createWeakPtr(*this));
+
+    durationChanged(m_playbackSessionModel->duration());
+    currentTimeChanged(m_playbackSessionModel->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
+    bufferedTimeChanged(m_playbackSessionModel->bufferedTime());
+    rateChanged(m_playbackSessionModel->isPlaying(), m_playbackSessionModel->playbackRate());
+    seekableRangesChanged(m_playbackSessionModel->seekableRanges(), m_playbackSessionModel->seekableTimeRangesLastModifiedTime(), m_playbackSessionModel->liveUpdateInterval());
+    canPlayFastReverseChanged(m_playbackSessionModel->canPlayFastReverse());
+    audioMediaSelectionOptionsChanged(m_playbackSessionModel->audioMediaSelectionOptions(), m_playbackSessionModel->audioMediaSelectedIndex());
+    legibleMediaSelectionOptionsChanged(m_playbackSessionModel->legibleMediaSelectionOptions(), m_playbackSessionModel->legibleMediaSelectedIndex());
+    externalPlaybackChanged(m_playbackSessionModel->externalPlaybackEnabled(), m_playbackSessionModel->externalPlaybackTargetType(), m_playbackSessionModel->externalPlaybackLocalizedDeviceName());
+    wirelessVideoPlaybackDisabledChanged(m_playbackSessionModel->wirelessVideoPlaybackDisabled());
 }
 
 PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
 {
+    m_playbackSessionModel->removeClient(*this);
     [m_playerController setPlaybackSessionInterface:nullptr];
     [m_playerController setExternalPlaybackActive:false];
-
-    invalidate();
 }
 
 void PlaybackSessionInterfaceAVKit::resetMediaState()
@@ -204,16 +208,6 @@ void PlaybackSessionInterfaceAVKit::mutedChanged(bool muted)
 void PlaybackSessionInterfaceAVKit::volumeChanged(double volume)
 {
     [m_playerController volumeChanged:volume];
-}
-
-void PlaybackSessionInterfaceAVKit::invalidate()
-{
-    if (!m_playbackSessionModel)
-        return;
-
-    [m_playerController setDelegate:nullptr];
-    m_playbackSessionModel->removeClient(*this);
-    m_playbackSessionModel = nullptr;
 }
 
 }

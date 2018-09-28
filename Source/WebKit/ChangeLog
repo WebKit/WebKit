@@ -1,3 +1,73 @@
+2018-09-28  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: eliminate raw pointer usage in Fullscreen code
+        https://bugs.webkit.org/show_bug.cgi?id=188747
+        <rdar://problem/43541164>
+
+        Reviewed by Alex Christensen.
+
+        Adopt those Ref and WeakPtr changes made in WebCore.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::addClient):
+        (WebKit::PlaybackSessionModelContext::removeClient):
+        (WebKit::PlaybackSessionModelContext::durationChanged):
+        (WebKit::PlaybackSessionModelContext::currentTimeChanged):
+        (WebKit::PlaybackSessionModelContext::bufferedTimeChanged):
+        (WebKit::PlaybackSessionModelContext::rateChanged):
+        (WebKit::PlaybackSessionModelContext::seekableRangesChanged):
+        (WebKit::PlaybackSessionModelContext::canPlayFastReverseChanged):
+        (WebKit::PlaybackSessionModelContext::audioMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionModelContext::legibleMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionModelContext::audioMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionModelContext::legibleMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionModelContext::externalPlaybackChanged):
+        (WebKit::PlaybackSessionModelContext::wirelessVideoPlaybackDisabledChanged):
+        (WebKit::PlaybackSessionModelContext::mutedChanged):
+        (WebKit::PlaybackSessionModelContext::volumeChanged):
+        (WebKit::PlaybackSessionModelContext::pictureInPictureActiveChanged):
+        (WebKit::PlaybackSessionManagerProxy::invalidate):
+        (WebKit::PlaybackSessionManagerProxy::createModelAndInterface):
+        (WebKit::PlaybackSessionManagerProxy::removeClientForContext):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::create):
+        (WebKit::VideoFullscreenModelContext::VideoFullscreenModelContext):
+        (WebKit::VideoFullscreenModelContext::addClient):
+        (WebKit::VideoFullscreenModelContext::removeClient):
+        (WebKit::VideoFullscreenModelContext::willEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::didEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::failedToEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::willExitPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::didExitPictureInPicture):
+        (WebKit::VideoFullscreenManagerProxy::invalidate):
+        (WebKit::VideoFullscreenManagerProxy::createModelAndInterface):
+        (WebKit::VideoFullscreenManagerProxy::removeClientForContext):
+        (WebKit::VideoFullscreenModelContext::~VideoFullscreenModelContext): Deleted.
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (WKFullScreenViewControllerPlaybackSessionModelClient::setInterface):
+        (WKFullScreenViewControllerVideoFullscreenModelClient::setInterface):
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+        (-[WKFullScreenViewController _togglePiPAction:]):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::setInterface):
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionInterfaceContext::PlaybackSessionInterfaceContext):
+        (WebKit::PlaybackSessionManager::~PlaybackSessionManager):
+        (WebKit::PlaybackSessionManager::createModelAndInterface):
+        (WebKit::PlaybackSessionManager::removeContext):
+        (WebKit::PlaybackSessionInterfaceContext::~PlaybackSessionInterfaceContext): Deleted.
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        (WebKit::VideoFullscreenInterfaceContext::create):
+        (WebKit::VideoFullscreenInterfaceContext::createWeakPtr):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenInterfaceContext::VideoFullscreenInterfaceContext):
+        (WebKit::VideoFullscreenManager::~VideoFullscreenManager):
+        (WebKit::VideoFullscreenManager::createModelAndInterface):
+        (WebKit::VideoFullscreenManager::removeContext):
+
 2018-09-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] error C2027: use of undefined type 'WTF::EnumTraits<E>' while compiling AuthenticationChallengeProxy.cpp

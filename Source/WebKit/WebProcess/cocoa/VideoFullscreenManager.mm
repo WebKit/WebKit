@@ -80,8 +80,8 @@ static IntRect inlineVideoFrame(HTMLVideoElement& element)
 
 #pragma mark - VideoFullscreenInterfaceContext
 
-VideoFullscreenInterfaceContext::VideoFullscreenInterfaceContext(VideoFullscreenManager& manager, uint64_t contextId)
-    : m_manager(&manager)
+VideoFullscreenInterfaceContext::VideoFullscreenInterfaceContext(WeakPtr<VideoFullscreenManager>&& manager, uint64_t contextId)
+    : m_manager(WTFMove(manager))
     , m_contextId(contextId)
 {
 }
@@ -129,9 +129,6 @@ VideoFullscreenManager::~VideoFullscreenManager()
         std::tie(model, interface) = tuple;
 
         model->setVideoElement(nullptr);
-        model->removeClient(*interface);
-
-        interface->invalidate();
     }
 
     m_contextMap.clear();
@@ -152,11 +149,11 @@ void VideoFullscreenManager::invalidate()
 VideoFullscreenManager::ModelInterfaceTuple VideoFullscreenManager::createModelAndInterface(uint64_t contextId)
 {
     RefPtr<VideoFullscreenModelVideoElement> model = VideoFullscreenModelVideoElement::create();
-    RefPtr<VideoFullscreenInterfaceContext> interface = VideoFullscreenInterfaceContext::create(*this, contextId);
+    RefPtr<VideoFullscreenInterfaceContext> interface = VideoFullscreenInterfaceContext::create(makeWeakPtr(*this), contextId);
     m_playbackSessionManager->addClientForContext(contextId);
 
     interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
-    model->addClient(*interface);
+    model->addClient(interface->createWeakPtr());
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -189,8 +186,6 @@ void VideoFullscreenManager::removeContext(uint64_t contextId)
 
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
     model->setVideoElement(nullptr);
-    model->removeClient(*interface);
-    interface->invalidate();
     m_videoElements.remove(videoElement.get());
     m_contextMap.remove(contextId);
 }

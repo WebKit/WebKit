@@ -56,7 +56,9 @@ static const double requiredScore = 0.1;
 - (void)failedToEnterPictureInPicture;
 @end
 
-class WKFullScreenViewControllerPlaybackSessionModelClient : PlaybackSessionModelClient {
+class WKFullScreenViewControllerPlaybackSessionModelClient 
+    : public PlaybackSessionModelClient
+    , public CanMakeWeakPtr<WKFullScreenViewControllerPlaybackSessionModelClient> {
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
 
@@ -79,11 +81,11 @@ public:
         if (m_interface == interface)
             return;
 
-        if (m_interface && m_interface->playbackSessionModel())
-            m_interface->playbackSessionModel()->removeClient(*this);
+        if (m_interface)
+            m_interface->playbackSessionModel().removeClient(*this);
         m_interface = interface;
-        if (m_interface && m_interface->playbackSessionModel())
-            m_interface->playbackSessionModel()->addClient(*this);
+        if (m_interface)
+            m_interface->playbackSessionModel().addClient(makeWeakPtr(*this));
     }
 
 private:
@@ -91,7 +93,9 @@ private:
     RefPtr<PlaybackSessionInterfaceAVKit> m_interface;
 };
 
-class WKFullScreenViewControllerVideoFullscreenModelClient : VideoFullscreenModelClient {
+class WKFullScreenViewControllerVideoFullscreenModelClient
+    : public VideoFullscreenModelClient
+    , public CanMakeWeakPtr<WKFullScreenViewControllerVideoFullscreenModelClient> {
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
 
@@ -100,11 +104,11 @@ public:
         if (m_interface == interface)
             return;
 
-        if (m_interface && m_interface->videoFullscreenModel())
-            m_interface->videoFullscreenModel()->removeClient(*this);
+        if (m_interface)
+            m_interface->videoFullscreenModel().removeClient(*this);
         m_interface = interface;
-        if (m_interface && m_interface->videoFullscreenModel())
-            m_interface->videoFullscreenModel()->addClient(*this);
+        if (m_interface)
+            m_interface->videoFullscreenModel().addClient(makeWeakPtr(*this));
     }
 
     VideoFullscreenInterfaceAVKit* interface() const { return m_interface.get(); }
@@ -268,9 +272,14 @@ private:
     _playbackClient.setInterface(playbackSessionInterface);
     _videoFullscreenClient.setInterface(videoFullscreenInterface);
 
-    PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
-    self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
-    [_pipButton setHidden:!playbackSessionModel];
+    if (!playbackSessionInterface) {
+        self.playing = NO;
+        [_pipButton setHidden:YES];
+        return;
+    }
+
+    self.playing = playbackSessionInterface->playbackSessionModel().isPlaying();
+    [_pipButton setHidden:NO];
 }
 
 - (void)setPrefersStatusBarHidden:(BOOL)value
@@ -516,14 +525,8 @@ private:
         return;
 
     PlatformPlaybackSessionInterface* playbackSessionInterface = playbackSessionManager->controlsManagerInterface();
-    if (!playbackSessionInterface)
-        return;
-
-    PlaybackSessionModel* playbackSessionModel = playbackSessionInterface->playbackSessionModel();
-    if (!playbackSessionModel)
-        return;
-
-    playbackSessionModel->togglePictureInPicture();
+    if (playbackSessionInterface)
+        playbackSessionInterface->playbackSessionModel().togglePictureInPicture();
 }
 
 - (void)_touchDetected:(id)sender

@@ -97,6 +97,23 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     [super dealloc];
 }
 
+@dynamic delegate;
+- (WebCore::PlaybackSessionModel*)delegate
+{
+    return _playbackSessionInterface ? &_playbackSessionInterface->playbackSessionModel() : nullptr;
+}
+
+@dynamic playbackSessionInterface;
+- (WebCore::PlaybackSessionInterfaceAVKit*)playbackSessionInterface
+{
+    return _playbackSessionInterface.get();
+}
+
+- (void)setPlaybackSessionInterface:(WebCore::PlaybackSessionInterfaceAVKit*)playbackSessionInterface
+{
+    _playbackSessionInterface = playbackSessionInterface;
+}
+
 - (AVPlayer *)player
 {
     return nil;

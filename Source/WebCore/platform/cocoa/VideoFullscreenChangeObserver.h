@@ -32,7 +32,7 @@ namespace WebCore {
 
 class VideoFullscreenChangeObserver {
 public:
-    virtual ~VideoFullscreenChangeObserver() { };
+    virtual ~VideoFullscreenChangeObserver() = default;
     virtual void requestUpdateInlineRect() = 0;
     virtual void requestVideoContentLayer() = 0;
     virtual void returnVideoContentLayer() = 0;
