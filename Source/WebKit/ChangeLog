@@ -1,3 +1,22 @@
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Do not do automatic process prewarming while under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=190082
+        <rdar://problem/39771424>
+
+        Reviewed by Geoffrey Garen.
+
+        Do not do automatic process prewarming while under memory pressure and
+        also terminate any prewarmed process when receiving a memory warning.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::prewarmProcess):
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        (WebKit::WebProcessPool::handleMemoryPressureWarning):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.mm:
+        (WebKit::installMemoryPressureHandler):
+
 2018-09-28  Daniel Bates  <dabates@apple.com>
 
         [iOS] Allow programmatic focus when hardware keyboard is attached

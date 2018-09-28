@@ -997,6 +997,7 @@ void WebProcessPool::prewarmProcess()
     if (!m_websiteDataStore)
         m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
 
+    RELEASE_LOG(PerformanceLogging, "Prewarming a WebProcess for performance");
     createNewWebProcess(m_websiteDataStore->websiteDataStore(), WebProcessProxy::IsPrewarmed::Yes);
 }
 
@@ -1307,6 +1308,12 @@ void WebProcessPool::didReachGoodTimeToPrewarm()
     if (!configuration().isAutomaticProcessWarmingEnabled())
         return;
 
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
+        if (!m_prewarmedProcess)
+            RELEASE_LOG(PerformanceLogging, "Not automatically prewarming a WebProcess due to memory pressure");
+        return;
+    }
+
     prewarmProcess();
 }
 
@@ -1320,6 +1327,13 @@ WebProcessPool::Statistics& WebProcessPool::statistics()
     static Statistics statistics = Statistics();
 
     return statistics;
+}
+
+void WebProcessPool::handleMemoryPressureWarning(Critical)
+{
+    if (m_prewarmedProcess)
+        m_prewarmedProcess->shutDown();
+    ASSERT(!m_prewarmedProcess);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

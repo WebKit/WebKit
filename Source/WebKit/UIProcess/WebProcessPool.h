@@ -51,6 +51,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
@@ -200,6 +201,8 @@ public:
     void postMessageToInjectedBundle(const String&, API::Object*);
 
     void populateVisitedLinks();
+
+    void handleMemoryPressureWarning(Critical);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void setAdditionalPluginsDirectory(const String&);
