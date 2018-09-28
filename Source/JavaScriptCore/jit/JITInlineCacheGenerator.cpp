@@ -59,14 +59,10 @@ void JITInlineCacheGenerator::finalize(
 {
     m_stubInfo->patch.start = start;
 
-    int32_t inlineSize = MacroAssembler::differenceBetweenCodePtr(
-        start, fastPath.locationOf<NoPtrTag>(m_done));
-    m_stubInfo->patch.inlineSize = inlineSize;
+    m_stubInfo->patch.doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
 
-    m_stubInfo->patch.deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
-        start, slowPath.locationOf<NoPtrTag>(m_slowPathCall));
-    m_stubInfo->patch.deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
-        start, slowPath.locationOf<NoPtrTag>(m_slowPathBegin));
+    m_stubInfo->patch.slowPathCallLocation = slowPath.locationOf<JSInternalPtrTag>(m_slowPathCall);
+    m_stubInfo->patch.slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
 }
 
 JITByIdGenerator::JITByIdGenerator(
