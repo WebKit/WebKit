@@ -64,7 +64,6 @@ private:
     ExceptionOr<void> setNodeValue(const String&) final;
     bool isCharacterDataNode() const final { return true; }
     int maxCharacterOffset() const final;
-    bool offsetInCharacters() const final;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     void notifyParentAfterChange(ContainerNode::ChildChangeSource);
 

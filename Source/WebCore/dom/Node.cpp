@@ -1606,11 +1606,6 @@ ExceptionOr<void> Node::setTextContent(const String& text)
     return { };
 }
 
-bool Node::offsetInCharacters() const
-{
-    return false;
-}
-
 static SHA1::Digest hashPointer(void* pointer)
 {
     SHA1 sha1;

@@ -1132,7 +1132,7 @@ ExceptionOr<void> Range::setStartBefore(Node& refNode)
 
 Node* Range::firstNode() const
 {
-    if (startContainer().offsetInCharacters())
+    if (startContainer().isCharacterDataNode())
         return &startContainer();
     if (Node* child = startContainer().traverseToChildAt(m_start.offset()))
         return child;
@@ -1148,7 +1148,7 @@ ShadowRoot* Range::shadowRoot() const
 
 Node* Range::pastLastNode() const
 {
-    if (endContainer().offsetInCharacters())
+    if (endContainer().isCharacterDataNode())
         return NodeTraversal::nextSkippingChildren(endContainer());
     if (Node* child = endContainer().traverseToChildAt(m_end.offset()))
         return child;

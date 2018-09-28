@@ -375,7 +375,7 @@ TextDirection directionOfEnclosingBlock(const Position& position)
 // on a Position before using it to create a DOM Range, or an exception will be thrown.
 int lastOffsetForEditing(const Node& node)
 {
-    if (node.offsetInCharacters())
+    if (node.isCharacterDataNode())
         return node.maxCharacterOffset();
 
     if (node.hasChildNodes())

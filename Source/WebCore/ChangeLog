@@ -1,3 +1,47 @@
+2018-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace every use of Node::offsetInCharacters() by Node::isCharacterDataNode()
+        https://bugs.webkit.org/show_bug.cgi?id=190069
+
+        Reviewed by Zalan Bujtas.
+
+        Removed Node::offsetInCharacters() and replaced every use of it by isCharacterDataNode()
+        because their implementations are identical.
+
+        Note that offsetInCharacters() sounds like a function which returns some kind of an offset
+        but it doesn't. It returns true when called on a CharacterData and false elsewhere.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::characterOffsetsInOrder):
+        (WebCore::AXObjectCache::startOrEndCharacterOffsetForRange):
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::offsetInCharacters const): Deleted.
+        * dom/CharacterData.h:
+        * dom/Node.cpp:
+        (WebCore::Node::offsetInCharacters const): Deleted.
+        * dom/Node.h:
+        * dom/Position.cpp:
+        (WebCore::Position::parentAnchoredEquivalent const):
+        * dom/Position.h:
+        (WebCore::lastOffsetInNode):
+        (WebCore::minOffsetForNode):
+        (WebCore::offsetIsBeforeLastNodeOffset):
+        * dom/Range.cpp:
+        (WebCore::Range::firstNode const):
+        (WebCore::Range::pastLastNode const):
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::setOffset):
+        (WebCore::RangeBoundaryPoint::setToEndOfNode):
+        * editing/Editing.cpp:
+        (WebCore::lastOffsetForEditing):
+        * editing/TextIterator.cpp:
+        (WebCore::nextInPreOrderCrossingShadowBoundaries):
+        (WebCore::TextIterator::node const):
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::extend):
+
 2018-09-28  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: eliminate raw pointer usage in Fullscreen code

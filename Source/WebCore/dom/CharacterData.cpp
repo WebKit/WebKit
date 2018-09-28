@@ -239,9 +239,4 @@ int CharacterData::maxCharacterOffset() const
     return static_cast<int>(length());
 }
 
-bool CharacterData::offsetInCharacters() const
-{
-    return true;
-}
-
 } // namespace WebCore

@@ -190,7 +190,7 @@ unsigned BitStack::size() const
 // This function is like Range::pastLastNode, except for the fact that it can climb up out of shadow trees.
 static Node* nextInPreOrderCrossingShadowBoundaries(Node& rangeEndContainer, int rangeEndOffset)
 {
-    if (rangeEndOffset >= 0 && !rangeEndContainer.offsetInCharacters()) {
+    if (rangeEndOffset >= 0 && !rangeEndContainer.isCharacterDataNode()) {
         if (Node* next = rangeEndContainer.traverseToChildAt(rangeEndOffset))
             return next;
     }
@@ -1267,7 +1267,7 @@ Node* TextIterator::node() const
     Ref<Range> textRange = range();
 
     Node& node = textRange->startContainer();
-    if (node.offsetInCharacters())
+    if (node.isCharacterDataNode())
         return &node;
     
     return node.traverseToChildAt(textRange->startOffset());
@@ -1284,13 +1284,13 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range& ra
     int startOffset = range.startOffset();
     int endOffset = range.endOffset();
 
-    if (!startNode->offsetInCharacters()) {
+    if (!startNode->isCharacterDataNode()) {
         if (startOffset >= 0 && startOffset < static_cast<int>(startNode->countChildNodes())) {
             startNode = startNode->traverseToChildAt(startOffset);
             startOffset = 0;
         }
     }
-    if (!endNode->offsetInCharacters()) {
+    if (!endNode->isCharacterDataNode()) {
         if (endOffset > 0 && endOffset <= static_cast<int>(endNode->countChildNodes())) {
             endNode = endNode->traverseToChildAt(endOffset - 1);
             endOffset = lastOffsetInNode(endNode);

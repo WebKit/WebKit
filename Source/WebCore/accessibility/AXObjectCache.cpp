@@ -1823,9 +1823,9 @@ static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, con
     
     Node* node1 = characterOffset1.node;
     Node* node2 = characterOffset2.node;
-    if (!node1->offsetInCharacters() && !isReplacedNodeOrBR(node1) && node1->hasChildNodes())
+    if (!node1->isCharacterDataNode() && !isReplacedNodeOrBR(node1) && node1->hasChildNodes())
         node1 = node1->traverseToChildAt(characterOffset1.offset);
-    if (!node2->offsetInCharacters() && !isReplacedNodeOrBR(node2) && node2->hasChildNodes())
+    if (!node2->isCharacterDataNode() && !isReplacedNodeOrBR(node2) && node2->hasChildNodes())
         node2 = node2->traverseToChildAt(characterOffset2.offset);
     
     if (!node1 || !node2)
@@ -1951,14 +1951,14 @@ CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(RefPtr<Range> r
     bool stayWithinRange = !isStart;
     
     Node& endNode = range->endContainer();
-    if (endNode.offsetInCharacters() && !isStart)
+    if (endNode.isCharacterDataNode() && !isStart)
         return traverseToOffsetInRange(rangeForNodeContents(&endNode), range->endOffset(), TraverseOptionValidateOffset);
     
     Ref<Range> copyRange = *range;
     // Change the start of the range, so the character offset starts from node beginning.
     int offset = 0;
     Node& node = copyRange->startContainer();
-    if (node.offsetInCharacters()) {
+    if (node.isCharacterDataNode()) {
         CharacterOffset nodeStartOffset = traverseToOffsetInRange(rangeForNodeContents(&node), range->startOffset(), TraverseOptionValidateOffset);
         if (isStart)
             return nodeStartOffset;
@@ -2135,7 +2135,7 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
     Node* domNode = deepPos.deprecatedNode();
     ASSERT(domNode);
     
-    if (domNode->offsetInCharacters())
+    if (domNode->isCharacterDataNode())
         return traverseToOffsetInRange(rangeForNodeContents(domNode), deepPos.deprecatedEditingOffset(), TraverseOptionValidateOffset);
     
     RefPtr<AccessibilityObject> obj = this->getOrCreate(domNode);
@@ -2167,7 +2167,7 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
                 characterOffset--;
         } else {
             // Sometimes VisiblePosition will move multiple characters, like emoji.
-            if (currentPosition.deprecatedNode()->offsetInCharacters())
+            if (currentPosition.deprecatedNode()->isCharacterDataNode())
                 characterOffset += currentPosition.offsetInContainerNode() - previousPosition.offsetInContainerNode() - 1;
         }
     }

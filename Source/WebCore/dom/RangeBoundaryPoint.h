@@ -124,7 +124,7 @@ inline void RangeBoundaryPoint::set(Ref<Node>&& container, unsigned offset, Node
 inline void RangeBoundaryPoint::setOffset(unsigned offset)
 {
     ASSERT(m_containerNode);
-    ASSERT(m_containerNode->offsetInCharacters());
+    ASSERT(m_containerNode->isCharacterDataNode());
     ASSERT(m_offsetInContainer);
     ASSERT(!m_childBeforeBoundary);
     m_offsetInContainer = offset;
@@ -156,7 +156,7 @@ inline void RangeBoundaryPoint::setToStartOfNode(Ref<Node>&& container)
 inline void RangeBoundaryPoint::setToEndOfNode(Ref<Node>&& container)
 {
     m_containerNode = WTFMove(container);
-    if (m_containerNode->offsetInCharacters()) {
+    if (m_containerNode->isCharacterDataNode()) {
         m_offsetInContainer = m_containerNode->maxCharacterOffset();
         m_childBeforeBoundary = nullptr;
     } else {

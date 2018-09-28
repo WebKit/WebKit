@@ -279,7 +279,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
 {
     if (!m_frame)
         return { };
-    if (offset > (node.offsetInCharacters() ? caretMaxOffset(node) : node.countChildNodes()))
+    if (offset > (node.isCharacterDataNode() ? caretMaxOffset(node) : node.countChildNodes()))
         return Exception { IndexSizeError };
     if (!isValidForPosition(&node))
         return { };

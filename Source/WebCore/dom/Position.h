@@ -287,7 +287,7 @@ inline Position positionAfterNode(Node* anchorNode)
 
 inline int lastOffsetInNode(Node* node)
 {
-    return node->offsetInCharacters() ? node->maxCharacterOffset() : static_cast<int>(node->countChildNodes());
+    return node->isCharacterDataNode() ? node->maxCharacterOffset() : static_cast<int>(node->countChildNodes());
 }
 
 // firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
@@ -307,7 +307,7 @@ inline Position lastPositionInNode(Node* anchorNode)
 
 inline int minOffsetForNode(Node* anchorNode, int offset)
 {
-    if (anchorNode->offsetInCharacters())
+    if (anchorNode->isCharacterDataNode())
         return std::min(offset, anchorNode->maxCharacterOffset());
 
     int newOffset = 0;
@@ -319,7 +319,7 @@ inline int minOffsetForNode(Node* anchorNode, int offset)
 
 inline bool offsetIsBeforeLastNodeOffset(int offset, Node* anchorNode)
 {
-    if (anchorNode->offsetInCharacters())
+    if (anchorNode->isCharacterDataNode())
         return offset < anchorNode->maxCharacterOffset();
 
     int currentOffset = 0;
