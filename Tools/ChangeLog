@@ -1,3 +1,12 @@
+2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Bring up queues for Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=189935
+
+        Unreviewed infrastructure fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Remove trigger, update bot assignment.
+
 2018-09-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Bring up queues for Mojave

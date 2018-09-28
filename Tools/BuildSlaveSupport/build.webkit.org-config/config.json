@@ -102,7 +102,7 @@
     "builders":   [ { "name": "Apple Mojave Debug (Build)", "type": "Build", "builddir": "mojave-debug",
                       "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["mojave-debug-tests-wk1", "mojave-debug-tests-wk2"],
-                      "slavenames": ["bot613", "bot614"]
+                      "slavenames": ["bot612", "bot613"]
                     },
                     { "name": "Apple Mojave Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "mojave-debug-tests-wk1",
                       "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
@@ -429,7 +429,7 @@
                                        "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mojave", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Mojave Release (Build)", "Apple Mojave Debug (Build)", "Apple Mojave LLINT CLoop (BuildAndTest)"]
+                      "builderNames": ["Apple Mojave Release (Build)", "Apple Mojave Debug (Build)"]
                     },
                     { "type": "Triggerable", "name": "mojave-release-tests-wk1",
                       "builderNames": ["Apple Mojave Release WK1 (Tests)"]
