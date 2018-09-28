@@ -1,3 +1,25 @@
+2018-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Simplify StyledMarkupAccumulator::traverseNodesForSerialization
+        https://bugs.webkit.org/show_bug.cgi?id=190073
+
+        Reviewed by Antti Koivisto.
+
+        Simplified the range traversal algorithm in traverseNodesForSerialization as it was too complicated
+        to support shadow DOM for copy and paste.
+
+        Instead of using NodeTraversal::next to traverse past ancestors and then figuring out which ancestor
+        must be closed or to wrap the existing markup with, new code collects the list of ancestors as we
+        traverse out of them.
+
+        Also extracted lambdas for generating markup and deciding whether to skip a node as well as keeping
+        track of the depth of the current markup. This further reduces the code complexity of the actual
+        node traversal algorithm. Keeping track of the depth allows us to now generate ancestor elements'
+        closing tags without keeping a stack of ancestor nodes we opened at all times.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+
 2018-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace every use of Node::offsetInCharacters() by Node::isCharacterDataNode()

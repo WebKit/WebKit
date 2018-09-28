@@ -518,84 +518,85 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
 Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, Node* pastEnd, NodeTraversalMode traversalMode)
 {
     const bool shouldEmit = traversalMode == NodeTraversalMode::EmitString;
-    Vector<Node*> ancestorsToClose;
-    Node* next;
-    Node* lastClosed = nullptr;
-    m_inMSOList = false;
-    for (Node* n = startNode; n != pastEnd; n = next) {
-        // According to <rdar://problem/5730668>, it is possible for n to blow
-        // past pastEnd and become null here. This shouldn't be possible.
-        // This null check will prevent crashes (but create too much markup)
-        // and the ASSERT will hopefully lead us to understanding the problem.
-        ASSERT(n);
-        if (!n)
-            break;
 
-        next = NodeTraversal::next(*n);
-        bool openedTag = false;
+    m_inMSOList = false;
+
+    unsigned depth = 0;
+    auto enterNode = [&] (Node& node) {
+        if (!node.renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(&node), selectTag))
+            return false;
+
+        if (UNLIKELY(m_shouldPreserveMSOList) && shouldEmit) {
+            if (appendNodeToPreserveMSOList(node))
+                return false;
+        }
+
+        ++depth;
+        if (shouldEmit)
+            appendStartTag(node);
+
+        return true;
+    };
+
+    Node* lastClosed = nullptr;
+    auto exitNode = [&] (Node& node) {
+        bool closing = depth;
+        if (depth)
+            --depth;
+        if (shouldEmit) {
+            if (closing)
+                appendEndTag(node);
+            else
+                wrapWithNode(node);
+        }
+        lastClosed = &node;
+    };
+
+    Node* lastNode = nullptr;
+    Node* next = nullptr;
+    for (Node* n = startNode; n != pastEnd; n = next) {
+        lastNode = n;
+
+        Vector<Node*, 8> exitedAncestors;
+        next = nullptr;
+        if (auto* firstChild = n->firstChild())
+            next = firstChild;
+        else if (auto* nextSibling = n->nextSibling())
+            next = nextSibling;
+        else {
+            for (auto* ancestor = n->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+                exitedAncestors.append(ancestor);
+                if (auto* nextSibling = ancestor->nextSibling()) {
+                    next = nextSibling;
+                    break;
+                }
+            }
+        }
 
         if (isBlock(n) && canHaveChildrenForEditing(*n) && next == pastEnd) {
             // Don't write out empty block containers that aren't fully selected.
             continue;
         }
 
-        bool shouldSkipNode = !n->renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(n), selectTag);
-        if (UNLIKELY(m_shouldPreserveMSOList) && shouldEmit)
-            shouldSkipNode = appendNodeToPreserveMSOList(*n) || shouldSkipNode;
-
-        if (shouldSkipNode) {
+        if (!enterNode(*n)) {
             next = NodeTraversal::nextSkippingChildren(*n);
             // Don't skip over pastEnd.
             if (pastEnd && pastEnd->isDescendantOf(*n))
                 next = pastEnd;
         } else {
-            // Add the node to the markup if we're not skipping the descendants
-            if (shouldEmit)
-                appendStartTag(*n);
-
-            // If node has no children, close the tag now.
-            if (!n->hasChildNodes()) {
-                if (shouldEmit)
-                    appendEndTag(*n);
-                lastClosed = n;
-            } else {
-                openedTag = true;
-                ancestorsToClose.append(n);
-            }
+            if (!n->hasChildNodes())
+                exitNode(*n);
         }
 
-        // If we didn't insert open tag and there's no more siblings or we're at the end of the traversal, take care of ancestors.
-        // FIXME: What happens if we just inserted open tag and reached the end?
-        if (!openedTag && (!n->nextSibling() || next == pastEnd)) {
-            // Close up the ancestors.
-            while (!ancestorsToClose.isEmpty()) {
-                Node* ancestor = ancestorsToClose.last();
-                if (next != pastEnd && next->isDescendantOf(ancestor))
-                    break;
-                // Not at the end of the range, close ancestors up to sibling of next node.
-                if (shouldEmit)
-                    appendEndTag(*ancestor);
-                lastClosed = ancestor;
-                ancestorsToClose.removeLast();
-            }
-
-            // Surround the currently accumulated markup with markup for ancestors we never opened as we leave the subtree(s) rooted at those ancestors.
-            ContainerNode* nextParent = next ? next->parentNode() : 0;
-            if (next != pastEnd && n != nextParent) {
-                Node* lastAncestorClosedOrSelf = n->isDescendantOf(lastClosed) ? lastClosed : n;
-                for (ContainerNode* parent = lastAncestorClosedOrSelf->parentNode(); parent && parent != nextParent; parent = parent->parentNode()) {
-                    // All ancestors that aren't in the ancestorsToClose list should either be a) unrendered:
-                    if (!parent->renderer())
-                        continue;
-                    // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
-                    ASSERT(startNode->isDescendantOf(*parent));
-                    if (shouldEmit)
-                        wrapWithNode(*parent);
-                    lastClosed = parent;
-                }
-            }
+        for (auto* ancestor : exitedAncestors) {
+            if (!depth && next == pastEnd)
+                break;
+            exitNode(*ancestor);
         }
     }
+
+    for (auto* ancestor = (pastEnd ? pastEnd : lastNode)->parentNode(); ancestor && depth; ancestor = ancestor->parentNode())
+        exitNode(*ancestor);
 
     return lastClosed;
 }
