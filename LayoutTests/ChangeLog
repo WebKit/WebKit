@@ -1,3 +1,12 @@
+2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] Layout test editing/pasteboard/emacs-ctrl-a-k-y.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190067
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as failing.
+
 2018-09-27  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Non-redirected top frame navigation should not get captured in statistics

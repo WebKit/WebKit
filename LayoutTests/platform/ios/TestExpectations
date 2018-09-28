@@ -3172,3 +3172,5 @@ webkit.org/b/187557 media/media-fragments/TC0091.html [ Pass Failure ]
 webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
 
 webkit.org/b/190032 animations/stop-animation-on-suspend.html [ Failure ]
+
+webkit.org/b/190067 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
