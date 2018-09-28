@@ -109,10 +109,15 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
     uint8_t* inData = reinterpret_cast<uint8_t*>(m_assemblerStorage.buffer());
 
-    AssemblerData outBuffer(m_size);
-
-    uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.buffer());
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
+#if CPU(ARM64E)
+    const ARM64EHash assemblerBufferHash = macroAssembler.m_assembler.buffer().hash();
+    ARM64EHash verifyUncompactedHash(assemblerBufferHash.randomSeed());
+    uint8_t* outData = codeOutData;
+#else
+    AssemblerData outBuffer(m_size);
+    uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.buffer());
+#endif
 #if CPU(ARM64)
     RELEASE_ASSERT(roundUpToMultipleOf<sizeof(unsigned)>(outData) == outData);
     RELEASE_ASSERT(roundUpToMultipleOf<sizeof(unsigned)>(codeOutData) == codeOutData);
@@ -121,6 +126,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     int readPtr = 0;
     int writePtr = 0;
     unsigned jumpCount = jumpsToLink.size();
+
+#if CPU(ARM64E)
+    os_thread_self_restrict_rwx_to_rw();
+#endif
+
     if (m_shouldPerformBranchCompaction) {
         for (unsigned i = 0; i < jumpCount; ++i) {
             int offset = readPtr - writePtr;
@@ -134,8 +144,18 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
             ASSERT(!(regionSize % 2));
             ASSERT(!(readPtr % 2));
             ASSERT(!(writePtr % 2));
-            while (copySource != copyEnd)
-                *copyDst++ = *copySource++;
+#if CPU(ARM64E)
+            unsigned index = readPtr;
+#endif
+            while (copySource != copyEnd) {
+                InstructionType insn = *copySource++;
+#if CPU(ARM64E)
+                static_assert(sizeof(InstructionType) == 4, "");
+                verifyUncompactedHash.update(insn, index);
+                index += sizeof(InstructionType);
+#endif
+                *copyDst++ = insn;
+            }
             recordLinkOffsets(m_assemblerStorage, readPtr, jumpsToLink[i].from(), offset);
             readPtr += regionSize;
             writePtr += regionSize;
@@ -166,29 +186,76 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
                 ASSERT(!MacroAssembler::canCompact(jumpsToLink[i].type()));
         }
     }
+
     // Copy everything after the last jump
-    memcpy(outData + writePtr, inData + readPtr, initialSize - readPtr);
+    {
+        InstructionType* dst = bitwise_cast<InstructionType*>(outData + writePtr);
+        InstructionType* src = bitwise_cast<InstructionType*>(inData + readPtr);
+        size_t bytes = initialSize - readPtr;
+
+        RELEASE_ASSERT(bitwise_cast<uintptr_t>(dst) % sizeof(InstructionType) == 0);
+        RELEASE_ASSERT(bitwise_cast<uintptr_t>(src) % sizeof(InstructionType) == 0);
+        RELEASE_ASSERT(bytes % sizeof(InstructionType) == 0);
+
+#if CPU(ARM64E)
+        unsigned index = readPtr;
+#endif
+
+        for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
+            InstructionType insn = *src++;
+#if CPU(ARM64E)
+            verifyUncompactedHash.update(insn, index);
+            index += sizeof(InstructionType);
+#endif
+            *dst++ = insn;
+        }
+    }
+
+#if CPU(ARM64E)
+    if (verifyUncompactedHash.hash() != assemblerBufferHash.hash()) {
+        dataLogLn("Hashes don't match: ", RawPointer(bitwise_cast<void*>(verifyUncompactedHash.hash())), " ", RawPointer(bitwise_cast<void*>(assemblerBufferHash.hash())));
+        dataLogLn("Crashing!");
+        CRASH();
+    }
+#endif
+
     recordLinkOffsets(m_assemblerStorage, readPtr, initialSize, readPtr - writePtr);
         
     for (unsigned i = 0; i < jumpCount; ++i) {
+#if CPU(ARM64E)
+        auto memcpyFunction = memcpy;
+#else
+        auto memcpyFunction = performJITMemcpy;
+#endif
+
         uint8_t* location = codeOutData + jumpsToLink[i].from();
         uint8_t* target = codeOutData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
-        MacroAssembler::link(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
+        MacroAssembler::link(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target, memcpyFunction);
     }
 
-    jumpsToLink.clear();
-
     size_t compactSize = writePtr + initialSize - readPtr;
+    if (!m_executableMemory) {
+        size_t nopSizeInBytes = initialSize - compactSize;
+        MacroAssembler::AssemblerType_T::fillNops(outData + compactSize, nopSizeInBytes, memcpy);
+    }
+
+#if CPU(ARM64E)
+    os_thread_self_restrict_rwx_to_rx();
+#endif
+
     if (m_executableMemory) {
         m_size = compactSize;
         m_executableMemory->shrink(m_size);
-    } else {
-        size_t nopSizeInBytes = initialSize - compactSize;
-        bool isCopyingToExecutableMemory = false;
-        MacroAssembler::AssemblerType_T::fillNops(outData + compactSize, nopSizeInBytes, isCopyingToExecutableMemory);
     }
 
+#if !CPU(ARM64E)
+    ASSERT(codeOutData != outData);
     performJITMemcpy(codeOutData, outData, m_size);
+#else
+    ASSERT(codeOutData == outData);
+#endif
+
+    jumpsToLink.clear();
 
 #if DUMP_LINK_STATISTICS
     dumpLinkStatistics(codeOutData, initialSize, m_size);

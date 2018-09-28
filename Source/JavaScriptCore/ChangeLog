@@ -1,3 +1,54 @@
+2018-09-27  Saam barati  <sbarati@apple.com>
+
+        Verify the contents of AssemblerBuffer on arm64e
+        https://bugs.webkit.org/show_bug.cgi?id=190057
+        <rdar://problem/38916630>
+
+        Reviewed by Mark Lam.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::ARM64Assembler):
+        (JSC::ARM64Assembler::fillNops):
+        (JSC::ARM64Assembler::link):
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        (JSC::ARM64Assembler::linkCompareAndBranch):
+        (JSC::ARM64Assembler::linkConditionalBranch):
+        (JSC::ARM64Assembler::linkTestAndBranch):
+        (JSC::ARM64Assembler::unlinkedCode): Deleted.
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::fillNops):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::unlinkedCode): Deleted.
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::emitNops):
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+        * assembler/AssemblerBuffer.h:
+        (JSC::ARM64EHash::ARM64EHash):
+        (JSC::ARM64EHash::update):
+        (JSC::ARM64EHash::hash const):
+        (JSC::ARM64EHash::randomSeed const):
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::putShort):
+        (JSC::AssemblerBuffer::putIntUnchecked):
+        (JSC::AssemblerBuffer::putInt):
+        (JSC::AssemblerBuffer::hash const):
+        (JSC::AssemblerBuffer::data const):
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        (JSC::AssemblerBuffer::append): Deleted.
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::fillNops):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::jumpsToLink):
+        (JSC::MacroAssemblerARM64::link):
+        (JSC::MacroAssemblerARM64::unlinkedCode): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::jumpsToLink):
+        (JSC::MacroAssemblerARMv7::unlinkedCode): Deleted.
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::fillNops):
+
 2018-09-27  Mark Lam  <mark.lam@apple.com>
 
         ByValInfo should not use integer offsets.

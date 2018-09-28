@@ -3933,9 +3933,10 @@ public:
         m_formatter.oneByteOp(OP_NOP);
     }
 
-    static void fillNops(void* base, size_t size, bool isCopyingToExecutableMemory)
+    template <typename CopyFunction>
+    static void fillNops(void* base, size_t size, CopyFunction copy)
     {
-        UNUSED_PARAM(isCopyingToExecutableMemory);
+        UNUSED_PARAM(copy);
 #if CPU(X86_64)
         static const uint8_t nops[10][10] = {
             // nop

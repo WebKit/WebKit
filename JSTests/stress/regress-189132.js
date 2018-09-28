@@ -1,3 +1,5 @@
+//@ skip if $memoryLimited
+
 try {
     var a0 = '\ud801';
     var a1 = [];

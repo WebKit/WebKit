@@ -33,10 +33,15 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
+#if CPU(ARM64E)
+#include <wtf/PtrTag.h>
+#endif
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnalignedAccess.h>
 
 namespace JSC {
+
+    class LinkBuffer;
 
     struct AssemblerLabel {
         AssemblerLabel()
@@ -141,11 +146,37 @@ namespace JSC {
         unsigned m_capacity;
     };
 
+#if CPU(ARM64E)
+    class ARM64EHash {
+    public:
+        ARM64EHash(unsigned randomNumber)
+            : m_hash(randomNumber)
+            , m_randomSeed(randomNumber)
+        { }
+        ALWAYS_INLINE void update(unsigned value, uintptr_t index)
+        {
+            m_hash = tagInt((static_cast<uintptr_t>(value) + m_hash) ^ (m_hash >> 32), static_cast<PtrTag>(index));
+        }
+        uintptr_t hash() const { return m_hash; }
+        unsigned randomSeed() const { return m_randomSeed; }
+    private:
+        uintptr_t m_hash;
+        unsigned m_randomSeed;
+    };
+#endif
+
     class AssemblerBuffer {
     public:
-        AssemblerBuffer()
+        AssemblerBuffer(
+#if CPU(ARM64E)
+            unsigned randomNumber
+#endif
+        )
             : m_storage()
             , m_index(0)
+#if CPU(ARM64E)
+            , m_hash(randomNumber)
+#endif
         {
         }
 
@@ -165,25 +196,23 @@ namespace JSC {
             return !(m_index & (alignment - 1));
         }
 
+#if !CPU(ARM64)
         void putByteUnchecked(int8_t value) { putIntegralUnchecked(value); }
         void putByte(int8_t value) { putIntegral(value); }
         void putShortUnchecked(int16_t value) { putIntegralUnchecked(value); }
         void putShort(int16_t value) { putIntegral(value); }
-        void putIntUnchecked(int32_t value) { putIntegralUnchecked(value); }
-        void putInt(int32_t value) { putIntegral(value); }
         void putInt64Unchecked(int64_t value) { putIntegralUnchecked(value); }
         void putInt64(int64_t value) { putIntegral(value); }
-
-        void* data() const
-        {
-            return m_storage.buffer();
-        }
+#endif
+        void putIntUnchecked(int32_t value) { putIntegralUnchecked(value); }
+        void putInt(int32_t value) { putIntegral(value); }
 
         size_t codeSize() const
         {
             return m_index;
         }
 
+#if !CPU(ARM64)
         void setCodeSize(size_t index)
         {
             // Warning: Only use this if you know exactly what you are doing.
@@ -192,6 +221,7 @@ namespace JSC {
             m_index = index;
             ASSERT(m_index <= m_storage.capacity());
         }
+#endif
 
         AssemblerLabel label() const
         {
@@ -209,6 +239,7 @@ namespace JSC {
         //
         // LocalWriter *CANNOT* be mixed with other types of access to AssemblerBuffer.
         // AssemblerBuffer cannot be used until its LocalWriter goes out of scope.
+#if !CPU(ARM64) // If we ever need to use this on arm64e, we would need to make the checksum aware of this.
         class LocalWriter {
         public:
             LocalWriter(AssemblerBuffer& buffer, unsigned requiredSpace)
@@ -251,6 +282,16 @@ namespace JSC {
             unsigned m_requiredSpace;
 #endif
         };
+#endif // !CPU(ARM64)
+
+#if CPU(ARM64E)
+        ARM64EHash hash() const { return m_hash; }
+#endif
+
+#if !CPU(ARM64) // If we were to define this on arm64e, we'd need a way to update the hash as we write directly into the buffer.
+        void* data() const { return m_storage.buffer(); }
+#endif
+
 
     protected:
         template<typename IntegralType>
@@ -265,35 +306,38 @@ namespace JSC {
         template<typename IntegralType>
         void putIntegralUnchecked(IntegralType value)
         {
+#if CPU(ARM64)
+            static_assert(sizeof(value) == 4, "");
+#if CPU(ARM64E)
+            m_hash.update(value, m_index);
+#endif
+#endif
             ASSERT(isAvailable(sizeof(IntegralType)));
             WTF::unalignedStore<IntegralType>(m_storage.buffer() + m_index, value);
             m_index += sizeof(IntegralType);
         }
 
-        void append(const char* data, int size)
-        {
-            if (!isAvailable(size))
-                grow(size);
-
-            memcpy(m_storage.buffer() + m_index, data, size);
-            m_index += size;
-        }
-
+    private:
         void grow(int extraCapacity = 0)
         {
             m_storage.grow(extraCapacity);
         }
 
-    private:
         NEVER_INLINE void outOfLineGrow()
         {
             m_storage.grow();
         }
 
+#if !CPU(ARM64)
         friend LocalWriter;
+#endif
+        friend LinkBuffer;
 
         AssemblerData m_storage;
         unsigned m_index;
+#if CPU(ARM64E)
+        ARM64EHash m_hash;
+#endif
     };
 
 } // namespace JSC

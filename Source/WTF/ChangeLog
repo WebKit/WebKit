@@ -1,3 +1,14 @@
+2018-09-27  Saam barati  <sbarati@apple.com>
+
+        Verify the contents of AssemblerBuffer on arm64e
+        https://bugs.webkit.org/show_bug.cgi?id=190057
+        <rdar://problem/38916630>
+
+        Reviewed by Mark Lam.
+
+        * wtf/PtrTag.h:
+        (WTF::tagInt):
+
 2018-09-27  Jer Noble  <jer.noble@apple.com>
 
         MediaPlayer should have mediaPlayerWaitingForKeyChanged() / bool waitingForKey() accessor
