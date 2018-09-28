@@ -110,7 +110,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     uint8_t* inData = reinterpret_cast<uint8_t*>(m_assemblerStorage.buffer());
 
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
     const ARM64EHash assemblerBufferHash = macroAssembler.m_assembler.buffer().hash();
     ARM64EHash verifyUncompactedHash(assemblerBufferHash.randomSeed());
     uint8_t* outData = codeOutData;
@@ -127,7 +127,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     int writePtr = 0;
     unsigned jumpCount = jumpsToLink.size();
 
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
     os_thread_self_restrict_rwx_to_rw();
 #endif
 
@@ -144,12 +144,12 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
             ASSERT(!(regionSize % 2));
             ASSERT(!(readPtr % 2));
             ASSERT(!(writePtr % 2));
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
             unsigned index = readPtr;
 #endif
             while (copySource != copyEnd) {
                 InstructionType insn = *copySource++;
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
                 static_assert(sizeof(InstructionType) == 4, "");
                 verifyUncompactedHash.update(insn, index);
                 index += sizeof(InstructionType);
@@ -197,13 +197,13 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
         RELEASE_ASSERT(bitwise_cast<uintptr_t>(src) % sizeof(InstructionType) == 0);
         RELEASE_ASSERT(bytes % sizeof(InstructionType) == 0);
 
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
         unsigned index = readPtr;
 #endif
 
         for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
             InstructionType insn = *src++;
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
             verifyUncompactedHash.update(insn, index);
             index += sizeof(InstructionType);
 #endif
@@ -211,7 +211,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
         }
     }
 
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
     if (verifyUncompactedHash.hash() != assemblerBufferHash.hash()) {
         dataLogLn("Hashes don't match: ", RawPointer(bitwise_cast<void*>(verifyUncompactedHash.hash())), " ", RawPointer(bitwise_cast<void*>(assemblerBufferHash.hash())));
         dataLogLn("Crashing!");
@@ -222,7 +222,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     recordLinkOffsets(m_assemblerStorage, readPtr, initialSize, readPtr - writePtr);
         
     for (unsigned i = 0; i < jumpCount; ++i) {
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
         auto memcpyFunction = memcpy;
 #else
         auto memcpyFunction = performJITMemcpy;
@@ -239,7 +239,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
         MacroAssembler::AssemblerType_T::fillNops(outData + compactSize, nopSizeInBytes, memcpy);
     }
 
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
     os_thread_self_restrict_rwx_to_rx();
 #endif
 
@@ -248,7 +248,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
         m_executableMemory->shrink(m_size);
     }
 
-#if !CPU(ARM64E)
+#if !CPU(ARM64E) || !ENABLE(FAST_JIT_PERMISSIONS)
     ASSERT(codeOutData != outData);
     performJITMemcpy(codeOutData, outData, m_size);
 #else

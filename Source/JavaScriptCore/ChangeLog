@@ -1,3 +1,13 @@
+2018-09-28  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: speculative build fix.
+        <rdar://problem/44869924>
+
+        Not reviewed.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+
 2018-09-28  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC] [Armv7] Add a copy function argument to MacroAssemblerARMv7::link() and pass it down to the assembler's linking functions.
