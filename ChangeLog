@@ -1,3 +1,12 @@
+2018-09-28  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WTF] Make isMainThread more reliable
+        https://bugs.webkit.org/show_bug.cgi?id=189880
+
+        Reviewed by Mark Lam.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2018-09-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Enable LLInt ASM interpreter on X64 and ARM64 in non JIT configuration

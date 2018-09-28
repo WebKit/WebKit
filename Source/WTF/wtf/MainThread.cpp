@@ -42,10 +42,6 @@
 namespace WTF {
 
 static bool callbacksPaused; // This global variable is only accessed from main thread.
-#if !PLATFORM(COCOA)
-static Thread* mainThread { nullptr };
-#endif
-
 static Lock mainThreadFunctionQueueMutex;
 
 static Deque<Function<void ()>>& functionQueue()
@@ -60,25 +56,10 @@ void initializeMainThread()
 {
     std::call_once(initializeKey, [] {
         initializeThreading();
-#if !PLATFORM(COCOA)
-        mainThread = &Thread::current();
-#endif
         initializeMainThreadPlatform();
         initializeGCThreads();
     });
 }
-
-#if !PLATFORM(COCOA)
-bool isMainThread()
-{
-    return mainThread == &Thread::current();
-}
-
-bool isMainThreadIfInitialized()
-{
-    return isMainThread();
-}
-#endif
 
 #if PLATFORM(COCOA)
 #if !USE(WEB_THREAD)

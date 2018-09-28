@@ -30,7 +30,10 @@
  */
 
 #include "config.h"
-#include "MainThread.h"
+#include <pthread.h>
+#if HAVE(PTHREAD_NP_H)
+#include <pthread_np.h>
+#endif
 
 #include <wtf/RunLoop.h>
 #if USE(GLIB)
@@ -38,6 +41,10 @@
 #endif
 
 namespace WTF {
+
+#if !HAVE(PTHREAD_MAIN_NP)
+static pthread_t mainThread;
+#endif
 
 class MainThreadDispatcher {
 public:
@@ -65,6 +72,23 @@ private:
 
 void initializeMainThreadPlatform()
 {
+#if !HAVE(PTHREAD_MAIN_NP)
+    mainThread = pthread_self();
+#endif
+}
+
+bool isMainThread()
+{
+#if HAVE(PTHREAD_MAIN_NP)
+    return pthread_main_np();
+#else
+    return pthread_equal(pthread_self(), mainThread);
+#endif
+}
+
+bool isMainThreadIfInitialized()
+{
+    return isMainThread();
 }
 
 void scheduleDispatchFunctionsOnMainThread()

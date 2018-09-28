@@ -45,12 +45,12 @@ list(APPEND WTF_SOURCES
     cocoa/CPUTimeCocoa.cpp
     cocoa/Entitlements.cpp
     cocoa/MachSendRight.cpp
+    cocoa/MainThreadCocoa.mm
     cocoa/MemoryFootprintCocoa.cpp
     cocoa/MemoryPressureHandlerCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 
     mac/DeprecatedSymbolsUsedBySafari.mm
-    mac/MainThreadMac.mm
 
     text/cf/AtomicStringImplCF.cpp
     text/cf/StringCF.cpp
