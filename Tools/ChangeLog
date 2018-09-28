@@ -1,5 +1,14 @@
 2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update flakiness dashboard configuration for Mojave queues
+        https://bugs.webkit.org/show_bug.cgi?id=190068
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+
+2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
         Bring up queues for Mojave
         https://bugs.webkit.org/show_bug.cgi?id=189935
 

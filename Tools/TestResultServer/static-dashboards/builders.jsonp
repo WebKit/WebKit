@@ -6,11 +6,15 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "layout-tests": {
                 "builders": [
-                    "Apple High Sierra (Leaks)", 
                     "Apple High Sierra Debug WK1 (Tests)", 
                     "Apple High Sierra Debug WK2 (Tests)", 
                     "Apple High Sierra Release WK1 (Tests)", 
                     "Apple High Sierra Release WK2 (Tests)", 
+                    "Apple Mojave (Leaks)", 
+                    "Apple Mojave Debug WK1 (Tests)", 
+                    "Apple Mojave Debug WK2 (Tests)", 
+                    "Apple Mojave Release WK1 (Tests)", 
+                    "Apple Mojave Release WK2 (Tests)", 
                     "Apple Sierra Debug WK1 (Tests)", 
                     "Apple Sierra Debug WK2 (Tests)", 
                     "Apple Sierra Release WK1 (Tests)", 
