@@ -1,3 +1,20 @@
+2018-09-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Fix priority issue with multiple cookies with different level of path.
+        https://bugs.webkit.org/show_bug.cgi?id=189920
+
+        Reviewed by Fujii Hironori.
+
+        When multiple cookies are stored in the database for same site, the priority of
+        multiple cookies which matches path criteria was not defined. The backend
+        implementation `sqlite` then returns the first matching result, which is the one
+        stored earlier.
+
+        Test: http/tests/cookies/cookie-with-multiple-level-path.html
+
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::searchCookies):
+
 2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use enum class in createMarkup arguments

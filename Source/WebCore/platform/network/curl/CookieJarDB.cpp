@@ -331,7 +331,8 @@ bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bo
         "AND (httponly = COALESCE(NULLIF(?, -1), httponly)) "\
         "AND (secure = COALESCE(NULLIF(?, -1), secure)) "\
         "AND (session = COALESCE(NULLIF(?, -1), session)) "\
-        "AND ((domain = ?) OR (domain GLOB ?))";
+        "AND ((domain = ?) OR (domain GLOB ?)) "\
+        "ORDER BY length(path) DESC, lastupdated";
 
     std::unique_ptr<SQLiteStatement> pstmt = std::make_unique<SQLiteStatement>(m_database, sql);
     pstmt->prepare();
