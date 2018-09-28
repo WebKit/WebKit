@@ -1,3 +1,19 @@
+2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Increase the timeout for iOS Simulator data migration
+        https://bugs.webkit.org/show_bug.cgi?id=190059
+
+        Reviewed by Aakash Jain.
+
+        3 minutes isn't always enough time for the data migrator to complete
+        when booting up multiple iOS Simulators. Change the timeout to 10 minutes.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager): Create a constant for the default timeout.
+        (SimulatedDeviceManager.initialize_devices): Use new constant.
+        (SimulatedDeviceManager.swap): Ditto.
+        (SimulatedDeviceManager.wait_until_data_migration_is_done): Ditto.
+
 2018-09-27  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should use TextEncoding through an abstract class

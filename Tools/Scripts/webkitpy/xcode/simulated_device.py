@@ -61,6 +61,8 @@ class SimulatedDeviceManager(object):
     AVAILABLE_DEVICES = []
     INITIALIZED_DEVICES = None
 
+    SIMULATOR_BOOT_TIMEOUT = 600
+
     # FIXME: Simulators should only take up 2GB, but because of <rdar://problem/39393590> something in the OS thinks they're taking closer to 6GB
     MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE = 6 * (1024 ** 3)  # 6GB a simulator.
     PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 125
@@ -314,7 +316,7 @@ class SimulatedDeviceManager(object):
         SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
 
     @staticmethod
-    def initialize_devices(requests, host=SystemHost(), name_base='Managed', simulator_ui=True, timeout=180, **kwargs):
+    def initialize_devices(requests, host=SystemHost(), name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, **kwargs):
         if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
             return SimulatedDeviceManager.INITIALIZED_DEVICES
 
@@ -395,7 +397,7 @@ class SimulatedDeviceManager(object):
         return min(max_supported_simulators_locally, max_supported_simulators_for_hardware)
 
     @staticmethod
-    def swap(device, request, host=SystemHost(), name_base='Managed', timeout=180):
+    def swap(device, request, host=SystemHost(), name_base='Managed', timeout=SIMULATOR_BOOT_TIMEOUT):
         if SimulatedDeviceManager.INITIALIZED_DEVICES is None:
             raise RuntimeError('Cannot swap when there are no initialized devices')
         if device not in SimulatedDeviceManager.INITIALIZED_DEVICES:
@@ -419,7 +421,7 @@ class SimulatedDeviceManager(object):
         SimulatedDeviceManager.wait_until_data_migration_is_done(host, max(0, deadline - time.time()))
 
     @staticmethod
-    def wait_until_data_migration_is_done(host, timeout=180):
+    def wait_until_data_migration_is_done(host, timeout=SIMULATOR_BOOT_TIMEOUT):
         # The existence of a datamigrator process means that simulators are still booting.
         deadline = time.time() + timeout
         _log.debug('Waiting until no com.apple.datamigrator processes are found')
