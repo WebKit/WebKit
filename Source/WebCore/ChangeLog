@@ -1,3 +1,22 @@
+2018-09-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Allow programmatic focus when hardware keyboard is attached
+        https://bugs.webkit.org/show_bug.cgi?id=190017
+        <rdar://problem/42270463>
+
+        Reviewed by Wenson Hsieh.
+
+        Add support for checking if the embedding client is WebKitTestRunner and export isDumpRenderTree()
+        so that we can make use of it from WebKit. We will make use of these functions to keep the current
+        behavior of disallowing programmatic focus when running tests in these apps. This is needed to
+        keep testing deterministic. Otherwise, test results would be dependent on whether a hardware
+        keyboard is attached. When running tests in Simulator.app the hardware keyboard may also not be
+        connected (i.e. Hardware > Keyboard > Connect Hardware Keyboard is disabled).
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isWebKitTestRunner): Added.
+
 2018-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r236609): API tests for mso list preservation are failing

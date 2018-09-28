@@ -4191,6 +4191,7 @@ static bool isAssistableInputType(InputType type)
             || (_isChangingFocus && ![_focusedFormControlView isHidden])
 #else
             || _isChangingFocus
+            || isInHardwareKeyboardMode()
 #endif
 #if ENABLE(DRAG_SUPPORT)
             || _dragDropInteractionState.isPerformingDrop()

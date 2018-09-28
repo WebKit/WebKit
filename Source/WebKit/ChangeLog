@@ -1,3 +1,27 @@
+2018-09-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Allow programmatic focus when hardware keyboard is attached
+        https://bugs.webkit.org/show_bug.cgi?id=190017
+        <rdar://problem/42270463>
+
+        Reviewed by Wenson Hsieh.
+
+        Make the experience of using iOS with a hardware keyboard more desktop-like by allowing
+        programmatic focusing of editable elements.
+
+        * Platform/spi/ios/UIKitSPI.h: Forward declare SPI.
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/ios/NativeWebKeyboardEventIOS.mm:
+        (WebKit::isInHardwareKeyboardMode): Returns whether we are in hardware keyboard mode. In DumpRenderTree
+        and WebKitTestRunner this function always returns false to keep test results deterministic.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        Allow starting an input session if we are in hardware keyboard mode.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const): Send the full editor state if we are in hardware
+        keyboard mode regardless of whether layout has been performed so that UIProcess can update UI,
+        including the position of the caret, immediately.
+
 2018-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename createMarkup to serializePreservingVisualAppearance

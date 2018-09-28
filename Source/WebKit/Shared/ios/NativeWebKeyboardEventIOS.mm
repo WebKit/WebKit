@@ -28,9 +28,16 @@
 
 #if PLATFORM(IOS)
 
+#import "UIKitSPI.h"
 #import "WebIOSEventFactory.h"
+#import <WebCore/RuntimeApplicationChecks.h>
 
 namespace WebKit {
+
+bool isInHardwareKeyboardMode()
+{
+    return !WebCore::IOSApplication::isDumpRenderTree() && !WebCore::IOSApplication::isWebKitTestRunner() && [UIKeyboard isInHardwareKeyboardMode];
+}
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(::WebEvent *event)
     : WebKeyboardEvent(WebIOSEventFactory::createWebKeyboardEvent(event))

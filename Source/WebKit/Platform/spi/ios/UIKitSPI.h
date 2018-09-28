@@ -247,6 +247,7 @@ typedef enum {
 - (void)activate;
 - (void)geometryChangeDone:(BOOL)keyboardVisible;
 - (void)prepareForGeometryChange;
++ (BOOL)isInHardwareKeyboardMode;
 @end
 
 @interface UIKeyboardImpl : UIView <UIKeyboardCandidateListDelegate>
