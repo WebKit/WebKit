@@ -166,6 +166,7 @@ class StringImpl : private StringImplShape {
     friend class PrivateSymbolImpl;
     friend class RegisteredSymbolImpl;
     friend class SymbolImpl;
+    friend class ExternalStringImpl;
 
     friend struct WTF::CStringTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
@@ -177,7 +178,7 @@ class StringImpl : private StringImplShape {
     template<typename> friend struct WTF::HashAndCharactersTranslator;
 
 public:
-    enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring };
+    enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring, BufferExternal };
 
     // The bottom 6 bits in the hash are flags.
     static constexpr const unsigned s_flagCount = 6;
@@ -281,6 +282,8 @@ public:
     bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
     bool isAtomic() const { return m_hashAndFlags & s_hashFlagStringKindIsAtomic; }
     void setIsAtomic(bool);
+    
+    bool isExternal() const { return bufferOwnership() == BufferExternal; }
 
 #if STRING_STATS
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }

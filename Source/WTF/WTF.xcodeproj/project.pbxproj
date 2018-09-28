@@ -66,6 +66,7 @@
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
 		3337DB9CE743410FAF076E17 /* StackTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */; };
+		50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */; };
 		515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */; };
 		517F82D71FD22F3000DA3DEA /* CrossThreadTaskHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */; };
 		51F1752B1F3D486000C74950 /* PersistentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175261F3D486000C74950 /* PersistentCoders.cpp */; };
@@ -338,6 +339,8 @@
 		413FE8F51F8D2EAB00F6D7D7 /* CallbackAggregator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackAggregator.h; sourceTree = "<group>"; };
 		430B47871AAAAC1A001223DA /* StringCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringCommon.h; sourceTree = "<group>"; };
 		46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandler.h; sourceTree = "<group>"; };
+		50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalStringImpl.cpp; sourceTree = "<group>"; };
+		50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalStringImpl.h; sourceTree = "<group>"; };
 		513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingAccumulator.h; sourceTree = "<group>"; };
 		515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadCopier.cpp; sourceTree = "<group>"; };
 		515F794C1CFC9F4A00CCED93 /* CrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadCopier.h; sourceTree = "<group>"; };
@@ -1211,6 +1214,8 @@
 				0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */,
 				A8A47321151A825B004123FF /* CString.cpp */,
 				A8A47322151A825B004123FF /* CString.h */,
+				50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */,
+				50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */,
 				26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */,
 				93AC91A718942FC400244939 /* LChar.h */,
 				1C181C811D30797C00F5FA16 /* LineBreakIteratorPoolICU.h */,
@@ -1498,6 +1503,7 @@
 				A8A473B0151A825B004123FF /* double-conversion.cc in Sources */,
 				A8A473BA151A825B004123FF /* dtoa.cpp in Sources */,
 				143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */,
+				50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */,
 				A8A473B3151A825B004123FF /* fast-dtoa.cc in Sources */,
 				0F7C5FB61D885CF20044F5E2 /* FastBitVector.cpp in Sources */,
 				A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */,

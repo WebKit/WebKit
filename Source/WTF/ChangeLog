@@ -1,3 +1,17 @@
+2018-09-28  Koby Boyango  <koby.b@mce.systems>
+
+        [WTF] Add ExternalStringImpl, a StringImpl for user controlled buffers
+        https://bugs.webkit.org/show_bug.cgi?id=189991
+
+        Reviewed by Yusuke Suzuki.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/ExternalStringImpl.cpp: Added.
+        * wtf/text/ExternalStringImpl.h: Added.
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+
 2018-09-27  Saam barati  <sbarati@apple.com>
 
         Verify the contents of AssemblerBuffer on arm64e

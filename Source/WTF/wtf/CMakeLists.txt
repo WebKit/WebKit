@@ -287,6 +287,7 @@ set(WTF_PUBLIC_HEADERS
     text/Base64.h
     text/CString.h
     text/ConversionMode.h
+    text/ExternalStringImpl.h
     text/IntegerToStringConversion.h
     text/LChar.h
     text/LineBreakIteratorPoolICU.h
@@ -418,6 +419,7 @@ set(WTF_SOURCES
     text/AtomicStringTable.cpp
     text/Base64.cpp
     text/CString.cpp
+    text/ExternalStringImpl.cpp
     text/LineEnding.cpp
     text/StringBuilder.cpp
     text/StringBuilderJSON.cpp

@@ -27,6 +27,7 @@
 
 #include <wtf/Hasher.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/ExternalStringImpl.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/WTFString.h>
 
@@ -735,6 +736,122 @@ TEST(WTF, StaticPrivateSymbolImpl)
     auto& symbol = static_cast<SymbolImpl&>(staticPrivateSymbol);
     ASSERT_TRUE(symbol.isSymbol());
     ASSERT_TRUE(symbol.isPrivate());
+}
+
+TEST(WTF, ExternalStringImplCreate8bit)
+{
+    constexpr LChar buffer[] = "hello";
+    constexpr size_t bufferStringLength = sizeof(buffer) - 1;
+    bool freeFunctionCalled = false;
+
+    {
+        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+            freeFunctionCalled = true;
+        });
+
+        ASSERT_TRUE(external->isExternal());
+        ASSERT_TRUE(external->is8Bit());
+        ASSERT_FALSE(external->isSymbol());
+        ASSERT_FALSE(external->isAtomic());
+        ASSERT_EQ(external->length(), bufferStringLength);
+        ASSERT_EQ(external->characters8(), buffer);
+    }
+
+    ASSERT_TRUE(freeFunctionCalled);
+}
+
+TEST(WTF, ExternalStringImplCreate16bit)
+{
+    constexpr UChar buffer[] = { L'h', L'e', L'l', L'l', L'o', L'\0' };
+    constexpr size_t bufferStringLength = (sizeof(buffer) - 1) / sizeof(UChar);
+    bool freeFunctionCalled = false;
+
+    {
+        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+            freeFunctionCalled = true;
+        });
+
+        ASSERT_TRUE(external->isExternal());
+        ASSERT_FALSE(external->is8Bit());
+        ASSERT_FALSE(external->isSymbol());
+        ASSERT_FALSE(external->isAtomic());
+        ASSERT_EQ(external->length(), bufferStringLength);
+        ASSERT_EQ(external->characters16(), buffer);
+    }
+
+    ASSERT_TRUE(freeFunctionCalled);
+}
+
+TEST(WTF, StringImplNotExternal)
+{
+    auto notExternal = stringFromUTF8("hello");
+    ASSERT_FALSE(notExternal->isExternal());
+}
+
+
+TEST(WTF, ExternalStringAtomic)
+{
+    constexpr LChar buffer[] = "hello";
+    constexpr size_t bufferStringLength = sizeof(buffer) - 1;
+    bool freeFunctionCalled = false;
+
+    {
+        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+            freeFunctionCalled = true;
+        });    
+
+        ASSERT_TRUE(external->isExternal());
+        ASSERT_FALSE(external->isAtomic());
+        ASSERT_FALSE(external->isSymbol());
+        ASSERT_TRUE(external->is8Bit());
+        ASSERT_EQ(external->length(), bufferStringLength);
+        ASSERT_EQ(external->characters8(), buffer);
+
+        auto result = AtomicStringImpl::lookUp(external.ptr());
+        ASSERT_FALSE(result);
+
+        auto atomic = AtomicStringImpl::add(external.ptr());
+        ASSERT_TRUE(atomic->isExternal());
+        ASSERT_TRUE(atomic->isAtomic());
+        ASSERT_FALSE(atomic->isSymbol());
+        ASSERT_TRUE(atomic->is8Bit());
+        ASSERT_EQ(atomic->length(), external->length());
+        ASSERT_EQ(atomic->characters8(), external->characters8());
+
+        auto result2 = AtomicStringImpl::lookUp(external.ptr());
+        ASSERT_TRUE(result2);
+        ASSERT_EQ(atomic, result2);
+    }
+
+    ASSERT_TRUE(freeFunctionCalled);
+}
+
+TEST(WTF, ExternalStringToSymbol)
+{
+    constexpr LChar buffer[] = "hello";
+    constexpr size_t bufferStringLength = sizeof(buffer) - 1;
+    bool freeFunctionCalled = false;
+
+    {
+        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+            freeFunctionCalled = true;
+        });    
+
+        ASSERT_TRUE(external->isExternal());
+        ASSERT_FALSE(external->isSymbol());
+        ASSERT_FALSE(external->isAtomic());
+
+        auto symbol = SymbolImpl::create(external);
+        ASSERT_FALSE(symbol->isExternal());
+        ASSERT_TRUE(symbol->isSymbol());
+        ASSERT_FALSE(symbol->isAtomic());
+        ASSERT_FALSE(symbol->isPrivate());
+        ASSERT_FALSE(symbol->isNullSymbol());
+        ASSERT_EQ(external->length(), symbol->length());
+        ASSERT_TRUE(equal(symbol.ptr(), buffer));
+    }
+
+    ASSERT_TRUE(freeFunctionCalled);
 }
 
 } // namespace TestWebKitAPI

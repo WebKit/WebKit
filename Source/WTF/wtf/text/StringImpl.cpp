@@ -26,6 +26,7 @@
 #include "StringImpl.h"
 
 #include "AtomicString.h"
+#include "ExternalStringImpl.h"
 #include "StringBuffer.h"
 #include "StringHash.h"
 #include <wtf/ProcessID.h>
@@ -130,6 +131,12 @@ StringImpl::~StringImpl()
         // We use m_data8, but since it is a union with m_data16 this works either way.
         ASSERT(m_data8);
         fastFree(const_cast<LChar*>(m_data8));
+        return;
+    }
+    if (ownership == BufferExternal) {
+        auto* external = static_cast<ExternalStringImpl*>(this);
+        external->freeExternalBuffer(const_cast<LChar*>(m_data8), sizeInBytes());
+        external->m_free.~ExternalStringImplFreeFunction();
         return;
     }
 
