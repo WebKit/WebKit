@@ -1,3 +1,17 @@
+2018-09-27  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Non-redirected top frame navigation should not get captured in statistics
+        https://bugs.webkit.org/show_bug.cgi?id=190055
+        <rdar://problem/44843460>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::decode):
+            Corrects legacy statistics for frames and triggers a re-classification.
+
 2018-09-27  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed watchOS build fix; Fix declaration for ports which USE(ENCRYPTED_MEDIA) but don't

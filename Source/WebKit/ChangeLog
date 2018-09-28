@@ -1,3 +1,17 @@
+2018-09-27  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Non-redirected top frame navigation should not get captured in statistics
+        https://bugs.webkit.org/show_bug.cgi?id=190055
+        <rdar://problem/44843460>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+            Bumped the statisticsModelVersion to 14 to be able to
+            correct legacy statistics.
+        (WebKit::ResourceLoadStatisticsMemoryStore::logFrameNavigation):
+            Now skips capture if it's the main frame.
+
 2018-09-27  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Allow access to VoiceServices features needed for accessibility

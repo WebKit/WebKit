@@ -213,8 +213,9 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
     }
 
     // Subframe stats
-    decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
-    
+    if (modelVersion >= 14)
+        decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
+
     // Subresource stats
     decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameOrigins);
     decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo);
@@ -228,6 +229,12 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
     if (modelVersion >= 12) {
         if (!decoder.decodeBool("isVeryPrevalentResource", isVeryPrevalentResource))
             return false;
+    }
+
+    // Trigger re-classification based on model 14.
+    if (modelVersion < 14) {
+        isPrevalentResource = false;
+        isVeryPrevalentResource = false;
     }
 
     if (!decoder.decodeUInt32("dataRecordsRemoved", dataRecordsRemoved))

@@ -46,7 +46,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-constexpr unsigned statisticsModelVersion { 13 };
+constexpr unsigned statisticsModelVersion { 14 };
 constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
 constexpr Seconds minimumStatisticsProcessingInterval { 5_s };
 constexpr unsigned operatingDatesWindow { 30 };
@@ -596,7 +596,7 @@ void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const String& targetP
     bool areTargetAndSourceDomainsAssociated = targetPrimaryDomain == sourcePrimaryDomain;
 
     bool statisticsWereUpdated = false;
-    if (targetHost != mainFrameHost && !(areTargetAndMainFrameDomainsAssociated || areTargetAndSourceDomainsAssociated)) {
+    if (!isMainFrame && targetHost != mainFrameHost && !(areTargetAndMainFrameDomainsAssociated || areTargetAndSourceDomainsAssociated)) {
         auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
         targetStatistics.lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
         if (targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
