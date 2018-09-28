@@ -195,7 +195,7 @@ using namespace JSC;
 - (NSString *)markupString
 {
     auto& range = *core(self);
-    return String { documentTypeString(range.startContainer().document()) + createMarkup(range, nullptr, AnnotateForInterchange::Yes) };
+    return String { documentTypeString(range.startContainer().document()) + serializePreservingVisualAppearance(range, nullptr, AnnotateForInterchange::Yes) };
 }
 
 @end

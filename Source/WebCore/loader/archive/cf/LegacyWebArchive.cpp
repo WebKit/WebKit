@@ -460,7 +460,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
 
     // FIXME: This is always "for interchange". Is that right?
     Vector<Node*> nodeList;
-    String markupString = documentTypeString(document) + createMarkup(*range, &nodeList, AnnotateForInterchange::Yes);
+    String markupString = documentTypeString(document) + serializePreservingVisualAppearance(*range, &nodeList, AnnotateForInterchange::Yes);
     return create(markupString, *frame, nodeList, nullptr);
 }
 
@@ -555,7 +555,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
 
     Vector<Node*> nodeList;
     if (auto selectionRange = frame->selection().toNormalizedRange())
-        builder.append(createMarkup(*selectionRange, &nodeList, AnnotateForInterchange::Yes));
+        builder.append(serializePreservingVisualAppearance(*selectionRange, &nodeList, AnnotateForInterchange::Yes));
 
     auto archive = create(builder.toString(), *frame, nodeList, nullptr);
     

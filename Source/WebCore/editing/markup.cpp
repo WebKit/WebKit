@@ -844,7 +844,7 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
     return accumulator.takeResults();
 }
 
-String createMarkup(const Range& range, Vector<Node*>* nodes, AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs urlsToReslve)
+String serializePreservingVisualAppearance(const Range& range, Vector<Node*>* nodes, AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs urlsToReslve)
 {
     return createMarkupInternal(range.ownerDocument(), range, nodes, annotate, convertBlocksToInlines, urlsToReslve, MSOListMode::DoNotPreserve);
 }

@@ -1,3 +1,33 @@
+2018-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename createMarkup to serializePreservingVisualAppearance
+        https://bugs.webkit.org/show_bug.cgi?id=190086
+
+        Reviewed by Wenson Hsieh.
+
+        Renamed the function to clarify what it does. Also removed the unused Range::toHTML.
+
+        * dom/Range.cpp:
+        (WebCore::Range::toHTML const): Deleted.
+        * dom/Range.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::selectionInHTMLFormat):
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard):
+        * editing/markup.cpp:
+        (WebCore::serializePreservingVisualAppearance):
+        (WebCore::createMarkup): Deleted.
+        * editing/markup.h:
+        * editing/wpe/EditorWPE.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeRangeToDataObject):
+
 2018-09-28  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some unused RenderLayer code

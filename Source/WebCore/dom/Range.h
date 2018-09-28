@@ -84,7 +84,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> insertNode(Ref<Node>&&);
     WEBCORE_EXPORT String toString() const;
 
-    String toHTML() const;
     WEBCORE_EXPORT String text() const;
 
     WEBCORE_EXPORT ExceptionOr<Ref<DocumentFragment>> createContextualFragment(const String& html);

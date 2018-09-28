@@ -64,7 +64,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
     PasteboardWebContent pasteboardContent;
     pasteboardContent.text = selectedTextForDataTransfer();
-    pasteboardContent.markup = createMarkup(*selectedRange(), nullptr, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, ResolveURLs::YesExcludingLocalFileURLsForPrivacy);
+    pasteboardContent.markup = serializePreservingVisualAppearance(*selectedRange(), nullptr, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, ResolveURLs::YesExcludingLocalFileURLsForPrivacy);
     pasteboard.write(pasteboardContent);
 }
 

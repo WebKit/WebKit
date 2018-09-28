@@ -69,12 +69,11 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragme
 
 enum class ResolveURLs : uint8_t { No, Yes, YesExcludingLocalFileURLsForPrivacy };
 enum class ConvertBlocksToInlines : uint8_t { No, Yes };
-WEBCORE_EXPORT String createMarkup(const Range&, Vector<Node*>* = nullptr, AnnotateForInterchange = AnnotateForInterchange::No, ConvertBlocksToInlines = ConvertBlocksToInlines::No, ResolveURLs = ResolveURLs::No);
+WEBCORE_EXPORT String serializePreservingVisualAppearance(const Range&, Vector<Node*>* = nullptr, AnnotateForInterchange = AnnotateForInterchange::No, ConvertBlocksToInlines = ConvertBlocksToInlines::No, ResolveURLs = ResolveURLs::No);
 
 enum class SerializedNodes : uint8_t { SubtreeIncludingNode, SubtreesOfChildren };
 enum class SerializationSyntax : uint8_t { HTML, XML };
 WEBCORE_EXPORT String serializeFragment(const Node&, SerializedNodes, Vector<Node*>* = nullptr, ResolveURLs = ResolveURLs::No, Vector<QualifiedName>* tagNamesToSkip = nullptr, SerializationSyntax = SerializationSyntax::HTML);
-WEBCORE_EXPORT String serializeFragmentWithDocType(const Node&);
 
 String urlToMarkup(const URL&, const String& title);
 

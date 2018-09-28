@@ -952,11 +952,6 @@ String Range::toString() const
     return builder.toString();
 }
 
-String Range::toHTML() const
-{
-    return createMarkup(*this);
-}
-
 String Range::text() const
 {
     // We need to update layout, since plainText uses line boxes in the render tree.
