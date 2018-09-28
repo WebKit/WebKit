@@ -186,10 +186,18 @@ public:
     
     struct {
         CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
+        CodeLocationLabel<JSInternalPtrTag> doneLocation;
+        CodeLocationCall<JSInternalPtrTag> slowPathCallLocation;
+        CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
+
         RegisterSet usedRegisters;
-        uint32_t inlineSize;
-        int32_t deltaFromStartToSlowPathCallLocation;
-        int32_t deltaFromStartToSlowPathStart;
+
+        uint32_t inlineSize() const
+        {
+            int32_t inlineSize = MacroAssembler::differenceBetweenCodePtr(start, doneLocation);
+            ASSERT(inlineSize >= 0);
+            return inlineSize;
+        }
 
         GPRReg baseGPR;
         GPRReg valueGPR;
@@ -206,9 +214,10 @@ public:
         return patch.baseGPR;
     }
 
-    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return patch.start.callAtOffset<JSInternalPtrTag>(patch.deltaFromStartToSlowPathCallLocation); }
-    CodeLocationLabel<JSInternalPtrTag> doneLocation() { return patch.start.labelAtOffset<JSInternalPtrTag>(patch.inlineSize); }
-    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation() { return patch.start.labelAtOffset(patch.deltaFromStartToSlowPathStart); }
+    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return patch.slowPathCallLocation; }
+    CodeLocationLabel<JSInternalPtrTag> doneLocation() { return patch.doneLocation; }
+    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation() { return patch.slowPathStartLocation; }
+
     CodeLocationJump<JSInternalPtrTag> patchableJump()
     { 
         ASSERT(accessType == AccessType::InstanceOf);
