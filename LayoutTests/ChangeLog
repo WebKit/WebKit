@@ -1,3 +1,12 @@
+2018-09-28  Dawei Fenton  <realdawei@apple.com>
+
+        WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance
+        https://bugs.webkit.org/show_bug.cgi?id=189641
+
+        Unreviewed, skip tests that are timing out.
+
+        * TestExpectations:
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         document.open() should throw errors for cross-origin calls

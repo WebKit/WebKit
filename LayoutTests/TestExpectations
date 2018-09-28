@@ -974,6 +974,16 @@ webkit.org/b/189641 webgl/2.0.0/conformance/textures/misc/copy-tex-image-2d-form
 webkit.org/b/189641 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Skip ]
 webkit.org/b/189641 webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit.html [ Skip ]
 
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/acos/acos_001_to_006.html [ Skip ]
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/asin/asin_001_to_006.html [ Skip ]
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/atan/atan_001_to_008.html [ Skip ]
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/faceforward/faceforward_001_to_006.html [ Skip ]
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/floor/floor_001_to_006.html [ Skip ]
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/functions/functions_001_to_008.html [ Skip ]
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/log2/log2_001_to_008.html [ Skip ]
+webkit.org/b/189641 webgl/2.0.0/conformance/ogles/GL/mat/mat_001_to_008.html [ Skip ]
+
 webkit.org/b/189641 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Slow ]
 
 [ Debug ] fast/workers/worker-cloneport.html [ Slow ]
