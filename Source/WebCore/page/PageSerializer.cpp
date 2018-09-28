@@ -109,7 +109,7 @@ private:
 };
 
 PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer& serializer, Document& document, Vector<Node*>* nodes)
-    : MarkupAccumulator(nodes, ResolveAllURLs)
+    : MarkupAccumulator(nodes, ResolveURLs::Yes)
     , m_serializer(serializer)
     , m_document(document)
 {
@@ -198,7 +198,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         // FIXME: iframes used as images trigger this. We should deal with them correctly.
         return;
     }
-    String text = accumulator.serializeNodes(*document->documentElement(), IncludeNode);
+    String text = accumulator.serializeNodes(*document->documentElement(), SerializedNodes::SubtreeIncludingNode);
     m_resources.append({ url, document->suggestedMIMEType(), SharedBuffer::create(textEncoding.encode(text, UnencodableHandling::Entities)) });
     m_resourceURLs.add(url);
 

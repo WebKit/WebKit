@@ -55,10 +55,6 @@ std::unique_ptr<Page> createPageForSanitizingWebContent();
 String sanitizeMarkup(const String&, MSOListQuirks = MSOListQuirks::Disabled, std::optional<WTF::Function<void(DocumentFragment&)>> fragmentSanitizer = std::nullopt);
 String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&&, Document&, MSOListQuirks, const String& originalMarkup);
 
-enum EChildrenOnly { IncludeNode, ChildrenOnly };
-enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
-enum EFragmentSerialization { HTMLFragmentSerialization, XMLFragmentSerialization };
-
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text);
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
 ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element&, const String& markup, ParserContentPolicy);
@@ -71,14 +67,17 @@ bool isPlainTextMarkup(Node*);
 // These methods are used by HTMLElement & ShadowRoot to replace the children with respected fragment/text.
 ExceptionOr<void> replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragment>&&);
 
-String createMarkup(const Range&, Vector<Node*>* = nullptr, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
-String createMarkup(const Node&, EChildrenOnly = IncludeNode, Vector<Node*>* = nullptr, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = nullptr, EFragmentSerialization = HTMLFragmentSerialization);
+enum class ResolveURLs : uint8_t { No, Yes, YesExcludingLocalFileURLsForPrivacy };
+enum class ConvertBlocksToInlines : uint8_t { No, Yes };
+WEBCORE_EXPORT String createMarkup(const Range&, Vector<Node*>* = nullptr, AnnotateForInterchange = AnnotateForInterchange::No, ConvertBlocksToInlines = ConvertBlocksToInlines::No, ResolveURLs = ResolveURLs::No);
 
-WEBCORE_EXPORT String createFullMarkup(const Node&);
-WEBCORE_EXPORT String createFullMarkup(const Range&);
+enum class SerializedNodes : uint8_t { SubtreeIncludingNode, SubtreesOfChildren };
+enum class SerializationSyntax : uint8_t { HTML, XML };
+WEBCORE_EXPORT String serializeFragment(const Node&, SerializedNodes, Vector<Node*>* = nullptr, ResolveURLs = ResolveURLs::No, Vector<QualifiedName>* tagNamesToSkip = nullptr, SerializationSyntax = SerializationSyntax::HTML);
+WEBCORE_EXPORT String serializeFragmentWithDocType(const Node&);
 
 String urlToMarkup(const URL&, const String& title);
 
-String documentTypeString(const Document&);
+WEBCORE_EXPORT String documentTypeString(const Document&);
 
 }

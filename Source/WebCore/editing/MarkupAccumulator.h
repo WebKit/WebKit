@@ -59,10 +59,10 @@ enum EntityMask {
 // FIXME: Noncopyable?
 class MarkupAccumulator {
 public:
-    MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs, const Range* = nullptr, EFragmentSerialization = HTMLFragmentSerialization);
+    MarkupAccumulator(Vector<Node*>*, ResolveURLs, const Range* = nullptr, SerializationSyntax = SerializationSyntax::HTML);
     virtual ~MarkupAccumulator();
 
-    String serializeNodes(Node& targetNode, EChildrenOnly, Vector<QualifiedName>* tagNamesToSkip = nullptr);
+    String serializeNodes(Node& targetNode, SerializedNodes, Vector<QualifiedName>* tagNamesToSkip = nullptr);
 
     static void appendCharactersReplacingEntities(StringBuilder&, const String&, unsigned, unsigned, EntityMask);
 
@@ -114,13 +114,13 @@ protected:
 private:
     String resolveURLIfNeeded(const Element&, const String&) const;
     void appendQuotedURLAttributeValue(StringBuilder&, const Element&, const Attribute&);
-    void serializeNodesWithNamespaces(Node& targetNode, EChildrenOnly, const Namespaces*, Vector<QualifiedName>* tagNamesToSkip);
-    bool inXMLFragmentSerialization() const { return m_fragmentSerialization == XMLFragmentSerialization; }
+    void serializeNodesWithNamespaces(Node& targetNode, SerializedNodes, const Namespaces*, Vector<QualifiedName>* tagNamesToSkip);
+    bool inXMLFragmentSerialization() const { return m_serializationSyntax == SerializationSyntax::XML; }
     void generateUniquePrefix(QualifiedName&, const Namespaces&);
 
     StringBuilder m_markup;
-    const EAbsoluteURLs m_resolveURLsMethod;
-    EFragmentSerialization m_fragmentSerialization;
+    const ResolveURLs m_resolveURLs;
+    SerializationSyntax m_serializationSyntax;
     unsigned m_prefixLevel;
 };
 

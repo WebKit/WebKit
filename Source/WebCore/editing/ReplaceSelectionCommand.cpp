@@ -921,7 +921,7 @@ bool ReplaceSelectionCommand::willApplyCommand()
 {
     ensureReplacementFragment();
     m_documentFragmentPlainText = m_documentFragment->textContent();
-    m_documentFragmentHTMLMarkup = createMarkup(*m_documentFragment);
+    m_documentFragmentHTMLMarkup = serializeFragment(*m_documentFragment, SerializedNodes::SubtreeIncludingNode);
     return CompositeEditCommand::willApplyCommand();
 }
 

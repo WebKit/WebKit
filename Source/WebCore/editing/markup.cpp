@@ -219,7 +219,7 @@ class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
-    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs, EAnnotateForInterchange, MSOListMode, const Range*, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = nullptr);
+    StyledMarkupAccumulator(Vector<Node*>* nodes, ResolveURLs, AnnotateForInterchange, MSOListMode, const Range*, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = nullptr);
 
     Node* serializeNodes(Node* startNode, Node* pastEnd);
     void wrapWithNode(Node&, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
@@ -249,14 +249,14 @@ private:
         appendElement(out, element, false, DoesFullySelectNode);
     }
 
-    enum NodeTraversalMode { EmitString, DoNotEmitString };
+    enum class NodeTraversalMode { EmitString, DoNotEmitString };
     Node* traverseNodesForSerialization(Node* startNode, Node* pastEnd, NodeTraversalMode);
 
     bool appendNodeToPreserveMSOList(Node&);
 
     bool shouldAnnotate()
     {
-        return m_shouldAnnotate == AnnotateForInterchange;
+        return m_annotate == AnnotateForInterchange::Yes;
     }
 
     bool shouldApplyWrappingStyle(const Node& node) const
@@ -265,7 +265,7 @@ private:
     }
 
     Vector<String> m_reversedPrecedingMarkup;
-    const EAnnotateForInterchange m_shouldAnnotate;
+    const AnnotateForInterchange m_annotate;
     Node* m_highestNodeToBeSerialized;
     RefPtr<EditingStyle> m_wrappingStyle;
     bool m_needRelativeStyleWrapper;
@@ -275,9 +275,9 @@ private:
     bool m_inMSOList { false };
 };
 
-inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, MSOListMode msoListMode, const Range* range, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
-    : MarkupAccumulator(nodes, shouldResolveURLs, range)
-    , m_shouldAnnotate(shouldAnnotate)
+inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, ResolveURLs urlsToResolve, AnnotateForInterchange annotate, MSOListMode msoListMode, const Range* range, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
+    : MarkupAccumulator(nodes, urlsToResolve, range)
+    , m_annotate(annotate)
     , m_highestNodeToBeSerialized(highestNodeToBeSerialized)
     , m_needRelativeStyleWrapper(false)
     , m_needsPositionStyleConversion(needsPositionStyleConversion)
@@ -505,19 +505,19 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
 Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
 {
     if (!m_highestNodeToBeSerialized) {
-        Node* lastClosed = traverseNodesForSerialization(startNode, pastEnd, DoNotEmitString);
+        Node* lastClosed = traverseNodesForSerialization(startNode, pastEnd, NodeTraversalMode::DoNotEmitString);
         m_highestNodeToBeSerialized = lastClosed;
     }
 
     if (m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode())
         m_wrappingStyle = EditingStyle::wrappingStyleForSerialization(*m_highestNodeToBeSerialized->parentNode(), shouldAnnotate());
 
-    return traverseNodesForSerialization(startNode, pastEnd, EmitString);
+    return traverseNodesForSerialization(startNode, pastEnd, NodeTraversalMode::EmitString);
 }
 
 Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, Node* pastEnd, NodeTraversalMode traversalMode)
 {
-    const bool shouldEmit = traversalMode == EmitString;
+    const bool shouldEmit = traversalMode == NodeTraversalMode::EmitString;
     Vector<Node*> ancestorsToClose;
     Node* next;
     Node* lastClosed = nullptr;
@@ -530,7 +530,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
         ASSERT(n);
         if (!n)
             break;
-        
+
         next = NodeTraversal::next(*n);
         bool openedTag = false;
 
@@ -703,12 +703,12 @@ static bool isElementPresentational(const Node* node)
         || node->hasTagName(iTag) || node->hasTagName(emTag) || node->hasTagName(bTag) || node->hasTagName(strongTag);
 }
 
-static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterchange shouldAnnotate)
+static Node* highestAncestorToWrapMarkup(const Range* range, AnnotateForInterchange annotate)
 {
     auto* commonAncestor = range->commonAncestorContainer();
     ASSERT(commonAncestor);
     Node* specialCommonAncestor = nullptr;
-    if (shouldAnnotate == AnnotateForInterchange) {
+    if (annotate == AnnotateForInterchange::Yes) {
         // Include ancestors that aren't completely inside the range but are required to retain 
         // the structure and appearance of the copied markup.
         specialCommonAncestor = ancestorToRetainStructureAndAppearance(commonAncestor);
@@ -748,10 +748,10 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
     return specialCommonAncestor;
 }
 
-// FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
+// FIXME: Shouldn't we omit style info when annotate == AnnotateForInterchange::No?
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
 static String createMarkupInternal(Document& document, const Range& range, Vector<Node*>* nodes,
-    EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs, MSOListMode msoListMode)
+    AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs urlsToResolve, MSOListMode msoListMode)
 {
     static NeverDestroyed<const String> interchangeNewlineString(MAKE_STATIC_STRING_IMPL("<br class=\"" AppleInterchangeNewline "\">"));
 
@@ -770,17 +770,17 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
     if (body && VisiblePosition(firstPositionInNode(body)) == VisiblePosition(range.startPosition())
         && VisiblePosition(lastPositionInNode(body)) == VisiblePosition(range.endPosition()))
         fullySelectedRoot = body;
-    Node* specialCommonAncestor = highestAncestorToWrapMarkup(&range, shouldAnnotate);
+    Node* specialCommonAncestor = highestAncestorToWrapMarkup(&range, annotate);
 
     bool needsPositionStyleConversion = body && fullySelectedRoot == body
         && document.settings().shouldConvertPositionStyleOnCopy();
-    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, msoListMode, &range, needsPositionStyleConversion, specialCommonAncestor);
+    StyledMarkupAccumulator accumulator(nodes, urlsToResolve, annotate, msoListMode, &range, needsPositionStyleConversion, specialCommonAncestor);
     Node* pastEnd = range.pastLastNode();
 
     Node* startNode = range.firstNode();
     VisiblePosition visibleStart(range.startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(range.endPosition(), VP_DEFAULT_AFFINITY);
-    if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleStart)) {
+    if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleStart)) {
         if (visibleStart == visibleEnd.previous())
             return interchangeNewlineString;
 
@@ -796,7 +796,7 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
     if (specialCommonAncestor && lastClosed) {
         // Also include all of the ancestors of lastClosed up to this special ancestor.
         for (ContainerNode* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-            if (ancestor == fullySelectedRoot && !convertBlocksToInlines) {
+            if (ancestor == fullySelectedRoot && convertBlocksToInlines == ConvertBlocksToInlines::No) {
                 RefPtr<EditingStyle> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(*fullySelectedRoot);
 
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
@@ -818,7 +818,7 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
             } else {
                 // Since this node and all the other ancestors are not in the selection we want to set RangeFullySelectsNode to DoesNotFullySelectNode
                 // so that styles that affect the exterior of the node are not included.
-                accumulator.wrapWithNode(*ancestor, convertBlocksToInlines, StyledMarkupAccumulator::DoesNotFullySelectNode);
+                accumulator.wrapWithNode(*ancestor, convertBlocksToInlines == ConvertBlocksToInlines::Yes, StyledMarkupAccumulator::DoesNotFullySelectNode);
             }
             if (nodes)
                 nodes->append(ancestor);
@@ -837,15 +837,15 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
     }
 
     // FIXME: The interchange newline should be placed in the block that it's in, not after all of the content, unconditionally.
-    if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleEnd.previous()))
+    if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleEnd.previous()))
         accumulator.appendString(interchangeNewlineString);
 
     return accumulator.takeResults();
 }
 
-String createMarkup(const Range& range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
+String createMarkup(const Range& range, Vector<Node*>* nodes, AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs urlsToReslve)
 {
-    return createMarkupInternal(range.ownerDocument(), range, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs, MSOListMode::DoNotPreserve);
+    return createMarkupInternal(range.ownerDocument(), range, nodes, annotate, convertBlocksToInlines, urlsToReslve, MSOListMode::DoNotPreserve);
 }
 
 static bool shouldPreserveMSOLists(const String& markup)
@@ -871,7 +871,7 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
 
     auto range = Range::create(document);
     range->selectNodeContents(*bodyElement);
-    auto result = createMarkupInternal(document, range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs, msoListMode);
+    auto result = createMarkupInternal(document, range.get(), nullptr, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, ResolveURLs::YesExcludingLocalFileURLsForPrivacy, msoListMode);
 
     if (msoListMode == MSOListMode::Preserve) {
         StringBuilder builder;
@@ -947,10 +947,10 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
     return fragment;
 }
 
-String createMarkup(const Node& node, EChildrenOnly childrenOnly, Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, Vector<QualifiedName>* tagNamesToSkip, EFragmentSerialization fragmentSerialization)
+String serializeFragment(const Node& node, SerializedNodes root, Vector<Node*>* nodes, ResolveURLs urlsToResolve, Vector<QualifiedName>* tagNamesToSkip, SerializationSyntax serializationSyntax)
 {
-    MarkupAccumulator accumulator(nodes, shouldResolveURLs, 0, fragmentSerialization);
-    return accumulator.serializeNodes(const_cast<Node&>(node), childrenOnly, tagNamesToSkip);
+    MarkupAccumulator accumulator(nodes, urlsToResolve, nullptr, serializationSyntax);
+    return accumulator.serializeNodes(const_cast<Node&>(node), root, tagNamesToSkip);
 }
 
 static void fillContainerFromString(ContainerNode& paragraph, const String& string)
@@ -1094,25 +1094,7 @@ String documentTypeString(const Document& document)
     DocumentType* documentType = document.doctype();
     if (!documentType)
         return emptyString();
-    return createMarkup(*documentType);
-}
-
-String createFullMarkup(const Node& node)
-{
-    // FIXME: This is never "for interchange". Is that right?
-    String markupString = createMarkup(node, IncludeNode, 0);
-
-    Node::NodeType nodeType = node.nodeType();
-    if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
-        markupString = documentTypeString(node.document()) + markupString;
-
-    return markupString;
-}
-
-String createFullMarkup(const Range& range)
-{
-    // FIXME: This is always "for interchange". Is that right?
-    return documentTypeString(range.startContainer().document()) + createMarkup(range, 0, AnnotateForInterchange);
+    return serializeFragment(*documentType, SerializedNodes::SubtreeIncludingNode);
 }
 
 String urlToMarkup(const URL& url, const String& title)

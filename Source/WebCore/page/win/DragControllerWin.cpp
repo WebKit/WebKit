@@ -78,7 +78,7 @@ void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Elemen
     // Order is important here for Explorer's sake
     pasteboard.writeURLToWritableDataObject(url, label);
     pasteboard.writeImageToDataObject(element, url);
-    pasteboard.writeMarkup(createMarkup(element, IncludeNode, 0, ResolveAllURLs));
+    pasteboard.writeMarkup(serializeFragment(element, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::Yes));
 }
 
 }

@@ -629,7 +629,7 @@ bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
     if (!fragment)
         return false;
 
-    markup = createMarkup(*fragment);
+    markup = serializeFragment(*fragment, SerializedNodes::SubtreeIncludingNode);
     return true;
 }
 
@@ -655,7 +655,7 @@ bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
     auto fragment = createFragmentAndAddResources(frame, string.get());
     if (!fragment)
         return false;
-    markup = createMarkup(*fragment);
+    markup = serializeFragment(*fragment, SerializedNodes::SubtreeIncludingNode);
     return true;
 }
 

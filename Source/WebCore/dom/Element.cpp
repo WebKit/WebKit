@@ -2777,12 +2777,12 @@ ExceptionOr<void> Element::mergeWithNextTextNode(Text& node)
 
 String Element::innerHTML() const
 {
-    return createMarkup(*this, ChildrenOnly);
+    return serializeFragment(*this, SerializedNodes::SubtreesOfChildren);
 }
 
 String Element::outerHTML() const
 {
-    return createMarkup(*this);
+    return serializeFragment(*this, SerializedNodes::SubtreeIncludingNode);
 }
 
 ExceptionOr<void> Element::setOuterHTML(const String& html)

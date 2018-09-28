@@ -766,7 +766,7 @@ void InspectorDOMAgent::getOuterHTML(ErrorString& errorString, int nodeId, WTF::
     if (!node)
         return;
 
-    *outerHTML = createMarkup(*node);
+    *outerHTML = serializeFragment(*node, SerializedNodes::SubtreeIncludingNode);
 }
 
 void InspectorDOMAgent::setOuterHTML(ErrorString& errorString, int nodeId, const String& outerHTML)

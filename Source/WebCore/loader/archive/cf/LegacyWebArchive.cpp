@@ -421,7 +421,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, WTF::Function<bool
     }
 
     Vector<Node*> nodeList;
-    String markupString = createMarkup(node, IncludeNode, &nodeList, DoNotResolveURLs, tagNamesToFilter.get());
+    String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::No, tagNamesToFilter.get());
     auto nodeType = node.nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = documentTypeString(node.document()) + markupString;
@@ -460,7 +460,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
 
     // FIXME: This is always "for interchange". Is that right?
     Vector<Node*> nodeList;
-    String markupString = documentTypeString(document) + createMarkup(*range, &nodeList, AnnotateForInterchange);
+    String markupString = documentTypeString(document) + createMarkup(*range, &nodeList, AnnotateForInterchange::Yes);
     return create(markupString, *frame, nodeList, nullptr);
 }
 
@@ -555,7 +555,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
 
     Vector<Node*> nodeList;
     if (auto selectionRange = frame->selection().toNormalizedRange())
-        builder.append(createMarkup(*selectionRange, &nodeList, AnnotateForInterchange));
+        builder.append(createMarkup(*selectionRange, &nodeList, AnnotateForInterchange::Yes));
 
     auto archive = create(builder.toString(), *frame, nodeList, nullptr);
     

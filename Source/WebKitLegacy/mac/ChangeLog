@@ -1,3 +1,14 @@
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use enum class in createMarkup arguments
+        https://bugs.webkit.org/show_bug.cgi?id=190028
+
+        Reviewed by Wenson Hsieh.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode markupString]): Moved the code from WebCore/editing/markup.cpp
+        (-[DOMRange markupString]): Ditto.
+
 2018-09-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on

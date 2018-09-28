@@ -137,7 +137,14 @@ using namespace JSC;
 
 - (NSString *)markupString
 {
-    return createFullMarkup(*core(self));
+    auto& node = *core(self);
+
+    String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode);
+    Node::NodeType nodeType = node.nodeType();
+    if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
+        markupString = documentTypeString(node.document()) + markupString;
+
+    return markupString;
 }
 
 - (NSRect)_renderRect:(bool *)isReplaced
@@ -187,7 +194,8 @@ using namespace JSC;
 
 - (NSString *)markupString
 {
-    return createFullMarkup(*core(self));
+    auto& range = *core(self);
+    return String { documentTypeString(range.startContainer().document()) + createMarkup(range, nullptr, AnnotateForInterchange::Yes) };
 }
 
 @end

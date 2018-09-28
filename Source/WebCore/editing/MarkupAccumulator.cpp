@@ -116,24 +116,24 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs resolveUrlsMethod, const Range* range, EFragmentSerialization fragmentSerialization)
+MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, ResolveURLs resolveURLs, const Range* range, SerializationSyntax serializationSyntax)
     : m_nodes(nodes)
     , m_range(range)
-    , m_resolveURLsMethod(resolveUrlsMethod)
-    , m_fragmentSerialization(fragmentSerialization)
+    , m_resolveURLs(resolveURLs)
+    , m_serializationSyntax(serializationSyntax)
     , m_prefixLevel(0)
 {
 }
 
 MarkupAccumulator::~MarkupAccumulator() = default;
 
-String MarkupAccumulator::serializeNodes(Node& targetNode, EChildrenOnly childrenOnly, Vector<QualifiedName>* tagNamesToSkip)
+String MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root, Vector<QualifiedName>* tagNamesToSkip)
 {
-    serializeNodesWithNamespaces(targetNode, childrenOnly, 0, tagNamesToSkip);
+    serializeNodesWithNamespaces(targetNode, root, 0, tagNamesToSkip);
     return m_markup.toString();
 }
 
-void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, EChildrenOnly childrenOnly, const Namespaces* namespaces, Vector<QualifiedName>* tagNamesToSkip)
+void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, SerializedNodes root, const Namespaces* namespaces, Vector<QualifiedName>* tagNamesToSkip)
 {
     if (tagNamesToSkip && is<Element>(targetNode)) {
         for (auto& name : *tagNamesToSkip) {
@@ -151,7 +151,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, EChildren
         namespaceHash.set(XMLNames::xmlNamespaceURI->impl(), xmlAtom().impl());
     }
 
-    if (!childrenOnly)
+    if (root == SerializedNodes::SubtreeIncludingNode)
         appendStartTag(targetNode, &namespaceHash);
 
     if (targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(targetNode))
@@ -159,24 +159,24 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, EChildren
 
     Node* current = targetNode.hasTagName(templateTag) ? downcast<HTMLTemplateElement>(targetNode).content().firstChild() : targetNode.firstChild();
     for ( ; current; current = current->nextSibling())
-        serializeNodesWithNamespaces(*current, IncludeNode, &namespaceHash, tagNamesToSkip);
+        serializeNodesWithNamespaces(*current, SerializedNodes::SubtreeIncludingNode, &namespaceHash, tagNamesToSkip);
 
-    if (!childrenOnly)
+    if (root == SerializedNodes::SubtreeIncludingNode)
         appendEndTag(targetNode);
 }
 
 String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
 {
-    switch (m_resolveURLsMethod) {
-    case ResolveAllURLs:
+    switch (m_resolveURLs) {
+    case ResolveURLs::Yes:
         return element.document().completeURL(urlString).string();
 
-    case ResolveNonLocalURLs:
+    case ResolveURLs::YesExcludingLocalFileURLsForPrivacy:
         if (!element.document().url().isLocalFile())
             return element.document().completeURL(urlString).string();
         break;
 
-    case DoNotResolveURLs:
+    case ResolveURLs::No:
         break;
     }
     return urlString;

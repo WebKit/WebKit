@@ -1,3 +1,89 @@
+2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use enum class in createMarkup arguments
+        https://bugs.webkit.org/show_bug.cgi?id=190028
+
+        Reviewed by Wenson Hsieh.
+
+        Replaced enums used by createMarkup with equivalent enum classes: EChildrenOnly with SerializedNodes,
+        EAbsoluteURLs with ResolveURLs, and EFragmentSerialization with SerializationSyntax.
+
+        Also replaced the boolean convertBlocksToInlines with an enum class of the same name.
+
+        Finally, renamed the createMarkup variant which doesn't serialize style and used for innerHTML and XMLSerializer
+        to serializeFragment.
+
+        * dom/Element.cpp:
+        (WebCore::Element::innerHTML const):
+        (WebCore::Element::outerHTML const):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::innerHTML const):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/HTMLInterchange.h:
+        (WebCore::AnnotateForInterchange): Renamed from EAnnotateForInterchange.
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::MarkupAccumulator):
+        (WebCore::MarkupAccumulator::serializeNodes):
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces):
+        (WebCore::MarkupAccumulator::resolveURLIfNeeded const):
+        * editing/MarkupAccumulator.h:
+        (WebCore::MarkupAccumulator::inXMLFragmentSerialization const):
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::inputEventDataTransfer const):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::willApplyCommand):
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::inputEventDataTransfer const):
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::selectionInHTMLFormat):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentMarkupReader::readRTFD):
+        (WebCore::WebContentMarkupReader::readRTF):
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::writeImageToPasteboard):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator):
+        (WebCore::StyledMarkupAccumulator::serializeNodes):
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+        (WebCore::highestAncestorToWrapMarkup):
+        (WebCore::createMarkupInternal):
+        (WebCore::createMarkup):
+        (WebCore::sanitizedMarkupForFragmentInDocument):
+        (WebCore::serializeFragment): Renamed from createMarkup. This is used for innerHTML and XMLSerializer,
+        which faithfully serializes the fragment without any computed style as inline styles.
+        (WebCore::documentTypeString):
+        (WebCore::createFullMarkup): Deleted two varinats used in WebKitLegacy.
+        * editing/markup.h:
+        (WebCore::ResolveURLs): Renamed from EAbsoluteURLs.
+        (WebCore::ConvertBlocksToInlines): Added.
+        (WebCore::SerializedNodes): Renamed from EChildrenOnly.
+        (WebCore::SerializationSyntax): Renamed from EFragmentSerialization.
+        * editing/wpe/EditorWPE.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard):
+        * inspector/DOMEditor.cpp:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator):
+        (WebCore::PageSerializer::serializeFrame):
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::declareAndWriteDragImage):
+        * Source/WebCore/platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeRangeToDataObject):
+        (WebCore::Pasteboard::writeSelection):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        * xml/XMLSerializer.cpp:
+        (WebCore::XMLSerializer::serializeToString):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::xsltStylesheetPointer):
+        (WebCore::xmlDocPtrFromNode):
+
 2018-09-27  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Non-redirected top frame navigation should not get captured in statistics

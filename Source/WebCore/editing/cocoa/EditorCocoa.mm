@@ -76,7 +76,7 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
 String Editor::selectionInHTMLFormat()
 {
     if (auto range = selectedRange())
-        return createMarkup(*range, nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
+        return createMarkup(*range, nullptr, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, ResolveURLs::YesExcludingLocalFileURLsForPrivacy);
     return { };
 }
 

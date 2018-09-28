@@ -444,7 +444,7 @@ void Pasteboard::writeRangeToDataObject(Range& selectedRange, Frame& frame)
     medium.tymed = TYMED_HGLOBAL;
 
     Vector<char> data;
-    markupToCFHTML(createMarkup(selectedRange, 0, AnnotateForInterchange),
+    markupToCFHTML(createMarkup(selectedRange, nullptr, AnnotateForInterchange::Yes),
         selectedRange.startContainer().document().url().string(), data);
     medium.hGlobal = createGlobalData(data);
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
@@ -469,7 +469,7 @@ void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete,
     // Put CF_HTML format on the pasteboard 
     if (::OpenClipboard(m_owner)) {
         Vector<char> data;
-        markupToCFHTML(createMarkup(selectedRange, 0, AnnotateForInterchange),
+        markupToCFHTML(createMarkup(selectedRange, nullptr, AnnotateForInterchange::Yes),
             selectedRange.startContainer().document().url().string(), data);
         HGLOBAL cbData = createGlobalData(data);
         if (!::SetClipboardData(HTMLClipboardFormat, cbData))

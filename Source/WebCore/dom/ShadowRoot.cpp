@@ -153,7 +153,7 @@ Style::Scope& ShadowRoot::styleScope()
 
 String ShadowRoot::innerHTML() const
 {
-    return createMarkup(*this, ChildrenOnly);
+    return serializeFragment(*this, SerializedNodes::SubtreesOfChildren);
 }
 
 ExceptionOr<void> ShadowRoot::setInnerHTML(const String& markup)
