@@ -1,5 +1,3 @@
 
-FAIL document.open bailout should not have any side effects (same origin-domain (but not same origin) document) assert_throws: document.open() should throw a SecurityError on a same origin-domain (but not same origin) document function "() => {
-    ctx.iframes[0].contentDocument.open();
-  }" did not throw
+PASS document.open bailout should not have any side effects (same origin-domain (but not same origin) document) 
 

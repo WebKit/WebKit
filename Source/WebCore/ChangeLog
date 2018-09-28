@@ -1,3 +1,22 @@
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
+        document.open() should throw errors for cross-origin calls
+        https://bugs.webkit.org/show_bug.cgi?id=189371
+        <rdar://problem/44282700>
+
+        Reviewed by Youenn Fablet.
+
+        document.open() / document.write() should throw errors for cross-origin calls as per:
+        - https://html.spec.whatwg.org/#document-open-steps (Step 4)
+
+        No new tests, rebaselined existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        (WebCore::Document::write):
+        (WebCore::Document::writeln):
+        * dom/Document.h:
+
 2018-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename createMarkup to serializePreservingVisualAppearance

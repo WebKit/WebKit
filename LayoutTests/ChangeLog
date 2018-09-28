@@ -1,3 +1,16 @@
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
+        document.open() should throw errors for cross-origin calls
+        https://bugs.webkit.org/show_bug.cgi?id=189371
+        <rdar://problem/44282700>
+
+        Reviewed by Youenn Fablet.
+
+        Tweak a couple of existing tests to reflect behavior change.
+
+        * fast/dom/HTMLDocument/document-open-return-value.html:
+        * fast/parser/tokenizer-close-during-document-write.html:
+
 2018-09-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r236605.
