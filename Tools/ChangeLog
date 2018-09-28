@@ -1,3 +1,15 @@
+2018-09-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Bring up queues for Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=189935
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2018-09-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Increase the timeout for iOS Simulator data migration

@@ -1,7 +1,20 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
-                    { "name": "bot121", "platform": "mac-highsierra" },
+                    { "name": "bot121", "platform": "mac-mojave" },
+                    { "name": "bot132", "platform": "mac-mojave" },
+                    { "name": "bot178", "platform": "mac-mojave" },
+                    { "name": "bot179", "platform": "mac-mojave" },
+                    { "name": "bot183", "platform": "mac-mojave" },
+                    { "name": "bot184", "platform": "mac-mojave" },
+                    { "name": "bot185", "platform": "mac-mojave" },
+                    { "name": "bot198", "platform": "mac-mojave" },
+                    { "name": "bot210", "platform": "mac-mojave" },
+                    { "name": "bot610", "platform": "mac-mojave" },
+                    { "name": "bot611", "platform": "mac-mojave" },
+                    { "name": "bot612", "platform": "mac-mojave" },
+                    { "name": "bot613", "platform": "mac-mojave" },
+
                     { "name": "bot155", "platform": "mac-highsierra" },
                     { "name": "bot153", "platform": "mac-highsierra" },
                     { "name": "bot157", "platform": "mac-highsierra" },
@@ -86,7 +99,42 @@
                     { "name": "wpe-linux-bot-4", "platform": "wpe" }
                   ],
 
-    "builders":   [ { "name": "Apple High Sierra Debug (Build)", "type": "Build", "builddir": "highsierra-debug",
+    "builders":   [ { "name": "Apple Mojave Debug (Build)", "type": "Build", "builddir": "mojave-debug",
+                      "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["mojave-debug-tests-wk1", "mojave-debug-tests-wk2"],
+                      "slavenames": ["bot613", "bot614"]
+                    },
+                    { "name": "Apple Mojave Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "mojave-debug-tests-wk1",
+                      "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot183", "bot184"]
+                    },
+                    { "name": "Apple Mojave Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "mojave-debug-tests-wk2",
+                      "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot178", "bot179"]
+                    },
+                    { "name": "Apple Mojave Release (Build)", "type": "Build", "builddir": "mojave-release",
+                      "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["mojave-release-tests-wk1", "mojave-release-tests-wk2", "mojave-leaks"],
+                      "slavenames": ["bot610", "bot611"]
+                    },
+                    { "name": "Apple Mojave Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "mojave-release-tests-wk1",
+                      "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot132", "bot185"]
+                    },
+                    { "name": "Apple Mojave Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "mojave-release-tests-wk2",
+                      "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot198", "bot210"]
+                    },
+                    { "name": "Apple Mojave (Leaks)", "type": "TestWebKit1Leaks", "builddir": "mojave-leaks",
+                      "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
+                      "slavenames": ["bot121"]
+                    },
+                    { "name": "Apple High Sierra Debug (Build)", "type": "Build", "builddir": "highsierra-debug",
                       "platform": "mac-highsierra", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["highsierra-debug-tests-jsc", "highsierra-debug-tests-wk1", "highsierra-debug-tests-wk2"],
                       "slavenames": ["bot630", "bot631"]
@@ -103,7 +151,7 @@
                     },
                     { "name": "Apple High Sierra Release (Build)", "type": "Build", "builddir": "highsierra-release",
                       "platform": "mac-highsierra", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["highsierra-release-tests-jsc", "highsierra-release-tests-wk1", "highsierra-release-tests-wk2", "highsierra-leaks"],
+                      "triggers": ["highsierra-release-tests-jsc", "highsierra-release-tests-wk1", "highsierra-release-tests-wk2"],
                       "slavenames": ["bot635", "bot636"]
                     },
                     { "name": "Apple High Sierra Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "highsierra-release-tests-wk1",
@@ -135,11 +183,6 @@
                     { "name": "Apple High Sierra 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "highsierra-32bitJSC-debug",
                       "platform": "mac-highsierra", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["bot187"]
-                    },
-                    { "name": "Apple High Sierra (Leaks)", "type": "TestWebKit1Leaks", "builddir": "highsierra-leaks",
-                      "platform": "mac-highsierra", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot121"]
                     },
                     { "name": "Apple Sierra Debug (Build)", "type": "Build", "builddir": "sierra-debug",
                       "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
@@ -385,6 +428,24 @@
                                        "JSCOnly Linux MIPS32el Release", "WinCairo 64-bit WKL Release (Build)", "WinCairo 64-bit WKL Debug (Build)",
                                        "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
                     },
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-mojave", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple Mojave Release (Build)", "Apple Mojave Debug (Build)", "Apple Mojave LLINT CLoop (BuildAndTest)"]
+                    },
+                    { "type": "Triggerable", "name": "mojave-release-tests-wk1",
+                      "builderNames": ["Apple Mojave Release WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "mojave-release-tests-wk2",
+                      "builderNames": ["Apple Mojave Release WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "mojave-debug-tests-wk1",
+                      "builderNames": ["Apple Mojave Debug WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "mojave-debug-tests-wk2",
+                      "builderNames": ["Apple Mojave Debug WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "mojave-leaks",
+                      "builderNames": ["Apple Mojave (Leaks)"]
+                    },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra Release (32-bit Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)", "Apple High Sierra 32-bit JSC (BuildAndTest)"]
                     },
@@ -417,9 +478,6 @@
                     },
                     { "type": "Triggerable", "name": "highsierra-release-tests-jsc",
                       "builderNames": ["Apple High Sierra Release JSC (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "highsierra-leaks",
-                      "builderNames": ["Apple High Sierra (Leaks)"]
                     },
                     { "type": "Triggerable", "name": "sierra-release-tests-wk1",
                       "builderNames": ["Apple Sierra Release WK1 (Tests)"]
