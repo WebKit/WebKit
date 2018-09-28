@@ -1,3 +1,15 @@
+2018-09-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JSC test stress/jsc-read.js doesn't support CRLF
+        https://bugs.webkit.org/show_bug.cgi?id=190063
+
+        Reviewed by Yusuke Suzuki.
+
+        In order to run this test via Windows command prompt, we can't assume that the final newline will be LF.
+
+        * stress/jsc-read.js:
+        (test):
+
 2018-09-27  Saam barati  <sbarati@apple.com>
 
         Verify the contents of AssemblerBuffer on arm64e

@@ -3,7 +3,9 @@
     const in_file = 'jsc-read.js';
 
     const check = content_read => {
-        let expect = '(' + test.toString() + ')();\n';
+        let testContent = test.toString();
+        let lineEnding = testContent.match(/\r?\n/)[0];
+        let expect = `(${testContent})();${lineEnding}`;
         if (content_read !== expect)
             throw Error('Expected to read this file as-is, instead read:\n==========\n' + content_read + '\n==========');
     };
