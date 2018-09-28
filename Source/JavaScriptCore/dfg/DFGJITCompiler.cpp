@@ -102,10 +102,8 @@ void JITCompiler::linkOSRExits()
             addLinkTask([target, osrExitThunkLabel] (LinkBuffer& linkBuffer) {
                 linkBuffer.link(target, osrExitThunkLabel);
             });
-        } else {
-            OSRExit& exit = m_jitCode->osrExit[i];
-            exit.setPatchableCodeOffset(patchableJump());
-        }
+        } else
+            info.m_patchableJump = patchableJump();
     }
 }
 
@@ -300,9 +298,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         if (!Options::useProbeOSRExit()) {
+            linkBuffer.link(info.m_patchableJump.m_jump, target);
             OSRExit& exit = m_jitCode->osrExit[i];
-            linkBuffer.link(exit.getPatchableCodeOffsetAsJump(), target);
-            exit.correctJump(linkBuffer);
+            exit.m_patchableJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(info.m_patchableJump);
         }
         if (info.m_replacementSource.isSet()) {
             m_jitCode->common.jumpReplacements.append(JumpReplacement(

@@ -1,5 +1,25 @@
 2018-09-27  Saam barati  <sbarati@apple.com>
 
+        DFG::OSRExit::m_patchableCodeOffset should not be an int
+        https://bugs.webkit.org/show_bug.cgi?id=190066
+        <rdar://problem/39498244>
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::codeLocationForRepatch const):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        (JSC::DFG::OSRExit::setPatchableCodeOffset): Deleted.
+        (JSC::DFG::OSRExit::getPatchableCodeOffsetAsJump const): Deleted.
+        (JSC::DFG::OSRExit::correctJump): Deleted.
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompilationInfo.h:
+
+2018-09-27  Saam barati  <sbarati@apple.com>
+
         Don't use int offsets in StructureStubInfo
         https://bugs.webkit.org/show_bug.cgi?id=190064
         <rdar://problem/44784719>
