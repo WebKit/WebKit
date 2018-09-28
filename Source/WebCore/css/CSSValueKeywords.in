@@ -1334,7 +1334,6 @@ white-outline
 plain
 buy
 set-up
-in-store
 donate
 #if defined(ENABLE_APPLE_PAY_SESSION_V4) && ENABLE_APPLE_PAY_SESSION_V4
 check-out

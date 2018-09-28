@@ -1,3 +1,25 @@
+2018-09-28  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Remove the "in-store" button type
+        https://bugs.webkit.org/show_bug.cgi?id=190079
+
+        Reviewed by Tim Horton.
+
+        According to <https://developer.apple.com/design/human-interface-guidelines/apple-pay/buttons-and-marks/buttons/>,
+        this button is meant only for certain kinds of native apps. It shouldn't be available on the web.
+
+        Updated http/tests/ssl/applepay/ApplePayButton.html.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ApplePayButtonType const):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::toPKPaymentButtonType):
+        * rendering/style/RenderStyleConstants.h:
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         document.open() should throw errors for cross-origin calls

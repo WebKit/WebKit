@@ -114,8 +114,6 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
         return PKPaymentButtonTypeBuy;
     case ApplePayButtonType::SetUp:
         return PKPaymentButtonTypeSetUp;
-    case ApplePayButtonType::InStore:
-        return PKPaymentButtonTypeInStore;
     case ApplePayButtonType::Donate:
         return PKPaymentButtonTypeDonate;
 #if ENABLE(APPLE_PAY_SESSION_V4)
