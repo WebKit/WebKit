@@ -774,7 +774,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "black", "white", "white-outline",
     ],
     "-apple-pay-button-type": [
-        "plain", "buy", "set-up", "donate", "checkout", "book", "subscribe",
+        "plain", "buy", "set-up", "donate", "check-out", "book", "subscribe",
     ],
     "-apple-trailing-word": [
         "auto", "-webkit-partially-balanced",
