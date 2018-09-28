@@ -33,7 +33,6 @@
 #include "VideoFullscreenModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSWindow;
@@ -47,21 +46,21 @@ class VideoFullscreenChangeObserver;
 
 class VideoFullscreenInterfaceMac
     : public VideoFullscreenModelClient
-    , public PlaybackSessionModelClient
-    , public RefCounted<VideoFullscreenInterfaceMac>
-    , public CanMakeWeakPtr<VideoFullscreenInterfaceMac> {
+    , private PlaybackSessionModelClient
+    , public RefCounted<VideoFullscreenInterfaceMac> {
 
 public:
-    static Ref<VideoFullscreenInterfaceMac> create(Ref<PlaybackSessionInterfaceMac>&& playbackSessionInterface, Ref<VideoFullscreenModel> videoFullscreenModel)
+    static Ref<VideoFullscreenInterfaceMac> create(PlaybackSessionInterfaceMac& playbackSessionInterface)
     {
-        return adoptRef(*new VideoFullscreenInterfaceMac(WTFMove(playbackSessionInterface), WTFMove(videoFullscreenModel)));
+        return adoptRef(*new VideoFullscreenInterfaceMac(playbackSessionInterface));
     }
     virtual ~VideoFullscreenInterfaceMac();
     PlaybackSessionInterfaceMac& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
-    VideoFullscreenModel& videoFullscreenModel() const { return m_videoFullscreenModel; }
-    PlaybackSessionModel& playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
-    VideoFullscreenChangeObserver* videoFullscreenChangeObserver() const { return m_fullscreenChangeObserver.get(); }
-    WEBCORE_EXPORT void setVideoFullscreenChangeObserver(WeakPtr<VideoFullscreenChangeObserver>);
+    VideoFullscreenModel* videoFullscreenModel() const { return m_videoFullscreenModel; }
+    PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
+    WEBCORE_EXPORT void setVideoFullscreenModel(VideoFullscreenModel*);
+    VideoFullscreenChangeObserver* videoFullscreenChangeObserver() const { return m_fullscreenChangeObserver; }
+    WEBCORE_EXPORT void setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver*);
 
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void rateChanged(bool isPlaying, float playbackRate) override;
@@ -98,11 +97,10 @@ public:
     WEBCORE_EXPORT void requestHideAndExitPiP();
 
 private:
-    WEBCORE_EXPORT VideoFullscreenInterfaceMac(Ref<PlaybackSessionInterfaceMac>&&, Ref<VideoFullscreenModel>&&);
+    WEBCORE_EXPORT VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac&);
     Ref<PlaybackSessionInterfaceMac> m_playbackSessionInterface;
-    Ref<VideoFullscreenModel> m_videoFullscreenModel;
-    WeakPtrFactory<PlaybackSessionModelClient> m_weakPtrFactory;
-    WeakPtr<VideoFullscreenChangeObserver> m_fullscreenChangeObserver;
+    VideoFullscreenModel* m_videoFullscreenModel { nullptr };
+    VideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
     RetainPtr<WebVideoFullscreenInterfaceMacObjC> m_webVideoFullscreenInterfaceObjC;
 };

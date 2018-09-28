@@ -47,27 +47,8 @@
 
 namespace WebCore {
 
-
-class VideoFullscreenModelVideoElement::MediaElementEventListener final : public EventListener {
-public:
-    MediaElementEventListener(WeakPtr<VideoFullscreenModelVideoElement>&& parent)
-        : EventListener(CPPEventListenerType)
-        , m_parent(WTFMove(parent))
-    {
-    }
-private:
-    void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event) final
-    {
-        if (m_parent)
-            m_parent->updateForEventName(event.type());
-    }
-    bool operator==(const EventListener& rhs) const final { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
-
-    WeakPtr<VideoFullscreenModelVideoElement> m_parent;
-};
-
 VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement()
-    : m_eventListener(adoptRef(*new MediaElementEventListener(makeWeakPtr(*this))))
+    : EventListener(EventListener::CPPEventListenerType)
 {
     LOG(Fullscreen, "VideoFullscreenModelVideoElement %p ctor", this);
 }
@@ -87,19 +68,26 @@ void VideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoEl
     if (m_videoElement && m_videoElement->videoFullscreenLayer())
         m_videoElement->setVideoFullscreenLayer(nullptr);
 
-    if (m_videoElement) {
+    if (m_videoElement && m_isListening) {
         for (auto& eventName : observedEventNames())
-            m_videoElement->removeEventListener(eventName, m_eventListener.copyRef(), false);
+            m_videoElement->removeEventListener(eventName, *this, false);
     }
+    m_isListening = false;
 
     m_videoElement = videoElement;
 
     if (m_videoElement) {
         for (auto& eventName : observedEventNames())
-            m_videoElement->addEventListener(eventName, m_eventListener.copyRef(), false);
+            m_videoElement->addEventListener(eventName, *this, false);
+        m_isListening = true;
     }
 
     updateForEventName(eventNameAll());
+}
+
+void VideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
+{
+    updateForEventName(event.type());
 }
 
 void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicString& eventName)
@@ -211,14 +199,16 @@ void VideoFullscreenModelVideoElement::fullscreenModeChanged(HTMLMediaElementEnu
         m_videoElement->fullscreenModeChanged(videoFullscreenMode);
 }
 
-void VideoFullscreenModelVideoElement::addClient(WeakPtr<VideoFullscreenModelClient>&& client)
+void VideoFullscreenModelVideoElement::addClient(VideoFullscreenModelClient& client)
 {
-    m_clients.add(WTFMove(client));
+    ASSERT(!m_clients.contains(&client));
+    m_clients.add(&client);
 }
 
 void VideoFullscreenModelVideoElement::removeClient(VideoFullscreenModelClient& client)
 {
-    m_clients.remove(client);
+    ASSERT(m_clients.contains(&client));
+    m_clients.remove(&client);
 }
 
 bool VideoFullscreenModelVideoElement::isVisible() const
@@ -239,9 +229,8 @@ void VideoFullscreenModelVideoElement::setHasVideo(bool hasVideo)
 
     m_hasVideo = hasVideo;
 
-    m_clients.forEachNonNullMember([hasVideo] (auto& client) {
-        client.hasVideoChanged(hasVideo);
-    });
+    for (auto& client : m_clients)
+        client->hasVideoChanged(m_hasVideo);
 }
 
 void VideoFullscreenModelVideoElement::setVideoDimensions(const FloatSize& videoDimensions)
@@ -251,44 +240,38 @@ void VideoFullscreenModelVideoElement::setVideoDimensions(const FloatSize& video
 
     m_videoDimensions = videoDimensions;
 
-    m_clients.forEachNonNullMember([videoDimensions] (auto& client) {
-        client.videoDimensionsChanged(videoDimensions);
-    });
+    for (auto& client : m_clients)
+        client->videoDimensionsChanged(m_videoDimensions);
 }
 
 void VideoFullscreenModelVideoElement::willEnterPictureInPicture()
 {
-    m_clients.forEachNonNullMember([] (auto& client) {
-        client.willEnterPictureInPicture();
-    });
+    for (auto& client : m_clients)
+        client->willEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::didEnterPictureInPicture()
 {
-    m_clients.forEachNonNullMember([] (auto& client) {
-        client.didEnterPictureInPicture();
-    });
+    for (auto& client : m_clients)
+        client->didEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::failedToEnterPictureInPicture()
 {
-    m_clients.forEachNonNullMember([] (auto& client) {
-        client.failedToEnterPictureInPicture();
-    });
+    for (auto& client : m_clients)
+        client->failedToEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::willExitPictureInPicture()
 {
-    m_clients.forEachNonNullMember([] (auto& client) {
-        client.willExitPictureInPicture();
-    });
+    for (auto& client : m_clients)
+        client->willExitPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::didExitPictureInPicture()
 {
-    m_clients.forEachNonNullMember([] (auto& client) {
-        client.didExitPictureInPicture();
-    });
+    for (auto& client : m_clients)
+        client->didExitPictureInPicture();
 }
 
 } // namespace WebCore

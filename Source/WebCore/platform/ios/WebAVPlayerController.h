@@ -26,7 +26,6 @@
 #if PLATFORM(IOS) && HAVE(AVKIT)
 
 #import <pal/spi/cocoa/AVKitSPI.h>
-#import <wtf/WeakPtr.h>
 
 namespace WebCore {
 class PlaybackSessionModel;
@@ -40,14 +39,13 @@ class PlaybackSessionInterfaceAVKit;
 @interface WebAVPlayerController : NSObject {
     WebAVMediaSelectionOption *_currentAudioMediaSelectionOption;
     WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
-    RefPtr<WebCore::PlaybackSessionInterfaceAVKit> _playbackSessionInterface;
     BOOL _pictureInPictureInterrupted;
     BOOL _muted;
 }
 
 @property (retain) AVPlayerController* playerControllerProxy;
-@property (readonly) WebCore::PlaybackSessionModel* delegate;
-@property WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
+@property (assign) WebCore::PlaybackSessionModel* delegate;
+@property (assign) WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
 
 @property (readonly) BOOL canScanForward;
 @property BOOL canScanBackward;

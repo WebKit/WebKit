@@ -13,11 +13,8 @@ if (window.testRunner) {
 }
 
 // Called by resources/picture-in-picture.html
-function notifyDidChangePresentationMode(mode)
+function notifyDidChangePresentationMode()
 {
-    if (mode !== 'picture-in-picture')
-        return;
-
     // For some reason waiting ~200ms to allow the video to transition from the page to its
     // picture-in-picture window seems to make triggering the assertion more reliable (why?).
     function closeWindowAndDone()

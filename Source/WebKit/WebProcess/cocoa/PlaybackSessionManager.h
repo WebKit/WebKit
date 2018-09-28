@@ -47,8 +47,6 @@ class MessageReceiver;
 
 namespace WebCore {
 class Node;
-class PlaybackSessionModel;
-class PlaybackSessionModelClient;
 }
 
 namespace WebKit {
@@ -57,17 +55,17 @@ class WebPage;
 class PlaybackSessionManager;
 
 class PlaybackSessionInterfaceContext final
-    : public WebCore::PlaybackSessionInterface
-    , public WebCore::PlaybackSessionModelClient
-    , public RefCounted<PlaybackSessionInterfaceContext> {
+    : public RefCounted<PlaybackSessionInterfaceContext>
+    , public WebCore::PlaybackSessionInterface
+    , public WebCore::PlaybackSessionModelClient {
 public:
-    static Ref<PlaybackSessionInterfaceContext> create(WeakPtr<PlaybackSessionManager>&& manager, uint64_t contextId)
+    static Ref<PlaybackSessionInterfaceContext> create(PlaybackSessionManager& manager, uint64_t contextId)
     {
-        return adoptRef(*new PlaybackSessionInterfaceContext(WTFMove(manager), contextId));
+        return adoptRef(*new PlaybackSessionInterfaceContext(manager, contextId));
     }
     virtual ~PlaybackSessionInterfaceContext();
 
-    WeakPtr<WebCore::PlaybackSessionModelClient> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
+    void invalidate() { m_manager = nullptr; }
 
 private:
     friend class VideoFullscreenInterfaceContext;
@@ -93,17 +91,13 @@ private:
     void volumeChanged(double) final;
     void isPictureInPictureSupportedChanged(bool) final;
 
-    PlaybackSessionInterfaceContext(WeakPtr<PlaybackSessionManager>&&, uint64_t contextId);
+    PlaybackSessionInterfaceContext(PlaybackSessionManager&, uint64_t contextId);
 
-    WeakPtr<PlaybackSessionManager> m_manager;
-    WeakPtrFactory<PlaybackSessionModelClient> m_weakPtrFactory;
+    PlaybackSessionManager* m_manager;
     uint64_t m_contextId;
 };
 
-class PlaybackSessionManager
-    : public RefCounted<PlaybackSessionManager>
-    , private IPC::MessageReceiver
-    , public CanMakeWeakPtr<PlaybackSessionManager> {
+class PlaybackSessionManager : public RefCounted<PlaybackSessionManager>, private IPC::MessageReceiver {
 public:
     static Ref<PlaybackSessionManager> create(WebPage&);
     virtual ~PlaybackSessionManager();
@@ -172,7 +166,6 @@ protected:
     void setVolume(uint64_t contextId, double volume);
     void setPlayingOnSecondScreen(uint64_t contextId, bool value);
 
-    WeakPtrFactory<WebCore::PlaybackSessionModel> m_weakPtrFactory;
     WebPage* m_page;
     HashMap<WebCore::HTMLMediaElement*, uint64_t> m_mediaElements;
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;

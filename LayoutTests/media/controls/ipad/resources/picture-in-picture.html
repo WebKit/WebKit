@@ -9,9 +9,9 @@
 if (window.internals)
     internals.settings.setAllowsPictureInPictureMediaPlayback(true);
 
-function dispatchDidChangePresentationMode(event)
+function dispatchDidChangePresentationMode()
 {
-    window.opener.notifyDidChangePresentationMode(event.target.webkitPresentationMode);
+    window.opener.notifyDidChangePresentationMode();
 }
 
 var video = document.querySelector("video");

@@ -47,33 +47,13 @@
 
 namespace WebCore {
 
-class PlaybackSessionModelMediaElement::MediaElementEventListener final : public EventListener {
-public:
-    MediaElementEventListener(WeakPtr<PlaybackSessionModelMediaElement>&& parent)
-        : EventListener(CPPEventListenerType)
-        , m_parent(WTFMove(parent))
-    {
-    }
-private:
-    void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event) final
-    {
-        if (m_parent)
-            m_parent->updateForEventName(event.type());
-    }
-    bool operator==(const EventListener& rhs) const final { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
-
-    WeakPtr<PlaybackSessionModelMediaElement> m_parent;
-};
-
 PlaybackSessionModelMediaElement::PlaybackSessionModelMediaElement()
-    : m_eventListener(adoptRef(*new MediaElementEventListener(makeWeakPtr(*this))))
+    : EventListener(EventListener::CPPEventListenerType)
 {
 }
 
 PlaybackSessionModelMediaElement::~PlaybackSessionModelMediaElement()
 {
-    m_clients.clear();
-    setMediaElement(nullptr);
 }
 
 void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaElement)
@@ -83,45 +63,52 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
 
     auto& events = eventNames();
 
-    if (m_mediaElement) {
+    if (m_mediaElement && m_isListening) {
         for (auto& eventName : observedEventNames())
-            m_mediaElement->removeEventListener(eventName, m_eventListener.copyRef(), false);
+            m_mediaElement->removeEventListener(eventName, *this, false);
         if (auto* audioTracks = m_mediaElement->audioTracks()) {
-            audioTracks->removeEventListener(events.addtrackEvent, m_eventListener.copyRef(), false);
-            audioTracks->removeEventListener(events.changeEvent, m_eventListener.copyRef(), false);
-            audioTracks->removeEventListener(events.removetrackEvent, m_eventListener.copyRef(), false);
+            audioTracks->removeEventListener(events.addtrackEvent, *this, false);
+            audioTracks->removeEventListener(events.changeEvent, *this, false);
+            audioTracks->removeEventListener(events.removetrackEvent, *this, false);
         }
 
         if (auto* textTracks = m_mediaElement->audioTracks()) {
-            textTracks->removeEventListener(events.addtrackEvent, m_eventListener.copyRef(), false);
-            textTracks->removeEventListener(events.changeEvent, m_eventListener.copyRef(), false);
-            textTracks->removeEventListener(events.removetrackEvent, m_eventListener.copyRef(), false);
+            textTracks->removeEventListener(events.addtrackEvent, *this, false);
+            textTracks->removeEventListener(events.changeEvent, *this, false);
+            textTracks->removeEventListener(events.removetrackEvent, *this, false);
         }
-        m_mediaElement->resetPlaybackSessionState();
     }
+    m_isListening = false;
+
+    if (m_mediaElement)
+        m_mediaElement->resetPlaybackSessionState();
 
     m_mediaElement = mediaElement;
 
     if (m_mediaElement) {
         for (auto& eventName : observedEventNames())
-            m_mediaElement->addEventListener(eventName, m_eventListener.copyRef(), false);
+            m_mediaElement->addEventListener(eventName, *this, false);
 
         auto& audioTracks = m_mediaElement->ensureAudioTracks();
-        audioTracks.addEventListener(events.addtrackEvent, m_eventListener.copyRef(), false);
-        audioTracks.addEventListener(events.changeEvent, m_eventListener.copyRef(), false);
-        audioTracks.addEventListener(events.removetrackEvent, m_eventListener.copyRef(), false);
+        audioTracks.addEventListener(events.addtrackEvent, *this, false);
+        audioTracks.addEventListener(events.changeEvent, *this, false);
+        audioTracks.addEventListener(events.removetrackEvent, *this, false);
 
         auto& textTracks = m_mediaElement->ensureTextTracks();
-        textTracks.addEventListener(events.addtrackEvent, m_eventListener.copyRef(), false);
-        textTracks.addEventListener(events.changeEvent, m_eventListener.copyRef(), false);
-        textTracks.addEventListener(events.removetrackEvent, m_eventListener.copyRef(), false);
+        textTracks.addEventListener(events.addtrackEvent, *this, false);
+        textTracks.addEventListener(events.changeEvent, *this, false);
+        textTracks.addEventListener(events.removetrackEvent, *this, false);
     }
 
     updateForEventName(eventNameAll());
 
-    m_clients.forEachNonNullMember([isPictureInPictureSupported = isPictureInPictureSupported()] (auto& client) {
-        client.isPictureInPictureSupportedChanged(isPictureInPictureSupported);
-    });
+    for (auto client : m_clients)
+        client->isPictureInPictureSupportedChanged(isPictureInPictureSupported());
+}
+
+void PlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
+{
+    updateForEventName(event.type());
 }
 
 void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicString& eventName)
@@ -133,46 +120,51 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicStrin
 
     if (all
         || eventName == eventNames().durationchangeEvent) {
-        m_clients.forEachNonNullMember([duration = duration()] (auto& client) {
-            client.durationChanged(duration);
-        });
+        double duration = this->duration();
+        for (auto client : m_clients)
+            client->durationChanged(duration);
         // These is no standard event for minFastReverseRateChange; duration change is a reasonable proxy for it.
         // It happens every time a new item becomes ready to play.
-        m_clients.forEachNonNullMember([canPlayFastReverse = canPlayFastReverse()] (auto& client) {
-            client.canPlayFastReverseChanged(canPlayFastReverse);
-        });
+        bool canPlayFastReverse = this->canPlayFastReverse();
+        for (auto client : m_clients)
+            client->canPlayFastReverseChanged(canPlayFastReverse);
     }
 
     if (all
         || eventName == eventNames().playEvent
         || eventName == eventNames().playingEvent) {
-        m_clients.forEachNonNullMember([playbackStartedTime = playbackStartedTime()] (auto& client) {
-            client.playbackStartedTimeChanged(playbackStartedTime);
-        });
+        for (auto client : m_clients)
+            client->playbackStartedTimeChanged(playbackStartedTime());
     }
 
     if (all
         || eventName == eventNames().pauseEvent
         || eventName == eventNames().playEvent
         || eventName == eventNames().ratechangeEvent) {
-        m_clients.forEachNonNullMember([isPlaying = isPlaying(), playbackRate = playbackRate()] (auto& client) {
-            client.rateChanged(isPlaying, playbackRate);
-        });
+        bool isPlaying = this->isPlaying();
+        float playbackRate = this->playbackRate();
+        for (auto client : m_clients)
+            client->rateChanged(isPlaying, playbackRate);
     }
 
     if (all
         || eventName == eventNames().timeupdateEvent) {
-        m_clients.forEachNonNullMember([currentTime = currentTime(), anchorTime = [[NSProcessInfo processInfo] systemUptime]] (auto& client) {
-            client.currentTimeChanged(currentTime, anchorTime);
-        });
+        auto currentTime = this->currentTime();
+        auto anchorTime = [[NSProcessInfo processInfo] systemUptime];
+        for (auto client : m_clients)
+            client->currentTimeChanged(currentTime, anchorTime);
     }
 
     if (all
         || eventName == eventNames().progressEvent) {
-        m_clients.forEachNonNullMember([bufferedTime = bufferedTime(), seekableRanges = seekableRanges(), seekableTimeRangesLastModifiedTime = seekableTimeRangesLastModifiedTime(), liveUpdateInterval = liveUpdateInterval()] (auto& client) {
-            client.bufferedTimeChanged(bufferedTime);
-            client.seekableRangesChanged(seekableRanges, seekableTimeRangesLastModifiedTime, liveUpdateInterval);
-        });
+        auto bufferedTime = this->bufferedTime();
+        auto seekableRanges = this->seekableRanges();
+        auto seekableTimeRangesLastModifiedTime = this->seekableTimeRangesLastModifiedTime();
+        auto liveUpdateInterval = this->liveUpdateInterval();
+        for (auto client : m_clients) {
+            client->bufferedTimeChanged(bufferedTime);
+            client->seekableRangesChanged(seekableRanges, seekableTimeRangesLastModifiedTime, liveUpdateInterval);
+        }
     }
 
     if (all
@@ -182,17 +174,24 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicStrin
 
     if (all
         || eventName == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
-        m_clients.forEachNonNullMember([enabled = externalPlaybackEnabled(), targetType = externalPlaybackTargetType(), localizedDeviceName = externalPlaybackLocalizedDeviceName(), wirelessVideoPlaybackDisabled = wirelessVideoPlaybackDisabled()] (auto& client) {
-            client.externalPlaybackChanged(enabled, targetType, localizedDeviceName);
-            client.wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
-        });
+        bool enabled = externalPlaybackEnabled();
+        ExternalPlaybackTargetType targetType = externalPlaybackTargetType();
+        String localizedDeviceName = externalPlaybackLocalizedDeviceName();
+
+        bool wirelessVideoPlaybackDisabled = this->wirelessVideoPlaybackDisabled();
+
+        for (auto client : m_clients) {
+            client->externalPlaybackChanged(enabled, targetType, localizedDeviceName);
+            client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
+        }
     }
 
     if (all
         || eventName == eventNames().webkitpresentationmodechangedEvent) {
-        m_clients.forEachNonNullMember([isPictureInPictureActive = isPictureInPictureActive()] (auto& client) {
-            client.pictureInPictureActiveChanged(isPictureInPictureActive);
-        });
+        bool isPictureInPictureActive = this->isPictureInPictureActive();
+
+        for (auto client : m_clients)
+            client->pictureInPictureActiveChanged(isPictureInPictureActive);
     }
 
 
@@ -203,20 +202,22 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicStrin
 
     if (all
         || eventName == eventNames().volumechangeEvent) {
-        m_clients.forEachNonNullMember([isMuted = isMuted(), volume = volume()] (auto& client) {
-            client.mutedChanged(isMuted);
-            client.volumeChanged(volume);
-        });
+        for (auto client : m_clients) {
+            client->mutedChanged(isMuted());
+            client->volumeChanged(volume());
+        }
     }
 }
-void PlaybackSessionModelMediaElement::addClient(WeakPtr<PlaybackSessionModelClient>&& client)
+void PlaybackSessionModelMediaElement::addClient(PlaybackSessionModelClient& client)
 {
-    m_clients.add(WTFMove(client));
+    ASSERT(!m_clients.contains(&client));
+    m_clients.add(&client);
 }
 
 void PlaybackSessionModelMediaElement::removeClient(PlaybackSessionModelClient& client)
 {
-    m_clients.remove(client);
+    ASSERT(m_clients.contains(&client));
+    m_clients.remove(&client);
 }
 
 void PlaybackSessionModelMediaElement::play()
@@ -354,18 +355,26 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
     else
         m_audioTracksForMenu.clear();
 
-    m_clients.forEachNonNullMember([audioOptions = audioMediaSelectionOptions(), audioIndex = audioMediaSelectedIndex(), legibleOptions = legibleMediaSelectionOptions(), legibleIndex = legibleMediaSelectedIndex()] (auto& client) {
-        client.audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
-        client.legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
-    });
+    auto audioOptions = audioMediaSelectionOptions();
+    auto audioIndex = audioMediaSelectedIndex();
+    auto legibleOptions = legibleMediaSelectionOptions();
+    auto legibleIndex = legibleMediaSelectedIndex();
+
+    for (auto client : m_clients) {
+        client->audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
+        client->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
+    }
 }
 
 void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()
 {
-    m_clients.forEachNonNullMember([audioIndex = audioMediaSelectedIndex(), legibleIndex = legibleMediaSelectedIndex()] (auto& client) {
-        client.audioMediaSelectionIndexChanged(audioIndex);
-        client.legibleMediaSelectionIndexChanged(legibleIndex);
-    });
+    auto audioIndex = audioMediaSelectedIndex();
+    auto legibleIndex = legibleMediaSelectedIndex();
+
+    for (auto client : m_clients) {
+        client->audioMediaSelectionIndexChanged(audioIndex);
+        client->legibleMediaSelectionIndexChanged(legibleIndex);
+    }
 }
 
 double PlaybackSessionModelMediaElement::playbackStartedTime() const

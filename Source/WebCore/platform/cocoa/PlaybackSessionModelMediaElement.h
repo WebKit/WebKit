@@ -30,8 +30,9 @@
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
 #include "PlaybackSessionModel.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/WeakPtrContainer.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -40,10 +41,7 @@ class HTMLMediaElement;
 class TextTrack;
 class PlaybackSessionInterface;
 
-class PlaybackSessionModelMediaElement final
-    : public RefCounted<PlaybackSessionModelMediaElement>
-    , public CanMakeWeakPtr<PlaybackSessionModelMediaElement>
-    , public PlaybackSessionModel {
+class PlaybackSessionModelMediaElement final : public PlaybackSessionModel, public EventListener {
 public:
     static Ref<PlaybackSessionModelMediaElement> create()
     {
@@ -53,9 +51,11 @@ public:
     WEBCORE_EXPORT void setMediaElement(HTMLMediaElement*);
     HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
 
+    WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
     void updateForEventName(const WTF::AtomicString&);
+    bool operator==(const EventListener& rhs) const final { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
-    WEBCORE_EXPORT void addClient(WeakPtr<PlaybackSessionModelClient>&&);
+    WEBCORE_EXPORT void addClient(PlaybackSessionModelClient&);
     WEBCORE_EXPORT void removeClient(PlaybackSessionModelClient&);
     WEBCORE_EXPORT void play() final;
     WEBCORE_EXPORT void pause() final;
@@ -98,27 +98,19 @@ public:
     bool isPictureInPictureSupported() const final;
     bool isPictureInPictureActive() const final;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
-
 protected:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();
 
 private:
-    void refPlaybackSessionModel() final { ref(); }
-    void derefPlaybackSessionModel() final { deref(); }
-    
     void progressEventTimerFired();
     static const Vector<WTF::AtomicString>& observedEventNames();
     const WTF::AtomicString& eventNameAll();
 
-    class MediaElementEventListener;
-
     RefPtr<HTMLMediaElement> m_mediaElement;
-    WeakPtrContainer<PlaybackSessionModelClient> m_clients;
+    bool m_isListening { false };
+    HashSet<PlaybackSessionModelClient*> m_clients;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
-    Ref<MediaElementEventListener> m_eventListener;
 
     double playbackStartedTime() const;
     void updateMediaSelectionOptions();

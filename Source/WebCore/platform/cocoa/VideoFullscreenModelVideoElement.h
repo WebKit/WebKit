@@ -28,14 +28,16 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#include "EventListener.h"
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
 #include "PlatformLayer.h"
 #include "VideoFullscreenModel.h"
 #include <wtf/Function.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/WeakPtrContainer.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class AudioTrack;
@@ -43,10 +45,7 @@ class HTMLVideoElement;
 class TextTrack;
 class PlaybackSessionModelMediaElement;
 
-class VideoFullscreenModelVideoElement 
-    : public RefCounted<VideoFullscreenModelVideoElement>
-    , public CanMakeWeakPtr<VideoFullscreenModelVideoElement>
-    , public VideoFullscreenModel {
+class VideoFullscreenModelVideoElement : public VideoFullscreenModel, public EventListener {
 public:
     static RefPtr<VideoFullscreenModelVideoElement> create()
     {
@@ -59,9 +58,11 @@ public:
     WEBCORE_EXPORT void willExitFullscreen();
     WEBCORE_EXPORT void waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler = [] { });
     
+    WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) override;
     void updateForEventName(const WTF::AtomicString&);
+    bool operator==(const EventListener& rhs) const override { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
-    WEBCORE_EXPORT void addClient(WeakPtr<VideoFullscreenModelClient>&&) override;
+    WEBCORE_EXPORT void addClient(VideoFullscreenModelClient&) override;
     WEBCORE_EXPORT void removeClient(VideoFullscreenModelClient&) override;
     WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) override;
@@ -71,8 +72,6 @@ public:
     FloatSize videoDimensions() const override { return m_videoDimensions; }
     bool hasVideo() const override { return m_hasVideo; }
 
-    using RefCounted::ref;
-    using RefCounted::deref;
 
 protected:
     WEBCORE_EXPORT VideoFullscreenModelVideoElement();
@@ -81,8 +80,6 @@ private:
     void setHasVideo(bool);
     void setVideoDimensions(const FloatSize&);
 
-    void refVideoFullscreenModel() final { ref(); }
-    void derefVideoFullscreenModel() final { deref(); }
     void willEnterPictureInPicture() override;
     void didEnterPictureInPicture() override;
     void failedToEnterPictureInPicture() override;
@@ -92,17 +89,15 @@ private:
     static const Vector<WTF::AtomicString>& observedEventNames();
     const WTF::AtomicString& eventNameAll();
 
-    class MediaElementEventListener;
-
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
-    WeakPtrContainer<VideoFullscreenModelClient> m_clients;
+    bool m_isListening { false };
+    HashSet<VideoFullscreenModelClient*> m_clients;
     bool m_hasVideo { false };
     FloatSize m_videoDimensions;
     FloatRect m_videoFrame;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
-    Ref<MediaElementEventListener> m_eventListener;
 };
 
 }

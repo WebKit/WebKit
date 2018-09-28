@@ -30,7 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -40,12 +39,8 @@ struct MediaSelectionOption;
 
 class PlaybackSessionModel {
 public:
-    virtual ~PlaybackSessionModel() = default;
-
-    void ref() { refPlaybackSessionModel(); }
-    void deref() { derefPlaybackSessionModel(); }
-
-    virtual void addClient(WeakPtr<PlaybackSessionModelClient>&&) = 0;
+    virtual ~PlaybackSessionModel() { };
+    virtual void addClient(PlaybackSessionModelClient&) = 0;
     virtual void removeClient(PlaybackSessionModelClient&) = 0;
 
     virtual void play() = 0;
@@ -91,10 +86,6 @@ public:
     virtual double volume() const = 0;
     virtual bool isPictureInPictureSupported() const = 0;
     virtual bool isPictureInPictureActive() const = 0;
-
-private:
-    virtual void refPlaybackSessionModel() = 0;
-    virtual void derefPlaybackSessionModel() = 0;
 };
 
 class PlaybackSessionModelClient {

@@ -9420,6 +9420,8 @@ bool LayerFlushController::flushLayers()
         return;
 
     _private->playbackSessionModel->setMediaElement(nullptr);
+    _private->playbackSessionInterface->invalidate();
+
     _private->playbackSessionModel = nullptr;
     _private->playbackSessionInterface = nullptr;
     [self updateTouchBar];

@@ -51,14 +51,18 @@ class IntRect;
 class PlaybackSessionModel;
 class WebPlaybackSessionChangeObserver;
 
-class PlaybackSessionInterfaceAVKit
+class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit
     : public PlaybackSessionInterface
     , public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceAVKit> {
+
 public:
-    WEBCORE_EXPORT static Ref<PlaybackSessionInterfaceAVKit> create(Ref<PlaybackSessionModel>&&);
+    static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel& model)
+    {
+        return adoptRef(*new PlaybackSessionInterfaceAVKit(model));
+    }
     virtual ~PlaybackSessionInterfaceAVKit();
-    PlaybackSessionModel& playbackSessionModel() const { return m_playbackSessionModel; }
+    PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionModel; }
 
     // PlaybackSessionInterface
     WEBCORE_EXPORT void resetMediaState() override;
@@ -77,14 +81,15 @@ public:
     WEBCORE_EXPORT void mutedChanged(bool) override;
     WEBCORE_EXPORT void volumeChanged(double) override;
 
+    WEBCORE_EXPORT virtual void invalidate();
+
     WebAVPlayerController *playerController() const { return m_playerController.get(); }
 
 protected:
-    WEBCORE_EXPORT PlaybackSessionInterfaceAVKit(Ref<PlaybackSessionModel>&&);
+    WEBCORE_EXPORT PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
 
     RetainPtr<WebAVPlayerController> m_playerController;
-    Ref<PlaybackSessionModel> m_playbackSessionModel;
-    WeakPtrFactory<PlaybackSessionModelClient> m_weakPtrFactory;
+    PlaybackSessionModel* m_playbackSessionModel { nullptr };
 };
 
 }

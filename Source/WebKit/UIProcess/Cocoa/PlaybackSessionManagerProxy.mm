@@ -38,14 +38,16 @@ using namespace WebCore;
 
 #pragma mark - PlaybackSessionModelContext
 
-void PlaybackSessionModelContext::addClient(WeakPtr<PlaybackSessionModelClient>&& client)
+void PlaybackSessionModelContext::addClient(PlaybackSessionModelClient& client)
 {
-    m_clients.add(WTFMove(client));
+    ASSERT(!m_clients.contains(&client));
+    m_clients.add(&client);
 }
 
 void PlaybackSessionModelContext::removeClient(PlaybackSessionModelClient& client)
 {
-    m_clients.remove(client);
+    ASSERT(m_clients.contains(&client));
+    m_clients.remove(&client);
 }
 
 void PlaybackSessionModelContext::play()
@@ -164,9 +166,8 @@ void PlaybackSessionModelContext::playbackStartedTimeChanged(double playbackStar
 void PlaybackSessionModelContext::durationChanged(double duration)
 {
     m_duration = duration;
-    m_clients.forEachNonNullMember([duration] (auto& client) {
-        client.durationChanged(duration);
-    });
+    for (auto* client : m_clients)
+        client->durationChanged(duration);
 }
 
 void PlaybackSessionModelContext::currentTimeChanged(double currentTime)
@@ -176,26 +177,23 @@ void PlaybackSessionModelContext::currentTimeChanged(double currentTime)
     if (m_playbackStartedTimeNeedsUpdate)
         playbackStartedTimeChanged(currentTime);
 
-    m_clients.forEachNonNullMember([currentTime, anchorTime] (auto& client) {
-        client.currentTimeChanged(currentTime, anchorTime);
-    });
+    for (auto* client : m_clients)
+        client->currentTimeChanged(currentTime, anchorTime);
 }
 
 void PlaybackSessionModelContext::bufferedTimeChanged(double bufferedTime)
 {
     m_bufferedTime = bufferedTime;
-    m_clients.forEachNonNullMember([bufferedTime] (auto& client) {
-        client.bufferedTimeChanged(bufferedTime);
-    });
+    for (auto* client : m_clients)
+        client->bufferedTimeChanged(bufferedTime);
 }
 
 void PlaybackSessionModelContext::rateChanged(bool isPlaying, float playbackRate)
 {
     m_isPlaying = isPlaying;
     m_playbackRate = playbackRate;
-    m_clients.forEachNonNullMember([isPlaying, playbackRate] (auto& client) {
-        client.rateChanged(isPlaying, playbackRate);
-    });
+    for (auto* client : m_clients)
+        client->rateChanged(isPlaying, playbackRate);
 }
 
 void PlaybackSessionModelContext::seekableRangesChanged(WebCore::TimeRanges& seekableRanges, double lastModifiedTime, double liveUpdateInterval)
@@ -203,26 +201,23 @@ void PlaybackSessionModelContext::seekableRangesChanged(WebCore::TimeRanges& see
     m_seekableRanges = seekableRanges;
     m_seekableTimeRangesLastModifiedTime = lastModifiedTime;
     m_liveUpdateInterval = liveUpdateInterval;
-    m_clients.forEachNonNullMember([seekableRanges = makeRef(seekableRanges), lastModifiedTime, liveUpdateInterval] (auto& client) {
-        client.seekableRangesChanged(seekableRanges, lastModifiedTime, liveUpdateInterval);
-    });
+    for (auto* client : m_clients)
+        client->seekableRangesChanged(seekableRanges, lastModifiedTime, liveUpdateInterval);
 }
 
 void PlaybackSessionModelContext::canPlayFastReverseChanged(bool canPlayFastReverse)
 {
     m_canPlayFastReverse = canPlayFastReverse;
-    m_clients.forEachNonNullMember([canPlayFastReverse] (auto& client) {
-        client.canPlayFastReverseChanged(canPlayFastReverse);
-    });
+    for (auto* client : m_clients)
+        client->canPlayFastReverseChanged(canPlayFastReverse);
 }
 
 void PlaybackSessionModelContext::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& audioMediaSelectionOptions, uint64_t audioMediaSelectedIndex)
 {
     m_audioMediaSelectionOptions = audioMediaSelectionOptions;
     m_audioMediaSelectedIndex = audioMediaSelectedIndex;
-    m_clients.forEachNonNullMember([audioMediaSelectionOptions, audioMediaSelectedIndex] (auto& client) {
-        client.audioMediaSelectionOptionsChanged(audioMediaSelectionOptions, audioMediaSelectedIndex);
-    });
+    for (auto* client : m_clients)
+        client->audioMediaSelectionOptionsChanged(audioMediaSelectionOptions, audioMediaSelectedIndex);
 }
 
 void PlaybackSessionModelContext::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& legibleMediaSelectionOptions, uint64_t legibleMediaSelectedIndex)
@@ -230,27 +225,24 @@ void PlaybackSessionModelContext::legibleMediaSelectionOptionsChanged(const Vect
     m_legibleMediaSelectionOptions = legibleMediaSelectionOptions;
     m_legibleMediaSelectedIndex = legibleMediaSelectedIndex;
 
-    m_clients.forEachNonNullMember([legibleMediaSelectionOptions, legibleMediaSelectedIndex] (auto& client) {
-        client.legibleMediaSelectionOptionsChanged(legibleMediaSelectionOptions, legibleMediaSelectedIndex);
-    });
+    for (auto* client : m_clients)
+        client->legibleMediaSelectionOptionsChanged(legibleMediaSelectionOptions, legibleMediaSelectedIndex);
 }
 
 void PlaybackSessionModelContext::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
     m_audioMediaSelectedIndex = selectedIndex;
 
-    m_clients.forEachNonNullMember([selectedIndex] (auto& client) {
-        client.audioMediaSelectionIndexChanged(selectedIndex);
-    });
+    for (auto* client : m_clients)
+        client->audioMediaSelectionIndexChanged(selectedIndex);
 }
 
 void PlaybackSessionModelContext::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
     m_legibleMediaSelectedIndex = selectedIndex;
 
-    m_clients.forEachNonNullMember([selectedIndex] (auto& client) {
-        client.legibleMediaSelectionIndexChanged(selectedIndex);
-    });
+    for (auto* client : m_clients)
+        client->legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
 void PlaybackSessionModelContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedName)
@@ -259,49 +251,43 @@ void PlaybackSessionModelContext::externalPlaybackChanged(bool enabled, Playback
     m_externalPlaybackTargetType = type;
     m_externalPlaybackLocalizedDeviceName = localizedName;
 
-    m_clients.forEachNonNullMember([enabled, type, localizedName] (auto& client) {
-        client.externalPlaybackChanged(enabled, type, localizedName);
-    });
+    for (auto* client : m_clients)
+        client->externalPlaybackChanged(enabled, type, localizedName);
 }
 
 void PlaybackSessionModelContext::wirelessVideoPlaybackDisabledChanged(bool wirelessVideoPlaybackDisabled)
 {
     m_wirelessVideoPlaybackDisabled = wirelessVideoPlaybackDisabled;
-    m_clients.forEachNonNullMember([wirelessVideoPlaybackDisabled] (auto& client) {
-        client.wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
-    });
+    for (auto* client : m_clients)
+        client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
 }
 
 void PlaybackSessionModelContext::mutedChanged(bool muted)
 {
     m_muted = muted;
-    m_clients.forEachNonNullMember([muted] (auto& client) {
-        client.mutedChanged(muted);
-    });
+    for (auto* client : m_clients)
+        client->mutedChanged(muted);
 }
 
 void PlaybackSessionModelContext::volumeChanged(double volume)
 {
     m_volume = volume;
-    m_clients.forEachNonNullMember([volume] (auto& client) {
-        client.volumeChanged(volume);
-    });
+    for (auto* client : m_clients)
+        client->volumeChanged(volume);
 }
 
 void PlaybackSessionModelContext::pictureInPictureSupportedChanged(bool supported)
 {
     m_pictureInPictureSupported = supported;
-    m_clients.forEachNonNullMember([supported] (auto& client) {
-        client.isPictureInPictureSupportedChanged(supported);
-    });
+    for (auto* client : m_clients)
+        client->isPictureInPictureSupportedChanged(supported);
 }
 
 void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
 {
     m_pictureInPictureActive = active;
-    m_clients.forEachNonNullMember([active] (auto& client) {
-        client.pictureInPictureActiveChanged(active);
-    });
+    for (auto* client : m_clients)
+        client->pictureInPictureActiveChanged(active);
 }
 
 #pragma mark - PlaybackSessionManagerProxy
@@ -329,14 +315,22 @@ void PlaybackSessionManagerProxy::invalidate()
     m_page->process().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->pageID());
     m_page = nullptr;
 
-    m_contextMap.clear();
+    auto contextMap = WTFMove(m_contextMap);
     m_clientCounts.clear();
+
+    for (auto& tuple : contextMap.values()) {
+        RefPtr<PlaybackSessionModelContext> model;
+        RefPtr<PlatformPlaybackSessionInterface> interface;
+        std::tie(model, interface) = tuple;
+
+        interface->invalidate();
+    }
 }
 
 PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::createModelAndInterface(uint64_t contextId)
 {
-    Ref<PlaybackSessionModelContext> model = PlaybackSessionModelContext::create(makeWeakPtr(this), contextId);
-    Ref<PlatformPlaybackSessionInterface> interface = PlatformPlaybackSessionInterface::create(model.copyRef());
+    Ref<PlaybackSessionModelContext> model = PlaybackSessionModelContext::create(*this, contextId);
+    Ref<PlatformPlaybackSessionInterface> interface = PlatformPlaybackSessionInterface::create(model);
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -366,8 +360,11 @@ void PlaybackSessionManagerProxy::addClientForContext(uint64_t contextId)
 
 void PlaybackSessionManagerProxy::removeClientForContext(uint64_t contextId)
 {
-    if (m_clientCounts.remove(contextId))
-        m_contextMap.remove(contextId);
+    if (!m_clientCounts.remove(contextId))
+        return;
+
+    ensureInterface(contextId).invalidate();
+    m_contextMap.remove(contextId);
 }
 
 #pragma mark Messages from PlaybackSessionManager
@@ -384,8 +381,7 @@ void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(uint64_t co
     ensureInterface(m_controlsManagerContextId).ensureControlsManager();
     addClientForContext(m_controlsManagerContextId);
 
-    if (m_page)
-        m_page->videoControlsManagerDidChange();
+    m_page->videoControlsManagerDidChange();
 }
 
 void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
@@ -395,8 +391,7 @@ void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
 
     removeClientForContext(m_controlsManagerContextId);
     m_controlsManagerContextId = 0;
-    if (m_page)
-        m_page->videoControlsManagerDidChange();
+    m_page->videoControlsManagerDidChange();
 }
 
 void PlaybackSessionManagerProxy::resetMediaState(uint64_t contextId)
@@ -503,7 +498,7 @@ void PlaybackSessionManagerProxy::pictureInPictureActiveChanged(uint64_t context
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(uint64_t contextId, String identifier) const
 {
 #if PLATFORM(MAC)
-    if (m_page && contextId == m_controlsManagerContextId)
+    if (contextId == m_controlsManagerContextId)
         m_page->handleControlledElementIDResponse(identifier);
 #else
     UNUSED_PARAM(contextId);
@@ -516,98 +511,82 @@ void PlaybackSessionManagerProxy::handleControlledElementIDResponse(uint64_t con
 
 void PlaybackSessionManagerProxy::play(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::Play(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::Play(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::pause(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::Pause(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::Pause(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::togglePlayState(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::TogglePlayState(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::TogglePlayState(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::beginScrubbing(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::BeginScrubbing(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::BeginScrubbing(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::endScrubbing(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::EndScrubbing(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::EndScrubbing(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::seekToTime(uint64_t contextId, double time, double toleranceBefore, double toleranceAfter)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::SeekToTime(contextId, time, toleranceBefore, toleranceAfter), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SeekToTime(contextId, time, toleranceBefore, toleranceAfter), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::fastSeek(uint64_t contextId, double time)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::FastSeek(contextId, time), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::FastSeek(contextId, time), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::beginScanningForward(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::BeginScanningForward(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::BeginScanningForward(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::beginScanningBackward(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::BeginScanningBackward(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::BeginScanningBackward(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::endScanning(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::EndScanning(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::EndScanning(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::selectAudioMediaOption(uint64_t contextId, uint64_t index)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::SelectAudioMediaOption(contextId, index), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SelectAudioMediaOption(contextId, index), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::selectLegibleMediaOption(uint64_t contextId, uint64_t index)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::togglePictureInPicture(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::toggleMuted(uint64_t contextId)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::ToggleMuted(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::ToggleMuted(contextId), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::setMuted(uint64_t contextId, bool muted)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::SetMuted(contextId, muted), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SetMuted(contextId, muted), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::setVolume(uint64_t contextId, double volume)
 {
-    if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::SetVolume(contextId, volume), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SetVolume(contextId, volume), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::setPlayingOnSecondScreen(uint64_t contextId, bool value)
@@ -618,7 +597,7 @@ void PlaybackSessionManagerProxy::setPlayingOnSecondScreen(uint64_t contextId, b
 
 void PlaybackSessionManagerProxy::requestControlledElementID()
 {
-    if (m_page && m_controlsManagerContextId)
+    if (m_controlsManagerContextId)
         m_page->send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId), m_page->pageID());
 }
 

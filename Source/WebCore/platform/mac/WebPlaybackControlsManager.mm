@@ -93,7 +93,7 @@ using WebCore::PlaybackSessionInterfaceMac;
 {
     UNUSED_PARAM(toleranceBefore);
     UNUSED_PARAM(toleranceAfter);
-    _playbackSessionInterfaceMac->playbackSessionModel().seekToTime(time);
+    _playbackSessionInterfaceMac->playbackSessionModel()->seekToTime(time);
 }
 
 - (void)cancelThumbnailAndAudioAmplitudeSampleGeneration
@@ -192,7 +192,7 @@ using WebCore::PlaybackSessionInterfaceMac;
     if (audioMediaSelectionOption && _audioTouchBarMediaSelectionOptions)
         index = [_audioTouchBarMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
 
-    _playbackSessionInterfaceMac->playbackSessionModel().selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
+    _playbackSessionInterfaceMac->playbackSessionModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
 - (NSArray<AVTouchBarMediaSelectionOption *> *)legibleTouchBarMediaSelectionOptions
@@ -222,7 +222,7 @@ using WebCore::PlaybackSessionInterfaceMac;
     if (legibleMediaSelectionOption && _legibleTouchBarMediaSelectionOptions)
         index = [_legibleTouchBarMediaSelectionOptions indexOfObject:legibleMediaSelectionOption];
 
-    _playbackSessionInterfaceMac->playbackSessionModel().selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
+    _playbackSessionInterfaceMac->playbackSessionModel()->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
@@ -313,34 +313,34 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelecti
 
 - (void)togglePlayback
 {
-    if (_playbackSessionInterfaceMac)
-        _playbackSessionInterfaceMac->playbackSessionModel().togglePlayState();
+    if (_playbackSessionInterfaceMac && _playbackSessionInterfaceMac->playbackSessionModel())
+        _playbackSessionInterfaceMac->playbackSessionModel()->togglePlayState();
 }
 
 - (void)setPlaying:(BOOL)playing
 {
-    if (!_playbackSessionInterfaceMac)
+    if (!_playbackSessionInterfaceMac || !_playbackSessionInterfaceMac->playbackSessionModel())
         return;
 
     BOOL isCurrentlyPlaying = self.playing;
     if (!isCurrentlyPlaying && playing)
-        _playbackSessionInterfaceMac->playbackSessionModel().play();
+        _playbackSessionInterfaceMac->playbackSessionModel()->play();
     else if (isCurrentlyPlaying && !playing)
-        _playbackSessionInterfaceMac->playbackSessionModel().pause();
+        _playbackSessionInterfaceMac->playbackSessionModel()->pause();
 }
 
 - (BOOL)isPlaying
 {
-    if (_playbackSessionInterfaceMac)
-        return _playbackSessionInterfaceMac->playbackSessionModel().isPlaying();
+    if (_playbackSessionInterfaceMac && _playbackSessionInterfaceMac->playbackSessionModel())
+        return _playbackSessionInterfaceMac->playbackSessionModel()->isPlaying();
 
     return NO;
 }
 
 - (void)togglePictureInPicture
 {
-    if (_playbackSessionInterfaceMac)
-        _playbackSessionInterfaceMac->playbackSessionModel().togglePictureInPicture();
+    if (_playbackSessionInterfaceMac && _playbackSessionInterfaceMac->playbackSessionModel())
+        _playbackSessionInterfaceMac->playbackSessionModel()->togglePictureInPicture();
 }
 
 IGNORE_CLANG_WARNINGS_END
