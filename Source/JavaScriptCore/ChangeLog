@@ -1,3 +1,27 @@
+2018-09-27  Mark Lam  <mark.lam@apple.com>
+
+        ByValInfo should not use integer offsets.
+        https://bugs.webkit.org/show_bug.cgi?id=190070
+        <rdar://problem/44803430>
+
+        Reviewed by Saam Barati.
+
+        Also moved some fields around to allow the ByValInfo struct to be more densely packed.
+
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+
 2018-09-27  Saam barati  <sbarati@apple.com>
 
         DFG::OSRExit::m_patchableCodeOffset should not be an int

@@ -853,10 +853,9 @@ CompilationResult JIT::link()
             if (Jump(patchableNotIndexJump).isSet())
                 notIndexJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(patchableNotIndexJump));
             auto badTypeJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.badTypeJump));
-            CodeLocationLabel<NoPtrTag> doneTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.doneTarget);
-            CodeLocationLabel<NoPtrTag> nextHotPathTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.nextHotPathTarget);
-            CodeLocationLabel<NoPtrTag> slowPathTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.slowPathTarget);
-            CodeLocationCall<NoPtrTag> returnAddress = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.returnAddress);
+            auto doneTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.doneTarget));
+            auto nextHotPathTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.nextHotPathTarget));
+            auto slowPathTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.slowPathTarget));
 
             *byValCompilationInfo.byValInfo = ByValInfo(
                 byValCompilationInfo.bytecodeIndex,
@@ -865,9 +864,9 @@ CompilationResult JIT::link()
                 exceptionHandler,
                 byValCompilationInfo.arrayMode,
                 byValCompilationInfo.arrayProfile,
-                differenceBetweenCodePtr(badTypeJump, doneTarget),
-                differenceBetweenCodePtr(badTypeJump, nextHotPathTarget),
-                differenceBetweenCodePtr(returnAddress, slowPathTarget));
+                doneTarget,
+                nextHotPathTarget,
+                slowPathTarget);
         }
     }
 

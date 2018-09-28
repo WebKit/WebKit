@@ -1022,10 +1022,10 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
 
     LinkBuffer patchBuffer(*this, m_codeBlock);
     
-    patchBuffer.link(badType, CodeLocationLabel<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    patchBuffer.link(slowCases, CodeLocationLabel<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    
-    patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
+    patchBuffer.link(badType, byValInfo->slowPathTarget);
+    patchBuffer.link(slowCases, byValInfo->slowPathTarget);
+
+    patchBuffer.link(done, byValInfo->badTypeDoneTarget);
 
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,

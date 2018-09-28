@@ -1211,12 +1211,12 @@ void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     Jump done = jump();
 
     LinkBuffer patchBuffer(*this, m_codeBlock);
-    
-    patchBuffer.link(badType, CodeLocationLabel<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    patchBuffer.link(slowCases, CodeLocationLabel<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    
-    patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
-    
+
+    patchBuffer.link(badType, byValInfo->slowPathTarget);
+    patchBuffer.link(slowCases, byValInfo->slowPathTarget);
+
+    patchBuffer.link(done, byValInfo->badTypeDoneTarget);
+
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
         "Baseline get_by_val stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value());
@@ -1237,9 +1237,9 @@ void JIT::privateCompileGetByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
 
     ConcurrentJSLocker locker(m_codeBlock->m_lock);
     LinkBuffer patchBuffer(*this, m_codeBlock);
-    patchBuffer.link(slowCases, CodeLocationLabel<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    patchBuffer.link(fastDoneCase, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
-    patchBuffer.link(slowDoneCase, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToNextHotPath));
+    patchBuffer.link(slowCases, byValInfo->slowPathTarget);
+    patchBuffer.link(fastDoneCase, byValInfo->badTypeDoneTarget);
+    patchBuffer.link(slowDoneCase, byValInfo->badTypeNextHotPathTarget);
     if (!m_exceptionChecks.empty())
         patchBuffer.link(m_exceptionChecks, byValInfo->exceptionHandler);
 
@@ -1294,9 +1294,9 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     Jump done = jump();
 
     LinkBuffer patchBuffer(*this, m_codeBlock);
-    patchBuffer.link(badType, CodeLocationLabel<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    patchBuffer.link(slowCases, CodeLocationLabel<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
+    patchBuffer.link(badType, byValInfo->slowPathTarget);
+    patchBuffer.link(slowCases, byValInfo->slowPathTarget);
+    patchBuffer.link(done, byValInfo->badTypeDoneTarget);
     if (needsLinkForWriteBarrier) {
         ASSERT(removeCodePtrTag(m_calls.last().callee.executableAddress()) == removeCodePtrTag(operationWriteBarrierSlowPath));
         patchBuffer.link(m_calls.last().from, m_calls.last().callee);
@@ -1328,8 +1328,8 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
 
     ConcurrentJSLocker locker(m_codeBlock->m_lock);
     LinkBuffer patchBuffer(*this, m_codeBlock);
-    patchBuffer.link(slowCases, CodeLocationLabel<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    patchBuffer.link(doneCases, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
+    patchBuffer.link(slowCases, byValInfo->slowPathTarget);
+    patchBuffer.link(doneCases, byValInfo->badTypeDoneTarget);
     if (!m_exceptionChecks.empty())
         patchBuffer.link(m_exceptionChecks, byValInfo->exceptionHandler);
 
