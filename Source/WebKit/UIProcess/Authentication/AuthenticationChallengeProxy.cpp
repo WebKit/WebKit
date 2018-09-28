@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuthenticationChallengeProxy.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationDecisionListener.h"
 #include "AuthenticationManager.h"
 #include "AuthenticationManagerMessages.h"

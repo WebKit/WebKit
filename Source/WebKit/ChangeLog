@@ -1,3 +1,14 @@
+2018-09-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] error C2027: use of undefined type 'WTF::EnumTraits<E>' while compiling AuthenticationChallengeProxy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=190071
+
+        Unreviewed build fix for WinCairo port.
+
+        AuthenticationChallengeDisposition was not defined in this file.
+
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp: Include "AuthenticationChallengeDisposition.h".
+
 2018-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use enum class in createMarkup arguments
