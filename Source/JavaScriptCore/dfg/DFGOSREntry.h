@@ -54,7 +54,7 @@ struct OSREntryReshuffling {
 
 struct OSREntryData {
     unsigned m_bytecodeIndex;
-    unsigned m_machineCodeOffset;
+    CodeLocationLabel<OSREntryPtrTag> m_machineCode;
     Operands<AbstractValue> m_expectedValues;
     // Use bitvectors here because they tend to only require one word.
     BitVector m_localsForcedDouble;

@@ -42,7 +42,7 @@ namespace JSC { namespace DFG {
 
 void OSREntryData::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    out.print("bc#", m_bytecodeIndex, ", machine code offset = ", m_machineCodeOffset);
+    out.print("bc#", m_bytecodeIndex, ", machine code = ", RawPointer(m_machineCode.executableAddress()));
     out.print(", stack rules = [");
     
     auto printOperand = [&] (VirtualRegister reg) {
@@ -269,11 +269,12 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     *bitwise_cast<size_t*>(scratch + 0) = frameSize;
     
-    void* targetPC = codeBlock->jitCode()->executableAddressAtOffset(entry->m_machineCodeOffset);
+    void* targetPC = entry->m_machineCode.executableAddress();
+    RELEASE_ASSERT(codeBlock->jitCode()->contains(entry->m_machineCode.untaggedExecutableAddress()));
     if (Options::verboseOSR())
         dataLogF("    OSR using target PC %p.\n", targetPC);
     RELEASE_ASSERT(targetPC);
-    *bitwise_cast<void**>(scratch + 1) = retagCodePtr(targetPC, JSEntryPtrTag, bitwise_cast<PtrTag>(exec));
+    *bitwise_cast<void**>(scratch + 1) = retagCodePtr(targetPC, OSREntryPtrTag, bitwise_cast<PtrTag>(exec));
 
     Register* pivot = scratch + 2 + CallFrame::headerSizeInRegisters;
     
