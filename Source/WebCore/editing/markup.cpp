@@ -523,13 +523,13 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
 
     unsigned depth = 0;
     auto enterNode = [&] (Node& node) {
-        if (!node.renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(&node), selectTag))
-            return false;
-
         if (UNLIKELY(m_shouldPreserveMSOList) && shouldEmit) {
             if (appendNodeToPreserveMSOList(node))
                 return false;
         }
+
+        if (!node.renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(&node), selectTag))
+            return false;
 
         ++depth;
         if (shouldEmit)

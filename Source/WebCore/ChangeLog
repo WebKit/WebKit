@@ -1,5 +1,20 @@
 2018-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r236609): API tests for mso list preservation are failing
+        https://bugs.webkit.org/show_bug.cgi?id=190095
+
+        Reviewed by Wenson Hsieh.
+
+        The regression was caused by appendNodeToPreserveMSOList called after an early return for not having renderer.
+        Clearly, comment & style elements coming from a MS word document wouldn't have a renderer.
+
+        Fixed the bug by changing the order.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+
+2018-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r236612.
 
         * platform/win/PasteboardWin.cpp:
