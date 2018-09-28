@@ -2211,30 +2211,32 @@ public:
         return m_jumpsToLink;
     }
 
-    static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction8, uint8_t* to)
+    typedef void* (*CopyFunction)(void*, const void*, size_t);
+
+    static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction8, uint8_t* to, CopyFunction copy)
     {
         const uint16_t* fromInstruction = reinterpret_cast_ptr<const uint16_t*>(fromInstruction8);
         switch (record.linkType()) {
         case LinkJumpT1:
-            linkJumpT1(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkJumpT1(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, copy);
             break;
         case LinkJumpT2:
-            linkJumpT2(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkJumpT2(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, copy);
             break;
         case LinkJumpT3:
-            linkJumpT3(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkJumpT3(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, copy);
             break;
         case LinkJumpT4:
-            linkJumpT4(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkJumpT4(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, copy);
             break;
         case LinkConditionalJumpT4:
-            linkConditionalJumpT4(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkConditionalJumpT4(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, copy);
             break;
         case LinkConditionalBX:
-            linkConditionalBX(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkConditionalBX(record.condition(), reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, copy);
             break;
         case LinkBX:
-            linkBX(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to);
+            linkBX(reinterpret_cast_ptr<uint16_t*>(from), fromInstruction, to, copy);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2685,7 +2687,7 @@ private:
         return ((relative << 7) >> 7) == relative;
     }
     
-    static void linkJumpT1(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
+    static void linkJumpT1(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target, CopyFunction copy = performJITMemcpy)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
@@ -2701,10 +2703,10 @@ private:
         // All branch offsets should be an even distance.
         ASSERT(!(relative & 1));
         uint16_t newInstruction = OP_B_T1 | ((cond & 0xf) << 8) | ((relative & 0x1fe) >> 1);
-        performJITMemcpy(writeTarget - 1, &newInstruction, sizeof(uint16_t));
+        copy(writeTarget - 1, &newInstruction, sizeof(uint16_t));
     }
     
-    static void linkJumpT2(uint16_t* writeTarget, const uint16_t* instruction, void* target)
+    static void linkJumpT2(uint16_t* writeTarget, const uint16_t* instruction, void* target, CopyFunction copy = performJITMemcpy)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
@@ -2720,10 +2722,10 @@ private:
         // All branch offsets should be an even distance.
         ASSERT(!(relative & 1));
         uint16_t newInstruction = OP_B_T2 | ((relative & 0xffe) >> 1);
-        performJITMemcpy(writeTarget - 1, &newInstruction, sizeof(uint16_t));
+        copy(writeTarget - 1, &newInstruction, sizeof(uint16_t));
     }
     
-    static void linkJumpT3(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
+    static void linkJumpT3(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target, CopyFunction copy = performJITMemcpy)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
@@ -2737,10 +2739,10 @@ private:
         uint16_t instructions[2];
         instructions[0] = OP_B_T3a | ((relative & 0x100000) >> 10) | ((cond & 0xf) << 6) | ((relative & 0x3f000) >> 12);
         instructions[1] = OP_B_T3b | ((relative & 0x80000) >> 8) | ((relative & 0x40000) >> 5) | ((relative & 0xffe) >> 1);
-        performJITMemcpy(writeTarget - 2, instructions, 2 * sizeof(uint16_t));
+        copy(writeTarget - 2, instructions, 2 * sizeof(uint16_t));
     }
     
-    static void linkJumpT4(uint16_t* writeTarget, const uint16_t* instruction, void* target)
+    static void linkJumpT4(uint16_t* writeTarget, const uint16_t* instruction, void* target, CopyFunction copy = performJITMemcpy)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
@@ -2757,21 +2759,21 @@ private:
         uint16_t instructions[2];
         instructions[0] = OP_B_T4a | ((relative & 0x1000000) >> 14) | ((relative & 0x3ff000) >> 12);
         instructions[1] = OP_B_T4b | ((relative & 0x800000) >> 10) | ((relative & 0x400000) >> 11) | ((relative & 0xffe) >> 1);
-        performJITMemcpy(writeTarget - 2, instructions, 2 * sizeof(uint16_t));
+        copy(writeTarget - 2, instructions, 2 * sizeof(uint16_t));
     }
     
-    static void linkConditionalJumpT4(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
+    static void linkConditionalJumpT4(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target, CopyFunction copy = performJITMemcpy)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         
         uint16_t newInstruction = ifThenElse(cond) | OP_IT;
-        performJITMemcpy(writeTarget - 3, &newInstruction, sizeof(uint16_t));
-        linkJumpT4(writeTarget, instruction, target);
+        copy(writeTarget - 3, &newInstruction, sizeof(uint16_t));
+        linkJumpT4(writeTarget, instruction, target, copy);
     }
     
-    static void linkBX(uint16_t* writeTarget, const uint16_t* instruction, void* target)
+    static void linkBX(uint16_t* writeTarget, const uint16_t* instruction, void* target, CopyFunction copy = performJITMemcpy)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(
         ASSERT_UNUSED(instruction, !(reinterpret_cast<intptr_t>(instruction) & 1));
@@ -2788,10 +2790,10 @@ private:
         instructions[3] = twoWordOp5i6Imm4Reg4EncodedImmSecond(JUMP_TEMPORARY_REGISTER, hi16);
         instructions[4] = OP_BX | (JUMP_TEMPORARY_REGISTER << 3);
 
-        performJITMemcpy(writeTarget - 5, instructions, 5 * sizeof(uint16_t));
+        copy(writeTarget - 5, instructions, 5 * sizeof(uint16_t));
     }
     
-    static void linkConditionalBX(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
+    static void linkConditionalBX(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target, CopyFunction copy = performJITMemcpy)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
@@ -2799,7 +2801,7 @@ private:
         
         linkBX(writeTarget, instruction, target);
         uint16_t newInstruction = ifThenElse(cond, true, true) | OP_IT;
-        performJITMemcpy(writeTarget - 6, &newInstruction, sizeof(uint16_t));
+        copy(writeTarget - 6, &newInstruction, sizeof(uint16_t));
     }
     
     static void linkJumpAbsolute(uint16_t* writeTarget, const uint16_t* instruction, void* target)
