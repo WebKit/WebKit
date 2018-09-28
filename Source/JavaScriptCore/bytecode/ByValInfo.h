@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,37 +226,37 @@ inline JITArrayMode jitArrayModeForStructure(Structure* structure)
 struct ByValInfo {
     ByValInfo() { }
 
-    ByValInfo(unsigned bytecodeIndex, CodeLocationJump<JSInternalPtrTag> notIndexJump, CodeLocationJump<JSInternalPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, int16_t badTypeJumpToDone, int16_t badTypeJumpToNextHotPath, int16_t returnAddressToSlowPath)
-        : bytecodeIndex(bytecodeIndex)
-        , notIndexJump(notIndexJump)
+    ByValInfo(unsigned bytecodeIndex, CodeLocationJump<JSInternalPtrTag> notIndexJump, CodeLocationJump<JSInternalPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, CodeLocationLabel<JSInternalPtrTag> badTypeDoneTarget, CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget, CodeLocationLabel<JSInternalPtrTag> slowPathTarget)
+        : notIndexJump(notIndexJump)
         , badTypeJump(badTypeJump)
         , exceptionHandler(exceptionHandler)
-        , arrayMode(arrayMode)
+        , badTypeDoneTarget(badTypeDoneTarget)
+        , badTypeNextHotPathTarget(badTypeNextHotPathTarget)
+        , slowPathTarget(slowPathTarget)
         , arrayProfile(arrayProfile)
-        , badTypeJumpToDone(badTypeJumpToDone)
-        , badTypeJumpToNextHotPath(badTypeJumpToNextHotPath)
-        , returnAddressToSlowPath(returnAddressToSlowPath)
+        , bytecodeIndex(bytecodeIndex)
         , slowPathCount(0)
         , stubInfo(nullptr)
+        , arrayMode(arrayMode)
         , tookSlowPath(false)
         , seen(false)
     {
     }
 
-    unsigned bytecodeIndex;
     CodeLocationJump<JSInternalPtrTag> notIndexJump;
     CodeLocationJump<JSInternalPtrTag> badTypeJump;
     CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler;
-    JITArrayMode arrayMode; // The array mode that was baked into the inline JIT code.
+    CodeLocationLabel<JSInternalPtrTag> badTypeDoneTarget;
+    CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget;
+    CodeLocationLabel<JSInternalPtrTag> slowPathTarget;
     ArrayProfile* arrayProfile;
-    int16_t badTypeJumpToDone;
-    int16_t badTypeJumpToNextHotPath;
-    int16_t returnAddressToSlowPath;
+    unsigned bytecodeIndex;
     unsigned slowPathCount;
     RefPtr<JITStubRoutine> stubRoutine;
     Identifier cachedId;
     WriteBarrier<Symbol> cachedSymbol;
     StructureStubInfo* stubInfo;
+    JITArrayMode arrayMode; // The array mode that was baked into the inline JIT code.
     bool tookSlowPath : 1;
     bool seen : 1;
 };
