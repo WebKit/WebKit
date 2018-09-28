@@ -178,7 +178,6 @@ protected:
     void setNeedsRelayoutAllFrames();
     void mediaTypeOverrideChanged();
     void imagesEnabledChanged();
-    void scriptEnabledChanged();
     void pluginsEnabledChanged();
     void userStyleSheetLocationChanged();
     void usesPageCacheChanged();

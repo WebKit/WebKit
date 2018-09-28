@@ -655,7 +655,6 @@ imagesEnabled:
 scriptEnabled:
   initial: false
   getter: isScriptEnabled
-  onChange: scriptEnabledChanged
 pluginsEnabled:
   initial: false
   getter: arePluginsEnabled

@@ -292,15 +292,6 @@ void SettingsBase::imageLoadingSettingsTimerFired()
     }
 }
 
-void SettingsBase::scriptEnabledChanged()
-{
-#if PLATFORM(IOS)
-    // FIXME: Why do we only do this on iOS?
-    if (m_page)
-        m_page->setNeedsRecalcStyleInAllFrames();
-#endif
-}
-
 void SettingsBase::pluginsEnabledChanged()
 {
     Page::refreshPlugins(false);

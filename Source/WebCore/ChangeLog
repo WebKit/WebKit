@@ -1,3 +1,24 @@
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Drop iOS specific quirk in SettingsBase::scriptEnabledChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=190077
+        <rdar://problem/44812613>
+
+        Reviewed by Zalan Bujtas.
+
+        Drop iOS specific quirk in SettingsBase::scriptEnabledChanged() that would dirty style after the
+        "JavaScriptEnabled" setting's state is toggled. I do not see a good reason to do this given that
+        scripts would not get executed until a reload.
+
+        If we find out after dropping this that this is actually useful for some reason, then we can
+        always bring it back and consider making this non-iOS specific, as well as documenting why this
+        it is needed.
+
+        * page/Settings.yaml:
+        * page/SettingsBase.cpp:
+        (WebCore::SettingsBase::scriptEnabledChanged): Deleted.
+        * page/SettingsBase.h:
+
 2018-09-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix priority issue with multiple cookies with different level of path.
