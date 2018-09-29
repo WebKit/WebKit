@@ -1,0 +1,19 @@
+This directory demonstrates how to build a yasm builtin module as a plugin.
+This can be useful for integrating custom changes without
+rebuilding/reinstalling yasm.
+
+It requires access to the yasm source.  It defaults to assuming it is being
+built inside of the yasm source tree.
+
+To build:
+  mkdir objdir
+  cd objdir
+  cmake ..
+  make
+
+Testing (on Windows):
+  yasm -N Release/x86mod.dll -f x86 ...
+
+Testing (on Unix):
+  yasm -N ./libx86mod.so -f x86 ...
+
