@@ -270,8 +270,10 @@ unsigned ResourceLoadStatisticsMemoryStore::recursivelyGetAllDomainsThatHaveRedi
     ASSERT(!RunLoop::isMain());
 
     if (numberOfRecursiveCalls >= maxNumberOfRecursiveCallsInRedirectTraceBack) {
-        ASSERT_NOT_REACHED();
-        WTFLogAlways("Hit %u recursive calls in redirect backtrace. Returning early.", maxNumberOfRecursiveCallsInRedirectTraceBack);
+        // Model version 14 invokes a deliberate re-classification of the whole set.
+        if (statisticsModelVersion != 14)
+            ASSERT_NOT_REACHED();
+        RELEASE_LOG(ResourceLoadStatistics, "Hit %u recursive calls in redirect backtrace. Returning early.", maxNumberOfRecursiveCallsInRedirectTraceBack);
         return numberOfRecursiveCalls;
     }
 

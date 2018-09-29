@@ -1,3 +1,20 @@
+2018-09-28  John Wilander  <wilander@apple.com>
+
+        Skip debug assertion in ResourceLoadStatisticsMemoryStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain()
+        https://bugs.webkit.org/show_bug.cgi?id=190097
+        <rdar://problem/44877080>
+
+        Reviewed by Chris Dumez.
+
+        The change in https://bugs.webkit.org/show_bug.cgi?id=190055 causes a
+        re-classification that may trigger a debug assertion in
+        ResourceLoadStatisticsMemoryStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain().
+        We should skip the assertion for statistics model version 14 to avoid
+        this.
+
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain const):
+
 2018-09-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: crash in InspectorNetworkAgent::didReceiveResponse when loading denied x-frame resources
