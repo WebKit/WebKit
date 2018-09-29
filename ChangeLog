@@ -1,3 +1,13 @@
+2018-09-28  Mike Gorse  <mgorse@alum.wpi.edu>
+
+        cmake cannot run if python 2 isn't available
+        https://bugs.webkit.org/show_bug.cgi?id=190075
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/WebKitCommon.cmake: Set Python_ADDITIONAL_VERSIONS
+        to 3, so that a python3 binary will be found.
+
 2018-09-28  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WTF] Make isMainThread more reliable
