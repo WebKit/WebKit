@@ -1,3 +1,17 @@
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
+        The return value of an OnBeforeUnloadEventHandler should always be coerced into a DOMString
+        https://bugs.webkit.org/show_bug.cgi?id=190090
+
+        Reviewed by Ryosuke Niwa.
+
+        Update test that was returning a value in a beforeunload event listener instead of using an
+        event handler. The test needs to use an event handler (window.onbeforeunload) as an event
+        listener does not have a return value. I have verified that our behavior is consistent with
+        Chrome and Firefox on this test, both with an event listener and an event handler.
+
+        * fast/loader/form-submission-after-beforeunload-cancel.html:
+
 2018-09-28  Simon Fraser  <simon.fraser@apple.com>
 
         RenderLayer::removeOnlyThisLayer() should not call updateLayerPositions()

@@ -13,7 +13,7 @@ function submitForm()
     document.forms[0].submit();
 }
 
-window.addEventListener("beforeunload", function() {
+onbeforeunload = function() {
 
     if (window._confirmationDialogDisplayedOnce)
         return "Click 'Leave Page'";
@@ -34,7 +34,7 @@ window.addEventListener("beforeunload", function() {
     window._confirmationDialogDisplayedOnce = true;
     
     return "Click 'Stay on Page'";
-});
+}
 </script>
 
 <p>This tests that submitting a form a second time after canceling the first submission in a onbeforeunload handler is allowed. To test manually, follow the instructions in the JavaScript confirmation dialogs.</p>

@@ -1,7 +1,7 @@
 
 PASS Returning a string must not cancel the event: CustomEvent, non-cancelable 
 PASS Returning a string must not cancel the event: CustomEvent, cancelable 
-FAIL Returning false must not cancel the event, because it's coerced to the DOMString "false" which does not cancel CustomEvents: CustomEvent, cancelable assert_false: The event must not have been canceled expected false got true
+PASS Returning false must not cancel the event, because it's coerced to the DOMString "false" which does not cancel CustomEvents: CustomEvent, cancelable 
 PASS Returning a string must not cancel the event: BeforeUnloadEvent with type "click", cancelable 
 PASS Returning null with a real iframe unloading 
 PASS Returning undefined with a real iframe unloading 

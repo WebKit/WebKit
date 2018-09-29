@@ -149,52 +149,63 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         callType = getCallData(vm, handleEventFunction, callData);
     }
 
-    if (callType != CallType::None) {
-        Ref<JSEventListener> protectedThis(*this);
+    if (callType == CallType::None)
+        return;
 
-        MarkedArgumentBuffer args;
-        args.append(toJS(exec, globalObject, &event));
-        ASSERT(!args.hasOverflowed());
+    Ref<JSEventListener> protectedThis(*this);
 
-        Event* savedEvent = globalObject->currentEvent();
+    MarkedArgumentBuffer args;
+    args.append(toJS(exec, globalObject, &event));
+    ASSERT(!args.hasOverflowed());
 
-        // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
-        bool isTargetInsideShadowTree = is<Node>(event.currentTarget()) && downcast<Node>(*event.currentTarget()).isInShadowTree();
-        if (!isTargetInsideShadowTree)
-            globalObject->setCurrentEvent(&event);
+    Event* savedEvent = globalObject->currentEvent();
 
-        VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
+    // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
+    bool isTargetInsideShadowTree = is<Node>(event.currentTarget()) && downcast<Node>(*event.currentTarget()).isInShadowTree();
+    if (!isTargetInsideShadowTree)
+        globalObject->setCurrentEvent(&event);
 
-        InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
+    VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
-        JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event.currentTarget()) : jsFunction;
-        NakedPtr<JSC::Exception> exception;
-        JSValue retval = JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);
+    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
 
-        InspectorInstrumentation::didCallFunction(cookie, &scriptExecutionContext);
+    JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event.currentTarget()) : jsFunction;
+    NakedPtr<JSC::Exception> exception;
+    JSValue retval = JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);
 
-        globalObject->setCurrentEvent(savedEvent);
+    InspectorInstrumentation::didCallFunction(cookie, &scriptExecutionContext);
 
-        if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-            auto& scriptController = *downcast<WorkerGlobalScope>(scriptExecutionContext).script();
-            bool terminatorCausedException = (scope.exception() && isTerminatedExecutionException(vm, scope.exception()));
-            if (terminatorCausedException || scriptController.isTerminatingExecution())
-                scriptController.forbidExecution();
-        }
+    globalObject->setCurrentEvent(savedEvent);
 
-        if (exception) {
-            event.target()->uncaughtExceptionInEventHandler();
-            reportException(exec, exception);
-        } else {
-            if (is<BeforeUnloadEvent>(event))
-                handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), convert<IDLNullable<IDLDOMString>>(*exec, retval));
-
-            if (m_isAttribute) {
-                if (retval.isFalse())
-                    event.preventDefault();
-            }
-        }
+    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
+        auto& scriptController = *downcast<WorkerGlobalScope>(scriptExecutionContext).script();
+        bool terminatorCausedException = (scope.exception() && isTerminatedExecutionException(vm, scope.exception()));
+        if (terminatorCausedException || scriptController.isTerminatingExecution())
+            scriptController.forbidExecution();
     }
+
+    if (exception) {
+        event.target()->uncaughtExceptionInEventHandler();
+        reportException(exec, exception);
+        return;
+    }
+
+    if (!m_isAttribute) {
+        // This is an EventListener and there is therefore no need for any return value handling.
+        return;
+    }
+
+    // Do return value handling for event handlers (https://html.spec.whatwg.org/#the-event-handler-processing-algorithm).
+
+    if (event.type() == eventNames().beforeunloadEvent) {
+        // This is a OnBeforeUnloadEventHandler, and therefore the return value must be coerced into a String.
+        if (is<BeforeUnloadEvent>(event))
+            handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), convert<IDLNullable<IDLDOMString>>(*exec, retval));
+        return;
+    }
+
+    if (retval.isFalse())
+        event.preventDefault();
 }
 
 bool JSEventListener::operator==(const EventListener& listener) const
