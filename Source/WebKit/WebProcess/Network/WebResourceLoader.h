@@ -83,7 +83,7 @@ private:
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didBlockAuthenticationChallenge();
 
-    void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied();
+    void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(const WebCore::ResourceResponse&);
 
 #if ENABLE(SHAREABLE_RESOURCE)
     void didReceiveResource(const ShareableResource::Handle&);

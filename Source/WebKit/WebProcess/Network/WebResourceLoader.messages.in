@@ -30,7 +30,7 @@ messages -> WebResourceLoader LegacyReceiver {
     DidFailResourceLoad(WebCore::ResourceError error)
     DidBlockAuthenticationChallenge()
 
-    StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied()
+    StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(WebCore::ResourceResponse response)
 
 #if ENABLE(SHAREABLE_RESOURCE)
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
