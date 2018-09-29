@@ -2875,14 +2875,6 @@ fast/gradients/conic-two-hints.html [ Skip ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
 
-# Temporary disables old WebAuthN tests, will either reenable or remove them in webkit.org/b/189283
-http/wpt/credential-management/credentialscontainer-store-basics.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-create-failure.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-create-success.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-get-failure.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-get-success.https.html [ Skip ]
-http/wpt/webauthn/idl.https.html [ Skip ]
-
 webkit.org/b/189997 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]
 
 # This is fallout from turning Web Animations on.

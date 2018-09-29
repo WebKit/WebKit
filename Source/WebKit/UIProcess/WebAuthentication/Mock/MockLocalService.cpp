@@ -42,8 +42,7 @@ MockLocalService::MockLocalService(Observer& observer, const MockWebAuthenticati
 
 bool MockLocalService::platformStartDiscovery() const
 {
-    // FIXME(189642): we should test false case.
-    return true;
+    return !!m_configuration.local;
 }
 
 UniqueRef<LocalConnection> MockLocalService::createLocalConnection() const

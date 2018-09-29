@@ -924,7 +924,6 @@ http/tests/ssl [ Skip ]
 
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
-http/tests/webauthn [ Skip ]
 http/tests/webgl [ Skip ]
 http/tests/webrtc [ Skip ]
 

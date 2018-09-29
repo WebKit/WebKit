@@ -73,7 +73,8 @@ void MockLocalConnection::getUserConsent(const String&, UserConsentCallback&& ca
 {
     // Mock async operations.
     RunLoop::main().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
-        if (!configuration.local.acceptAuthentication) {
+        ASSERT(configuration.local);
+        if (!configuration.local->acceptAuthentication) {
             callback(UserConsent::No);
             return;
         }
@@ -85,7 +86,8 @@ void MockLocalConnection::getUserConsent(const String&, SecAccessControlRef, Use
 {
     // Mock async operations.
     RunLoop::main().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
-        if (!configuration.local.acceptAuthentication) {
+        ASSERT(configuration.local);
+        if (!configuration.local->acceptAuthentication) {
             callback(UserConsent::No, nil);
             return;
         }
@@ -99,7 +101,8 @@ void MockLocalConnection::getAttestation(const String& rpId, const String& usern
 
     // Mock async operations.
     RunLoop::main().dispatch([configuration = m_configuration, rpId, username, hash, callback = WTFMove(callback)]() mutable {
-        if (!configuration.local.acceptAttestation) {
+        ASSERT(configuration.local);
+        if (!configuration.local->acceptAttestation) {
             callback(NULL, NULL, [NSError errorWithDomain:NSOSStatusErrorDomain code:-1 userInfo:nil]);
             return;
         }
@@ -112,7 +115,7 @@ void MockLocalConnection::getAttestation(const String& rpId, const String& usern
         };
         CFErrorRef errorRef = nullptr;
         auto key = adoptCF(SecKeyCreateWithData(
-            (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:configuration.local.privateKeyBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
+            (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:configuration.local->privateKeyBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
             (__bridge CFDictionaryRef)options,
             &errorRef
         ));

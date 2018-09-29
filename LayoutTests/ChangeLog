@@ -1,3 +1,55 @@
+2018-09-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Polish WebAuthN auto-test environment
+        https://bugs.webkit.org/show_bug.cgi?id=189283
+        <rdar://problem/44117828>
+
+        Reviewed by Chris Dumez.
+
+        This patch does the following few things:
+        1. Update tests that employ old mocking mechnism to the new one.
+        2. Move tests from http/tests/webauthn to http/wpt/webauthn. As a result, we have one unified place for
+        all WebAuthN tests: http/wpt/webauthn.
+        3. Add a helper function to check DOMException message as well.
+
+        * TestExpectations:
+        * http/tests/webauthn/public-key-credential-create-with-invalid-parameters.https-expected.txt: Removed.
+        * http/tests/webauthn/public-key-credential-get-with-invalid-parameters.https-expected.txt: Removed.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors-2.https-expected.txt: Removed.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors-2.https.html: Removed.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors.https-expected.txt: Removed.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors.https.html: Removed.
+        * http/tests/webauthn/resources/last-layer-frame.https.html: Removed.
+        * http/tests/webauthn/resources/util.js: Removed.
+        * http/wpt/credential-management/credentialscontainer-store-basics.https.html:
+        * http/wpt/webauthn/idl.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success.https-expected.txt: Removed.
+        * http/wpt/webauthn/public-key-credential-create-success.https.html: Removed.
+        * http/wpt/webauthn/public-key-credential-create-with-invalid-parameters.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-with-invalid-parameters.https.html: Renamed from LayoutTests/http/tests/webauthn/public-key-credential-create-with-invalid-parameters.https.html.
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success.https-expected.txt: Removed.
+        * http/wpt/webauthn/public-key-credential-get-success.https.html: Removed.
+        * http/wpt/webauthn/public-key-credential-get-with-invalid-parameters.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-with-invalid-parameters.https.html: Renamed from LayoutTests/http/tests/webauthn/public-key-credential-get-with-invalid-parameters.https.html.
+        * http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html: Added.
+        * http/wpt/webauthn/resources/last-layer-frame.https.html: Added.
+        * http/wpt/webauthn/resources/second-layer-frame.https.html: Renamed from LayoutTests/http/tests/webauthn/resources/second-layer-frame.https.html.
+        * http/wpt/webauthn/resources/util.js:
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-09-28  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: eliminate raw pointer usage in Fullscreen code

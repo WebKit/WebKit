@@ -79,7 +79,6 @@ class MediaStreamTrack;
 class MemoryInfo;
 class MockCDMFactory;
 class MockContentFilterSettings;
-class MockAuthenticatorCoordinator;
 class MockPageOverlay;
 class MockPaymentCoordinator;
 class NodeList;
@@ -704,10 +703,6 @@ public:
     void pauseTimeline(AnimationTimeline&);
     void setTimelineCurrentTime(AnimationTimeline&, double);
 
-#if ENABLE(WEB_AUTHN)
-    MockAuthenticatorCoordinator& mockAuthenticatorCoordinator() const;
-#endif
-
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
 
@@ -805,10 +800,6 @@ private:
 
 #if ENABLE(APPLE_PAY)
     MockPaymentCoordinator* m_mockPaymentCoordinator { nullptr };
-#endif
-
-#if ENABLE(WEB_AUTHN)
-    WeakPtr<MockAuthenticatorCoordinator> m_mockAuthenticatorCoordinator;
 #endif
 };
 

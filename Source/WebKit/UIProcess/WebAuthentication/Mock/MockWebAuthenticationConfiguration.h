@@ -36,7 +36,7 @@ struct MockWebAuthenticationConfiguration {
         String privateKeyBase64;
     };
 
-    Local local;
+    std::optional<Local> local;
 };
 
 } // namespace WebKit

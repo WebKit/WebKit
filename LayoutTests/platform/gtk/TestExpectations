@@ -1150,7 +1150,6 @@ webkit.org/b/175419 http/wpt/service-workers/navigation-redirect-main-frame.http
 webkit.org/b/175419 http/wpt/service-workers/third-party-registration.html [ Skip ]
 
 # Skip anything related to WebAuthN
-http/tests/webauthn/ [ Skip ]
 http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]

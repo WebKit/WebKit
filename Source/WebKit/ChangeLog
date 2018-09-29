@@ -1,3 +1,23 @@
+2018-09-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Polish WebAuthN auto-test environment
+        https://bugs.webkit.org/show_bug.cgi?id=189283
+        <rdar://problem/44117828>
+
+        Reviewed by Chris Dumez.
+
+        This patch changes MockWebAuthenticationConfiguration.local to optional such that tests can express
+        absence of local authenticators.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getUserConsent const):
+        (WebKit::MockLocalConnection::getAttestation const):
+        * UIProcess/WebAuthentication/Mock/MockLocalService.cpp:
+        (WebKit::MockLocalService::platformStartDiscovery const):
+        * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h:
+
 2018-09-28  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: eliminate raw pointer usage in Fullscreen code

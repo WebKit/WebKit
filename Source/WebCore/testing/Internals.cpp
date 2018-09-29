@@ -268,11 +268,6 @@
 #include "PaymentCoordinator.h"
 #endif
 
-#if ENABLE(WEB_AUTHN)
-#include "AuthenticatorCoordinator.h"
-#include "MockAuthenticatorCoordinator.h"
-#endif
-
 #if PLATFORM(MAC) && USE(LIBWEBRTC)
 #include <webrtc/sdk/WebKit/VideoProcessingSoftLink.h>
 #endif
@@ -551,15 +546,6 @@ Internals::Internals(Document& document)
     if (frame && frame->page()) {
         m_mockPaymentCoordinator = new MockPaymentCoordinator(*frame->page());
         frame->page()->setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator));
-    }
-#endif
-
-#if ENABLE(WEB_AUTHN)
-    // FIXME(189283)
-    if (document.page()) {
-        auto mockAuthenticatorCoordinator = std::make_unique<MockAuthenticatorCoordinator>();
-        m_mockAuthenticatorCoordinator = makeWeakPtr(mockAuthenticatorCoordinator.get());
-//        document.page()->authenticatorCoordinator().setClient(WTFMove(mockAuthenticatorCoordinator));
     }
 #endif
 }
@@ -4637,13 +4623,6 @@ void Internals::setTimelineCurrentTime(AnimationTimeline& timeline, double curre
 MockPaymentCoordinator& Internals::mockPaymentCoordinator() const
 {
     return *m_mockPaymentCoordinator;
-}
-#endif
-
-#if ENABLE(WEB_AUTHN)
-MockAuthenticatorCoordinator& Internals::mockAuthenticatorCoordinator() const
-{
-    return *m_mockAuthenticatorCoordinator;
 }
 #endif
 

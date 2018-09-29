@@ -887,3 +887,6 @@ http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
+# The following tests require PublicKeyCredential objects. We can only produce them via local authenticators now.
+http/wpt/credential-management/credentialscontainer-store-basics.https.html [ Skip ]
+http/wpt/webauthn/idl.https.html [ Skip ]

@@ -1,0 +1,48 @@
+<script src="./util.js"></script>
+<script>
+function messageToTop(message) {
+    top.postMessage(message, "*");
+}
+
+const makeOptions = {
+    publicKey: {
+        rp: {
+            name: "example.com"
+        },
+        user: {
+            name: "John Appleseed",
+            id: asciiToUint8Array("123456"),
+            displayName: "Appleseed",
+        },
+        challenge: asciiToUint8Array("123456"),
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }]
+    }
+};
+const requestOptions = {
+    publicKey: {
+        challenge: asciiToUint8Array("123456"),
+    }
+};
+
+
+navigator.credentials.create(makeOptions).then(
+    function(value) {
+        messageToTop("Access granted. " + value);
+    },
+    function(exception) {
+        if (exception.name == "NotAllowedError" && exception.message == "The origin of the document is not the same as its ancestors.")
+            return navigator.credentials.get(requestOptions);
+        else
+            messageToTop("Throw " + exception.name  + ".");
+    }
+).then(function(value) {
+        messageToTop("Access granted. " + value);
+    },
+    function(exception) {
+        if (exception.name == "NotAllowedError" && exception.message == "The origin of the document is not the same as its ancestors.")
+            messageToTop("PASS.");
+        else
+            messageToTop("Throw " + exception.name  + ".");
+    }
+);
+</script>

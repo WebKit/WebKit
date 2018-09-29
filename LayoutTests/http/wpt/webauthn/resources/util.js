@@ -1,3 +1,16 @@
+const testCredentialIdBase64url = "SMSXHngF7hEOsElA73C3RY-8bR4";
+const testES256PrivateKeyBase64 =
+    "BDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749VBJPgqUIwfhWHJ91nb7U" +
+    "PH76c0+WFOzZKslPyyFse4goGIW2R7k9VHLPEZl5nfnBgEVFh5zev+/xpHQIvuq6" +
+    "RQ==";
+const testES256PublicKeyBase64url =
+    "BDj_zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF_Qm1749VBJPgqUIwfhWHJ91nb7U" +
+    "PH76c0-WFOzZKslPyyFse4g";
+const testRpId = "localhost";
+const testUserhandleBase64 = "AAECAwQFBgcICQ==";
+
+const RESOURCES_DIR = "/WebKit/webauthn/resources/";
+
 function asciiToUint8Array(str)
 {
     var chars = [];
@@ -138,13 +151,31 @@ function extractRawSignature(asn1signature)
     return tmp.buffer;
 }
 
-const testCredentialIdBase64url = "SMSXHngF7hEOsElA73C3RY-8bR4";
-const testES256PrivateKeyBase64 =
-    "BDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749VBJPgqUIwfhWHJ91nb7U" +
-    "PH76c0+WFOzZKslPyyFse4goGIW2R7k9VHLPEZl5nfnBgEVFh5zev+/xpHQIvuq6" +
-    "RQ==";
-const testES256PublicKeyBase64url =
-    "BDj_zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF_Qm1749VBJPgqUIwfhWHJ91nb7U" +
-    "PH76c0-WFOzZKslPyyFse4g";
-const testRpId = "localhost";
-const testUserhandleBase64 = "AAECAwQFBgcICQ==";
+function waitForLoad()
+{
+    return new Promise((resolve) => {
+        window.addEventListener('message', (message) => {
+            resolve(message);
+        });
+    });
+}
+
+function withCrossOriginIframe(resourceFile)
+{
+    return new Promise((resolve) => {
+        waitForLoad().then((message) => {
+            resolve(message);
+        });
+        const frame = document.createElement("iframe");
+        frame.src = get_host_info().HTTPS_REMOTE_ORIGIN + RESOURCES_DIR + resourceFile;
+        document.body.appendChild(frame);
+    });
+}
+
+function promiseRejects(test, expected, promise, description)
+{
+    return promise.then(test.unreached_func("Should have rejected: " + description)).catch(function(e) {
+        assert_throws(expected, function() { throw e }, description);
+        assert_equals(e.message, description);
+    });
+}

@@ -19,6 +19,9 @@
 <div id='log'></div>
 
 <script>
+if (window.testRunner)
+    testRunner.setWebAuthenticationMockConfiguration({ local: { acceptAuthentication: true, acceptAttestation: true, privateKeyBase64: testES256PrivateKeyBase64 } });
+
 promise_test(async () => {
     const idlURL = ["WebAuthN.idl"];
     const idlArray = new IdlArray();
@@ -44,15 +47,13 @@ promise_test(async () => {
             },
             user: {
                 name: "John Appleseed",
-                id: asciiToUint8Array("123456"),
+                id: Base64URL.parse(testUserhandleBase64),
                 displayName: "Appleseed",
             },
             challenge: Base64URL.parse("MTIzNDU2"),
             pubKeyCredParams: [{ type: "public-key", alg: -7 }],
         }
     };
-    // A mock attestation object
-    internals.mockAuthenticatorCoordinator.setCreationReturnBundle(hexStringToUint8Array('00'), hexStringToUint8Array('01'));
     createdCredential = await navigator.credentials.create(creationOptions);
 
 
@@ -61,11 +62,12 @@ promise_test(async () => {
             challenge: Base64URL.parse("MTIzNDU2"),
         }
     };
-    // A mock assertion return bundle.
-    internals.mockAuthenticatorCoordinator.setAssertionReturnBundle(hexStringToUint8Array('00'), hexStringToUint8Array('01'), hexStringToUint8Array('02'), hexStringToUint8Array('03'));
     requestedCredential = await navigator.credentials.get(requestOptions);
 
     idlArray.add_objects({"PublicKeyCredential": ["createdCredential"], "AuthenticatorAttestationResponse": ["createdCredential.response"], "AuthenticatorAssertionResponse": ["requestedCredential.response"]});
     idlArray.test();
+
+    if (window.testRunner)
+        testRunner.cleanUpKeychain(testRpId);
 }, "Setup for WebAuthN API IDL tests.");
 </script>

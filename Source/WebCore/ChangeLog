@@ -1,3 +1,28 @@
+2018-09-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Polish WebAuthN auto-test environment
+        https://bugs.webkit.org/show_bug.cgi?id=189283
+        <rdar://problem/44117828>
+
+        Reviewed by Chris Dumez.
+
+        This patch removes the old mocking mechanism.
+
+        Tests: http/wpt/webauthn/public-key-credential-create-with-invalid-parameters.https.html
+               http/wpt/webauthn/public-key-credential-get-with-invalid-parameters.https.html
+               http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::mockAuthenticatorCoordinator const): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockAuthenticatorCoordinator.cpp: Removed.
+        * testing/MockAuthenticatorCoordinator.h: Removed.
+        * testing/MockAuthenticatorCoordinator.idl: Removed.
+
 2018-09-28  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: eliminate raw pointer usage in Fullscreen code

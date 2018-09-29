@@ -2358,51 +2358,54 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
         return;
     JSObjectRef configuration = JSValueToObject(context, configurationValue, 0);
 
-    JSRetainPtr<JSStringRef> localPropertyName(Adopt, JSStringCreateWithUTF8CString("local"));
-    JSValueRef localValue = JSObjectGetProperty(context, configuration, localPropertyName.get(), 0);
-    if (!JSValueIsObject(context, localValue))
-        return;
-    JSObjectRef local = JSValueToObject(context, localValue, 0);
-
-    JSRetainPtr<JSStringRef> acceptAuthenticationPropertyName(Adopt, JSStringCreateWithUTF8CString("acceptAuthentication"));
-    JSValueRef acceptAuthenticationValue = JSObjectGetProperty(context, local, acceptAuthenticationPropertyName.get(), 0);
-    if (!JSValueIsBoolean(context, acceptAuthenticationValue))
-        return;
-    bool acceptAuthentication = JSValueToBoolean(context, acceptAuthenticationValue);
-
-    JSRetainPtr<JSStringRef> acceptAttestationPropertyName(Adopt, JSStringCreateWithUTF8CString("acceptAttestation"));
-    JSValueRef acceptAttestationValue = JSObjectGetProperty(context, local, acceptAttestationPropertyName.get(), 0);
-    if (!JSValueIsBoolean(context, acceptAttestationValue))
-        return;
-    bool acceptAttestation = JSValueToBoolean(context, acceptAttestationValue);
-
-    JSRetainPtr<JSStringRef> privateKeyBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("privateKeyBase64"));
-    JSValueRef privateKeyBase64Value = JSObjectGetProperty(context, local, privateKeyBase64PropertyName.get(), 0);
-    if (!JSValueIsString(context, privateKeyBase64Value))
-        return;
-
-    Vector<WKRetainPtr<WKStringRef>> localKeys;
-    Vector<WKRetainPtr<WKTypeRef>> localValues;
-    localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("AcceptAuthentication") });
-    localValues.append(adoptWK(WKBooleanCreate(acceptAuthentication)).get());
-    localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("AcceptAttestation") });
-    localValues.append(adoptWK(WKBooleanCreate(acceptAttestation)).get());
-    localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("PrivateKeyBase64") });
-    localValues.append(toWK(adopt(JSValueToStringCopy(context, privateKeyBase64Value, 0)).get()));
-
-    Vector<WKStringRef> rawLocalKeys;
-    Vector<WKTypeRef> rawLocalValues;
-    rawLocalKeys.resize(localKeys.size());
-    rawLocalValues.resize(localValues.size());
-    for (size_t i = 0; i < localKeys.size(); ++i) {
-        rawLocalKeys[i] = localKeys[i].get();
-        rawLocalValues[i] = localValues[i].get();
-    }
-
     Vector<WKRetainPtr<WKStringRef>> configurationKeys;
     Vector<WKRetainPtr<WKTypeRef>> configurationValues;
-    configurationKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("Local") });
-    configurationValues.append({ AdoptWK, WKDictionaryCreate(rawLocalKeys.data(), rawLocalValues.data(), rawLocalKeys.size()) });
+
+    JSRetainPtr<JSStringRef> localPropertyName(Adopt, JSStringCreateWithUTF8CString("local"));
+    JSValueRef localValue = JSObjectGetProperty(context, configuration, localPropertyName.get(), 0);
+    if (!JSValueIsNull(context, localValue)) {
+        if (!JSValueIsObject(context, localValue))
+            return;
+        JSObjectRef local = JSValueToObject(context, localValue, 0);
+
+        JSRetainPtr<JSStringRef> acceptAuthenticationPropertyName(Adopt, JSStringCreateWithUTF8CString("acceptAuthentication"));
+        JSValueRef acceptAuthenticationValue = JSObjectGetProperty(context, local, acceptAuthenticationPropertyName.get(), 0);
+        if (!JSValueIsBoolean(context, acceptAuthenticationValue))
+            return;
+        bool acceptAuthentication = JSValueToBoolean(context, acceptAuthenticationValue);
+
+        JSRetainPtr<JSStringRef> acceptAttestationPropertyName(Adopt, JSStringCreateWithUTF8CString("acceptAttestation"));
+        JSValueRef acceptAttestationValue = JSObjectGetProperty(context, local, acceptAttestationPropertyName.get(), 0);
+        if (!JSValueIsBoolean(context, acceptAttestationValue))
+            return;
+        bool acceptAttestation = JSValueToBoolean(context, acceptAttestationValue);
+
+        JSRetainPtr<JSStringRef> privateKeyBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("privateKeyBase64"));
+        JSValueRef privateKeyBase64Value = JSObjectGetProperty(context, local, privateKeyBase64PropertyName.get(), 0);
+        if (!JSValueIsString(context, privateKeyBase64Value))
+            return;
+
+        Vector<WKRetainPtr<WKStringRef>> localKeys;
+        Vector<WKRetainPtr<WKTypeRef>> localValues;
+        localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("AcceptAuthentication") });
+        localValues.append(adoptWK(WKBooleanCreate(acceptAuthentication)).get());
+        localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("AcceptAttestation") });
+        localValues.append(adoptWK(WKBooleanCreate(acceptAttestation)).get());
+        localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("PrivateKeyBase64") });
+        localValues.append(toWK(adopt(JSValueToStringCopy(context, privateKeyBase64Value, 0)).get()));
+
+        Vector<WKStringRef> rawLocalKeys;
+        Vector<WKTypeRef> rawLocalValues;
+        rawLocalKeys.resize(localKeys.size());
+        rawLocalValues.resize(localValues.size());
+        for (size_t i = 0; i < localKeys.size(); ++i) {
+            rawLocalKeys[i] = localKeys[i].get();
+            rawLocalValues[i] = localValues[i].get();
+        }
+
+        configurationKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("Local") });
+        configurationValues.append({ AdoptWK, WKDictionaryCreate(rawLocalKeys.data(), rawLocalValues.data(), rawLocalKeys.size()) });
+    }
 
     Vector<WKStringRef> rawConfigurationKeys;
     Vector<WKTypeRef> rawConfigurationValues;
