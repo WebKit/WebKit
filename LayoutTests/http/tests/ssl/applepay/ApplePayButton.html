@@ -33,10 +33,6 @@
             -apple-pay-button-type: set-up;
         }
 
-        .in-store {
-            -apple-pay-button-type: in-store;
-        }
-
         .donate {
             -apple-pay-button-type: donate;
         }
@@ -45,7 +41,7 @@
 <body>
     <script>
         for (let style of ["white", "white-outline", "black"]) {
-            for (let type of ["plain", "buy", "set-up", "in-store", "donate"]) {
+            for (let type of ["plain", "buy", "set-up", "donate"]) {
                 var button = document.createElement("button");
                 button.classList.add("apple-pay-button", style, type);
                 document.body.appendChild(button);
