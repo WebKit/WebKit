@@ -1,3 +1,24 @@
+2018-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236512): http/tests/navigation/keyboard-events-during-provisional-navigation.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190052
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduce a new IPC::SendOption indicating that the IPC should always be sent asynchronously,
+        even if the connection is in fully synchronous mode. This is used by WebKitTestRunner for
+        all text outputting (e.g. console.log) is asynchronous, and thus in order.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        * Platform/IPC/Connection.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePagePostMessageIgnoringFullySynchronousMode):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::postMessageIgnoringFullySynchronousMode):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-09-28  John Wilander  <wilander@apple.com>
 
         Skip debug assertion in ResourceLoadStatisticsMemoryStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain()

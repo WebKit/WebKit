@@ -603,7 +603,10 @@ void InjectedBundle::outputText(const String& output)
         return;
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
     WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithUTF8CString(output.utf8().data()));
-    WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
+    // We use WKBundlePagePostMessageIgnoringFullySynchronousMode() instead of WKBundlePagePostMessage() to make sure that all text output
+    // is done via asynchronous IPC, even if the connection is in fully synchronous mode due to a WKBundlePagePostSynchronousMessageForTesting()
+    // call. Otherwise, messages logged via sync and async IPC may end up out of order and cause flakiness.
+    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), messageName.get(), messageBody.get());
 }
 
 void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)
