@@ -784,6 +784,13 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         return true;
     }
 
+#if ENABLE(CSS_COMPOSITING)
+    if (m_rareNonInheritedData->isolation != other.m_rareNonInheritedData->isolation) {
+        // Ideally this would trigger a cheaper layout that just updates layer z-order trees (webit.org/b/190088).
+        return true;
+    }
+#endif
+
     if (m_rareNonInheritedData->hasFilters() != other.m_rareNonInheritedData->hasFilters())
         return true;
 

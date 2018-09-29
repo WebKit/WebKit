@@ -1751,9 +1751,6 @@ void RenderLayer::removeOnlyThisLayer()
         removeChild(current);
         m_parent->addChild(current, nextSib);
         current->setRepaintStatus(NeedsFullRepaint);
-        // updateLayerPositions depends on hasLayer() already being false for proper layout.
-        ASSERT(!renderer().hasLayer());
-        current->updateLayerPositions(); // FIXME: use geometry map.
         current = next;
     }
 

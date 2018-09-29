@@ -3,7 +3,8 @@ This test checks that removing isolation from an element not being stacking cont
 (repaint rects
   (rect 8 68 100 100)
   (rect 58 68 100 100)
-  (rect 58 68 100 100)
   (rect 8 68 100 100)
+  (rect 8 68 100 100)
+  (rect 58 68 100 100)
 )
 

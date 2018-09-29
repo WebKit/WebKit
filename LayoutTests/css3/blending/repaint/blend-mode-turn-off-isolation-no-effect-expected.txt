@@ -1,3 +1,6 @@
 This test checks that removing isolation from an element being stacking context for other reasons will not trigger any repaint.
 
+(repaint rects
+  (rect 8 68 100 100)
+)
 
