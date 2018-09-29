@@ -139,7 +139,10 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
 
     // FIXME: give a name to the pipeline, maybe related with the track it's managing.
     // The track name is still unknown at this time, though.
-    m_pipeline = gst_pipeline_new(nullptr);
+    static size_t appendPipelineCount = 0;
+    String pipelineName = String::format("append-pipeline-%s-%zu",
+        m_sourceBufferPrivate->type().containerType().replace("/", "-").utf8().data(), appendPipelineCount++);
+    m_pipeline = gst_pipeline_new(pipelineName.utf8().data());
 
     m_bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     gst_bus_add_signal_watch_full(m_bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
@@ -278,7 +281,7 @@ GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo*
         return GST_PAD_PROBE_OK;
     }
 
-    GST_TRACE_OBJECT(this, "posting end-of-append request to bus");
+    GST_TRACE_OBJECT(m_pipeline.get(), "posting end-of-append request to bus");
     GstStructure* structure = gst_structure_new_empty("end-of-append");
     GstMessage* message = gst_message_new_application(GST_OBJECT(m_appsrc.get()), structure);
     gst_bus_post(m_bus.get(), message);
@@ -614,7 +617,7 @@ void AppendPipeline::appsinkCapsChanged()
 void AppendPipeline::handleEndOfAppend()
 {
     ASSERT(WTF::isMainThread());
-    GST_TRACE_OBJECT(this, "received end-of-append");
+    GST_TRACE_OBJECT(m_pipeline.get(), "received end-of-append");
 
     // Regardless of the state transition, the result is the same: didReceiveAllPendingSamples() is called.
     switch (m_appendState) {
@@ -742,7 +745,7 @@ void AppendPipeline::consumeAppsinkAvailableSamples()
         batchedSampleCount++;
     }
 
-    GST_TRACE_OBJECT(this, "batchedSampleCount = %d", batchedSampleCount);
+    GST_TRACE_OBJECT(m_pipeline.get(), "batchedSampleCount = %d", batchedSampleCount);
 }
 
 void AppendPipeline::resetPipeline()
@@ -790,7 +793,7 @@ GstFlowReturn AppendPipeline::pushNewBuffer(GstBuffer* buffer)
 
     setAppendState(AppendPipeline::AppendState::Ongoing);
 
-    GST_TRACE_OBJECT(this, "pushing data buffer %" GST_PTR_FORMAT, buffer);
+    GST_TRACE_OBJECT(m_pipeline.get(), "pushing data buffer %" GST_PTR_FORMAT, buffer);
     GstFlowReturn pushDataBufferRet = gst_app_src_push_buffer(GST_APP_SRC(m_appsrc.get()), buffer);
     // Pushing buffers to appsrc can only fail if the appsrc is flushing, in EOS or stopped. Neither of these should
     // be true at this point.
@@ -808,7 +811,7 @@ GstFlowReturn AppendPipeline::pushNewBuffer(GstBuffer* buffer)
     GstBuffer* endOfAppendBuffer = gst_buffer_new();
     gst_buffer_add_meta(endOfAppendBuffer, s_webKitEndOfAppendMetaInfo, nullptr);
 
-    GST_TRACE_OBJECT(this, "pushing end-of-append buffer %" GST_PTR_FORMAT, endOfAppendBuffer);
+    GST_TRACE_OBJECT(m_pipeline.get(), "pushing end-of-append buffer %" GST_PTR_FORMAT, endOfAppendBuffer);
     GstFlowReturn pushEndOfAppendBufferRet = gst_app_src_push_buffer(GST_APP_SRC(m_appsrc.get()), endOfAppendBuffer);
     g_return_val_if_fail(pushEndOfAppendBufferRet == GST_FLOW_OK, GST_FLOW_ERROR);
 

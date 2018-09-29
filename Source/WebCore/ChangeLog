@@ -1,3 +1,20 @@
+2018-09-29  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MSE] Use GObject for GST_TRACE_OBJECT
+        https://bugs.webkit.org/show_bug.cgi?id=190045
+
+        Reviewed by Philippe Normand.
+
+        Passing a non-GObject object to GST_TRACE_OBJECT() can be
+        theoretically misunderstood by the GStreamer logging function, so this
+        patch avoids that.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsrcEndOfAppendCheckerProbe):
+        (WebCore::AppendPipeline::handleEndOfAppend):
+        (WebCore::AppendPipeline::consumeAppsinkAvailableSamples):
+        (WebCore::AppendPipeline::pushNewBuffer):
+
 2018-09-28  Zamiul Haque  <zhaque@apple.com>
 
         Angled gradient backgrounds in body render vertically when body height is 0
