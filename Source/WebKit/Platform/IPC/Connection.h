@@ -61,7 +61,6 @@ enum class SendOption {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.
     DispatchMessageEvenWhenWaitingForSyncReply = 1 << 0,
-    IgnoreFullySynchronousMode = 1 << 1,
 };
 
 enum class SendSyncOption {

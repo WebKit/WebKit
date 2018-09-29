@@ -1,3 +1,18 @@
+2018-09-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r236631.
+        https://bugs.webkit.org/show_bug.cgi?id=190112
+
+        Caused various eventSender tests, including fast/css/pseudo-
+        active-style-sharing*, to fail (Requested by smfr on #webkit).
+
+        Reverted changeset:
+
+        "Regression(r236512): http/tests/navigation/keyboard-events-
+        during-provisional-navigation.html is flaky"
+        https://bugs.webkit.org/show_bug.cgi?id=190052
+        https://trac.webkit.org/changeset/236631
+
 2018-09-29  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Deal with the drawing area potentially being null in WebFrameLoaderClient::transitionToCommittedForNewPage()

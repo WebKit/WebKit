@@ -18,9 +18,8 @@ if (window.testRunner) {
 
     file1.addEventListener("change", function() {
         file2.addEventListener("change", function() {
-            setTimeout(() => {
-                runTest(file1, file2);
-            }, 0);
+            runTest(file1, file2);
+            finishJSTest();
         });
         window.setTimeout(function() {
             dragFilesOntoInput(file2, ["bar.txt"]);
@@ -44,8 +43,6 @@ function runTest(file1, file2) {
     file1.files = file2.files;
     shouldBe("file1.files.length", "1");
     shouldBeEqualToString("file1.files.item(0).name", "bar.txt");
-
-    finishJSTest();
 }
 
 function dragFilesOntoInput(input, files) {
