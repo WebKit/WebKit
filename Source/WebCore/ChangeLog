@@ -1,3 +1,23 @@
+2018-09-28  Zamiul Haque  <zhaque@apple.com>
+
+        Angled gradient backgrounds in body render vertically when body height is 0
+        https://bugs.webkit.org/show_bug.cgi?id=177232
+        <rdar://problem/34548230>.
+
+        Reviewed by Tim Horton.
+
+        Specifically, gradients displayed at an angle (ie. 45 degrees) are rendered
+        as if they are vertical when the body tag containing the gradient
+        has a height of 0. Other browsers do not render under these circumstances,
+        so WebKit was modified to follow in suit. The problem was due to layout sizes for
+        fill tiles being calculated with a minimum height of 1px. A simple change of the
+        minimum height and width to 0px was enough to bring about the desired behavior.
+
+        Tests: angled-background-repeating-gradient-rendering-vertical.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateFillTileSize const):
+
 2018-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         No DOM API to instantiate an attachment for an img element

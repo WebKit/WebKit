@@ -1,3 +1,17 @@
+2018-09-28  Zamiul Haque  <zhaque@apple.com>
+
+        Angled gradient backgrounds in body render vertically when body height is 0
+        https://bugs.webkit.org/show_bug.cgi?id=177232
+        <rdar://problem/34548230>.
+
+        Reviewed by Tim Horton.
+
+        Added tests to make sure that angled background gradients inside of a 
+        body tag of height 0 render as empty white screens.
+
+        * angled-background-repeating-gradient-rendering-vertical.html: Added.
+        * angled-background-repeating-gradient-rendering-vertical-expected.html: Added.
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         The return value of an OnBeforeUnloadEventHandler should always be coerced into a DOMString
