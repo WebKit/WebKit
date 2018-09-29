@@ -112,7 +112,9 @@ public:
     static JSBigInt* divide(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* remainder(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* unaryMinus(VM&, JSBigInt* x);
-    
+
+    static JSBigInt* bitwiseAnd(VM&, JSBigInt* x, JSBigInt* y);
+
 private:
 
     using Digit = uintptr_t;
@@ -147,6 +149,24 @@ private:
     Digit absoluteInplaceAdd(JSBigInt* summand, unsigned startIndex);
     Digit absoluteInplaceSub(JSBigInt* subtrahend, unsigned startIndex);
     void inplaceRightShift(unsigned shift);
+
+    enum class ExtraDigitsHandling {
+        Copy,
+        Skip
+    };
+
+    enum class SymmetricOp {
+        Symmetric,
+        NotSymmetric
+    };
+
+    static JSBigInt* absoluteBitwiseOp(VM&, JSBigInt* x, JSBigInt* y, ExtraDigitsHandling, SymmetricOp, std::function<Digit(Digit, Digit)> op);
+    static JSBigInt* absoluteAnd(VM&, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* absoluteOr(VM&, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* absoluteAndNot(VM&, JSBigInt* x, JSBigInt* y);
+
+    static JSBigInt* absoluteAddOne(VM&, JSBigInt* x, bool sign);
+    static JSBigInt* absoluteSubOne(VM&, JSBigInt* x, unsigned resultLength);
 
     // Digit arithmetic helpers.
     static Digit digitAdd(Digit a, Digit b, Digit& carry);

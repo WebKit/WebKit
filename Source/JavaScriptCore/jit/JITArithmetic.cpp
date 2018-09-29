@@ -528,7 +528,7 @@ void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEnt
 }
 
 template<typename SnippetGenerator>
-void JIT::emitBitBinaryOpFastPath(Instruction* currentInstruction)
+void JIT::emitBitBinaryOpFastPath(Instruction* currentInstruction, ProfilingPolicy profilingPolicy)
 {
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
@@ -567,6 +567,8 @@ void JIT::emitBitBinaryOpFastPath(Instruction* currentInstruction)
 
     ASSERT(gen.didEmitFastPath());
     gen.endJumpList().link(this);
+    if (profilingPolicy == ProfilingPolicy::ShouldEmitProfiling)
+        emitValueProfilingSite();
     emitPutVirtualRegister(result, resultRegs);
 
     addSlowCase(gen.slowPathJumpList());
@@ -574,7 +576,7 @@ void JIT::emitBitBinaryOpFastPath(Instruction* currentInstruction)
 
 void JIT::emit_op_bitand(Instruction* currentInstruction)
 {
-    emitBitBinaryOpFastPath<JITBitAndGenerator>(currentInstruction);
+    emitBitBinaryOpFastPath<JITBitAndGenerator>(currentInstruction, ProfilingPolicy::ShouldEmitProfiling);
 }
 
 void JIT::emit_op_bitor(Instruction* currentInstruction)

@@ -1732,12 +1732,22 @@ RegisterID* BytecodeGenerator::emitDec(RegisterID* srcDst)
 
 RegisterID* BytecodeGenerator::emitBinaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types)
 {
+
+    if (opcodeID == op_bitand) {
+        UnlinkedValueProfile profile = emitProfiledOpcode(opcodeID);
+        instructions().append(dst->index());
+        instructions().append(src1->index());
+        instructions().append(src2->index());
+        instructions().append(profile);
+        return dst;
+    }
+
     emitOpcode(opcodeID);
     instructions().append(dst->index());
     instructions().append(src1->index());
     instructions().append(src2->index());
 
-    if (opcodeID == op_bitor || opcodeID == op_bitand || opcodeID == op_bitxor ||
+    if (opcodeID == op_bitor || opcodeID == op_bitxor ||
         opcodeID == op_add || opcodeID == op_mul || opcodeID == op_sub || opcodeID == op_div)
         instructions().append(ArithProfile(types.first(), types.second()).bits());
 

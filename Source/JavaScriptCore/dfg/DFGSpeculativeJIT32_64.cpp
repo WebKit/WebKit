@@ -1979,7 +1979,11 @@ void SpeculativeJIT::compile(Node* node)
         recordSetLocal(dataFormatFor(node->variableAccessData()->flushFormat()));
         break;
 
-    case BitAnd:
+    case ValueBitAnd:
+        compileValueBitwiseOp(node);
+        break;
+
+    case ArithBitAnd:
     case BitOr:
     case BitXor:
         compileBitwiseOp(node);

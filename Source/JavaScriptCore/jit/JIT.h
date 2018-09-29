@@ -793,8 +793,13 @@ namespace JSC {
             return appendCallWithCallFrameRollbackOnException(operation);
         }
 
+        enum class ProfilingPolicy {
+            ShouldEmitProfiling,
+            NoProfiling
+        };
+
         template<typename SnippetGenerator>
-        void emitBitBinaryOpFastPath(Instruction* currentInstruction);
+        void emitBitBinaryOpFastPath(Instruction* currentInstruction, ProfilingPolicy shouldEmitProfiling = ProfilingPolicy::NoProfiling);
 
         void emitRightShiftFastPath(Instruction* currentInstruction, OpcodeID);
 

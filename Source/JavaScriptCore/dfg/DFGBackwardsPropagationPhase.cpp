@@ -110,7 +110,7 @@ private:
             return isWithinPowerOfTwoForConstant<power>(node);
         }
             
-        case BitAnd: {
+        case ArithBitAnd: {
             if (power > 31)
                 return true;
             
@@ -207,7 +207,7 @@ private:
         case CheckVarargs:
             break;
             
-        case BitAnd:
+        case ArithBitAnd:
         case BitOr:
         case BitXor:
         case BitRShift:

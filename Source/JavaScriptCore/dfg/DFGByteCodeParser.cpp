@@ -4845,7 +4845,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_bitand: {
             Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* op2 = get(VirtualRegister(currentInstruction[3].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(BitAnd, op1, op2));
+            if (isInt32Speculation(getPrediction()))
+                set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(ArithBitAnd, op1, op2));
+            else
+                set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(ValueBitAnd, op1, op2));
+
             NEXT_OPCODE(op_bitand);
         }
 

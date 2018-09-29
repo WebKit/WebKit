@@ -1148,6 +1148,25 @@ _llint_op_div:
         _slow_path_div)
 
 
+macro bitOpProfiled(operation, slowPath, advance)
+    loadi 12[PC], t2
+    loadi 8[PC], t0
+    loadConstantOrVariable(t2, t3, t1)
+    loadConstantOrVariable2Reg(t0, t2, t0)
+    bineq t3, Int32Tag, .slow
+    bineq t2, Int32Tag, .slow
+    loadi 4[PC], t2
+    operation(t1, t0)
+    storei t3, TagOffset[cfr, t2, 8]
+    storei t0, PayloadOffset[cfr, t2, 8]
+    valueProfile(t3, t0, (advance - 1) * 4, t2)
+    dispatch(advance)
+
+.slow:
+    callSlowPath(slowPath)
+    dispatch(advance)
+end
+
 macro bitOp(operation, slowPath, advance)
     loadi 12[PC], t2
     loadi 8[PC], t0
@@ -1206,7 +1225,7 @@ _llint_op_unsigned:
 
 _llint_op_bitand:
     traceExecution()
-    bitOp(
+    bitOpProfiled(
         macro (left, right) andi left, right end,
         _slow_path_bitand,
         constexpr op_bitand_length)

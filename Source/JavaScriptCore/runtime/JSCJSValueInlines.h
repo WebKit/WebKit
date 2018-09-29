@@ -750,6 +750,26 @@ ALWAYS_INLINE Variant<JSBigInt*, double> JSValue::toNumeric(ExecState* exec) con
     return value;
 }
 
+ALWAYS_INLINE Variant<JSBigInt*, int32_t> JSValue::toBigIntOrInt32(ExecState* exec) const
+{
+    if (isInt32())
+        return asInt32();
+    if (isDouble() && canBeInt32(asDouble()))
+        return static_cast<int32_t>(asDouble());
+    if (isBigInt())
+        return asBigInt(*this);
+
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue primValue = this->toPrimitive(exec, PreferNumber);
+    RETURN_IF_EXCEPTION(scope, 0);
+    if (primValue.isBigInt())
+        return asBigInt(primValue);
+    int32_t value = primValue.toInt32(exec);
+    RETURN_IF_EXCEPTION(scope, 0);
+    return value;
+}
+
 inline JSObject* JSValue::toObject(ExecState* exec) const
 {
     return isCell() ? asCell()->toObject(exec, exec->lexicalGlobalObject()) : toObjectSlowCase(exec, exec->lexicalGlobalObject());

@@ -64,11 +64,11 @@ const ClassInfo JSBigInt::s_info =
 JSBigInt::JSBigInt(VM& vm, Structure* structure, unsigned length)
     : Base(vm, structure)
     , m_length(length)
+    , m_sign(false)
 { }
 
 void JSBigInt::initialize(InitializationType initType)
 {
-    setSign(false);
     if (initType == InitializationType::WithZero)
         memset(dataStorage(), 0, length() * sizeof(Digit));
 }
@@ -81,7 +81,6 @@ Structure* JSBigInt::createStructure(VM& vm, JSGlobalObject* globalObject, JSVal
 JSBigInt* JSBigInt::createZero(VM& vm)
 {
     JSBigInt* zeroBigInt = createWithLength(vm, 0);
-    zeroBigInt->setSign(false);
     return zeroBigInt;
 }
 
@@ -108,10 +107,8 @@ JSBigInt* JSBigInt::createFrom(VM& vm, int32_t value)
     if (value < 0) {
         bigInt->setDigit(0, static_cast<Digit>(-1 * static_cast<int64_t>(value)));
         bigInt->setSign(true);
-    } else {
+    } else
         bigInt->setDigit(0, static_cast<Digit>(value));
-        bigInt->setSign(false);
-    }
 
     return bigInt;
 }
@@ -123,7 +120,6 @@ JSBigInt* JSBigInt::createFrom(VM& vm, uint32_t value)
     
     JSBigInt* bigInt = createWithLength(vm, 1);
     bigInt->setDigit(0, static_cast<Digit>(value));
-    bigInt->setSign(false);
     return bigInt;
 }
 
@@ -138,10 +134,8 @@ JSBigInt* JSBigInt::createFrom(VM& vm, int64_t value)
         if (value < 0) {
             bigInt->setDigit(0, static_cast<Digit>(static_cast<uint64_t>(-(value + 1)) + 1));
             bigInt->setSign(true);
-        } else {
+        } else
             bigInt->setDigit(0, static_cast<Digit>(value));
-            bigInt->setSign(false);
-        }
         
         return bigInt;
     }
@@ -173,7 +167,6 @@ JSBigInt* JSBigInt::createFrom(VM& vm, bool value)
     
     JSBigInt* bigInt = createWithLength(vm, 1);
     bigInt->setDigit(0, static_cast<Digit>(value));
-    bigInt->setSign(false);
     return bigInt;
 }
 
@@ -379,6 +372,31 @@ JSBigInt* JSBigInt::sub(VM& vm, JSBigInt* x, JSBigInt* y)
         return absoluteSub(vm, x, y, xSign);
 
     return absoluteSub(vm, y, x, !xSign);
+}
+
+JSBigInt* JSBigInt::bitwiseAnd(VM& vm, JSBigInt* x, JSBigInt* y)
+{
+    if (!x->sign() && !y->sign())
+        return absoluteAnd(vm, x, y);
+    
+    if (x->sign() && y->sign()) {
+        int resultLength = std::max(x->length(), y->length()) + 1;
+        // (-x) & (-y) == ~(x-1) & ~(y-1) == ~((x-1) | (y-1))
+        // == -(((x-1) | (y-1)) + 1)
+        JSBigInt* result = absoluteSubOne(vm, x, resultLength);
+        JSBigInt* y1 = absoluteSubOne(vm, y, y->length());
+        result = absoluteOr(vm, result, y1);
+
+        return absoluteAddOne(vm, result, true);
+    }
+
+    ASSERT(x->sign() != y->sign());
+    // Assume that x is the positive BigInt.
+    if (x->sign())
+        std::swap(x, y);
+    
+    // x & (-y) == x & ~(y-1) == x & ~(y-1)
+    return absoluteAndNot(vm, x, absoluteSubOne(vm, y, y->length()));
 }
 
 #if USE(JSVALUE32_64)
@@ -991,6 +1009,128 @@ JSBigInt* JSBigInt::absoluteLeftShiftAlwaysCopy(VM& vm, JSBigInt* x, unsigned sh
     }
 
     return result;
+}
+
+// Helper for Absolute{And,AndNot,Or,Xor}.
+// Performs the given binary {op} on digit pairs of {x} and {y}; when the
+// end of the shorter of the two is reached, {extraDigits} configures how
+// remaining digits in the longer input (if {symmetric} == Symmetric, in
+// {x} otherwise) are handled: copied to the result or ignored.
+// Example:
+//       y:             [ y2 ][ y1 ][ y0 ]
+//       x:       [ x3 ][ x2 ][ x1 ][ x0 ]
+//                   |     |     |     |
+//                (Copy)  (op)  (op)  (op)
+//                   |     |     |     |
+//                   v     v     v     v
+// result: [  0 ][ x3 ][ r2 ][ r1 ][ r0 ]
+inline JSBigInt* JSBigInt::absoluteBitwiseOp(VM& vm, JSBigInt* x, JSBigInt* y, ExtraDigitsHandling extraDigits, SymmetricOp symmetric, std::function<Digit(Digit, Digit)> op)
+{
+    unsigned xLength = x->length();
+    unsigned yLength = y->length();
+    unsigned numPairs = yLength;
+    if (xLength < yLength) {
+        numPairs = xLength;
+        if (symmetric == SymmetricOp::Symmetric) {
+            std::swap(x, y);
+            std::swap(xLength, yLength);
+        }
+    }
+
+    ASSERT(numPairs == std::min(xLength, yLength));
+    unsigned resultLength = extraDigits == ExtraDigitsHandling::Copy ? xLength : numPairs;
+    JSBigInt* result = createWithLength(vm, resultLength);
+
+    unsigned i = 0;
+    for (; i < numPairs; i++)
+        result->setDigit(i, op(x->digit(i), y->digit(i)));
+
+    if (extraDigits == ExtraDigitsHandling::Copy) {
+        for (; i < xLength; i++)
+            result->setDigit(i, x->digit(i));
+    }
+
+    for (; i < resultLength; i++)
+        result->setDigit(i, 0);
+
+    return result->rightTrim(vm);
+}
+
+JSBigInt* JSBigInt::absoluteAnd(VM& vm, JSBigInt* x, JSBigInt* y)
+{
+    auto digitOperation = [](Digit a, Digit b) {
+        return a & b;
+    };
+    return absoluteBitwiseOp(vm, x, y, ExtraDigitsHandling::Skip, SymmetricOp::Symmetric, digitOperation);
+}
+
+JSBigInt* JSBigInt::absoluteOr(VM& vm, JSBigInt* x, JSBigInt* y)
+{
+    auto digitOperation = [](Digit a, Digit b) {
+        return a | b;
+    };
+    return absoluteBitwiseOp(vm, x, y, ExtraDigitsHandling::Copy, SymmetricOp::Symmetric, digitOperation);
+}
+
+JSBigInt* JSBigInt::absoluteAndNot(VM& vm, JSBigInt* x, JSBigInt* y)
+{
+    auto digitOperation = [](Digit a, Digit b) {
+        return a & ~b;
+    };
+    return absoluteBitwiseOp(vm, x, y, ExtraDigitsHandling::Copy, SymmetricOp::NotSymmetric, digitOperation);
+}
+
+JSBigInt* JSBigInt::absoluteAddOne(VM& vm, JSBigInt* x, bool sign)
+{
+    unsigned inputLength = x->length();
+    // The addition will overflow into a new digit if all existing digits are
+    // at maximum.
+    bool willOverflow = true;
+    for (unsigned i = 0; i < inputLength; i++) {
+        if (std::numeric_limits<Digit>::max() != x->digit(i)) {
+            willOverflow = false;
+            break;
+        }
+    }
+
+    unsigned resultLength = inputLength + willOverflow;
+    JSBigInt* result = createWithLength(vm, resultLength);
+
+    Digit carry = 1;
+    for (unsigned i = 0; i < inputLength; i++) {
+        Digit newCarry = 0;
+        result->setDigit(i, digitAdd(x->digit(i), carry, newCarry));
+        carry = newCarry;
+    }
+    if (resultLength > inputLength)
+        result->setDigit(inputLength, carry);
+    else
+        ASSERT(!carry);
+
+    result->setSign(sign);
+    return result->rightTrim(vm);
+}
+
+// Like the above, but you can specify that the allocated result should have
+// length {resultLength}, which must be at least as large as {x->length()}.
+JSBigInt* JSBigInt::absoluteSubOne(VM& vm, JSBigInt* x, unsigned resultLength)
+{
+    ASSERT(!x->isZero());
+    ASSERT(resultLength >= x->length());
+    JSBigInt* result = createWithLength(vm, resultLength);
+
+    unsigned length = x->length();
+    Digit borrow = 1;
+    for (unsigned i = 0; i < length; i++) {
+        Digit newBorrow = 0;
+        result->setDigit(i, digitSub(x->digit(i), borrow, newBorrow));
+        borrow = newBorrow;
+    }
+    ASSERT(!borrow);
+    for (unsigned i = length; i < resultLength; i++)
+        result->setDigit(i, borrow);
+
+    return result->rightTrim(vm);
 }
 
 // Lookup table for the maximum number of bits required per character of a

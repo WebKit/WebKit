@@ -99,7 +99,30 @@ private:
             return;
         }
             
-        case BitAnd:
+        case ValueBitAnd: {
+            if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
+                fixEdge<BigIntUse>(node->child1());
+                fixEdge<BigIntUse>(node->child2());
+                break;
+            }
+
+            fixEdge<UntypedUse>(node->child1());
+            fixEdge<UntypedUse>(node->child2());
+            break;
+        }
+    
+        case ArithBitAnd: {
+            if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())) {
+                fixEdge<UntypedUse>(node->child1());
+                fixEdge<UntypedUse>(node->child2());
+                node->setOpAndDefaultFlags(ValueBitAnd);
+                break;
+            }
+            fixIntConvertingEdge(node->child1());
+            fixIntConvertingEdge(node->child2());
+            break;
+        }
+
         case BitOr:
         case BitXor:
         case BitRShift:

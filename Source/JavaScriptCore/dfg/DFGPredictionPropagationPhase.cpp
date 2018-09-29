@@ -246,6 +246,12 @@ private:
             break;
         }
 
+        case ValueBitAnd: {
+            if (node->child1()->shouldSpeculateBigInt() && node->child2()->shouldSpeculateBigInt())
+                changed |= mergePrediction(SpecBigInt);
+            break;
+        }
+
         case ValueNegate:
         case ArithNegate: {
             SpeculatedType prediction = node->child1()->prediction();
@@ -700,7 +706,8 @@ private:
             setPrediction(type);
             break;
         }
-        case BitAnd:
+
+        case ArithBitAnd:
         case BitOr:
         case BitXor:
         case BitRShift:
@@ -1056,6 +1063,7 @@ private:
         case GetLocal:
         case SetLocal:
         case UInt32ToNumber:
+        case ValueBitAnd:
         case ValueNegate:
         case ValueAdd:
         case ArithAdd:

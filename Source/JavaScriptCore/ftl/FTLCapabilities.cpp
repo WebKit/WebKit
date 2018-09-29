@@ -58,7 +58,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PhantomLocal:
     case SetArgument:
     case Return:
-    case BitAnd:
+    case ArithBitAnd:
     case BitOr:
     case BitXor:
     case BitRShift:
@@ -86,6 +86,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetGlobalVar:
     case GetGlobalLexicalVariable:
     case PutGlobalVariable:
+    case ValueBitAnd:
     case ValueNegate:
     case ValueAdd:
     case StrCat:

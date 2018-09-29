@@ -581,6 +581,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             break;
         }
 
+        case op_bitand:
         case op_to_this: {
             linkValueProfile(i, opLength);
             break;

@@ -633,7 +633,7 @@ public:
     void bitOp(NodeType op, int32_t imm, GPRReg op1, GPRReg result)
     {
         switch (op) {
-        case BitAnd:
+        case ArithBitAnd:
             m_jit.and32(Imm32(imm), op1, result);
             break;
         case BitOr:
@@ -649,7 +649,7 @@ public:
     void bitOp(NodeType op, GPRReg op1, GPRReg op2, GPRReg result)
     {
         switch (op) {
-        case BitAnd:
+        case ArithBitAnd:
             m_jit.and32(op1, op2, result);
             break;
         case BitOr:
@@ -1332,6 +1332,7 @@ public:
     template<typename SnippetGenerator, J_JITOperation_EJJ slowPathFunction>
     void emitUntypedBitOp(Node*);
     void compileBitwiseOp(Node*);
+    void compileValueBitwiseOp(Node*);
 
     void emitUntypedRightShiftBitOp(Node*);
     void compileShiftOp(Node*);

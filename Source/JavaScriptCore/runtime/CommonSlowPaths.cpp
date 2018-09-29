@@ -656,11 +656,21 @@ SLOW_PATH_DECL(slow_path_unsigned)
 SLOW_PATH_DECL(slow_path_bitand)
 {
     BEGIN();
-    int32_t a = OP_C(2).jsValue().toInt32(exec);
-    if (UNLIKELY(throwScope.exception()))
-        RETURN(JSValue());
-    int32_t b = OP_C(3).jsValue().toInt32(exec);
-    RETURN(jsNumber(a & b));
+    auto leftNumeric = OP_C(2).jsValue().toBigIntOrInt32(exec);
+    CHECK_EXCEPTION();
+    auto rightNumeric = OP_C(3).jsValue().toBigIntOrInt32(exec);
+    CHECK_EXCEPTION();
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+            JSBigInt* result = JSBigInt::bitwiseAnd(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            CHECK_EXCEPTION();
+            RETURN_PROFILED(op_bitand, result);
+        }
+
+        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in bitwise and operation."));
+    }
+
+    RETURN_PROFILED(op_bitand, jsNumber(WTF::get<int32_t>(leftNumeric) & WTF::get<int32_t>(rightNumeric)));
 }
 
 SLOW_PATH_DECL(slow_path_bitor)

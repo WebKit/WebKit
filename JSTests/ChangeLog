@@ -1,3 +1,36 @@
+2018-09-28  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "&"
+        https://bugs.webkit.org/show_bug.cgi?id=186228
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-bitwise-and-general.js: Added.
+        (assert):
+        (assert.sameValue):
+        * stress/big-int-bitwise-and-jit.js: Added.
+        (let.assert.sameValue):
+        (bigIntBitAnd):
+        * stress/big-int-bitwise-and-memory-stress.js: Added.
+        (assert):
+        * stress/big-int-bitwise-and-to-primitive-precedence.js: Added.
+        (assert.sameValue):
+        (let.o.Symbol.toPrimitive):
+        (catch):
+        * stress/big-int-bitwise-and-type-error.js: Added.
+        (assert):
+        (assertThrowTypeError):
+        (let.o.valueOf):
+        (o.valueOf):
+        (o.toString):
+        (o.Symbol.toPrimitive):
+        * stress/big-int-bitwise-and-wrapped-value.js: Added.
+        (assert.sameValue):
+        (testBitAnd):
+        (let.o.Symbol.toPrimitive):
+        (o.valueOf):
+        (o.toString):
+
 2018-09-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         JSC test stress/jsc-read.js doesn't support CRLF

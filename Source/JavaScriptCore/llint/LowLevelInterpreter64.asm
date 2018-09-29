@@ -1092,6 +1092,25 @@ _llint_op_div:
     end
 
 
+macro bitOpProfiled(operation, slowPath, advance)
+    loadisFromInstruction(3, t0)
+    loadisFromInstruction(2, t2)
+    loadisFromInstruction(1, t3)
+    loadConstantOrVariable(t0, t1)
+    loadConstantOrVariable(t2, t0)
+    bqb t0, tagTypeNumber, .slow
+    bqb t1, tagTypeNumber, .slow
+    operation(t1, t0)
+    orq tagTypeNumber, t0
+    storeq t0, [cfr, t3, 8]
+    valueProfile(t0, advance - 1, t2)
+    dispatch(advance)
+
+.slow:
+    callSlowPath(slowPath)
+    dispatch(advance)
+end
+
 macro bitOp(operation, slowPath, advance)
     loadisFromInstruction(3, t0)
     loadisFromInstruction(2, t2)
@@ -1149,7 +1168,7 @@ _llint_op_unsigned:
 
 _llint_op_bitand:
     traceExecution()
-    bitOp(
+    bitOpProfiled(
         macro (left, right) andi left, right end,
         _slow_path_bitand,
         constexpr op_bitand_length)
