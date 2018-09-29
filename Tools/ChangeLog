@@ -1,3 +1,45 @@
+2018-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Allow uniform buffers to be used in the interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=189210
+
+        Reviewed by Filip Pizlo.
+
+        Every lvalue is associated with an address space, and the propagation of these address spaces
+        matches the propagation of lvalues. Luckily, there was already the infrastructure to do most
+        of this, so this patch just goes the last few yards. It also updates the standard library to
+        allow for writing into all writable address spaces for out-params.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitAssignment):
+        (Checker.prototype._finishVisitingPropertyAccess):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics.):
+        (Intrinsics.checkFalse):
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (let.standardLibrary):
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.threadArrayRefLoad):
+        (tests.threadArrayRefLoadIntLiteral):
+        (tests.deviceArrayRefLoad):
+        (tests.threadArrayRefStore):
+        (tests.deviceArrayRefStore):
+        (tests.deviceArrayRefStoreIntLiteral):
+        (tests.threadPointerLoad):
+        (tests.threadPointerStore):
+        (tests.devicePointerLoad):
+        (tests.devicePointerStore):
+        (tests.arrayLoad):
+        (tests.constantAddressSpace):
+        (tests.standardLibraryDevicePointers):
+        (tests.threadArrayLoad): Deleted.
+        (tests.threadArrayLoadIntLiteral): Deleted.
+        (tests.deviceArrayLoad): Deleted.
+        (tests.threadArrayStore): Deleted.
+        (tests.deviceArrayStore): Deleted.
+        (tests.deviceArrayStoreIntLiteral): Deleted.
+
 2018-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         No DOM API to instantiate an attachment for an img element

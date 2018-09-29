@@ -859,259 +859,261 @@ class Intrinsics {
         for (let setter of BuiltinMatrixSetter.functions())
             this._map.set(setter.toString(), func => setter.instantiateImplementation(func));
 
-        for (let addressSpace of ["thread", "threadgroup", "device"]) {
-            this._map.set(
-                `native void InterlockedAdd(atomic_uint* ${addressSpace},uint,uint* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToUint(a + b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+        for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+            for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                this._map.set(
+                    `native void InterlockedAdd(atomic_uint* ${addressSpace1},uint,uint* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToUint(a + b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedAdd(atomic_int* ${addressSpace},int,int* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToInt(a + b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedAdd(atomic_int* ${addressSpace1},int,int* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToInt(a + b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedAnd(atomic_uint* ${addressSpace},uint,uint* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToUint(a & b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedAnd(atomic_uint* ${addressSpace1},uint,uint* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToUint(a & b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedAnd(atomic_int* ${addressSpace},int,int* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToInt(a & b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedAnd(atomic_int* ${addressSpace1},int,int* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToInt(a & b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedExchange(atomic_uint* ${addressSpace},uint,uint* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(b), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedExchange(atomic_uint* ${addressSpace1},uint,uint* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(b), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedExchange(atomic_int* ${addressSpace},int,int* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(b), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedExchange(atomic_int* ${addressSpace1},int,int* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(b), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedMax(atomic_uint* ${addressSpace},uint,uint* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToUint(a > b ? a : b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedMax(atomic_uint* ${addressSpace1},uint,uint* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToUint(a > b ? a : b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedMax(atomic_int* ${addressSpace},int,int* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToInt(a > b ? a : b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedMax(atomic_int* ${addressSpace1},int,int* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToInt(a > b ? a : b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedMin(atomic_uint* ${addressSpace},uint,uint* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToUint(a < b ? a : b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedMin(atomic_uint* ${addressSpace1},uint,uint* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToUint(a < b ? a : b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedMin(atomic_int* ${addressSpace},int,int* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToInt(a < b ? a : b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedMin(atomic_int* ${addressSpace1},int,int* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToInt(a < b ? a : b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedOr(atomic_uint* ${addressSpace},uint,uint* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToUint(a | b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedOr(atomic_uint* ${addressSpace1},uint,uint* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToUint(a | b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedOr(atomic_int* ${addressSpace},int,int* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToInt(a | b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedOr(atomic_int* ${addressSpace1},int,int* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToInt(a | b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedXor(atomic_uint* ${addressSpace},uint,uint* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToUint(a ^ b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedXor(atomic_uint* ${addressSpace1},uint,uint* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToUint(a ^ b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedXor(atomic_int* ${addressSpace},int,int* thread)`,
-                func => {
-                    func.implementation = function([atomic, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = value.loadValue();
-                        let result = castToInt(a ^ b);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                        atomic.loadValue().copyFrom(EPtr.box(result), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedXor(atomic_int* ${addressSpace1},int,int* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, value, originalValue], node) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = value.loadValue();
+                            let result = castToInt(a ^ b);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                            atomic.loadValue().copyFrom(EPtr.box(result), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedCompareExchange(atomic_uint* ${addressSpace},uint,uint,uint* thread)`,
-                func => {
-                    func.implementation = function([atomic, compareValue, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = compareValue.loadValue();
-                        let c = value.loadValue();
-                        if (a == b)
-                            atomic.loadValue().copyFrom(EPtr.box(c), 1);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedCompareExchange(atomic_uint* ${addressSpace1},uint,uint,uint* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, compareValue, value, originalValue]) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = compareValue.loadValue();
+                            let c = value.loadValue();
+                            if (a == b)
+                                atomic.loadValue().copyFrom(EPtr.box(c), 1);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        }
+                    });
 
-            this._map.set(
-                `native void InterlockedCompareExchange(atomic_int* ${addressSpace},int,int,int* thread)`,
-                func => {
-                    func.implementation = function([atomic, compareValue, value, originalValue]) {
-                        if (!atomic.loadValue())
-                            throw new WTrapError("[Atomics]", "Null atomic pointer");
-                        let a = atomic.loadValue().loadValue();
-                        let b = compareValue.loadValue();
-                        let c = value.loadValue();
-                        if (a == b)
-                            atomic.loadValue().copyFrom(EPtr.box(c), 1);
-                        if (originalValue.loadValue())
-                            originalValue.loadValue().copyFrom(EPtr.box(a), 1);
-                    }
-                });
+                this._map.set(
+                    `native void InterlockedCompareExchange(atomic_int* ${addressSpace1},int,int,int* ${addressSpace2})`,
+                    func => {
+                        func.implementation = function([atomic, compareValue, value, originalValue]) {
+                            if (!atomic.loadValue())
+                                throw new WTrapError(node.origin.originString, "Null atomic pointer");
+                            let a = atomic.loadValue().loadValue();
+                            let b = compareValue.loadValue();
+                            let c = value.loadValue();
+                            if (a == b)
+                                atomic.loadValue().copyFrom(EPtr.box(c), 1);
+                            if (originalValue.loadValue())
+                                originalValue.loadValue().copyFrom(EPtr.box(a), 1);
+                        }
+                    });
+            }
         }
 
         function checkUndefined(origin, explanation, value)
         {
             if (value == undefined)
-                throw new WTrapError("[Load]", "Texture read out of bounds");
+                throw new WTrapError(origin, "Texture read out of bounds");
             return value;
         }
 
         function checkFalse(origin, explanation, value)
         {
             if (value == false)
-                throw new WTrapError("[Store]", "Texture store out of bounds");
+                throw new WTrapError(origin, "Texture store out of bounds");
         }
 
         function boxVector(a)
@@ -1160,33 +1162,37 @@ class Intrinsics {
                 this._map.set(
                     `native ${type}${length} Load(Texture1D<${type}${length}>,int2 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(1), 0, 0, location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(1), 0, 0, location.get(0))));
                         }
                     });
                 this._map.set(
                     `native ${type}${length} Load(Texture1D<${type}${length}>,int2 location,int offset)`,
                     func => {
-                        func.implementation = function ([texture, location, offset]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(1), 0, 0, location.get(0) + offset.loadValue())));
+                        func.implementation = function ([texture, location, offset], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(1), 0, 0, location.get(0) + offset.loadValue())));
                         }
                     });
-                this._map.set(
-                    `native void GetDimensions(Texture1D<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread NumberOfLevels)`,
-                    func => {
-                        func.implementation = function([texture, miplevel, width, numberOfLevels]) {
-                            let tex = texture.loadValue();
-                            let mipID = miplevel.loadValue();
-                            if (mipID >= tex.levelCount)
-                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            if (numberOfLevels.loadValue())
-                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
-                        }
-                    });
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        this._map.set(
+                            `native void GetDimensions(Texture1D<${type}${length}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} NumberOfLevels)`,
+                            func => {
+                                func.implementation = function([texture, miplevel, width, numberOfLevels], node) {
+                                    let tex = texture.loadValue();
+                                    let mipID = miplevel.loadValue();
+                                    if (mipID >= tex.levelCount)
+                                        throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                    if (numberOfLevels.loadValue())
+                                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                }
+                            });
+                    }
+                }
 
-                 this._map.set(
+                this._map.set(
                     `native ${type}${length} Sample(Texture1DArray<${type}${length}>,sampler,float2 location)`,
                     func => {
                         func.implementation = function([texture, sampler, location]) {
@@ -1206,35 +1212,41 @@ class Intrinsics {
                 this._map.set(
                     `native ${type}${length} Load(Texture1DArray<${type}${length}>,int3 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), location.get(1), 0, 0, location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), location.get(1), 0, 0, location.get(0))));
                         }
                     });
                 this._map.set(
                     `native ${type}${length} Load(Texture1DArray<${type}${length}>,int3 location,int offset)`,
                     func => {
-                        func.implementation = function ([texture, location, offset]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), location.get(1), 0, 0, location.get(0) + offset.loadValue())));
+                        func.implementation = function ([texture, location, offset], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), location.get(1), 0, 0, location.get(0) + offset.loadValue())));
                         }
                     });
-                this._map.set(
-                    `native void GetDimensions(Texture1DArray<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Elements,uint* thread NumberOfLevels)`,
-                    func => {
-                        func.implementation = function([texture, miplevel, width, elements, numberOfLevels]) {
-                            let tex = texture.loadValue();
-                            let mipID = miplevel.loadValue();
-                            if (mipID >= tex.levelCount)
-                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            if (elements.loadValue())
-                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                            if (numberOfLevels.loadValue())
-                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                            this._map.set(
+                                `native void GetDimensions(Texture1DArray<${type}${length}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} Elements,uint* ${addressSpace3} NumberOfLevels)`,
+                                func => {
+                                    func.implementation = function([texture, miplevel, width, elements, numberOfLevels], node) {
+                                        let tex = texture.loadValue();
+                                        let mipID = miplevel.loadValue();
+                                        if (mipID >= tex.levelCount)
+                                            throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                        if (width.loadValue())
+                                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                        if (elements.loadValue())
+                                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                        if (numberOfLevels.loadValue())
+                                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                    }
+                                });
                         }
-                    });
+                    }
+                }
 
-                 this._map.set(
+                this._map.set(
                     `native ${type}${length} Sample(Texture2D<${type}${length}>,sampler,float2 location)`,
                     func => {
                         func.implementation = function([texture, sampler, location]) {
@@ -1400,35 +1412,41 @@ class Intrinsics {
                 this._map.set(
                     `native ${type}${length} Load(Texture2D<${type}${length}>,int3 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1), location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1), location.get(0))));
                         }
                     });
                 this._map.set(
                     `native ${type}${length} Load(Texture2D<${type}${length}>,int3 location,int2 offset)`,
                     func => {
-                        func.implementation = function ([texture, location, offset]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                        func.implementation = function ([texture, location, offset], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
                         }
                     });
-                this._map.set(
-                    `native void GetDimensions(Texture2D<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread NumberOfLevels)`,
-                    func => {
-                        func.implementation = function([texture, miplevel, width, height, numberOfLevels]) {
-                            let tex = texture.loadValue();
-                            let mipID = miplevel.loadValue();
-                            if (mipID >= tex.levelCount)
-                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                            if (numberOfLevels.loadValue())
-                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                            this._map.set(
+                                `native void GetDimensions(Texture2D<${type}${length}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} NumberOfLevels)`,
+                                func => {
+                                    func.implementation = function([texture, miplevel, width, height, numberOfLevels], node) {
+                                        let tex = texture.loadValue();
+                                        let mipID = miplevel.loadValue();
+                                        if (mipID >= tex.levelCount)
+                                            throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                        if (width.loadValue())
+                                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                        if (height.loadValue())
+                                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                                        if (numberOfLevels.loadValue())
+                                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                    }
+                                });
                         }
-                    });
+                    }
+                }
 
-                 this._map.set(
+                this._map.set(
                     `native ${type}${length} Sample(Texture2DArray<${type}${length}>,sampler,float3 location)`,
                     func => {
                         func.implementation = function([texture, sampler, location]) {
@@ -1594,37 +1612,45 @@ class Intrinsics {
                 this._map.set(
                     `native ${type}${length} Load(Texture2DArray<${type}${length}>,int4 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1), location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1), location.get(0))));
                         }
                     });
                 this._map.set(
                     `native ${type}${length} Load(Texture2DArray<${type}${length}>,int4 location,int2 offset)`,
                     func => {
-                        func.implementation = function ([texture, location, offset]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                        func.implementation = function ([texture, location, offset], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
                         }
                     });
-                this._map.set(
-                    `native void GetDimensions(Texture2DArray<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread Elements,uint* thread NumberOfLevels)`,
-                    func => {
-                        func.implementation = function([texture, miplevel, width, height, elements, numberOfLevels]) {
-                            let tex = texture.loadValue();
-                            let mipID = miplevel.loadValue();
-                            if (mipID >= tex.levelCount)
-                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                            if (elements.loadValue())
-                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                            if (numberOfLevels.loadValue())
-                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                            for (let addressSpace4 of ["thread", "threadgroup", "device"]) {
+                                this._map.set(
+                                    `native void GetDimensions(Texture2DArray<${type}${length}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} Elements,uint* ${addressSpace4} NumberOfLevels)`,
+                                    func => {
+                                        func.implementation = function([texture, miplevel, width, height, elements, numberOfLevels], node) {
+                                            let tex = texture.loadValue();
+                                            let mipID = miplevel.loadValue();
+                                            if (mipID >= tex.levelCount)
+                                                throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                            if (width.loadValue())
+                                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                            if (height.loadValue())
+                                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                                            if (elements.loadValue())
+                                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                            if (numberOfLevels.loadValue())
+                                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                        }
+                                    });
+                            }
                         }
-                    });
+                    }
+                }
 
-                 this._map.set(
+                this._map.set(
                     `native ${type}${length} Sample(Texture3D<${type}${length}>,sampler,float3 location)`,
                     func => {
                         func.implementation = function([texture, sampler, location]) {
@@ -1644,37 +1670,45 @@ class Intrinsics {
                 this._map.set(
                     `native ${type}${length} Load(Texture3D<${type}${length}>,int4 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(3), location.get(2), location.get(1), location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(3), location.get(2), location.get(1), location.get(0))));
                         }
                     });
                 this._map.set(
                     `native ${type}${length} Load(Texture3D<${type}${length}>,int4 location,int3 offset)`,
                     func => {
-                        func.implementation = function ([texture, location, offset]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(3), location.get(2) + offset.get(2), location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                        func.implementation = function ([texture, location, offset], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(3), location.get(2) + offset.get(2), location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
                         }
                     });
-                this._map.set(
-                    `native void GetDimensions(Texture3D<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread Depth,uint* thread NumberOfLevels)`,
-                    func => {
-                        func.implementation = function([texture, miplevel, width, height, depth, numberOfLevels]) {
-                            let tex = texture.loadValue();
-                            let mipID = miplevel.loadValue();
-                            if (mipID >= tex.levelCount)
-                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                            if (depth.loadValue())
-                                depth.loadValue().copyFrom(EPtr.box(tex.depthAtLevel(mipID)), 1);
-                            if (numberOfLevels.loadValue())
-                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                            for (let addressSpace4 of ["thread", "threadgroup", "device"]) {
+                                this._map.set(
+                                    `native void GetDimensions(Texture3D<${type}${length}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} Depth,uint* ${addressSpace4} NumberOfLevels)`,
+                                    func => {
+                                        func.implementation = function([texture, miplevel, width, height, depth, numberOfLevels], node) {
+                                            let tex = texture.loadValue();
+                                            let mipID = miplevel.loadValue();
+                                            if (mipID >= tex.levelCount)
+                                                throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                            if (width.loadValue())
+                                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                            if (height.loadValue())
+                                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                                            if (depth.loadValue())
+                                                depth.loadValue().copyFrom(EPtr.box(tex.depthAtLevel(mipID)), 1);
+                                            if (numberOfLevels.loadValue())
+                                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                        }
+                                    });
+                            }
                         }
-                    });
+                    }
+                }
 
-                 this._map.set(
+                this._map.set(
                     `native ${type}${length} Sample(TextureCube<${type}${length}>,sampler,float3 location)`,
                     func => {
                         func.implementation = function([texture, sampler, location]) {
@@ -1754,209 +1788,237 @@ class Intrinsics {
                         }
                     }
                 }
-                this._map.set(
-                    `native void GetDimensions(TextureCube<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread NumberOfLevels)`,
-                    func => {
-                        func.implementation = function([texture, miplevel, width, height, numberOfLevels]) {
-                            let tex = texture.loadValue();
-                            let mipID = miplevel.loadValue();
-                            if (tex.layerCount != 6)
-                                throw new Error("Cube texture doesn't have 6 faces");
-                            if (mipID >= tex.levelCount)
-                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                            if (numberOfLevels.loadValue())
-                                numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                            this._map.set(
+                                `native void GetDimensions(TextureCube<${type}${length}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} NumberOfLevels)`,
+                                func => {
+                                    func.implementation = function([texture, miplevel, width, height, numberOfLevels], node) {
+                                        let tex = texture.loadValue();
+                                        let mipID = miplevel.loadValue();
+                                        if (tex.layerCount != 6)
+                                            throw new Error("Cube texture doesn't have 6 faces");
+                                        if (mipID >= tex.levelCount)
+                                            throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                        if (width.loadValue())
+                                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                        if (height.loadValue())
+                                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                                        if (numberOfLevels.loadValue())
+                                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                    }
+                                });
                         }
-                    });
+                    }
+                }
 
-                 this._map.set(
-                    `native void GetDimensions(RWTexture1D<${type}${length}>,uint* thread Width)`,
-                    func => {
-                        func.implementation = function([texture, width]) {
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
-                        }
-                    });
-                this._map.set(
-                    `native void GetDimensions(RWTexture1D<${type}${length}>,float* thread Width)`,
-                    func => {
-                        func.implementation = function([texture, width]) {
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
-                        }
-                    });
+                for (let addressSpace of ["thread", "threadgroup", "device"]) {
+                    this._map.set(
+                        `native void GetDimensions(RWTexture1D<${type}${length}>,uint* ${addressSpace} Width)`,
+                        func => {
+                            func.implementation = function([texture, width]) {
+                                if (width.loadValue())
+                                    width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
+                            }
+                        });
+                    this._map.set(
+                        `native void GetDimensions(RWTexture1D<${type}${length}>,float* ${addressSpace} Width)`,
+                        func => {
+                            func.implementation = function([texture, width]) {
+                                if (width.loadValue())
+                                    width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
+                            }
+                        });
+                }
                 this._map.set(
                     `native ${type}${length} Load(RWTexture1D<${type}${length}>,int location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, 0, location.loadValue())));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, 0, location.loadValue())));
                         }
                     });
                 this._map.set(
                     `native void Store(RWTexture1D<${type}${length}>,${type}${length},uint location)`,
                     func => {
-                        func.implementation = function ([texture, value, location]) {
-                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, 0, location.loadValue(), unboxVector(value, length)));
+                        func.implementation = function ([texture, value, location], node) {
+                            checkFalse(node.origin.originString, "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, 0, location.loadValue(), unboxVector(value, length)));
                         }
                     });
 
-                 this._map.set(
-                    `native void GetDimensions(RWTexture1DArray<${type}${length}>,uint* thread Width,uint* thread Elements)`,
-                    func => {
-                        func.implementation = function([texture, width, elements]) {
-                            let tex = texture.loadValue();
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                            if (elements.loadValue())
-                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                        }
-                    });
-                this._map.set(
-                    `native void GetDimensions(RWTexture1DArray<${type}${length}>,float* thread Width,uint* thread Elements)`,
-                    func => {
-                        func.implementation = function([texture, width, elements]) {
-                            let tex = texture.loadValue();
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                            if (elements.loadValue())
-                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                        }
-                    });
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        this._map.set(
+                            `native void GetDimensions(RWTexture1DArray<${type}${length}>,uint* ${addressSpace1} Width,uint* ${addressSpace2} Elements)`,
+                            func => {
+                                func.implementation = function([texture, width, elements]) {
+                                    let tex = texture.loadValue();
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                    if (elements.loadValue())
+                                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                }
+                            });
+                        this._map.set(
+                            `native void GetDimensions(RWTexture1DArray<${type}${length}>,float* ${addressSpace1} Width,uint* ${addressSpace2} Elements)`,
+                            func => {
+                                func.implementation = function([texture, width, elements]) {
+                                    let tex = texture.loadValue();
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                    if (elements.loadValue())
+                                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                }
+                            });
+                    }
+                }
                 this._map.set(
                     `native ${type}${length} Load(RWTexture1DArray<${type}${length}>,int2 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(1), 0, 0, 0, location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(1), 0, 0, 0, location.get(0))));
                         }
                     });
                 this._map.set(
                     `native void Store(RWTexture1DArray<${type}${length}>,${type}${length},uint2 location)`,
                     func => {
-                        func.implementation = function ([texture, value, location]) {
-                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(1), 0, 0, 0, location.get(0), unboxVector(value, length)));
+                        func.implementation = function ([texture, value, location], node) {
+                            checkFalse(node.origin.originString, "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(1), 0, 0, 0, location.get(0), unboxVector(value, length)));
                         }
                     });
 
-                 this._map.set(
-                    `native void GetDimensions(RWTexture2D<${type}${length}>,uint* thread Width,uint* thread Height)`,
-                    func => {
-                        func.implementation = function([texture, width, height]) {
-                            let tex = texture.loadValue();
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                        }
-                    });
-                this._map.set(
-                    `native void GetDimensions(RWTexture2D<${type}${length}>,float* thread Width,float* thread Height)`,
-                    func => {
-                        func.implementation = function([texture, width, height]) {
-                            let tex = texture.loadValue();
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                        }
-                    });
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        this._map.set(
+                            `native void GetDimensions(RWTexture2D<${type}${length}>,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height)`,
+                            func => {
+                                func.implementation = function([texture, width, height]) {
+                                    let tex = texture.loadValue();
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                    if (height.loadValue())
+                                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                                }
+                            });
+                        this._map.set(
+                            `native void GetDimensions(RWTexture2D<${type}${length}>,float* ${addressSpace1} Width,float* ${addressSpace2} Height)`,
+                            func => {
+                                func.implementation = function([texture, width, height]) {
+                                    let tex = texture.loadValue();
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                    if (height.loadValue())
+                                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                                }
+                            });
+                    }
+                }
                 this._map.set(
                     `native ${type}${length} Load(RWTexture2D<${type}${length}>,int2 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, location.get(1), location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, location.get(1), location.get(0))));
                         }
                     });
                 this._map.set(
                     `native void Store(RWTexture2D<${type}${length}>,${type}${length},uint2 location)`,
                     func => {
-                        func.implementation = function ([texture, value, location]) {
-                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, location.get(1), location.get(0), unboxVector(value, length)));
+                        func.implementation = function ([texture, value, location], node) {
+                            checkFalse(node.origin.originString, "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, location.get(1), location.get(0), unboxVector(value, length)));
                         }
                     });
 
-                 this._map.set(
-                    `native void GetDimensions(RWTexture2DArray<${type}${length}>,uint* thread Width,uint* thread Height,uint* thread Elements)`,
-                    func => {
-                        func.implementation = function([texture, width, height, elements]) {
-                            let tex = texture.loadValue();
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            if (elements.loadValue())
-                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                            this._map.set(
+                                `native void GetDimensions(RWTexture2DArray<${type}${length}>,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} Elements)`,
+                                func => {
+                                    func.implementation = function([texture, width, height, elements]) {
+                                        let tex = texture.loadValue();
+                                        if (width.loadValue())
+                                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                        if (height.loadValue())
+                                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                                        if (elements.loadValue())
+                                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                    }
+                                });
+                            this._map.set(
+                                `native void GetDimensions(RWTexture2DArray<${type}${length}>,float* ${addressSpace1} Width,float* ${addressSpace2} Height,float* ${addressSpace3} Elements)`,
+                                func => {
+                                    func.implementation = function([texture, width, height, elements]) {
+                                        let tex = texture.loadValue();
+                                        if (width.loadValue())
+                                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                        if (height.loadValue())
+                                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                                        if (elements.loadValue())
+                                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                    }
+                                });
                         }
-                    });
-                this._map.set(
-                    `native void GetDimensions(RWTexture2DArray<${type}${length}>,float* thread Width,float* thread Height,float* thread Elements)`,
-                    func => {
-                        func.implementation = function([texture, width, height, elements]) {
-                            let tex = texture.loadValue();
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            if (elements.loadValue())
-                                elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                        }
-                    });
+                    }
+                }
                 this._map.set(
                     `native ${type}${length} Load(RWTexture2DArray<${type}${length}>,int3 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), 0, 0, location.get(1), location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), 0, 0, location.get(1), location.get(0))));
                         }
                     });
                 this._map.set(
                     `native void Store(RWTexture2DArray<${type}${length}>,${type}${length},uint3 location)`,
                     func => {
-                        func.implementation = function ([texture, value, location]) {
-                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(2), 0, 0, location.get(1), location.get(0), unboxVector(value, length)));
+                        func.implementation = function ([texture, value, location], node) {
+                            checkFalse(node.origin.originString, "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(2), 0, 0, location.get(1), location.get(0), unboxVector(value, length)));
                         }
                     });
 
-                 this._map.set(
-                    `native void GetDimensions(RWTexture3D<${type}${length}>,uint* thread Width,uint* thread Height,uint* thread Depth)`,
-                    func => {
-                        func.implementation = function([texture, width, height, depth]) {
-                            let tex = texture.loadValue();
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            if (depth.loadValue())
-                                depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
+                for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                        for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                             this._map.set(
+                                `native void GetDimensions(RWTexture3D<${type}${length}>,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} Depth)`,
+                                func => {
+                                    func.implementation = function([texture, width, height, depth]) {
+                                        let tex = texture.loadValue();
+                                        if (width.loadValue())
+                                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                        if (height.loadValue())
+                                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                                        if (depth.loadValue())
+                                            depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
+                                    }
+                                });
+                            this._map.set(
+                                `native void GetDimensions(RWTexture3D<${type}${length}>,float* ${addressSpace1} Width,float* ${addressSpace2} Height,float* ${addressSpace3} Depth)`,
+                                func => {
+                                    func.implementation = function([texture, width, height, depth]) {
+                                        let tex = texture.loadValue();
+                                        if (width.loadValue())
+                                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                        if (height.loadValue())
+                                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                                        if (depth.loadValue())
+                                            depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
+                                    }
+                                });
                         }
-                    });
-                this._map.set(
-                    `native void GetDimensions(RWTexture3D<${type}${length}>,float* thread Width,float* thread Height,float* thread Depth)`,
-                    func => {
-                        func.implementation = function([texture, width, height, depth]) {
-                            let tex = texture.loadValue();
-                            if (width.loadValue())
-                                width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                            if (height.loadValue())
-                                height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                            if (depth.loadValue())
-                                depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
-                        }
-                    });
+                    }
+                }
                 this._map.set(
                     `native ${type}${length} Load(RWTexture3D<${type}${length}>,int3 location)`,
                     func => {
-                        func.implementation = function ([texture, location]) {
-                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, location.get(2), location.get(1), location.get(0))));
+                        func.implementation = function ([texture, location], node) {
+                            return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, location.get(2), location.get(1), location.get(0))));
                         }
                     });
                 this._map.set(
                     `native void Store(RWTexture3D<${type}${length}>,${type}${length},uint3 location)`,
                     func => {
-                        func.implementation = function ([texture, value, location]) {
-                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, location.get(2), location.get(1), location.get(0), unboxVector(value, length)));
+                        func.implementation = function ([texture, value, location], node) {
+                            checkFalse(node.origin.originString, "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, location.get(2), location.get(1), location.get(0), unboxVector(value, length)));
                         }
                     });
             }
@@ -2140,33 +2202,39 @@ class Intrinsics {
             this._map.set(
                 `native ${type} Load(TextureDepth2D<${type}>,int3 location)`,
                 func => {
-                    func.implementation = function ([texture, location]) {
-                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1), location.get(0))));
+                    func.implementation = function ([texture, location], node) {
+                        return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1), location.get(0))));
                     }
                 });
             this._map.set(
                 `native ${type} Load(TextureDepth2D<${type}>,int3 location,int2 offset)`,
                 func => {
-                    func.implementation = function ([texture, location, offset]) {
-                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                    func.implementation = function ([texture, location, offset], node) {
+                        return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
                     }
                 });
-            this._map.set(
-                `native void GetDimensions(TextureDepth2D<${type}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread NumberOfLevels)`,
-                func => {
-                    func.implementation = function ([texture, miplevel, width, height, numberOfLevels]) {
-                        let tex = texture.loadValue();
-                        let mipID = miplevel.loadValue();
-                        if (mipID >= tex.levelCount)
-                            throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                        if (width.loadValue())
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                        if (height.loadValue())
-                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                        if (numberOfLevels.loadValue())
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+            for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                        this._map.set(
+                            `native void GetDimensions(TextureDepth2D<${type}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} NumberOfLevels)`,
+                            func => {
+                                func.implementation = function ([texture, miplevel, width, height, numberOfLevels], node) {
+                                    let tex = texture.loadValue();
+                                    let mipID = miplevel.loadValue();
+                                    if (mipID >= tex.levelCount)
+                                        throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                    if (height.loadValue())
+                                        height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                                    if (numberOfLevels.loadValue())
+                                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                }
+                            });
                     }
-                });
+                }
+            }
             this._map.set(
                 `native ${type} Sample(TextureDepth2DArray<${type}>,sampler,float3 location)`,
                 func => {
@@ -2344,35 +2412,43 @@ class Intrinsics {
             this._map.set(
                 `native ${type} Load(TextureDepth2DArray<${type}>,int4 location)`,
                 func => {
-                    func.implementation = function ([texture, location]) {
-                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1), location.get(0))));
+                    func.implementation = function ([texture, location], node) {
+                        return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1), location.get(0))));
                     }
                 });
             this._map.set(
                 `native ${type} Load(TextureDepth2DArray<${type}>,int4 location,int2 offset)`,
                 func => {
-                    func.implementation = function ([texture, location, offset]) {
-                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                    func.implementation = function ([texture, location, offset], node) {
+                        return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
                     }
                 });
-            this._map.set(
-                `native void GetDimensions(TextureDepth2DArray<${type}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread Elements,uint* thread NumberOfLevels)`,
-                func => {
-                    func.implementation = function ([texture, miplevel, width, height, elements, numberOfLevels]) {
-                        let tex = texture.loadValue();
-                        let mipID = miplevel.loadValue();
-                        if (mipID >= tex.levelCount)
-                            throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                        if (width.loadValue())
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                        if (height.loadValue())
-                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                        if (elements.loadValue())
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                        if (numberOfLevels.loadValue())
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+            for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                        for (let addressSpace4 of ["thread", "threadgroup", "device"]) {
+                            this._map.set(
+                                `native void GetDimensions(TextureDepth2DArray<${type}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} Elements,uint* ${addressSpace4} NumberOfLevels)`,
+                                func => {
+                                    func.implementation = function ([texture, miplevel, width, height, elements, numberOfLevels], node) {
+                                        let tex = texture.loadValue();
+                                        let mipID = miplevel.loadValue();
+                                        if (mipID >= tex.levelCount)
+                                            throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                        if (width.loadValue())
+                                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                        if (height.loadValue())
+                                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                                        if (elements.loadValue())
+                                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                        if (numberOfLevels.loadValue())
+                                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                    }
+                                });
+                        }
                     }
-                });
+                }
+            }
             this._map.set(
                 `native ${type} Sample(TextureDepthCube<${type}>,sampler,float3 location)`,
                 func => {
@@ -2455,98 +2531,114 @@ class Intrinsics {
                         return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
                     }
                 });
-            this._map.set(
-                `native void GetDimensions(TextureDepthCube<${type}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread NumberOfLevels)`,
-                func => {
-                    func.implementation = function ([texture, miplevel, width, height, numberOfLevels]) {
-                        let tex = texture.loadValue();
-                        let mipID = miplevel.loadValue();
-                        if (tex.layerCount != 6)
-                            throw new Error("Cube texture doesn't have 6 faces");
-                        if (mipID >= tex.levelCount)
-                            throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
-                        if (width.loadValue())
-                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
-                        if (height.loadValue())
-                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
-                        if (numberOfLevels.loadValue())
-                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+            for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                        this._map.set(
+                            `native void GetDimensions(TextureDepthCube<${type}>,uint MipLevel,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} NumberOfLevels)`,
+                            func => {
+                                func.implementation = function ([texture, miplevel, width, height, numberOfLevels], node) {
+                                    let tex = texture.loadValue();
+                                    let mipID = miplevel.loadValue();
+                                    if (tex.layerCount != 6)
+                                        throw new Error("Cube texture doesn't have 6 faces");
+                                    if (mipID >= tex.levelCount)
+                                        throw new WTrapError(node.origin.originString, "Reading from nonexistant mip level of texture");
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                                    if (height.loadValue())
+                                        height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                                    if (numberOfLevels.loadValue())
+                                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                                }
+                            });
                     }
-                });
-            this._map.set(
-                `native void GetDimensions(RWTextureDepth2D<${type}>,uint* thread Width,uint* thread Height)`,
-                func => {
-                    func.implementation = function ([texture, width, height]) {
-                        let tex = texture.loadValue();
-                        if (width.loadValue())
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                        if (height.loadValue())
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                    }
-                });
-            this._map.set(
-                `native void GetDimensions(RWTextureDepth2D<${type}>,float* thread Width,float* thread Height)`,
-                func => {
-                    func.implementation = function ([texture, width, height]) {
-                        let tex = texture.loadValue();
-                        if (width.loadValue())
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                        if (height.loadValue())
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                    }
-                });
+                }
+            }
+            for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                    this._map.set(
+                        `native void GetDimensions(RWTextureDepth2D<${type}>,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height)`,
+                        func => {
+                            func.implementation = function ([texture, width, height]) {
+                                let tex = texture.loadValue();
+                                if (width.loadValue())
+                                    width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                if (height.loadValue())
+                                    height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            }
+                        });
+                    this._map.set(
+                        `native void GetDimensions(RWTextureDepth2D<${type}>,float* ${addressSpace1} Width,float* ${addressSpace2} Height)`,
+                        func => {
+                            func.implementation = function ([texture, width, height]) {
+                                let tex = texture.loadValue();
+                                if (width.loadValue())
+                                    width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                if (height.loadValue())
+                                    height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            }
+                        });
+                }
+            }
             this._map.set(
                 `native ${type} Load(RWTextureDepth2D<${type}>,int2 location)`,
                 func => {
-                    func.implementation = function ([texture, location]) {
-                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, location.get(1), location.get(0))));
+                    func.implementation = function ([texture, location], node) {
+                        return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, location.get(1), location.get(0))));
                     }
                 });
             this._map.set(
                 `native void Store(RWTextureDepth2D<${type}>,${type},uint2 location)`,
                 func => {
-                    func.implementation = function ([texture, value, location]) {
-                        checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, location.get(1), location.get(0), unboxVector(value, "")));
+                    func.implementation = function ([texture, value, location], node) {
+                        checkFalse(node.origin.originString, "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, location.get(1), location.get(0), unboxVector(value, "")));
                     }
                 });
-            this._map.set(
-                `native void GetDimensions(RWTextureDepth2DArray<${type}>,uint* thread Width,uint* thread Height,uint* thread Elements)`,
-                func => {
-                    func.implementation = function ([texture, width, height, elements]) {
-                        let tex = texture.loadValue();
-                        if (width.loadValue())
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                        if (height.loadValue())
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                        if (elements.loadValue())
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+            for (let addressSpace1 of ["thread", "threadgroup", "device"]) {
+                for (let addressSpace2 of ["thread", "threadgroup", "device"]) {
+                    for (let addressSpace3 of ["thread", "threadgroup", "device"]) {
+                        this._map.set(
+                            `native void GetDimensions(RWTextureDepth2DArray<${type}>,uint* ${addressSpace1} Width,uint* ${addressSpace2} Height,uint* ${addressSpace3} Elements)`,
+                            func => {
+                                func.implementation = function ([texture, width, height, elements]) {
+                                    let tex = texture.loadValue();
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                    if (height.loadValue())
+                                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                                    if (elements.loadValue())
+                                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                }
+                            });
+                        this._map.set(
+                            `native void GetDimensions(RWTextureDepth2DArray<${type}>,float* ${addressSpace1} Width,float* ${addressSpace2} Height,float* ${addressSpace3} Elements)`,
+                            func => {
+                                func.implementation = function ([texture, width, height, elements]) {
+                                    let tex = texture.loadValue();
+                                    if (width.loadValue())
+                                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                                    if (height.loadValue())
+                                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                                    if (elements.loadValue())
+                                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                                }
+                            });
                     }
-                });
-            this._map.set(
-                `native void GetDimensions(RWTextureDepth2DArray<${type}>,float* thread Width,float* thread Height,float* thread Elements)`,
-                func => {
-                    func.implementation = function ([texture, width, height, elements]) {
-                        let tex = texture.loadValue();
-                        if (width.loadValue())
-                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
-                        if (height.loadValue())
-                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
-                        if (elements.loadValue())
-                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
-                    }
-                });
+                }
+            }
             this._map.set(
                 `native ${type} Load(RWTextureDepth2DArray<${type}>,int3 location)`,
                 func => {
-                    func.implementation = function ([texture, location]) {
-                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), 0, 0, location.get(1), location.get(0))));
+                    func.implementation = function ([texture, location], node) {
+                        return boxVector(checkUndefined(node.origin.originString, "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), 0, 0, location.get(1), location.get(0))));
                     }
                 });
             this._map.set(
                 `native void Store(RWTextureDepth2DArray<${type}>,${type},uint3 location)`,
                 func => {
-                    func.implementation = function ([texture, value, location]) {
-                        checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(2), 0, 0, location.get(1), location.get(0), unboxVector(value, "")));
+                    func.implementation = function ([texture, value, location], node) {
+                        checkFalse(node.origin.originString, "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(2), 0, 0, location.get(1), location.get(0), unboxVector(value, "")));
                     }
                 });
         }

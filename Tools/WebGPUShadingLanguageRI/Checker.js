@@ -539,6 +539,10 @@ class Checker extends Visitor {
         let lhsType = node.lhs.visit(this);
         if (!node.lhs.isLValue)
             throw new WTypeError(node.origin.originString, "LHS of assignment is not an LValue: " + node.lhs + node.lhs.notLValueReasonString);
+        if (!isAddressSpace(node.lhs.addressSpace))
+            throw new Error(`${node.origin.originString}: Unknown address space in node ${node.lhs}`);
+        if (node.lhs.addressSpace == "constant")
+            throw new WTypeError(node.origin.originString, "Cannot assign to variable in the constant address space.");
         let rhsType = node.rhs.visit(this);
         if (!lhsType.equalsWithCommit(rhsType))
             throw new WTypeError(node.origin.originString, "Type mismatch in assignment: " + lhsType + " versus " + rhsType);
@@ -699,7 +703,7 @@ class Checker extends Visitor {
             node.notLValueReason = "Base of property access is neither a lvalue nor an array reference";
         } else {
             node.isLValue = true;
-            node.addressSpace = node.base.isLValue ? node.base.addressSpace : baseType.addressSpace;
+            node.addressSpace = baseType.addressSpace ? baseType.addressSpace : node.base.addressSpace;
         }
 
         return node.resultType;

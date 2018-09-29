@@ -646,7 +646,7 @@ tests.simpleMakePtr = function()
         throw new Error("Expected 42 but got: " + value);
 }
 
-tests.threadArrayLoad = function()
+tests.threadArrayRefLoad = function()
 {
     let program = doPrep(`
         test int foo(thread int[] array)
@@ -660,7 +660,7 @@ tests.threadArrayLoad = function()
     checkInt(program, result, 89);
 }
 
-tests.threadArrayLoadIntLiteral = function()
+tests.threadArrayRefLoadIntLiteral = function()
 {
     let program = doPrep(`
         test int foo(thread int[] array)
@@ -674,7 +674,7 @@ tests.threadArrayLoadIntLiteral = function()
     checkInt(program, result, 89);
 }
 
-tests.deviceArrayLoad = function()
+tests.deviceArrayRefLoad = function()
 {
     let program = doPrep(`
         test int foo(device int[] array)
@@ -688,7 +688,7 @@ tests.deviceArrayLoad = function()
     checkInt(program, result, 89);
 }
 
-tests.threadArrayStore = function()
+tests.threadArrayRefStore = function()
 {
     let program = doPrep(`
         test void foo(thread int[] array, int value)
@@ -709,7 +709,7 @@ tests.threadArrayStore = function()
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
 }
 
-tests.deviceArrayStore = function()
+tests.deviceArrayRefStore = function()
 {
     let program = doPrep(`
         test void foo(device int[] array, int value)
@@ -730,7 +730,7 @@ tests.deviceArrayStore = function()
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
 }
 
-tests.deviceArrayStoreIntLiteral = function()
+tests.deviceArrayRefStoreIntLiteral = function()
 {
     let program = doPrep(`
         test void foo(device int[] array, int value)
@@ -749,6 +749,102 @@ tests.deviceArrayStoreIntLiteral = function()
     callFunction(program, "foo", [arrayRef, makeInt(program, -111)]);
     if (buffer.get(0) != -111)
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
+}
+
+tests.threadPointerLoad = function()
+{
+    let program = doPrep(`
+        test int foo(thread int* ptr)
+        {
+            return *ptr;
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 89);
+    let result = callFunction(program, "foo", [TypedValue.box(new PtrType(externalOrigin, "thread", program.intrinsics.int), new EPtr(buffer, 0))]);
+    checkInt(program, result, 89);
+}
+
+tests.threadPointerStore = function()
+{
+    let program = doPrep(`
+        test void foo(thread int* ptr, int value)
+        {
+            *ptr = value;
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 89);
+    let pointer = TypedValue.box(new PtrType(externalOrigin, "thread", program.intrinsics.int), new EPtr(buffer, 0));
+    callFunction(program, "foo", [pointer, makeInt(program, 123)]);
+    if (buffer.get(0) != 123)
+        throw new Error("Bad value stored into buffer (expected 123): " + buffer.get(0));
+    callFunction(program, "foo", [pointer, makeInt(program, 321)]);
+    if (buffer.get(0) != 321)
+        throw new Error("Bad value stored into buffer (expected 321): " + buffer.get(0));
+}
+
+tests.devicePointerLoad = function()
+{
+    let program = doPrep(`
+        test int foo(device int* ptr)
+        {
+            return *ptr;
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 89);
+    let result = callFunction(program, "foo", [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int), new EPtr(buffer, 0))]);
+    checkInt(program, result, 89);
+}
+
+tests.devicePointerStore = function()
+{
+    let program = doPrep(`
+        test void foo(device int* ptr, int value)
+        {
+            *ptr = value;
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 89);
+    let pointer = TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int), new EPtr(buffer, 0));
+    callFunction(program, "foo", [pointer, makeInt(program, 123)]);
+    if (buffer.get(0) != 123)
+        throw new Error("Bad value stored into buffer (expected 123): " + buffer.get(0));
+    callFunction(program, "foo", [pointer, makeInt(program, 321)]);
+    if (buffer.get(0) != 321)
+        throw new Error("Bad value stored into buffer (expected 321): " + buffer.get(0));
+}
+
+tests.arrayLoad = function()
+{
+    let program = doPrep(`
+        typedef IntArray = int[3];
+        test int foo(IntArray a)
+        {
+            return a[0];
+        }
+        test int bar(IntArray a)
+        {
+            return a[1];
+        }
+        test int baz(IntArray a)
+        {
+            return a[2];
+        }
+    `);
+    let buffer = new EBuffer(3);
+    buffer.set(0, 89);
+    buffer.set(1, 91);
+    buffer.set(2, 103);
+    let array = new TypedValue(program.types.get("IntArray").type, new EPtr(buffer, 0));
+    let result = callFunction(program, "foo", [array]);
+    checkInt(program, result, 89);
+    result = callFunction(program, "bar", [array]);
+    checkInt(program, result, 91);
+    result = callFunction(program, "baz", [array]);
+    checkInt(program, result, 103);
 }
 
 tests.typeMismatchReturn = function()
@@ -6856,6 +6952,185 @@ tests.numThreads = function() {
         }
     `), e => e instanceof WSyntaxError);
 
+tests.constantAddressSpace = function() {
+    checkFail(
+        () => doPrep(`
+            void foo(constant int* bar)
+            {
+                *bar = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            void foo(constant int[] bar)
+            {
+                bar[0] = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            typedef ConstantIntArrayRef = constant int[];
+            void foo(ConstantIntArrayRef[3] bar)
+            {
+                bar[0][0] = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            typedef IntArray = int[3];
+            void foo(constant IntArray[] bar)
+            {
+                bar[0][0] = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            typedef IntArray = int[3];
+            struct Bar {
+                IntArray baz;
+            }
+            void foo(constant Bar[] bar)
+            {
+                bar[0].baz[0] = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            struct Bar {
+                int baz;
+            }
+            typedef BarArray = Bar[3];
+            void foo(constant BarArray[] bar)
+            {
+                bar[0][0].baz = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            typedef IntArray = int[3];
+            struct Bar {
+                constant IntArray[] baz;
+            }
+            void foo(Bar bar)
+            {
+                bar.baz[0][0] = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            typedef ConstantIntArrayRef = constant int[];
+            struct Bar {
+                ConstantIntArrayRef[3] baz;
+            }
+            void foo(Bar bar)
+            {
+                bar.baz[0][0] = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            struct Bar {
+                int baz;
+            }
+            typedef ConstantBarArrayRef = constant Bar[];
+            void foo(ConstantBarArrayRef[3] bar)
+            {
+                bar[0][0].baz = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+    checkFail(
+        () => doPrep(`
+            struct Bar {
+                constant int[] baz;
+            }
+            void foo(Bar[3] bar)
+            {
+                bar[0].baz[0] = 0;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("constant address space") !== -1);
+}
+
+tests.standardLibraryDevicePointers = function() {
+    let program = doPrep(`
+        test float foo1() {
+            float s;
+            float c;
+            sincos(0, &s, &c);
+            return c;
+        }
+        test float foo2() {
+            float s;
+            float c;
+            sincos(0, &s, &c);
+            return s;
+        }
+        test float foo3() {
+            thread float* s = null;
+            float c;
+            sincos(0, s, &c);
+            return c;
+        }
+        test float foo4() {
+            float s;
+            thread float* c = null;
+            sincos(0, &s, c);
+            return s;
+        }
+        test void foo5(device float* s) {
+            thread float* c = null;
+            sincos(0, s, c);
+        }
+        test void foo6(device float* c) {
+            thread float* s = null;
+            sincos(0, s, c);
+        }
+        test void foo7(device float* s, device float* c) {
+            sincos(0, s, c);
+        }
+        test void foo8(device float[] result) {
+            sincos(0, &result[0], &result[1]);
+        }
+    `);
+    checkFloat(program, callFunction(program, "foo1", []), 1);
+    checkFloat(program, callFunction(program, "foo2", []), 0);
+    checkFloat(program, callFunction(program, "foo3", []), 1);
+    checkFloat(program, callFunction(program, "foo4", []), 0);
+
+    let buffer = new EBuffer(2);
+    callFunction(program, "foo5", [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.float), new EPtr(buffer, 0))]);
+    if (buffer.get(0) != 0)
+        throw new Error("Bad value stored into buffer (expected 0): " + buffer.get(0));
+
+    callFunction(program, "foo6", [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.float), new EPtr(buffer, 0))]);
+    if (buffer.get(0) != 1)
+        throw new Error("Bad value stored into buffer (expected 1): " + buffer.get(0));
+    callFunction(program, "foo7", [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.float), new EPtr(buffer, 0)), TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.float), new EPtr(buffer, 1))]);
+    if (buffer.get(0) != 0)
+        throw new Error("Bad value stored into buffer (expected 0): " + buffer.get(0));
+    if (buffer.get(1) != 1)
+        throw new Error("Bad value stored into buffer (expected 1): " + buffer.get(1));
+
+    buffer.set(0, 0);
+    buffer.set(1, 0);
+    let arrayRef = TypedValue.box(
+        new ArrayRefType(externalOrigin, "device", program.intrinsics.float),
+        new EArrayRef(new EPtr(buffer, 0), 2));
+    callFunction(program, "foo8", [arrayRef]);
+    if (buffer.get(0) != 0)
+        throw new Error("Bad value stored into buffer (expected 0): " + buffer.get(0));
+    if (buffer.get(1) != 1)
+        throw new Error("Bad value stored into buffer (expected 1): " + buffer.get(1));
+}
 
     checkFail(() => doPrep(`
         struct R {
