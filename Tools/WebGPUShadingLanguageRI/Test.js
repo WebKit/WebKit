@@ -6389,188 +6389,222 @@ tests.atomicsNull = function()
     let program = doPrep(`
         test int foo1(int z) {
             atomic_int x;
-            InterlockedAdd(&x, z, null);
+            thread int* result = null;
+            InterlockedAdd(&x, z, result);
             return int(x);
         }
         test int foo2(int z) {
             atomic_int x;
-            InterlockedAdd(&x, z, null);
-            InterlockedAdd(&x, z, null);
+            thread int* result = null;
+            InterlockedAdd(&x, z, result);
+            InterlockedAdd(&x, z, result);
             return int(x);
         }
         test uint foo3(uint z) {
             atomic_uint x;
-            InterlockedAdd(&x, z, null);
+            thread uint* result = null;
+            InterlockedAdd(&x, z, result);
             return uint(x);
         }
         test uint foo4(uint z) {
             atomic_uint x;
-            InterlockedAdd(&x, z, null);
-            InterlockedAdd(&x, z, null);
+            thread uint* result = null;
+            InterlockedAdd(&x, z, result);
+            InterlockedAdd(&x, z, result);
             return uint(x);
         }
         test uint foo5(uint x, uint y) {
             atomic_uint z;
-            InterlockedAdd(&z, x, null);
-            InterlockedAnd(&z, y, null);
+            thread uint* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedAnd(&z, y, result);
             return uint(z);
         }
         test int foo6(int x, int y) {
             atomic_int z;
-            InterlockedAdd(&z, x, null);
-            InterlockedAnd(&z, y, null);
+            thread int* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedAnd(&z, y, result);
             return int(z);
         }
         test uint foo7(uint x, uint y) {
             atomic_uint z;
-            InterlockedAdd(&z, x, null);
-            InterlockedExchange(&z, y, null);
+            thread uint* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedExchange(&z, y, result);
             return uint(z);
         }
         test int foo8(int x, int y) {
             atomic_int z;
-            InterlockedAdd(&z, x, null);
-            InterlockedExchange(&z, y, null);
+            thread int* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedExchange(&z, y, result);
             return int(z);
         }
         test uint foo9(uint x, uint y) {
             atomic_uint z;
-            InterlockedAdd(&z, x, null);
-            InterlockedMax(&z, y, null);
+            thread uint* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedMax(&z, y, result);
             return uint(z);
         }
         test int foo10(int x, int y) {
             atomic_int z;
-            InterlockedAdd(&z, x, null);
-            InterlockedMax(&z, y, null);
+            thread int* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedMax(&z, y, result);
             return int(z);
         }
         test uint foo11(uint x, uint y) {
             atomic_uint z;
-            InterlockedAdd(&z, x, null);
-            InterlockedMin(&z, y, null);
+            thread uint* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedMin(&z, y, result);
             return uint(z);
         }
         test int foo12(int x, int y) {
             atomic_int z;
-            InterlockedAdd(&z, x, null);
-            InterlockedMin(&z, y, null);
+            thread int* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedMin(&z, y, result);
             return int(z);
         }
         test uint foo13(uint x, uint y) {
             atomic_uint z;
-            InterlockedAdd(&z, x, null);
-            InterlockedOr(&z, y, null);
+            thread uint* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedOr(&z, y, result);
             return uint(z);
         }
         test int foo14(int x, int y) {
             atomic_int z;
-            InterlockedAdd(&z, x, null);
-            InterlockedOr(&z, y, null);
+            thread int* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedOr(&z, y, result);
             return int(z);
         }
         test uint foo15(uint x, uint y) {
             atomic_uint z;
-            InterlockedAdd(&z, x, null);
-            InterlockedXor(&z, y, null);
+            thread uint* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedXor(&z, y, result);
             return uint(z);
         }
         test int foo16(int x, int y) {
             atomic_int z;
-            InterlockedAdd(&z, x, null);
-            InterlockedXor(&z, y, null);
+            thread int* result = null;
+            InterlockedAdd(&z, x, result);
+            InterlockedXor(&z, y, result);
             return int(z);
         }
         test uint foo17(uint x, uint y, uint z) {
             atomic_uint w;
-            InterlockedAdd(&w, x, null);
-            InterlockedCompareExchange(&w, y, z, null);
+            thread uint* result = null;
+            InterlockedAdd(&w, x, result);
+            InterlockedCompareExchange(&w, y, z, result);
             return uint(w);
         }
         test int foo18(int x, int y, int z) {
             atomic_int w;
-            InterlockedAdd(&w, x, null);
-            InterlockedCompareExchange(&w, y, z, null);
+            thread int* result = null;
+            InterlockedAdd(&w, x, result);
+            InterlockedCompareExchange(&w, y, z, result);
             return int(w);
         }
         test int foo19() {
             thread atomic_int* x = null;
-            InterlockedAdd(x, 1, null);
+            thread int* result = null;
+            InterlockedAdd(x, 1, result);
             return 1;
         }
         test int foo20() {
             thread atomic_uint* x = null;
-            InterlockedAdd(x, 1, null);
+            thread uint* result = null;
+            InterlockedAdd(x, 1, result);
             return 1;
         }
         test int foo21() {
             thread atomic_int* x = null;
-            InterlockedAnd(x, 1, null);
+            thread int* result = null;
+            InterlockedAnd(x, 1, result);
             return 1;
         }
         test int foo22() {
             thread atomic_uint* x = null;
-            InterlockedAnd(x, 1, null);
+            thread uint* result = null;
+            InterlockedAnd(x, 1, result);
             return 1;
         }
         test int foo23() {
             thread atomic_int* x = null;
-            InterlockedExchange(x, 1, null);
+            thread int* result = null;
+            InterlockedExchange(x, 1, result);
             return 1;
         }
         test int foo24() {
             thread atomic_uint* x = null;
-            InterlockedExchange(x, 1, null);
+            thread uint* result = null;
+            InterlockedExchange(x, 1, result);
             return 1;
         }
         test int foo25() {
             thread atomic_int* x = null;
-            InterlockedMax(x, 1, null);
+            thread int* result = null;
+            InterlockedMax(x, 1, result);
             return 1;
         }
         test int foo26() {
             thread atomic_uint* x = null;
-            InterlockedMax(x, 1, null);
+            thread uint* result = null;
+            InterlockedMax(x, 1, result);
             return 1;
         }
         test int foo27() {
             thread atomic_int* x = null;
-            InterlockedMin(x, 1, null);
+            thread int* result = null;
+            InterlockedMin(x, 1, result);
             return 1;
         }
         test int foo28() {
             thread atomic_uint* x = null;
-            InterlockedMin(x, 1, null);
+            thread uint* result = null;
+            InterlockedMin(x, 1, result);
             return 1;
         }
         test int foo29() {
             thread atomic_int* x = null;
-            InterlockedOr(x, 1, null);
+            thread int* result = null;
+            InterlockedOr(x, 1, result);
             return 1;
         }
         test int foo30() {
             thread atomic_uint* x = null;
-            InterlockedOr(x, 1, null);
+            thread uint* result = null;
+            InterlockedOr(x, 1, result);
             return 1;
         }
         test int foo31() {
             thread atomic_int* x = null;
-            InterlockedXor(x, 1, null);
+            thread int* result = null;
+            InterlockedXor(x, 1, result);
             return 1;
         }
         test int foo32() {
             thread atomic_uint* x = null;
-            InterlockedXor(x, 1, null);
+            thread uint* result = null;
+            InterlockedXor(x, 1, result);
             return 1;
         }
         test int foo33() {
             thread atomic_int* x = null;
-            InterlockedCompareExchange(x, 1, 2, null);
+            thread int* result = null;
+            InterlockedCompareExchange(x, 1, 2, result);
             return 1;
         }
         test int foo34() {
             thread atomic_uint* x = null;
-            InterlockedCompareExchange(x, 1, 2, null);
+            thread uint* result = null;
+            InterlockedCompareExchange(x, 1, 2, result);
             return 1;
         }
     `);
@@ -6952,6 +6986,19 @@ tests.numThreads = function() {
         }
     `), e => e instanceof WSyntaxError);
 
+    checkFail(() => doPrep(`
+        struct R {
+            float4 position;
+        }
+        [numthreads(3, 4, 5)]
+        vertex R baz() {
+            R r;
+            r.position = float4(1, 2, 3, 4);
+            return r;
+        }
+    `), e => e instanceof WSyntaxError);
+}
+
 tests.constantAddressSpace = function() {
     checkFail(
         () => doPrep(`
@@ -7130,19 +7177,6 @@ tests.standardLibraryDevicePointers = function() {
         throw new Error("Bad value stored into buffer (expected 0): " + buffer.get(0));
     if (buffer.get(1) != 1)
         throw new Error("Bad value stored into buffer (expected 1): " + buffer.get(1));
-}
-
-    checkFail(() => doPrep(`
-        struct R {
-            float4 position;
-        }
-        [numthreads(3, 4, 5)]
-        vertex R baz() {
-            R r;
-            r.position = float4(1, 2, 3, 4);
-            return r;
-        }
-    `), e => e instanceof WSyntaxError);
 }
 
 function createTexturesForTesting(program)
@@ -7712,31 +7746,38 @@ tests.textureDimensions = function() {
 tests.textureDimensionsNull = function() {
     let program = doPrep(`
         test bool foo1(Texture1D<float> texture) {
-            GetDimensions(texture, 0, null, null);
+            thread uint* ptr = null;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, ptr, ptr);
             return true;
         }
         test bool foo2(Texture1DArray<float> texture) {
-            GetDimensions(texture, 0, null, null, null);
+            thread uint* ptr = null;
+            GetDimensions(texture, 0, ptr, ptr, ptr);
             return true;
         }
         test bool foo3(Texture2D<float> texture) {
-            GetDimensions(texture, 0, null, null, null);
+            thread uint* ptr = null;
+            GetDimensions(texture, 0, ptr, ptr, ptr);
             return true;
         }
         test bool foo4(Texture2DArray<float> texture) {
-            GetDimensions(texture, 0, null, null, null, null);
+            thread uint* ptr = null;
+            GetDimensions(texture, 0, ptr, ptr, ptr, ptr);
             return true;
         }
         test bool foo5(Texture3D<float> texture) {
-            GetDimensions(texture, 0, null, null, null, null);
+            thread uint* ptr = null;
+            GetDimensions(texture, 0, ptr, ptr, ptr, ptr);
             return true;
         }
         test bool foo6(TextureCube<float> texture) {
-            GetDimensions(texture, 0, null, null, null);
+            thread uint* ptr = null;
+            GetDimensions(texture, 0, ptr, ptr, ptr);
             return true;
         }
         test bool foo7(RWTexture1D<float> texture) {
-            thread float* ptr = null;
+            thread uint* ptr = null;
             GetDimensions(texture, ptr);
             return true;
         }
@@ -7761,15 +7802,18 @@ tests.textureDimensionsNull = function() {
             return true;
         }
         test bool foo12(TextureDepth2D<float> texture) {
-            GetDimensions(texture, 0, null, null, null);
+            thread uint* ptr = null;
+            GetDimensions(texture, 0, ptr, ptr, ptr);
             return true;
         }
         test bool foo13(TextureDepth2DArray<float> texture) {
-            GetDimensions(texture, 0, null, null, null, null);
+            thread uint* ptr = null;
+            GetDimensions(texture, 0, ptr, ptr, ptr, ptr);
             return true;
         }
         test bool foo14(TextureDepthCube<float> texture) {
-            GetDimensions(texture, 0, null, null, null);
+            thread uint* ptr = null;
+            GetDimensions(texture, 0, ptr, ptr, ptr);
             return true;
         }
         test bool foo15(RWTextureDepth2D<float> texture) {
@@ -9407,39 +9451,6 @@ tests.referenceEquality = function() {
             }
         `),
         (e) => e instanceof WTypeError);
-}
-
-tests.standardLibraryDevicePointers = function() {
-    let program = doPrep(`
-        test float foo1() {
-            float s;
-            float c;
-            sincos(0, &s, &c);
-            return c;
-        }
-        test float foo2() {
-            float s;
-            float c;
-            sincos(0, &s, &c);
-            return s;
-        }
-        test float foo3() {
-            thread float* s = null;
-            float c;
-            sincos(0, s, &c);
-            return c;
-        }
-        test float foo4() {
-            float s;
-            thread float* c = null;
-            sincos(0, &s, c);
-            return s;
-        }
-    `);
-    checkFloat(program, callFunction(program, "foo1", []), 1);
-    checkFloat(program, callFunction(program, "foo2", []), 0);
-    checkFloat(program, callFunction(program, "foo3", []), 1);
-    checkFloat(program, callFunction(program, "foo4", []), 0);
 }
 
 tests.commentParsing = function() {

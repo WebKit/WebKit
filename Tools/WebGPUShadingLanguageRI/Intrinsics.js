@@ -1072,7 +1072,7 @@ class Intrinsics {
                 this._map.set(
                     `native void InterlockedCompareExchange(atomic_uint* ${addressSpace1},uint,uint,uint* ${addressSpace2})`,
                     func => {
-                        func.implementation = function([atomic, compareValue, value, originalValue]) {
+                        func.implementation = function([atomic, compareValue, value, originalValue], node) {
                             if (!atomic.loadValue())
                                 throw new WTrapError(node.origin.originString, "Null atomic pointer");
                             let a = atomic.loadValue().loadValue();
@@ -1088,7 +1088,7 @@ class Intrinsics {
                 this._map.set(
                     `native void InterlockedCompareExchange(atomic_int* ${addressSpace1},int,int,int* ${addressSpace2})`,
                     func => {
-                        func.implementation = function([atomic, compareValue, value, originalValue]) {
+                        func.implementation = function([atomic, compareValue, value, originalValue], node) {
                             if (!atomic.loadValue())
                                 throw new WTrapError(node.origin.originString, "Null atomic pointer");
                             let a = atomic.loadValue().loadValue();

@@ -1,5 +1,19 @@
 2018-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WHLSL] Fix build after r236635
+        https://bugs.webkit.org/show_bug.cgi?id=189210
+
+        Unreviewed.
+
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics.):
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.atomicsNull):
+        (tests.numThreads):
+        (tests.textureDimensionsNull):
+
+2018-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WHLSL] Allow uniform buffers to be used in the interpreter
         https://bugs.webkit.org/show_bug.cgi?id=189210
 
