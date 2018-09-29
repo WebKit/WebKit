@@ -3943,6 +3943,12 @@ void Editor::registerAttachmentIdentifier(const String& identifier, const String
         client->registerAttachmentIdentifier(identifier, contentType, filePath);
 }
 
+void Editor::registerAttachmentIdentifier(const String& identifier)
+{
+    if (auto* client = this->client())
+        client->registerAttachmentIdentifier(identifier);
+}
+
 void Editor::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
 {
     if (auto* client = this->client())
@@ -3987,7 +3993,7 @@ void Editor::notifyClientOfAttachmentUpdates()
 
     for (auto& identifier : insertedAttachmentIdentifiers) {
         if (auto attachment = document->attachmentForIdentifier(identifier))
-            client()->didInsertAttachmentWithIdentifier(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr));
+            client()->didInsertAttachmentWithIdentifier(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr), attachment->hasEnclosingImage());
         else
             ASSERT_NOT_REACHED();
     }

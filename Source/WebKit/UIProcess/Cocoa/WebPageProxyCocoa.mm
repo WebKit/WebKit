@@ -164,6 +164,9 @@ void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 
 void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::DataReference& dataReference)
 {
+    if (dataReference.isEmpty())
+        return;
+
     auto buffer = SharedBuffer::create(dataReference.data(), dataReference.size());
     auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:buffer->createNSData().autorelease()]);
     [fileWrapper setPreferredFilename:preferredFileName];
@@ -172,6 +175,9 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
 
 void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& filePath)
 {
+    if (!filePath)
+        return;
+
     auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:[NSURL fileURLWithPath:filePath] options:0 error:nil]);
     attachment->setFileWrapper(fileWrapper.get());
 }

@@ -1,3 +1,29 @@
+2018-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        No DOM API to instantiate an attachment for an img element
+        https://bugs.webkit.org/show_bug.cgi?id=189934
+        <rdar://problem/44743222>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds 3 new API tests in WKAttachmentTests:
+
+        `AddAttachmentToConnectedImageElement` verifies that an image element that's already in the document can gain an
+        attachment element via `HTMLAttachmentElement.getAttachmentIdentifier`.
+
+        `ChangeFileWrapperForPastedImage` verifies that an image that has been pasted produces a _WKAttachment in the UI
+        process, and changing the file wrapper of that _WKAttachment changes the pasted image.
+
+        `ConnectImageWithAttachmentToDocument` verifies that script can create an image element, ensure that it has an
+        attachment, and set a file wrapper for the generated _WKAttachment. Connecting the image to the document should
+        then result in an image element with the contents of the _WKAttachment's file wrapper.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView imageElementSize]):
+        (-[TestWKWebView waitForImageElementSizeToBecome:]):
+        (TestWebKitAPI::TEST):
+        (-[TestWKWebView waitForAttachmentElementSizeToBecome:]): Deleted.
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236512): http/tests/navigation/keyboard-events-during-provisional-navigation.html is flaky

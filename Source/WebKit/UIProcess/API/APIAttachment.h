@@ -77,7 +77,13 @@ public:
     InsertionState insertionState() const { return m_insertionState; }
     void setInsertionState(InsertionState state) { m_insertionState = state; }
 
+    bool isEmpty() const;
+
+    RefPtr<WebCore::SharedBuffer> enclosingImageData() const;
     std::optional<uint64_t> fileSizeForDisplay() const;
+
+    void setHasEnclosingImage(bool hasEnclosingImage) { m_hasEnclosingImage = hasEnclosingImage; }
+    bool hasEnclosingImage() const { return m_hasEnclosingImage; }
 
 private:
     explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);
@@ -90,6 +96,7 @@ private:
     WTF::String m_contentType;
     WeakPtr<WebKit::WebPageProxy> m_webPage;
     InsertionState m_insertionState { InsertionState::NotInserted };
+    bool m_hasEnclosingImage { false };
 };
 
 } // namespace API

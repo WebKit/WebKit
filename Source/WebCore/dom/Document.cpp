@@ -8109,6 +8109,12 @@ Vector<RefPtr<WebAnimation>> Document::getAnimations()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+void Document::registerAttachmentIdentifier(const String& identifier)
+{
+    if (auto* frame = this->frame())
+        frame->editor().registerAttachmentIdentifier(identifier);
+}
+
 void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
     auto identifier = attachment.uniqueIdentifier();

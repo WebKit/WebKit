@@ -78,6 +78,7 @@
 #include "PrintInfo.h"
 #include "SafeBrowsingResult.h"
 #include "ShareSheetCallbackID.h"
+#include "SharedBufferDataReference.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UIMessagePortChannelProvider.h"
@@ -7775,8 +7776,12 @@ void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment,
         return;
     }
 
+    IPC::SharedBufferDataReference dataReference;
+    if (auto data = attachment.enclosingImageData())
+        dataReference = { *data };
+
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), callbackID), m_pageID);
+    m_process->send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), WTFMove(dataReference), callbackID), m_pageID);
 }
 
 void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::DataReference& data)
@@ -7802,6 +7807,12 @@ void WebPageProxy::registerAttachmentIdentifierFromFilePath(const String& identi
     m_attachmentIdentifierToAttachmentMap.set(identifier, attachment.copyRef());
 
     platformRegisterAttachment(WTFMove(attachment), filePath);
+}
+
+void WebPageProxy::registerAttachmentIdentifier(const String& identifier)
+{
+    if (!attachmentForIdentifier(identifier))
+        m_attachmentIdentifierToAttachmentMap.set(identifier, ensureAttachment(identifier));
 }
 
 void WebPageProxy::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
@@ -7845,22 +7856,21 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&&, Ref<API::Atta
 
 #endif
 
-void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, const String& source)
+void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage)
 {
     auto attachment = ensureAttachment(identifier);
-    didInsertAttachment(attachment.get(), source);
+    attachment->setHasEnclosingImage(hasEnclosingImage);
+    attachment->setInsertionState(API::Attachment::InsertionState::Inserted);
+    pageClient().didInsertAttachment(attachment.get(), source);
+
+    if (!attachment->isEmpty() && hasEnclosingImage)
+        updateAttachmentAttributes(attachment.get(), [] (auto) { });
 }
 
 void WebPageProxy::didRemoveAttachmentWithIdentifier(const String& identifier)
 {
     if (auto attachment = attachmentForIdentifier(identifier))
         didRemoveAttachment(*attachment);
-}
-
-void WebPageProxy::didInsertAttachment(API::Attachment& attachment, const String& source)
-{
-    attachment.setInsertionState(API::Attachment::InsertionState::Inserted);
-    pageClient().didInsertAttachment(attachment, source);
 }
 
 void WebPageProxy::didRemoveAttachment(API::Attachment& attachment)

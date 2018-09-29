@@ -27,6 +27,7 @@
 #import "APIAttachment.h"
 
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/SharedBuffer.h>
 #if PLATFORM(IOS)
 #import <MobileCoreServices/MobileCoreServices.h>
 #else
@@ -102,6 +103,26 @@ std::optional<uint64_t> Attachment::fileSizeForDisplay() const
         return fileSize;
 
     return [m_fileWrapper regularFileContents].length;
+}
+
+RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
+{
+    if (!m_hasEnclosingImage)
+        return nullptr;
+
+    if (![m_fileWrapper isRegularFile])
+        return nullptr;
+
+    NSData *data = [m_fileWrapper regularFileContents];
+    if (!data)
+        return nullptr;
+
+    return WebCore::SharedBuffer::create(data);
+}
+
+bool Attachment::isEmpty() const
+{
+    return !m_fileWrapper;
 }
 
 } // namespace API

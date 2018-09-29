@@ -60,10 +60,11 @@ private:
     bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*) final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<WebCore::SharedBuffer>&&) final;
-    void registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& filePath) final;
+    void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<WebCore::SharedBuffer>&&) final;
+    void registerAttachmentIdentifier(const String&, const String& contentType, const String& filePath) final;
+    void registerAttachmentIdentifier(const String&) final;
     void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier) final;
-    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source) final;
+    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage) final;
     void didRemoveAttachmentWithIdentifier(const String& identifier) final;
     bool supportsClientSideAttachmentData() const final { return true; }
 #endif

@@ -1814,17 +1814,17 @@ private:
     void stopAllURLSchemeTasks();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::DataReference&);
-    void registerAttachmentIdentifierFromFilePath(const String& identifier, const String& contentType, const String& filePath);
+    void registerAttachmentIdentifierFromData(const String&, const String& contentType, const String& preferredFileName, const IPC::DataReference&);
+    void registerAttachmentIdentifierFromFilePath(const String&, const String& contentType, const String& filePath);
+    void registerAttachmentIdentifier(const String&);
     void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier);
 
     void platformRegisterAttachment(Ref<API::Attachment>&&, const String& preferredFileName, const IPC::DataReference&);
     void platformRegisterAttachment(Ref<API::Attachment>&&, const String& filePath);
     void platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment);
 
-    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source);
+    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage);
     void didRemoveAttachmentWithIdentifier(const String& identifier);
-    void didInsertAttachment(API::Attachment&, const String& source);
     void didRemoveAttachment(API::Attachment&);
     Ref<API::Attachment> ensureAttachment(const String& identifier);
     void invalidateAllAttachments();

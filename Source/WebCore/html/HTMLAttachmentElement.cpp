@@ -33,12 +33,18 @@
 #include "Editor.h"
 #include "File.h"
 #include "Frame.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "MIMETypeRegistry.h"
 #include "RenderAttachment.h"
 #include "SharedBuffer.h"
 #include <pal/FileSizeFormatter.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
+
+#if PLATFORM(COCOA)
+#include "UTIUtilities.h"
+#endif
 
 namespace WebCore {
 
@@ -62,6 +68,21 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
 RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderAttachment>(*this, WTFMove(style));
+}
+
+const String& HTMLAttachmentElement::getAttachmentIdentifier(HTMLImageElement& image)
+{
+    if (auto attachment = image.attachmentElement())
+        return attachment->uniqueIdentifier();
+
+    auto& document = image.document();
+    auto attachment = create(HTMLNames::attachmentTag, document);
+    auto& identifier = attachment->ensureUniqueIdentifier();
+
+    document.registerAttachmentIdentifier(identifier);
+    image.setAttachmentElement(WTFMove(attachment));
+
+    return identifier;
 }
 
 File* HTMLAttachmentElement::file() const
@@ -109,11 +130,16 @@ void HTMLAttachmentElement::removedFromAncestor(RemovalType type, ContainerNode&
         document().didRemoveAttachmentElement(*this);
 }
 
-String HTMLAttachmentElement::ensureUniqueIdentifier()
+const String& HTMLAttachmentElement::ensureUniqueIdentifier()
 {
     if (m_uniqueIdentifier.isEmpty())
         m_uniqueIdentifier = createCanonicalUUIDString();
     return m_uniqueIdentifier;
+}
+
+bool HTMLAttachmentElement::hasEnclosingImage() const
+{
+    return is<HTMLImageElement>(shadowHost());
 }
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -163,6 +189,24 @@ void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSi
 
     if (auto* renderer = this->renderer())
         renderer->invalidate();
+}
+
+void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentType, Ref<SharedBuffer>&& data)
+{
+    auto* hostElement = shadowHost();
+    if (!is<HTMLImageElement>(hostElement) || !data->size())
+        return;
+
+    String mimeType = contentType;
+#if PLATFORM(COCOA)
+    if (isDeclaredUTI(contentType))
+        mimeType = MIMETypeFromUTI(contentType);
+#endif
+
+    if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return;
+
+    hostElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(WTFMove(data), mimeType)));
 }
 
 } // namespace WebCore

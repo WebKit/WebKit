@@ -170,14 +170,19 @@ void WebEditorClient::registerAttachmentIdentifier(const String& identifier, con
     m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromFilePath(identifier, contentType, filePath));
 }
 
+void WebEditorClient::registerAttachmentIdentifier(const String& identifier)
+{
+    m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifier(identifier));
+}
+
 void WebEditorClient::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
 {
     m_page->send(Messages::WebPageProxy::CloneAttachmentData(fromIdentifier, toIdentifier));
 }
 
-void WebEditorClient::didInsertAttachmentWithIdentifier(const String& identifier, const String& source)
+void WebEditorClient::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage)
 {
-    m_page->send(Messages::WebPageProxy::DidInsertAttachmentWithIdentifier(identifier, source));
+    m_page->send(Messages::WebPageProxy::DidInsertAttachmentWithIdentifier(identifier, source, hasEnclosingImage));
 }
 
 void WebEditorClient::didRemoveAttachmentWithIdentifier(const String& identifier)

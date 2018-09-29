@@ -71,6 +71,11 @@ void Attachment::invalidate()
 
 #if !PLATFORM(COCOA)
 
+bool Attachment::isEmpty() const
+{
+    return true;
+}
+
 WTF::String Attachment::mimeType() const
 {
     return m_contentType;
@@ -84,6 +89,11 @@ WTF::String Attachment::fileName() const
 std::optional<uint64_t> Attachment::fileSizeForDisplay() const
 {
     return std::nullopt;
+}
+
+RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
+{
+    return nullptr;
 }
 
 #endif // !PLATFORM(COCOA)

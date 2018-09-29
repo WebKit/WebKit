@@ -1,3 +1,53 @@
+2018-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        No DOM API to instantiate an attachment for an img element
+        https://bugs.webkit.org/show_bug.cgi?id=189934
+        <rdar://problem/44743222>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds support for HTMLAttachmentElement.getAttachmentIdentifier, a function that internal WebKit clients can use
+        to ensure that an image element is backed by a unique _WKAttachment. See below for more details.
+
+        Tests:  WKAttachmentTests.AddAttachmentToConnectedImageElement
+                WKAttachmentTests.ChangeFileWrapperForPastedImage
+                WKAttachmentTests.ConnectImageWithAttachmentToDocument
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerAttachmentIdentifier):
+
+        Add a new hook to register an empty _WKAttachment in the UI process with a given identifier. Used when creating
+        a new empty attachment to back an image element.
+
+        * dom/Document.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::registerAttachmentIdentifier):
+        (WebCore::Editor::notifyClientOfAttachmentUpdates):
+        * editing/Editor.h:
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::getAttachmentIdentifier):
+
+        Creates an attachment element to back the image element, if an attachment does not already exist, and returns
+        the unique identifier. This also causes an empty corresponding _WKAttachment to be created in the client, whose
+        file wrapper determines the contents of the image.
+
+        (WebCore::HTMLAttachmentElement::ensureUniqueIdentifier):
+        (WebCore::HTMLAttachmentElement::hasEnclosingImage const):
+        (WebCore::HTMLAttachmentElement::updateEnclosingImageWithData):
+
+        Add a helper that updates the source of the enclosing image element given a content type and image data, by
+        creating a new blob and blob URL.
+
+        * html/HTMLAttachmentElement.h:
+        * html/HTMLAttachmentElement.idl:
+        * html/HTMLImageElement.idl:
+
+        Rename webkitAttachmentIdentifier to just attachmentIdentifier.
+
+        * page/EditorClient.h:
+        (WebCore::EditorClient::registerAttachmentIdentifier):
+        (WebCore::EditorClient::didInsertAttachmentWithIdentifier):
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         The return value of an OnBeforeUnloadEventHandler should always be coerced into a DOMString

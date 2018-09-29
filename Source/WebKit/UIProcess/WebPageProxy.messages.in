@@ -534,8 +534,9 @@ messages -> WebPageProxy {
 #if ENABLE(ATTACHMENT_ELEMENT)
     RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferDataReference data)
     RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
+    RegisterAttachmentIdentifier(String identifier)
     CloneAttachmentData(String fromIdentifier, String toIdentifier)
-    DidInsertAttachmentWithIdentifier(String identifier, String source)
+    DidInsertAttachmentWithIdentifier(String identifier, String source, bool hasEnclosingImage)
     DidRemoveAttachmentWithIdentifier(String identifier)
 #endif
 

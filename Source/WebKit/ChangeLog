@@ -1,3 +1,63 @@
+2018-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        No DOM API to instantiate an attachment for an img element
+        https://bugs.webkit.org/show_bug.cgi?id=189934
+        <rdar://problem/44743222>
+
+        Reviewed by Ryosuke Niwa.
+
+        Makes some adjustments to support using _WKAttachment's file wrapper to change the contents of any image element
+        hosting the attachment in its shadow root. To do this, we add some plumbing to allow the UI process to update an
+        attachment element's enclosing image with data from its file wrapper.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::isEmpty const):
+        (API::Attachment::enclosingImageData const):
+
+        Helper method that creates a SharedBuffer representing image data for the attachment. Only returns a non-null
+        value for attachment elements that are enclosed within an image.
+
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::enclosingImageData const):
+        (API::Attachment::isEmpty const):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _attachmentForIdentifier:]):
+
+        Add new SPI to request a _WKAttachment for a given unique identifier. Currently, this is only used for testing.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+        (WebKit::WebPageProxy::registerAttachmentIdentifier):
+        (WebKit::WebPageProxy::didInsertAttachmentWithIdentifier):
+
+        Plumb whether or not the attachment is enclosed by an image from the web process to the UI process.
+
+        (WebKit::WebPageProxy::didRemoveAttachmentWithIdentifier):
+        (WebKit::WebPageProxy::didInsertAttachment): Deleted.
+        (WebKit::WebPageProxy::didRemoveAttachment):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerAttachmentIdentifier):
+        (WebKit::WebEditorClient::didInsertAttachmentWithIdentifier):
+
+        Update attachment attributes after inserting an attachment. This ensures that an attachment that was created and
+        later inserted via script into the document will be synced with state in the UI process, if the client has
+        changed the contents of the attachment.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateAttachmentAttributes):
+
+        Plumb attachment data from the UI process to the web process.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236512): http/tests/navigation/keyboard-events-during-provisional-navigation.html is flaky

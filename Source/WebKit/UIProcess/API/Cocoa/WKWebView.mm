@@ -4566,6 +4566,15 @@ WEBCORE_COMMAND(yankAndSelect)
 #endif
 }
 
+- (_WKAttachment *)_attachmentForIdentifier:(NSString *)identifier
+{
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (auto attachment = _page->attachmentForIdentifier(identifier))
+        return wrapper(attachment);
+#endif
+    return nil;
+}
+
 - (void)_pasteAsQuotation:(id)sender
 {
 #if PLATFORM(MAC)

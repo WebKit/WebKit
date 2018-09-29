@@ -75,8 +75,9 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* preferredFileName */, Ref<SharedBuffer>&&) { }
     virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* filePath */) { }
+    virtual void registerAttachmentIdentifier(const String& /* identifier */) { }
     virtual void cloneAttachmentData(const String& /* fromIdentifier */, const String& /* toIdentifier */) { }
-    virtual void didInsertAttachmentWithIdentifier(const String& /* identifier */, const String& /* source */) { }
+    virtual void didInsertAttachmentWithIdentifier(const String& /* identifier */, const String& /* source */, bool /* hasEnclosingImage */) { }
     virtual void didRemoveAttachmentWithIdentifier(const String&) { }
     virtual bool supportsClientSideAttachmentData() const { return false; }
 #endif
