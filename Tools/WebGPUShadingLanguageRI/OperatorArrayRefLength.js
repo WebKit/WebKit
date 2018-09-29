@@ -41,7 +41,7 @@ class OperatorArrayRefLength {
 
     instantiateImplementation(func)
     {
-        func.implementation = ([ref], node) => {
+        func.implementation = ([ref]) => {
             ref = ref.loadValue();
             if (!ref)
                 return EPtr.box(0);

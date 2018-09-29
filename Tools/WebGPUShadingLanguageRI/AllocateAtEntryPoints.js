@@ -142,7 +142,7 @@ function allocateAtEntryPoints(program)
 
             _addVariableDeclaration()
             {
-                this._variableDecl = new VariableDecl(func.origin, null, globalStructTypeRef, null);
+                this._variableDecl = new VariableDecl(func.origin, "global struct", globalStructTypeRef, null);
                 this.makeGlobalStructVariableRef = () => new MakePtrExpression(func.origin, VariableRef.wrap(this._variableDecl));
                 func.body.statements.unshift(this._variableDecl);
             }

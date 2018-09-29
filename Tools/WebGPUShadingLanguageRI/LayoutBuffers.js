@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,18 +20,17 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class LateChecker extends Visitor {
-    visitReferenceType(node)
-    {
-        if (node.addressSpace == "thread")
-            return;
-        
-        if (!node.elementType.isPrimitive)
-            throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type: " + node);
+function layoutBuffers(program)
+{
+    for (let funcList of program.functions.values()) {
+        for (let func of funcList) {
+            if (func.isNative)
+                continue;
+            func.visit(new EBufferBuilder());
+        }
     }
 }
-

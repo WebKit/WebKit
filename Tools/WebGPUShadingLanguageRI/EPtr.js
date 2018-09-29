@@ -79,6 +79,11 @@ class EPtr {
         for (let i = size; i--;)
             this.set(i, other.get(i));
     }
+
+    equals(other)
+    {
+        return this.buffer == other.buffer && this.offset == other.offset;
+    }
     
     toString()
     {

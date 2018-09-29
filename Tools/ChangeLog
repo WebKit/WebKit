@@ -1,3 +1,57 @@
+2018-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Pointers should have automatically-generated equality checks
+        https://bugs.webkit.org/show_bug.cgi?id=189986
+
+        Reviewed by Filip Pizlo.
+
+        C allows for pointer equality, and we need it so people can do null checks.
+        This is generated the same way all our other NativeFuncs are generated - by Checker
+        creating NativeFuncs inside CallExpression.resolve().
+
+        This patch also does some general cleanup.
+
+        * WebGPUShadingLanguageRI/All.js: Everything the late checker does is no longer necessary.
+        The last thing it was doing was making sure that only primitive types are in resources, but
+        it's totally reasonable to put structs and arrays in resources, so I removed this pass. We
+        still have to add a check to make sure resources can't live within resources, but I expect
+        that will be done in the same place that semantics are checked.
+        * WebGPUShadingLanguageRI/AllocateAtEntryPoints.js:
+        (allocateAtEntryPoints.updateFunction.UpdateFunctions.prototype._addVariableDeclaration):
+        Name the global struct for debugging purposes.
+        * WebGPUShadingLanguageRI/CallExpression.js: 
+        (CallExpression.prototype._resolveByInstantiation): Cleanup
+        (CallExpression.prototype._resolveWithOperatorAnderIndexer): Ditto
+        (CallExpression.prototype._resolveWithOperatorLength): Ditto
+        (CallExpression.prototype._resolveWithReferenceComparator): Add support to automatically
+        generate pointer equality NativeFuncs.
+        * WebGPUShadingLanguageRI/EPtr.js: Implement pointer equality in the interpreter.
+        * WebGPUShadingLanguageRI/LateChecker.js: Removed.
+        * WebGPUShadingLanguageRI/LayoutBuffers.js: Renamed from Tools/WebGPUShadingLanguageRI/LateCheckAndLayoutBuffers.js.
+        (layoutBuffers):
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/WHLSL Tests.xcodeproj/project.pbxproj:
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        * WebGPUShadingLanguageRI/OperatorArrayRefLength.js:
+        (OperatorArrayRefLength.prototype.instantiateImplementation):
+        (OperatorArrayRefLength):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.ternaryExpression):
+        (tests.break): Speed up testing time
+        (tests.doWhile): Ditto
+        (tests.forLoop): Ditto
+        (tests.atomics): Ditto
+        (tests.atomicsNull): Ditto
+        (tests.pointerEquality): Test pointer equality
+        (tests.standardLibraryDevicePointers):
+        (tests.devicePtrPtr): Deleted.
+        (tests.threadgroupPtrPtr): Deleted.
+        (tests.constantPtrPtr): Deleted.
+        * WebGPUShadingLanguageRI/index.html:
+
 2018-09-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Polish WebAuthN auto-test environment

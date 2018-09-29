@@ -33,6 +33,11 @@ class EArrayRef {
     
     get ptr() { return this._ptr; }
     get length() { return this._length; }
+
+    equals(other)
+    {
+        return this.ptr.equals(other.ptr) && this.length == other.length;
+    }
     
     toString()
     {

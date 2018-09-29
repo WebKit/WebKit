@@ -83,7 +83,6 @@
 		E92D115A20F7060E00D776B2 /* IntLiteral.js in Resources */ = {isa = PBXBuildFile; fileRef = E92D0FE420F56DDD00D776B2 /* IntLiteral.js */; };
 		E92D115B20F7060E00D776B2 /* IntLiteralType.js in Resources */ = {isa = PBXBuildFile; fileRef = E92D0FE520F56DDD00D776B2 /* IntLiteralType.js */; };
 		E92D115C20F7060E00D776B2 /* Intrinsics.js in Resources */ = {isa = PBXBuildFile; fileRef = E92D0FE720F56DDD00D776B2 /* Intrinsics.js */; };
-		E92D115D20F7060E00D776B2 /* LateChecker.js in Resources */ = {isa = PBXBuildFile; fileRef = E9FCEB6420F56DA5009B3629 /* LateChecker.js */; };
 		E92D115E20F7060E00D776B2 /* Lexer.js in Resources */ = {isa = PBXBuildFile; fileRef = E92D0FF120F56DEC00D776B2 /* Lexer.js */; };
 		E92D115F20F7060E00D776B2 /* LexerToken.js in Resources */ = {isa = PBXBuildFile; fileRef = E92D0FF020F56DEB00D776B2 /* LexerToken.js */; };
 		E92D116020F7060E00D776B2 /* LiteralTypeChecker.js in Resources */ = {isa = PBXBuildFile; fileRef = E92D0FF220F56DEC00D776B2 /* LiteralTypeChecker.js */; };
@@ -186,7 +185,7 @@
 		E9D7CB98214B824200F1C918 /* MSLBackend.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D7CB95214B824200F1C918 /* MSLBackend.js */; };
 		E9D7CB99214B824200F1C918 /* MSLConstexprEmitter.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D7CB96214B824200F1C918 /* MSLConstexprEmitter.js */; };
 		E9D7CBA0214B82B800F1C918 /* Texture.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D7CB9A214B82B700F1C918 /* Texture.js */; };
-		E9D7CBA1214B82B800F1C918 /* LateCheckAndLayoutBuffers.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D7CB9B214B82B700F1C918 /* LateCheckAndLayoutBuffers.js */; };
+		E9D7CBA1214B82B800F1C918 /* LayoutBuffers.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D7CB9B214B82B700F1C918 /* LayoutBuffers.js */; };
 		E9D7CBA2214B82B800F1C918 /* Casts.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D7CB9C214B82B700F1C918 /* Casts.js */; };
 		E9D7CBA3214B82B800F1C918 /* Sampler.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D7CB9D214B82B800F1C918 /* Sampler.js */; };
 		E9D7CBA4214B82B800F1C918 /* TextureOperations.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D7CB9E214B82B800F1C918 /* TextureOperations.js */; };
@@ -405,7 +404,7 @@
 		E9D7CB95214B824200F1C918 /* MSLBackend.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = MSLBackend.js; path = ../../MSLBackend.js; sourceTree = "<group>"; };
 		E9D7CB96214B824200F1C918 /* MSLConstexprEmitter.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = MSLConstexprEmitter.js; path = ../../MSLConstexprEmitter.js; sourceTree = "<group>"; };
 		E9D7CB9A214B82B700F1C918 /* Texture.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = Texture.js; path = ../../../Texture.js; sourceTree = "<group>"; };
-		E9D7CB9B214B82B700F1C918 /* LateCheckAndLayoutBuffers.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = LateCheckAndLayoutBuffers.js; path = ../../../LateCheckAndLayoutBuffers.js; sourceTree = "<group>"; };
+		E9D7CB9B214B82B700F1C918 /* LayoutBuffers.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = LayoutBuffers.js; path = ../../../LayoutBuffers.js; sourceTree = "<group>"; };
 		E9D7CB9C214B82B700F1C918 /* Casts.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = Casts.js; path = ../../../Casts.js; sourceTree = "<group>"; };
 		E9D7CB9D214B82B800F1C918 /* Sampler.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = Sampler.js; path = ../../../Sampler.js; sourceTree = "<group>"; };
 		E9D7CB9E214B82B800F1C918 /* TextureOperations.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = TextureOperations.js; path = ../../../TextureOperations.js; sourceTree = "<group>"; };
@@ -416,7 +415,6 @@
 		E9FCEB5A20F56D93009B3629 /* ForLoop.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = ForLoop.js; path = ../../../ForLoop.js; sourceTree = "<group>"; };
 		E9FCEB5B20F56D93009B3629 /* Field.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = Field.js; path = ../../../Field.js; sourceTree = "<group>"; };
 		E9FCEB6320F56DA4009B3629 /* IndexExpression.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = IndexExpression.js; path = ../../../IndexExpression.js; sourceTree = "<group>"; };
-		E9FCEB6420F56DA5009B3629 /* LateChecker.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = LateChecker.js; path = ../../../LateChecker.js; sourceTree = "<group>"; };
 		E9FCEB6520F56DA5009B3629 /* InferTypesForCall.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = InferTypesForCall.js; path = ../../../InferTypesForCall.js; sourceTree = "<group>"; };
 		E9FCEB6620F56DA5009B3629 /* Inline.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Inline.js; path = ../../../Inline.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -628,8 +626,7 @@
 				E92D0FE420F56DDD00D776B2 /* IntLiteral.js */,
 				E92D0FE520F56DDD00D776B2 /* IntLiteralType.js */,
 				E92D0FE720F56DDD00D776B2 /* Intrinsics.js */,
-				E9D7CB9B214B82B700F1C918 /* LateCheckAndLayoutBuffers.js */,
-				E9FCEB6420F56DA5009B3629 /* LateChecker.js */,
+				E9D7CB9B214B82B700F1C918 /* LayoutBuffers.js */,
 				E92D0FF120F56DEC00D776B2 /* Lexer.js */,
 				E92D0FF020F56DEB00D776B2 /* LexerToken.js */,
 				E92D0FF220F56DEC00D776B2 /* LiteralTypeChecker.js */,
@@ -885,8 +882,7 @@
 				E92D115B20F7060E00D776B2 /* IntLiteralType.js in Resources */,
 				E92D115C20F7060E00D776B2 /* Intrinsics.js in Resources */,
 				E906B04621139B7700AD1C5E /* Julia.whlsl in Resources */,
-				E9D7CBA1214B82B800F1C918 /* LateCheckAndLayoutBuffers.js in Resources */,
-				E92D115D20F7060E00D776B2 /* LateChecker.js in Resources */,
+				E9D7CBA1214B82B800F1C918 /* LayoutBuffers.js in Resources */,
 				E92D115E20F7060E00D776B2 /* Lexer.js in Resources */,
 				E92D115F20F7060E00D776B2 /* LexerToken.js in Resources */,
 				E92D116020F7060E00D776B2 /* LiteralTypeChecker.js in Resources */,
