@@ -1514,9 +1514,13 @@ void RenderGrid::gridAreaPositionForInFlowChild(const RenderBox& child, GridTrac
     // The 'positions' vector includes distribution offset (because of content
     // alignment) and gutters so we need to subtract them to get the actual
     // end position for a given track (this does not have to be done for the
-    // last track as there are no more positions's elements after it).
-    if (span.endLine() < positions.size() - 1)
+    // last track as there are no more positions's elements after it, nor for
+    // collapsed tracks).
+    if (span.endLine() < positions.size() - 1
+        && !(m_grid.hasAutoRepeatEmptyTracks(direction)
+        && m_grid.isEmptyAutoRepeatTrack(direction, span.endLine()))) {
         end -= gridGap(direction) + gridItemOffset(direction);
+    }
 }
 
 void RenderGrid::gridAreaPositionForChild(const RenderBox& child, GridTrackSizingDirection direction, LayoutUnit& start, LayoutUnit& end) const

@@ -1,3 +1,17 @@
+2018-09-29  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Properly align items next to collapsed tracks with gutters
+        https://bugs.webkit.org/show_bug.cgi?id=190089
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import grid-gutters-013.html and reference from WPT.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-013.html
+
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-013-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-013.html: Added.
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         The return value of an OnBeforeUnloadEventHandler should always be coerced into a DOMString

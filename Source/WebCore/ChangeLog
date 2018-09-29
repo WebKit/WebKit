@@ -1,3 +1,20 @@
+2018-09-29  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Properly align items next to collapsed tracks with gutters
+        https://bugs.webkit.org/show_bug.cgi?id=190089
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        gridAreaPositionForInFlowChild could return a wrong end position for
+        grid items adjacent to a collapsed track, because it didn't take into
+        account that gutters collapse in that case. Therefore, "center" or
+        "end" alignments displayed the item at the wrong position.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-013.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::gridAreaPositionForInFlowChild const):
+
 2018-09-29  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer][MSE] Use GObject for GST_TRACE_OBJECT
