@@ -1,3 +1,17 @@
+2018-09-29  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Deal with the drawing area potentially being null in WebFrameLoaderClient::transitionToCommittedForNewPage()
+        https://bugs.webkit.org/show_bug.cgi?id=190084
+        <rdar://problem/44844561>
+
+        Reviewed by Antti Koivisto.
+
+        Deal with the drawing area potentially being null in WebFrameLoaderClient::transitionToCommittedForNewPage(), as a
+        result of calling WebPage::tearDownDrawingAreaForSuspend().
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+
 2018-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         No DOM API to instantiate an attachment for an img element
