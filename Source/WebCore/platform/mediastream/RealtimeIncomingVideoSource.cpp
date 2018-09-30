@@ -42,8 +42,6 @@ RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webr
     , m_videoTrack(WTFMove(videoTrack))
 {
     setName("remote video");
-    m_currentSettings.setWidth(640);
-    m_currentSettings.setHeight(480);
     notifyMutedChange(!m_videoTrack);
 }
 
@@ -77,7 +75,27 @@ const RealtimeMediaSourceCapabilities& RealtimeIncomingVideoSource::capabilities
 
 const RealtimeMediaSourceSettings& RealtimeIncomingVideoSource::settings()
 {
-    return m_currentSettings;
+    if (m_currentSettings)
+        return m_currentSettings.value();
+
+    RealtimeMediaSourceSupportedConstraints constraints;
+    constraints.setSupportsWidth(true);
+    constraints.setSupportsHeight(true);
+
+    RealtimeMediaSourceSettings settings;
+    auto& size = this->size();
+    settings.setWidth(size.width());
+    settings.setHeight(size.height());
+    settings.setSupportedConstraints(constraints);
+
+    m_currentSettings = WTFMove(settings);
+    return m_currentSettings.value();
+}
+
+void RealtimeIncomingVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
+{
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
+        m_currentSettings = std::nullopt;
 }
 
 } // namespace WebCore

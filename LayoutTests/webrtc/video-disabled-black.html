@@ -7,7 +7,7 @@
         <script src="../resources/testharnessreport.js"></script>
     </head>
     <body>
-        <video id="video" autoplay=""></video>
+        <video id="video" autoplay playsinline></video>
         <canvas id="canvas" width="640" height="480"></canvas>
         <script src ="routines.js"></script>
         <script>
@@ -21,6 +21,9 @@ canvas = document.getElementById("canvas");
 function testImage()
 {
     try {
+        if (!video.videoWidth || !video.videoHeight)
+            throw `Video size invalid: ${video.videoWidth}x${video.videoHeight}`;
+
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -44,7 +47,7 @@ function testStream(stream)
         setTimeout(() => {
             testImage();
         }, 0);
-    }, 500);
+    }, 2000);
 }
 
 var finishTest, errorTest;

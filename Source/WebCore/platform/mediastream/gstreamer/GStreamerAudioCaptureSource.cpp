@@ -176,8 +176,6 @@ void GStreamerAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourc
 {
     if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate))
         m_capturer->setSampleRate(sampleRate());
-
-    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings()

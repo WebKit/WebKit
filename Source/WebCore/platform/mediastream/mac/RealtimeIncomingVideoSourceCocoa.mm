@@ -227,17 +227,9 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
 void RealtimeIncomingVideoSourceCocoa::processNewSample(CMSampleBufferRef sample, unsigned width, unsigned height, MediaSample::VideoRotation rotation)
 {
     m_buffer = sample;
-    if (width != m_currentSettings.width() || height != m_currentSettings.height()) {
-        OptionSet<RealtimeMediaSourceSettings::Flag> changed;
-        if (width != m_currentSettings.width())
-            changed.add(RealtimeMediaSourceSettings::Flag::Width);
-        if (height != m_currentSettings.height())
-            changed.add(RealtimeMediaSourceSettings::Flag::Height);
-
-        m_currentSettings.setWidth(width);
-        m_currentSettings.setHeight(height);
-        settingsDidChange(changed);
-    }
+    auto size = this->size();
+    if (WTF::safeCast<int>(width) != size.width() || WTF::safeCast<int>(height) != size.height())
+        setSize(IntSize(width, height));
 
     videoSampleAvailable(MediaSampleAVFObjC::create(sample, rotation));
 }

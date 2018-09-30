@@ -1,5 +1,55 @@
 2018-09-30  Eric Carlson  <eric.carlson@apple.com>
 
+        [MediaStream] Clean up RealtimeMediaSource settings change handling
+        https://bugs.webkit.org/show_bug.cgi?id=189998
+        <rdar://problem/44797884>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, updated webrtc/video-disabled-black.html.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::Source):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::settings):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::settingsDidChange):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasResized):
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * platform/mediastream/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource):
+        (WebCore::RealtimeIncomingVideoSource::settings):
+        (WebCore::RealtimeIncomingVideoSource::settingsDidChange):
+        * platform/mediastream/RealtimeIncomingVideoSource.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::settingsDidChange):
+        (WebCore::RealtimeMediaSource::notifySettingsDidChangeObservers):
+        (WebCore::RealtimeMediaSource::setSize):
+        (WebCore::RealtimeMediaSource::setFrameRate):
+        (WebCore::RealtimeMediaSource::setAspectRatio):
+        (WebCore::RealtimeMediaSource::setFacingMode):
+        (WebCore::RealtimeMediaSource::setVolume):
+        (WebCore::RealtimeMediaSource::setSampleRate):
+        (WebCore::RealtimeMediaSource::setSampleSize):
+        (WebCore::RealtimeMediaSource::setEchoCancellation):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        (WebCore::GStreamerAudioCaptureSource::settingsDidChange):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::settingsDidChange):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::settingsDidChange):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::settingsDidChange):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::settingsDidChange):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::processNewSample):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::settingsDidChange):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::settingsDidChange):
+
+2018-09-30  Eric Carlson  <eric.carlson@apple.com>
+
         [MediaStream] Use display-specific capture factories
         https://bugs.webkit.org/show_bug.cgi?id=190043
         <rdar://problem/44834412>

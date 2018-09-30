@@ -66,7 +66,8 @@ private:
         void startProducingData() final;
         void stopProducingData()  final;
         const RealtimeMediaSourceCapabilities& capabilities() final { return RealtimeMediaSourceCapabilities::emptyCapabilities(); }
-        const RealtimeMediaSourceSettings& settings() final { return m_settings; }
+        const RealtimeMediaSourceSettings& settings() final;
+        void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
         void captureCanvas();
         void requestFrameTimerFired();
@@ -75,7 +76,7 @@ private:
         std::optional<double> m_frameRequestRate;
         Timer m_requestFrameTimer;
         Timer m_canvasChangedTimer;
-        RealtimeMediaSourceSettings m_settings;
+        std::optional<RealtimeMediaSourceSettings> m_currentSettings;
         HTMLCanvasElement* m_canvas;
         RefPtr<Image> m_currentImage;
     };

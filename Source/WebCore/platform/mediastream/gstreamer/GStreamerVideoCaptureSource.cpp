@@ -133,8 +133,6 @@ void GStreamerVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourc
         m_capturer->setSize(size().width(), size().height());
     if (settings.contains(RealtimeMediaSourceSettings::Flag::FrameRate))
         m_capturer->setFrameRate(frameRate());
-
-    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 void GStreamerVideoCaptureSource::startProducingData()

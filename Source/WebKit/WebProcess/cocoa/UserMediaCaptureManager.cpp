@@ -78,7 +78,7 @@ public:
     {
         auto changed = m_settings.difference(settings);
         m_settings = WTFMove(settings);
-        settingsDidChange(changed);
+        notifySettingsDidChangeObservers(changed);
     }
 
     const CAAudioStreamDescription& description() const { return m_description; }

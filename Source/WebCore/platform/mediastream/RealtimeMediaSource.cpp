@@ -133,7 +133,13 @@ void RealtimeMediaSource::notifyMutedObservers() const
 
 void RealtimeMediaSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>)
 {
+}
+
+void RealtimeMediaSource::notifySettingsDidChangeObservers(OptionSet<RealtimeMediaSourceSettings::Flag> flags)
+{
     ASSERT(isMainThread());
+
+    settingsDidChange(flags);
 
     if (m_pendingSettingsDidChangeNotification)
         return;
@@ -864,7 +870,7 @@ void RealtimeMediaSource::setSize(const IntSize& size)
         changed.add(RealtimeMediaSourceSettings::Flag::Height);
 
     m_size = size;
-    settingsDidChange(changed);
+    notifySettingsDidChangeObservers(changed);
 }
 
 void RealtimeMediaSource::setFrameRate(double rate)
@@ -873,7 +879,7 @@ void RealtimeMediaSource::setFrameRate(double rate)
         return;
 
     m_frameRate = rate;
-    settingsDidChange(RealtimeMediaSourceSettings::Flag::FrameRate);
+    notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::FrameRate);
 }
 
 void RealtimeMediaSource::setAspectRatio(double ratio)
@@ -883,7 +889,7 @@ void RealtimeMediaSource::setAspectRatio(double ratio)
 
     m_aspectRatio = ratio;
     m_size.setHeight(m_size.width() / ratio);
-    settingsDidChange({ RealtimeMediaSourceSettings::Flag::AspectRatio, RealtimeMediaSourceSettings::Flag::Height });
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::AspectRatio, RealtimeMediaSourceSettings::Flag::Height });
 }
 
 void RealtimeMediaSource::setFacingMode(RealtimeMediaSourceSettings::VideoFacingMode mode)
@@ -892,7 +898,7 @@ void RealtimeMediaSource::setFacingMode(RealtimeMediaSourceSettings::VideoFacing
         return;
 
     m_facingMode = mode;
-    settingsDidChange(RealtimeMediaSourceSettings::Flag::FacingMode);
+    notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::FacingMode);
 }
 
 void RealtimeMediaSource::setVolume(double volume)
@@ -901,7 +907,7 @@ void RealtimeMediaSource::setVolume(double volume)
         return;
 
     m_volume = volume;
-    settingsDidChange(RealtimeMediaSourceSettings::Flag::Volume);
+    notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::Volume);
 }
 
 void RealtimeMediaSource::setSampleRate(int rate)
@@ -910,7 +916,7 @@ void RealtimeMediaSource::setSampleRate(int rate)
         return;
 
     m_sampleRate = rate;
-    settingsDidChange(RealtimeMediaSourceSettings::Flag::SampleRate);
+    notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::SampleRate);
 }
 
 std::optional<Vector<int>> RealtimeMediaSource::discreteSampleRates() const
@@ -924,7 +930,7 @@ void RealtimeMediaSource::setSampleSize(int size)
         return;
 
     m_sampleSize = size;
-    settingsDidChange(RealtimeMediaSourceSettings::Flag::SampleSize);
+    notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::SampleSize);
 }
 
 std::optional<Vector<int>> RealtimeMediaSource::discreteSampleSizes() const
@@ -938,7 +944,7 @@ void RealtimeMediaSource::setEchoCancellation(bool echoCancellation)
         return;
 
     m_echoCancellation = echoCancellation;
-    settingsDidChange(RealtimeMediaSourceSettings::Flag::EchoCancellation);
+    notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::EchoCancellation);
 }
 
 void RealtimeMediaSource::scheduleDeferredTask(WTF::Function<void()>&& function)

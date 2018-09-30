@@ -60,16 +60,16 @@ public:
 protected:
     RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
 
-    RealtimeMediaSourceSettings m_currentSettings;
-
 private:
     // RealtimeMediaSource API
     void startProducingData() final;
     void stopProducingData()  final;
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
 
+    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
 };
 
