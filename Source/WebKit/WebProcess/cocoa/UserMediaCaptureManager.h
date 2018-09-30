@@ -31,6 +31,7 @@
 #include "SharedMemory.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/RealtimeMediaSourceFactory.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ namespace WebKit {
 class CrossProcessRealtimeAudioSource;
 class WebProcess;
 
-class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver, public WebCore::RealtimeMediaSource::AudioCaptureFactory, public WebCore::RealtimeMediaSource::VideoCaptureFactory {
+class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver, public WebCore::AudioCaptureFactory, public WebCore::VideoCaptureFactory {
 public:
     explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();

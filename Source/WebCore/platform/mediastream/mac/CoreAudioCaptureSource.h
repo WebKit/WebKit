@@ -30,6 +30,7 @@
 #include "CAAudioStreamDescription.h"
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
+#include "RealtimeMediaSourceFactory.h"
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/HashMap.h>
@@ -108,7 +109,7 @@ private:
     bool m_resumePending { false };
 };
 
-class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory {
+class CoreAudioCaptureSourceFactory : public AudioCaptureFactory {
 public:
     static CoreAudioCaptureSourceFactory& singleton();
 

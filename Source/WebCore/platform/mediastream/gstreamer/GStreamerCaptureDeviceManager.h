@@ -26,6 +26,7 @@
 #include "CaptureDeviceManager.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerCaptureDevice.h"
+#include "RealtimeMediaSourceFactory.h"
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ class GStreamerVideoCaptureDeviceManager final : public GStreamerCaptureDeviceMa
     friend class NeverDestroyed<GStreamerVideoCaptureDeviceManager>;
 public:
     static GStreamerVideoCaptureDeviceManager& singleton();
-    static RealtimeMediaSource::VideoCaptureFactory& videoFactory();
+    static VideoCaptureFactory& videoFactory();
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Camera; }
 private:
     GStreamerVideoCaptureDeviceManager() = default;

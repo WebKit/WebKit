@@ -769,7 +769,7 @@ void CoreAudioCaptureSourceFactory::scheduleReconfiguration()
     CoreAudioSharedUnit::singleton().reconfigureAudioUnit();
 }
 
-RealtimeMediaSource::AudioCaptureFactory& CoreAudioCaptureSource::factory()
+AudioCaptureFactory& CoreAudioCaptureSource::factory()
 {
     return CoreAudioCaptureSourceFactory::singleton();
 }

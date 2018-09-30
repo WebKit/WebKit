@@ -83,6 +83,62 @@ static inline Vector<MockMediaDevice> defaultDevices()
     };
 }
 
+
+class MockRealtimeVideoSourceFactory : public VideoCaptureFactory {
+public:
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    {
+        ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
+        ASSERT(MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId()));
+
+        return MockRealtimeVideoSource::create(device.persistentId(), device.label(), constraints);
+    }
+
+#if PLATFORM(IOS)
+private:
+    void setVideoCapturePageState(bool interrupted, bool pageMuted)
+    {
+        if (activeSource())
+            activeSource()->setInterrupted(interrupted, pageMuted);
+    }
+#endif
+};
+
+class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
+public:
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    {
+        ASSERT(MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()));
+
+        switch (device.type()) {
+        case CaptureDevice::DeviceType::Screen:
+        case CaptureDevice::DeviceType::Window:
+            return MockRealtimeVideoSource::create(device.persistentId(), device.label(), constraints);
+            break;
+        case CaptureDevice::DeviceType::Application:
+        case CaptureDevice::DeviceType::Browser:
+        case CaptureDevice::DeviceType::Microphone:
+        case CaptureDevice::DeviceType::Camera:
+        case CaptureDevice::DeviceType::Unknown:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        return { };
+    }
+};
+
+class MockRealtimeAudioSourceFactory : public AudioCaptureFactory {
+public:
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    {
+        ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
+        ASSERT(MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, device.persistentId()));
+
+        return MockRealtimeAudioSource::create(device.persistentId(), device.label(), constraints);
+    }
+};
+
 static Vector<MockMediaDevice>& devices()
 {
     static auto devices = makeNeverDestroyed([] {
@@ -252,6 +308,24 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
     }());
 
     return displayDevices;
+}
+
+AudioCaptureFactory& MockRealtimeMediaSourceCenter::audioFactory()
+{
+    static NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
+    return factory.get();
+}
+
+VideoCaptureFactory& MockRealtimeMediaSourceCenter::videoFactory()
+{
+    static NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
+    return factory.get();
+}
+
+DisplayCaptureFactory& MockRealtimeMediaSourceCenter::displayCaptureFactory()
+{
+    static NeverDestroyed<MockRealtimeDisplaySourceFactory> factory;
+    return factory.get();
 }
 
 } // namespace WebCore

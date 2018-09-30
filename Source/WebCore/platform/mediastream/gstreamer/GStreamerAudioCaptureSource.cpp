@@ -51,7 +51,7 @@ static void initializeGStreamerDebug()
     });
 }
 
-class GStreamerAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory {
+class GStreamerAudioCaptureSourceFactory : public AudioCaptureFactory {
 public:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
     {
@@ -83,7 +83,7 @@ CaptureSourceOrError GStreamerAudioCaptureSource::create(const String& deviceID,
     return CaptureSourceOrError(WTFMove(source));
 }
 
-RealtimeMediaSource::AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
+AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
 {
     return libWebRTCAudioCaptureSourceFactory();
 }

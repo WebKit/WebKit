@@ -46,32 +46,12 @@
 
 namespace WebCore {
 
-class VideoCaptureSourceFactoryMac final : public RealtimeMediaSource::VideoCaptureFactory
-{
+class VideoCaptureSourceFactoryMac final : public VideoCaptureFactory {
 public:
     CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
     {
-        switch (device.type()) {
-        case CaptureDevice::DeviceType::Camera:
-            return AVVideoCaptureSource::create(device.persistentId(), constraints);
-            break;
-        case CaptureDevice::DeviceType::Screen:
-#if PLATFORM(MAC)
-            return ScreenDisplayCaptureSourceMac::create(device.persistentId(), constraints);
-#endif
-        case CaptureDevice::DeviceType::Window:
-#if PLATFORM(MAC)
-            return WindowDisplayCaptureSourceMac::create(device.persistentId(), constraints);
-#endif
-        case CaptureDevice::DeviceType::Application:
-        case CaptureDevice::DeviceType::Browser:
-        case CaptureDevice::DeviceType::Microphone:
-        case CaptureDevice::DeviceType::Unknown:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-
-        return { };
+        ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
+        return AVVideoCaptureSource::create(device.persistentId(), constraints);
     }
 
 #if PLATFORM(IOS)
@@ -84,13 +64,49 @@ private:
 #endif
 };
 
-RealtimeMediaSource::VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoCaptureSourceFactory()
+class DisplayCaptureSourceFactoryMac final : public DisplayCaptureFactory {
+public:
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    {
+#if PLATFORM(IOS)
+        UNUSED_PARAM(device);
+        UNUSED_PARAM(constraints);
+#endif
+        switch (device.type()) {
+        case CaptureDevice::DeviceType::Screen:
+#if PLATFORM(MAC)
+            return ScreenDisplayCaptureSourceMac::create(device.persistentId(), constraints);
+#endif
+        case CaptureDevice::DeviceType::Window:
+#if PLATFORM(MAC)
+            return WindowDisplayCaptureSourceMac::create(device.persistentId(), constraints);
+#endif
+        case CaptureDevice::DeviceType::Application:
+        case CaptureDevice::DeviceType::Browser:
+        case CaptureDevice::DeviceType::Microphone:
+        case CaptureDevice::DeviceType::Camera:
+        case CaptureDevice::DeviceType::Unknown:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        return { };
+    }
+};
+
+VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoCaptureSourceFactory()
 {
     static NeverDestroyed<VideoCaptureSourceFactoryMac> factory;
     return factory.get();
 }
 
-RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioCaptureSourceFactory()
+DisplayCaptureFactory& RealtimeMediaSourceCenterMac::displayCaptureSourceFactory()
+{
+    static NeverDestroyed<DisplayCaptureSourceFactoryMac> factory;
+    return factory.get();
+}
+
+AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioCaptureSourceFactory()
 {
     return RealtimeMediaSourceCenterMac::singleton().audioFactory();
 }
@@ -112,7 +128,7 @@ RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac() = default;
 RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac() = default;
 
 
-RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioFactory()
+AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioFactory()
 {
     if (m_audioFactoryOverride)
         return *m_audioFactoryOverride;
@@ -120,9 +136,14 @@ RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioFac
     return CoreAudioCaptureSource::factory();
 }
 
-RealtimeMediaSource::VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoFactory()
+VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoFactory()
 {
     return videoCaptureSourceFactory();
+}
+
+DisplayCaptureFactory& RealtimeMediaSourceCenterMac::displayCaptureFactory()
+{
+    return displayCaptureSourceFactory();
 }
 
 CaptureDeviceManager& RealtimeMediaSourceCenterMac::audioCaptureDeviceManager()

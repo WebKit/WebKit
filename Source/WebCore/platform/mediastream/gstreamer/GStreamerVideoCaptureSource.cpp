@@ -52,7 +52,7 @@ static void initializeGStreamerDebug()
     });
 }
 
-class GStreamerVideoCaptureSourceFactory final : public RealtimeMediaSource::VideoCaptureFactory {
+class GStreamerVideoCaptureSourceFactory final : public VideoCaptureFactory {
 public:
     CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
     {
@@ -60,9 +60,24 @@ public:
     }
 };
 
-RealtimeMediaSource::VideoCaptureFactory& libWebRTCVideoCaptureSourceFactory()
+VideoCaptureFactory& libWebRTCVideoCaptureSourceFactory()
 {
     static NeverDestroyed<GStreamerVideoCaptureSourceFactory> factory;
+    return factory.get();
+}
+
+class GStreamerDisplayCaptureSourceFactory final : public DisplayCaptureFactory {
+public:
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, const MediaConstraints*) final
+    {
+        // FIXME: Implement this.
+        return { };
+    }
+};
+
+DisplayCaptureFactory& libWebRTCDisplayCaptureSourceFactory()
+{
+    static NeverDestroyed<GStreamerDisplayCaptureSourceFactory> factory;
     return factory.get();
 }
 
@@ -84,9 +99,14 @@ CaptureSourceOrError GStreamerVideoCaptureSource::create(const String& deviceID,
     return CaptureSourceOrError(WTFMove(source));
 }
 
-RealtimeMediaSource::VideoCaptureFactory& GStreamerVideoCaptureSource::factory()
+VideoCaptureFactory& GStreamerVideoCaptureSource::factory()
 {
     return libWebRTCVideoCaptureSourceFactory();
+}
+
+DisplayCaptureFactory& GStreamerVideoCaptureSource::displayFactory()
+{
+    return libWebRTCDisplayCaptureSourceFactory();
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(const String& deviceID, const String& name, const gchar *source_factory)

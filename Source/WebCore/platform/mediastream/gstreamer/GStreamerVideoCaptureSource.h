@@ -32,6 +32,9 @@ public:
     static CaptureSourceOrError create(const String& deviceID, const MediaConstraints*);
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
+    // FIXME: Implement this.
+    WEBCORE_EXPORT static DisplayCaptureFactory& displayFactory(); 
+
     const RealtimeMediaSourceCapabilities& capabilities() override;
     const RealtimeMediaSourceSettings& settings() override;
     GstElement* pipeline() { return m_capturer->pipeline(); }

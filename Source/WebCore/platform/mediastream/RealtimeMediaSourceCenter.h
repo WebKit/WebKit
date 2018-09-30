@@ -37,6 +37,7 @@
 #include "ExceptionOr.h"
 #include "MediaStreamRequest.h"
 #include "RealtimeMediaSource.h"
+#include "RealtimeMediaSourceFactory.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
@@ -71,11 +72,13 @@ public:
     
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
-    virtual void setAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) { }
-    virtual void unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) { }
-    WEBCORE_EXPORT virtual RealtimeMediaSource::AudioCaptureFactory& audioFactory() = 0;
+    virtual void setAudioFactory(AudioCaptureFactory&) { }
+    virtual void unsetAudioFactory(AudioCaptureFactory&) { }
+    WEBCORE_EXPORT virtual AudioCaptureFactory& audioFactory() = 0;
 
-    virtual RealtimeMediaSource::VideoCaptureFactory& videoFactory() = 0;
+    virtual VideoCaptureFactory& videoFactory() = 0;
+
+    virtual DisplayCaptureFactory& displayCaptureFactory() = 0;
 
     virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
     virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;

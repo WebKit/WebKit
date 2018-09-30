@@ -38,25 +38,26 @@ class RealtimeMediaSourceCenterLibWebRTC final : public RealtimeMediaSourceCente
 public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenterLibWebRTC& singleton();
 
-    static RealtimeMediaSource::VideoCaptureFactory& videoCaptureSourceFactory();
-    static RealtimeMediaSource::AudioCaptureFactory& audioCaptureSourceFactory();
+    static VideoCaptureFactory& videoCaptureSourceFactory();
+    static AudioCaptureFactory& audioCaptureSourceFactory();
 
 private:
     friend class NeverDestroyed<RealtimeMediaSourceCenterLibWebRTC>;
     RealtimeMediaSourceCenterLibWebRTC();
     ~RealtimeMediaSourceCenterLibWebRTC();
 
-    void setAudioFactory(RealtimeMediaSource::AudioCaptureFactory& factory) final { m_audioFactoryOverride = &factory; }
-    void unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) final { m_audioFactoryOverride = nullptr; }
+    void setAudioFactory(AudioCaptureFactory& factory) final { m_audioFactoryOverride = &factory; }
+    void unsetAudioFactory(AudioCaptureFactory&) final { m_audioFactoryOverride = nullptr; }
 
-    RealtimeMediaSource::AudioCaptureFactory& audioFactory() final;
-    RealtimeMediaSource::VideoCaptureFactory& videoFactory() final;
+    AudioCaptureFactory& audioFactory() final;
+    VideoCaptureFactory& videoFactory() final;
+    DisplayCaptureFactory& displayCaptureFactory() final;
 
     CaptureDeviceManager& audioCaptureDeviceManager() final;
     CaptureDeviceManager& videoCaptureDeviceManager() final;
     CaptureDeviceManager& displayCaptureDeviceManager() final;
 
-    RealtimeMediaSource::AudioCaptureFactory* m_audioFactoryOverride { nullptr };
+    AudioCaptureFactory* m_audioFactoryOverride { nullptr };
 };
 
 } // namespace WebCore

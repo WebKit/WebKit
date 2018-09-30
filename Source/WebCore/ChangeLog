@@ -1,3 +1,78 @@
+2018-09-30  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Use display-specific capture factories
+        https://bugs.webkit.org/show_bug.cgi?id=190043
+        <rdar://problem/44834412>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no change in functionality.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::AudioCaptureFactory::~AudioCaptureFactory): Deleted.
+        (WebCore::RealtimeMediaSource::VideoCaptureFactory::~VideoCaptureFactory): Deleted.
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::createMediaStream):
+        (WebCore::RealtimeMediaSourceCenter::getDisplayMediaDevices):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        (WebCore::RealtimeMediaSourceCenter::setAudioFactory):
+        (WebCore::RealtimeMediaSourceCenter::unsetAudioFactory):
+        * platform/mediastream/RealtimeMediaSourceFactory.cpp: Added.
+        (WebCore::SingleSourceFactory::setActiveSource):
+        (WebCore::SingleSourceFactory::unsetActiveSource):
+        * platform/mediastream/RealtimeMediaSourceFactory.h: Added.
+        (WebCore::SingleSourceFactory::activeSource):
+        (WebCore::VideoCaptureFactory::setVideoCapturePageState):
+        (WebCore::DisplayCaptureFactory::setDisplayCapturePageState):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::libWebRTCVideoCaptureSourceFactory):
+        (WebCore::libWebRTCDisplayCaptureSourceFactory):
+        (WebCore::GStreamerVideoCaptureSource::factory):
+        (WebCore::GStreamerVideoCaptureSource::displayFactory):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp:
+        (WebCore::RealtimeMediaSourceCenterLibWebRTC::audioCaptureSourceFactory):
+        (WebCore::RealtimeMediaSourceCenterLibWebRTC::audioFactory):
+        (WebCore::RealtimeMediaSourceCenterLibWebRTC::videoFactory):
+        (WebCore::RealtimeMediaSourceCenterLibWebRTC::displayCaptureFactory):
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::~AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::factory):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::videoCaptureSourceFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::displayCaptureSourceFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::audioCaptureSourceFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::audioFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::videoFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::displayCaptureFactory):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::~MockRealtimeAudioSource):
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        (): Deleted.
+        (WebCore::mockAudioCaptureSourceFactory): Deleted.
+        (WebCore::MockRealtimeAudioSource::factory): Deleted.
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeVideoSourceFactory::setVideoCapturePageState):
+        (WebCore::MockRealtimeMediaSourceCenter::audioFactory):
+        (WebCore::MockRealtimeMediaSourceCenter::videoFactory):
+        (WebCore::MockRealtimeMediaSourceCenter::displayCaptureFactory):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (): Deleted.
+        (WebCore::MockRealtimeVideoSourceFactory::setVideoCapturePageState): Deleted.
+        (WebCore::mockVideoCaptureSourceFactory): Deleted.
+        (WebCore::MockRealtimeVideoSource::factory): Deleted.
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2018-09-29  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Properly align items next to collapsed tracks with gutters

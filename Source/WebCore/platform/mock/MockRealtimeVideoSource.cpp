@@ -48,40 +48,6 @@
 
 namespace WebCore {
 
-class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::VideoCaptureFactory
-{
-public:
-    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
-    {
-        ASSERT(MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()));
-
-        switch (device.type()) {
-        case CaptureDevice::DeviceType::Camera:
-        case CaptureDevice::DeviceType::Screen:
-        case CaptureDevice::DeviceType::Window:
-            return MockRealtimeVideoSource::create(device.persistentId(), device.label(), constraints);
-            break;
-        case CaptureDevice::DeviceType::Application:
-        case CaptureDevice::DeviceType::Browser:
-        case CaptureDevice::DeviceType::Microphone:
-        case CaptureDevice::DeviceType::Unknown:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-
-        return { };
-    }
-
-#if PLATFORM(IOS)
-private:
-    void setVideoCapturePageState(bool interrupted, bool pageMuted)
-    {
-        if (activeSource())
-            activeSource()->setInterrupted(interrupted, pageMuted);
-    }
-#endif
-};
-
 #if !PLATFORM(MAC) && !PLATFORM(IOS) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
 CaptureSourceOrError MockRealtimeVideoSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
 {
@@ -97,17 +63,6 @@ CaptureSourceOrError MockRealtimeVideoSource::create(const String& deviceID, con
     return CaptureSourceOrError(WTFMove(source));
 }
 #endif
-
-static MockRealtimeVideoSourceFactory& mockVideoCaptureSourceFactory()
-{
-    static NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
-    return factory.get();
-}
-
-RealtimeMediaSource::VideoCaptureFactory& MockRealtimeVideoSource::factory()
-{
-    return mockVideoCaptureSourceFactory();
-}
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(const String& deviceID, const String& name)
     : RealtimeVideoSource(deviceID, name)

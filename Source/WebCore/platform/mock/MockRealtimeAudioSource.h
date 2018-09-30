@@ -34,6 +34,7 @@
 
 #include "ImageBuffer.h"
 #include "MockMediaDevice.h"
+#include "RealtimeMediaSourceFactory.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -42,8 +43,6 @@ class MockRealtimeAudioSource : public RealtimeMediaSource {
 public:
 
     static CaptureSourceOrError create(const String& deviceID, const String& name, const MediaConstraints*);
-
-    static AudioCaptureFactory& factory();
 
     virtual ~MockRealtimeAudioSource();
 

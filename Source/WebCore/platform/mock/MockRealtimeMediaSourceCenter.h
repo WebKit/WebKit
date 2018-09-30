@@ -45,9 +45,6 @@ public:
     WEBCORE_EXPORT static void removeDevice(const String& persistentId);
     WEBCORE_EXPORT static void resetDevices();
 
-    static RealtimeMediaSource::VideoCaptureFactory& videoCaptureSourceFactory() { return MockRealtimeVideoSource::factory(); }
-    static RealtimeMediaSource::AudioCaptureFactory& audioCaptureSourceFactory() { return MockRealtimeAudioSource::factory(); }
-
     static Vector<CaptureDevice>& audioDevices();
     static Vector<CaptureDevice>& videoDevices();
     static Vector<CaptureDevice>& displayDevices();
@@ -61,8 +58,9 @@ private:
 
     static MockRealtimeMediaSourceCenter& singleton();
 
-    RealtimeMediaSource::AudioCaptureFactory& audioFactory() final { return MockRealtimeAudioSource::factory(); }
-    RealtimeMediaSource::VideoCaptureFactory& videoFactory() final { return MockRealtimeVideoSource::factory(); }
+    AudioCaptureFactory& audioFactory() final;
+    VideoCaptureFactory& videoFactory() final;
+    DisplayCaptureFactory& displayCaptureFactory() final;
 
     CaptureDeviceManager& audioCaptureDeviceManager() final { return m_audioCaptureDeviceManager; }
     CaptureDeviceManager& videoCaptureDeviceManager() final { return m_videoCaptureDeviceManager; }

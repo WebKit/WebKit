@@ -42,19 +42,6 @@
 
 namespace WebCore {
 
-class MockRealtimeAudioSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
-{
-public:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
-    {
-        for (auto& mockDevice : MockRealtimeMediaSourceCenter::audioDevices()) {
-            if (mockDevice.persistentId() == device.persistentId())
-                return MockRealtimeAudioSource::create(mockDevice.persistentId(), mockDevice.label(), constraints);
-        }
-        return { };
-    }
-};
-
 #if !PLATFORM(MAC) && !PLATFORM(IOS) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
 CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
 {
@@ -71,17 +58,6 @@ CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID, con
 }
 #endif
 
-static MockRealtimeAudioSourceFactory& mockAudioCaptureSourceFactory()
-{
-    static NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
-    return factory.get();
-}
-
-RealtimeMediaSource::AudioCaptureFactory& MockRealtimeAudioSource::factory()
-{
-    return mockAudioCaptureSourceFactory();
-}
-
 MockRealtimeAudioSource::MockRealtimeAudioSource(const String& deviceID, const String& name)
     : RealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Audio, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
@@ -94,7 +70,7 @@ MockRealtimeAudioSource::MockRealtimeAudioSource(const String& deviceID, const S
 MockRealtimeAudioSource::~MockRealtimeAudioSource()
 {
 #if PLATFORM(IOS)
-    MockRealtimeMediaSourceCenter::audioCaptureSourceFactory().unsetActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().audioFactory().unsetActiveSource(*this);
 #endif
 }
 
@@ -143,7 +119,7 @@ void MockRealtimeAudioSource::settingsDidChange(OptionSet<RealtimeMediaSourceSet
 void MockRealtimeAudioSource::startProducingData()
 {
 #if PLATFORM(IOS)
-    MockRealtimeMediaSourceCenter::audioCaptureSourceFactory().setActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().audioFactory().setActiveSource(*this);
 #endif
 
     if (!sampleRate())

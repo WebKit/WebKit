@@ -100,7 +100,12 @@ void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& comple
     }
 
     if (videoDevice) {
-        auto videoSource = videoFactory().createVideoCaptureSource(WTFMove(videoDevice), &request.videoConstraints);
+        CaptureSourceOrError videoSource;
+        if (videoDevice.type() == CaptureDevice::DeviceType::Camera)
+            videoSource = videoFactory().createVideoCaptureSource(WTFMove(videoDevice), &request.videoConstraints);
+        else
+            videoSource = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), &request.videoConstraints);
+
         if (videoSource)
             videoSources.append(videoSource.source());
         else {
@@ -217,7 +222,7 @@ void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest&
         if (!device.enabled())
             return;
 
-        auto sourceOrError = videoFactory().createVideoCaptureSource(device, { });
+        auto sourceOrError = displayCaptureFactory().createDisplayCaptureSource(device, { });
         if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
             diaplayDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
 

@@ -41,6 +41,7 @@
 #include "MediaSample.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
+#include "RealtimeMediaSourceFactory.h"
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -83,55 +84,6 @@ public:
 
         // May be called on a background thread.
         virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) { }
-    };
-
-    class SingleSourceFactory {
-    public:
-        void setActiveSource(RealtimeMediaSource& source)
-        {
-            if (m_activeSource == &source)
-                return;
-            if (m_activeSource && m_activeSource->isProducingData())
-                m_activeSource->setMuted(true);
-            m_activeSource = &source;
-        }
-
-        void unsetActiveSource(RealtimeMediaSource& source)
-        {
-            if (m_activeSource == &source)
-                m_activeSource = nullptr;
-        }
-
-        RealtimeMediaSource* activeSource() { return m_activeSource; }
-    private:
-        RealtimeMediaSource* m_activeSource { nullptr };
-    };
-
-    class AudioCaptureFactory
-#if PLATFORM(IOS)
-        : public RealtimeMediaSource::SingleSourceFactory
-#endif
-    {
-    public:
-        virtual ~AudioCaptureFactory();
-        virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
-
-    protected:
-        AudioCaptureFactory() = default;
-    };
-
-    class VideoCaptureFactory
-#if PLATFORM(IOS)
-        : public RealtimeMediaSource::SingleSourceFactory
-#endif
-    {
-    public:
-        virtual ~VideoCaptureFactory();
-        virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
-        virtual void setVideoCapturePageState(bool, bool) { }
-
-    protected:
-        VideoCaptureFactory() = default;
     };
 
     virtual ~RealtimeMediaSource() = default;

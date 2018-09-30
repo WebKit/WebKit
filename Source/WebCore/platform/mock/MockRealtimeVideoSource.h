@@ -36,6 +36,7 @@
 #include "FontCascade.h"
 #include "ImageBuffer.h"
 #include "MockMediaDevice.h"
+#include "RealtimeMediaSourceFactory.h"
 #include "RealtimeVideoSource.h"
 #include <wtf/RunLoop.h>
 
@@ -48,8 +49,6 @@ class MockRealtimeVideoSource : public RealtimeVideoSource {
 public:
 
     static CaptureSourceOrError create(const String& deviceID, const String& name, const MediaConstraints*);
-
-    static VideoCaptureFactory& factory();
 
 protected:
     MockRealtimeVideoSource(const String& deviceID, const String& name);
