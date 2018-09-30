@@ -1,3 +1,21 @@
+2018-09-30  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] BigInt.proptotype.toString is broken when radix is power of 2
+        https://bugs.webkit.org/show_bug.cgi?id=190033
+
+        Reviewed by Yusuke Suzuki.
+
+        The implementation of JSBigInt::toStringToGeneric doesn't handle power
+        of 2 radix when JSBigInt length is >= 2. To handle such cases, we
+        implemented JSBigInt::toStringBasePowerOfTwo that follows the
+        algorithm that groups bits using mask of (2 ^ n) - 1 to extract every
+        digit.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::toString):
+        (JSC::JSBigInt::toStringBasePowerOfTwo):
+        * runtime/JSBigInt.h:
+
 2018-09-28  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "&"
