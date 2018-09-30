@@ -122,7 +122,7 @@ AudioNodeOutput* AudioNode::output(unsigned i)
     return nullptr;
 }
 
-ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
+ExceptionOr<AudioNode&> AudioNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
 {
     ASSERT(isMainThread()); 
     AudioContext::AutoLocker locker(context());
@@ -144,7 +144,7 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
     // Let context know that a connection has been made.
     context().incrementConnectionCount();
 
-    return { };
+    return destination;
 }
 
 ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)

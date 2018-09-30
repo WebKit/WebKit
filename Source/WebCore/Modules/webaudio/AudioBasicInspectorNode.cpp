@@ -49,7 +49,7 @@ void AudioBasicInspectorNode::pullInputs(size_t framesToProcess)
     input(0)->pull(output(0)->bus(), framesToProcess);
 }
 
-ExceptionOr<void> AudioBasicInspectorNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
+ExceptionOr<AudioNode&> AudioBasicInspectorNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
 {
     ASSERT(isMainThread());
 

@@ -1,3 +1,12 @@
+2018-09-30  Walker Henderson  <wjahenderson@gmail.com>
+
+        AudioNode.connect should return passed destination node
+        https://bugs.webkit.org/show_bug.cgi?id=188834
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-connect-return-value-expected.txt:
+
 2018-09-29  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Properly align items next to collapsed tracks with gutters

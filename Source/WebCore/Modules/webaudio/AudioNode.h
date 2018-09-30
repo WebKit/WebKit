@@ -123,7 +123,7 @@ public:
     AudioNodeOutput* output(unsigned);
 
     // Called from main thread by corresponding JavaScript methods.
-    virtual ExceptionOr<void> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex);
+    virtual ExceptionOr<AudioNode&> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex);
     ExceptionOr<void> connect(AudioParam&, unsigned outputIndex);
     virtual ExceptionOr<void> disconnect(unsigned outputIndex);
 
