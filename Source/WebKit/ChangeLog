@@ -1,3 +1,14 @@
+2018-10-01  Olivier Blin  <olivier.blin@softathome.com>
+
+        [WPE] Remove WebKit2InspectorGResourceBundle.xml
+        https://bugs.webkit.org/show_bug.cgi?id=190132
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/wpe/WebKit2InspectorGResourceBundle.xml: Removed.
+        This is unused since legacy INSPECTOR_SERVER implementation has
+        been removed in r217924.
+
 2018-09-30  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Clean up RealtimeMediaSource settings change handling
