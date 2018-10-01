@@ -1,3 +1,55 @@
+2018-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use Position instead of Range in createMarkupInternal
+        https://bugs.webkit.org/show_bug.cgi?id=190107
+
+        Reviewed by Darin Adler.
+
+        Use two Position's indicating start and end instead of Range in createMarkupInternal and StylizedMarkupAccumulator
+        in order to support copy & paste across shadow boundaries in the bug 157443. This patch also removes the use of
+        Range in MarkupAccumulator since all uses of range is via StylizedMarkupAccumulator.
+
+        Also renamed createMarkupInternal to serializePreservingVisualAppearanceInternal to match the rename in r236612.
+
+        * dom/Position.cpp:
+        (WebCore::Position::firstNode const):  Added.
+        * dom/Position.h:
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::MarkupAccumulator): No longer takes Range.
+        (WebCore::MarkupAccumulator::appendText): Removed the code to truncate string at the boundary points of the range.
+        * editing/MarkupAccumulator.h:
+        (WebCore::MarkupAccumulator): Made this class non-copyable.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator): Now takes and stores two positions.
+
+        (WebCore::StyledMarkupAccumulator::appendText): Use textContentRespectingRange in the case annotation is disabled
+        instead of calling to MarkupAccumulator::appendText, which no longer respects boundary offsets.
+
+        (WebCore::StyledMarkupAccumulator::renderedTextRespectingRange): Renamed from renderedText. Updated to respect
+        boundary offsets defined by m_start and m_end Positions instead of m_range Range.
+
+        (WebCore::StyledMarkupAccumulator::textContentRespectingRange): Renamed from stringValueForRange. Ditto.
+
+        (WebCore::StyledMarkupAccumulator::serializeNodes): Now computes startNode and pastEnd nodes from start and end
+        Positions. Note that the end position is always the next node in the tree order  for a character node
+        and computeNodeAfterPosition returns nullptr for a character data.
+
+        (WebCore::highestAncestorToWrapMarkup): Now takes two positions instead of a range.
+
+        (WebCore::serializePreservingVisualAppearanceInternal): Renamed from createMarkupInternal. Removed the obsolete
+        comments which were added for DOMRange in WebKitLegacy.
+
+        (WebCore::serializePreservingVisualAppearance):
+
+        (WebCore::sanitizedMarkupForFragmentInDocument): Create positions instead of a range to pass to
+        serializePreservingVisualAppearanceInternal.
+
+        (WebCore::serializeFragment):
+
+        * editing/markup.h:
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::SerializerMarkupAccumulator): Removed the unnecessary WebCore namespace qualifier.
+
 2018-09-30  Walker Henderson  <wjahenderson@gmail.com>
 
         AudioNode.connect should return passed destination node

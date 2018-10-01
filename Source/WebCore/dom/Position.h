@@ -103,6 +103,8 @@ public:
         return offsetForPositionAfterAnchor();
     }
 
+    RefPtr<Node> firstNode() const;
+
     // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
     Node* computeNodeBeforePosition() const;
     Node* computeNodeAfterPosition() const;

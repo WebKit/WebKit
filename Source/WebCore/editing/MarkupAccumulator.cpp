@@ -116,12 +116,10 @@ void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result,
         appendCharactersReplacingEntitiesInternal<UChar>(result, source, offset, length, entityMask);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, ResolveURLs resolveURLs, const Range* range, SerializationSyntax serializationSyntax)
+MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, ResolveURLs resolveURLs, SerializationSyntax serializationSyntax)
     : m_nodes(nodes)
-    , m_range(range)
     , m_resolveURLs(resolveURLs)
     , m_serializationSyntax(serializationSyntax)
-    , m_prefixLevel(0)
 {
 }
 
@@ -341,19 +339,7 @@ EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const
 void MarkupAccumulator::appendText(StringBuilder& result, const Text& text)
 {
     const String& textData = text.data();
-    unsigned start = 0;
-    unsigned length = textData.length();
-
-    if (m_range) {
-        if (&text == &m_range->endContainer())
-            length = m_range->endOffset();
-        if (&text == &m_range->startContainer()) {
-            start = m_range->startOffset();
-            length -= start;
-        }
-    }
-
-    appendCharactersReplacingEntities(result, textData, start, length, entityMaskForText(text));
+    appendCharactersReplacingEntities(result, textData, 0, textData.length(), entityMaskForText(text));
 }
 
 static void appendComment(StringBuilder& result, const String& comment)

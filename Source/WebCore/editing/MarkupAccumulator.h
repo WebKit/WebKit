@@ -56,10 +56,10 @@ enum EntityMask {
     EntityMaskInHTMLAttributeValue = EntityAmp | EntityQuot | EntityNbsp,
 };
 
-// FIXME: Noncopyable?
 class MarkupAccumulator {
+    WTF_MAKE_NONCOPYABLE(MarkupAccumulator);
 public:
-    MarkupAccumulator(Vector<Node*>*, ResolveURLs, const Range* = nullptr, SerializationSyntax = SerializationSyntax::HTML);
+    MarkupAccumulator(Vector<Node*>*, ResolveURLs, SerializationSyntax = SerializationSyntax::HTML);
     virtual ~MarkupAccumulator();
 
     String serializeNodes(Node& targetNode, SerializedNodes, Vector<QualifiedName>* tagNamesToSkip = nullptr);
@@ -109,7 +109,6 @@ protected:
     EntityMask entityMaskForText(const Text&) const;
 
     Vector<Node*>* const m_nodes;
-    const Range* const m_range;
 
 private:
     String resolveURLIfNeeded(const Element&, const String&) const;
@@ -121,7 +120,7 @@ private:
     StringBuilder m_markup;
     const ResolveURLs m_resolveURLs;
     SerializationSyntax m_serializationSyntax;
-    unsigned m_prefixLevel;
+    unsigned m_prefixLevel { 0 };
 };
 
 } // namespace WebCore

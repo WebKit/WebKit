@@ -38,6 +38,7 @@
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
+#include "NodeTraversal.h"
 #include "PositionIterator.h"
 #include "RenderBlock.h"
 #include "RenderFlexibleBox.h"
@@ -245,6 +246,20 @@ Position Position::parentAnchoredEquivalent() const
     }
 
     return { containerNode(), computeOffsetInContainerNode(), PositionIsOffsetInAnchor };
+}
+
+RefPtr<Node> Position::firstNode() const
+{
+    auto container = makeRefPtr(containerNode());
+    if (!container)
+        return nullptr;
+    if (is<CharacterData>(*container))
+        return container;
+    if (auto* node = computeNodeAfterPosition())
+        return node;
+    if (!computeOffsetInContainerNode())
+        return container;
+    return NodeTraversal::nextSkippingChildren(*container);
 }
 
 Node* Position::computeNodeBeforePosition() const
