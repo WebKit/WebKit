@@ -916,11 +916,13 @@ void MediaPlayerPrivateGStreamerBase::flushCurrentBuffer()
     GST_DEBUG_OBJECT(pipeline(), "Flushing video sample");
     auto sampleLocker = holdLock(m_sampleMutex);
 
-    // Replace by a new sample having only the caps, so this dummy sample is still useful to get the dimensions.
-    // This prevents resizing problems when the video changes its quality and a DRAIN is performed.
-    const GstStructure* info = gst_sample_get_info(m_sample.get());
-    m_sample = adoptGRef(gst_sample_new(nullptr, gst_sample_get_caps(m_sample.get()),
-        gst_sample_get_segment(m_sample.get()), info ? gst_structure_copy(info) : nullptr));
+    if (m_sample) {
+        // Replace by a new sample having only the caps, so this dummy sample is still useful to get the dimensions.
+        // This prevents resizing problems when the video changes its quality and a DRAIN is performed.
+        const GstStructure* info = gst_sample_get_info(m_sample.get());
+        m_sample = adoptGRef(gst_sample_new(nullptr, gst_sample_get_caps(m_sample.get()),
+            gst_sample_get_segment(m_sample.get()), info ? gst_structure_copy(info) : nullptr));
+    }
 
     auto proxyOperation =
         [](TextureMapperPlatformLayerProxy& proxy)
@@ -1076,6 +1078,11 @@ GstElement* MediaPlayerPrivateGStreamerBase::createGLAppSink()
 
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(appsink, "sink"));
     gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH), [] (GstPad*, GstPadProbeInfo* info,  gpointer userData) -> GstPadProbeReturn {
+        // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
+        // pipeline has to be drained before a frame with the new resolution can be decoded.
+        // In this context, it's important that we don't hold references to any previous frame
+        // (e.g. m_sample) so that decoding can continue.
+        // We are also not supposed to keep the original frame after a flush.
         if (info->type & GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM) {
             if (GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) != GST_QUERY_DRAIN)
                 return GST_PAD_PROBE_OK;

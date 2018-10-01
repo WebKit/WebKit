@@ -1,3 +1,22 @@
+2018-10-01  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Fix abort in gst_sample_get_info()
+        https://bugs.webkit.org/show_bug.cgi?id=190135
+
+        Reviewed by Philippe Normand.
+
+        A flush can occur before any frame has finished decoding -- especially
+        in tests, where actions on the player often occur in quick succession.
+
+        Therefore, the code must not assume by the time a flush occurs any
+        frame has reached the sink. This patch fixes a case when such wrong
+        assumption was causing gst_sample_get_info() to abort (crashing
+        WebKit).
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createGLAppSink):
+
 2018-10-01  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE] fix buffer over-read in RenderThemeWPE::mediaControlsStyleSheet()
