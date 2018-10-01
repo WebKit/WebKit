@@ -160,14 +160,32 @@ bool parseContentType(const String& contentType, ReceiverType& receiver)
         return false;
     }
 
+    unsigned contentTypeStart = index;
+    auto typeRange = parseToken(contentType, index);
+    if (!typeRange.second) {
+        LOG_ERROR("Invalid Content-Type, invalid type value.");
+        return false;
+    }
+
+    if (contentType[index++] != '/') {
+        LOG_ERROR("Invalid Content-Type, missing '/'.");
+        return false;
+    }
+
+    auto subTypeRange = parseToken(contentType, index);
+    if (!subTypeRange.second) {
+        LOG_ERROR("Invalid Content-Type, invalid subtype value.");
+        return false;
+    }
+
     // There should not be any quoted strings until we reach the parameters.
-    size_t semiColonIndex = contentType.find(';', index);
+    size_t semiColonIndex = contentType.find(';', contentTypeStart);
     if (semiColonIndex == notFound) {
-        receiver.setContentType(SubstringRange(index, contentTypeLength - index));
+        receiver.setContentType(SubstringRange(contentTypeStart, contentTypeLength - contentTypeStart));
         return true;
     }
 
-    receiver.setContentType(SubstringRange(index, semiColonIndex - index));
+    receiver.setContentType(SubstringRange(contentTypeStart, semiColonIndex - contentTypeStart));
     index = semiColonIndex + 1;
     while (true) {
         skipSpaces(contentType, index);

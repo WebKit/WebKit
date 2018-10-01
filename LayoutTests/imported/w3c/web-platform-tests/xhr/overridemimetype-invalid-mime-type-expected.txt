@@ -1,5 +1,5 @@
 
 PASS Bogus MIME type does not override encoding 
-FAIL Bogus MIME type does not override encoding, 2 assert_equals: expected "ÿ" but got "\x1a"
+PASS Bogus MIME type does not override encoding, 2 
 PASS Bogus MIME type does override MIME type 
 

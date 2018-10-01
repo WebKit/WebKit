@@ -1,3 +1,12 @@
+2018-10-01  Rob Buis  <rbuis@igalia.com>
+
+        Align XMLHttpRequest's overrideMimeType() with the standard
+        https://bugs.webkit.org/show_bug.cgi?id=169276
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/xhr/overridemimetype-invalid-mime-type-expected.txt:
+
 2018-10-01  Chris Dumez  <cdumez@apple.com>
 
         Make crossOriginObject.then undefined for promises

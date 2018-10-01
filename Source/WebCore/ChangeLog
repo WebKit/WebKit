@@ -1,3 +1,29 @@
+2018-10-01  Rob Buis  <rbuis@igalia.com>
+
+        Align XMLHttpRequest's overrideMimeType() with the standard
+        https://bugs.webkit.org/show_bug.cgi?id=169276
+
+        Reviewed by Chris Dumez.
+
+        Implement the overrideMimeType() as specified in that standard, i.e.
+        add a check that the passed mime type is valid and if not fallback
+        to application/octet-stream.
+
+        In order for this patch to have any effect, I went ahead and
+        made an improvement to the ContentType parsing, parseContentType now
+        will reject mime types that do not match the type / subtype format, I
+        believe this is required by both RFC2045 and mimesniff specs.
+
+        This behavior matches Chrome and Firefox.
+
+        Test: web-platform-tests/xhr/overridemimetype-invalid-mime-type.htm
+
+        * platform/network/ParsedContentType.cpp:
+        (WebCore::parseContentType):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::overrideMimeType):
+
+
 2018-10-01  Chris Dumez  <cdumez@apple.com>
 
         Make crossOriginObject.then undefined for promises

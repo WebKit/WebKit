@@ -776,12 +776,15 @@ void XMLHttpRequest::dropProtection()
     unsetPendingActivity(this);
 }
 
-ExceptionOr<void> XMLHttpRequest::overrideMimeType(const String& override)
+ExceptionOr<void> XMLHttpRequest::overrideMimeType(const String& mimeType)
 {
     if (readyState() == LOADING || readyState() == DONE)
         return Exception { InvalidStateError };
 
-    m_mimeTypeOverride = override;
+    m_mimeTypeOverride = "application/octet-stream"_s;
+    if (isValidContentType(mimeType))
+        m_mimeTypeOverride = mimeType;
+
     return { };
 }
 
