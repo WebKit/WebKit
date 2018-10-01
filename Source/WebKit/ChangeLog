@@ -1,5 +1,13 @@
 2018-10-01  Alex Christensen  <achristensen@webkit.org>
 
+        Fix an internal build after r236665
+        https://bugs.webkit.org/show_bug.cgi?id=189850
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Make WKNSURLAuthenticationChallenge.h a private header.
+
+2018-10-01  Alex Christensen  <achristensen@webkit.org>
+
         URL should not use TextEncoding internally
         https://bugs.webkit.org/show_bug.cgi?id=190111
 
