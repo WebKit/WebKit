@@ -1,3 +1,30 @@
+2018-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize RenderStyle::diff() and clean up the code
+        https://bugs.webkit.org/show_bug.cgi?id=190104
+
+        Reviewed by Dan Bernstein.
+
+        RenderStyle::changeRequiresLayout() and related should only check values on 
+        m_rareNonInheritedData and m_rareInheritedData after checking for pointer equality.
+        To reduce the chances of future changes regressing this, move code comparing values
+        on StyleRare[Non]InheritedData into dedication functions.
+        
+        In addition, the transform comparison double-compared the transformOperations,
+        because m_rareNonInheritedData->transform != other.m_rareNonInheritedData->transform
+        is a deep comparison, and it was followed by *m_rareNonInheritedData->transform != *other.m_rareNonInheritedData->transform.
+        Change the first to be a pointer comparison.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareNonInheritedDataChangeRequiresLayout):
+        (WebCore::rareInheritedDataChangeRequiresLayout):
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        (WebCore::rareNonInheritedDataChangeRequiresLayerRepaint):
+        (WebCore::RenderStyle::changeRequiresLayerRepaint const):
+        (WebCore::rareNonInheritedDataChangeRequiresRepaint):
+        (WebCore::rareInheritedDataChangeRequiresRepaint):
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+
 2018-10-01  Alex Christensen  <achristensen@webkit.org>
 
         URL should not use TextEncoding internally
