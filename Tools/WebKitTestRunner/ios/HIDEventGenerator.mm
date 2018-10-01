@@ -952,10 +952,14 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         return kHIDUsage_KeyboardDownArrow;
     if ([key isEqualToString:@"delete"])
         return kHIDUsage_KeyboardDeleteOrBackspace;
+    if ([key isEqualToString:@"forwardDelete"])
+        return kHIDUsage_KeyboardDeleteForward;
     if ([key isEqualToString:@"leftCommand"])
         return kHIDUsage_KeyboardLeftGUI;
     if ([key isEqualToString:@"rightCommand"])
         return kHIDUsage_KeyboardRightGUI;
+    if ([key isEqualToString:@"clear"]) // Num Lock / Clear
+        return kHIDUsage_KeypadNumLock;
     // The simulator keyboard interprets both left and right modifier keys using the left version of the usage code.
     if ([key isEqualToString:@"leftControl"] || [key isEqualToString:@"rightControl"])
         return kHIDUsage_KeyboardLeftControl;

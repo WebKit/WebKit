@@ -35,21 +35,8 @@
 #import "WAKAppKitStubs.h"
 #import "WebEvent.h"
 #import "WindowsKeyboardCodes.h"
-#import <UIKit/UIKit.h>
 #import <wtf/Optional.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/WallTime.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputUpArrow, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputDownArrow, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputLeftArrow, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputRightArrow, NSString *)
-
-#define UIKeyInputUpArrow getUIKeyInputUpArrow()
-#define UIKeyInputDownArrow getUIKeyInputDownArrow()
-#define UIKeyInputLeftArrow getUIKeyInputLeftArrow()
-#define UIKeyInputRightArrow getUIKeyInputRightArrow()
 
 namespace WebCore {
 
@@ -97,32 +84,6 @@ static PlatformEvent::Type mouseEventType(WebEvent *event)
     }
 }
 
-static std::optional<int> convertSpecialKeyToCharCode(NSString *keyString)
-{
-    if ([keyString isEqualToString:UIKeyInputUpArrow])
-        return NSUpArrowFunctionKey;
-    if ([keyString isEqualToString:UIKeyInputDownArrow])
-        return NSDownArrowFunctionKey;
-    if ([keyString isEqualToString:UIKeyInputLeftArrow])
-        return NSLeftArrowFunctionKey;
-    if ([keyString isEqualToString:UIKeyInputRightArrow])
-        return NSRightArrowFunctionKey;
-    return std::nullopt;
-}
-
-int keyCodeForEvent(WebEvent *event)
-{
-    if ([event.characters isEqualToString:UIKeyInputUpArrow])
-        return VK_UP;
-    if ([event.characters isEqualToString:UIKeyInputDownArrow])
-        return VK_DOWN;
-    if ([event.characters isEqualToString:UIKeyInputLeftArrow])
-        return VK_LEFT;
-    if ([event.characters isEqualToString:UIKeyInputRightArrow])
-        return VK_RIGHT;
-    return event.keyCode;
-}
-
 class PlatformMouseEventBuilder : public PlatformMouseEvent {
 public:
     PlatformMouseEventBuilder(WebEvent *event)
@@ -167,8 +128,6 @@ PlatformWheelEvent PlatformEventFactory::createPlatformWheelEvent(WebEvent *even
 String keyIdentifierForKeyEvent(WebEvent *event)
 {
     NSString *characters = event.charactersIgnoringModifiers;
-    if (auto specialKeyCharCode = convertSpecialKeyToCharCode(characters))
-        return keyIdentifierForCharCode(*specialKeyCharCode);
     if ([characters length] != 1) {
         LOG(Events, "received an unexpected number of characters in key event: %u", [characters length]);
         return "Unidentified"_s;
@@ -185,8 +144,6 @@ String keyForKeyEvent(WebEvent *event)
     // "Dead" is defined here https://w3c.github.io/uievents-key/#keys-composition.
     if (!length)
         return "Dead"_s;
-    if (auto specialKeyCharCode = convertSpecialKeyToCharCode(characters))
-        return keyForCharCode(*specialKeyCharCode);
     if (length > 1)
         return characters;
     return keyForCharCode([characters characterAtIndex:0]);
@@ -195,7 +152,7 @@ String keyForKeyEvent(WebEvent *event)
 // https://w3c.github.io/uievents-code/
 String codeForKeyEvent(WebEvent *event)
 {
-    switch (keyCodeForEvent(event)) {
+    switch (event.keyCode) {
     // Keys in the alphanumeric section.
     case VK_OEM_3: return "Backquote"_s;
     case VK_OEM_5: return "Backslash"_s;
@@ -419,7 +376,7 @@ public:
         m_key = keyForKeyEvent(event);
         m_code = codeForKeyEvent(event);
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
-        m_windowsVirtualKeyCode = keyCodeForEvent(event);
+        m_windowsVirtualKeyCode = event.keyCode;
         m_autoRepeat = event.isKeyRepeating;
         m_isKeypad = false; // iOS does not distinguish the numpad. See <rdar://problem/7190835>.
         m_isSystemKey = false;

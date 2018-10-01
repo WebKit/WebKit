@@ -1,3 +1,23 @@
+2018-10-01  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Special keys are misidentified in DOM keyboard events
+        https://bugs.webkit.org/show_bug.cgi?id=189974
+
+        Reviewed by Wenson Hsieh.
+
+        Add tests to ensure that we do not regress key identification for special keys.
+
+        Update the expected results for test fast/events/ios/keydown-keyup-special-keys-in-non-editable-element.html
+        now that we correctly identify some more keys.
+
+        * fast/events/ios/keydown-keyup-arrow-keys-in-non-editable-element-expected.txt: Added.
+        * fast/events/ios/keydown-keyup-arrow-keys-in-non-editable-element.html: Added.
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element-expected.txt:
+        * fast/events/ios/keypress-keys-in-non-editable-element-expected.txt: Added.
+        * fast/events/ios/keypress-keys-in-non-editable-element.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.typeCharacter): Actually type the specified character in DumpRenderTree.
+
 2018-10-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r235948?): Layout Test media/media-controls-accessibility.html is a flaky failure

@@ -2,9 +2,11 @@ This tests that DOM keydown and keyup events are dispatched to a non-editable <b
 
 type: keydown, key: ArrowUp, code: ArrowUp, keyIdentifier: Up, keyCode: 38, charCode: 0, keyCode: 38, which: 38
 type: keyup, key: ArrowUp, code: ArrowUp, keyIdentifier: Up, keyCode: 38, charCode: 0, keyCode: 38, which: 38
+type: keydown, key: ArrowDown, code: ArrowDown, keyIdentifier: Down, keyCode: 40, charCode: 0, keyCode: 40, which: 40
 type: keyup, key: ArrowDown, code: ArrowDown, keyIdentifier: Down, keyCode: 40, charCode: 0, keyCode: 40, which: 40
 type: keydown, key: ArrowLeft, code: ArrowLeft, keyIdentifier: Left, keyCode: 37, charCode: 0, keyCode: 37, which: 37
 type: keyup, key: ArrowLeft, code: ArrowLeft, keyIdentifier: Left, keyCode: 37, charCode: 0, keyCode: 37, which: 37
+type: keydown, key: ArrowRight, code: ArrowRight, keyIdentifier: Right, keyCode: 39, charCode: 0, keyCode: 39, which: 39
 type: keyup, key: ArrowRight, code: ArrowRight, keyIdentifier: Right, keyCode: 39, charCode: 0, keyCode: 39, which: 39
 type: keydown, key: Backspace, code: Backspace, keyIdentifier: U+0008, keyCode: 8, charCode: 0, keyCode: 8, which: 8
 type: keyup, key: Dead, code: Backspace, keyIdentifier: Unidentified, keyCode: 8, charCode: 0, keyCode: 8, which: 8
@@ -12,8 +14,8 @@ type: keydown, key: , code: End, keyIdentifier: U+0004, keyCode: 35, charCode: 
 type: keyup, key: Dead, code: End, keyIdentifier: Unidentified, keyCode: 35, charCode: 0, keyCode: 35, which: 35
 type: keydown, key: Enter, code: Enter, keyIdentifier: Enter, keyCode: 13, charCode: 0, keyCode: 13, which: 13
 type: keyup, key: Dead, code: Enter, keyIdentifier: Unidentified, keyCode: 13, charCode: 0, keyCode: 13, which: 13
-type: keydown, key: UIKeyInputEscape, code: Escape, keyIdentifier: Unidentified, keyCode: 27, charCode: 0, keyCode: 27, which: 27
-type: keyup, key: UIKeyInputEscape, code: Escape, keyIdentifier: Unidentified, keyCode: 27, charCode: 0, keyCode: 27, which: 27
+type: keydown, key: Escape, code: Escape, keyIdentifier: U+001B, keyCode: 27, charCode: 0, keyCode: 27, which: 27
+type: keyup, key: Escape, code: Escape, keyIdentifier: U+001B, keyCode: 27, charCode: 0, keyCode: 27, which: 27
 type: keydown, key: , code: Home, keyIdentifier: U+0001, keyCode: 36, charCode: 0, keyCode: 36, which: 36
 type: keyup, key: Dead, code: Home, keyIdentifier: Unidentified, keyCode: 36, charCode: 0, keyCode: 36, which: 36
 type: keydown, key: Dead, code: Unidentified, keyIdentifier: Unidentified, keyCode: 45, charCode: 0, keyCode: 45, which: 45
@@ -26,9 +28,10 @@ type: keydown, key: Dead, code: ControlLeft, keyIdentifier: Unidentified, keyCod
 type: keyup, key: Dead, code: ControlLeft, keyIdentifier: Unidentified, keyCode: 17, charCode: 0, keyCode: 17, which: 17
 type: keydown, key: Dead, code: ShiftLeft, keyIdentifier: Unidentified, keyCode: 16, charCode: 0, keyCode: 16, which: 16
 type: keyup, key: Dead, code: ShiftLeft, keyIdentifier: Unidentified, keyCode: 16, charCode: 0, keyCode: 16, which: 16
-type: keydown, key: UIKeyInputPageDown, code: PageDown, keyIdentifier: Unidentified, keyCode: 34, charCode: 0, keyCode: 34, which: 34
-type: keyup, key: UIKeyInputPageDown, code: PageDown, keyIdentifier: Unidentified, keyCode: 34, charCode: 0, keyCode: 34, which: 34
-type: keyup, key: UIKeyInputPageUp, code: PageUp, keyIdentifier: Unidentified, keyCode: 33, charCode: 0, keyCode: 33, which: 33
+type: keydown, key: PageDown, code: PageDown, keyIdentifier: PageDown, keyCode: 34, charCode: 0, keyCode: 34, which: 34
+type: keyup, key: PageDown, code: PageDown, keyIdentifier: PageDown, keyCode: 34, charCode: 0, keyCode: 34, which: 34
+type: keydown, key: PageUp, code: PageUp, keyIdentifier: PageUp, keyCode: 33, charCode: 0, keyCode: 33, which: 33
+type: keyup, key: PageUp, code: PageUp, keyIdentifier: PageUp, keyCode: 33, charCode: 0, keyCode: 33, which: 33
 type: keydown, key: Enter, code: Enter, keyIdentifier: Enter, keyCode: 13, charCode: 0, keyCode: 13, which: 13
 type: keyup, key: Dead, code: Enter, keyIdentifier: Unidentified, keyCode: 13, charCode: 0, keyCode: 13, which: 13
 type: keydown, key: Dead, code: Unidentified, keyIdentifier: Unidentified, keyCode: 18, charCode: 0, keyCode: 18, which: 18

@@ -307,7 +307,7 @@ window.UIHelper = class UIHelper {
     static typeCharacter(characterString)
     {
         if (!this.isWebKit2() || !this.isIOS()) {
-            eventSender.keyDown(key);
+            eventSender.keyDown(characterString);
             return;
         }
 

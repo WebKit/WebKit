@@ -29,6 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "KeyEventCocoa.h"
+#import "KeyEventCodesIOS.h"
 #import "NotImplemented.h"
 #import "WindowsKeyboardCodes.h"
 #import <pal/spi/cocoa/IOKitSPI.h>
@@ -202,7 +203,7 @@ int windowsKeyCodeForCharCode(unichar charCode)
     case 8: case 0x7F: return VK_BACK;
     case 9: return VK_TAB;
     case 0xD: case 3: return VK_RETURN;
-    case 0x1B: return VK_ESCAPE;
+    case 0x1B: return VK_ESCAPE; // WebKit generated code for Escape.
     case ' ': return VK_SPACE;
 
     case '0': case ')': return VK_0;
@@ -242,6 +243,14 @@ int windowsKeyCodeForCharCode(unichar charCode)
     case 'y': case 'Y': return VK_Y;
     case 'z': case 'Z': return VK_Z;
 
+    // WebKit uses Unicode PUA codes in the OpenStep reserve range for some special keys.
+    case NSUpArrowFunctionKey: return VK_UP;
+    case NSDownArrowFunctionKey: return VK_DOWN;
+    case NSLeftArrowFunctionKey: return VK_LEFT;
+    case NSRightArrowFunctionKey: return VK_RIGHT;
+    case NSPageUpFunctionKey: return VK_PRIOR;
+    case NSPageDownFunctionKey: return VK_NEXT;
+
     // This is for U.S. keyboard mapping, and doesn't necessarily make sense for different keyboard layouts.
     // For example, '"' on Windows Russian layout is VK_2, not VK_OEM_7.
     case ';': case ':': return VK_OEM_1;
@@ -259,6 +268,28 @@ int windowsKeyCodeForCharCode(unichar charCode)
     return 0;
 }
 
+static bool isFunctionKey(UChar charCode)
+{
+    switch (charCode) {
+    case 1: // Home
+    case 4: // End
+    case 5: // FIXME: For some reason WebKitTestRunner generates this code for F14 (why?).
+    case 0x7F: // Forward Delete
+    case 0x10: // Function key (e.g. F1, F2, ...)
+
+    // WebKit uses Unicode PUA codes in the OpenStep reserve range for some special keys.
+    case NSUpArrowFunctionKey:
+    case NSDownArrowFunctionKey:
+    case NSLeftArrowFunctionKey:
+    case NSRightArrowFunctionKey:
+    case NSPageUpFunctionKey:
+    case NSPageDownFunctionKey:
+    case NSClearLineFunctionKey: // Num Lock / Clear
+        return true;
+    }
+    return false;
+}
+
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCompatibilityMode)
 {
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
@@ -274,10 +305,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     } else {
         m_keyIdentifier = String();
         m_windowsVirtualKeyCode = 0;
-        if (m_text.length() == 1 && (m_text[0U] >= 0xF700 && m_text[0U] <= 0xF7FF)) {
-            // According to NSEvents.h, OpenStep reserves the range 0xF700-0xF8FF for function keys. However, some actual private use characters
-            // happen to be in this range, e.g. the Apple logo (Option+Shift+K).
-            // 0xF7FF is an arbitrary cut-off.
+        if (m_text.length() == 1 && isFunctionKey(m_text[0])) {
             m_text = String();
             m_unmodifiedText = String();
         }

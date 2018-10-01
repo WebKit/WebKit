@@ -33,10 +33,31 @@
 
 #if PLATFORM(IOS)
 
+#import "KeyEventCodesIOS.h"
 #import "WAKAppKitStubs.h"
+#import <pal/spi/ios/UIKitSPI.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CONSTANT(UIKit, UIKeyInputUpArrow, NSString *)
+SOFT_LINK_CONSTANT(UIKit, UIKeyInputDownArrow, NSString *)
+SOFT_LINK_CONSTANT(UIKit, UIKeyInputLeftArrow, NSString *)
+SOFT_LINK_CONSTANT(UIKit, UIKeyInputRightArrow, NSString *)
+SOFT_LINK_CONSTANT(UIKit, UIKeyInputPageUp, NSString *)
+SOFT_LINK_CONSTANT(UIKit, UIKeyInputPageDown, NSString *)
+SOFT_LINK_CONSTANT(UIKit, UIKeyInputEscape, NSString *)
+
+#define UIKeyInputUpArrow getUIKeyInputUpArrow()
+#define UIKeyInputDownArrow getUIKeyInputDownArrow()
+#define UIKeyInputLeftArrow getUIKeyInputLeftArrow()
+#define UIKeyInputRightArrow getUIKeyInputRightArrow()
+#define UIKeyInputPageUp getUIKeyInputPageUp()
+#define UIKeyInputPageDown getUIKeyInputPageDown()
+#define UIKeyInputEscape getUIKeyInputEscape()
 
 using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
+
 @implementation WebEvent
 
 @synthesize type = _type;
@@ -121,6 +142,29 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     return windowsKeyCodeForCharCode(charCode);
 }
 
+static NSString* normalizedStringWithAppKitCompatibilityMapping(NSString *characters)
+{
+    auto makeNSStringWithCharacter = [] (unichar c) { return [NSString stringWithCharacters:&c length:1]; };
+
+    if (characters == UIKeyInputUpArrow)
+        return makeNSStringWithCharacter(NSUpArrowFunctionKey);
+    if (characters == UIKeyInputDownArrow)
+        return makeNSStringWithCharacter(NSDownArrowFunctionKey);
+    if (characters == UIKeyInputLeftArrow)
+        return makeNSStringWithCharacter(NSLeftArrowFunctionKey);
+    if (characters == UIKeyInputRightArrow)
+        return makeNSStringWithCharacter(NSRightArrowFunctionKey);
+    if (characters == UIKeyInputPageUp)
+        return makeNSStringWithCharacter(NSPageUpFunctionKey);
+    if (characters == UIKeyInputPageDown)
+        return makeNSStringWithCharacter(NSPageDownFunctionKey);
+    if (characters == UIKeyInputEscape)
+        return @"\x1B";
+    if ([characters isEqualToString:@"\x1B"]) // Num Lock / Clear
+        return makeNSStringWithCharacter(NSClearLineFunctionKey);
+    return characters;
+}
+
 // FIXME: to be removed when the adoption of the new initializer is complete.
 - (WebEvent *)initWithKeyEventType:(WebEventType)type
                          timeStamp:(CFTimeInterval)timeStamp
@@ -141,8 +185,8 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     _type = type;
     _timestamp = timeStamp;
 
-    _characters = [characters retain];
-    _charactersIgnoringModifiers = [charactersIgnoringModifiers retain];
+    _characters = [normalizedStringWithAppKitCompatibilityMapping(characters) retain];
+    _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers) retain];
     _modifierFlags = modifiers;
     _keyRepeating = repeating;
     _keyboardFlags = flags;
@@ -176,8 +220,8 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     _type = type;
     _timestamp = timeStamp;
     
-    _characters = [characters retain];
-    _charactersIgnoringModifiers = [charactersIgnoringModifiers retain];
+    _characters = [normalizedStringWithAppKitCompatibilityMapping(characters) retain];
+    _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers) retain];
     _modifierFlags = modifiers;
     _keyRepeating = repeating;
     _keyboardFlags = flags;

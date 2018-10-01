@@ -29,6 +29,7 @@
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIColor_Private.h>
 #import <UIKit/UIInterface_Private.h>
+#import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/UIViewController_Private.h>
 
@@ -135,5 +136,17 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
+
+WTF_EXTERN_C_BEGIN
+
+extern NSString *const UIKeyInputPageUp;
+extern NSString *const UIKeyInputPageDown;
+extern NSString *const UIKeyInputEscape;
+
+WTF_EXTERN_C_END
+
+NS_ASSUME_NONNULL_END
 
 #endif

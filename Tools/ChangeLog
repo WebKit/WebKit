@@ -1,3 +1,15 @@
+2018-10-01  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Special keys are misidentified in DOM keyboard events
+        https://bugs.webkit.org/show_bug.cgi?id=189974
+
+        Reviewed by Wenson Hsieh.
+
+        Add support for testing keys Forward Delete and Num Lock / Clear.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (hidUsageCodeForCharacter):
+
 2018-10-01  Alex Christensen  <achristensen@webkit.org>
 
         URL should not use TextEncoding internally

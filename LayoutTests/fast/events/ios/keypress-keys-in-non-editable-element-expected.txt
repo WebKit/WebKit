@@ -1,0 +1,103 @@
+This tests that DOM keypress events are dispatched to a non-editable <body> on iOS when pressing special keys on a hardware keyboard. This test can only be run in DumpRenderTree/WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a did dispatch a keypress event.
+PASS b did dispatch a keypress event.
+PASS c did dispatch a keypress event.
+PASS d did dispatch a keypress event.
+PASS e did dispatch a keypress event.
+PASS f did dispatch a keypress event.
+PASS g did dispatch a keypress event.
+PASS h did dispatch a keypress event.
+PASS i did dispatch a keypress event.
+PASS j did dispatch a keypress event.
+PASS k did dispatch a keypress event.
+PASS l did dispatch a keypress event.
+PASS m did dispatch a keypress event.
+PASS n did dispatch a keypress event.
+PASS o did dispatch a keypress event.
+PASS p did dispatch a keypress event.
+PASS q did dispatch a keypress event.
+PASS r did dispatch a keypress event.
+PASS s did dispatch a keypress event.
+PASS t did dispatch a keypress event.
+PASS u did dispatch a keypress event.
+PASS v did dispatch a keypress event.
+PASS w did dispatch a keypress event.
+PASS x did dispatch a keypress event.
+PASS y did dispatch a keypress event.
+PASS z did dispatch a keypress event.
+PASS 0 did dispatch a keypress event.
+PASS 1 did dispatch a keypress event.
+PASS 2 did dispatch a keypress event.
+PASS 3 did dispatch a keypress event.
+PASS 4 did dispatch a keypress event.
+PASS 5 did dispatch a keypress event.
+PASS 6 did dispatch a keypress event.
+PASS 7 did dispatch a keypress event.
+PASS 8 did dispatch a keypress event.
+PASS 9 did dispatch a keypress event.
+PASS - did dispatch a keypress event.
+PASS = did dispatch a keypress event.
+PASS [ did dispatch a keypress event.
+PASS ] did dispatch a keypress event.
+PASS \ did dispatch a keypress event.
+PASS ; did dispatch a keypress event.
+PASS ' did dispatch a keypress event.
+PASS , did dispatch a keypress event.
+PASS . did dispatch a keypress event.
+PASS / did dispatch a keypress event.
+PASS   did not dispatch a keypress event.
+PASS delete did dispatch a keypress event.
+PASS enter did dispatch a keypress event.
+PASS escape did dispatch a keypress event.
+PASS return did dispatch a keypress event.
+PASS forwardDelete did dispatch a keypress event.
+PASS upArrow did not dispatch a keypress event.
+PASS downArrow did not dispatch a keypress event.
+PASS leftArrow did not dispatch a keypress event.
+PASS rightArrow did not dispatch a keypress event.
+PASS clear did not dispatch a keypress event.
+PASS end did not dispatch a keypress event.
+PASS home did not dispatch a keypress event.
+PASS insert did not dispatch a keypress event.
+PASS leftAlt did not dispatch a keypress event.
+PASS leftCommand did not dispatch a keypress event.
+PASS leftControl did not dispatch a keypress event.
+PASS leftShift did not dispatch a keypress event.
+PASS pageDown did not dispatch a keypress event.
+PASS pageUp did not dispatch a keypress event.
+PASS rightAlt did not dispatch a keypress event.
+PASS rightCommand did not dispatch a keypress event.
+PASS rightControl did not dispatch a keypress event.
+PASS rightShift did not dispatch a keypress event.
+PASS F1 did not dispatch a keypress event.
+PASS F2 did not dispatch a keypress event.
+PASS F3 did not dispatch a keypress event.
+PASS F4 did not dispatch a keypress event.
+PASS F5 did not dispatch a keypress event.
+PASS F6 did not dispatch a keypress event.
+PASS F7 did not dispatch a keypress event.
+PASS F8 did not dispatch a keypress event.
+PASS F9 did not dispatch a keypress event.
+PASS F10 did not dispatch a keypress event.
+PASS F11 did not dispatch a keypress event.
+PASS F12 did not dispatch a keypress event.
+PASS F13 did not dispatch a keypress event.
+PASS F14 did not dispatch a keypress event.
+PASS F15 did not dispatch a keypress event.
+PASS F16 did not dispatch a keypress event.
+PASS F17 did not dispatch a keypress event.
+PASS F18 did not dispatch a keypress event.
+PASS F19 did not dispatch a keypress event.
+PASS F20 did not dispatch a keypress event.
+PASS F21 did not dispatch a keypress event.
+PASS F22 did not dispatch a keypress event.
+PASS F23 did not dispatch a keypress event.
+PASS F24 did not dispatch a keypress event.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

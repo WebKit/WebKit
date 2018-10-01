@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body onkeydown="handleKeyDown(event)" onkeyup="handleKeyUp(event)">
+<p>This tests that DOM keydown and keyup events are dispatched to a non-editable &lt;body&gt; on iOS when pressing the arrow keys on a hardware keyboard. To run this test manually, verify that two messages are emitted when you press the following keys: &#x2191;, &#x2193;, &#x2190;, &#x2192;.</p>
+<pre id="console"></pre>
+<script>
+var remainingKeysToPress = ["upArrow", "downArrow", "leftArrow", "rightArrow"]
+
+async function nextKeyPress()
+{
+    if (!remainingKeysToPress.length) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    let nextKey = remainingKeysToPress.shift();
+    UIHelper.typeCharacter(nextKey);
+}
+
+function handleKeyDown(event)
+{
+    logKeyEvent(event);
+}
+
+function handleKeyUp(event)
+{
+    logKeyEvent(event);
+    nextKeyPress();
+}
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+function logKeyEvent(event)
+{
+    let pieces = [];
+    for (let propertyName of ["type", "key", "code", "keyIdentifier", "keyCode", "charCode", "keyCode", "which"])
+        pieces.push(`${propertyName}: ${event[propertyName]}`);
+    log(pieces.join(", "));
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+    nextKeyPress();
+}
+
+runTest();
+</script>
+</body>
+</html>
