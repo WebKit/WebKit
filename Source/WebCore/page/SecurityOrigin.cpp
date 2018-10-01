@@ -34,6 +34,7 @@
 #include "URL.h"
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
+#include "TextEncoding.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

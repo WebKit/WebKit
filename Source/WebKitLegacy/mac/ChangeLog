@@ -1,3 +1,12 @@
+2018-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        URL should not use TextEncoding internally
+        https://bugs.webkit.org/show_bug.cgi?id=190111
+
+        Reviewed by Andy Estes.
+
+        * Misc/WebNSURLExtras.mm:
+
 2018-09-28  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: eliminate raw pointer usage in Fullscreen code

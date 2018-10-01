@@ -50,6 +50,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/TextEncoding.h>
 
 using namespace WebCore;
 

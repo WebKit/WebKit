@@ -67,6 +67,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
+#include <WebCore/TextEncoding.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/StringBuilder.h>

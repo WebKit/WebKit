@@ -1,3 +1,14 @@
+2018-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        URL should not use TextEncoding internally
+        https://bugs.webkit.org/show_bug.cgi?id=190111
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::testUserPass):
+        (TestWebKitAPI::TEST_F):
+
 2018-10-01  Daniel Bates  <dabates@apple.com>
 
         LLDB tests may use wrong configuration of lldbWebKitTester

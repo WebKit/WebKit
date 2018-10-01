@@ -29,6 +29,7 @@
 #include "DecodeEscapeSequences.h"
 #include "HTTPParsers.h"
 #include "SharedBuffer.h"
+#include "TextEncoding.h"
 #include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>

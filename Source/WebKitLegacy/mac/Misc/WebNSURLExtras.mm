@@ -35,6 +35,7 @@
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/URL.h>
 #import <WebCore/LoaderNSURLExtras.h>
+#import <WebCore/TextEncoding.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/Assertions.h>
 #import <wtf/ObjcRuntimeExtras.h>

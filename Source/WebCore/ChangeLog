@@ -1,3 +1,28 @@
+2018-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        URL should not use TextEncoding internally
+        https://bugs.webkit.org/show_bug.cgi?id=190111
+
+        Reviewed by Andy Estes.
+
+        That dependency makes it impossible to move or use elsewhere.
+        Using TextEncoding was overkill because we know the credentials are UTF-8 percent-encoded in a parsed URL.
+        No change in behavior as verified by new API tests.
+
+        * page/SecurityOrigin.cpp:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        * platform/URL.cpp:
+        (WebCore::decodeEscapeSequencesFromParsedURL):
+        (WebCore::URL::user const):
+        (WebCore::URL::pass const):
+        (WebCore::URL::fileSystemPath const):
+        (WebCore::decodeURLEscapeSequences): Deleted.
+        * platform/URL.h:
+        * platform/network/DataURLDecoder.cpp:
+        * platform/text/TextEncoding.cpp:
+        (WebCore::decodeURLEscapeSequences):
+        * platform/text/TextEncoding.h:
+
 2018-10-01  Simon Pieters  <zcorpan@gmail.com>
 
         <form> in quirks mode should have margin-block-end: 1em

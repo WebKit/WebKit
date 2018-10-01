@@ -40,6 +40,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SoupNetworkSession.h>
+#include <WebCore/TextEncoding.h>
 #include <wtf/MainThread.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 

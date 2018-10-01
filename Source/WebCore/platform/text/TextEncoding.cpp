@@ -28,6 +28,7 @@
 #include "config.h"
 #include "TextEncoding.h"
 
+#include "DecodeEscapeSequences.h"
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
 #include <unicode/unorm.h>
@@ -216,6 +217,13 @@ const TextEncoding& WindowsLatin1Encoding()
 {
     static NeverDestroyed<TextEncoding> globalWindowsLatin1Encoding("WinLatin-1");
     return globalWindowsLatin1Encoding;
+}
+
+String decodeURLEscapeSequences(const String& string, const TextEncoding& encoding)
+{
+    if (string.isEmpty())
+        return string;
+    return decodeEscapeSequences<URLEscapeSequence>(string, encoding);
 }
 
 } // namespace WebCore

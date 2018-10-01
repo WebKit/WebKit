@@ -41,6 +41,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/TextEncoding.h>
 #include <wtf/SetForScope.h>
 
 #if PLATFORM(GTK)

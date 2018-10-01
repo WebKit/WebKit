@@ -128,8 +128,8 @@ public:
 
     // Unlike user() and pass(), these functions don't decode escape sequences.
     // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
-    String encodedUser() const;
-    String encodedPass() const;
+    WEBCORE_EXPORT String encodedUser() const;
+    WEBCORE_EXPORT String encodedPass() const;
 
     WEBCORE_EXPORT String baseAsString() const;
 
@@ -301,13 +301,6 @@ WEBCORE_EXPORT void clearDefaultPortForProtocolMapForTesting();
 bool isValidProtocol(const String&);
 
 String mimeTypeFromDataURL(const String& url);
-
-// Unescapes the given string using URL escaping rules, given an optional
-// encoding (defaulting to UTF-8 otherwise). DANGER: If the URL has "%00"
-// in it, the resulting string will have embedded null characters!
-WEBCORE_EXPORT String decodeURLEscapeSequences(const String&);
-class TextEncoding;
-String decodeURLEscapeSequences(const String&, const TextEncoding&);
 
 // FIXME: This is a wrong concept to expose, different parts of a URL need different escaping per the URL Standard.
 WEBCORE_EXPORT String encodeWithURLEscapeSequences(const String&);

@@ -26,6 +26,7 @@
 #include "WebKitFileChooserRequestPrivate.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/TextEncoding.h>
 #include <WebCore/URL.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>

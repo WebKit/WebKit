@@ -502,6 +502,43 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://:@host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
 }
 
+static void testUserPass(const String& value, const String& decoded, const String& encoded)
+{
+    URL userURL(URL(), makeString("http://", value, "@example.com/"));
+    URL passURL(URL(), makeString("http://user:", value, "@example.com/"));
+    EXPECT_EQ(encoded, userURL.encodedUser());
+    EXPECT_EQ(encoded, passURL.encodedPass());
+    EXPECT_EQ(decoded, userURL.user());
+    EXPECT_EQ(decoded, passURL.pass());
+}
+
+static void testUserPass(const String& value, const String& encoded)
+{
+    testUserPass(value, value, encoded);
+}
+
+TEST_F(URLParserTest, Credentials)
+{
+    auto validSurrogate = utf16String<3>({0xD800, 0xDD55, '\0'});
+    auto invalidSurrogate = utf16String<3>({0xD800, 'A', '\0'});
+    auto replacementA = utf16String<3>({0xFFFD, 'A', '\0'});
+
+    testUserPass("a", "a");
+    testUserPass("%", "%");
+    testUserPass("%25", "%", "%25");
+    testUserPass("%2525", "%25", "%2525");
+    testUserPass("%FX", "%FX");
+    testUserPass("%00", String::fromUTF8("\0", 1), "%00");
+    testUserPass("%F%25", "%F%", "%F%25");
+    testUserPass("%X%25", "%X%", "%X%25");
+    testUserPass("%%25", "%%", "%%25");
+    testUserPass("💩", "%C3%B0%C2%9F%C2%92%C2%A9");
+    testUserPass("%💩", "%%C3%B0%C2%9F%C2%92%C2%A9");
+    testUserPass(validSurrogate, "%F0%90%85%95");
+    testUserPass(replacementA, "%EF%BF%BDA");
+    testUserPass(invalidSurrogate, replacementA, "%EF%BF%BDA");
+}
+
 TEST_F(URLParserTest, ParseRelative)
 {
     checkRelativeURL("/index.html", "http://webkit.org/path1/path2/", {"http", "", "", "webkit.org", 0, "/index.html", "", "", "http://webkit.org/index.html"});
