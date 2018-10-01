@@ -1,3 +1,14 @@
+2018-10-01  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Use tolerance when growing the coded frame group
+        https://bugs.webkit.org/show_bug.cgi?id=190085
+
+        A test simulating unordered appends with imprecise timestamps,
+        overlapping <1ms (replicating a typical WebM 30fps video file) is
+        added.
+
+        * media/media-source/media-source-append-acb-tolerance.html: Added.
+
 2018-09-27  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Fix unwanted sample erase from the decode queue
