@@ -49,10 +49,6 @@
 
 namespace WebKit {
 
-template<> struct WrapperTraits<DownloadProxy> {
-    using WrapperClass = _WKDownload;
-};
-
 DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     : m_delegate(delegate)
 {

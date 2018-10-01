@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "DownloadProxy.h"
+#import "WKNSData.h"
 #import "WKWebViewInternal.h"
 #import <wtf/WeakObjCPtr.h>
 
@@ -72,6 +73,11 @@
 - (BOOL)wasUserInitiated
 {
     return _download->wasUserInitiated();
+}
+
+- (NSData *)resumeData
+{
+    return WebKit::wrapper(_download->resumeData());
 }
 
 #pragma mark WKObject protocol implementation

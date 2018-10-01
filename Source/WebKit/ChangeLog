@@ -1,3 +1,23 @@
+2018-10-01  David Quesada  <david_quesada@apple.com>
+
+        Add missing Objective-C versions of downloads SPI
+        https://bugs.webkit.org/show_bug.cgi?id=190149
+        rdar://problem/44915592
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _downloadURLRequest:]):
+        (-[WKProcessPool _resumeDownloadFromData:path:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload resumeData]):
+        * UIProcess/API/Cocoa/_WKDownloadInternal.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+            Move the DownloadProxy's WrapperTraits out of DownloadClient, and into the internal
+            header so it can be used from other classes (i.e. WKProcessPool here).
+
 2018-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal build after r236665

@@ -43,6 +43,7 @@
 #import "_WKAutomationDelegate.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKDownloadDelegate.h"
+#import "_WKDownloadInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/PluginData.h>
@@ -572,6 +573,16 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _coreLocationProvider = coreLocationProvider;
 }
 #endif // PLATFORM(IOS)
+
+- (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request
+{
+    return (_WKDownload *)_processPool->download(nullptr, request)->wrapper();
+}
+
+- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path
+{
+    return wrapper(_processPool->resumeDownload(API::Data::createWithoutCopying(resumeData).ptr(), path));
+}
 
 @end
 
