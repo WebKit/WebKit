@@ -50,42 +50,31 @@ public:
 
     template<typename = std::enable_if_t<std::is_base_of<Node, T>::value>>
     GCReachableRef(T& object)
-        : m_ref(object)
+        : m_ptr(&object)
     {
-        GCReachableRefMap::add(m_ref.get());
+        GCReachableRefMap::add(*m_ptr);
     }
 
     ~GCReachableRef()
     {
-        if (!isNull())
-            GCReachableRefMap::remove(m_ref.get());
-    }
-
-    template<typename X, typename Y, typename = std::enable_if_t<std::is_base_of<Node, T>::value>>
-    GCReachableRef(Ref<X, Y>&& other)
-        : m_ref(WTFMove(other.m_ref))
-    {
-        if (!isNull())
-            GCReachableRefMap::add(m_ref.get());
+        if (m_ptr)
+            GCReachableRefMap::remove(*m_ptr);
     }
 
     GCReachableRef(GCReachableRef&& other)
-        : m_ref(WTFMove(other.m_ref))
+        : m_ptr(WTFMove(other.m_ptr))
     {
     }
 
-    template<typename X, typename Y> GCReachableRef(const GCReachableRef<X, Y>& other) = delete;
-
-    T* operator->() const { ASSERT(!isNull()); return m_ref.ptr(); }
-    T* ptr() const RETURNS_NONNULL { ASSERT(!isNull()); return m_ref.ptr(); }
-    T& get() const { ASSERT(!isNull()); return m_ref.get(); }
-    operator T&() const { ASSERT(!isNull()); return m_ref.get(); }
-    bool operator!() const { ASSERT(!isNull()); return !m_ref.get(); }
+    T* operator->() const { return &get(); }
+    T* ptr() const RETURNS_NONNULL { return &get(); }
+    T& get() const { ASSERT(m_ptr); return *m_ptr; }
+    operator T&() const { ASSERT(m_ptr); return *m_ptr; }
+    bool operator!() const { return !get(); }
 
 private:
-    bool isNull() const { return m_ref.isHashTableEmptyValue(); }
 
-    Ref<T> m_ref;
+    RefPtr<T> m_ptr;
 };
 
 }
