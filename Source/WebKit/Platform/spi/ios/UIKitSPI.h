@@ -1003,6 +1003,7 @@ typedef NSInteger UICompositingMode;
 @end
 
 @interface UIPhysicalKeyboardEvent ()
+- (UIPhysicalKeyboardEvent *)_cloneEvent NS_RETURNS_RETAINED;
 @property (nonatomic, readonly) CFIndex _keyCode;
 @end
 

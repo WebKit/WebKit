@@ -3745,6 +3745,15 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (event == _uiEventBeingResent)
         return;
 
+    uint16_t keyCode;
+    BOOL isHardwareKeyboardEvent = !!event._hidEvent;
+    if (!isHardwareKeyboardEvent)
+        keyCode = 0;
+    else {
+        UIPhysicalKeyboardEvent *keyEvent = (UIPhysicalKeyboardEvent *)event;
+        keyCode = keyEvent._keyCode;
+        event = [[keyEvent _cloneEvent] autorelease]; // UIKit uses a singleton for hardware keyboard events.
+    }
     WKWebEvent *webEvent = [[[WKWebEvent alloc] initWithKeyEventType:(event._isKeyDown) ? WebEventKeyDown : WebEventKeyUp
                                                            timeStamp:event.timestamp
                                                           characters:event._modifiedInput
@@ -3752,7 +3761,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
                                                            modifiers:event._modifierFlags
                                                          isRepeating:(event._inputFlags & kUIKeyboardInputRepeat)
                                                            withFlags:event._inputFlags
-                                                             keyCode:event._hidEvent ? ((UIPhysicalKeyboardEvent *)event)._keyCode : 0
+                                                             keyCode:keyCode
                                                             isTabKey:[event._modifiedInput isEqualToString:@"\t"]
                                                         characterSet:WebEventCharacterSetUnicode] autorelease];
     webEvent.uiEvent = event;

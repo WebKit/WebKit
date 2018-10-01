@@ -1,3 +1,25 @@
+2018-10-01  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Wrong key event may be sent to UIKit
+        https://bugs.webkit.org/show_bug.cgi?id=189992
+
+        Reviewed by Simon Fraser.
+
+        Retain a clone of a received UIEvent if it is for a hardware key event so as to ensure that we
+        notify the UIKit keyboard code of the correct keyboard event.
+
+        Currently the UIProcess retains the UIEvent associated with a keyboard event so as to defer
+        notifying the UIKit keyboard code (via -_handleKeyUIEvent) about a received keyboard event until
+        after the WebProcess has processed the raw key event. If this UIEvent is for a hardware keyboard
+        event then it is not sufficient to retain it to preserve its value because UIKit uses a singleton
+        UIEvent for all hardware keyboard events ;=> its value will be clobbered as each hardware keyboard
+        event is received. Instead we need to explicitly clone a UIEvent for a hardware key event before
+        retaining it.
+
+        * Platform/spi/ios/UIKitSPI.h: Forward declare SPI.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView handleKeyEvent:]): Clone the UIEvent if it is for a hardware key event.
+
 2018-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate ObjC SPI in Deprecated Xcode group
