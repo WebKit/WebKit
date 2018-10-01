@@ -1,3 +1,21 @@
+2018-10-01  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] The UIProcess should listen to memory pressure signals
+        https://bugs.webkit.org/show_bug.cgi?id=190166
+
+        Reviewed by Simon Fraser.
+
+        The UIProcess should listen to memory pressure signals on Mac in order to free memory, similarly to what we already
+        do on iOS. The memory pressure handler currently discards view snapshots and prewarmed processes.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebMemoryPressureHandlerCocoa.h: Renamed from Source/WebKit/UIProcess/ios/WebMemoryPressureHandlerIOS.h.
+        * UIProcess/Cocoa/WebMemoryPressureHandlerCocoa.mm: Renamed from Source/WebKit/UIProcess/ios/WebMemoryPressureHandlerIOS.mm.
+        (WebKit::installMemoryPressureHandler):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-10-01  Sihui Liu  <sihui_liu@apple.com>
 
         Fix Internal iOS Build after r236690

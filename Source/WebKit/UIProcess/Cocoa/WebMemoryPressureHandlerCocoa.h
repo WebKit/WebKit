@@ -23,36 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebMemoryPressureHandlerIOS.h"
-
-#if PLATFORM(IOS)
-
-#import "ViewSnapshotStore.h"
-#import "WebProcessPool.h"
-#import <wtf/MemoryPressureHandler.h>
+#pragma once
 
 namespace WebKit {
 
-void installMemoryPressureHandler()
-{
-    // FIXME: This should be able to share code with WebCore's MemoryPressureHandler (and be platform independent).
-    // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
-    // and you can only have one WebCore::MemoryPressureHandler.
+void installMemoryPressureHandler();
 
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"])
-        return;
-
-    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous) {
-        ViewSnapshotStore::singleton().discardSnapshotImages();
-
-        for (auto* processPool : WebProcessPool::allProcessPools())
-            processPool->handleMemoryPressureWarning(critical);
-    });
-    memoryPressureHandler.install();
 }
-
-} // namespace WebKit
-
-#endif

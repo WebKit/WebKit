@@ -36,6 +36,7 @@
 #import "TextChecker.h"
 #import "VersionChecks.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WebMemoryPressureHandlerCocoa.h"
 #import "WebPageGroup.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessCreationParameters.h"
@@ -54,9 +55,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
-#if PLATFORM(IOS)
-#import "WebMemoryPressureHandlerIOS.h"
-#else
+#if PLATFORM(MAC)
 #import <QuartzCore/CARemoteLayerServer.h>
 #endif
 
@@ -132,9 +131,7 @@ void WebProcessPool::platformInitialize()
     registerUserDefaultsIfNeeded();
     registerNotificationObservers();
 
-#if PLATFORM(IOS)
     installMemoryPressureHandler();
-#endif
 
     setLegacyCustomProtocolManagerClient(std::make_unique<LegacyCustomProtocolManagerClient>());
 }
