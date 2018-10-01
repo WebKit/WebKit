@@ -52,21 +52,6 @@ _host = SystemHost()
 _webkit_root = None
 
 
-def _build_lldb_webkit_tester(configuration):
-    if not _host.platform.is_mac():
-        _log.error('lldbWebKitTester is not supported on this platform.')
-        return False
-    config = Config(_host.executive, _host.filesystem)
-    build_lldbwebkittester = os.path.join(_webkit_root, 'Tools', 'Scripts', 'build-lldbwebkittester')
-    try:
-        _host.executive.run_and_throw_if_fail([build_lldbwebkittester, config.flag_for_configuration(configuration or config.default_configuration())], quiet=True)
-    except ScriptError as e:
-        _log.error(e.message_with_output(output_limit=None))
-        return False
-    return True
-
-
-
 def main():
     global _webkit_root
     configure_logging(logger=_log)
@@ -198,8 +183,17 @@ class Tester(object):
 
         if will_run_lldb_webkit_tests:
             self.printer.write_update('Building lldbWebKitTester ...')
-            if not _build_lldb_webkit_tester(configuration=self._options.configuration):
-                _log.error('Failed to build lldbWebKitTester.')
+            build_lldbwebkittester = self.finder.filesystem.join(_webkit_root, 'Tools', 'Scripts', 'build-lldbwebkittester')
+            config = Config(_host.executive, self.finder.filesystem)
+            configuration_to_use = self._options.configuration or config.default_configuration()
+            try:
+                _host.executive.run_and_throw_if_fail([build_lldbwebkittester, config.flag_for_configuration(configuration_to_use)], quiet=(not bool(self._options.verbose)))
+            except ScriptError as e:
+                _log.error(e.message_with_output(output_limit=None))
+                return False
+            os.environ['LLDB_WEBKIT_TESTER_EXECUTABLE'] = str(self.finder.filesystem.join(config.build_directory(configuration_to_use), 'lldbWebKitTester'))
+            if not self.finder.filesystem.exists(os.environ['LLDB_WEBKIT_TESTER_EXECUTABLE']):
+                _log.error('Failed to find lldbWebKitTester.')
                 return False
 
         if self._options.coverage:

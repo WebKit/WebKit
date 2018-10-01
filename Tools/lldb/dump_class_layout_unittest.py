@@ -30,12 +30,8 @@ import os
 import sys
 import unittest
 
-from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.port.config import Config
-
 from lldb_dump_class_layout import LLDBDebuggerInstance, ClassLayoutBase
-
-_host = SystemHost()
+from webkitpy.common.system.systemhost import SystemHost
 
 # Run these tests with ./Tools/Scripts/test-webkitpy dump_class_layout_unittest
 # Run a single test with e.g. ./Tools/Scripts/test-webkitpy dump_class_layout_unittest.TestDumpClassLayout.serial_test_ClassWithUniquePtrs
@@ -52,16 +48,13 @@ def destroy_cached_debug_session():
 class TestDumpClassLayout(unittest.TestCase):
     @classmethod
     def shouldSkip(cls):
-        return not _host.platform.is_mac()
+        return not SystemHost().platform.is_mac()
 
     @classmethod
     def setUpClass(cls):
         global debugger_instance
         if not debugger_instance:
-            LLDB_WEBKIT_TESTER_NAME = 'lldbWebKitTester'
-
-            config = Config(_host.executive, _host.filesystem)
-            lldbWebKitTesterExecutable = os.path.join(config.build_directory(config.default_configuration()), LLDB_WEBKIT_TESTER_NAME)
+            lldbWebKitTesterExecutable = str(os.environ['LLDB_WEBKIT_TESTER_EXECUTABLE'])
 
             architecture = 'x86_64'
             debugger_instance = LLDBDebuggerInstance(lldbWebKitTesterExecutable, architecture)

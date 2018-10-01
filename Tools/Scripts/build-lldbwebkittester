@@ -56,6 +56,11 @@ if ($showHelp || !$result) {
    exit 1;
 }
 
+if (!isAppleMacWebKit()) {
+    print STDERR "lldbWebKitTester is currently only supported on Mac.\n";
+    exit 1;
+}
+
 checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();

@@ -1,3 +1,48 @@
+2018-10-01  Daniel Bates  <dabates@apple.com>
+
+        LLDB tests may use wrong configuration of lldbWebKitTester
+        https://bugs.webkit.org/show_bug.cgi?id=189011
+
+        Reviewed by Dean Jackson.
+
+        Fixes an issue where the LLDB unit tests may use the wrong configuration of lldbWebKitTester.
+        Additionally, add back the unit tests originally added in r235376 (https://bugs.webkit.org/show_bug.cgi?id=188936).
+
+        Currently the unit tests pick the LLDBWebKitTester binary based on the configuration set by
+        script set-webkit-configuration. This may not be the same configuration specified to test-webkitpy.
+        So, the unit tests may use the wrong binary. Instead we have test-webkitpy store the path
+        to the correct lldbWebKitTester binary that the unit tests should use in an environment variable,
+        called LLDB_WEBKIT_TESTER_EXECUTABLE. (We use an environment variable because the test driver,
+        test-webkitpy, and the unit tests cannot talk to each other directly due the limitations of
+        the Python unittest module, the Python multiprocessing module, and the general principle of unit
+        tests - to test code in isolation). The unit tests make use of the value of this environment
+        variable to launch lldbWebKitTester binary.
+
+        * Scripts/build-lldbwebkittester: We only support building lldbWebKitTester on Mac for now. Error
+        out if this script is invoked for a non-Mac platform.
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests): Build lldbWebKitTester and store the path to it in the environment variable
+        LLDB_WEBKIT_TESTER_EXECUTABLE.
+        (_build_lldb_webkit_tester): Deleted.
+        * lldb/dump_class_layout_unittest.py:
+        (TestDumpClassLayout.shouldSkip): Use SystemHost() here and remove the _host global variable as
+        this is the only call site that needs the Host object now.
+        (TestDumpClassLayout.setUpClass): Take the path to the lldbWebKitTester binary from the value of
+        the environment variable LLDB_WEBKIT_TESTER_EXECUTABLE.
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders): Add back unit test support infrastructure originally added in r235376 (https://bugs.webkit.org/show_bug.cgi?id=188936).
+        * lldb/lldb_webkit_unittest.py:
+        (LLDBDebugSession.setup): Take the path to the lldbWebKitTester binary from the value of the environment
+        variable LLDB_WEBKIT_TESTER_EXECUTABLE.
+        (TestSummaryProviders):
+        (TestSummaryProviders.shouldSkip): Skip the tests on non-Mac platforms.
+        (TestSummaryProviders.serial_test_WTFHashSet_tablesize_and_size):
+        (TestSummaryProviders.serial_test_WTFOptionSet_SummaryProvider_empty):
+        (TestSummaryProviders.serial_test_WTFOptionSet_SummaryProvider_simple):
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_empty):
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_simple):
+        Add back the unit tests originally added in r235376 (https://bugs.webkit.org/show_bug.cgi?id=188936).
+
 2018-10-01  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE] Update install-dependencies
