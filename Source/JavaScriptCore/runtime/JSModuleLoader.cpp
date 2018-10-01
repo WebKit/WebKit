@@ -138,8 +138,7 @@ JSValue JSModuleLoader::provideFetch(ExecState* exec, JSValue key, const SourceC
     arguments.append(JSSourceCode::create(vm, WTFMove(source)));
     ASSERT(!arguments.hasOverflowed());
 
-    scope.release();
-    return call(exec, function, callType, callData, this, arguments);
+    RELEASE_AND_RETURN(scope, call(exec, function, callType, callData, this, arguments));
 }
 
 JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
@@ -159,8 +158,7 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValu
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    scope.release();
-    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+    RELEASE_AND_RETURN(scope, jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments)));
 }
 
 JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
@@ -180,8 +178,7 @@ JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleNam
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    scope.release();
-    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+    RELEASE_AND_RETURN(scope, jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments)));
 }
 
 JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey, JSValue scriptFetcher)
@@ -200,8 +197,7 @@ JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    scope.release();
-    return call(exec, function, callType, callData, this, arguments);
+    RELEASE_AND_RETURN(scope, call(exec, function, callType, callData, this, arguments));
 }
 
 JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher)
@@ -221,8 +217,7 @@ JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Id
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    scope.release();
-    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+    RELEASE_AND_RETURN(scope, jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments)));
 }
 
 JSInternalPromise* JSModuleLoader::importModule(ExecState* exec, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer)
@@ -333,8 +328,7 @@ JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(ExecState* exe
         return nullptr;
     }
 
-    scope.release();
-    return moduleRecord->getModuleNamespace(exec);
+    RELEASE_AND_RETURN(scope, moduleRecord->getModuleNamespace(exec));
 }
 
 // ------------------------------ Functions --------------------------------
@@ -395,10 +389,8 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderRequestedModules(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(vm, exec->argument(0));
-    if (!moduleRecord) {
-        scope.release();
-        return JSValue::encode(constructEmptyArray(exec, nullptr));
-    }
+    if (!moduleRecord) 
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(exec, nullptr)));
 
     JSArray* result = constructEmptyArray(exec, nullptr, moduleRecord->requestedModules().size());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

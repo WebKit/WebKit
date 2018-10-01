@@ -142,8 +142,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(E
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).
-    scope.release();
-    return JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1))));
 }
 
 void IntlNumberFormatConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

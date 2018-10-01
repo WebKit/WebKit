@@ -109,8 +109,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
     Symbol* symbol = tryExtractSymbol(vm, exec->thisValue());
     if (!symbol)
         return throwVMTypeError(exec, scope, SymbolToStringTypeError);
-    scope.release();
-    return JSValue::encode(jsNontrivialString(&vm, symbol->descriptiveString()));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNontrivialString(&vm, symbol->descriptiveString())));
 }
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)
@@ -122,8 +121,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)
     if (!symbol)
         return throwVMTypeError(exec, scope, SymbolValueOfTypeError);
 
-    scope.release();
-    return JSValue::encode(symbol);
+    RELEASE_AND_RETURN(scope, JSValue::encode(symbol));
 }
 
 } // namespace JSC

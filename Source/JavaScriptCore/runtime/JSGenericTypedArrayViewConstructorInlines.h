@@ -133,8 +133,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
             length = (buffer->byteLength() - offset) / ViewClass::elementSize;
         }
 
-        scope.release();
-        return ViewClass::create(exec, structure, WTFMove(buffer), offset, length);
+        RELEASE_AND_RETURN(scope, ViewClass::create(exec, structure, WTFMove(buffer), offset, length));
     }
     ASSERT(!offset && !lengthOpt);
     
@@ -171,8 +170,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
                     || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
                     || hasAnyArrayStorage(object->indexingType()))) {
 
-                    scope.release();
-                    return constructGenericTypedArrayViewFromIterator<ViewClass>(exec, structure, object, iteratorFunc);
+                    RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewFromIterator<ViewClass>(exec, structure, object, iteratorFunc));
             }
 
             if (lengthSlot.isUnset())
@@ -200,8 +198,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
 
     unsigned length = firstValue.toIndex(exec, "length");
     RETURN_IF_EXCEPTION(scope, nullptr);
-    scope.release();
-    return ViewClass::create(exec, structure, length);
+    RELEASE_AND_RETURN(scope, ViewClass::create(exec, structure, length));
 }
 
 template<typename ViewClass>
@@ -221,8 +218,7 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
         if (ViewClass::TypedArrayStorageType == TypeDataView)
             return throwVMTypeError(exec, scope, "DataView constructor requires at least one argument."_s);
 
-        scope.release();
-        return JSValue::encode(ViewClass::create(exec, structure, 0));
+        RELEASE_AND_RETURN(scope, JSValue::encode(ViewClass::create(exec, structure, 0)));
     }
 
     JSValue firstValue = exec->uncheckedArgument(0);
@@ -247,8 +243,7 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
         }
     }
 
-    scope.release();
-    return JSValue::encode(constructGenericTypedArrayViewWithArguments<ViewClass>(exec, structure, JSValue::encode(firstValue), offset, length));
+    RELEASE_AND_RETURN(scope, JSValue::encode(constructGenericTypedArrayViewWithArguments<ViewClass>(exec, structure, JSValue::encode(firstValue), offset, length)));
 }
 
 template<typename ViewClass>

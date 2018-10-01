@@ -222,8 +222,7 @@ static ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(StringView)
         return { };
     auto viewWithString = string->viewWithUnderlyingString(exec);
     RETURN_IF_EXCEPTION(scope, { });
-    scope.release();
-    return callback(viewWithString.view);
+    RELEASE_AND_RETURN(scope, callback(viewWithString.view));
 }
 
 // Mapping from integers 0..35 to digit identifying this value, for radix 2..36.

@@ -299,8 +299,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         patternArg = pattern;
     }
 
-    scope.release();
-    return regExpCreate(exec, globalObject, newTarget, patternArg, flagsArg);
+    RELEASE_AND_RETURN(scope, regExpCreate(exec, globalObject, newTarget, patternArg, flagsArg));
 }
 
 EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(ExecState* exec)

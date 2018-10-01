@@ -254,8 +254,7 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
     }
 
     // Now just let the normal object machinery do its thing.
-    scope.release();
-    return Base::defineOwnProperty(object, exec, ident, descriptor, shouldThrow);
+    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, ident, descriptor, shouldThrow));
 }
 
 template<typename Type>

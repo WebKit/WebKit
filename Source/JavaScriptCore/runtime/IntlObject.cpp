@@ -212,8 +212,7 @@ unsigned intlNumberOption(ExecState& state, JSValue options, PropertyName proper
     JSValue value = opts->get(&state, property);
     RETURN_IF_EXCEPTION(scope, 0);
 
-    scope.release();
-    return intlDefaultNumberOption(state, value, property, minimum, maximum, fallback);
+    RELEASE_AND_RETURN(scope, intlDefaultNumberOption(state, value, property, minimum, maximum, fallback));
 }
 
 unsigned intlDefaultNumberOption(ExecState& state, JSValue value, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)

@@ -253,12 +253,10 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         // e.i. Set oldLenDesc.[[Value]] to index + 1.
         // e.ii. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", oldLenDesc, and false as arguments. This call will always return true.
         // f. Return true.
-        scope.release();
-        return array->defineOwnIndexedProperty(exec, index, descriptor, throwException);
+        RELEASE_AND_RETURN(scope, array->defineOwnIndexedProperty(exec, index, descriptor, throwException));
     }
 
-    scope.release();
-    return array->JSObject::defineOwnNonIndexProperty(exec, propertyName, descriptor, throwException);
+    RELEASE_AND_RETURN(scope, array->JSObject::defineOwnNonIndexProperty(exec, propertyName, descriptor, throwException));
 }
 
 bool JSArray::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -282,10 +280,8 @@ bool JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
 
     JSArray* thisObject = jsCast<JSArray*>(cell);
 
-    if (UNLIKELY(isThisValueAltered(slot, thisObject))) {
-        scope.release();
-        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
-    }
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        RELEASE_AND_RETURN(scope, ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode()));
 
     thisObject->ensureWritable(vm);
 
@@ -300,12 +296,10 @@ bool JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
             throwException(exec, scope, createRangeError(exec, "Invalid array length"_s));
             return false;
         }
-        scope.release();
-        return thisObject->setLength(exec, newLength, slot.isStrictMode());
+        RELEASE_AND_RETURN(scope, thisObject->setLength(exec, newLength, slot.isStrictMode()));
     }
 
-    scope.release();
-    return JSObject::put(thisObject, exec, propertyName, value, slot);
+    RELEASE_AND_RETURN(scope, JSObject::put(thisObject, exec, propertyName, value, slot));
 }
 
 bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
@@ -589,10 +583,9 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
         if (!newLength)
             return true;
         if (newLength >= MIN_SPARSE_ARRAY_INDEX) {
-            scope.release();
-            return setLengthWithArrayStorage(
+            RELEASE_AND_RETURN(scope, setLengthWithArrayStorage(
                 exec, newLength, throwException,
-                ensureArrayStorage(vm));
+                ensureArrayStorage(vm)));
         }
         createInitialUndecided(vm, newLength);
         return true;
@@ -615,10 +608,9 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
         if (newLength > MAX_STORAGE_VECTOR_LENGTH // This check ensures that we can do fast push.
             || (newLength >= MIN_SPARSE_ARRAY_INDEX
                 && !isDenseEnoughForVector(newLength, countElements()))) {
-            scope.release();
-            return setLengthWithArrayStorage(
+            RELEASE_AND_RETURN(scope, setLengthWithArrayStorage(
                 exec, newLength, throwException,
-                ensureArrayStorage(vm));
+                ensureArrayStorage(vm)));
         }
         if (newLength > butterfly->publicLength()) {
             if (!ensureLength(vm, newLength)) {
@@ -648,8 +640,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
         
     case ArrayWithArrayStorage:
     case ArrayWithSlowPutArrayStorage:
-        scope.release();
-        return setLengthWithArrayStorage(exec, newLength, throwException, arrayStorage());
+        RELEASE_AND_RETURN(scope, setLengthWithArrayStorage(exec, newLength, throwException, arrayStorage()));
         
     default:
         CRASH();
@@ -1092,10 +1083,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
         
         // We may have to walk the entire array to do the unshift. We're willing to do so
         // only if it's not horribly slow.
-        if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX) {
-            scope.release();
-            return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm));
-        }
+        if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
+            RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm)));
 
         Checked<unsigned, RecordOverflow> checkedLength(oldLength);
         checkedLength += count;
@@ -1116,10 +1105,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
         // through shifting and then realize we should have been in ArrayStorage mode.
         for (unsigned i = oldLength; i-- > startIndex;) {
             JSValue v = butterfly->contiguous().at(this, i).get();
-            if (UNLIKELY(!v)) {
-                scope.release();
-                return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm));
-            }
+            if (UNLIKELY(!v))
+                RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm)));
         }
 
         for (unsigned i = oldLength; i-- > startIndex;) {
@@ -1145,10 +1132,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
         
         // We may have to walk the entire array to do the unshift. We're willing to do so
         // only if it's not horribly slow.
-        if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX) {
-            scope.release();
-            return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm));
-        }
+        if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
+            RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm)));
 
         Checked<unsigned, RecordOverflow> checkedLength(oldLength);
         checkedLength += count;
@@ -1169,10 +1154,8 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
         // through shifting and then realize we should have been in ArrayStorage mode.
         for (unsigned i = oldLength; i-- > startIndex;) {
             double v = butterfly->contiguousDouble().at(this, i);
-            if (UNLIKELY(v != v)) {
-                scope.release();
-                return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm));
-            }
+            if (UNLIKELY(v != v))
+                RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm)));
         }
 
         for (unsigned i = oldLength; i-- > startIndex;) {
@@ -1191,8 +1174,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
         
     case ArrayWithArrayStorage:
     case ArrayWithSlowPutArrayStorage:
-        scope.release();
-        return unshiftCountWithArrayStorage(exec, startIndex, count, arrayStorage());
+        RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(exec, startIndex, count, arrayStorage()));
         
     default:
         CRASH();

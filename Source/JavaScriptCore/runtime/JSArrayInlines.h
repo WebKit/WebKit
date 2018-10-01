@@ -100,8 +100,7 @@ ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
 
     JSValue lengthValue = obj->get(exec, vm.propertyNames->length);
     RETURN_IF_EXCEPTION(scope, PNaN);
-    scope.release();
-    return lengthValue.toLength(exec);
+    RELEASE_AND_RETURN(scope, lengthValue.toLength(exec));
 }
 
 ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)

@@ -269,9 +269,8 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         return nullptr;
     }
 
-    throwScope.release();
-    return FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope, 
-        source().provider(), source().startOffset(), startColumn());
+    RELEASE_AND_RETURN(throwScope, FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope, 
+        source().provider(), source().startOffset(), startColumn()));
 }
 
 CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(

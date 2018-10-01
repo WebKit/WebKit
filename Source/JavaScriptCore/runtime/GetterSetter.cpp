@@ -57,8 +57,7 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
 
     CallData callData;
     CallType callType = getter->methodTable(vm)->getCallData(getter, callData);
-    scope.release();
-    return call(exec, getter, callType, callData, base, ArgList());
+    RELEASE_AND_RETURN(scope, call(exec, getter, callType, callData, base, ArgList()));
 }
 
 bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)

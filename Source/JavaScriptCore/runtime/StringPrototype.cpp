@@ -326,8 +326,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(ExecState* exec, JSString* sou
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call String::substringSharingImpl(), but this would result in redundant checks.
-        scope.release();
-        return jsString(exec, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length)));
+        RELEASE_AND_RETURN(scope, jsString(exec, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length))));
     }
 
     int totalLength = 0;
@@ -354,8 +353,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(ExecState* exec, JSString* sou
             }
         }
 
-        scope.release();
-        return jsString(exec, WTFMove(impl));
+        RELEASE_AND_RETURN(scope, jsString(exec, WTFMove(impl)));
     }
 
     UChar* buffer;
@@ -375,8 +373,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(ExecState* exec, JSString* sou
         }
     }
 
-    scope.release();
-    return jsString(exec, WTFMove(impl));
+    RELEASE_AND_RETURN(scope, jsString(exec, WTFMove(impl)));
 }
 
 static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(ExecState* exec, JSString* sourceVal, const String& source, const StringRange* substringRanges, int rangeCount, const String* separators, int separatorCount)
@@ -391,8 +388,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(ExecState* exec,
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call String::substringSharingImpl(), but this would result in redundant checks.
-        scope.release();
-        return jsString(exec, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length)));
+        RELEASE_AND_RETURN(scope, jsString(exec, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length))));
     }
 
     Checked<int, RecordOverflow> totalLength = 0;
@@ -439,8 +435,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(ExecState* exec,
             }
         }        
 
-        scope.release();
-        return jsString(exec, WTFMove(impl));
+        RELEASE_AND_RETURN(scope, jsString(exec, WTFMove(impl)));
     }
 
     UChar* buffer;
@@ -473,8 +468,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(ExecState* exec,
         }
     }
 
-    scope.release();
-    return jsString(exec, WTFMove(impl));
+    RELEASE_AND_RETURN(scope, jsString(exec, WTFMove(impl)));
 }
 
 #define OUT_OF_MEMORY(exec__, scope__) \
@@ -522,8 +516,7 @@ static ALWAYS_INLINE JSString* removeUsingRegExpSearch(VM& vm, ExecState* exec, 
         if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, sourceLen - lastIndex)))
             OUT_OF_MEMORY(exec, scope);
     }
-    scope.release();
-    return jsSpliceSubstrings(exec, string, source, sourceRanges.data(), sourceRanges.size());
+    RELEASE_AND_RETURN(scope, jsSpliceSubstrings(exec, string, source, sourceRanges.data(), sourceRanges.size()));
 }
 
 static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
@@ -545,10 +538,8 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
         regExpObject->setLastIndex(exec, 0);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
-        if (callType == CallType::None && !replacementString.length()) {
-            scope.release();
-            return removeUsingRegExpSearch(vm, exec, string, source, regExp);
-        }
+        if (callType == CallType::None && !replacementString.length()) 
+            RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, exec, string, source, regExp));
     }
 
     // FIXME: This is wrong because we may be called directly from the FTL.
@@ -721,8 +712,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
         if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, sourceLen - lastIndex)))
             OUT_OF_MEMORY(exec, scope);
     }
-    scope.release();
-    return jsSpliceSubstringsWithSeparators(exec, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size());
+    RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparators(exec, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
 
 JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
@@ -737,15 +727,13 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
         // ES5.1 15.5.4.10 step 8.a.
         searchValue->setLastIndex(exec, 0);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        scope.release();
-        return removeUsingRegExpSearch(vm, exec, thisValue, thisValue->value(exec), regExp);
+        RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, exec, thisValue, thisValue->value(exec), regExp));
     }
 
     CallData callData;
     String replacementString = emptyString();
-    scope.release();
-    return replaceUsingRegExpSearch(
-        vm, exec, thisValue, searchValue, callData, CallType::None, replacementString, JSValue());
+    RELEASE_AND_RETURN(scope, replaceUsingRegExpSearch(
+        vm, exec, thisValue, searchValue, callData, CallType::None, replacementString, JSValue()));
 }
 
 JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
@@ -772,9 +760,8 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, ExecState* exec,
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    scope.release();
-    return replaceUsingRegExpSearch(
-        vm, exec, string, searchValue, callData, callType, replacementString, replaceValue);
+    RELEASE_AND_RETURN(scope, replaceUsingRegExpSearch(
+        vm, exec, string, searchValue, callData, callType, replacementString, replaceValue));
 }
 
 static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, ExecState* exec, JSString* jsString, JSValue searchValue, JSValue replaceValue)
@@ -815,8 +802,7 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, ExecState* exec,
 
     size_t leftLength = stringImpl->length() - matchEnd;
     String rightPart(StringImpl::createSubstringSharingImpl(*stringImpl, matchEnd, leftLength));
-    scope.release();
-    return JSC::jsString(exec, leftPart, middlePart, rightPart);
+    RELEASE_AND_RETURN(scope, JSC::jsString(exec, leftPart, middlePart, rightPart));
 }
 
 static inline bool checkObjectCoercible(JSValue thisValue)
@@ -848,8 +834,7 @@ static inline JSString* repeatCharacter(ExecState& exec, CharacterType character
 
     std::fill_n(buffer, repeatCount, character);
 
-    scope.release();
-    return jsString(&exec, WTFMove(impl));
+    RELEASE_AND_RETURN(scope, jsString(&exec, WTFMove(impl)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
@@ -905,8 +890,7 @@ ALWAYS_INLINE JSString* replace(
     }
     JSString* string = thisValue.toString(exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    scope.release();
-    return replace(vm, exec, string, searchValue, replaceValue);
+    RELEASE_AND_RETURN(scope, replace(vm, exec, string, searchValue, replaceValue));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState* exec)
@@ -921,8 +905,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState* exec)
     if (!searchValue.inherits<RegExpObject>(vm))
         return JSValue::encode(jsUndefined());
 
-    scope.release();
-    return JSValue::encode(replaceUsingRegExpSearch(vm, exec, string, searchValue, exec->argument(1)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingRegExpSearch(vm, exec, string, searchValue, exec->argument(1))));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingStringSearch(ExecState* exec)
@@ -933,8 +916,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingStringSearch(ExecState* 
     JSString* string = exec->thisValue().toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    scope.release();
-    return JSValue::encode(replaceUsingStringSearch(vm, exec, string, exec->argument(0), exec->argument(1)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch(vm, exec, string, exec->argument(0), exec->argument(1))));
 }
 
 JSCell* JIT_OPERATION operationStringProtoFuncReplaceGeneric(
@@ -1308,15 +1290,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
             separatorCharacter = separatorImpl->characters16()[0];
 
         if (stringImpl->is8Bit()) {
-            if (splitStringByOneCharacterImpl<LChar>(exec, result, thisValue, input, stringImpl, separatorCharacter, position, resultLength, limit)) {
-                scope.release();
-                return JSValue::encode(result);
-            }
+            if (splitStringByOneCharacterImpl<LChar>(exec, result, thisValue, input, stringImpl, separatorCharacter, position, resultLength, limit)) 
+                RELEASE_AND_RETURN(scope, JSValue::encode(result));
         } else {
-            if (splitStringByOneCharacterImpl<UChar>(exec, result, thisValue, input, stringImpl, separatorCharacter, position, resultLength, limit)) {
-                scope.release();
-                return JSValue::encode(result);
-            }
+            if (splitStringByOneCharacterImpl<UChar>(exec, result, thisValue, input, stringImpl, separatorCharacter, position, resultLength, limit)) 
+                RELEASE_AND_RETURN(scope, JSValue::encode(result));
         }
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else {
@@ -1468,8 +1446,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
     String lowercasedString = s.convertToLowercaseWithoutLocale();
     if (lowercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
-    scope.release();
-    return JSValue::encode(jsString(exec, lowercasedString));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, lowercasedString)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
@@ -1486,8 +1463,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
     String uppercasedString = s.convertToUppercaseWithoutLocale();
     if (uppercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
-    scope.release();
-    return JSValue::encode(jsString(exec, uppercasedString));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, uppercasedString)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
@@ -1589,8 +1565,7 @@ static EncodedJSValue toLocaleCase(ExecState* state, int32_t (*convertCase)(UCha
         return throwVMTypeError(state, scope, u_errorName(error));
 
     // 18. Return L.
-    scope.release();
-    return JSValue::encode(jsString(state, lower));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(state, lower)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState* state)
@@ -1639,8 +1614,7 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
     if (left == 0 && right == str.length() && thisValue.isString())
         return thisValue;
 
-    scope.release();
-    return jsString(exec, str.substringSharingImpl(left, right - left));
+    RELEASE_AND_RETURN(scope, jsString(exec, str.substringSharingImpl(left, right - left)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState* exec)
@@ -1777,8 +1751,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
 
     JSValue positionArg = exec->argument(1);
 
-    scope.release();
-    return stringIncludesImpl(vm, exec, stringToSearchIn, searchString, positionArg);
+    RELEASE_AND_RETURN(scope, stringIncludesImpl(vm, exec, stringToSearchIn, searchString, positionArg));
 }
 
 EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(ExecState* exec)
@@ -1798,8 +1771,7 @@ EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(ExecState* exec)
 
     JSValue positionArg = exec->argument(1);
 
-    scope.release();
-    return stringIncludesImpl(vm, exec, stringToSearchIn, searchString, positionArg);
+    RELEASE_AND_RETURN(scope, stringIncludesImpl(vm, exec, stringToSearchIn, searchString, positionArg));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState* exec)
@@ -1866,8 +1838,7 @@ static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLeng
     if (U_FAILURE(status))
         return throwTypeError(exec, scope);
 
-    scope.release();
-    return jsString(exec, WTFMove(impl));
+    RELEASE_AND_RETURN(scope, jsString(exec, WTFMove(impl)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
@@ -1900,8 +1871,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
             return throwVMError(exec, scope, createRangeError(exec, "argument does not match any normalization form"_s));
     }
 
-    scope.release();
-    return JSValue::encode(normalize(exec, view.upconvertedCharacters(), view.length(), form));
+    RELEASE_AND_RETURN(scope, JSValue::encode(normalize(exec, view.upconvertedCharacters(), view.length(), form)));
 }
 
 } // namespace JSC

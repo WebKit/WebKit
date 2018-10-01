@@ -165,12 +165,10 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsi
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (!hasProperty)
         return { };
-    if (UNLIKELY(slot.isTaintedByOpaqueObject())) {
-        scope.release();
-        return object->get(exec, index);
-    }
-    scope.release();
-    return slot.getValue(exec, index);
+    if (UNLIKELY(slot.isTaintedByOpaqueObject()))
+        RELEASE_AND_RETURN(scope, object->get(exec, index));
+
+    RELEASE_AND_RETURN(scope, slot.getValue(exec, index));
 }
 
 static ALWAYS_INLINE bool putLength(ExecState* exec, VM& vm, JSObject* obj, JSValue value)
@@ -453,8 +451,7 @@ inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separ
                 joiner.appendEmptyString();
             }
         }
-        scope.release();
-        return joiner.join(state);
+        RELEASE_AND_RETURN(scope, joiner.join(state));
     }
     case ALL_CONTIGUOUS_INDEXING_TYPES: {
         auto& butterfly = *thisObject->butterfly();
@@ -479,8 +476,7 @@ inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separ
                 joiner.appendEmptyString();
             }
         }
-        scope.release();
-        return joiner.join(state);
+        RELEASE_AND_RETURN(scope, joiner.join(state));
     }
     case ALL_DOUBLE_INDEXING_TYPES: {
         auto& butterfly = *thisObject->butterfly();
@@ -505,8 +501,7 @@ inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separ
                 joiner.appendEmptyString();
             }
         }
-        scope.release();
-        return joiner.join(state);
+        RELEASE_AND_RETURN(scope, joiner.join(state));
     }
     }
 
@@ -519,8 +514,7 @@ generalCase:
         joiner.append(state, element);
         RETURN_IF_EXCEPTION(scope, { });
     }
-    scope.release();
-    return joiner.join(state);
+    RELEASE_AND_RETURN(scope, joiner.join(state));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
@@ -546,16 +540,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     if (callType == CallType::None)
         customJoinCase = true;
 
-    if (UNLIKELY(customJoinCase)) {
-        scope.release();
-        return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(vm)->className(thisObject, vm), "]"));
-    }
+    if (UNLIKELY(customJoinCase))
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(vm)->className(thisObject, vm), "]")));
 
     // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
-    if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin) {
-        scope.release();
-        return JSValue::encode(call(exec, function, callType, callData, thisObject, *vm.emptyList));
-    }
+    if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin)
+        RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, function, callType, callData, thisObject, *vm.emptyList)));
 
     ASSERT(isJSArray(thisValue));
     JSArray* thisArray = asArray(thisValue);
@@ -604,8 +594,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    scope.release();
-    return JSValue::encode(joiner.join(*exec));
+    RELEASE_AND_RETURN(scope, JSValue::encode(joiner.join(*exec)));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
@@ -653,8 +642,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    scope.release();
-    return JSValue::encode(stringJoiner.join(*exec));
+    RELEASE_AND_RETURN(scope, JSValue::encode(stringJoiner.join(*exec)));
 }
 
 static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separator, uint64_t length)
@@ -736,15 +724,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
             JSString* jsSeparator = jsSingleCharacterString(exec, comma);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-            scope.release();
-            return JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64));
+            RELEASE_AND_RETURN(scope, JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64)));
         }
 
         unsigned unsignedLength = static_cast<unsigned>(length);
         ASSERT(static_cast<double>(unsignedLength) == length);
 
-        scope.release();
-        return JSValue::encode(fastJoin(*exec, thisObject, { &comma, 1 }, unsignedLength));
+        RELEASE_AND_RETURN(scope, JSValue::encode(fastJoin(*exec, thisObject, { &comma, 1 }, unsignedLength)));
     }
 
     // 4. Let sep be ? ToString(separator).
@@ -755,15 +741,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
         uint64_t length64 = static_cast<uint64_t>(length);
         ASSERT(static_cast<double>(length64) == length);
 
-        scope.release();
-        return JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64));
+        RELEASE_AND_RETURN(scope, JSValue::encode(slowJoin(*exec, thisObject, jsSeparator, length64)));
     }
 
     auto viewWithString = jsSeparator->viewWithUnderlyingString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    scope.release();
-    return JSValue::encode(fastJoin(*exec, thisObject, viewWithString.view, length));
+    RELEASE_AND_RETURN(scope, JSValue::encode(fastJoin(*exec, thisObject, viewWithString.view, length)));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
@@ -773,10 +757,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
 
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
 
-    if (isJSArray(thisValue)) {
-        scope.release();
-        return JSValue::encode(asArray(thisValue)->pop(exec));
-    }
+    if (isJSArray(thisValue))
+        RELEASE_AND_RETURN(scope, JSValue::encode(asArray(thisValue)->pop(exec)));
 
     JSObject* thisObj = thisValue.toObject(exec);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
@@ -1457,10 +1439,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         return JSValue::encode(jsNull());
 
     JSValue second = exec->uncheckedArgument(1);
-    if (!isJSArray(second)) {
-        scope.release();
-        return concatAppendOne(exec, vm, firstArray, second);
-    }
+    if (!isJSArray(second))
+        RELEASE_AND_RETURN(scope, concatAppendOne(exec, vm, firstArray, second));
 
     JSArray* secondArray = jsCast<JSArray*>(second);
     

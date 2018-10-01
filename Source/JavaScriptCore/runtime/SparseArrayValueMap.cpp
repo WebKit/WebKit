@@ -113,8 +113,7 @@ bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
         return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
     }
     
-    scope.release();
-    return entry.put(exec, array, this, value, shouldThrow);
+    RELEASE_AND_RETURN(scope, entry.put(exec, array, this, value, shouldThrow));
 }
 
 bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
@@ -204,8 +203,7 @@ bool SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
         return true;
     }
 
-    scope.release();
-    return callSetter(exec, thisValue, Base::get(), value, shouldThrow ? StrictMode : NotStrictMode);
+    RELEASE_AND_RETURN(scope, callSetter(exec, thisValue, Base::get(), value, shouldThrow ? StrictMode : NotStrictMode));
 }
 
 JSValue SparseArrayEntry::getNonSparseMode() const

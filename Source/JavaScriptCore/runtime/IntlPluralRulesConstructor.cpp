@@ -124,8 +124,7 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesConstructorFuncSupportedLocalesOf(Ex
     Vector<String> requestedLocales = canonicalizeLocaleList(*state, state->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    scope.release();
-    return JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1))));
 }
 
 void IntlPluralRulesConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

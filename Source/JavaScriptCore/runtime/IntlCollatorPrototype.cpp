@@ -104,8 +104,7 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto yViewWithString = y->viewWithUnderlyingString(state);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(collator->compareStrings(*state, xViewWithString.view, yViewWithString.view));
+    RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(*state, xViewWithString.view, yViewWithString.view)));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(ExecState* state)
@@ -147,8 +146,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(ExecState*
     if (!collator)
         return JSValue::encode(throwTypeError(state, scope, "Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator"_s));
 
-    scope.release();
-    return JSValue::encode(collator->resolvedOptions(*state));
+    RELEASE_AND_RETURN(scope, JSValue::encode(collator->resolvedOptions(*state)));
 }
 
 } // namespace JSC

@@ -79,8 +79,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(vm, targetFunction, callData);
     ASSERT(callType != CallType::None);
-    scope.release();
-    return JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args)));
 }
 
 EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(ExecState* exec)
@@ -123,8 +122,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
     ConstructData constructData;
     ConstructType constructType = getConstructData(vm, targetFunction, constructData);
     ASSERT(constructType != ConstructType::None);
-    scope.release();
-    return JSValue::encode(construct(exec, targetFunction, constructType, constructData, args));
+    RELEASE_AND_RETURN(scope, JSValue::encode(construct(exec, targetFunction, constructType, constructData, args)));
 }
 
 EncodedJSValue JSC_HOST_CALL isBoundFunction(ExecState* exec)

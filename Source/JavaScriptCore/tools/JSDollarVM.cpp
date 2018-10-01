@@ -1151,14 +1151,12 @@ EncodedJSValue JSC_HOST_CALL functionWasmStreamingParserAddBytes(ExecState* exec
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
     auto* thisObject = jsDynamicCast<WasmStreamingParser*>(vm, exec->thisValue());
-    if (!thisObject) {
-        scope.release();
-        return JSValue::encode(jsBoolean(false));
-    }
+    if (!thisObject)
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(false)));
+
     auto data = getWasmBufferFromValue(exec, exec->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsNumber(static_cast<int32_t>(thisObject->streamingParser().addBytes(bitwise_cast<const uint8_t*>(data.first), data.second))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(static_cast<int32_t>(thisObject->streamingParser().addBytes(bitwise_cast<const uint8_t*>(data.first), data.second)))));
 }
 
 EncodedJSValue JSC_HOST_CALL functionWasmStreamingParserFinalize(ExecState* exec)
@@ -1810,8 +1808,7 @@ static EncodedJSValue JSC_HOST_CALL functionGetPrivateProperty(ExecState* exec)
     if (!ident)
         return throwVMError(exec, scope, "Unknown private name.");
 
-    scope.release();
-    return JSValue::encode(exec->argument(0).get(exec, *ident));
+    RELEASE_AND_RETURN(scope, JSValue::encode(exec->argument(0).get(exec, *ident)));
 }
 
 static EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState* exec)

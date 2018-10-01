@@ -1467,8 +1467,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
             LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), JSEntryPtrTag);
         }
-        throwScope.release();
-        return handleHostCall(execCallee, pc, calleeAsValue, kind);
+        RELEASE_AND_RETURN(throwScope, handleHostCall(execCallee, pc, calleeAsValue, kind));
     }
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     JSScope* scope = callee->scopeUnchecked();
@@ -1543,15 +1542,13 @@ inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpec
 LLINT_SLOW_PATH_DECL(slow_path_call)
 {
     LLINT_BEGIN_NO_SET_PC();
-    throwScope.release();
-    return genericCall(exec, pc, CodeForCall);
+    RELEASE_AND_RETURN(throwScope, genericCall(exec, pc, CodeForCall));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_construct)
 {
     LLINT_BEGIN_NO_SET_PC();
-    throwScope.release();
-    return genericCall(exec, pc, CodeForConstruct);
+    RELEASE_AND_RETURN(throwScope, genericCall(exec, pc, CodeForConstruct));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
@@ -1617,8 +1614,7 @@ inline SlowPathReturnType varargsSetup(ExecState* exec, Instruction* pc, CodeSpe
     execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     exec->setCurrentVPC(pc);
 
-    throwScope.release();
-    return setUpCall(execCallee, pc, kind, calleeAsValue);
+    RELEASE_AND_RETURN(throwScope, setUpCall(execCallee, pc, kind, calleeAsValue));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
@@ -1651,10 +1647,8 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setCodeBlock(0);
     exec->setCurrentVPC(pc);
     
-    if (!isHostFunction(calleeAsValue, globalFuncEval)) {
-        throwScope.release();
-        return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);
-    }
+    if (!isHostFunction(calleeAsValue, globalFuncEval))
+        RELEASE_AND_RETURN(throwScope, setUpCall(execCallee, pc, CodeForCall, calleeAsValue));
     
     vm.hostCallReturnValue = eval(execCallee);
     LLINT_CALL_RETURN(exec, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);

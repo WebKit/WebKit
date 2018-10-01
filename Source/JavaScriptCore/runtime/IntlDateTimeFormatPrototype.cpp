@@ -111,8 +111,7 @@ static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecSta
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    scope.release();
-    return JSValue::encode(format->format(*state, value));
+    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(*state, value)));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* state)
@@ -176,8 +175,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(ExecSt
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    scope.release();
-    return JSValue::encode(dateTimeFormat->formatToParts(*state, value));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(*state, value)));
 }
 #endif
 
@@ -200,8 +198,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(Exec
     if (!dateTimeFormat)
         return JSValue::encode(throwTypeError(state, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat"_s));
 
-    scope.release();
-    return JSValue::encode(dateTimeFormat->resolvedOptions(*state));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->resolvedOptions(*state)));
 }
 
 } // namespace JSC

@@ -92,8 +92,7 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(ExecState* state
     double value = state->argument(0).toNumber(state);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    scope.release();
-    return JSValue::encode(pluralRules->select(*state, value));
+    RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->select(*state, value)));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(ExecState* state)
@@ -108,8 +107,7 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(ExecSta
     if (!pluralRules)
         return JSValue::encode(throwTypeError(state, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s));
 
-    scope.release();
-    return JSValue::encode(pluralRules->resolvedOptions(*state));
+    RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->resolvedOptions(*state)));
 }
 
 } // namespace JSC

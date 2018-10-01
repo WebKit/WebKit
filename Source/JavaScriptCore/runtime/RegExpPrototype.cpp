@@ -111,8 +111,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncTestFast(ExecState* exec)
     EXCEPTION_ASSERT(!!scope.exception() == !string);
     if (!string)
         return JSValue::encode(jsUndefined());
-    scope.release();
-    return JSValue::encode(jsBoolean(regexp->test(exec, exec->lexicalGlobalObject(), string)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(regexp->test(exec, exec->lexicalGlobalObject(), string))));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
@@ -128,8 +127,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
     EXCEPTION_ASSERT(!!scope.exception() == !string);
     if (!string)
         return JSValue::encode(jsUndefined());
-    scope.release();
-    return JSValue::encode(regexp->exec(exec, exec->lexicalGlobalObject(), string));
+    RELEASE_AND_RETURN(scope, JSValue::encode(regexp->exec(exec, exec->lexicalGlobalObject(), string)));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchFast(ExecState* exec)
@@ -249,8 +247,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     String flags = flagsValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, '/', source, '/', flags));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, '/', source, '/', flags)));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)

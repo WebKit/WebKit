@@ -89,8 +89,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
         buf[i] = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
-    scope.release();
-    return JSValue::encode(jsString(exec, WTFMove(impl)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, WTFMove(impl))));
 }
 
 JSString* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
@@ -124,8 +123,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState* exec)
         }
     }
 
-    scope.release();
-    return JSValue::encode(jsString(exec, builder.toString()));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, builder.toString())));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)

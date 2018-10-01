@@ -71,8 +71,7 @@ JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const
 
     if (!globalObject->evalEnabled())
         return throwException(exec, scope, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
-    scope.release();
-    return constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceOrigin, sourceURL, position, -1, functionConstructionMode, newTarget);
+    RELEASE_AND_RETURN(scope, constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceOrigin, sourceURL, position, -1, functionConstructionMode, newTarget));
 }
 
 JSObject* constructFunctionSkippingEvalEnabledCheck(

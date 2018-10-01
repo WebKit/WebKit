@@ -198,8 +198,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdDirect(ExecState* exec, StructureSt
     bool found = baseValue.getOwnPropertySlot(exec, ident, slot);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    scope.release();
-    return JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined());
+    RELEASE_AND_RETURN(scope, JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined()));
 }
 
 EncodedJSValue JIT_OPERATION operationGetByIdDirectGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
@@ -215,8 +214,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdDirectGeneric(ExecState* exec, Enco
     bool found = baseValue.getOwnPropertySlot(exec, ident, slot);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    scope.release();
-    return JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined());
+    RELEASE_AND_RETURN(scope, JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined()));
 }
 
 EncodedJSValue JIT_OPERATION operationGetByIdDirectOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
@@ -235,8 +233,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdDirectOptimize(ExecState* exec, Str
     if (stubInfo->considerCaching(exec->codeBlock(), baseValue.structureOrNull()))
         repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Direct);
 
-    scope.release();
-    return JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined());
+    RELEASE_AND_RETURN(scope, JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined()));
 }
 
 EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
@@ -1018,8 +1015,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
             void* linkedTarget = codePtr.executableAddress();
             return encodeResult(linkedTarget, reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
-        throwScope.release();
-        return handleHostCall(execCallee, calleeAsValue, callLinkInfo);
+        RELEASE_AND_RETURN(throwScope, handleHostCall(execCallee, calleeAsValue, callLinkInfo));
     }
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
@@ -1132,8 +1128,7 @@ inline SlowPathReturnType virtualForWithFunction(
             ASSERT(!!codePtr);
             return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
-        throwScope.release();
-        return handleHostCall(execCallee, calleeAsValue, callLinkInfo);
+        RELEASE_AND_RETURN(throwScope, handleHostCall(execCallee, calleeAsValue, callLinkInfo));
     }
     
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
@@ -1827,8 +1822,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
         if (isJSString(baseValue)) {
             if (asString(baseValue)->canGetIndex(i)) {
                 ctiPatchCallByReturnAddress(returnAddress, operationGetByValString);
-                scope.release();
-                return asString(baseValue)->getIndex(exec, i);
+                RELEASE_AND_RETURN(scope, asString(baseValue)->getIndex(exec, i));
             }
             byValInfo->arrayProfile->setOutOfBounds();
         } else if (baseValue.isObject()) {
@@ -1853,8 +1847,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
             }
         }
 
-        scope.release();
-        return baseValue.get(exec, i);
+        RELEASE_AND_RETURN(scope, baseValue.get(exec, i));
     }
 
     baseValue.requireObjectCoercible(exec);
@@ -1866,8 +1859,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
     if (byValInfo->stubInfo && (!isStringOrSymbol(subscript) || byValInfo->cachedId != property))
         byValInfo->tookSlowPath = true;
 
-    scope.release();
-    return baseValue.get(exec, property);
+    RELEASE_AND_RETURN(scope, baseValue.get(exec, property));
 }
 
 static OptimizationResult tryGetByValOptimize(ExecState* exec, JSValue baseValue, JSValue subscript, ByValInfo* byValInfo, ReturnAddressPtr returnAddress)
@@ -2058,10 +2050,9 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
     JSValue result;
     if (LIKELY(subscript.isUInt32())) {
         uint32_t i = subscript.asUInt32();
-        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i)) {
-            scope.release();
-            return JSValue::encode(asString(baseValue)->getIndex(exec, i));
-        }
+        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
+            RELEASE_AND_RETURN(scope, JSValue::encode(asString(baseValue)->getIndex(exec, i)));
+
         result = baseValue.get(exec, i);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!isJSString(baseValue)) {
@@ -2305,8 +2296,7 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction*
     // ModuleVar is always converted to ClosureVar for get_from_scope.
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
-    throwScope.release();
-    return JSValue::encode(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
         if (!found) {
             if (getPutInfo.resolveMode() == ThrowIfNotFound)
                 throwException(exec, throwScope, createUndefinedVariableError(exec, ident));
@@ -2328,7 +2318,7 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction*
         if (!result)
             return slot.getValue(exec, ident);
         return result;
-    }));
+    })));
 }
 
 void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)

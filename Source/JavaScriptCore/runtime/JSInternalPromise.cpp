@@ -66,8 +66,7 @@ JSInternalPromise* JSInternalPromise::then(ExecState* exec, JSFunction* onFulfil
     arguments.append(onRejected ? onRejected : jsUndefined());
     ASSERT(!arguments.hasOverflowed());
 
-    scope.release();
-    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+    RELEASE_AND_RETURN(scope, jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments)));
 }
 
 } // namespace JSC

@@ -262,41 +262,32 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     
     switch (ci->typedArrayStorageType) {
     case TypeInt8:
-        scope.release();
-        return setWithSpecificType<Int8Adaptor>(
-            exec, offset, jsCast<JSInt8Array*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Int8Adaptor>(
+            exec, offset, jsCast<JSInt8Array*>(object), objectOffset, length, type));
     case TypeInt16:
-        scope.release();
-        return setWithSpecificType<Int16Adaptor>(
-            exec, offset, jsCast<JSInt16Array*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Int16Adaptor>(
+            exec, offset, jsCast<JSInt16Array*>(object), objectOffset, length, type));
     case TypeInt32:
-        scope.release();
-        return setWithSpecificType<Int32Adaptor>(
-            exec, offset, jsCast<JSInt32Array*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Int32Adaptor>(
+            exec, offset, jsCast<JSInt32Array*>(object), objectOffset, length, type));
     case TypeUint8:
-        scope.release();
-        return setWithSpecificType<Uint8Adaptor>(
-            exec, offset, jsCast<JSUint8Array*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Uint8Adaptor>(
+            exec, offset, jsCast<JSUint8Array*>(object), objectOffset, length, type));
     case TypeUint8Clamped:
-        scope.release();
-        return setWithSpecificType<Uint8ClampedAdaptor>(
-            exec, offset, jsCast<JSUint8ClampedArray*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Uint8ClampedAdaptor>(
+            exec, offset, jsCast<JSUint8ClampedArray*>(object), objectOffset, length, type));
     case TypeUint16:
-        scope.release();
-        return setWithSpecificType<Uint16Adaptor>(
-            exec, offset, jsCast<JSUint16Array*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Uint16Adaptor>(
+            exec, offset, jsCast<JSUint16Array*>(object), objectOffset, length, type));
     case TypeUint32:
-        scope.release();
-        return setWithSpecificType<Uint32Adaptor>(
-            exec, offset, jsCast<JSUint32Array*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Uint32Adaptor>(
+            exec, offset, jsCast<JSUint32Array*>(object), objectOffset, length, type));
     case TypeFloat32:
-        scope.release();
-        return setWithSpecificType<Float32Adaptor>(
-            exec, offset, jsCast<JSFloat32Array*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Float32Adaptor>(
+            exec, offset, jsCast<JSFloat32Array*>(object), objectOffset, length, type));
     case TypeFloat64:
-        scope.release();
-        return setWithSpecificType<Float64Adaptor>(
-            exec, offset, jsCast<JSFloat64Array*>(object), objectOffset, length, type);
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Float64Adaptor>(
+            exec, offset, jsCast<JSFloat64Array*>(object), objectOffset, length, type));
     case NotTypedArray:
     case TypeDataView: {
         bool success = validateRange(exec, offset, length);
@@ -414,14 +405,12 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
 
         if (descriptor.value()) {
             PutPropertySlot unused(JSValue(thisObject), shouldThrow);
-            scope.release();
-            return thisObject->put(thisObject, exec, propertyName, descriptor.value(), unused);
+            RELEASE_AND_RETURN(scope, thisObject->put(thisObject, exec, propertyName, descriptor.value(), unused));
         }
         return true;
     }
     
-    scope.release();
-    return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
+    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow));
 }
 
 template<typename Adaptor>

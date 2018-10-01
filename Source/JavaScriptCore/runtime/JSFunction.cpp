@@ -497,17 +497,15 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
 
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
-    if (UNLIKELY(isThisValueAltered(slot, thisObject))) {
-        scope.release();
-        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
-    }
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        RELEASE_AND_RETURN(scope, ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode()));
+
 
     if (thisObject->isHostOrBuiltinFunction()) {
         PropertyStatus propertyType = thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, exec, propertyName);
         if (isLazy(propertyType))
             slot.disableCaching();
-        scope.release();
-        return Base::put(thisObject, exec, propertyName, value, slot);
+        RELEASE_AND_RETURN(scope, Base::put(thisObject, exec, propertyName, value, slot));
     }
 
     if (propertyName == vm.propertyNames->prototype) {
@@ -518,23 +516,20 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, propertyName, getSlot);
         if (thisObject->m_rareData)
             thisObject->m_rareData->clear("Store to prototype property of a function");
-        scope.release();
-        return Base::put(thisObject, exec, propertyName, value, slot);
+        RELEASE_AND_RETURN(scope, Base::put(thisObject, exec, propertyName, value, slot));
     }
 
     if (propertyName == vm.propertyNames->arguments || propertyName == vm.propertyNames->caller) {
-        if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
-            scope.release();
-            return Base::put(thisObject, exec, propertyName, value, slot);
-        }
+        if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties())
+            RELEASE_AND_RETURN(scope, Base::put(thisObject, exec, propertyName, value, slot));
+
         slot.disableCaching();
         return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     }
     PropertyStatus propertyType = thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
     if (isLazy(propertyType))
         slot.disableCaching();
-    scope.release();
-    return Base::put(thisObject, exec, propertyName, value, slot);
+    RELEASE_AND_RETURN(scope, Base::put(thisObject, exec, propertyName, value, slot));
 }
 
 bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
@@ -567,8 +562,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (thisObject->isHostOrBuiltinFunction()) {
         thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, exec, propertyName);
-        scope.release();
-        return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
+        RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException));
     }
 
     if (propertyName == vm.propertyNames->prototype) {
@@ -578,27 +572,23 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         if (thisObject->m_rareData)
             thisObject->m_rareData->clear("Store to prototype property of a function");
-        scope.release();
-        return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
+        RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException));
     }
 
     bool valueCheck;
     if (propertyName == vm.propertyNames->arguments) {
-        if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
-            scope.release();
-            return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
-        }
+        if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties())
+            RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException));
+
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveArguments(exec, thisObject));
     } else if (propertyName == vm.propertyNames->caller) {
-        if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
-            scope.release();
-            return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
-        }
+        if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties())
+            RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException));
+
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveCallerFunction(exec, thisObject));
     } else {
         thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
-        scope.release();
-        return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
+        RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException));
     }
      
     if (descriptor.configurablePresent() && descriptor.configurable())

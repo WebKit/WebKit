@@ -130,8 +130,7 @@ bool RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
     if (std::optional<uint32_t> index = parseIndex(propertyName))
         return thisObject->getConcreteArray()->setValueAt(exec, index.value(), value);
 
-    scope.release();
-    return JSObject::put(thisObject, exec, propertyName, value, slot);
+    RELEASE_AND_RETURN(scope, JSObject::put(thisObject, exec, propertyName, value, slot));
 }
 
 bool RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool)

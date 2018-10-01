@@ -1,3 +1,20 @@
+2018-10-01  Keith Miller  <keith_miller@apple.com>
+
+        Create a RELEASE_AND_RETURN macro for ExceptionScopes
+        https://bugs.webkit.org/show_bug.cgi?id=190163
+
+        Reviewed by Mark Lam.
+
+        The new RELEASE_AND_RETURN does all the work for cases
+        where you want to return the result of some expression
+        without explicitly checking for an exception. This is
+        much like the existing RETURN_IF_EXCEPTION macro.
+
+        No new tests since this is a refactor.
+
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::put):
+
 2018-10-01  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the watchOS build after <https://trac.webkit.org/changeset/236678>

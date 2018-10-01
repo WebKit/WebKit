@@ -306,8 +306,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
         return throwVMTypeError(exec, scope);
 
     // Return the result of calling the [[Call]] internal method of toString passing the this value and no arguments.
-    scope.release();
-    return JSValue::encode(call(exec, toString, callType, callData, thisValue, *vm.emptyList));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, toString, callType, callData, thisValue, *vm.emptyList)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
@@ -328,8 +327,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
         return JSValue::encode(result);
 
     PropertyName toStringTagSymbol = vm.propertyNames->toStringTagSymbol;
-    scope.release();
-    return JSValue::encode(thisObject->getPropertySlot(exec, toStringTagSymbol, [&] (bool found, PropertySlot& toStringTagSlot) -> JSValue {
+    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPropertySlot(exec, toStringTagSymbol, [&] (bool found, PropertySlot& toStringTagSlot) -> JSValue {
         if (found) {
             JSValue stringTag = toStringTagSlot.getValue(exec, toStringTagSymbol);
             RETURN_IF_EXCEPTION(scope, { });
@@ -356,7 +354,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
         auto result = jsNontrivialString(&vm, newString);
         thisObject->structure(vm)->setObjectToStringValue(exec, vm, result, toStringTagSlot);
         return result;
-    }));
+    })));
 }
 
 } // namespace JSC

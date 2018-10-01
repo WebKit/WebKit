@@ -123,8 +123,7 @@ bool JSModuleEnvironment::put(JSCell* cell, ExecState* exec, PropertyName proper
         throwTypeError(exec, scope, ReadonlyPropertyWriteError);
         return false;
     }
-    scope.release();
-    return Base::put(thisObject, exec, propertyName, value, slot);
+    RELEASE_AND_RETURN(scope, Base::put(thisObject, exec, propertyName, value, slot));
 }
 
 bool JSModuleEnvironment::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

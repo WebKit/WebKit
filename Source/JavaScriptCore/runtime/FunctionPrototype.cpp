@@ -87,10 +87,8 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (thisValue.inherits<JSFunction>(vm)) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
-        if (function->isHostOrBuiltinFunction()) {
-            scope.release();
-            return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(vm), "() {\n    [native code]\n}"));
-        }
+        if (function->isHostOrBuiltinFunction())
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(vm), "() {\n    [native code]\n}")));
 
         FunctionExecutable* executable = function->jsExecutable();
         if (executable->isClass()) {
@@ -141,22 +139,18 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         StringView source = executable->source().provider()->getRange(
             executable->parametersStartOffset(),
             executable->parametersStartOffset() + executable->source().length());
-        scope.release();
-        return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source));
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source)));
     }
 
     if (thisValue.inherits<InternalFunction>(vm)) {
         InternalFunction* function = jsCast<InternalFunction*>(thisValue);
-        scope.release();
-        return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}"));
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}")));
     }
 
     if (thisValue.isObject()) {
         JSObject* object = asObject(thisValue);
-        if (object->isFunction(vm)) {
-            scope.release();
-            return JSValue::encode(jsMakeNontrivialString(exec, "function ", object->classInfo(vm)->className, "() {\n    [native code]\n}"));
-        }
+        if (object->isFunction(vm))
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, "function ", object->classInfo(vm)->className, "() {\n    [native code]\n}")));
     }
 
     return throwVMTypeError(exec, scope);

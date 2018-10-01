@@ -73,18 +73,15 @@ JSArray* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* pr
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (!length.isNumber()) {
-        scope.release();
-        return constructArrayNegativeIndexed(exec, profile, globalObject, &length, 1, newTarget);
-    }
+    if (!length.isNumber())
+        RELEASE_AND_RETURN(scope, constructArrayNegativeIndexed(exec, profile, globalObject, &length, 1, newTarget));
     
     uint32_t n = length.toUInt32(exec);
     if (n != length.toNumber(exec)) {
         throwException(exec, scope, createRangeError(exec, "Array size is not a small enough positive integer."_s));
         return nullptr;
     }
-    scope.release();
-    return constructEmptyArray(exec, profile, globalObject, n, newTarget);
+    RELEASE_AND_RETURN(scope, constructEmptyArray(exec, profile, globalObject, n, newTarget));
 }
 
 static inline JSArray* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args, JSValue newTarget)

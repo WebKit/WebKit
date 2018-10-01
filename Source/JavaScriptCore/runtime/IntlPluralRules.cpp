@@ -235,8 +235,7 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     options->putDirect(vm, Identifier::fromString(&vm, "pluralCategories"), categories);
 #endif
 
-    scope.release();
-    return options;
+    RELEASE_AND_RETURN(scope, options);
 }
 
 JSValue IntlPluralRules::select(ExecState& exec, double value)

@@ -141,8 +141,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecS
 
     // 3. Return SupportedLocales(%Collator%.[[availableLocales]], requestedLocales, options).
     JSGlobalObject* globalObject = state->jsCallee()->globalObject(vm);
-    scope.release();
-    return JSValue::encode(supportedLocales(*state, globalObject->intlCollatorAvailableLocales(), requestedLocales, state->argument(1)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(supportedLocales(*state, globalObject->intlCollatorAvailableLocales(), requestedLocales, state->argument(1))));
 }
 
 void IntlCollatorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

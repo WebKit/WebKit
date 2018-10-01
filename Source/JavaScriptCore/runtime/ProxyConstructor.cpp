@@ -102,8 +102,7 @@ static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState* exec)
     ArgList args(exec);
     JSValue target = args.at(0);
     JSValue handler = args.at(1);
-    scope.release();
-    return JSValue::encode(ProxyObject::create(exec, exec->lexicalGlobalObject(), target, handler));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ProxyObject::create(exec, exec->lexicalGlobalObject(), target, handler)));
 }
 
 static EncodedJSValue JSC_HOST_CALL callProxy(ExecState* exec)

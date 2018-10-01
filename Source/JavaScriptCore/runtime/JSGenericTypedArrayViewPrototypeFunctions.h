@@ -51,10 +51,9 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     JSValue constructor = exemplar->get(exec, vm.propertyNames->constructor);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    if (constructor.isUndefined()) {
-        scope.release();
-        return defaultConstructor();
-    }
+    if (constructor.isUndefined())
+        RELEASE_AND_RETURN(scope, defaultConstructor());
+
     if (!constructor.isObject()) {
         throwTypeError(exec, scope, "constructor Property should not be null"_s);
         return nullptr;
@@ -63,10 +62,9 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     JSValue species = constructor.get(exec, vm.propertyNames->speciesSymbol);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    if (species.isUndefinedOrNull()) {
-        scope.release();
-        return defaultConstructor();
-    }
+    if (species.isUndefinedOrNull())
+        RELEASE_AND_RETURN(scope, defaultConstructor());
+
 
     JSValue result = construct(exec, species, args, "species is not a constructor");
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -279,8 +277,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncJoin(VM& vm, ExecStat
             joiner.append(*exec, thisObject->getIndexQuickly(i));
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         }
-        scope.release();
-        return JSValue::encode(joiner.join(*exec));
+        RELEASE_AND_RETURN(scope, JSValue::encode(joiner.join(*exec)));
     };
 
     JSValue separatorValue = exec->argument(0);
@@ -553,11 +550,10 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     if (species == defaultConstructor) {
         Structure* structure = callee->globalObject(vm)->typedArrayStructure(ViewClass::TypedArrayStorageType);
 
-        scope.release();
-        return JSValue::encode(ViewClass::create(
+        RELEASE_AND_RETURN(scope, JSValue::encode(ViewClass::create(
             exec, structure, WTFMove(arrayBuffer),
             thisObject->byteOffset() + offset * ViewClass::elementSize,
-            length));
+            length)));
     }
 
     MarkedArgumentBuffer args;

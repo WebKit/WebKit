@@ -93,4 +93,9 @@ protected:
             return value__; \
     } while (false)
 
+#define RELEASE_AND_RETURN(scope__, expression__) do { \
+        scope__.release(); \
+        return expression__; \
+    } while (false)
+
 } // namespace JSC

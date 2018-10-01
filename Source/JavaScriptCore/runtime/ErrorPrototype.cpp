@@ -120,8 +120,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
         return JSValue::encode(name.isString() ? name : jsString(exec, nameString));
 
     // 10. Return the result of concatenating name, ":", a single space character, and msg.
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, nameString, ": ", messageString));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, nameString, ": ", messageString)));
 }
 
 } // namespace JSC

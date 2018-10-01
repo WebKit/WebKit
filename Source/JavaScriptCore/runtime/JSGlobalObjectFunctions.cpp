@@ -229,8 +229,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
         k++;
         builder.append(c);
     }
-    scope.release();
-    return jsString(&vm, builder.toString());
+    RELEASE_AND_RETURN(scope, jsString(&vm, builder.toString()));
 }
 
 static JSValue decode(ExecState* exec, const Bitmap<256>& doNotUnescape, bool strict)
@@ -504,8 +503,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     if (!eval)
         return encodedJSValue();
 
-    scope.release();
-    return JSValue::encode(vm.interpreter->execute(eval, exec, calleeGlobalObject->globalThis(), calleeGlobalObject->globalScope()));
+    RELEASE_AND_RETURN(scope, JSValue::encode(vm.interpreter->execute(eval, exec, calleeGlobalObject->globalThis(), calleeGlobalObject->globalScope())));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
@@ -714,8 +712,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
         return JSValue::encode(prototype);
     }
 
-    scope.release();
-    return JSValue::encode(thisObject->getPrototype(vm, exec));
+    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPrototype(vm, exec)));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)

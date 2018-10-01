@@ -169,8 +169,7 @@ EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     String dateStr = exec->argument(0).toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsNumber(parseDate(exec, vm, dateStr)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(parseDate(exec, vm, dateStr))));
 }
 
 EncodedJSValue JSC_HOST_CALL dateNow(ExecState*)

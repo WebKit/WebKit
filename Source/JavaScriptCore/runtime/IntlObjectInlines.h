@@ -57,8 +57,7 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(ExecState& s
             return thisObject;
         }
     }
-    scope.release();
-    return factory(vm);
+    RELEASE_AND_RETURN(scope, factory(vm));
 }
 
 } // namespace JSC

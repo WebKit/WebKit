@@ -79,8 +79,7 @@ public:
             auto scope = DECLARE_THROW_SCOPE(vm);
             JSValue value = get(exec, vm.propertyNames->length);
             RETURN_IF_EXCEPTION(scope, 0);
-            scope.release();
-            return value.toUInt32(exec);
+            RELEASE_AND_RETURN(scope, value.toUInt32(exec));
         }
         return m_length;
     }

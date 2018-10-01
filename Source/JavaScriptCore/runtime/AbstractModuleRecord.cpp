@@ -146,8 +146,7 @@ AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(ExecState*
     JSValue moduleNameValue = identifierToJSValue(vm, moduleName);
     JSValue entry = m_dependenciesMap->JSMap::get(exec, moduleNameValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    scope.release();
-    return jsCast<AbstractModuleRecord*>(entry.get(exec, Identifier::fromString(exec, "module")));
+    RELEASE_AND_RETURN(scope, jsCast<AbstractModuleRecord*>(entry.get(exec, Identifier::fromString(exec, "module"))));
 }
 
 auto AbstractModuleRecord::resolveImport(ExecState* exec, const Identifier& localName) -> Resolution

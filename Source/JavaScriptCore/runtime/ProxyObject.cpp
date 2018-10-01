@@ -61,10 +61,8 @@ String ProxyObject::toStringName(const JSObject* object, ExecState* exec)
         bool targetIsArray = isArray(exec, target);
         if (UNLIKELY(scope.exception()))
             break;
-        if (targetIsArray) {
-            scope.release();
-            return target->classInfo(vm)->methodTable.toStringName(target, exec);
-        }
+        if (targetIsArray)
+            RELEASE_AND_RETURN(scope, target->classInfo(vm)->methodTable.toStringName(target, exec));
 
         proxy = jsDynamicCast<const ProxyObject*>(vm, target);
     }
@@ -138,10 +136,9 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
         PropertySlot slot(receiver, PropertySlot::InternalMethodType::Get);
         bool hasProperty = target->getPropertySlot(exec, propertyName, slot);
         EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-        if (hasProperty) {
-            scope.release();
-            return slot.getValue(exec, propertyName);
-        }
+        if (hasProperty)
+            RELEASE_AND_RETURN(scope, slot.getValue(exec, propertyName));
+
         return jsUndefined();
     };
 
@@ -214,10 +211,8 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
     };
 
-    if (propertyName.isPrivateName()) {
-        scope.release();
-        return performDefaultGetOwnProperty();
-    }
+    if (propertyName.isPrivateName())
+        RELEASE_AND_RETURN(scope, performDefaultGetOwnProperty());
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -230,10 +225,8 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     CallType callType;
     JSValue getOwnPropertyDescriptorMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "getOwnPropertyDescriptor"), "'getOwnPropertyDescriptor' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
-    if (getOwnPropertyDescriptorMethod.isUndefined()) {
-        scope.release();
-        return performDefaultGetOwnProperty();
-    }
+    if (getOwnPropertyDescriptorMethod.isUndefined())
+        RELEASE_AND_RETURN(scope, performDefaultGetOwnProperty());
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -323,10 +316,8 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
         return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
     };
 
-    if (propertyName.isPrivateName()) {
-        scope.release();
-        return performDefaultHasProperty();
-    }
+    if (propertyName.isPrivateName())
+        RELEASE_AND_RETURN(scope, performDefaultHasProperty());
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -339,10 +330,8 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
     CallType callType;
     JSValue hasMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->has, "'has' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
-    if (hasMethod.isUndefined()) {
-        scope.release();
-        return performDefaultHasProperty();
-    }
+    if (hasMethod.isUndefined())
+        RELEASE_AND_RETURN(scope, performDefaultHasProperty());
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -387,14 +376,11 @@ bool ProxyObject::getOwnPropertySlotCommon(ExecState* exec, PropertyName propert
     slot.setIsTaintedByOpaqueObject();
     switch (slot.internalMethodType()) {
     case PropertySlot::InternalMethodType::Get:
-        scope.release();
-        return performGet(exec, propertyName, slot);
+        RELEASE_AND_RETURN(scope, performGet(exec, propertyName, slot));
     case PropertySlot::InternalMethodType::GetOwnProperty:
-        scope.release();
-        return performInternalMethodGetOwnProperty(exec, propertyName, slot);
+        RELEASE_AND_RETURN(scope, performInternalMethodGetOwnProperty(exec, propertyName, slot));
     case PropertySlot::InternalMethodType::HasProperty:
-        scope.release();
-        return performHasProperty(exec, propertyName, slot);
+        RELEASE_AND_RETURN(scope, performHasProperty(exec, propertyName, slot));
     default:
         return false;
     }
@@ -428,10 +414,8 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
         return false;
     }
 
-    if (propertyName.isPrivateName()) {
-        scope.release();
-        return performDefaultPut();
-    }
+    if (propertyName.isPrivateName())
+        RELEASE_AND_RETURN(scope, performDefaultPut());
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -445,10 +429,8 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
     JSValue setMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->set, "'set' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
     JSObject* target = this->target();
-    if (setMethod.isUndefined()) {
-        scope.release();
-        return performDefaultPut();
-    }
+    if (setMethod.isUndefined())
+        RELEASE_AND_RETURN(scope, performDefaultPut());
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -505,8 +487,7 @@ bool ProxyObject::putByIndexCommon(ExecState* exec, JSValue thisValue, unsigned 
         PutPropertySlot slot(thisValue, isStrictMode); // We must preserve the "this" target of the putByIndex.
         return target->methodTable(vm)->put(target, exec, ident.impl(), putValue, slot);
     };
-    scope.release();
-    return performPut(exec, putValue, thisValue, ident.impl(), performDefaultPut);
+    RELEASE_AND_RETURN(scope, performPut(exec, putValue, thisValue, ident.impl(), performDefaultPut));
 }
 
 bool ProxyObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
@@ -540,8 +521,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
         CallData callData;
         CallType callType = target->methodTable(vm)->getCallData(target, callData);
         RELEASE_ASSERT(callType != CallType::None);
-        scope.release();
-        return JSValue::encode(call(exec, target, callType, callData, exec->thisValue(), ArgList(exec)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, target, callType, callData, exec->thisValue(), ArgList(exec))));
     }
 
     JSArray* argArray = constructArray(exec, static_cast<ArrayAllocationProfile*>(nullptr), ArgList(exec));
@@ -551,8 +531,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
     arguments.append(exec->thisValue().toThis(exec, ECMAMode::StrictMode));
     arguments.append(argArray);
     ASSERT(!arguments.hasOverflowed());
-    scope.release();
-    return JSValue::encode(call(exec, applyMethod, callType, callData, handler, arguments));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, applyMethod, callType, callData, handler, arguments)));
 }
 
 CallType ProxyObject::getCallData(JSCell* cell, CallData& callData)
@@ -593,8 +572,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
         ConstructData constructData;
         ConstructType constructType = target->methodTable(vm)->getConstructData(target, constructData);
         RELEASE_ASSERT(constructType != ConstructType::None);
-        scope.release();
-        return JSValue::encode(construct(exec, target, constructType, constructData, ArgList(exec), exec->newTarget()));
+        RELEASE_AND_RETURN(scope, JSValue::encode(construct(exec, target, constructType, constructData, ArgList(exec), exec->newTarget())));
     }
 
     JSArray* argArray = constructArray(exec, static_cast<ArrayAllocationProfile*>(nullptr), ArgList(exec));
@@ -636,10 +614,8 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
         return false;
     }
 
-    if (propertyName.isPrivateName()) {
-        scope.release();
-        return performDefaultDelete();
-    }
+    if (propertyName.isPrivateName())
+        RELEASE_AND_RETURN(scope, performDefaultDelete());
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
@@ -653,10 +629,8 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
     JSValue deletePropertyMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "deleteProperty"), "'deleteProperty' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
     JSObject* target = this->target();
-    if (deletePropertyMethod.isUndefined()) {
-        scope.release();
-        return performDefaultDelete();
-    }
+    if (deletePropertyMethod.isUndefined())
+        RELEASE_AND_RETURN(scope, performDefaultDelete());
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -728,10 +702,8 @@ bool ProxyObject::performPreventExtensions(ExecState* exec)
     JSValue preventExtensionsMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "preventExtensions"), "'preventExtensions' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
     JSObject* target = this->target();
-    if (preventExtensionsMethod.isUndefined()) {
-        scope.release();
-        return target->methodTable(vm)->preventExtensions(target, exec);
-    }
+    if (preventExtensionsMethod.isUndefined())
+        RELEASE_AND_RETURN(scope, target->methodTable(vm)->preventExtensions(target, exec));
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -783,10 +755,8 @@ bool ProxyObject::performIsExtensible(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, false);
 
     JSObject* target = this->target();
-    if (isExtensibleMethod.isUndefined()) {
-        scope.release();
-        return target->isExtensible(exec);
-    }
+    if (isExtensibleMethod.isUndefined())
+        RELEASE_AND_RETURN(scope, target->isExtensible(exec));
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -832,8 +802,7 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
 
     JSObject* target = this->target();
     auto performDefaultDefineOwnProperty = [&] {
-        scope.release();
-        return target->methodTable(vm)->defineOwnProperty(target, exec, propertyName, descriptor, shouldThrow);
+        RELEASE_AND_RETURN(scope, target->methodTable(vm)->defineOwnProperty(target, exec, propertyName, descriptor, shouldThrow));
     };
 
     if (propertyName.isPrivateName())
@@ -1090,10 +1059,8 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     RETURN_IF_EXCEPTION(scope, false);
 
     JSObject* target = this->target();
-    if (setPrototypeOfMethod.isUndefined()) {
-        scope.release();
-        return target->setPrototype(vm, exec, prototype, shouldThrowIfCantSet);
-    }
+    if (setPrototypeOfMethod.isUndefined())
+        RELEASE_AND_RETURN(scope, target->setPrototype(vm, exec, prototype, shouldThrowIfCantSet));
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -1155,10 +1122,8 @@ JSValue ProxyObject::performGetPrototype(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* target = this->target();
-    if (getPrototypeOfMethod.isUndefined()) {
-        scope.release();
-        return target->getPrototype(vm, exec);
-    }
+    if (getPrototypeOfMethod.isUndefined()) 
+        RELEASE_AND_RETURN(scope, target->getPrototype(vm, exec));
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);

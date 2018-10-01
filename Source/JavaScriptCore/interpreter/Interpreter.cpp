@@ -144,16 +144,14 @@ JSValue eval(CallFrame* callFrame)
         if (!callerCodeBlock->isStrictMode()) {
             if (programSource.is8Bit()) {
                 LiteralParser<LChar> preparser(callFrame, programSource.characters8(), programSource.length(), NonStrictJSON);
-                if (JSValue parsedObject = preparser.tryLiteralParse()) {
-                    scope.release();
-                    return parsedObject;
-                }
+                if (JSValue parsedObject = preparser.tryLiteralParse())
+                    RELEASE_AND_RETURN(scope, parsedObject);
+
             } else {
                 LiteralParser<UChar> preparser(callFrame, programSource.characters16(), programSource.length(), NonStrictJSON);
-                if (JSValue parsedObject = preparser.tryLiteralParse()) {
-                    scope.release();
-                    return parsedObject;
-                }
+                if (JSValue parsedObject = preparser.tryLiteralParse())
+                    RELEASE_AND_RETURN(scope, parsedObject);
+
             }
             RETURN_IF_EXCEPTION(scope, JSValue());
         }
@@ -170,8 +168,7 @@ JSValue eval(CallFrame* callFrame)
 
     JSValue thisValue = callerFrame->thisValue();
     Interpreter* interpreter = vm.interpreter;
-    scope.release();
-    return interpreter->execute(eval, callFrame, thisValue, callerScopeChain);
+    RELEASE_AND_RETURN(scope, interpreter->execute(eval, callFrame, thisValue, callerScopeChain));
 }
 
 unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVarArgOffset)

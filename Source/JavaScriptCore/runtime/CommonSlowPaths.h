@@ -103,14 +103,12 @@ inline bool opInByVal(ExecState* exec, JSValue baseVal, JSValue propName, ArrayP
     if (propName.getUInt32(i)) {
         if (arrayProfile)
             arrayProfile->observeIndexedRead(vm, baseObj, i);
-        scope.release();
-        return baseObj->hasProperty(exec, i);
+        RELEASE_AND_RETURN(scope, baseObj->hasProperty(exec, i));
     }
 
     auto property = propName.toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, false);
-    scope.release();
-    return baseObj->hasProperty(exec, property);
+    RELEASE_AND_RETURN(scope, baseObj->hasProperty(exec, property));
 }
 
 inline void tryCachePutToScopeGlobal(

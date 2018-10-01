@@ -54,15 +54,13 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     if (p1.isString()) {
         JSString* p2String = p2.toString(callFrame);
         RETURN_IF_EXCEPTION(scope, { });
-        scope.release();
-        return jsString(callFrame, asString(p1), p2String);
+        RELEASE_AND_RETURN(scope, jsString(callFrame, asString(p1), p2String));
     }
 
     if (p2.isString()) {
         JSString* p1String = p1.toString(callFrame);
         RETURN_IF_EXCEPTION(scope, { });
-        scope.release();
-        return jsString(callFrame, p1String, asString(p2));
+        RELEASE_AND_RETURN(scope, jsString(callFrame, p1String, asString(p2)));
     }
 
     auto leftNumeric = p1.toNumeric(callFrame);

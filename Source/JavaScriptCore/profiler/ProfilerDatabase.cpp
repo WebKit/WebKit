@@ -143,8 +143,7 @@ String Database::toJSON() const
 
     auto value = toJS(globalObject->globalExec());
     RETURN_IF_EXCEPTION(scope, String());
-    scope.release();
-    return JSONStringify(globalObject->globalExec(), value, 0);
+    RELEASE_AND_RETURN(scope, JSONStringify(globalObject->globalExec(), value, 0));
 }
 
 bool Database::save(const char* filename) const

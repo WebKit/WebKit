@@ -152,10 +152,8 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
-        scope.release();
-        return putToPrimitiveByIndex(exec, index.value(), value, slot.isStrictMode());
-    }
+    if (std::optional<uint32_t> index = parseIndex(propertyName))
+        RELEASE_AND_RETURN(scope, putToPrimitiveByIndex(exec, index.value(), value, slot.isStrictMode()));
 
     // Check if there are any setters or getters in the prototype chain
     JSObject* obj = synthesizePrototype(exec);
@@ -181,10 +179,8 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
                 return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 
             JSValue gs = obj->getDirect(offset);
-            if (gs.isGetterSetter()) {
-                scope.release();
-                return callSetter(exec, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
-            }
+            if (gs.isGetterSetter())
+                RELEASE_AND_RETURN(scope, callSetter(exec, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode));
 
             if (gs.isCustomGetterSetter())
                 return callCustomSetter(exec, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);

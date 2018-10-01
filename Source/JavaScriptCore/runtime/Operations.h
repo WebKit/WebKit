@@ -62,20 +62,17 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2, JS
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     int32_t length1 = s1->length();
-    if (!length1) {
-        scope.release();
-        return jsString(exec, s2, s3);
-    }
+    if (!length1)
+        RELEASE_AND_RETURN(scope, jsString(exec, s2, s3));
+
     int32_t length2 = s2->length();
-    if (!length2) {
-        scope.release();
-        return jsString(exec, s1, s3);
-    }
+    if (!length2)
+        RELEASE_AND_RETURN(scope, jsString(exec, s1, s3));
+
     int32_t length3 = s3->length();
-    if (!length3) {
-        scope.release();
-        return jsString(exec, s1, s2);
-    }
+    if (!length3)
+        RELEASE_AND_RETURN(scope, jsString(exec, s1, s2));
+
 
     if (sumOverflows<int32_t>(length1, length2, length3)) {
         throwOutOfMemoryError(exec, scope);
@@ -98,18 +95,14 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String
         return nullptr;
     }
     
-    if (!length1) {
-        scope.release();
-        return jsString(exec, jsString(vm, u2), jsString(vm, u3));
-    }
-    if (!length2) {
-        scope.release();
-        return jsString(exec, jsString(vm, u1), jsString(vm, u3));
-    }
-    if (!length3) {
-        scope.release();
-        return jsString(exec, jsString(vm, u1), jsString(vm, u2));
-    }
+    if (!length1)
+        RELEASE_AND_RETURN(scope, jsString(exec, jsString(vm, u2), jsString(vm, u3)));
+
+    if (!length2)
+        RELEASE_AND_RETURN(scope, jsString(exec, jsString(vm, u1), jsString(vm, u3)));
+
+    if (!length3)
+        RELEASE_AND_RETURN(scope, jsString(exec, jsString(vm, u1), jsString(vm, u2)));
 
     if (sumOverflows<int32_t>(length1, length2, length3)) {
         throwOutOfMemoryError(exec, scope);
@@ -270,10 +263,8 @@ ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
     RETURN_IF_EXCEPTION(scope, false);
 
     if (wasNotString1 | wasNotString2) {
-        if (p1.isBigInt() || p2.isBigInt()) {
-            scope.release();
-            return bigIntCompare(callFrame, p1, p2, JSBigInt::ComparisonMode::LessThan);
-        }
+        if (p1.isBigInt() || p2.isBigInt())
+            RELEASE_AND_RETURN(scope, bigIntCompare(callFrame, p1, p2, JSBigInt::ComparisonMode::LessThan));
 
         return n1 < n2;
     }
@@ -317,10 +308,8 @@ ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
     RETURN_IF_EXCEPTION(scope, false);
 
     if (wasNotString1 | wasNotString2) {
-        if (p1.isBigInt() || p2.isBigInt()) {
-            scope.release();
-            return bigIntCompare(callFrame, p1, p2, JSBigInt::ComparisonMode::LessThanOrEqual);
-        }
+        if (p1.isBigInt() || p2.isBigInt())
+            RELEASE_AND_RETURN(scope, bigIntCompare(callFrame, p1, p2, JSBigInt::ComparisonMode::LessThanOrEqual));
 
         return n1 <= n2;
     }

@@ -106,8 +106,7 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* 
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 6. Return FormatNumber(nf, x).
-    scope.release();
-    return JSValue::encode(numberFormat->formatNumber(*state, number));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatNumber(*state, number)));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* state)
@@ -163,8 +162,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(ExecStat
     double value = state->argument(0).toNumber(state);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    scope.release();
-    return JSValue::encode(numberFormat->formatToParts(*state, value));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(*state, value)));
 }
 #endif
 
@@ -187,8 +185,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecSt
     if (!numberFormat)
         return JSValue::encode(throwTypeError(state, scope, "Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat"_s));
 
-    scope.release();
-    return JSValue::encode(numberFormat->resolvedOptions(*state));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->resolvedOptions(*state)));
 }
 
 } // namespace JSC

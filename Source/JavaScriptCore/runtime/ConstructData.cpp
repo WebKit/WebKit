@@ -44,8 +44,7 @@ JSObject* construct(ExecState* exec, JSValue constructorObject, const ArgList& a
     if (constructType == ConstructType::None)
         return throwTypeError(exec, scope, errorMessage);
 
-    scope.release();
-    return construct(exec, constructorObject, constructType, constructData, args, constructorObject);
+    RELEASE_AND_RETURN(scope, construct(exec, constructorObject, constructType, constructData, args, constructorObject));
 }
 
 
