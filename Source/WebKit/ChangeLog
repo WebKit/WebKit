@@ -1,3 +1,12 @@
+2018-10-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix Internal iOS Build after r236690
+        https://bugs.webkit.org/show_bug.cgi?id=190171
+
+        Reviewed by Alex Christensen.
+
+        * Platform/ExtraPrivateSymbolsForTAPI.h:
+
 2018-10-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add SPI to customize the input accessory view when focusing an element
