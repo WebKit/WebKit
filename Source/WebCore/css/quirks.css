@@ -1,4 +1,4 @@
-/* 
+/*
  * Additonal style sheet used to render HTML pages in quirks mode.
  *
  * Copyright (C) 2000-2003 Lars Knoll (knoll@kde.org)
@@ -50,5 +50,5 @@ input:not([type=image]), textarea {
 /* Set margin-bottom for form element in quirks mode. */
 /* Compatible with Gecko. (Doing this only for quirks mode is a fix for bug 17696.) */
 form {
-    margin-bottom: 1em
+    margin-block-end: 1em
 }

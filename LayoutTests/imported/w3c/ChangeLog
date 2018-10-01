@@ -1,3 +1,13 @@
+2018-10-01  Simon Pieters  <zcorpan@gmail.com>
+
+        <form> in quirks mode should have margin-block-end: 1em
+        https://bugs.webkit.org/show_bug.cgi?id=157788
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/form-margin-quirk.html: Added.
+        * web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/form-margin-quirk-expected.txt: Added.
+
 2018-10-01  Rob Buis  <rbuis@igalia.com>
 
         Align XMLHttpRequest's overrideMimeType() with the standard

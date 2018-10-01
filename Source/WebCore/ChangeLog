@@ -1,3 +1,21 @@
+2018-10-01  Simon Pieters  <zcorpan@gmail.com>
+
+        <form> in quirks mode should have margin-block-end: 1em
+        https://bugs.webkit.org/show_bug.cgi?id=157788
+
+        Reviewed by Simon Fraser.
+
+        Change the default style for forms to take writing-mode into account
+        in quirks mode. Matches the behavior of Gecko and Edge and the HTML
+        standard.
+
+        Spec: https://html.spec.whatwg.org/multipage/rendering.html#flow-content-3
+
+        Test: imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/form-margin-quirk.html
+
+        * css/quirks.css:
+        (form):
+
 2018-10-01  Jeremy Jones  <jeremyj@apple.com>
 
         Unify implementation in VideoFullscreenInterfaceAVKit
