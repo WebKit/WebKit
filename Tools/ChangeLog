@@ -1,3 +1,24 @@
+2018-10-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add SPI to customize the input accessory view when focusing an element
+        https://bugs.webkit.org/show_bug.cgi?id=190152
+        <rdar://problem/42754975>
+
+        Reviewed by Dan Bernstein.
+
+        Add an API test to verify that setting a custom input accessory view and custom input view on the form input
+        session when focusing an element overrides the first responder's (i.e. WKContentView's) `-inputView` and
+        `-inputAccessoryView`.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (webViewWithAutofocusedInput):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.h:
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.mm:
+        (-[TestInputDelegate setWillStartInputSessionHandler:]):
+        (-[TestInputDelegate willStartInputSessionHandler]):
+        (-[TestInputDelegate _webView:willStartInputSession:]):
+
 2018-10-01  Sihui Liu  <sihui_liu@apple.com>
 
         Remove StorageProcess

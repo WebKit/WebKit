@@ -293,6 +293,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     WeakObjCPtr<WKContentView> _contentView;
     RetainPtr<WKFocusedElementInfo> _focusedElementInfo;
     RetainPtr<UIView> _customInputView;
+    RetainPtr<UIView> _customInputAccessoryView;
     RetainPtr<NSArray<UITextSuggestion *>> _suggestions;
     BOOL _accessoryViewShouldNotShow;
     BOOL _forceSecureTextEntry;
@@ -380,6 +381,20 @@ const CGFloat minimumTapHighlightRadius = 2.0;
         return;
 
     _customInputView = customInputView;
+    [_contentView reloadInputViews];
+}
+
+- (UIView *)customInputAccessoryView
+{
+    return _customInputAccessoryView.get();
+}
+
+- (void)setCustomInputAccessoryView:(UIView *)customInputAccessoryView
+{
+    if (_customInputAccessoryView == customInputAccessoryView)
+        return;
+
+    _customInputAccessoryView = customInputAccessoryView;
     [_contentView reloadInputViews];
 }
 
@@ -2089,6 +2104,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if ([_formInputSession accessoryViewShouldNotShow])
         return NO;
 
+    if ([_formInputSession customInputAccessoryView])
+        return YES;
+
     if (_assistedNodeInformation.inputMode == InputMode::None)
         return NO;
 
@@ -2133,7 +2151,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (![self requiresAccessoryView])
         return nil;
 
-    return self.formAccessoryView;
+    return [_formInputSession customInputAccessoryView] ?: self.formAccessoryView;
 }
 
 - (NSArray *)supportedPasteboardTypesForCurrentSelection

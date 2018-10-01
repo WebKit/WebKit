@@ -32,6 +32,7 @@
 
 @implementation TestInputDelegate {
     BlockPtr<_WKFocusStartsInputSessionPolicy(WKWebView *, id <_WKFocusedElementInfo>)> _focusStartsInputSessionPolicyHandler;
+    BlockPtr<void(WKWebView *, id <_WKFormInputSession>)> _willStartInputSessionHandler;
 }
 
 - (void)setFocusStartsInputSessionPolicyHandler:(_WKFocusStartsInputSessionPolicy (^)(WKWebView *, id <_WKFocusedElementInfo>))handler
@@ -44,9 +45,25 @@
     return _focusStartsInputSessionPolicyHandler.get();
 }
 
+- (void)setWillStartInputSessionHandler:(void (^)(WKWebView *, id<_WKFormInputSession>))willStartInputSessionHandler
+{
+    _willStartInputSessionHandler = makeBlockPtr(willStartInputSessionHandler);
+}
+
+- (void (^)(WKWebView *, id<_WKFormInputSession>))willStartInputSessionHandler
+{
+    return _willStartInputSessionHandler.get();
+}
+
 - (_WKFocusStartsInputSessionPolicy)_webView:(WKWebView *)webView decidePolicyForFocusedElement:(id <_WKFocusedElementInfo>)info
 {
     return self.focusStartsInputSessionPolicyHandler ? self.focusStartsInputSessionPolicyHandler(webView, info) : _WKFocusStartsInputSessionPolicyAuto;
+}
+
+- (void)_webView:(WKWebView *)webView willStartInputSession:(id<_WKFormInputSession>)inputSession
+{
+    if (_willStartInputSessionHandler)
+        _willStartInputSessionHandler(webView, inputSession);
 }
 
 @end

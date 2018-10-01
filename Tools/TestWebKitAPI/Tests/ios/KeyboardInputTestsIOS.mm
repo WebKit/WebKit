@@ -87,10 +87,9 @@ static CGRect rounded(CGRect rect)
 
 @end
 
-static RetainPtr<TestWKWebView> webViewWithAutofocusedInput()
+static RetainPtr<TestWKWebView> webViewWithAutofocusedInput(const RetainPtr<TestInputDelegate>& inputDelegate)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
 
     bool doneWaiting = false;
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
@@ -105,7 +104,28 @@ static RetainPtr<TestWKWebView> webViewWithAutofocusedInput()
     return webView;
 }
 
+static RetainPtr<TestWKWebView> webViewWithAutofocusedInput()
+{
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    return webViewWithAutofocusedInput(inputDelegate);
+}
+
 namespace TestWebKitAPI {
+
+TEST(KeyboardInputTests, CustomInputViewAndInputAccessoryView)
+{
+    auto inputView = adoptNS([[UIView alloc] init]);
+    auto inputAccessoryView = adoptNS([[UIView alloc] init]);
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    [inputDelegate setWillStartInputSessionHandler:[inputView, inputAccessoryView] (WKWebView *, id<_WKFormInputSession> session) {
+        session.customInputView = inputView.get();
+        session.customInputAccessoryView = inputAccessoryView.get();
+    }];
+
+    auto webView = webViewWithAutofocusedInput(inputDelegate);
+    EXPECT_EQ(inputView.get(), [webView firstResponder].inputView);
+    EXPECT_EQ(inputAccessoryView.get(), [webView firstResponder].inputAccessoryView);
+}
 
 TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
 {

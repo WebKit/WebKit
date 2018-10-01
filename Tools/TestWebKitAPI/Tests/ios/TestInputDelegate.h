@@ -28,12 +28,14 @@
 #if WK_API_ENABLED && PLATFORM(IOS)
 
 #import <WebKit/_WKFocusedElementInfo.h>
+#import <WebKit/_WKFormInputSession.h>
 #import <WebKit/_WKInputDelegate.h>
 
 @class WKWebView;
 
 @interface TestInputDelegate : NSObject <_WKInputDelegate>
 @property (nonatomic, copy) _WKFocusStartsInputSessionPolicy (^focusStartsInputSessionPolicyHandler)(WKWebView *, id <_WKFocusedElementInfo>);
+@property (nonatomic, copy) void (^willStartInputSessionHandler)(WKWebView *, id <_WKFormInputSession>);
 @end
 
 #endif

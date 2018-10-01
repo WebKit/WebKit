@@ -41,6 +41,7 @@
 #if TARGET_OS_IPHONE
 @property (nonatomic, copy) NSString *accessoryViewCustomButtonTitle;
 @property (nonatomic, strong) UIView *customInputView WK_API_AVAILABLE(ios(10.0));
+@property (nonatomic, strong) UIView *customInputAccessoryView WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, copy) NSArray<UITextSuggestion *> *suggestions WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic) BOOL accessoryViewShouldNotShow WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic) BOOL forceSecureTextEntry WK_API_AVAILABLE(ios(10.0));
