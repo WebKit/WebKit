@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-acb-no-frame-lost</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var bufferedSamples;
+    var enqueuedSamples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function syncSampleRun(start, end) {
+        const samples = [];
+        for (let time = start; time < end; time++)
+            samples.push(makeASample(time, time, 1, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+        return concatenateSamples(samples);
+    }
+
+    window.addEventListener('load', async () => {
+        findMediaElement();
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+        const sourceOpened = waitFor(source, 'sourceopen');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await sourceOpened;
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        initSegment = makeAInit(30, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Segment A
+        run('sourceBuffer.appendBuffer(syncSampleRun(0, 10))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Segment C
+        run('sourceBuffer.appendBuffer(syncSampleRun(20, 30))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Segment B
+        run('sourceBuffer.appendBuffer(syncSampleRun(10, 20))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+
+        // 30 samples were appended in total. All of them should have ended up in buffered samples and in the decode queue.
+        testExpected('bufferedSamples.length', 30);
+        testExpected('enqueuedSamples.length', 30);
+
+        enqueuedSamples.forEach(consoleWrite);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

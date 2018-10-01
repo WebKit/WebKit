@@ -1,0 +1,46 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(syncSampleRun(0, 10)))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(syncSampleRun(20, 30)))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(syncSampleRun(10, 20)))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '30') OK
+EXPECTED (enqueuedSamples.length == '30') OK
+{PTS({0/1000 = 0.000000}), DTS({0/1000 = 0.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({1000/1000 = 1.000000}), DTS({1000/1000 = 1.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({2000/1000 = 2.000000}), DTS({2000/1000 = 2.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({3000/1000 = 3.000000}), DTS({3000/1000 = 3.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({4000/1000 = 4.000000}), DTS({4000/1000 = 4.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({5000/1000 = 5.000000}), DTS({5000/1000 = 5.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({6000/1000 = 6.000000}), DTS({6000/1000 = 6.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({7000/1000 = 7.000000}), DTS({7000/1000 = 7.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({8000/1000 = 8.000000}), DTS({8000/1000 = 8.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({9000/1000 = 9.000000}), DTS({9000/1000 = 9.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({10000/1000 = 10.000000}), DTS({10000/1000 = 10.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({11000/1000 = 11.000000}), DTS({11000/1000 = 11.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({12000/1000 = 12.000000}), DTS({12000/1000 = 12.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({13000/1000 = 13.000000}), DTS({13000/1000 = 13.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({14000/1000 = 14.000000}), DTS({14000/1000 = 14.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({15000/1000 = 15.000000}), DTS({15000/1000 = 15.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({16000/1000 = 16.000000}), DTS({16000/1000 = 16.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({17000/1000 = 17.000000}), DTS({17000/1000 = 17.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({18000/1000 = 18.000000}), DTS({18000/1000 = 18.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({19000/1000 = 19.000000}), DTS({19000/1000 = 19.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({20000/1000 = 20.000000}), DTS({20000/1000 = 20.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({21000/1000 = 21.000000}), DTS({21000/1000 = 21.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({22000/1000 = 22.000000}), DTS({22000/1000 = 22.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({23000/1000 = 23.000000}), DTS({23000/1000 = 23.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({24000/1000 = 24.000000}), DTS({24000/1000 = 24.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({25000/1000 = 25.000000}), DTS({25000/1000 = 25.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({26000/1000 = 26.000000}), DTS({26000/1000 = 26.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({27000/1000 = 27.000000}), DTS({27000/1000 = 27.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({28000/1000 = 28.000000}), DTS({28000/1000 = 28.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({29000/1000 = 29.000000}), DTS({29000/1000 = 29.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+END OF TEST
+
