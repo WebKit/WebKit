@@ -53,7 +53,6 @@
 #include "MathCommon.h"
 #include "ParseInt.h"
 #include <algorithm>
-#include <wtf/MathExtras.h>
 
 #define STATIC_ASSERT(cond) static_assert(cond, "JSBigInt assumes " #cond)
 
@@ -212,9 +211,6 @@ String JSBigInt::toString(ExecState* exec, unsigned radix)
 {
     if (this->isZero())
         return exec->vm().smallStrings.singleCharacterStringRep('0');
-
-    if (hasOneBitSet(radix))
-        return toStringBasePowerOfTwo(exec, this, radix);
 
     return toStringGeneric(exec, this, radix);
 }
@@ -1182,71 +1178,6 @@ uint64_t JSBigInt::calculateMaximumCharactersRequired(unsigned length, unsigned 
     maximumCharactersRequired += sign;
     
     return maximumCharactersRequired;
-}
-
-String JSBigInt::toStringBasePowerOfTwo(ExecState* exec, JSBigInt* x, unsigned radix)
-{
-    ASSERT(hasOneBitSet(radix));
-    ASSERT(radix >= 2 && radix <= 32);
-    ASSERT(!x->isZero());
-    VM& vm = exec->vm();
-
-    const unsigned length = x->length();
-    const bool sign = x->sign();
-    const unsigned bitsPerChar = ctz32(radix);
-    const unsigned charMask = radix - 1;
-    // Compute the length of the resulting string: divide the bit length of the
-    // BigInt by the number of bits representable per character (rounding up).
-    const Digit msd = x->digit(length - 1);
-
-#if USE(JSVALUE64)
-    const unsigned msdLeadingZeros = clz64(msd);
-#else
-    const unsigned msdLeadingZeros = clz32(msd);
-#endif
-    
-    const size_t bitLength = length * digitBits - msdLeadingZeros;
-    const size_t charsRequired = (bitLength + bitsPerChar - 1) / bitsPerChar + sign;
-
-    if (charsRequired > JSString::MaxLength) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        throwOutOfMemoryError(exec, scope);
-        return String();
-    }
-
-    Vector<LChar> resultString(charsRequired);
-    Digit digit = 0;
-    // Keeps track of how many unprocessed bits there are in {digit}.
-    unsigned availableBits = 0;
-    int pos = static_cast<int>(charsRequired - 1);
-    for (unsigned i = 0; i < length - 1; i++) {
-        Digit newDigit = x->digit(i);
-        // Take any leftover bits from the last iteration into account.
-        int current = (digit | (newDigit << availableBits)) & charMask;
-        resultString[pos--] = radixDigits[current];
-        int consumedBits = bitsPerChar - availableBits;
-        digit = newDigit >> consumedBits;
-        availableBits = digitBits - consumedBits;
-        while (availableBits >= bitsPerChar) {
-            resultString[pos--] = radixDigits[digit & charMask];
-            digit >>= bitsPerChar;
-            availableBits -= bitsPerChar;
-        }
-    }
-    // Take any leftover bits from the last iteration into account.
-    int current = (digit | (msd << availableBits)) & charMask;
-    resultString[pos--] = radixDigits[current];
-    digit = msd >> (bitsPerChar - availableBits);
-    while (digit) {
-        resultString[pos--] = radixDigits[digit & charMask];
-        digit >>= bitsPerChar;
-    }
-
-    if (sign)
-        resultString[pos--] = '-';
-
-    ASSERT(pos == -1);
-    return StringImpl::adopt(WTFMove(resultString));
 }
 
 String JSBigInt::toStringGeneric(ExecState* exec, JSBigInt* x, unsigned radix)

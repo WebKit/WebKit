@@ -575,30 +575,6 @@ inline unsigned clz64(uint64_t number)
 #endif
 }
 
-inline unsigned ctz32(uint32_t number)
-{
-#if COMPILER(GCC_COMPATIBLE)
-    if (!number)
-        return __builtin_ctz(number);
-    return 32;
-#elif COMPILER(MSVC) && !CPU(X86)
-    unsigned long ret = 0;
-    if (_BitScanForward(&ret, number))
-        return ret;
-    return 32;
-#else
-    unsigned zeroCount = 0;
-    for (unsigned i = 0; i < 32; i++) {
-        if (number & 1)
-            break;
-
-        zeroCount++;
-        number >>= 1;
-    }
-    return zeroCount;
-#endif
-}
-
 } // namespace WTF
 
 using WTF::opaque;
@@ -608,6 +584,5 @@ using WTF::preciseIndexMaskShiftForSize;
 using WTF::shuffleVector;
 using WTF::clz32;
 using WTF::clz64;
-using WTF::ctz32;
 
 #endif // #ifndef WTF_MathExtras_h
