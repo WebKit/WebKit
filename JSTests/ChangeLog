@@ -1,3 +1,24 @@
+2018-10-01  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Split NaN-check into separate test
+        https://bugs.webkit.org/show_bug.cgi?id=190010
+
+        Reviewed by Saam Barati.
+
+        DataView exposes NaN-representation, which is not necessarily the same on each
+        architecture. Therefore move the check of the NaN-representation into its own
+        file such that we can disable this test on MIPS where NaN-representation can be
+        different on older CPUs.
+
+        * stress/dataview-jit-set-nan.js: Added.
+        (assert):
+        (test.storeLittleEndian):
+        (test.storeBigEndian):
+        (test.store):
+        (test):
+        * stress/dataview-jit-set.js:
+        (test5):
+
 2018-10-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r236647.

@@ -314,7 +314,6 @@ function test5() {
 
         storeLittleEndian(dv, 0, NaN);
         assert(isNaN(arr[0]));
-        assert(bits[0] === 0x7FC00000);
 
         storeLittleEndian(dv, 0, 2.3879393e-38);
         assert(arr[0] === 2.387939260590663e-38);
