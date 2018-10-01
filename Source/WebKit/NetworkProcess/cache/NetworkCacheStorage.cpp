@@ -657,7 +657,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
     ++m_readOperationDispatchCount;
 
     // Avoid randomness during testing.
-    if (m_mode != Mode::Testing) {
+    if (m_mode != Mode::AvoidRandomness) {
         // I/O pressure may make disk operations slow. If they start taking very long time we rather go to network.
         const Seconds readTimeout = 1500_ms;
         m_readOperationTimeoutTimer.startOneShot(readTimeout);
@@ -1070,7 +1070,7 @@ void Storage::shrinkIfNeeded()
     ASSERT(RunLoop::isMain());
 
     // Avoid randomness caused by cache shrinks.
-    if (m_mode == Mode::Testing)
+    if (m_mode == Mode::AvoidRandomness)
         return;
 
     if (approximateSize() > m_capacity)

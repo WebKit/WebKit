@@ -47,7 +47,7 @@ class IOChannel;
 
 class Storage : public ThreadSafeRefCounted<Storage> {
 public:
-    enum class Mode { Normal, Testing };
+    enum class Mode { Normal, AvoidRandomness };
     static RefPtr<Storage> open(const String& cachePath, Mode);
 
     struct Record {

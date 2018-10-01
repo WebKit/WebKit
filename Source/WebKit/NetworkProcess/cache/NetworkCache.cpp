@@ -61,7 +61,7 @@ static const AtomicString& resourceType()
 
 RefPtr<Cache> Cache::open(const String& cachePath, OptionSet<Option> options)
 {
-    auto storage = Storage::open(cachePath, options.contains(Option::TestingMode) ? Storage::Mode::Testing : Storage::Mode::Normal);
+    auto storage = Storage::open(cachePath, options.contains(Option::TestingMode) ? Storage::Mode::AvoidRandomness : Storage::Mode::Normal);
 
     LOG(NetworkCache, "(NetworkProcess) opened cache storage, success %d", !!storage);
 

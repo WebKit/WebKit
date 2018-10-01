@@ -1,3 +1,30 @@
+2018-10-01  Youenn Fablet  <youenn@apple.com>
+
+        [macOS Sierra] Layout Test http/wpt/cache-storage/cache-put-keys.https.any.worker.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=184204
+
+        Reviewed by Chris Dumez.
+
+        NetworkCache::Storage by default limits the length to read to 1500 milliseconds.
+        This is good for the HTTP cache since networking might be faster.
+        It does not work for DOM cache which needs to get these resources even if it takes a long time.
+
+        Since this is disabled by a Mode::Testing option, use it for DOMCache after renaming it to Mode::AvoidRandomness.
+
+        Add a bunch of release logging to help debugging error cases.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::retrieveOriginFromDirectory):
+        (WebKit::CacheStorage::Caches::initialize):
+        (WebKit::CacheStorage::Caches::writeCachesToDisk):
+        (WebKit::CacheStorage::Caches::readRecord):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::open):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::shrinkIfNeeded):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2018-10-01  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE] Remove WebKit2InspectorGResourceBundle.xml
