@@ -1,3 +1,25 @@
+2018-10-01  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Reset running time in PlaybackPipeline::flush()
+        https://bugs.webkit.org/show_bug.cgi?id=190076
+
+        Reviewed by Philippe Normand.
+
+        A test where a seek is followed by a redundant append is added. This
+        test timed out in the GStreamer MSE implementation before the
+        accompanying patch fixed it.
+
+        The MIME type declared in test-48khz-manifest.json has also been
+        changed, from non-standard `audio/x-m4a` to `audio/mp4;
+        codecs="mp4a.40.2"`, as implied by the MSE specs. This should not
+        affect other tests because no other tests were reading this type
+        string before.
+
+        * media/media-source/content/test-48khz-manifest.json:
+        * media/media-source/media-source-seek-redundant-append-expected.txt: Added.
+        * media/media-source/media-source-seek-redundant-append.html: Added.
+        * media/video-test.js:
+
 2018-10-01  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Fix test regressions after enabling Web Animations with CSS Integration

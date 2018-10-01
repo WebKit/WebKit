@@ -289,25 +289,6 @@ void PlaybackPipeline::markEndOfStream(MediaSourcePrivate::EndOfStreamStatus)
         gst_app_src_end_of_stream(appsrc);
 }
 
-GstPadProbeReturn segmentFixerProbe(GstPad*, GstPadProbeInfo* info, gpointer)
-{
-    GstEvent* event = GST_EVENT(info->data);
-
-    if (GST_EVENT_TYPE(event) != GST_EVENT_SEGMENT)
-        return GST_PAD_PROBE_OK;
-
-    GstSegment* segment = nullptr;
-    gst_event_parse_segment(event, const_cast<const GstSegment**>(&segment));
-
-    GST_TRACE("Fixed segment base time from %" GST_TIME_FORMAT " to %" GST_TIME_FORMAT,
-        GST_TIME_ARGS(segment->base), GST_TIME_ARGS(segment->start));
-
-    segment->base = segment->start;
-    segment->flags = static_cast<GstSegmentFlags>(0);
-
-    return GST_PAD_PROBE_REMOVE;
-}
-
 void PlaybackPipeline::flush(AtomicString trackId)
 {
     ASSERT(WTF::isMainThread());
@@ -358,7 +339,7 @@ void PlaybackPipeline::flush(AtomicString trackId)
         return;
     }
 
-    if (!gst_element_send_event(GST_ELEMENT(appsrc), gst_event_new_flush_stop(false))) {
+    if (!gst_element_send_event(GST_ELEMENT(appsrc), gst_event_new_flush_stop(true))) {
         GST_WARNING("Failed to send flush-stop event for trackId=%s", trackId.string().utf8().data());
         return;
     }
@@ -370,11 +351,6 @@ void PlaybackPipeline::flush(AtomicString trackId)
     gst_segment_init(segment.get(), GST_FORMAT_TIME);
     gst_segment_do_seek(segment.get(), rate, GST_FORMAT_TIME, GST_SEEK_FLAG_NONE,
         GST_SEEK_TYPE_SET, position, GST_SEEK_TYPE_SET, stop, nullptr);
-
-    GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(appsrc, "src"));
-    GRefPtr<GstPad> srcPad = sinkPad ? adoptGRef(gst_pad_get_peer(sinkPad.get())) : nullptr;
-    if (srcPad)
-        gst_pad_add_probe(srcPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, segmentFixerProbe, nullptr, nullptr);
 
     GST_TRACE("Sending new seamless segment: [%" GST_TIME_FORMAT ", %" GST_TIME_FORMAT "], rate: %f",
         GST_TIME_ARGS(segment->start), GST_TIME_ARGS(segment->stop), segment->rate);

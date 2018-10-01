@@ -1,3 +1,52 @@
+2018-10-01  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Reset running time in PlaybackPipeline::flush()
+        https://bugs.webkit.org/show_bug.cgi?id=190076
+
+        Reviewed by Philippe Normand.
+
+        Test: media/media-source/media-source-seek-redundant-append.html
+
+        PlaybackPipeline::flush() is called when already enqueued frames are
+        appended again. This may be caused by a quality change or just a
+        redundant append. Either way, the pipeline has to be flushed and
+        playback begin again, but without changing the player position by
+        much.
+
+        There are two kinds of time to consider here: stream time (i.e. the
+        time of a frame as written in the file, e.g. a frame may have stream
+        time 0:01:00), and running time (i.e. how much time since playback
+        started should pass before the frame should be played, e.g. if we
+        started playing at 0:00:59 that same frame would have a running time
+        of just 1 second).
+
+        Notice how running time depends on where and when playback starts.
+        Running time can also be optionally resetted after a flush. (This is
+        indeed done currently by most demuxers after a seek.)
+
+        Instead of resetting running time, PlaybackPipeline used to modify the
+        first GstSegment emitted after the flush. A GstSegment declares the
+        mapping between stream time and running time for the following frames.
+        There, PlaybackPipeline used to set `base` (the running time at which
+        the segment starts) to the position reported by a position query
+        (which is stream time).
+
+        This, of course, only worked when playback (or the last seek) started
+        at stream time 0:00:00, since that's the only case where running time
+        equals stream time. In other cases delays as long as the difference
+        between these timelines would appear. This is demonstrated in the
+        attached test, where seeks and appends are made in such an order that
+        the difference is more than 5 minutes, making the playback stall for
+        >5 minutes before playing 1 second of audio.
+
+        This patch fixes the problem by resetting running time with the flush
+        and not modifying GstSegment.base anymore (it will be left as zero,
+        which is now correct since the running time has been reset).
+
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::flush):
+        (WebCore::segmentFixerProbe): Deleted.
+
 2018-09-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use Position instead of Range in createMarkupInternal
