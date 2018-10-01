@@ -1005,8 +1005,7 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     }
 #endif
 
-    if (m_initialDuration > m_mediaSourceClient->duration()
-        || (m_mediaSourceClient->duration().isInvalid() && m_initialDuration > MediaTime::zeroTime()))
+    if (m_mediaSourceClient->duration().isInvalid() && m_initialDuration > MediaTime::zeroTime())
         m_mediaSourceClient->durationChanged(m_initialDuration);
 
     parseDemuxerSrcPadCaps(gst_caps_ref(caps.get()));
