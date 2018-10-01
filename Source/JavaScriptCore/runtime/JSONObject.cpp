@@ -854,16 +854,21 @@ JSValue JSONParse(ExecState* exec, const String& json)
     return jsonParser.tryLiteralParse();
 }
 
-String JSONStringify(ExecState* exec, JSValue value, unsigned indent)
+String JSONStringify(ExecState* exec, JSValue value, JSValue space)
 {
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    Stringifier stringifier(exec, jsNull(), jsNumber(indent));
+    Stringifier stringifier(exec, jsNull(), space);
     RETURN_IF_EXCEPTION(throwScope, { });
     JSValue result = stringifier.stringify(value);
     if (UNLIKELY(throwScope.exception()) || result.isUndefinedOrNull())
         return String();
     return result.getString(exec);
+}
+
+String JSONStringify(ExecState* exec, JSValue value, unsigned indent)
+{
+    return JSONStringify(exec, value, jsNumber(indent));
 }
 
 } // namespace JSC
