@@ -161,22 +161,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     vm.wasmContext.store(prevWasmInstance, vm.softStackLimit());
     RETURN_IF_EXCEPTION(scope, { });
 
-    switch (signature.returnType()) {
-    case Wasm::Void:
-        return JSValue::encode(jsUndefined());
-    case Wasm::I32:
-        return JSValue::encode(jsNumber(static_cast<int32_t>(rawResult)));
-    case Wasm::F32:
-        return JSValue::encode(jsNumber(purifyNaN(static_cast<double>(bitwise_cast<float>(static_cast<int32_t>(rawResult))))));
-    case Wasm::F64:
-        return JSValue::encode(jsNumber(purifyNaN(bitwise_cast<double>(rawResult))));
-    case Wasm::I64:
-    case Wasm::Func:
-    case Wasm::Anyfunc:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    return EncodedJSValue();
+    return rawResult;
 }
 
 WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, JSWebAssemblyInstance* instance, Wasm::Callee& jsEntrypoint, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::SignatureIndex signatureIndex)

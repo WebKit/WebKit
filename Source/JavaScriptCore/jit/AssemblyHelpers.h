@@ -1244,11 +1244,15 @@ public:
 
     // These methods convert between doubles, and doubles boxed and JSValues.
 #if USE(JSVALUE64)
-    GPRReg boxDouble(FPRReg fpr, GPRReg gpr)
+    GPRReg boxDouble(FPRReg fpr, GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
     {
         moveDoubleTo64(fpr, gpr);
-        sub64(GPRInfo::tagTypeNumberRegister, gpr);
-        jitAssertIsJSDouble(gpr);
+        if (mode == DoNotHaveTagRegisters)
+            sub64(TrustedImm64(TagTypeNumber), gpr);
+        else {
+            sub64(GPRInfo::tagTypeNumberRegister, gpr);
+            jitAssertIsJSDouble(gpr);
+        }
         return gpr;
     }
     FPRReg unboxDoubleWithoutAssertions(GPRReg gpr, GPRReg resultGPR, FPRReg fpr)
@@ -1263,9 +1267,9 @@ public:
         return unboxDoubleWithoutAssertions(gpr, resultGPR, fpr);
     }
     
-    void boxDouble(FPRReg fpr, JSValueRegs regs)
+    void boxDouble(FPRReg fpr, JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
-        boxDouble(fpr, regs.gpr());
+        boxDouble(fpr, regs.gpr(), mode);
     }
 
     void unboxDoubleNonDestructive(JSValueRegs regs, FPRReg destFPR, GPRReg resultGPR, FPRReg)

@@ -1,3 +1,27 @@
+2018-10-01  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WebAssembly] Move type conversion code of JSToWasm return type to JS wasm wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=189498
+
+        Reviewed by Saam Barati.
+
+        To call JS-to-Wasm code we need to convert the result value from wasm function to
+        the JS type. Previously this is done by callWebAssemblyFunction by using swtich
+        over signature.returnType(). But since we know the value of `signature.returnType()`
+        at compiling phase, we can emit a small conversion code directly to JSToWasm glue
+        and remove this switch from callWebAssemblyFunction.
+
+        In JSToWasm glue code, we do not have tag registers. So we use DoNotHaveTagRegisters
+        in boxInt32 and boxDouble. Since boxDouble does not have DoNotHaveTagRegisters version,
+        we add an implementation for that.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::boxDouble):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+
 2018-09-30  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] BigInt.proptotype.toString is broken when radix is power of 2

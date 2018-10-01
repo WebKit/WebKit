@@ -209,11 +209,27 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
     }
 
     switch (signature.returnType()) {
-    case Wasm::F32:
-        jit.moveFloatTo32(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
+    case Wasm::Void:
+        jit.moveTrustedValue(jsUndefined(), JSValueRegs { GPRInfo::returnValueGPR });
         break;
-    case Wasm::F64:
-        jit.moveDoubleTo64(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
+    case Wasm::I32:
+        jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+        jit.boxInt32(GPRInfo::returnValueGPR, JSValueRegs { GPRInfo::returnValueGPR }, DoNotHaveTagRegisters);
+        break;
+    case Wasm::F32:
+        jit.convertFloatToDouble(FPRInfo::returnValueFPR, FPRInfo::returnValueFPR);
+        FALLTHROUGH;
+    case Wasm::F64: {
+        jit.moveTrustedValue(jsNumber(pureNaN()), JSValueRegs { GPRInfo::returnValueGPR });
+        auto isNaN = jit.branchDouble(CCallHelpers::DoubleNotEqualOrUnordered, FPRInfo::returnValueFPR, FPRInfo::returnValueFPR);
+        jit.boxDouble(FPRInfo::returnValueFPR, JSValueRegs { GPRInfo::returnValueGPR }, DoNotHaveTagRegisters);
+        isNaN.link(&jit);
+        break;
+    }
+    case Wasm::I64:
+    case Wasm::Func:
+    case Wasm::Anyfunc:
+        jit.breakpoint();
         break;
     default:
         break;
