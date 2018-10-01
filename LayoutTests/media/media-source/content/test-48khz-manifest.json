@@ -1,6 +1,6 @@
 {
 	"url": "content/test-48kHz.m4a",
-	"type": "audio/x-m4a",
+	"type": "audio/mp4; codecs=\"mp4a.40.2\"",
 	"init": { "offset": 0, "size": 624 },
 	"duration": 10.0906,
 	"media": [ 
