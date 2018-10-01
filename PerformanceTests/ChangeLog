@@ -1,3 +1,16 @@
+2018-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236613): Parser/HTML5-8266-ParseOnly.html performance tests no longer runs
+        https://bugs.webkit.org/show_bug.cgi?id=190174
+
+        Reviewed by Ryosuke Niwa.
+
+        Update iframe's sandbox to use 'allow-same-origin' so that the iframe is treated as same-origin and so that
+        the top frame can call document.open() / document.write() on the subframe. This test was also failing in
+        Firefox without this change.
+
+        * Parser/HTML5-8266-ParseOnly.html:
+
 2018-08-27  Aditya Keerthi  <akeerthi@apple.com>
 
         Consolidate ENABLE_INPUT_TYPE_COLOR and ENABLE_INPUT_TYPE_COLOR_POPOVER
