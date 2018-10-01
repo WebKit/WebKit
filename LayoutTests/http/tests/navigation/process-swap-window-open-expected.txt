@@ -31,6 +31,7 @@ PASS w.postMessage is an instance of Function
 PASS w.postMessage('test', '*') did not throw exception.
 PASS w.focus() did not throw exception.
 PASS w.blur() did not throw exception.
+PASS w.then is undefined
 PASS w.location did not throw exception.
 FAIL w.location should not be null.
 PASS areArraysEqual(actual_properties, expected_property_names) is true

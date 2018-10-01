@@ -87,8 +87,7 @@
 
             // Window.
             whitelistedWindowIndices = ['0', '1', '2'];
-            whitelistedWindowPropNames = ['blur', 'close', 'closed', 'focus', 'frames', 'length', 'location', 'opener', 'parent', 'postMessage', 'self', 'top', 'window'];
-            whitelistedLocationProperties = ['href', 'replace'];
+            whitelistedWindowPropNames = ['blur', 'close', 'closed', 'focus', 'frames', 'length', 'location', 'opener', 'parent', 'postMessage', 'self', 'then', 'top', 'window'];
             whitelistedSymbols = [Symbol.toStringTag, Symbol.hasInstance, Symbol.isConcatSpreadable];
             shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), whitelistedWindowIndices.concat(whitelistedWindowPropNames).sort())");
             allWindowProps = Reflect.ownKeys(b_win);
@@ -100,7 +99,7 @@
             shouldBeTrue("areArraysEqual(symbolWindowProps, whitelistedSymbols)"); // Reflect.ownKeys should end with the cross-origin symbols for a cross-origin Window.
 
             // Location.
-            whitelistedLocationPropNames = ['href', 'replace'];
+            whitelistedLocationPropNames = ['href', 'replace', 'then'];
             allLocationProps = Reflect.ownKeys(b_win.location);
             stringLocationProps = allLocationProps.slice(0, -1 * whitelistedSymbols.length);
             symbolLocationProps = allLocationProps.slice(-1 * whitelistedSymbols.length);

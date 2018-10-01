@@ -1,3 +1,28 @@
+2018-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Make crossOriginObject.then undefined for promises
+        https://bugs.webkit.org/show_bug.cgi?id=190094
+
+        Reviewed by Darin Adler.
+
+        Make crossOriginObject.then undefined for promises. This allows promises to work better with cross-origin WindowProxy
+        and Location objects.
+
+        Specification:
+        - https://github.com/whatwg/html/pull/3242
+        - https://github.com/whatwg/dom/issues/536
+
+        This aligns our behavior with Blink and Gecko.
+
+        No new tests, rebaselined existing test.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::addCrossOriginWindowOwnPropertyNames):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::getOwnPropertySlotCommon):
+        (WebCore::addCrossOriginLocationOwnPropertyNames):
+
 2018-10-01  Xan Lopez  <xan@igalia.com>
 
         [SOUP] Fix the build for libsoup > 2.61.90

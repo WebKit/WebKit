@@ -8,15 +8,15 @@ PASS [[SetPrototypeOf]] should return false
 PASS [[IsExtensible]] should return true for cross-origin objects 
 PASS [[PreventExtensions]] should throw for cross-origin objects 
 PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| 
-FAIL [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly 
 PASS [[GetOwnProperty]] - Subframe named 'then' should shadow the default 'then' value 
 PASS [[Delete]] Should throw on cross-origin objects 
 PASS [[DefineOwnProperty]] Should throw for cross-origin objects 
 PASS Can only enumerate safelisted enumerable properties 
-FAIL [[OwnPropertyKeys]] should return all properties from cross-origin objects assert_array_equals: Object.getOwnPropertyNames() gives the right answer for cross-origin Window lengths differ, expected 16 got 15
+PASS [[OwnPropertyKeys]] should return all properties from cross-origin objects 
 PASS [[OwnPropertyKeys]] should return the right symbol-named properties for cross-origin objects 
-FAIL [[OwnPropertyKeys]] should place the symbols after the property names after the subframe indices assert_equals: 'then' property should be added to the end of the string list if not there expected "then" but got "window"
-FAIL [[OwnPropertyKeys]] should not reorder where 'then' appears if it's a named subframe, nor add another copy of 'then' assert_equals: expected "then" but got "window"
+PASS [[OwnPropertyKeys]] should place the symbols after the property names after the subframe indices 
+PASS [[OwnPropertyKeys]] should not reorder where 'then' appears if it's a named subframe, nor add another copy of 'then' 
 PASS A and B jointly observe the same identity for cross-origin Window and Location 
 PASS Cross-origin functions get local Function.prototype 
 PASS Cross-origin Window accessors get local Function.prototype 

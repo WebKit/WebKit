@@ -40,6 +40,10 @@ enum class DOMWindowType { Local, Remote };
 template <DOMWindowType windowType>
 bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, AbstractDOMWindow&, JSC::ExecState&, JSC::PropertyName, JSC::PropertySlot&, const String&);
 
-void addCrossOriginWindowOwnPropertyNames(JSC::ExecState&, JSC::PropertyNameArray&);
+enum class CrossOriginObject { Window, Location };
+
+template <CrossOriginObject objectType>
+void addCrossOriginOwnPropertyNames(JSC::ExecState&, JSC::PropertyNameArray&);
+bool handleCommonCrossOriginProperties(JSC::JSObject* thisObject, JSC::VM&, JSC::PropertyName, JSC::PropertySlot&);
 
 } // namespace WebCore

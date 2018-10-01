@@ -26,6 +26,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMWindowCustom.h"
 #include "RuntimeApplicationChecks.h"
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/Lookup.h>
@@ -54,10 +55,6 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
         return false;
 
     // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
-    if (propertyName == vm.propertyNames->toStringTagSymbol || propertyName == vm.propertyNames->hasInstanceSymbol || propertyName == vm.propertyNames->isConcatSpreadableSymbol) {
-        slot.setValue(&thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, jsUndefined());
-        return true;
-    }
 
     // We only allow access to Location.replace() cross origin.
     if (propertyName == vm.propertyNames->replace) {
@@ -73,6 +70,9 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
         slot.setCustomGetterSetter(&thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum), customGetterSetter);
         return true;
     }
+
+    if (handleCommonCrossOriginProperties(&thisObject, vm, propertyName, slot))
+        return true;
 
     throwSecurityError(state, scope, message);
     slot.setUndefined();
@@ -163,32 +163,12 @@ bool JSLocation::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
 }
 
-// https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
-static void addCrossOriginLocationPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
-{
-    VM& vm = state.vm();
-    static const Identifier* const properties[] = { &vm.propertyNames->href, &vm.propertyNames->replace };
-    for (auto* property : properties)
-        propertyNames.add(*property);
-}
-
-// https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
-static void addCrossOriginLocationOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
-{
-    VM& vm = state.vm();
-    addCrossOriginLocationPropertyNames(state, propertyNames);
-
-    propertyNames.add(vm.propertyNames->toStringTagSymbol);
-    propertyNames.add(vm.propertyNames->hasInstanceSymbol);
-    propertyNames.add(vm.propertyNames->isConcatSpreadableSymbol);
-}
-
 void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError)) {
         if (mode.includeDontEnumProperties())
-            addCrossOriginLocationOwnPropertyNames(*exec, propertyNames);
+            addCrossOriginOwnPropertyNames<CrossOriginObject::Location>(*exec, propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

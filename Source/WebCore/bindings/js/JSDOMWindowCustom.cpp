@@ -91,10 +91,6 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
     auto& builtinNames = static_cast<JSVMClientData*>(vm.clientData)->builtinNames();
 
     // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
-    if (propertyName == vm.propertyNames->toStringTagSymbol || propertyName == vm.propertyNames->hasInstanceSymbol || propertyName == vm.propertyNames->isConcatSpreadableSymbol) {
-        slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum, jsUndefined());
-        return true;
-    }
 
     // These are the functions we allow access to cross-origin (DoNotCheckSecurity in IDL).
     // Always provide the original function, on a fresh uncached function object.
@@ -157,12 +153,26 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
         }
     }
 
+    if (handleCommonCrossOriginProperties(thisObject, vm, propertyName, slot))
+        return true;
+
     throwSecurityError(state, scope, errorMessage);
     slot.setUndefined();
     return false;
 }
 template bool jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(JSDOMGlobalObject*, AbstractDOMWindow&, ExecState&, PropertyName, PropertySlot&, const String&);
 template bool jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(JSDOMGlobalObject*, AbstractDOMWindow&, ExecState&, PropertyName, PropertySlot&, const String&);
+
+// https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
+bool handleCommonCrossOriginProperties(JSObject* thisObject, VM& vm, PropertyName propertyName, PropertySlot& slot)
+{
+    auto& propertyNames =  vm.propertyNames;
+    if (propertyName == propertyNames->builtinNames().thenPublicName() || propertyName == propertyNames->toStringTagSymbol || propertyName == propertyNames->hasInstanceSymbol || propertyName == propertyNames->isConcatSpreadableSymbol) {
+        slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum, jsUndefined());
+        return true;
+    }
+    return false;
+}
 
 // Property access sequence is:
 // (1) indexed properties,
@@ -309,29 +319,50 @@ void JSDOMWindow::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
 }
 
 // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
-static void addCrossOriginWindowPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+template <CrossOriginObject objectType>
+static void addCrossOriginPropertyNames(VM& vm, PropertyNameArray& propertyNames)
+{
+    switch (objectType) {
+    case CrossOriginObject::Location: {
+        static const Identifier* const properties[] = { &vm.propertyNames->href, &vm.propertyNames->replace };
+        for (auto* property : properties)
+            propertyNames.add(*property);
+        break;
+    }
+    case CrossOriginObject::Window: {
+        auto& builtinNames = static_cast<JSVMClientData*>(vm.clientData)->builtinNames();
+        static const Identifier* const properties[] = {
+            &builtinNames.blurPublicName(), &builtinNames.closePublicName(), &builtinNames.closedPublicName(),
+            &builtinNames.focusPublicName(), &builtinNames.framesPublicName(), &vm.propertyNames->length,
+            &builtinNames.locationPublicName(), &builtinNames.openerPublicName(), &builtinNames.parentPublicName(),
+            &builtinNames.postMessagePublicName(), &builtinNames.selfPublicName(), &builtinNames.topPublicName(),
+            &builtinNames.windowPublicName()
+        };
+
+        for (auto* property : properties)
+            propertyNames.add(*property);
+        break;
+    }
+    }
+}
+
+// https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
+template <CrossOriginObject objectType>
+void addCrossOriginOwnPropertyNames(JSC::ExecState& state, JSC::PropertyNameArray& propertyNames)
 {
     auto& vm = state.vm();
+    addCrossOriginPropertyNames<objectType>(vm, propertyNames);
 
     static const Identifier* const properties[] = {
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().blurPublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().closePublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().closedPublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().focusPublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().framesPublicName(),
-        &vm.propertyNames->length,
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().openerPublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().parentPublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().postMessagePublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().selfPublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().topPublicName(),
-        &static_cast<JSVMClientData*>(vm.clientData)->builtinNames().windowPublicName()
+        &vm.propertyNames->builtinNames().thenPublicName(), &vm.propertyNames->toStringTagSymbol, &vm.propertyNames->hasInstanceSymbol, &vm.propertyNames->isConcatSpreadableSymbol
     };
 
     for (auto* property : properties)
         propertyNames.add(*property);
+
 }
+template void addCrossOriginOwnPropertyNames<CrossOriginObject::Window>(JSC::ExecState&, JSC::PropertyNameArray&);
+template void addCrossOriginOwnPropertyNames<CrossOriginObject::Location>(JSC::ExecState&, JSC::PropertyNameArray&);
 
 static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, PropertyNameArray& propertyNames)
 {
@@ -348,17 +379,6 @@ static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, Proper
         propertyNames.add(Identifier::from(&state, i));
 }
 
-// https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
-void addCrossOriginWindowOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
-{
-    addCrossOriginWindowPropertyNames(state, propertyNames);
-
-    auto& vm = state.vm();
-    propertyNames.add(vm.propertyNames->toStringTagSymbol);
-    propertyNames.add(vm.propertyNames->hasInstanceSymbol);
-    propertyNames.add(vm.propertyNames->isConcatSpreadableSymbol);
-}
-
 // https://html.spec.whatwg.org/#windowproxy-ownpropertykeys
 void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
@@ -368,7 +388,7 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError)) {
         if (mode.includeDontEnumProperties())
-            addCrossOriginWindowOwnPropertyNames(*exec, propertyNames);
+            addCrossOriginOwnPropertyNames<CrossOriginObject::Window>(*exec, propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

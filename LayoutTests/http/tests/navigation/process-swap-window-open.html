@@ -39,11 +39,12 @@ function runTest() {
     shouldNotThrow("w.postMessage('test', '*')");
     shouldNotThrow("w.focus()");
     shouldNotThrow("w.blur()");
+    shouldBe("w.then", "undefined");
 
     shouldNotThrow("w.location");
     shouldNotBe("w.location", "null");
 
-    expected_property_names = ["blur", "close", "closed", "focus", "frames", "length", "location", "opener", "parent", "postMessage", "self", "top", "window"];
+    expected_property_names = ["blur", "close", "closed", "focus", "frames", "length", "location", "opener", "parent", "postMessage", "self", "top", "window", "then"];
     actual_properties = Object.getOwnPropertyNames(w);
     shouldBeTrue("areArraysEqual(actual_properties, expected_property_names)");
 

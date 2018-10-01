@@ -102,7 +102,7 @@ void JSRemoteDOMWindow::getOwnPropertyNames(JSObject*, ExecState* exec, Property
     // FIXME: Add scoped children indexes.
 
     if (mode.includeDontEnumProperties())
-        addCrossOriginWindowOwnPropertyNames(*exec, propertyNames);
+        addCrossOriginOwnPropertyNames<CrossOriginObject::Window>(*exec, propertyNames);
 }
 
 bool JSRemoteDOMWindow::defineOwnProperty(JSC::JSObject*, JSC::ExecState* state, JSC::PropertyName, const JSC::PropertyDescriptor&, bool)

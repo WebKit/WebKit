@@ -1,3 +1,14 @@
+2018-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Make crossOriginObject.then undefined for promises
+        https://bugs.webkit.org/show_bug.cgi?id=190094
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+
 2018-09-30  Walker Henderson  <wjahenderson@gmail.com>
 
         AudioNode.connect should return passed destination node

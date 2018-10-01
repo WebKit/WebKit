@@ -1,3 +1,17 @@
+2018-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Make crossOriginObject.then undefined for promises
+        https://bugs.webkit.org/show_bug.cgi?id=190094
+
+        Reviewed by Darin Adler.
+
+        Update existing tests to reflect behavior change.
+
+        * http/tests/navigation/process-swap-window-open-expected.txt:
+        * http/tests/navigation/process-swap-window-open.html:
+        * http/wpt/cross-origin-window-policy/resources/utils.js:
+        (testCrossOriginOption):
+
 2018-10-01  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Reset running time in PlaybackPipeline::flush()
