@@ -67,6 +67,9 @@ function installDependenciesWithApt {
         gperf \
         intltool \
         itstool \
+        libasound2-dev \
+        libevent-dev \
+        libgbm-dev \
         libgnutls28-dev \
         libgstreamer1.0-dev \
         libgstreamer-plugins-bad1.0-dev \
@@ -124,6 +127,7 @@ function installDependenciesWithApt {
         libxcb-xkb-dev \
         libxkbcommon-dev \
         libxml-libxml-perl \
+        libxrandr-dev \
         libwayland-dev \
         luajit \
         yasm"
@@ -160,6 +164,7 @@ function installDependenciesWithPacman {
         icu \
         intltool \
         itstool \
+        libevent \
         libjpeg-turbo \
         libpng \
         libtasn1 \
@@ -250,6 +255,7 @@ function installDependenciesWithDnf {
         gstreamer1-plugins-base-devel \
         intltool \
         itstool \
+        libevent-devel \
         libicu-devel \
         libjpeg-turbo-devel \
         libpng-devel \

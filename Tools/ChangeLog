@@ -1,3 +1,22 @@
+2018-10-01  Olivier Blin  <olivier.blin@softathome.com>
+
+        [WPE] Update install-dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=190127
+
+        Reviewed by Michael Catanzaro.
+
+        * wpe/install-dependencies:
+        libxrandr-dev is needed for gstreamer-vaapi in jhbuild
+        It is used by gstvaapidisplay_x11.c.
+        Add it only for Apt, already ok for Pacman and DNF.
+
+        Install libevent-dev for WebRTC (like GTK)
+
+        Install libasound2-dev for WebRTC.
+        Add it only for Apt, already ok for Pacam and DNF.
+
+        Install libgbm-dev for HeadlessViewBackend, which uses gbm.h
+
 2018-10-01  Thibault Saunier  <tsaunier@igalia.com>
 
         [Flatpak] Add libunwind in the sandbox
