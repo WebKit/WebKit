@@ -50,6 +50,9 @@ public:
 
     void timingModelDidChange() override;
 
+    void animationWasAddedToElement(WebAnimation&, Element&) final;
+    void animationWasRemovedFromElement(WebAnimation&, Element&) final;
+
     // If possible, compute the visual extent of any transform animation on the given renderer
     // using the given rect, returning the result in the rect. Return false if there is some
     // transform animation but we were unable to cheaply compute its effect on the extent.
@@ -89,6 +92,7 @@ private:
     void updateAnimations();
     void performEventDispatchTask();
     void maybeClearCachedCurrentTime();
+    void updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element&);
 
     RefPtr<Document> m_document;
     Seconds m_originTime;
@@ -103,6 +107,7 @@ private:
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     Vector<Ref<AnimationPlaybackEvent>> m_pendingAnimationEvents;
     unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };
+    HashSet<Element*> m_elementsWithRunningAcceleratedAnimations;
 
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     void animationResolutionTimerFired();

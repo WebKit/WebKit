@@ -63,8 +63,8 @@ public:
     void elementWasRemoved(Element&);
     void removeAnimationsForElement(Element&);
     void cancelDeclarativeAnimationsForElement(Element&);
-    void animationWasAddedToElement(WebAnimation&, Element&);
-    void animationWasRemovedFromElement(WebAnimation&, Element&);
+    virtual void animationWasAddedToElement(WebAnimation&, Element&);
+    virtual void animationWasRemovedFromElement(WebAnimation&, Element&);
 
     void updateCSSAnimationsForElement(Element&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle);
     void updateCSSTransitionsForElement(Element&, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle);

@@ -1,3 +1,34 @@
+2018-10-01  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure renderers with accelerated animations have layers
+        https://bugs.webkit.org/show_bug.cgi?id=189990
+
+        Reviewed by Simon Fraser.
+
+        In r236501 we added code that would make a RenderBox and a RenderInline query the document timeline for whether a given element has
+        accelerated animations running on it. Since the calls to requiresLayer() are in a hot path, we instead keep a list of elements with
+        exclusively accelerated animations running.
+
+        No new tests, this is already covered by webanimations/accelerated-animation-with-delay.html and webanimations/opacity-animation-yields-compositing-span.html
+        which respectively check that we can apply an accelerated animation to a non-positioned block and an inline element.
+
+        * animation/AnimationTimeline.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::detachFromDocument):
+        (WebCore::DocumentTimeline::animationWasAddedToElement):
+        (WebCore::DocumentTimeline::animationWasRemovedFromElement):
+        (WebCore::DocumentTimeline::animationAcceleratedRunningStateDidChange):
+        (WebCore::DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement): Iterate over an element's animations to determine
+        whether all of its animations are running accelerated, then update the HashSet containing elements running accelerated animations to remove or
+        add this element.
+        (WebCore::DocumentTimeline::runningAnimationsForElementAreAllAccelerated const): Make a simple contains() call on the HashSet containing elements
+        running accelerated animations.
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::updateAcceleratedAnimationState):
+        (WebCore::KeyframeEffectReadOnly::applyPendingAcceleratedActions):
+        * rendering/RenderBoxModelObject.h:
+
 2018-10-01  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Fix abort in gst_sample_get_info()

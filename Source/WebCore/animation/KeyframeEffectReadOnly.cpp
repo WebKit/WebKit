@@ -1231,6 +1231,7 @@ void KeyframeEffectReadOnly::updateAcceleratedAnimationState()
         else {
             m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
             m_pendingAcceleratedActions.clear();
+            animation()->acceleratedStateDidChange();
         }
         return;
     }
@@ -1294,6 +1295,7 @@ void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
             if (!compositedRenderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer().ptr(), m_blendingKeyframes)) {
                 m_shouldRunAccelerated = false;
                 m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
+                animation()->acceleratedStateDidChange();
                 return;
             }
             break;

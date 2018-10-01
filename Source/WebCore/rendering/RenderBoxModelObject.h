@@ -241,6 +241,8 @@ public:
     void removeFromContinuationChain();
 
     virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return LayoutRect(); };
+
+    bool hasRunningAcceleratedAnimations() const;
     
 protected:
     RenderBoxModelObject(Element&, RenderStyle&&, BaseTypeFlags);
@@ -269,8 +271,6 @@ protected:
     bool hasAutoHeightOrContainingBlockWithAutoHeight() const;
 
     DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
-
-    bool hasRunningAcceleratedAnimations() const;
 
 public:
     // For RenderBlocks and RenderInlines with m_style->styleType() == PseudoId::FirstLetter, this tracks their remaining text fragments

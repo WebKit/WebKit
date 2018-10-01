@@ -72,6 +72,7 @@ void DocumentTimeline::detachFromDocument()
     m_invalidationTaskQueue.close();
     m_eventDispatchTaskQueue.close();
     m_animationScheduleTimer.stop();
+    m_elementsWithRunningAcceleratedAnimations.clear();
 
     auto& animationsToRemove = animations();
     while (!animationsToRemove.isEmpty())
@@ -397,9 +398,43 @@ std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderEl
     return result;
 }
 
+void DocumentTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)
+{
+    AnimationTimeline::animationWasAddedToElement(animation, element);
+    updateListOfElementsWithRunningAcceleratedAnimationsForElement(element);
+}
+
+void DocumentTimeline::animationWasRemovedFromElement(WebAnimation& animation, Element& element)
+{
+    AnimationTimeline::animationWasRemovedFromElement(animation, element);
+    updateListOfElementsWithRunningAcceleratedAnimationsForElement(element);
+}
+
 void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)
 {
     m_acceleratedAnimationsPendingRunningStateChange.add(&animation);
+
+    if (is<KeyframeEffectReadOnly>(animation.effect())) {
+        if (auto* target = downcast<KeyframeEffectReadOnly>(animation.effect())->target())
+            updateListOfElementsWithRunningAcceleratedAnimationsForElement(*target);
+    }
+}
+
+void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element& element)
+{
+    auto animations = animationsForElement(element);
+    bool runningAnimationsForElementAreAllAccelerated = !animations.isEmpty();
+    for (const auto& animation : animations) {
+        if (is<KeyframeEffectReadOnly>(animation->effect()) && !downcast<KeyframeEffectReadOnly>(animation->effect())->isRunningAccelerated()) {
+            runningAnimationsForElementAreAllAccelerated = false;
+            break;
+        }
+    }
+
+    if (runningAnimationsForElementAreAllAccelerated)
+        m_elementsWithRunningAcceleratedAnimations.add(&element);
+    else
+        m_elementsWithRunningAcceleratedAnimations.remove(&element);
 }
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()
@@ -448,15 +483,7 @@ bool DocumentTimeline::resolveAnimationsForElement(Element& element, RenderStyle
 
 bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element) const
 {
-    // FIXME: This will let animations run using hardware compositing even if later in the active
-    // span of the current animations a new animation should require hardware compositing to be
-    // disabled (webkit.org/b/179974).
-    auto animations = animationsForElement(element);
-    for (const auto& animation : animations) {
-        if (is<KeyframeEffectReadOnly>(animation->effect()) && !downcast<KeyframeEffectReadOnly>(animation->effect())->isRunningAccelerated())
-            return false;
-    }
-    return !animations.isEmpty();
+    return m_elementsWithRunningAcceleratedAnimations.contains(&element);
 }
 
 void DocumentTimeline::enqueueAnimationPlaybackEvent(AnimationPlaybackEvent& event)
