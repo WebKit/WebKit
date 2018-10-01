@@ -2380,19 +2380,36 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
             return;
         bool acceptAttestation = JSValueToBoolean(context, acceptAttestationValue);
 
-        JSRetainPtr<JSStringRef> privateKeyBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("privateKeyBase64"));
-        JSValueRef privateKeyBase64Value = JSObjectGetProperty(context, local, privateKeyBase64PropertyName.get(), 0);
-        if (!JSValueIsString(context, privateKeyBase64Value))
-            return;
-
         Vector<WKRetainPtr<WKStringRef>> localKeys;
         Vector<WKRetainPtr<WKTypeRef>> localValues;
         localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("AcceptAuthentication") });
         localValues.append(adoptWK(WKBooleanCreate(acceptAuthentication)).get());
         localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("AcceptAttestation") });
         localValues.append(adoptWK(WKBooleanCreate(acceptAttestation)).get());
-        localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("PrivateKeyBase64") });
-        localValues.append(toWK(adopt(JSValueToStringCopy(context, privateKeyBase64Value, 0)).get()));
+
+        if (acceptAttestation) {
+            JSRetainPtr<JSStringRef> privateKeyBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("privateKeyBase64"));
+            JSValueRef privateKeyBase64Value = JSObjectGetProperty(context, local, privateKeyBase64PropertyName.get(), 0);
+            if (!JSValueIsString(context, privateKeyBase64Value))
+                return;
+
+            JSRetainPtr<JSStringRef> userCertificateBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("userCertificateBase64"));
+            JSValueRef userCertificateBase64Value = JSObjectGetProperty(context, local, userCertificateBase64PropertyName.get(), 0);
+            if (!JSValueIsString(context, userCertificateBase64Value))
+                return;
+
+            JSRetainPtr<JSStringRef> intermediateCACertificateBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("intermediateCACertificateBase64"));
+            JSValueRef intermediateCACertificateBase64Value = JSObjectGetProperty(context, local, intermediateCACertificateBase64PropertyName.get(), 0);
+            if (!JSValueIsString(context, intermediateCACertificateBase64Value))
+            return;
+
+            localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("PrivateKeyBase64") });
+            localValues.append(toWK(adopt(JSValueToStringCopy(context, privateKeyBase64Value, 0)).get()));
+            localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("UserCertificateBase64") });
+            localValues.append(toWK(adopt(JSValueToStringCopy(context, userCertificateBase64Value, 0)).get()));
+            localKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("IntermediateCACertificateBase64") });
+            localValues.append(toWK(adopt(JSValueToStringCopy(context, intermediateCACertificateBase64Value, 0)).get()));
+        }
 
         Vector<WKStringRef> rawLocalKeys;
         Vector<WKTypeRef> rawLocalValues;

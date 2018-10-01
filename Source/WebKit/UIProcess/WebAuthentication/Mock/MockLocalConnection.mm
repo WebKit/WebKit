@@ -36,34 +36,6 @@
 
 namespace WebKit {
 
-namespace MockLocalConnectionInternal {
-const char* const testAttestationCertificateBase64 =
-    "MIIB6jCCAZCgAwIBAgIGAWHAxcjvMAoGCCqGSM49BAMCMFMxJzAlBgNVBAMMHkJh"
-    "c2ljIEF0dGVzdGF0aW9uIFVzZXIgU3ViIENBMTETMBEGA1UECgwKQXBwbGUgSW5j"
-    "LjETMBEGA1UECAwKQ2FsaWZvcm5pYTAeFw0xODAyMjMwMzM3MjJaFw0xODAyMjQw"
-    "MzQ3MjJaMGoxIjAgBgNVBAMMGTAwMDA4MDEwLTAwMEE0OUEyMzBBMDIxM0ExGjAY"
-    "BgNVBAsMEUJBQSBDZXJ0aWZpY2F0aW9uMRMwEQYDVQQKDApBcHBsZSBJbmMuMRMw"
-    "EQYDVQQIDApDYWxpZm9ybmlhMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvCje"
-    "Pzr6Sg76XMoHuGabPaG6zjpLFL8Zd8/74Hh5PcL2Zq+o+f7ENXX+7nEXXYt0S8Ux"
-    "5TIRw4hgbfxXQbWLEqM5MDcwDAYDVR0TAQH/BAIwADAOBgNVHQ8BAf8EBAMCBPAw"
-    "FwYJKoZIhvdjZAgCBAowCKEGBAR0ZXN0MAoGCCqGSM49BAMCA0gAMEUCIAlK8A8I"
-    "k43TbvKuYGHZs1DTgpTwmKTBvIUw5bwgZuYnAiEAtuJjDLKbGNJAJFMi5deEBqno"
-    "pBTCqbfbDJccfyQpjnY=";
-const char* const testAttestationIssuingCACertificateBase64 =
-    "MIICIzCCAaigAwIBAgIIeNjhG9tnDGgwCgYIKoZIzj0EAwIwUzEnMCUGA1UEAwwe"
-    "QmFzaWMgQXR0ZXN0YXRpb24gVXNlciBSb290IENBMRMwEQYDVQQKDApBcHBsZSBJ"
-    "bmMuMRMwEQYDVQQIDApDYWxpZm9ybmlhMB4XDTE3MDQyMDAwNDIwMFoXDTMyMDMy"
-    "MjAwMDAwMFowUzEnMCUGA1UEAwweQmFzaWMgQXR0ZXN0YXRpb24gVXNlciBTdWIg"
-    "Q0ExMRMwEQYDVQQKDApBcHBsZSBJbmMuMRMwEQYDVQQIDApDYWxpZm9ybmlhMFkw"
-    "EwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEoSZ/1t9eBAEVp5a8PrXacmbGb8zNC1X3"
-    "StLI9YO6Y0CL7blHmSGmjGWTwD4Q+i0J2BY3+bPHTGRyA9jGB3MSbaNmMGQwEgYD"
-    "VR0TAQH/BAgwBgEB/wIBADAfBgNVHSMEGDAWgBSD5aMhnrB0w/lhkP2XTiMQdqSj"
-    "8jAdBgNVHQ4EFgQU5mWf1DYLTXUdQ9xmOH/uqeNSD80wDgYDVR0PAQH/BAQDAgEG"
-    "MAoGCCqGSM49BAMCA2kAMGYCMQC3M360LLtJS60Z9q3vVjJxMgMcFQ1roGTUcKqv"
-    "W+4hJ4CeJjySXTgq6IEHn/yWab4CMQCm5NnK6SOSK+AqWum9lL87W3E6AA1f2TvJ"
-    "/hgok/34jr93nhS87tOQNdxDS8zyiqw=";
-}
-
 MockLocalConnection::MockLocalConnection(const MockWebAuthenticationConfiguration& configuration)
     : m_configuration(configuration)
 {
@@ -97,8 +69,6 @@ void MockLocalConnection::getUserConsent(const String&, SecAccessControlRef, Use
 
 void MockLocalConnection::getAttestation(const String& rpId, const String& username, const Vector<uint8_t>& hash, AttestationCallback&& callback) const
 {
-    using namespace MockLocalConnectionInternal;
-
     // Mock async operations.
     RunLoop::main().dispatch([configuration = m_configuration, rpId, username, hash, callback = WTFMove(callback)]() mutable {
         ASSERT(configuration.local);
@@ -131,10 +101,8 @@ void MockLocalConnection::getAttestation(const String& rpId, const String& usern
         OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
         ASSERT_UNUSED(status, !status);
 
-        // Construct dummy certificates. The content of certificates is not important. We need them to present to
-        // check the CBOR encoding procedure.
-        auto attestationCertificate = adoptCF(SecCertificateCreateWithData(NULL, (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:[NSString stringWithCString:testAttestationCertificateBase64 encoding:NSASCIIStringEncoding] options:NSDataBase64DecodingIgnoreUnknownCharacters]).get()));
-        auto attestationIssuingCACertificate = adoptCF(SecCertificateCreateWithData(NULL, (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:[NSString stringWithCString:testAttestationIssuingCACertificateBase64 encoding:NSASCIIStringEncoding] options:NSDataBase64DecodingIgnoreUnknownCharacters]).get()));
+        auto attestationCertificate = adoptCF(SecCertificateCreateWithData(NULL, (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:configuration.local->userCertificateBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get()));
+        auto attestationIssuingCACertificate = adoptCF(SecCertificateCreateWithData(NULL, (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:configuration.local->intermediateCACertificateBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get()));
 
         callback(key.get(), [NSArray arrayWithObjects: (__bridge id)attestationCertificate.get(), (__bridge id)attestationIssuingCACertificate.get(), nil], NULL);
     });

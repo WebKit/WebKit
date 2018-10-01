@@ -1,13 +1,38 @@
-const testCredentialIdBase64url = "SMSXHngF7hEOsElA73C3RY-8bR4";
+const testCredentialIdBase64 = "SMSXHngF7hEOsElA73C3RY+8bR4=";
 const testES256PrivateKeyBase64 =
     "BDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749VBJPgqUIwfhWHJ91nb7U" +
     "PH76c0+WFOzZKslPyyFse4goGIW2R7k9VHLPEZl5nfnBgEVFh5zev+/xpHQIvuq6" +
     "RQ==";
-const testES256PublicKeyBase64url =
-    "BDj_zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF_Qm1749VBJPgqUIwfhWHJ91nb7U" +
-    "PH76c0-WFOzZKslPyyFse4g";
+const testES256PublicKeyBase64 =
+    "BDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749VBJPgqUIwfhWHJ91nb7U" +
+    "PH76c0+WFOzZKslPyyFse4g=";
 const testRpId = "localhost";
 const testUserhandleBase64 = "AAECAwQFBgcICQ==";
+const testAttestationCertificateBase64 =
+    "MIIB6jCCAZCgAwIBAgIGAWHAxcjvMAoGCCqGSM49BAMCMFMxJzAlBgNVBAMMHkJh" +
+    "c2ljIEF0dGVzdGF0aW9uIFVzZXIgU3ViIENBMTETMBEGA1UECgwKQXBwbGUgSW5j" +
+    "LjETMBEGA1UECAwKQ2FsaWZvcm5pYTAeFw0xODAyMjMwMzM3MjJaFw0xODAyMjQw" +
+    "MzQ3MjJaMGoxIjAgBgNVBAMMGTAwMDA4MDEwLTAwMEE0OUEyMzBBMDIxM0ExGjAY" +
+    "BgNVBAsMEUJBQSBDZXJ0aWZpY2F0aW9uMRMwEQYDVQQKDApBcHBsZSBJbmMuMRMw" +
+    "EQYDVQQIDApDYWxpZm9ybmlhMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvCje" +
+    "Pzr6Sg76XMoHuGabPaG6zjpLFL8Zd8/74Hh5PcL2Zq+o+f7ENXX+7nEXXYt0S8Ux" +
+    "5TIRw4hgbfxXQbWLEqM5MDcwDAYDVR0TAQH/BAIwADAOBgNVHQ8BAf8EBAMCBPAw" +
+    "FwYJKoZIhvdjZAgCBAowCKEGBAR0ZXN0MAoGCCqGSM49BAMCA0gAMEUCIAlK8A8I" +
+    "k43TbvKuYGHZs1DTgpTwmKTBvIUw5bwgZuYnAiEAtuJjDLKbGNJAJFMi5deEBqno" +
+    "pBTCqbfbDJccfyQpjnY=";
+const testAttestationIssuingCACertificateBase64 =
+    "MIICIzCCAaigAwIBAgIIeNjhG9tnDGgwCgYIKoZIzj0EAwIwUzEnMCUGA1UEAwwe" +
+    "QmFzaWMgQXR0ZXN0YXRpb24gVXNlciBSb290IENBMRMwEQYDVQQKDApBcHBsZSBJ" +
+    "bmMuMRMwEQYDVQQIDApDYWxpZm9ybmlhMB4XDTE3MDQyMDAwNDIwMFoXDTMyMDMy" +
+    "MjAwMDAwMFowUzEnMCUGA1UEAwweQmFzaWMgQXR0ZXN0YXRpb24gVXNlciBTdWIg" +
+    "Q0ExMRMwEQYDVQQKDApBcHBsZSBJbmMuMRMwEQYDVQQIDApDYWxpZm9ybmlhMFkw" +
+    "EwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEoSZ/1t9eBAEVp5a8PrXacmbGb8zNC1X3" +
+    "StLI9YO6Y0CL7blHmSGmjGWTwD4Q+i0J2BY3+bPHTGRyA9jGB3MSbaNmMGQwEgYD" +
+    "VR0TAQH/BAgwBgEB/wIBADAfBgNVHSMEGDAWgBSD5aMhnrB0w/lhkP2XTiMQdqSj" +
+    "8jAdBgNVHQ4EFgQU5mWf1DYLTXUdQ9xmOH/uqeNSD80wDgYDVR0PAQH/BAQDAgEG" +
+    "MAoGCCqGSM49BAMCA2kAMGYCMQC3M360LLtJS60Z9q3vVjJxMgMcFQ1roGTUcKqv" +
+    "W+4hJ4CeJjySXTgq6IEHn/yWab4CMQCm5NnK6SOSK+AqWum9lL87W3E6AA1f2TvJ" +
+    "/hgok/34jr93nhS87tOQNdxDS8zyiqw=";
 
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 
@@ -125,7 +150,10 @@ function decodeAuthData(authDataUint8Array)
     authDataObject.credentialID = authDataUint8Array.slice(pos, pos + size);
     pos = pos + size;
 
-    // FIXME(): Add CBOR decoder to parse the public key.
+    // Public Key
+    authDataObject.publicKey = CBOR.decode(authDataUint8Array.slice(pos).buffer);
+    if (!authDataObject.publicKey)
+        return { };
 
     // Assume no extensions.
     return authDataObject;
@@ -178,4 +206,20 @@ function promiseRejects(test, expected, promise, description)
         assert_throws(expected, function() { throw e }, description);
         assert_equals(e.message, description);
     });
+}
+
+// COSE Key Format: https://www.w3.org/TR/webauthn/#sctn-encoded-credPubKey-examples.
+function checkPublicKey(publicKey)
+{
+    if (publicKey['1'] != 2)
+        return false;
+    if (publicKey['3'] != -7)
+        return false;
+    if (publicKey['-1'] != 1)
+        return false;
+    if (publicKey['-2'].byteLength != 32)
+        return false;
+    if (publicKey['-3'].byteLength != 32)
+        return false;
+    return true;
 }

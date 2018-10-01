@@ -1,3 +1,21 @@
+2018-10-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import a JS CBOR coder
+        https://bugs.webkit.org/show_bug.cgi?id=189877
+        <rdar://problem/44701124>
+
+        Reviewed by Chris Dumez.
+
+        Update MockWebAuthenticationConfiguration to have userCertificateBase64 and intermediateCACertificateBase64
+        as Local's memeber such that tests can pass those certificates to MockLocalConnection instead of letting it
+        holds some static ones.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getAttestation const):
+        * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h:
+
 2018-10-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236512): http/tests/navigation/keyboard-events-during-provisional-navigation.html is flaky

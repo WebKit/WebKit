@@ -20,7 +20,15 @@
 
 <script>
 if (window.testRunner)
-    testRunner.setWebAuthenticationMockConfiguration({ local: { acceptAuthentication: true, acceptAttestation: true, privateKeyBase64: testES256PrivateKeyBase64 } });
+    testRunner.setWebAuthenticationMockConfiguration({
+        local: {
+            acceptAuthentication: true,
+            acceptAttestation: true,
+            privateKeyBase64: testES256PrivateKeyBase64,
+            userCertificateBase64: testAttestationCertificateBase64,
+            intermediateCACertificateBase64: testAttestationIssuingCACertificateBase64
+        }
+    });
 
 promise_test(async () => {
     const idlURL = ["WebAuthN.idl"];

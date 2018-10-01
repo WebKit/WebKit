@@ -1,3 +1,25 @@
+2018-10-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import a JS CBOR coder
+        https://bugs.webkit.org/show_bug.cgi?id=189877
+        <rdar://problem/44701124>
+
+        Reviewed by Chris Dumez.
+
+        This patch import a 3rd party JS CBOR coder from https://github.com/paroga/cbor-js.
+        The library is MIT licensed, which should be fine to use within WebKit.
+
+        As a benefit from the library, tests are updated to check CBOR binaries.
+
+        * http/wpt/credential-management/credentialscontainer-store-basics.https.html:
+        * http/wpt/webauthn/idl.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+        * http/wpt/webauthn/resources/cbor.js: Added.
+        * http/wpt/webauthn/resources/util.js:
+
 2018-10-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] Special keys are misidentified in DOM keyboard events

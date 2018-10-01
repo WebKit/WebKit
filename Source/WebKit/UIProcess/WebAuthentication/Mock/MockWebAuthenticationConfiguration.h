@@ -34,6 +34,8 @@ struct MockWebAuthenticationConfiguration {
         bool acceptAuthentication { false };
         bool acceptAttestation { false };
         String privateKeyBase64;
+        String userCertificateBase64;
+        String intermediateCACertificateBase64;
     };
 
     std::optional<Local> local;
