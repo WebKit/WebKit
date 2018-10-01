@@ -1,3 +1,20 @@
+2018-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236512): http/tests/navigation/keyboard-events-during-provisional-navigation.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190052
+
+        Reviewed by Ryosuke Niwa.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        * Platform/IPC/Connection.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePagePostMessageIgnoringFullySynchronousMode):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::postMessageIgnoringFullySynchronousMode):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-10-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] Special keys are misidentified in DOM keyboard events

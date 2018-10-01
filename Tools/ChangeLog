@@ -1,3 +1,28 @@
+2018-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236512): http/tests/navigation/keyboard-events-during-provisional-navigation.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190052
+
+        Reviewed by Ryosuke Niwa.
+
+        The test relies on EventSender to send events to the page synchronously to the page and then uses console.log
+        to log those events. It also uses console.log() before sending those events to indicate what the test is about
+        to do. Note that console.log() normally causes the WebKitTestRunner to send an asynchronous IPC to the UIProcess
+        so that it can log the message.
+        The issue is that EventSender uses IPC::SendOption::UseFullySynchronousModeForTesting when sending the
+        sync IPC to the UIProcess. This option causes follow-up *asynchronous* IPC sent from the synchronous IPC reply
+        handler to be transformed into synchronous IPC.
+        As a result, some of the console.log IPC ended up being asynchronous and some other ended up being synchronous.
+        Because synchronous and asynchronous IPC is not necessarily processed in-order by the UIProcess, the logged
+        messages may end up being out of order, leading to flakiness.
+
+        To address the issue, we now make sure that InjectedBundle::outputText() uses a new IPC::SendOption indicated
+        that the IPC should always be sent asynchronously, even if the connection is in fully synchronous mode. As a
+        result, all text outputing IPC to the UIProcess will be asynchronous, and thus in order.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::outputText):
+
 2018-10-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] Special keys are misidentified in DOM keyboard events
