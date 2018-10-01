@@ -1434,12 +1434,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "TerminateStorageProcess")) {
-        ASSERT(!messageBody);
-        TestController::singleton().terminateStorageProcess();
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "TerminateNetworkProcess")) {
         ASSERT(!messageBody);
         TestController::singleton().terminateNetworkProcess();

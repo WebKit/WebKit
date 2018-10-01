@@ -621,19 +621,9 @@ void WKContextTerminateServiceWorkerProcess(WKContextRef context)
     toImpl(context)->terminateServiceWorkerProcesses();
 }
 
-void WKContextTerminateStorageProcess(WKContextRef context)
-{
-    toImpl(context)->terminateStorageProcessForTesting();
-}
-
 ProcessID WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
 {
     return toImpl(contextRef)->networkProcessIdentifier();
-}
-
-ProcessID WKContextGetDatabaseProcessIdentifier(WKContextRef contextRef)
-{
-    return toImpl(contextRef)->storageProcessIdentifier();
 }
 
 void WKContextAddSupportedPlugin(WKContextRef contextRef, WKStringRef domainRef, WKStringRef nameRef, WKArrayRef mimeTypesRef, WKArrayRef extensionsRef)

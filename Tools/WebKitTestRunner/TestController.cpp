@@ -484,7 +484,6 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
         networkProcessDidCrash,
         0, // plugInInformationBecameAvailable
         0, // copyWebCryptoMasterKey
-        databaseProcessDidCrash,
     };
     WKContextSetClient(m_context.get(), &contextClient.base);
 
@@ -1055,26 +1054,6 @@ const char* TestController::networkProcessName()
 #endif
 }
 
-const char* TestController::databaseProcessName()
-{
-    // FIXME: Find a way to not hardcode the process name.
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110300
-    return "com.apple.WebKit.Databases";
-#else
-    return "com.apple.WebKit.Storage";
-#endif
-#elif PLATFORM(COCOA)
-    return "com.apple.WebKit.Storage.Development";
-#elif PLATFORM(GTK)
-    return "WebKitStorageProcess";
-#elif PLATFORM(WPE)
-    return "WPEStorageProcess";
-#else
-    return "DatabaseProcess";
-#endif
-}
-
 void TestController::setAllowsAnySSLCertificate(bool allows)
 {
     WKContextSetAllowsAnySSLCertificateForWebSocketTesting(platformContext(), allows);
@@ -1498,11 +1477,6 @@ void TestController::networkProcessDidCrash(WKContextRef context, const void *cl
     static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash();
 }
 
-void TestController::databaseProcessDidCrash(WKContextRef context, const void *clientInfo)
-{
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->databaseProcessDidCrash();
-}
-
 void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous)
 {
     WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
@@ -1833,13 +1807,6 @@ void TestController::networkProcessDidCrash()
 {
     pid_t pid = WKContextGetNetworkProcessIdentifier(m_context.get());
     fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(pid));
-    exit(1);
-}
-
-void TestController::databaseProcessDidCrash()
-{
-    pid_t pid = WKContextGetDatabaseProcessIdentifier(m_context.get());
-    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", databaseProcessName(), static_cast<long>(pid));
     exit(1);
 }
 
@@ -2640,11 +2607,6 @@ void TestController::terminateNetworkProcess()
 void TestController::terminateServiceWorkerProcess()
 {
     WKContextTerminateServiceWorkerProcess(platformContext());
-}
-
-void TestController::terminateStorageProcess()
-{
-    WKContextTerminateStorageProcess(platformContext());
 }
 
 #if !PLATFORM(COCOA)

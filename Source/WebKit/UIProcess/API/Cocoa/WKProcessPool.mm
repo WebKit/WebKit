@@ -424,11 +424,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->clearSupportedPlugins();
 }
 
-- (void)_terminateStorageProcess
-{
-    _processPool->terminateStorageProcessForTesting();
-}
-
 - (void)_terminateNetworkProcess
 {
     _processPool->terminateNetworkProcess();
@@ -447,11 +442,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (pid_t)_networkProcessIdentifier
 {
     return _processPool->networkProcessIdentifier();
-}
-
-- (pid_t)_storageProcessIdentifier
-{
-    return _processPool->storageProcessIdentifier();
 }
 
 - (void)_syncNetworkProcessCookies

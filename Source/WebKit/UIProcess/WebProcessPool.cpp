@@ -54,8 +54,6 @@
 #include "SandboxExtension.h"
 #include "ServiceWorkerProcessProxy.h"
 #include "StatisticsData.h"
-#include "StorageProcessCreationParameters.h"
-#include "StorageProcessMessages.h"
 #include "TextChecker.h"
 #include "UIGamepad.h"
 #include "UIGamepadProvider.h"
@@ -441,7 +439,6 @@ void WebProcessPool::sendMemoryPressureEvent(bool isCritical)
 {
     sendToAllProcesses(Messages::ChildProcess::DidReceiveMemoryPressureEvent(isCritical));
     sendToNetworkingProcess(Messages::ChildProcess::DidReceiveMemoryPressureEvent(isCritical));
-    sendToStorageProcess(Messages::ChildProcess::DidReceiveMemoryPressureEvent(isCritical));
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginProcessManager::singleton().sendMemoryPressureEvent(isCritical);
 #endif
@@ -606,46 +603,6 @@ void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProx
     m_networkProcess->getNetworkProcessConnection(webProcessProxy, WTFMove(reply));
 }
 
-void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore)
-{
-    if (!m_storageProcess) {
-        auto parameters = m_websiteDataStore ? m_websiteDataStore->websiteDataStore().storageProcessParameters() : (relevantDataStore ? relevantDataStore->storageProcessParameters() : API::WebsiteDataStore::defaultDataStore()->websiteDataStore().storageProcessParameters());
-
-        ASSERT(parameters.sessionID.isValid());
-
-        m_storageProcess = std::make_unique<StorageProcessProxy>(*this);
-        m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(parameters), 0);
-    }
-
-    if (!relevantDataStore || !m_websiteDataStore || relevantDataStore == &m_websiteDataStore->websiteDataStore())
-        return;
-
-    m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(relevantDataStore->storageProcessParameters()), 0);
-}
-
-void WebProcessPool::getStorageProcessConnection(WebProcessProxy& webProcessProxy, PAL::SessionID initialSessionID, Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply&& reply)
-{
-    ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore::existingNonDefaultDataStoreForSessionID(initialSessionID));
-
-    m_storageProcess->getStorageProcessConnection(webProcessProxy, WTFMove(reply));
-}
-
-void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessProxy)
-{
-    ASSERT(m_storageProcess);
-    ASSERT(storageProcessProxy == m_storageProcess.get());
-
-    for (auto& supplement : m_supplements.values())
-        supplement->processDidClose(storageProcessProxy);
-
-    m_client.storageProcessDidCrash(this);
-
-    if (m_automationSession)
-        m_automationSession->terminate();
-
-    m_storageProcess = nullptr;
-}
-
 #if ENABLE(SERVICE_WORKER)
 void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, SecurityOriginData&& securityOrigin, std::optional<PAL::SessionID> sessionID)
 {
@@ -722,7 +679,6 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
         sendToAllProcesses(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()));
     } else {
         networkProcess()->removeSession(PAL::SessionID::legacyPrivateSessionID());
-        sendToStorageProcess(Messages::StorageProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()));
         sendToAllProcesses(Messages::WebProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()));
     }
 }
@@ -1361,14 +1317,6 @@ ProcessID WebProcessPool::networkProcessIdentifier()
     return m_networkProcess->processIdentifier();
 }
 
-ProcessID WebProcessPool::storageProcessIdentifier()
-{
-    if (!m_storageProcess)
-        return 0;
-
-    return m_storageProcess->processIdentifier();
-}
-
 void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
     m_alwaysUsesComplexTextCodePath = alwaysUseComplexText;
@@ -1623,15 +1571,6 @@ void WebProcessPool::clearCachedCredentials()
     sendToAllProcesses(Messages::WebProcess::ClearCachedCredentials());
     if (m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::ClearCachedCredentials(), 0);
-}
-
-void WebProcessPool::terminateStorageProcessForTesting()
-{
-    if (!m_storageProcess)
-        return;
-
-    m_storageProcess->terminateForTesting();
-    m_storageProcess = nullptr;
 }
 
 void WebProcessPool::terminateNetworkProcess()

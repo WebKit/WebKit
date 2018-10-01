@@ -5,7 +5,6 @@ global:
   WebProcessMainUnix;
   NetworkProcessMainUnix;
   PluginProcessMainUnix;
-  StorageProcessMainUnix;
   extern "C++" {
     "bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_data";
     "bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_object";

@@ -79,7 +79,7 @@ public:
     void ref() override { RefCounted<WebIDBConnectionToServer>::ref(); }
     void deref() override { RefCounted<WebIDBConnectionToServer>::deref(); }
 
-    // Messages received from StorageProcess
+    // Messages received from Network Process
     void didDeleteDatabase(const WebCore::IDBResultData&);
     void didOpenDatabase(const WebCore::IDBResultData&);
     void didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&);

@@ -46,12 +46,4 @@ void WebContextClient::networkProcessDidCrash(WebProcessPool* processPool)
     m_client.networkProcessDidCrash(toAPI(processPool), m_client.base.clientInfo);
 }
 
-void WebContextClient::storageProcessDidCrash(WebProcessPool* processPool)
-{
-    if (!m_client.databaseProcessDidCrash)
-        return;
-
-    m_client.databaseProcessDidCrash(toAPI(processPool), m_client.base.clientInfo);
-}
-
 } // namespace WebKit

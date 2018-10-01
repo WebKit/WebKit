@@ -104,8 +104,6 @@ Shared/soup/WebErrorsSoup.cpp
 
 Shared/unix/ChildProcessMain.cpp @no-unify
 
-StorageProcess/glib/StorageProcessMainGLib.cpp
-
 UIProcess/AcceleratedDrawingAreaProxy.cpp
 UIProcess/BackingStore.cpp
 UIProcess/DefaultUndoController.cpp

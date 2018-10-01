@@ -832,7 +832,7 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr<WKWebView> newRegularPageWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    // Test that a regular page does not trigger a service worker connection to storage process if there is no registered service worker.
+    // Test that a regular page does not trigger a service worker connection to network process if there is no registered service worker.
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageWithoutConnection.html"]];
 
     [regularPageWebView loadRequest:request];
@@ -874,47 +874,6 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
-}
-
-TEST(ServiceWorkers, StorageProcessConnectionCreation)
-{
-    ASSERT(mainBytes);
-    ASSERT(scriptBytes);
-
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    done = false;
-    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    setConfigurationInjectedBundlePath(configuration.get());
-
-    RetainPtr<RegularPageMessageHandler> regularPageMessageHandler = adoptNS([[RegularPageMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
-
-    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
-    handler->resources.set("sw://host/regularPageWithoutConnection.html", ResourceInfo { @"text/html", regularPageWithoutConnectionBytes });
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
-
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    EXPECT_EQ(0, webView.get().configuration.processPool._storageProcessIdentifier);
-
-    // Test that a regular page does not trigger a storage process if there is no registered service worker.
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageWithoutConnection.html"]];
-
-    [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    // Make sure than loading the simple page did not start a storage process.
-    EXPECT_EQ(0, webView.get().configuration.processPool._storageProcessIdentifier);
 }
 
 static const char* mainBytesWithScope = R"SWRESOURCE(
@@ -1088,9 +1047,6 @@ TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    // There should be no storage process created.
-    EXPECT_EQ(0, webView.get().configuration.processPool._storageProcessIdentifier);
-
     // Let's use the web site data store that has service worker and load a page.
     newConfiguration.get().websiteDataStore = [configuration websiteDataStore];
 
@@ -1100,9 +1056,6 @@ TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
-
-    // Make sure storage process is not launched.
-    EXPECT_EQ(0, webView.get().configuration.processPool._storageProcessIdentifier);
 
     // Make sure that loading the simple page did not start the service worker process.
     EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCount);

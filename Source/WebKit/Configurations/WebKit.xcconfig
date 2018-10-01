@@ -146,7 +146,7 @@ SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInte
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,mac/WebKit2.order;
 
 EXCLUDED_SOURCE_FILE_NAMES = Resources/ios/*;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = PluginProcessShim.dylib SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.Storage.sb com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb com.apple.WebKit.plugin-common.sb PlugInSandboxProfiles/*.sb;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = PluginProcessShim.dylib SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb com.apple.WebKit.plugin-common.sb PlugInSandboxProfiles/*.sb;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
 

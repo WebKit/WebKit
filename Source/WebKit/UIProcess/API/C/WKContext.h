@@ -50,7 +50,6 @@ typedef WKDataRef (*WKContextCopyWebCryptoMasterKeyCallback)(WKContextRef contex
 
 typedef void (*WKContextChildProcessDidCrashCallback)(WKContextRef context, const void *clientInfo);
 typedef WKContextChildProcessDidCrashCallback WKContextNetworkProcessDidCrashCallback;
-typedef WKContextChildProcessDidCrashCallback WKContextDatabaseProcessDidCrashCallback;
 
 typedef struct WKContextClientBase {
     int                                                                 version;
@@ -89,8 +88,6 @@ typedef struct WKContextClientV2 {
     // Version 1.
     void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
 
-    // Version 2.
-    WKContextDatabaseProcessDidCrashCallback                            databaseProcessDidCrash;
 } WKContextClientV2;
 
 // FIXME: Remove these once support for Mavericks has been dropped.

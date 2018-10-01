@@ -219,12 +219,7 @@ Shared/Plugins/PluginProcessCreationParameters.cpp @no-unify
 Shared/Plugins/Netscape/NetscapePluginModule.cpp  @no-unify
 Shared/Plugins/Netscape/PluginInformation.cpp @no-unify
 
-Shared/Storage/StorageProcessCreationParameters.cpp
-
 Shared/WebsiteData/WebsiteData.cpp
-
-StorageProcess/StorageProcess.cpp @no-unify
-StorageProcess/StorageToWebProcessConnection.cpp @no-unify
 
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
 UIProcess/ChildProcessProxy.cpp
@@ -385,8 +380,6 @@ UIProcess/Plugins/PluginInfoStore.cpp
 UIProcess/Plugins/PluginProcessManager.cpp
 UIProcess/Plugins/PluginProcessProxy.cpp
 
-UIProcess/Storage/StorageProcessProxy.cpp
-
 UIProcess/UserContent/WebScriptMessageHandler.cpp
 UIProcess/UserContent/WebUserContentControllerProxy.cpp
 
@@ -500,7 +493,6 @@ WebProcess/Storage/WebSWContextManagerConnection.cpp
 WebProcess/Storage/WebSWOriginTable.cpp
 WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
 WebProcess/Storage/WebServiceWorkerProvider.cpp
-WebProcess/Storage/WebToStorageProcessConnection.cpp
 
 WebProcess/UserContent/WebUserContentController.cpp
 

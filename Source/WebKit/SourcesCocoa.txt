@@ -194,12 +194,6 @@ Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm
 Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm
 Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp
 
-StorageProcess/EntryPoint/mac/XPCService/StorageServiceEntryPoint.mm @no-unify
-
-StorageProcess/ios/StorageProcessIOS.mm @no-unify
-
-StorageProcess/mac/StorageProcessMac.mm @no-unify
-
 UIProcess/_WKWebViewPrintFormatter.mm
 UIProcess/ApplicationStateTracker.mm
 UIProcess/HighPerformanceGraphicsUsageSampler.cpp

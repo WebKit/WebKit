@@ -33,8 +33,6 @@
 #include "MockAuthenticatorManager.h"
 #include "NetworkProcessMessages.h"
 #include "StorageManager.h"
-#include "StorageProcessCreationParameters.h"
-#include "StorageProcessMessages.h"
 #include "WebCookieManagerProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
@@ -135,7 +133,6 @@ WebsiteDataStore::~WebsiteDataStore()
         ASSERT(nonDefaultDataStores().get(m_sessionID) == this);
         nonDefaultDataStores().remove(m_sessionID);
         for (auto& processPool : WebProcessPool::allProcessPools()) {
-            processPool->sendToStorageProcess(Messages::StorageProcess::DestroySession(m_sessionID));
             if (auto* networkProcess = processPool->networkProcess())
                 networkProcess->removeSession(m_sessionID);
         }
@@ -1594,17 +1591,6 @@ void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandl
             processPool->clearResourceLoadStatistics();
     }
     callback();
-}
-
-StorageProcessCreationParameters WebsiteDataStore::storageProcessParameters()
-{
-    resolveDirectoriesIfNecessary();
-
-    StorageProcessCreationParameters parameters;
-
-    parameters.sessionID = m_sessionID;
-
-    return parameters;
 }
 
 Vector<WebCore::Cookie> WebsiteDataStore::pendingCookies() const

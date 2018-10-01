@@ -37,7 +37,6 @@ messages -> WebProcessProxy LegacyReceiver {
     GetPluginProcessConnection(uint64_t pluginProcessToken) -> (IPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Delayed
 #endif
     GetNetworkProcessConnection() -> (IPC::Attachment connectionHandle) Delayed
-    GetStorageProcessConnection(PAL::SessionID initialSessionID) -> (IPC::Attachment connectionHandle) Delayed
     ProcessReadyToSuspend()
     DidCancelProcessSuspension()
 

@@ -30,8 +30,8 @@
 
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
-#include "WebSWServerConnection.h"
 #include "WebSWClientConnection.h"
+#include "WebSWServerConnection.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/Exception.h>
 #include <WebCore/ExceptionCode.h>

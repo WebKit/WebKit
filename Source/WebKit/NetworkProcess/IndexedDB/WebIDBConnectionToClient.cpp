@@ -287,7 +287,7 @@ void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDB
         && overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::Overwrite)
         && overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor)) {
         // FIXME: This message from the WebProcess is corrupt.
-        // The StorageProcess should return early at this point, but can we also kill the bad WebProcess?
+        // The Network Process should return early at this point, but can we also kill the bad WebProcess?
         return;
     }
 

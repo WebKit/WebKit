@@ -144,7 +144,6 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
     // Ensure the shared process pool exists so the data store operations we're about to do work with it.
     WKProcessPool *sharedProcessPool = [WKProcessPool _sharedProcessPool];
 
-    EXPECT_EQ((pid_t)0, [sharedProcessPool _storageProcessIdentifier]);
     EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
 
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
@@ -169,7 +168,6 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
 
-    EXPECT_EQ((pid_t)0, [sharedProcessPool _storageProcessIdentifier]);
     EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
 }
 

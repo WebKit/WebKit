@@ -43,7 +43,6 @@
 #include "PluginProcessConnectionManager.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
-#include "StorageProcessMessages.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"
 #include "WebCacheStorageProvider.h"
@@ -70,7 +69,6 @@
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
 #include "WebSocketStream.h"
-#include "WebToStorageProcessConnection.h"
 #include "WebsiteData.h"
 #include "WebsiteDataStoreParameters.h"
 #include "WebsiteDataType.h"
@@ -1206,49 +1204,6 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
     return m_webLoaderStrategy;
 }
 
-void WebProcess::webToStorageProcessConnectionClosed(WebToStorageProcessConnection* connection)
-{
-    ASSERT(m_webToStorageProcessConnection);
-    ASSERT(m_webToStorageProcessConnection == connection);
-
-    m_webToStorageProcessConnection = nullptr;
-}
-
-WebToStorageProcessConnection& WebProcess::ensureWebToStorageProcessConnection(PAL::SessionID initialSessionID)
-{
-    if (!m_webToStorageProcessConnection) {
-        IPC::Attachment encodedConnectionIdentifier;
-
-        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetStorageProcessConnection(initialSessionID), Messages::WebProcessProxy::GetStorageProcessConnection::Reply(encodedConnectionIdentifier), 0)) {
-#if PLATFORM(GTK) || PLATFORM(WPE)
-            // GTK+ and WPE ports don't exit on send sync message failure.
-            // In this particular case, the storage process can be terminated by the UI process while the
-            // connection is being done, so we always want to exit instead of crashing.
-            // See https://bugs.webkit.org/show_bug.cgi?id=183348.
-            exit(0);
-#else
-            CRASH();
-#endif
-        }
-
-#if USE(UNIX_DOMAIN_SOCKETS)
-        IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
-#elif OS(DARWIN)
-        IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
-#elif OS(WINDOWS)
-        IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.handle());
-#else
-        ASSERT_NOT_REACHED();
-#endif
-        if (!IPC::Connection::identifierIsValid(connectionIdentifier))
-            CRASH();
-
-        m_webToStorageProcessConnection = WebToStorageProcessConnection::create(connectionIdentifier);
-
-    }
-    return *m_webToStorageProcessConnection;
-}
-
 void WebProcess::setEnhancedAccessibility(bool flag)
 {
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(flag);
@@ -1701,9 +1656,9 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 #if ENABLE(SERVICE_WORKER)
 void WebProcess::establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore& store, PAL::SessionID initialSessionID)
 {
-    // We are in the Service Worker context process and the call below establishes our connection to the Storage Process
-    // by calling webToStorageProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
-    // WebToStorageProcessConnection for synchronization purposes.
+    // We are in the Service Worker context process and the call below establishes our connection to the Network Process
+    // by calling ensureNetworkProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
+    // NetworkProcessConnection for synchronization purposes.
     auto& ipcConnection = ensureNetworkProcessConnection().connection();
     SWContextManager::singleton().setConnection(std::make_unique<WebSWContextManagerConnection>(ipcConnection, pageGroupID, pageID, store));
 }

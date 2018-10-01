@@ -2,7 +2,6 @@ set(WebKit_OUTPUT_NAME WebKit2)
 set(WebKit_WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(WebKit_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
 set(WebKit_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
-set(WebKit_StorageProcess_OUTPUT_NAME WebKitStorageProcess)
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT_DIR})
 
@@ -28,8 +27,6 @@ list(APPEND WebKit_SOURCES
     Shared/win/NativeWebTouchEventWin.cpp
     Shared/win/NativeWebWheelEventWin.cpp
     Shared/win/WebEventFactory.cpp
-
-    StorageProcess/win/StorageProcessMainWin.cpp
 
     UIProcess/AcceleratedDrawingAreaProxy.cpp
     UIProcess/BackingStore.cpp
@@ -107,7 +104,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/Plugins/win"
     "${WEBKIT_DIR}/Shared/unix"
     "${WEBKIT_DIR}/Shared/win"
-    "${WEBKIT_DIR}/StorageProcess/win"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/win"
     "${WEBKIT_DIR}/UIProcess/API/cpp/win"
@@ -136,10 +132,6 @@ list(APPEND WebProcess_SOURCES
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/win/NetworkProcessMain.cpp
-)
-
-list(APPEND StorageProcess_SOURCES
-    StorageProcess/EntryPoint/win/StorageProcessMain.cpp
 )
 
 if (${ENABLE_PLUGIN_PROCESS})

@@ -136,7 +136,6 @@ TEST(WebKit, WebsiteDataStoreCustomPaths)
     [[[webView configuration] processPool] _syncNetworkProcessCookies];
 
     // Forcibly shut down everything of WebKit that we can.
-    [[[webView configuration] processPool] _terminateStorageProcess];
     auto pid = [webView _webProcessIdentifier];
     if (pid)
         kill(pid, SIGKILL);
@@ -180,7 +179,6 @@ TEST(WebKit, WebsiteDataStoreCustomPaths)
 
     // Data stores can't delete anything unless a WKProcessPool exists, so make sure the shared data store exists.
     auto *processPool = [WKProcessPool _sharedProcessPool];
-    [processPool _terminateStorageProcess];
     RetainPtr<WKWebsiteDataStore> dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()];
     RetainPtr<NSSet> types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
 
@@ -291,7 +289,6 @@ TEST(WebKit, CustomDataStorePathsVersusCompletionHandlers)
     readyToContinue = false;
 
     // Fetch records again, this time releasing our reference to the data store while the request is in flight.
-    // Without a bug fix, this would crash the StorageProcess and the UI process wouldn't get the info back.
     [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         EXPECT_EQ(1U, dataRecords.count);
         readyToContinue = true;
@@ -301,7 +298,6 @@ TEST(WebKit, CustomDataStorePathsVersusCompletionHandlers)
     readyToContinue = false;
 
     // Delete all SW records, releasing our reference to the data store while the request is in flight.
-    // Same as above - We used to crash the storage process and the records weren't actually deleted.
     dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     [dataStore removeDataOfTypes:websiteDataTypes.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
@@ -310,7 +306,7 @@ TEST(WebKit, CustomDataStorePathsVersusCompletionHandlers)
     TestWebKitAPI::Util::run(&readyToContinue);
     readyToContinue = false;
 
-    // The StorageProcess should not have crashed, the records should have been deleted, and the callback should have been made.
+    // The records should have been deleted, and the callback should have been made.
     // Now refetch the records to verify they are gone.
     dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
@@ -403,7 +399,6 @@ TEST(WebKit, WebsiteDataStoreEphemeral)
     [[[webView configuration] processPool] _syncNetworkProcessCookies];
 
     // Forcibly shut down everything of WebKit that we can.
-    [[[webView configuration] processPool] _terminateStorageProcess];
     auto pid = [webView _webProcessIdentifier];
     if (pid)
         kill(pid, SIGKILL);

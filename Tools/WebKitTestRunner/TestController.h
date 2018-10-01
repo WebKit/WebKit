@@ -231,7 +231,6 @@ public:
 
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
-    void terminateStorageProcess();
 
     void removeAllSessionCredentials();
 
@@ -329,8 +328,6 @@ private:
     // WKContextClient
     static void networkProcessDidCrash(WKContextRef, const void*);
     void networkProcessDidCrash();
-    static void databaseProcessDidCrash(WKContextRef, const void*);
-    void databaseProcessDidCrash();
 
     // WKPageNavigationClient
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);

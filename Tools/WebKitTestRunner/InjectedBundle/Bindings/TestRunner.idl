@@ -330,7 +330,6 @@ interface TestRunner {
 
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
-    void terminateStorageProcess();
 
     readonly attribute boolean didCancelClientRedirect;
 

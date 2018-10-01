@@ -37,7 +37,7 @@ async function doTest() {
 
     if (!window.location.hash.length) {
         if (window.testRunner)
-            testRunner.terminateStorageProcess();
+            testRunner.terminateNetworkProcess();
         await waitFor(100);
         window.location += "?test#" + randomId;
         return;

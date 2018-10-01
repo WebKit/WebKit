@@ -40,7 +40,6 @@
 #include "ProcessThrottler.h"
 #include "ServiceWorkerProcessProxy.h"
 #include "StatisticsRequest.h"
-#include "StorageProcessProxy.h"
 #include "VisitedLinkStore.h"
 #include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
@@ -174,10 +173,6 @@ public:
     template<typename T, typename U> void sendSyncToNetworkingProcess(T&& message, U&& reply);
     template<typename T> void sendToNetworkingProcessRelaunchingIfNecessary(T&& message);
 
-    // Sends the message to WebProcess or StorageProcess as approporiate for current process model.
-    template<typename T> void sendToStorageProcess(T&& message);
-    template<typename T> void sendToStorageProcessRelaunchingIfNecessary(T&& message);
-
     void processDidFinishLaunching(WebProcessProxy*);
 
     // Disconnect the process from the context.
@@ -220,7 +215,6 @@ public:
     void clearSupportedPlugins();
 
     ProcessID networkProcessIdentifier();
-    ProcessID storageProcessIdentifier();
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
 
@@ -280,7 +274,6 @@ public:
     void setAllowsAnySSLCertificateForWebSocket(bool);
 
     void clearCachedCredentials();
-    void terminateStorageProcessForTesting();
     void terminateNetworkProcess();
     void terminateServiceWorkerProcesses();
     void disableServiceWorkerProcessTerminationDelay();
@@ -345,10 +338,6 @@ public:
 
     void getNetworkProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&&);
 
-    void ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore);
-    StorageProcessProxy* storageProcess() { return m_storageProcess.get(); }
-    void getStorageProcessConnection(WebProcessProxy&, PAL::SessionID initialSessionID, Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply&&);
-    void storageProcessCrashed(StorageProcessProxy*);
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy&, WebCore::SecurityOriginData&&, std::optional<PAL::SessionID>);
     ServiceWorkerProcessProxy* serviceWorkerProcessProxyFromPageID(uint64_t pageID) const;
@@ -630,7 +619,6 @@ private:
     bool m_canHandleHTTPSServerTrustEvaluation { true };
     bool m_didNetworkProcessCrash { false };
     std::unique_ptr<NetworkProcessProxy> m_networkProcess;
-    std::unique_ptr<StorageProcessProxy> m_storageProcess;
 
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
     HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;
@@ -722,20 +710,6 @@ void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
     ensureNetworkProcess();
     m_networkProcess->send(std::forward<T>(message), 0);
-}
-
-template<typename T>
-void WebProcessPool::sendToStorageProcess(T&& message)
-{
-    if (m_storageProcess && m_storageProcess->canSendMessage())
-        m_storageProcess->send(std::forward<T>(message), 0);
-}
-
-template<typename T>
-void WebProcessPool::sendToStorageProcessRelaunchingIfNecessary(T&& message)
-{
-    ensureStorageProcessAndWebsiteDataStore(nullptr);
-    m_storageProcess->send(std::forward<T>(message), 0);
 }
 
 template<typename T>

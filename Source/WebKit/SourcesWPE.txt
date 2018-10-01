@@ -95,8 +95,6 @@ Shared/wpe/NativeWebTouchEventWPE.cpp
 Shared/wpe/NativeWebWheelEventWPE.cpp
 Shared/wpe/WebEventFactory.cpp
 
-StorageProcess/glib/StorageProcessMainGLib.cpp
-
 UIProcess/AcceleratedDrawingAreaProxy.cpp
 UIProcess/BackingStore.cpp
 UIProcess/DefaultUndoController.cpp

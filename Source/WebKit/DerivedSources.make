@@ -37,8 +37,6 @@ VPATH = \
     $(WebKit2)/Shared/API/Cocoa \
     $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/mac \
-    $(WebKit2)/StorageProcess \
-    $(WebKit2)/StorageProcess/mac \
     $(WebKit2)/WebProcess/ApplePay \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Automation \
@@ -133,9 +131,6 @@ MESSAGE_RECEIVERS = \
     SmartMagnificationController \
     StorageAreaMap \
     StorageManager \
-    StorageProcess \
-    StorageProcessProxy \
-    StorageToWebProcessConnection \
     UserMediaCaptureManager \
     UserMediaCaptureManagerProxy \
     ViewGestureController \
@@ -231,7 +226,6 @@ endif
 
 SANDBOX_PROFILES = \
 	com.apple.WebProcess.sb \
-	com.apple.WebKit.Storage.sb \
 	com.apple.WebKit.plugin-common.sb \
 	com.apple.WebKit.NetworkProcess.sb
 

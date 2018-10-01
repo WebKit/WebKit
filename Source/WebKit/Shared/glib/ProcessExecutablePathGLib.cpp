@@ -92,13 +92,4 @@ String executablePathOfNetworkProcess()
 #endif
 }
 
-String executablePathOfStorageProcess()
-{
-#if PLATFORM(WPE)
-    return findWebKitProcess("WPEStorageProcess");
-#else
-    return findWebKitProcess("WebKitStorageProcess");
-#endif
-}
-
 } // namespace WebKit

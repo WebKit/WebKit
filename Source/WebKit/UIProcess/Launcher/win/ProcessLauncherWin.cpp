@@ -42,8 +42,6 @@ static const LPCWSTR processName(ProcessLauncher::ProcessType processType)
         return L"WebKitWebProcess.exe";
     case ProcessLauncher::ProcessType::Network:
         return L"WebKitNetworkProcess.exe";
-    case ProcessLauncher::ProcessType::Storage:
-        return L"WebKitStorageProcess.exe";
     }
     return L"WebKitWebProcess.exe";
 }

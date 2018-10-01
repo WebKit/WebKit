@@ -31,9 +31,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/Plugins/Netscape"
     "${WEBKIT_DIR}/Shared/Plugins/Netscape/x11"
     "${WEBKIT_DIR}/Shared/RemoteLayerTree"
-    "${WEBKIT_DIR}/Shared/Storage"
     "${WEBKIT_DIR}/Shared/WebsiteData"
-    "${WEBKIT_DIR}/StorageProcess"
     "${WEBKIT_DIR}/UIProcess"
     "${WEBKIT_DIR}/UIProcess/API"
     "${WEBKIT_DIR}/UIProcess/API/C"
@@ -49,7 +47,6 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Notifications"
     "${WEBKIT_DIR}/UIProcess/Plugins"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
-    "${WEBKIT_DIR}/UIProcess/Storage"
     "${WEBKIT_DIR}/UIProcess/UserContent"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/Mock"
@@ -135,9 +132,6 @@ set(WebKit_MESSAGES_IN_FILES
 
     Shared/Plugins/NPObjectMessageReceiver.messages.in
 
-    StorageProcess/StorageProcess.messages.in
-    StorageProcess/StorageToWebProcessConnection.messages.in
-
     UIProcess/DrawingAreaProxy.messages.in
     UIProcess/RemoteWebInspectorProxy.messages.in
     UIProcess/VisitedLinkStore.messages.in
@@ -158,8 +152,6 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/Network/NetworkProcessProxy.messages.in
 
     UIProcess/Plugins/PluginProcessProxy.messages.in
-
-    UIProcess/Storage/StorageProcessProxy.messages.in
 
     UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 
@@ -226,10 +218,6 @@ set(WebProcess_LIBRARIES
 )
 
 set(NetworkProcess_LIBRARIES
-    WebKit
-)
-
-set(StorageProcess_LIBRARIES
     WebKit
 )
 
@@ -452,20 +440,10 @@ if (WebKit_NetworkProcess_OUTPUT_NAME)
     set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit_NetworkProcess_OUTPUT_NAME})
 endif ()
 
-add_executable(StorageProcess ${StorageProcess_SOURCES})
-ADD_WEBKIT_PREFIX_HEADER(StorageProcess)
-target_link_libraries(StorageProcess ${StorageProcess_LIBRARIES})
-install(TARGETS StorageProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
-
-if (WebKit_StorageProcess_OUTPUT_NAME)
-    set_target_properties(StorageProcess PROPERTIES OUTPUT_NAME ${WebKit_StorageProcess_OUTPUT_NAME})
-endif ()
-
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebProcess -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(NetworkProcess -Wno-unused-parameter)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(StorageProcess -Wno-unused-parameter)
 endif ()
 
 # FIXME: Mac should build a plugin process.

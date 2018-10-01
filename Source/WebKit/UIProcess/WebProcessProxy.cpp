@@ -631,11 +631,6 @@ void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::Get
     m_processPool->getNetworkProcessConnection(*this, WTFMove(reply));
 }
 
-void WebProcessProxy::getStorageProcessConnection(PAL::SessionID initialSessionID, Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply&& reply)
-{
-    m_processPool->getStorageProcessConnection(*this, initialSessionID, WTFMove(reply));
-}
-
 #if !PLATFORM(COCOA)
 bool WebProcessProxy::platformIsBeingDebugged() const
 {

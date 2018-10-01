@@ -160,8 +160,6 @@ list(APPEND WebKit_SOURCES
     Shared/mac/WebHitTestResultData.mm
     Shared/mac/WebMemorySampler.mac.mm
 
-    StorageProcess/mac/StorageProcessMac.mm
-
     UIProcess/HighPerformanceGraphicsUsageSampler.cpp
     UIProcess/PerActivityStateCPUUsageSampler.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
@@ -454,15 +452,9 @@ list(APPEND NetworkProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
-list(APPEND StorageProcess_SOURCES
-    StorageProcess/EntryPoint/mac/XPCService/StorageServiceEntryPoint.mm
-    ${XPCService_SOURCES}
-)
-
 # FIXME: These should not have Development in production builds.
 set(WebKit_WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
 set(WebKit_NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
-set(WebKit_StorageProcess_OUTPUT_NAME com.apple.WebKit.Storage.Development)
 
 add_definitions("-include WebKit2Prefix.h")
 
@@ -788,11 +780,6 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         "com.apple.WebKit.Networking"
         ${WEBKIT_DIR}/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist
         ${WebKit_NetworkProcess_OUTPUT_NAME})
-
-    WEBKIT_XPC_SERVICE(StorageProcess
-        "com.apple.WebKit.Storage"
-        ${WEBKIT_DIR}/StorageProcess/EntryPoint/mac/XPCService/StorageService/Info.plist
-        ${WebKit_StorageProcess_OUTPUT_NAME})
 
     add_custom_target(WebContentProcessNib COMMAND
         ibtool --compile ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib ${WEBKIT_DIR}/Resources/WebContentProcess.xib

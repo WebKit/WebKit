@@ -1,3 +1,100 @@
+2018-10-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove StorageProcess
+        https://bugs.webkit.org/show_bug.cgi?id=189975
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * Configurations/Storage-OSX-sandbox.entitlements: Removed.
+        * Configurations/StorageService.xcconfig: Removed.
+        * Configurations/WebKit.xcconfig:
+        * DerivedSources.make:
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::putOrAdd):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::establishIDBConnectionToServer):
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * Shared/ProcessExecutablePath.h:
+        * Shared/Storage/StorageProcessCreationParameters.cpp: Removed.
+        * Shared/Storage/StorageProcessCreationParameters.h: Removed.
+        * Shared/glib/ProcessExecutablePathGLib.cpp:
+        (WebKit::executablePathOfStorageProcess): Deleted.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * StorageProcess/EntryPoint/mac/XPCService/StorageService/Info.plist: Removed.
+        * StorageProcess/EntryPoint/mac/XPCService/StorageServiceEntryPoint.mm: Removed.
+        * StorageProcess/EntryPoint/unix/StorageProcessMain.cpp: Removed.
+        * StorageProcess/EntryPoint/win/StorageProcessMain.cpp: Removed.
+        * StorageProcess/StorageProcess.cpp: Removed.
+        * StorageProcess/StorageProcess.h: Removed.
+        * StorageProcess/StorageProcess.messages.in: Removed.
+        * StorageProcess/StorageToWebProcessConnection.cpp: Removed.
+        * StorageProcess/StorageToWebProcessConnection.h: Removed.
+        * StorageProcess/StorageToWebProcessConnection.messages.in: Removed.
+        * StorageProcess/glib/StorageProcessMainGLib.cpp: Removed.
+        * StorageProcess/ios/StorageProcessIOS.mm: Removed.
+        * StorageProcess/mac/StorageProcessMac.mm: Removed.
+        * StorageProcess/mac/com.apple.WebKit.Storage.sb.in: Removed.
+        * StorageProcess/unix/StorageProcessMainUnix.h: Removed.
+        * StorageProcess/win/StorageProcessMainWin.cpp: Removed.
+        * StorageProcess/win/StorageProcessMainWin.h: Removed.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextTerminateStorageProcess): Deleted.
+        (WKContextGetDatabaseProcessIdentifier): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateStorageProcess]): Deleted.
+        (-[WKProcessPool _storageProcessIdentifier]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::processName):
+        * UIProcess/Storage/StorageProcessProxy.cpp: Removed.
+        * UIProcess/Storage/StorageProcessProxy.h: Removed.
+        * UIProcess/Storage/StorageProcessProxy.messages.in: Removed.
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::storageProcessDidCrash): Deleted.
+        * UIProcess/WebContextClient.h:
+        * UIProcess/WebContextSupplement.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::sendMemoryPressureEvent):
+        (WebKit::WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore): Deleted.
+        (WebKit::WebProcessPool::getStorageProcessConnection): Deleted.
+        (WebKit::WebProcessPool::storageProcessCrashed): Deleted.
+        (WebKit::WebProcessPool::storageProcessIdentifier): Deleted.
+        (WebKit::WebProcessPool::terminateStorageProcessForTesting): Deleted.
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToStorageProcess): Deleted.
+        (WebKit::WebProcessPool::sendToStorageProcessRelaunchingIfNecessary): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getStorageProcessConnection): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::storageProcessParameters): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp: Removed.
+        * WebProcess/Storage/WebToStorageProcessConnection.h: Removed.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcess::webToStorageProcessConnectionClosed): Deleted.
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection): Deleted.
+        * WebProcess/WebProcess.h:
+        * webkitglib-symbols.map:
+
 2018-10-01  David Quesada  <david_quesada@apple.com>
 
         Add missing Objective-C versions of downloads SPI
