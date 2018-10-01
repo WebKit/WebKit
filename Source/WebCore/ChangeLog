@@ -1,3 +1,27 @@
+2018-10-01  Olivier Blin  <olivier.blin@softathome.com>
+
+        [WPE] fix buffer over-read in RenderThemeWPE::mediaControlsStyleSheet()
+        https://bugs.webkit.org/show_bug.cgi?id=190139
+
+        Reviewed by Michael Catanzaro.
+
+        Like done upstream for EFL in r210213
+        https://bugs.webkit.org/show_bug.cgi?id=166622
+
+        This has been detected by a charactersAreAllASCII() assert failure.
+
+        This is because ASCIILiteral() is wrongly used in mediaControlsStyleSheet().
+        mediaControlsBaseUserAgentStyleSheet is a char array, not a null-terminated string.
+        It is thus incorrect to use StringImpl::createFromLiteral() that calls
+        strlen() to get the string length.
+
+        The String::ConstructFromLiteral constructor can not be used, since it
+        skips the last character.
+
+        * platform/wpe/RenderThemeWPE.cpp:
+        (WebCore::RenderThemeWPE::mediaControlsStyleSheet):
+        Explicitely pass the size to the String constructor.
+
 2018-10-01  Rob Buis  <rbuis@igalia.com>
 
         Align XMLHttpRequest's overrideMimeType() with the standard
