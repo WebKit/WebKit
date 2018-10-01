@@ -1,3 +1,12 @@
+2018-10-01  Xan Lopez  <xan@igalia.com>
+
+        [SOUP] Fix the build for libsoup > 2.61.90
+        https://bugs.webkit.org/show_bug.cgi?id=190126
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+
 2018-10-01  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Reset running time in PlaybackPipeline::flush()
