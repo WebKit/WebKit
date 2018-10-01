@@ -1,3 +1,11 @@
+2018-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal build after r236665
+        https://bugs.webkit.org/show_bug.cgi?id=189850
+
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-10-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Import a JS CBOR coder
