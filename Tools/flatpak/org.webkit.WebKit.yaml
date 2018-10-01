@@ -128,6 +128,11 @@ modules:
       - --enable-vp9-temporal-denoising
       - --enable-vp9-postproc
       - --enable-shared
+  - name: libunwind
+    sources:
+      - type: git
+        url: https://github.com/libunwind/libunwind.git
+        commit: v1.2.1
   - name: libopenh264
     buildsystem: meson
     sources:
