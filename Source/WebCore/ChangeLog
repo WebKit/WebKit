@@ -1,3 +1,22 @@
+2018-10-01  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Set a minimum sample duration
+        https://bugs.webkit.org/show_bug.cgi?id=190125
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The last sample of the audio track in the asset used in this test
+        player has a tiny duration (100 ns):
+
+        http://orange-opensource.github.io/hasplayer.js/1.2.0/player.html?url=http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/Manifest
+
+        So small, we were truncating it to zero. We're not supposed to have
+        frames with zero duration. Instead, lets set a minimum frame duration
+        for those fringe cases.
+
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::MediaSampleGStreamer):
+
 2018-10-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] Special keys are misidentified in DOM keyboard events
