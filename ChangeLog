@@ -1,3 +1,16 @@
+2018-10-01  Caio Lima  <ticaiolima@gmail.com>
+
+        'HAVE_PTHREAD_MAIN_NP' macro redefined warning when building --jsc-only on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=190118
+
+        Reviewed by Yusuke Suzuki.
+
+        We define HAVE_PTHREAD_MAIN_NP in WTF/wtf/Platform.h when the OS is
+        Darwin. In such case, we don't need to check symbols for
+        pthread_main_np when generating build for this system.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2018-09-28  Mike Gorse  <mgorse@alum.wpi.edu>
 
         cmake cannot run if python 2 isn't available
