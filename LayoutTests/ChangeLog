@@ -1,3 +1,11 @@
+2018-10-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline tests after r236632.
+
+        * platform/ios/css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+        * platform/ios/css3/blending/repaint/blend-mode-turn-off-isolation-expected.txt:
+        * platform/ios/css3/blending/repaint/blend-mode-turn-off-isolation-no-effect-expected.txt: Added.
+
 2018-10-01  Sihui Liu  <sihui_liu@apple.com>
 
         Remove StorageProcess
