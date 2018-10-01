@@ -541,7 +541,7 @@ void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t 
 }
 #endif
 
-#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+#if PLATFORM(IOS)
 
 void VideoFullscreenManagerProxy::setInlineRect(uint64_t contextId, const WebCore::IntRect& inlineRect, bool visible)
 {

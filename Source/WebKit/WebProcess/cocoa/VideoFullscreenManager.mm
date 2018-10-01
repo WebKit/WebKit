@@ -228,7 +228,7 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
 
 bool VideoFullscreenManager::supportsVideoFullscreenStandby() const
 {
-#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+#if PLATFORM(IOS)
     return true;
 #else
     return false;
@@ -406,7 +406,7 @@ void VideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     RefPtr<VideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
-#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+#if PLATFORM(IOS)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this, contextId] {
         if (protectedThis->m_page)
             m_page->send(Messages::VideoFullscreenManagerProxy::EnterFullscreen(contextId), protectedThis->m_page->pageID());
@@ -479,7 +479,7 @@ void VideoFullscreenManager::didExitFullscreen(uint64_t contextId)
     RefPtr<VideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
-#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+#if PLATFORM(IOS)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), contextId, interface] {
         if (protectedThis->m_page)
             protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::CleanupFullscreen(contextId), protectedThis->m_page->pageID());

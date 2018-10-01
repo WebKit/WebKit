@@ -1,3 +1,20 @@
+2018-10-01  Jeremy Jones  <jeremyj@apple.com>
+
+        Unify implementation in VideoFullscreenInterfaceAVKit
+        https://bugs.webkit.org/show_bug.cgi?id=190091
+        rdar://problem/44734523
+
+        Reviewed by Jer Noble.
+
+        Unified code in VideoFullscreenInterfaceAVKit now that new code path is proven and include
+        any changes that had been made in the old path.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::supportsVideoFullscreenStandby const):
+        (WebKit::VideoFullscreenManager::didSetupFullscreen):
+        (WebKit::VideoFullscreenManager::didExitFullscreen):
+
 2018-10-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] Wrong key event may be sent to UIKit
