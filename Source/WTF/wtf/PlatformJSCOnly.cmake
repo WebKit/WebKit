@@ -1,5 +1,4 @@
 list(APPEND WTF_SOURCES
-    generic/MainThreadGeneric.cpp
     generic/WorkQueueGeneric.cpp
 )
 
@@ -9,6 +8,7 @@ if (WIN32)
 
         win/CPUTimeWin.cpp
         win/LanguageWin.cpp
+        win/MainThreadWin.cpp
     )
     list(APPEND WTF_PUBLIC_HEADERS
         text/win/WCharStringExtras.h
@@ -16,6 +16,8 @@ if (WIN32)
 else ()
     list(APPEND WTF_SOURCES
         UniStdExtras.cpp
+
+        generic/MainThreadGeneric.cpp
 
         text/unix/TextBreakIteratorInternalICUUnix.cpp
 
