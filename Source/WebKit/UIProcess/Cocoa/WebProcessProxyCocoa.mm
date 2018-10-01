@@ -62,8 +62,10 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGra
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
                 return true;
 
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return true;
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             return false;
         }
@@ -72,15 +74,19 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGra
         {
 #if WK_API_ENABLED
             if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto* webPageProxy = m_webProcessProxy.webPage(handle.pageID))
+                if (auto* webPageProxy = m_webProcessProxy.webPage(handle.pageID)) {
+                    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     return [WKBrowsingContextController _browsingContextControllerForPageRef:toAPI(webPageProxy)];
+                    ALLOW_DEPRECATED_DECLARATIONS_END
+                }
 
                 return [NSNull null];
             }
 
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(m_webProcessProxy.transformHandlesToObjects(toImpl(wrapper.object)).get())]);
-
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             return object;
         }
@@ -97,11 +103,12 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
         bool shouldTransformObject(id object) const override
         {
 #if WK_API_ENABLED
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (dynamic_objc_cast<WKBrowsingContextController>(object))
                 return true;
-
             if (dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return true;
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             return false;
         }
@@ -109,12 +116,12 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
         RetainPtr<id> transformObject(id object) const override
         {
 #if WK_API_ENABLED
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto* controller = dynamic_objc_cast<WKBrowsingContextController>(object))
                 return controller.handle;
-
             if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(toImpl(wrapper.object)).get())]);
-
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
             return object;

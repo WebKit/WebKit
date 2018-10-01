@@ -25,6 +25,8 @@
 
 #import <WebKit/WKBrowsingContextLoadDelegate.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @protocol WKBrowsingContextLoadDelegatePrivate <WKBrowsingContextLoadDelegate>
 @optional
 
@@ -34,3 +36,4 @@
 - (void)browsingContextControllerWebProcessDidCrash:(WKBrowsingContextController *)sender;
 
 @end
+#pragma clang diagnostic pop

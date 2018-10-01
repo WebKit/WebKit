@@ -35,7 +35,7 @@
 @class WKProcessGroup;
 @class WKViewData;
 
-WK_EXPORT
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
 @interface WKView : NSView <NSTextInputClient> {
 @private
     WKViewData *_data;
@@ -47,7 +47,10 @@ WK_EXPORT
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property(readonly) WKBrowsingContextController *browsingContextController;
+#pragma clang diagnostic pop
 
 #endif // WK_API_ENABLED
 

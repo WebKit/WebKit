@@ -36,7 +36,7 @@
 @protocol WKBrowsingContextLoadDelegate;
 @protocol WKBrowsingContextPolicyDelegate;
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
 @interface WKBrowsingContextController : NSObject
 
 #pragma mark Delegates
@@ -47,8 +47,8 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 #pragma mark Loading
 
-+ (void)registerSchemeForCustomProtocol:(NSString *)scheme;
-+ (void)unregisterSchemeForCustomProtocol:(NSString *)scheme;
++ (void)registerSchemeForCustomProtocol:(NSString *)scheme WK_API_DEPRECATED_WITH_REPLACEMENT("WKURLSchemeHandler", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
++ (void)unregisterSchemeForCustomProtocol:(NSString *)scheme WK_API_DEPRECATED_WITH_REPLACEMENT("WKURLSchemeHandler", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 /* Load a request. This is only valid for requests of non-file: URLs. Passing a
    file: URL will throw an exception. */

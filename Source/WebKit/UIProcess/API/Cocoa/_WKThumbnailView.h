@@ -37,7 +37,10 @@
 WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface _WKThumbnailView : NSView
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView;
+#pragma clang diagnostic pop
 - (instancetype)initWithFrame:(NSRect)frame fromWKWebView:(WKWebView *)webView;
 
 @property (nonatomic) CGFloat scale;

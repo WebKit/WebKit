@@ -3789,6 +3789,7 @@ _WKRemoteObjectRegistry *WebViewImpl::remoteObjectRegistry()
     return m_remoteObjectRegistry.get();
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 WKBrowsingContextController *WebViewImpl::browsingContextController()
 {
     if (!m_browsingContextController)
@@ -3796,6 +3797,7 @@ WKBrowsingContextController *WebViewImpl::browsingContextController()
 
     return m_browsingContextController.get();
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // WK_API_ENABLED
 
 #if ENABLE(DRAG_SUPPORT)

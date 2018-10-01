@@ -143,7 +143,9 @@ void* Object::newObject(size_t size, Type type)
 #endif
 
     case Type::AuthenticationChallenge:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         wrapper = allocateWKObject([WKNSURLAuthenticationChallenge self], size);
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::AutomationSession:
@@ -252,7 +254,9 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::NavigationData:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         wrapper = [WKNavigationData alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::NavigationResponse:
@@ -266,7 +270,9 @@ void* Object::newObject(size_t size, Type type)
 #endif
 
     case Type::PageGroup:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         wrapper = [WKBrowsingContextGroup alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::SecurityOrigin:

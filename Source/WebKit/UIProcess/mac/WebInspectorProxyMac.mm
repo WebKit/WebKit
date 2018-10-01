@@ -524,8 +524,10 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         // top position for the inspector view since the banners only stretch as wide as the inspected view.
         inspectedViewFrame = NSMakeRect(0, 0, parentWidth - inspectorWidth, inspectedViewTop);
         CGFloat insetExcludingBanners = 0;
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([inspectedView isKindOfClass:[WKView class]])
             insetExcludingBanners = ((WKView *)inspectedView)._topContentInset - ((WKView *)inspectedView)._totalHeightOfBanners;
+        ALLOW_DEPRECATED_DECLARATIONS_END
         if ([inspectedView isKindOfClass:[WKWebView class]])
             insetExcludingBanners = ((WKWebView *)inspectedView)._topContentInset - ((WKWebView *)inspectedView)._totalHeightOfBanners;
         newInspectorViewFrame = NSMakeRect(parentWidth - inspectorWidth, 0, inspectorWidth, NSHeight(parentBounds) - insetExcludingBanners);
@@ -543,8 +545,10 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         // top position for the inspector view since the banners only stretch as wide as the inspected view.
         inspectedViewFrame = NSMakeRect(inspectorWidth, 0, parentWidth - inspectorWidth, inspectedViewTop);
         CGFloat insetExcludingBanners = 0;
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([inspectedView isKindOfClass:[WKView class]])
             insetExcludingBanners = ((WKView *)inspectedView)._topContentInset - ((WKView *)inspectedView)._totalHeightOfBanners;
+        ALLOW_DEPRECATED_DECLARATIONS_END
         if ([inspectedView isKindOfClass:[WKWebView class]])
             insetExcludingBanners = ((WKWebView *)inspectedView)._topContentInset - ((WKWebView *)inspectedView)._totalHeightOfBanners;
         newInspectorViewFrame = NSMakeRect(0, 0, inspectorWidth, NSHeight(parentBounds) - insetExcludingBanners);

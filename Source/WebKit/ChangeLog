@@ -1,3 +1,70 @@
+2018-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate ObjC SPI in Deprecated Xcode group
+        https://bugs.webkit.org/show_bug.cgi?id=189850
+
+        Reviewed by Andy Estes.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::typeFromObject):
+        (WebKit::ObjCObjectGraph::encode):
+        (WebKit::ObjCObjectGraph::decode):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (didStartProvisionalNavigation):
+        (didReceiveServerRedirectForProvisionalNavigation):
+        (didFailProvisionalNavigation):
+        (didCommitNavigation):
+        (didFinishNavigation):
+        (didFailNavigation):
+        (canAuthenticateAgainstProtectionSpace):
+        (didReceiveAuthenticationChallenge):
+        (processDidCrash):
+        (setUpPagePolicyClient):
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroupInternal.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextHistoryDelegate.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegate.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextPolicyDelegate.h:
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.h:
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm:
+        (-[WKNSURLAuthenticationChallengeSender cancelAuthenticationChallenge:]):
+        (-[WKNSURLAuthenticationChallengeSender continueWithoutCredentialForAuthenticationChallenge:]):
+        (-[WKNSURLAuthenticationChallengeSender useCredential:forAuthenticationChallenge:]):
+        (-[WKNSURLAuthenticationChallengeSender performDefaultHandlingForAuthenticationChallenge:]):
+        (-[WKNSURLAuthenticationChallengeSender rejectProtectionSpaceAndContinueWithChallenge:]):
+        * UIProcess/API/Cocoa/WKNavigationData.h:
+        * UIProcess/API/Cocoa/WKNavigationDataInternal.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (didCreateConnection):
+        (getInjectedBundleInitializationUserData):
+        (didNavigateWithNavigationData):
+        (didPerformClientRedirect):
+        (didPerformServerRedirect):
+        (didUpdateHistoryTitle):
+        * UIProcess/API/Cocoa/WKTypeRefWrapper.h:
+        * UIProcess/API/Cocoa/WKView.h:
+        (WK_CLASS_DEPRECATED_WITH_REPLACEMENT):
+        * UIProcess/API/Cocoa/_WKThumbnailView.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::transformHandlesToObjects):
+        (WebKit::WebProcessProxy::transformObjectsToHandles):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/Gamepad/mac/UIGamepadProviderMac.mm:
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::transformObjectsToHandles):
+
 2018-10-01  Youenn Fablet  <youenn@apple.com>
 
         [macOS Sierra] Layout Test http/wpt/cache-storage/cache-put-keys.https.any.worker.html is a flaky failure

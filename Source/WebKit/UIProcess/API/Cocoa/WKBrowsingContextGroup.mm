@@ -175,6 +175,7 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
 
 @end
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @implementation WKBrowsingContextGroup (Private)
 
 - (WKPageGroupRef)_pageGroupRef
@@ -183,5 +184,6 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
 }
 
 @end
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // WK_API_ENABLED

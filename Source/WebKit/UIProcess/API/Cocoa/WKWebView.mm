@@ -1338,10 +1338,12 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
     return _scrollView.get();
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (WKBrowsingContextController *)browsingContextController
 {
     return [_contentView browsingContextController];
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)becomeFirstResponder
 {

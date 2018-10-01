@@ -47,6 +47,7 @@ typedef NS_ENUM(NSUInteger, WKPolicyDecision) {
 
 typedef void (^WKPolicyDecisionHandler)(WKPolicyDecision);
 
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKNavigationDelegate", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
 @protocol WKBrowsingContextPolicyDelegate <NSObject>
 @optional
 

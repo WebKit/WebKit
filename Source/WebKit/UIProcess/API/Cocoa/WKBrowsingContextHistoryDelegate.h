@@ -31,6 +31,7 @@
 #import <WebKit/WKBrowsingContextController.h>
 #import <WebKit/WKNavigationData.h>
 
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKBackForwardList", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
 @protocol WKBrowsingContextHistoryDelegate <NSObject>
 @optional
 

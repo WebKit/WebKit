@@ -33,7 +33,9 @@
 namespace WebKit {
 
 template<> struct WrapperTraits<WebPageGroup> {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     using WrapperClass = WKBrowsingContextGroup;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 }

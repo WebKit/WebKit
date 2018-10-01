@@ -872,6 +872,7 @@ Some other editing-related methods still unimplemented:
 - (void)maybeInstallIconLoadingClient
 {
 #if WK_API_ENABLED
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     class IconLoadingClient : public API::IconLoadingClient {
     public:
         explicit IconLoadingClient(WKView *wkView)
@@ -907,6 +908,7 @@ Some other editing-related methods still unimplemented:
 
         WKView *m_wkView;
     };
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([self respondsToSelector:IconLoadingClient::delegateSelector()])
         _data->_impl->page().setIconLoadingClient(std::make_unique<IconLoadingClient>(self));
@@ -1118,6 +1120,7 @@ Some other editing-related methods still unimplemented:
 
 @end
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @implementation WKView (Private)
 
 - (void)saveBackForwardSnapshotForCurrentItem
@@ -1675,5 +1678,6 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::Scrol
 }
 
 @end
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // PLATFORM(MAC)

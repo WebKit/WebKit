@@ -427,7 +427,9 @@ public:
 
     _WKRemoteObjectRegistry *remoteObjectRegistry();
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBrowsingContextController *browsingContextController();
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // WK_API_ENABLED
 
 #if ENABLE(DRAG_SUPPORT)
@@ -749,7 +751,9 @@ private:
 
     RetainPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<WKBrowsingContextController> m_browsingContextController;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     std::unique_ptr<ViewGestureController> m_gestureController;

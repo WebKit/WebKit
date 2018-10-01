@@ -33,7 +33,9 @@
 namespace WebKit {
 
 template<> struct WrapperTraits<API::NavigationData> {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     using WrapperClass = WKNavigationData;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 }

@@ -64,7 +64,9 @@
 
 static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto processGroup = (__bridge WKProcessGroup *)clientInfo;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto delegate = processGroup->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
@@ -85,7 +87,9 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
 
 static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto processGroup = (__bridge WKProcessGroup *)clientInfo;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto delegate = processGroup->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(processGroupWillCreateConnectionToWebProcessPlugIn:)]) {
@@ -114,7 +118,9 @@ static void didNavigateWithNavigationData(WKContextRef, WKPageRef pageRef, WKNav
     if (!WebKit::toImpl(frameRef)->isMainFrame())
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didNavigateWithNavigationData:)])
@@ -126,7 +132,9 @@ static void didPerformClientRedirect(WKContextRef, WKPageRef pageRef, WKURLRef s
     if (!WebKit::toImpl(frameRef)->isMainFrame())
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didPerformClientRedirectFromURL:toURL:)])
@@ -138,7 +146,9 @@ static void didPerformServerRedirect(WKContextRef, WKPageRef pageRef, WKURLRef s
     if (!WebKit::toImpl(frameRef)->isMainFrame())
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didPerformServerRedirectFromURL:toURL:)])
@@ -150,7 +160,9 @@ static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef t
     if (!WebKit::toImpl(frameRef)->isMainFrame())
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didUpdateHistoryTitle:forURL:)])
@@ -207,6 +219,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
 @end
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @implementation WKProcessGroup (Private)
 
 - (WKContextRef)_contextRef
@@ -229,5 +242,6 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 #endif // PLATFORM(IOS)
 
 @end
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // WK_API_ENABLED

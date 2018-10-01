@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKBase.h>
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKObject", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
 @interface WKTypeRefWrapper : NSObject
 
 - (id)initWithObject:(WKTypeRef)object;
