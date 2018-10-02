@@ -3513,8 +3513,6 @@ webkit.org/b/189344 webanimations/css-animation-effect-target-change-and-animati
 
 webkit.org/b/189345 http/tests/media/clearkey/collect-webkit-media-session.html [ Timeout ]
 
-webkit.org/b/189350 fast/forms/color/input-appearance-color.html [ Failure ]
-
 webkit.org/b/189567 webrtc/video-addLegacyTransceiver.html [ Failure ]
 
 webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
