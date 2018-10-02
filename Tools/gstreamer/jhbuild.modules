@@ -74,6 +74,10 @@
       <patch file="gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch" strip="1" /> <!-- Merged as 3e063703b3a51b8aaa7f75f36c4660c583a60e93 -->
       <patch file="gst-plugins-good-0002-qtdemux-Do-not-unref-a-NULL-stream_tags.patch" strip="1" /> <!-- Merged as 43a540b1cd9f162d3dae5d50e36703dfaf558a3e -->
       <patch file="gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch" strip="1" /> <!-- Merged as 0fbde2a07928ba79b7a4ddb4585f6b1de36a74bb -->
+      <patch file="gst-plugins-good-0007-matroskademux-Allow-Matroska-headers-to-be-read-more.patch" strip="1" /> <!-- Merged as 9dc7859184d4b7ad1dd7e2b54704e994dbace329 (to be shipped in 1.14.4) -->
+      <patch file="gst-plugins-good-0008-matroskademux-Refactor-track-parsing-out-from-adding.patch" strip="1" /> <!-- Merged as f279bc5336dda19741a5996a108da42dd3201366 (to be shipped in 1.14.4) -->
+      <patch file="gst-plugins-good-0009-matroskademux-Parse-successive-Tracks-elements.patch" strip="1" /> <!-- Merged as 0e60076a390fd3ef53d350940b2c695ff7bbe008 (to be shipped in 1.14.4) -->
+      <patch file="gst-plugins-good-0010-matroskademux-Emit-no-more-pads-after-parsing-Tracks.patch" strip="1" /> <!-- Merged as 7ceefec7141069b4adf4451a874766f8760c66d6 (to be shipped in 1.14.4) -->
     </branch>
   </autotools>
 
