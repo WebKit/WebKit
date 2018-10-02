@@ -1533,8 +1533,8 @@ bool UniqueIDBDatabase::hasUnfinishedTransactions() const
 void UniqueIDBDatabase::invokeOperationAndTransactionTimer()
 {
     LOG(IndexedDB, "UniqueIDBDatabase::invokeOperationAndTransactionTimer()");
-    ASSERT(!m_hardClosedForUserDelete);
-    ASSERT(!m_owningPointerForClose);
+    RELEASE_ASSERT(!m_hardClosedForUserDelete);
+    RELEASE_ASSERT(!m_owningPointerForClose);
 
     if (!m_operationAndTransactionTimer.isActive())
         m_operationAndTransactionTimer.startOneShot(0_s);
