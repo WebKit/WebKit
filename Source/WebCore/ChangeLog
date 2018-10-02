@@ -1,3 +1,27 @@
+2018-10-02  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Add h264parse to accept MP4 without stss
+        https://bugs.webkit.org/show_bug.cgi?id=190143
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The MP4 file used in this URL does not contain a stss (Sync Sample
+        Box). In consequence, in acordance with the ISO BMFF spec, all samples
+        are assumed to be sync frames... But in this case that is not true,
+        it's just that the file is wrong (e.g. created with a buggy muxer).
+
+        http://orange-opensource.github.io/hasplayer.js/1.2.0/player.html?url=http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/Manifest
+
+        The way it works in other browsers is because instead of trusting the
+        MP4 stss table, they rely on parsing the h264 frames. We can do that
+        too.
+
+        This patch also changes RELEASE_ASSERT() when creating the parsers
+        to GLib criticals.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::createOptionalParserForFormat):
+
 2018-10-02  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] RealtimeMediaSource should be able to vend hashed IDs
