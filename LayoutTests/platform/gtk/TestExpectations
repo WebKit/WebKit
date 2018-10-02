@@ -1138,17 +1138,21 @@ fast/scrolling/scrolling-tree-includes-frame.html [ Skip ]
 # This test assumes that color on sliders is not reversed for RTL, so failing is good.
 fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
-webkit.org/b/178316 imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
-webkit.org/b/178316 http/wpt/cache-storage [ Skip ]
-webkit.org/b/178316 http/tests/cache-storage [ Skip ]
+# Cache storage
+webkit.org/b/178316 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
 
-# Service-workers implementation is not complete yet
-webkit.org/b/175419 http/tests/workers/service [ Skip ]
-webkit.org/b/175419 http/wpt/service-workers [ Failure Pass ]
-webkit.org/b/175419 http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers [ Skip ]
-webkit.org/b/175419 http/wpt/service-workers/navigation-redirect-main-frame.https.html [ Skip ]
-webkit.org/b/175419 http/wpt/service-workers/third-party-registration.html [ Skip ]
+# Service-workers tests that fail, time out or crash.
+webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
+webkit.org/b/175419 http/tests/workers/service/no-page-cache-when-controlled.html [ Skip ]
+webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/claim-with-redirect.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/registration-script.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting.https.html [ Skip ]
 
 # Skip anything related to WebAuthN
 http/wpt/credential-management/ [ Skip ]
