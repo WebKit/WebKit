@@ -1,3 +1,9 @@
+2018-10-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.22.0 release.
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
 2018-10-02  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][MSE] Ubuntu LTS build broken since r236409
