@@ -487,15 +487,22 @@ http/tests/webrtc [ Skip ]
 http/tests/websocket [ Skip ]
 http/tests/xmlhttprequest [ Skip ]
 
-webkit.org/b/175419 http/tests/workers/service [ Skip ]
-webkit.org/b/175419 http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
+# Cache storage
+webkit.org/b/178316 http/wpt/cache-storage/cache-quota.any.html [ Skip ]
 
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers [ Skip ]
-webkit.org/b/175419 http/wpt/service-workers/navigation-redirect-main-frame.https.html [ Skip ]
-
-webkit.org/b/178316 imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
-webkit.org/b/178316 http/wpt/cache-storage [ Skip ]
-webkit.org/b/178316 http/tests/cache-storage [ Skip ]
+# Service-workers tests that fail, time out or crash.
+webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
+webkit.org/b/175419 http/tests/workers/service/no-page-cache-when-controlled.html [ Skip ]
+webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/claim-with-redirect.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html [ Crash Pass ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/registration-script.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting.https.html [ Skip ]
 
 Bug(WPE) imported/blink [ Skip ]
 Bug(WPE) imported/mozilla [ Skip ]
@@ -630,8 +637,6 @@ Bug(WPE) fast/innerHTML/001.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
-
-webkit.org/b/175419 http/wpt/service-workers [ Pass Failure ]
 
 webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
 
