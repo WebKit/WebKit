@@ -45,13 +45,20 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
     static _generateDOM(recordingAction, recordingType)
     {
-        function createParameterElement(parameter, swizzleType) {
+        let parameterCount = recordingAction.parameters.length;
+
+        function createParameterElement(parameter, swizzleType, index) {
             let parameterElement = document.createElement("span");
             parameterElement.classList.add("parameter");
 
             switch (swizzleType) {
             case WI.Recording.Swizzle.Number:
-                parameterElement.textContent = parameter.maxDecimals(2);
+                var constantNameForParameter = WI.RecordingAction.constantNameForParameter(recordingType, recordingAction.name, parameter, index, parameterCount);
+                if (constantNameForParameter) {
+                    parameterElement.classList.add("constant");
+                    parameterElement.textContent = "context." + constantNameForParameter;
+                } else
+                    parameterElement.textContent = parameter.maxDecimals(2);
                 break;
 
             case WI.Recording.Swizzle.Boolean:
@@ -102,7 +109,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         nameContainer.classList.add("name");
         nameContainer.textContent = recordingAction.name;
 
-        if (!recordingAction.parameters.length)
+        if (!parameterCount)
             return {titleFragment, copyText};
 
         let parametersContainer = titleFragment.appendChild(document.createElement("span"));
@@ -113,10 +120,10 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         else
             copyText += " = ";
 
-        for (let i = 0; i < recordingAction.parameters.length; ++i) {
+        for (let i = 0; i < parameterCount; ++i) {
             let parameter = recordingAction.parameters[i];
             let swizzleType = recordingAction.swizzleTypes[i];
-            let parameterElement = createParameterElement(parameter, swizzleType);
+            let parameterElement = createParameterElement(parameter, swizzleType, i);
             parametersContainer.appendChild(parameterElement);
 
             if (i)

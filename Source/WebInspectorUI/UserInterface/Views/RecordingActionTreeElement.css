@@ -61,6 +61,12 @@ body[dir=rtl] .item.action::before {
     color: var(--text-color-gray-medium);
 }
 
+.item.action > .titles .parameter.constant {
+    font-size: calc(100% - 1px);
+    font-family: Menlo, monospace;
+    font-style: italic;
+}
+
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:matches(:focus, .force-focus) .item.action.selected > .titles .parameter.swizzled,
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:matches(:focus, .force-focus) .item.action.selected::before {
     color: var(--selected-secondary-text-color);

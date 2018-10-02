@@ -1,3 +1,26 @@
+2018-10-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: replace constant numbers with their associated name on WebGL contexts
+        https://bugs.webkit.org/show_bug.cgi?id=190026
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.constantNameForParameter): Added.
+        (WI.RecordingAction.prototype.getColorParameters):
+        (WI.RecordingAction.prototype.getImageParameters):
+        Drive-by: add additional swatches to color/image arguments for WebGL actions.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._treeOutlineSelectionDidChange):
+        Drive-by: ensure that the `WI.RecordingContentView` is showing before applying the action.
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM.createParameterElement):
+        (WI.RecordingActionTreeElement._generateDOM):
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.item.action > .titles .parameter.constant): Added.
+
 2018-10-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix a typo for execution context identifier
