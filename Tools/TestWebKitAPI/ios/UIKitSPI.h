@@ -30,6 +30,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/UIApplication_Private.h>
+#import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UITextInputMultiDocument.h>
 #import <UIKit/UITextInputTraits_Private.h>
@@ -122,6 +123,9 @@ WTF_EXTERN_C_END
 
 #endif
 
+@interface UIKeyboard : UIView
+@end
+
 #endif
 
 @protocol UITextInputTraits_Private_Proposed_SPI_34583628 <UITextInputPrivate>
@@ -158,6 +162,10 @@ WTF_EXTERN_C_END
 
 @interface UIResponder (UIKitSPI)
 - (UIResponder *)firstResponder;
+@end
+
+@interface UIKeyboard ()
++ (BOOL)isInHardwareKeyboardMode;
 @end
 
 #endif // PLATFORM(IOS)

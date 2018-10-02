@@ -1,3 +1,24 @@
+2018-10-02  Daniel Bates  <dabates@apple.com>
+
+        Fix iOS TestWebKitAPI failures following <https://trac.webkit.org/changeset/236619>
+        (https://bugs.webkit.org/show_bug.cgi?id=190017)
+
+        For now swizzle +[UIKeyboard isInHardwareKeyboardMode] to return NO in the following tests:
+            WKWebViewAutofillTests.AutofillRequiresInputSession
+            DragAndDropTests.ExternalSourceJPEGOnly
+            DragAndDropTests.ExternalSourceUTF8PlainTextOnly
+
+        so that the presence of a hardware keyboad does not effect their results. In <https://bugs.webkit.org/show_bug.cgi?id=190211>
+        we will look to swizzle this method for all test by default.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::overrideIsInHardwareKeyboardMode):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        (TestWebKitAPI::overrideIsInHardwareKeyboardMode):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2018-10-02  Dawei Fenton  <realdawei@apple.com>
 
         Unreviewed, rolling out r236751.
