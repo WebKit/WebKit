@@ -52,7 +52,8 @@ TEST(WKWebView, ProvisionalURLNotChange)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.webkit.org!"]]];
+    NSURL *invalidURL = [NSURL URLWithString:@"https://a@/b"];
+    [webView loadRequest:[NSURLRequest requestWithURL:invalidURL]];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 

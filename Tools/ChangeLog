@@ -1,3 +1,16 @@
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: TestWebKitAPI.WKWebView.ProvisionalURLNotChange API test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190176
+        <rdar://problem/44925871>
+
+        Reviewed by Alex Christensen.
+
+        Use a URL that is truly recognized as invalid by WebCore's URL parser.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProvisionalURLNotChange.mm:
+        (TEST):
+
 2018-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove ParsedURLString
