@@ -852,6 +852,13 @@ String serializePreservingVisualAppearance(const Range& range, Vector<Node*>* no
     return serializePreservingVisualAppearanceInternal(range.startPosition(), range.endPosition(), nodes, annotate, convertBlocksToInlines, urlsToReslve, MSOListMode::DoNotPreserve);
 }
 
+String serializePreservingVisualAppearance(const VisibleSelection& selection, ResolveURLs resolveURLs, Vector<Node*>* nodes)
+{
+    return serializePreservingVisualAppearanceInternal(selection.start(), selection.end(), nodes,
+        AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, resolveURLs, MSOListMode::DoNotPreserve);
+}
+
+
 static bool shouldPreserveMSOLists(const String& markup)
 {
     if (!markup.startsWith("<html xmlns:"))

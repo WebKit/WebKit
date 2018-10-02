@@ -1,3 +1,30 @@
+2018-10-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a new variant of serializePreservingVisualAppearance which takes VisibleSelection
+        https://bugs.webkit.org/show_bug.cgi?id=190108
+
+        Reviewed by Wenson Hsieh.
+
+        Added a version of serializePreservingVisualAppearance which takes VisibleSelection so that we can avoid creating
+        a range simply to get the first node and the end node of the selection later. This simple change also fixes a bug
+        demonstrated in editing/pasteboard/paste-table-003.html.
+
+        Test: editing/pasteboard/paste-table-003.html
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::selectionInHTMLFormat): Adopt the new variant.
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard): Ditto.
+        * editing/markup.cpp:
+        (WebCore::serializePreservingVisualAppearance): Added.
+        * editing/markup.h:
+        * editing/wpe/EditorWPE.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard): Ditto.
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createFromSelection): Ditto.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeSelection): Ditto.
+
 2018-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Don't read from WebCore's bundle for IDNScriptWhiteList

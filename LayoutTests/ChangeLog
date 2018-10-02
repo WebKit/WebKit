@@ -1,3 +1,16 @@
+2018-10-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a new variant of serializePreservingVisualAppearance which takes VisibleSelection
+        https://bugs.webkit.org/show_bug.cgi?id=190108
+
+        Reviewed by Wenson Hsieh.
+
+        Rebaselined the test since the bug that interchange new lines are inserted in the last table cell is fixed.
+        Also updated the description in the test to reflect this change.
+
+        * editing/pasteboard/paste-table-003-expected.txt:
+        * editing/pasteboard/paste-table-003.html:
+
 2018-10-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline tests after r236632.

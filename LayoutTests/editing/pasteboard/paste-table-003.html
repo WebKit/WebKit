@@ -34,7 +34,9 @@ function editingTest() {
 <title>Editing Test</title> 
 </head> 
 <body>
-<p>This tests pasting a table to replace some text.  <b>It demonstrates two bugs: 1) selecting a table without also selecting the line break after programmatically is impossible when its followed by a div because of the way DOM positions are mapped to visible positions, 2) pasting content that ends in a table places the caret in the last table cell instead of after the table, so the interchange newline is placed in the last table cell and not after the table.</b></p>
+<p>This tests pasting a table to replace some text.<br>
+It demonstrates a bug: selecting a table without also selecting the line break after programmatically is impossible
+when its followed by a div because of the way DOM positions are mapped to visible positions.</p>
 <div id="root" contenteditable>
 <table id="test">
 <tbody><tr><td>one</td><td>two</td></tr></tbody></table>

@@ -75,9 +75,7 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
 
 String Editor::selectionInHTMLFormat()
 {
-    if (auto range = selectedRange())
-        return serializePreservingVisualAppearance(*range, nullptr, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, ResolveURLs::YesExcludingLocalFileURLsForPrivacy);
-    return { };
+    return serializePreservingVisualAppearance(m_frame.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

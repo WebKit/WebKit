@@ -46,6 +46,7 @@ class Node;
 class Page;
 class QualifiedName;
 class Range;
+class VisibleSelection;
 
 void replaceSubresourceURLs(Ref<DocumentFragment>&&, HashMap<AtomicString, AtomicString>&&);
 void removeSubresourceURLAttributes(Ref<DocumentFragment>&&, WTF::Function<bool(const URL&)> shouldRemoveURL);
@@ -70,6 +71,7 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragme
 enum class ResolveURLs : uint8_t { No, Yes, YesExcludingLocalFileURLsForPrivacy };
 enum class ConvertBlocksToInlines : uint8_t { No, Yes };
 WEBCORE_EXPORT String serializePreservingVisualAppearance(const Range&, Vector<Node*>* = nullptr, AnnotateForInterchange = AnnotateForInterchange::No, ConvertBlocksToInlines = ConvertBlocksToInlines::No, ResolveURLs = ResolveURLs::No);
+String serializePreservingVisualAppearance(const VisibleSelection&, ResolveURLs = ResolveURLs::No, Vector<Node*>* = nullptr);
 
 enum class SerializedNodes : uint8_t { SubtreeIncludingNode, SubtreesOfChildren };
 enum class SerializationSyntax : uint8_t { HTML, XML };
