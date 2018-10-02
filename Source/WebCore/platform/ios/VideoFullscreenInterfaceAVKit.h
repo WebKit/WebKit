@@ -40,7 +40,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
@@ -65,11 +64,12 @@ class VideoFullscreenInterfaceAVKit final
     , public ThreadSafeRefCounted<VideoFullscreenInterfaceAVKit> {
 
 public:
-    WEBCORE_EXPORT static Ref<VideoFullscreenInterfaceAVKit> create(Ref<PlaybackSessionInterfaceAVKit>&&, Ref<VideoFullscreenModel>&&);
+    WEBCORE_EXPORT static Ref<VideoFullscreenInterfaceAVKit> create(PlaybackSessionInterfaceAVKit&);
     virtual ~VideoFullscreenInterfaceAVKit();
-    WEBCORE_EXPORT void setVideoFullscreenChangeObserver(WeakPtr<VideoFullscreenChangeObserver>);
+    WEBCORE_EXPORT void setVideoFullscreenModel(VideoFullscreenModel*);
+    WEBCORE_EXPORT void setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver*);
     PlaybackSessionInterfaceAVKit& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
-    PlaybackSessionModel& playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
+    PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 
     // VideoFullscreenModelClient
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
@@ -82,11 +82,14 @@ public:
     WEBCORE_EXPORT void enterFullscreen();
     WEBCORE_EXPORT void exitFullscreen(const IntRect& finalRect);
     WEBCORE_EXPORT void cleanupFullscreen();
+    WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void requestHideAndExitFullscreen();
     WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect);
     WEBCORE_EXPORT void preparedToExitFullscreen();
+#if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT void setHasVideoContentLayer(bool);
     WEBCORE_EXPORT void setInlineRect(const IntRect&, bool visible);
+#endif
 
     enum class ExitFullScreenReason {
         DoneButtonTapped,
@@ -124,9 +127,11 @@ public:
     };
 
     Mode m_currentMode;
+#if ENABLE(FULLSCREEN_API)
     Mode m_targetMode;
+#endif
 
-    VideoFullscreenModel& videoFullscreenModel() const { return m_videoFullscreenModel; }
+    VideoFullscreenModel* videoFullscreenModel() const { return m_videoFullscreenModel; }
     bool shouldExitFullscreenWithReason(ExitFullScreenReason);
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_currentMode.mode(); }
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
@@ -141,8 +146,10 @@ public:
     void willStopPictureInPicture();
     void didStopPictureInPicture();
     void prepareForPictureInPictureStopWithCompletionHandler(void (^)(BOOL));
+#if ENABLE(FULLSCREEN_API)
     void exitFullscreenHandler(BOOL success, NSError *);
     void enterFullscreenHandler(BOOL success, NSError *);
+#endif
     bool isPlayingVideoInEnhancedFullscreen() const;
 
     WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
@@ -157,21 +164,26 @@ public:
 #endif
 
 protected:
-    WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(Ref<PlaybackSessionInterfaceAVKit>&&, Ref<VideoFullscreenModel>&&);
+    WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);
 
+#if ENABLE(FULLSCREEN_API)
     void doSetup();
     void finalizeSetup();
     void doExitFullscreen();
     void returnToStandby();
+#else
+    void enterPictureInPicture();
+    void enterFullscreenStandard();
+#endif
     void doEnterFullscreen();
     void watchdogTimerFired();
     WebAVPlayerController *playerController() const;
 
     Ref<PlaybackSessionInterfaceAVKit> m_playbackSessionInterface;
-    Ref<VideoFullscreenModel> m_videoFullscreenModel;
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;
-    WeakPtr<VideoFullscreenChangeObserver> m_fullscreenChangeObserver;
+    VideoFullscreenModel* m_videoFullscreenModel { nullptr };
+    VideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
 
     // These are only used when fullscreen is presented in a separate window.
     RetainPtr<UIWindow> m_window;
@@ -188,6 +200,7 @@ protected:
     bool m_shouldReturnToFullscreenWhenStoppingPiP { false };
     bool m_restoringFullscreenForPictureInPictureStop { false };
 
+#if ENABLE(FULLSCREEN_API)
     bool m_setupNeedsInlineRect { false };
     bool m_exitFullscreenNeedInlineRect { false };
 
@@ -212,8 +225,13 @@ protected:
     bool m_inlineIsVisible { false };
     bool m_standby { false };
     bool m_targetStandby { false };
-
+#else
+    bool m_exitRequested { false };
+    bool m_exitCompleted { false };
+    bool m_enterRequested { false };
+    bool m_shouldReturnToFullscreenAfterEnteringForeground { false };
     bool m_waitingForPreparedToExit { false };
+#endif
 };
 
 }

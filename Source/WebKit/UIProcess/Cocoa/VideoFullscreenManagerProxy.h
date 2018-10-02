@@ -33,11 +33,9 @@
 #include <WebCore/VideoFullscreenChangeObserver.h>
 #include <WebCore/VideoFullscreenModel.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtrContainer.h>
 
 #if PLATFORM(IOS)
 #include <WebCore/VideoFullscreenInterfaceAVKit.h>
@@ -61,9 +59,12 @@ class VideoFullscreenManagerProxy;
 class VideoFullscreenModelContext final
     : public RefCounted<VideoFullscreenModelContext>
     , public WebCore::VideoFullscreenModel
-    , public WebCore::VideoFullscreenChangeObserver {
+    , public WebCore::VideoFullscreenChangeObserver  {
 public:
-    static Ref<VideoFullscreenModelContext> create(WeakPtr<VideoFullscreenManagerProxy>&&, Ref<PlaybackSessionModelContext>&&, uint64_t contextId);
+    static Ref<VideoFullscreenModelContext> create(VideoFullscreenManagerProxy& manager, PlaybackSessionModelContext& playbackSessionModel, uint64_t contextId)
+    {
+        return adoptRef(*new VideoFullscreenModelContext(manager, playbackSessionModel, contextId));
+    }
     virtual ~VideoFullscreenModelContext();
 
     void invalidate() { m_manager = nullptr; }
@@ -71,26 +72,19 @@ public:
     PlatformView *layerHostView() const { return m_layerHostView.get(); }
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
-    WeakPtr<VideoFullscreenChangeObserver> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
-
-    using RefCounted::ref;
-    using RefCounted::deref;
-
 private:
-    VideoFullscreenModelContext(WeakPtr<VideoFullscreenManagerProxy>&&, Ref<PlaybackSessionModelContext>&&, uint64_t);
+    VideoFullscreenModelContext(VideoFullscreenManagerProxy&, PlaybackSessionModelContext&, uint64_t);
 
     // VideoFullscreenModel
-    void refVideoFullscreenModel() final { ref(); }
-    void derefVideoFullscreenModel() final { deref(); }
-    void addClient(WeakPtr<WebCore::VideoFullscreenModelClient>&&) final;
-    void removeClient(WebCore::VideoFullscreenModelClient&) final;
-    void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) final;
-    void setVideoLayerFrame(WebCore::FloatRect) final;
-    void setVideoLayerGravity(VideoGravity) final;
-    void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) final;
-    bool isVisible() const final;
-    bool hasVideo() const final { return m_hasVideo; }
-    WebCore::FloatSize videoDimensions() const final { return m_videoDimensions; }
+    void addClient(WebCore::VideoFullscreenModelClient&) override;
+    void removeClient(WebCore::VideoFullscreenModelClient&) override;
+    void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
+    void setVideoLayerFrame(WebCore::FloatRect) override;
+    void setVideoLayerGravity(VideoGravity) override;
+    void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
+    bool isVisible() const override;
+    bool hasVideo() const override { return m_hasVideo; }
+    WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
 #if PLATFORM(IOS)
     UIViewController *presentingViewController() final;
     UIViewController *createVideoFullscreenViewController(AVPlayerViewController*) final;
@@ -112,20 +106,16 @@ private:
     void didCleanupFullscreen() final;
     void fullscreenMayReturnToInline() final;
 
-    WeakPtr<VideoFullscreenManagerProxy> m_manager;
+    VideoFullscreenManagerProxy* m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
     uint64_t m_contextId;
-    WeakPtrFactory<VideoFullscreenChangeObserver> m_weakPtrFactory;
     RetainPtr<PlatformView *> m_layerHostView;
-    WeakPtrContainer<WebCore::VideoFullscreenModelClient> m_clients;
+    HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
 };
 
-class VideoFullscreenManagerProxy
-    : public RefCounted<VideoFullscreenManagerProxy>
-    , private IPC::MessageReceiver 
-    , public CanMakeWeakPtr<VideoFullscreenManagerProxy> {
+class VideoFullscreenManagerProxy : public RefCounted<VideoFullscreenManagerProxy>, private IPC::MessageReceiver {
 public:
     static RefPtr<VideoFullscreenManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
     virtual ~VideoFullscreenManagerProxy();

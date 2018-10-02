@@ -52,9 +52,7 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
 namespace WebKit {
 
-class WKFullScreenWindowControllerVideoFullscreenModelClient 
-    : public CanMakeWeakPtr<WKFullScreenWindowControllerVideoFullscreenModelClient>
-    , public WebCore::VideoFullscreenModelClient {
+class WKFullScreenWindowControllerVideoFullscreenModelClient : WebCore::VideoFullscreenModelClient {
 public:
     void setParent(WKFullScreenWindowController *parent) { m_parent = parent; }
 
@@ -63,11 +61,11 @@ public:
         if (m_interface == interface)
             return;
 
-        if (m_interface)
-            m_interface->videoFullscreenModel().removeClient(*this);
+        if (m_interface && m_interface->videoFullscreenModel())
+            m_interface->videoFullscreenModel()->removeClient(*this);
         m_interface = interface;
-        if (m_interface)
-            m_interface->videoFullscreenModel().addClient(makeWeakPtr(this));
+        if (m_interface && m_interface->videoFullscreenModel())
+            m_interface->videoFullscreenModel()->addClient(*this);
     }
 
     WebCore::VideoFullscreenInterfaceMac* interface() const { return m_interface.get(); }

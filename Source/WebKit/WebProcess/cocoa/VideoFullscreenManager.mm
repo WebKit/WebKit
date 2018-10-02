@@ -80,8 +80,8 @@ static IntRect inlineVideoFrame(HTMLVideoElement& element)
 
 #pragma mark - VideoFullscreenInterfaceContext
 
-VideoFullscreenInterfaceContext::VideoFullscreenInterfaceContext(WeakPtr<VideoFullscreenManager>&& manager, uint64_t contextId)
-    : m_manager(WTFMove(manager))
+VideoFullscreenInterfaceContext::VideoFullscreenInterfaceContext(VideoFullscreenManager& manager, uint64_t contextId)
+    : m_manager(&manager)
     , m_contextId(contextId)
 {
 }
@@ -129,6 +129,9 @@ VideoFullscreenManager::~VideoFullscreenManager()
         std::tie(model, interface) = tuple;
 
         model->setVideoElement(nullptr);
+        model->removeClient(*interface);
+
+        interface->invalidate();
     }
 
     m_contextMap.clear();
@@ -149,11 +152,11 @@ void VideoFullscreenManager::invalidate()
 VideoFullscreenManager::ModelInterfaceTuple VideoFullscreenManager::createModelAndInterface(uint64_t contextId)
 {
     RefPtr<VideoFullscreenModelVideoElement> model = VideoFullscreenModelVideoElement::create();
-    RefPtr<VideoFullscreenInterfaceContext> interface = VideoFullscreenInterfaceContext::create(makeWeakPtr(*this), contextId);
+    RefPtr<VideoFullscreenInterfaceContext> interface = VideoFullscreenInterfaceContext::create(*this, contextId);
     m_playbackSessionManager->addClientForContext(contextId);
 
     interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
-    model->addClient(interface->createWeakPtr());
+    model->addClient(*interface);
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -186,6 +189,8 @@ void VideoFullscreenManager::removeContext(uint64_t contextId)
 
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
     model->setVideoElement(nullptr);
+    model->removeClient(*interface);
+    interface->invalidate();
     m_videoElements.remove(videoElement.get());
     m_contextMap.remove(contextId);
 }
@@ -228,7 +233,7 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
 
 bool VideoFullscreenManager::supportsVideoFullscreenStandby() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
     return true;
 #else
     return false;
@@ -406,7 +411,7 @@ void VideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     RefPtr<VideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this, contextId] {
         if (protectedThis->m_page)
             m_page->send(Messages::VideoFullscreenManagerProxy::EnterFullscreen(contextId), protectedThis->m_page->pageID());
@@ -479,7 +484,7 @@ void VideoFullscreenManager::didExitFullscreen(uint64_t contextId)
     RefPtr<VideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), contextId, interface] {
         if (protectedThis->m_page)
             protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::CleanupFullscreen(contextId), protectedThis->m_page->pageID());

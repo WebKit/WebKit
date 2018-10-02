@@ -30,7 +30,7 @@
 
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
-#include <wtf/WeakPtr.h>
+#include "PlaybackSessionModel.h"
 
 #if PLATFORM(IOS)
 OBJC_CLASS AVPlayerViewController;
@@ -43,15 +43,8 @@ class VideoFullscreenModelClient;
 
 class VideoFullscreenModel {
 public:
-    virtual ~VideoFullscreenModel() = default;
-
-    void ref() { refVideoFullscreenModel(); }
-    void deref() { derefVideoFullscreenModel(); }
-
-    virtual void refVideoFullscreenModel() = 0;
-    virtual void derefVideoFullscreenModel() = 0;
-
-    virtual void addClient(WeakPtr<VideoFullscreenModelClient>&&) = 0;
+    virtual ~VideoFullscreenModel() { };
+    virtual void addClient(VideoFullscreenModelClient&) = 0;
     virtual void removeClient(VideoFullscreenModelClient&)= 0;
 
     virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) = 0;
