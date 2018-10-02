@@ -474,6 +474,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         m_page->settings().setScriptEnabled(false);
         m_page->settings().setPluginsEnabled(false);
         m_page->settings().setAcceleratedCompositingEnabled(false);
+        m_page->settings().setShouldAllowUserInstalledFonts(false);
 
         Frame& frame = m_page->mainFrame();
         frame.setView(FrameView::create(frame));

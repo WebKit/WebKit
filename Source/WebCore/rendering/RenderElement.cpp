@@ -701,6 +701,8 @@ void RenderElement::invalidateCachedFirstLineStyle()
 
 void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
+    ASSERT(settings().shouldAllowUserInstalledFonts() || newStyle.fontDescription().shouldAllowUserInstalledFonts() == AllowUserInstalledFonts::No);
+
     auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     if (oldStyle) {
         // If our z-index changes value or our visibility changes,
