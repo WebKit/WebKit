@@ -175,6 +175,7 @@ private:
     static Digit digitDiv(Digit high, Digit low, Digit divisor, Digit& remainder);
     static Digit digitPow(Digit base, Digit exponent);
 
+    static String toStringBasePowerOfTwo(ExecState*, JSBigInt*, unsigned radix);
     static String toStringGeneric(ExecState*, JSBigInt*, unsigned radix);
 
     bool isZero();

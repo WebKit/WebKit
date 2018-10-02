@@ -1,3 +1,13 @@
+2018-10-02  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] BigInt.proptotype.toString is broken when radix is power of 2
+        https://bugs.webkit.org/show_bug.cgi?id=190033
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/MathExtras.h:
+        (WTF::ctz32):
+
 2018-10-01  Andy Estes  <aestes@apple.com>
 
         [watchOS] Adopt NSURLSessionCompanionProxyPreference
