@@ -1,3 +1,27 @@
+2018-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare WebCoreNSURLExtras for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=190219
+
+        Reviewed by Tim Horton.
+
+        ARC doesn't like the explicit sending of -release.
+        Use RetainPtr instead.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::collectRangesThatNeedMapping):
+        (WebCore::collectRangesThatNeedEncoding):
+        (WebCore::collectRangesThatNeedDecoding):
+        (WebCore::applyHostNameFunctionToMailToURLString):
+        (WebCore::applyHostNameFunctionToURLString):
+        (WebCore::mapHostNames):
+        (WebCore::stringByTrimmingWhitespace):
+        (WebCore::URLWithUserTypedString):
+        (WebCore::userVisibleString):
+        (WebCore::rangeOfURLScheme):
+        (WebCore::looksLikeAbsoluteURL):
+        (WebCore::retain): Deleted.
+
 2018-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix missing values of  resource timing API.
