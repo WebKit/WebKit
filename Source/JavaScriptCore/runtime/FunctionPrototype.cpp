@@ -91,10 +91,8 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
             RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(vm), "() {\n    [native code]\n}")));
 
         FunctionExecutable* executable = function->jsExecutable();
-        if (executable->isClass()) {
-            StringView classSource = executable->classSource().view();
-            return JSValue::encode(jsString(exec, classSource.toStringWithoutCopying()));
-        }
+        if (executable->isClass())
+            return JSValue::encode(jsString(exec, executable->classSource().view().toString()));
 
         String functionHeader;
         switch (executable->parseMode()) {
