@@ -27,6 +27,7 @@
 
 #if WK_API_ENABLED && PLATFORM(IOS)
 
+#import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
@@ -164,8 +165,15 @@ TEST(WKWebViewAutofillTests, AccountCreationPage)
     EXPECT_FALSE([webView textInputHasAutofillContext]);
 }
 
+static BOOL overrideIsInHardwareKeyboardMode()
+{
+    return NO;
+}
+
 TEST(WKWebViewAutofillTests, AutofillRequiresInputSession)
 {
+    ClassMethodSwizzler swizzler([UIKeyboard class], @selector(isInHardwareKeyboardMode), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
+
     auto webView = adoptNS([[AutofillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [(TestInputDelegate *)[webView _inputDelegate] setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
         return _WKFocusStartsInputSessionPolicyAuto;
