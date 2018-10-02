@@ -605,6 +605,7 @@ webkit.org/b/186933 webrtc/clone-audio-track.html
 webkit.org/b/186933 webrtc/audio-replace-track.html
 webkit.org/b/186933 webrtc/audio-peer-connection-webaudio.html
 webkit.org/b/186933 webrtc/audio-muted-stats.html
+webkit.org/b/186933 webrtc/getUserMedia-webaudio-autoplay.html
 
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 http/tests/webrtc [ Skip ]

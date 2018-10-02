@@ -76,10 +76,11 @@ webkit.org/b/186933 webrtc/clone-audio-track.html
 webkit.org/b/186933 webrtc/audio-replace-track.html
 webkit.org/b/186933 webrtc/audio-peer-connection-webaudio.html
 webkit.org/b/186933 webrtc/audio-muted-stats.html
+webkit.org/b/186933 webrtc/getUserMedia-webaudio-autoplay.html
 
 # The MediaStream implementation is still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
+webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout ]
 webkit.org/b/189734 fast/mediastream/MediaStreamTrack-getCapabilities.html [ Failure ]
 webkit.org/b/189734 fast/mediastream/apply-constraints-advanced.html [ Failure ]
