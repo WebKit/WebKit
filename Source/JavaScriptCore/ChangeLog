@@ -1,3 +1,40 @@
+2018-10-01  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Add branchIfNaN and branchIfNotNaN
+        https://bugs.webkit.org/show_bug.cgi?id=190122
+
+        Reviewed by Mark Lam.
+
+        Add AssemblyHelpers::{branchIfNaN, branchIfNotNaN} to make code more readable.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::getIntTypedArrayStoreOperand):
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        (JSC::DFG::SpeculativeJIT::compileNewArray):
+        (JSC::DFG::SpeculativeJIT::speculateRealNumber):
+        (JSC::DFG::SpeculativeJIT::speculateDoubleRepReal):
+        (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::purifyNaN):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfNaN):
+        (JSC::AssemblyHelpers::branchIfNotNaN):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+
 2018-10-01  Mark Lam  <mark.lam@apple.com>
 
         Function.toString() should also copy the source code Functions that are class definitions.

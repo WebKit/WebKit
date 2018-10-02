@@ -2057,8 +2057,7 @@ void SpeculativeJIT::compileDoublePutByVal(Node* node, SpeculateCellOperand& bas
     
     DFG_TYPE_CHECK(
         JSValueRegs(), child3, SpecFullRealNumber,
-        m_jit.branchDouble(
-            MacroAssembler::DoubleNotEqualOrUnordered, valueReg, valueReg));
+        m_jit.branchIfNaN(valueReg));
     
     if (!m_compileOkay)
         return;
@@ -2563,8 +2562,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
         unboxDouble(op1Regs.tagGPR(), op1Regs.payloadGPR(), resultFPR, tempFPR);
 #endif
         
-        JITCompiler::Jump done = m_jit.branchDouble(
-            JITCompiler::DoubleEqual, resultFPR, resultFPR);
+        JITCompiler::Jump done = m_jit.branchIfNotNaN(resultFPR);
         
         DFG_TYPE_CHECK(
             op1Regs, node->child1(), SpecBytecodeRealNumber, m_jit.branchIfNotInt32(op1Regs));
@@ -3028,7 +3026,7 @@ bool SpeculativeJIT::getIntTypedArrayStoreOperand(
                 GPRTemporary result(this);
                 FPRReg fpr = valueOp.fpr();
                 GPRReg gpr = result.gpr();
-                MacroAssembler::Jump notNaN = m_jit.branchDouble(MacroAssembler::DoubleEqual, fpr, fpr);
+                MacroAssembler::Jump notNaN = m_jit.branchIfNotNaN(fpr);
                 m_jit.xorPtr(gpr, gpr);
                 MacroAssembler::JumpList fixed(m_jit.jump());
                 notNaN.link(&m_jit);
@@ -7667,7 +7665,7 @@ void SpeculativeJIT::compileSpread(Node* node)
             auto loopStart = m_jit.label();
             m_jit.sub32(TrustedImm32(1), lengthGPR);
             m_jit.loadDouble(MacroAssembler::BaseIndex(scratch1GPR, lengthGPR, MacroAssembler::TimesEight), doubleFPR);
-            auto notEmpty = m_jit.branchDouble(JITCompiler::DoubleEqual, doubleFPR, doubleFPR);
+            auto notEmpty = m_jit.branchIfNotNaN(doubleFPR);
             m_jit.move(TrustedImm64(JSValue::encode(jsUndefined())), scratch2GPR);
             auto doStore = m_jit.jump();
             notEmpty.link(&m_jit);
@@ -7746,8 +7744,7 @@ void SpeculativeJIT::compileNewArray(Node* node)
                 FPRReg opFPR = operand.fpr();
                 DFG_TYPE_CHECK(
                     JSValueRegs(), use, SpecDoubleReal,
-                    m_jit.branchDouble(
-                        MacroAssembler::DoubleNotEqualOrUnordered, opFPR, opFPR));
+                    m_jit.branchIfNaN(opFPR));
                 m_jit.storeDouble(opFPR, MacroAssembler::Address(storageGPR, sizeof(double) * operandIdx));
                 break;
             }
@@ -7809,8 +7806,7 @@ void SpeculativeJIT::compileNewArray(Node* node)
             FPRReg opFPR = operand.fpr();
             DFG_TYPE_CHECK(
                 JSValueRegs(), use, SpecDoubleReal,
-                m_jit.branchDouble(
-                    MacroAssembler::DoubleNotEqualOrUnordered, opFPR, opFPR));
+                m_jit.branchIfNaN(opFPR));
 #if USE(JSVALUE64)
             JSValueRegsTemporary scratch(this);
             JSValueRegs scratchRegs = scratch.regs();
@@ -9725,8 +9721,7 @@ void SpeculativeJIT::speculateRealNumber(Edge edge)
     unboxDouble(op1Regs.tagGPR(), op1Regs.payloadGPR(), resultFPR, tempFPR);
 #endif
     
-    JITCompiler::Jump done = m_jit.branchDouble(
-        JITCompiler::DoubleEqual, resultFPR, resultFPR);
+    JITCompiler::Jump done = m_jit.branchIfNotNaN(resultFPR);
 
     typeCheck(op1Regs, edge, SpecBytecodeRealNumber, m_jit.branchIfNotInt32(op1Regs));
     
@@ -9742,8 +9737,7 @@ void SpeculativeJIT::speculateDoubleRepReal(Edge edge)
     FPRReg fpr = operand.fpr();
     typeCheck(
         JSValueRegs(), edge, SpecDoubleReal,
-        m_jit.branchDouble(
-            MacroAssembler::DoubleNotEqualOrUnordered, fpr, fpr));
+        m_jit.branchIfNaN(fpr));
 }
 
 void SpeculativeJIT::speculateBoolean(Edge edge)
@@ -11611,7 +11605,7 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
 #else
     unboxDouble(keyRegs.tagGPR(), keyRegs.payloadGPR(), doubleValueFPR, tempFPR);
 #endif
-    passThroughCases.append(m_jit.branchDouble(JITCompiler::DoubleNotEqualOrUnordered, doubleValueFPR, doubleValueFPR));
+    passThroughCases.append(m_jit.branchIfNaN(doubleValueFPR));
 
     m_jit.truncateDoubleToInt32(doubleValueFPR, scratchGPR);
     m_jit.convertInt32ToDouble(scratchGPR, tempFPR);
@@ -12879,7 +12873,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
             slowCases.append(outOfBounds);
 
         m_jit.loadDouble(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), scratchFPR);
-        slowCases.append(m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, scratchFPR, scratchFPR));
+        slowCases.append(m_jit.branchIfNaN(scratchFPR));
         m_jit.move(TrustedImm32(1), resultGPR);
         break;
     }

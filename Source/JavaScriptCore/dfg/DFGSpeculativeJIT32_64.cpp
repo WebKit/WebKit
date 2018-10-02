@@ -2342,7 +2342,7 @@ void SpeculativeJIT::compile(Node* node)
                 FPRTemporary result(this);
                 m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), result.fpr());
                 if (!node->arrayMode().isSaneChain())
-                    speculationCheck(LoadFromHole, JSValueRegs(), 0, m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, result.fpr(), result.fpr()));
+                    speculationCheck(LoadFromHole, JSValueRegs(), 0, m_jit.branchIfNaN(result.fpr()));
                 doubleResult(result.fpr(), node);
                 break;
             }
@@ -2370,7 +2370,7 @@ void SpeculativeJIT::compile(Node* node)
             slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
             
             m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), tempReg);
-            slowCases.append(m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, tempReg, tempReg));
+            slowCases.append(m_jit.branchIfNaN(tempReg));
             boxDouble(tempReg, resultTagReg, resultPayloadReg);
 
             addSlowPathGenerator(
@@ -2846,7 +2846,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.loadDouble(
                 MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight),
                 tempFPR);
-            MacroAssembler::Jump slowCase = m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, tempFPR, tempFPR);
+            MacroAssembler::Jump slowCase = m_jit.branchIfNaN(tempFPR);
             JSValue nan = JSValue(JSValue::EncodeAsDouble, PNaN);
             m_jit.store32(
                 MacroAssembler::TrustedImm32(nan.u.asBits.tag),

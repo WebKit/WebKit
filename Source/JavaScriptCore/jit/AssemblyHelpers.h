@@ -1069,6 +1069,16 @@ public:
     Jump branchIfFastTypedArray(GPRReg baseGPR);
     Jump branchIfNotFastTypedArray(GPRReg baseGPR);
 
+    Jump branchIfNaN(FPRReg fpr)
+    {
+        return branchDouble(DoubleNotEqualOrUnordered, fpr, fpr);
+    }
+
+    Jump branchIfNotNaN(FPRReg fpr)
+    {
+        return branchDouble(DoubleEqual, fpr, fpr);
+    }
+
     static Address addressForByteOffset(ptrdiff_t byteOffset)
     {
         return Address(GPRInfo::callFrameRegister, byteOffset);

@@ -331,7 +331,7 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
         Jump ready = jump();
         notInt.link(this);
         moveIntsToDouble(regT0, regT1, fpRegT0, fpRegT1);
-        slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
+        slowCases.append(branchIfNaN(fpRegT0));
         ready.link(this);
         storeDouble(fpRegT0, BaseIndex(regT3, regT2, TimesEight));
         break;

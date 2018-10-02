@@ -276,7 +276,7 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
         notInt.link(this);
         add64(tagTypeNumberRegister, regT3);
         move64ToDouble(regT3, fpRegT0);
-        slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
+        slowCases.append(branchIfNaN(fpRegT0));
         ready.link(this);
         storeDouble(fpRegT0, BaseIndex(regT2, regT1, TimesEight));
         break;
@@ -1368,7 +1368,7 @@ JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
     loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
     slowCases.append(branch32(AboveOrEqual, property, Address(scratch, Butterfly::offsetOfPublicLength())));
     loadDouble(BaseIndex(scratch, property, TimesEight), fpRegT0);
-    slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
+    slowCases.append(branchIfNaN(fpRegT0));
 
     return slowCases;
 }
@@ -1617,10 +1617,7 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
         CRASH();
     }
     
-    Jump notNaN = branchDouble(DoubleEqual, fpRegT0, fpRegT0);
-    static const double NaN = PNaN;
-    loadDouble(TrustedImmPtr(&NaN), fpRegT0);
-    notNaN.link(this);
+    purifyNaN(fpRegT0);
     
     boxDouble(fpRegT0, result);
     return slowCases;    

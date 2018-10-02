@@ -221,7 +221,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
         FALLTHROUGH;
     case Wasm::F64: {
         jit.moveTrustedValue(jsNumber(pureNaN()), JSValueRegs { GPRInfo::returnValueGPR });
-        auto isNaN = jit.branchDouble(CCallHelpers::DoubleNotEqualOrUnordered, FPRInfo::returnValueFPR, FPRInfo::returnValueFPR);
+        auto isNaN = jit.branchIfNaN(FPRInfo::returnValueFPR);
         jit.boxDouble(FPRInfo::returnValueFPR, JSValueRegs { GPRInfo::returnValueGPR }, DoNotHaveTagRegisters);
         isNaN.link(&jit);
         break;
