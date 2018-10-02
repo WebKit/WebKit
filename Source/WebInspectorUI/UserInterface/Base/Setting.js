@@ -121,6 +121,7 @@ WI.settings = {
     showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", true),
 
     // Experimental
+    experimentalEnableMultiplePropertiesSelection: new WI.Setting("experimental-enable-multiple-properties-selection", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
 

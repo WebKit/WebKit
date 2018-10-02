@@ -1,5 +1,20 @@
 2018-10-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles: add an experimental setting for multi-property selection
+        https://bugs.webkit.org/show_bug.cgi?id=190053
+        <rdar://problem/44842787>
+
+        Reviewed by Matt Baker.
+
+        This patch only adds a setting. It doesn't change property selection behavior.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+2018-10-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Dark Mode: use the same CSS variables for dark and light modes
         https://bugs.webkit.org/show_bug.cgi?id=189766
         <rdar://problem/44619650>
