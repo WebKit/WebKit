@@ -672,10 +672,10 @@ FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
         RefPtr<VideoTrackPrivateGStreamer> videoTrack = m_videoTracks.get(m_currentVideoStreamId);
 
         if (videoTrack) {
-            auto tags = gst_stream_get_tags(videoTrack->stream());
+            auto tags = adoptGRef(gst_stream_get_tags(videoTrack->stream()));
             gint width, height;
 
-            if (gst_tag_list_get_int(tags, WEBKIT_MEDIA_TRACK_TAG_WIDTH, &width) && gst_tag_list_get_int(tags, WEBKIT_MEDIA_TRACK_TAG_HEIGHT, &height))
+            if (tags && gst_tag_list_get_int(tags.get(), WEBKIT_MEDIA_TRACK_TAG_WIDTH, &width) && gst_tag_list_get_int(tags.get(), WEBKIT_MEDIA_TRACK_TAG_HEIGHT, &height))
                 return FloatSize(width, height);
         }
     }
