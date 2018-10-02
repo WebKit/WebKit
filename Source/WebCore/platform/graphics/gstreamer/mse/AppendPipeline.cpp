@@ -829,7 +829,7 @@ GstFlowReturn AppendPipeline::handleNewAppsinkSample(GstElement* appsink)
         // AppendPipeline should have only one streaming thread. Otherwise we can't detect reliably when an appends has
         // been demuxed completely.;
         g_critical("Appsink received a sample in a different thread than appsrcEndOfAppendCheckerProbe run.");
-        RELEASE_ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
     }
 
     if (!m_playerPrivate || m_appendState == AppendState::Invalid) {
