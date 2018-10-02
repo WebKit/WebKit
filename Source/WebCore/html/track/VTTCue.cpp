@@ -164,13 +164,13 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     // the 'writing-mode' property must be set to writing-mode
     setInlineStyleProperty(CSSPropertyWritingMode, m_cue.getCSSWritingMode(), false);
 
-    std::pair<float, float> position = m_cue.getCSSPosition();
+    auto position = m_cue.getCSSPosition();
 
     // the 'top' property must be set to top,
-    setInlineStyleProperty(CSSPropertyTop, static_cast<double>(position.second), CSSPrimitiveValue::CSS_PERCENTAGE);
+    setInlineStyleProperty(CSSPropertyTop, position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
 
     // the 'left' property must be set to left
-    setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first), CSSPrimitiveValue::CSS_PERCENTAGE);
+    setInlineStyleProperty(CSSPropertyLeft, position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
 
     double authorFontSize = std::min(videoSize.width(), videoSize.height()) * DEFAULTCAPTIONFONTSIZEPERCENTAGE / 100.0;
     double multiplier = 1.0;
@@ -925,15 +925,17 @@ std::pair<double, double> VTTCue::getPositionCoordinates() const
     // This method is used for setting x and y when snap to lines is not set.
     std::pair<double, double> coordinates;
 
+    auto textPosition = calculateComputedTextPosition();
+    
     if (m_writingDirection == Horizontal && m_displayDirection == CSSValueLtr) {
-        coordinates.first = m_textPosition;
+        coordinates.first = textPosition;
         coordinates.second = m_computedLinePosition;
 
         return coordinates;
     }
 
     if (m_writingDirection == Horizontal && m_displayDirection == CSSValueRtl) {
-        coordinates.first = 100 - m_textPosition;
+        coordinates.first = 100 - textPosition;
         coordinates.second = m_computedLinePosition;
 
         return coordinates;
@@ -941,14 +943,14 @@ std::pair<double, double> VTTCue::getPositionCoordinates() const
 
     if (m_writingDirection == VerticalGrowingLeft) {
         coordinates.first = 100 - m_computedLinePosition;
-        coordinates.second = m_textPosition;
+        coordinates.second = textPosition;
 
         return coordinates;
     }
 
     if (m_writingDirection == VerticalGrowingRight) {
         coordinates.first = m_computedLinePosition;
-        coordinates.second = m_textPosition;
+        coordinates.second = textPosition;
 
         return coordinates;
     }
@@ -1039,8 +1041,17 @@ void VTTCue::setCueSettings(const String& inputString)
                     break;
 
                 bool isPercentage = input.scan('%');
-                if (!input.isAt(valueRun.end()))
-                    break;
+                if (!input.isAt(valueRun.end())) {
+                    if (!input.scan(','))
+                        break;
+                    // FIXME: implement handling of line setting alignment.
+                    if (!input.scan(startKeyword().characters8(), startKeyword().length())
+                        && !input.scan(centerKeyword().characters8(), centerKeyword().length())
+                        && !input.scan(endKeyword().characters8(), endKeyword().length())) {
+                        LOG(Media, "VTTCue::setCueSettings, invalid line setting alignment");
+                        break;
+                    }
+                }
 
                 // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT
                 //    NINE (9), then jump to the step labeled next setting.
