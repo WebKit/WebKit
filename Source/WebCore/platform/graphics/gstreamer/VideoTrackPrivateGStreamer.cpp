@@ -49,9 +49,9 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     , m_player(player)
 {
     gint kind;
-    auto tags = gst_stream_get_tags(m_stream.get());
+    auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
 
-    if (gst_tag_list_get_int(tags, "webkit-media-stream-kind", &kind) && kind == static_cast<int>(VideoTrackPrivate::Kind::Main)) {
+    if (tags && gst_tag_list_get_int(tags.get(), "webkit-media-stream-kind", &kind) && kind == static_cast<int>(VideoTrackPrivate::Kind::Main)) {
         GstStreamFlags streamFlags = gst_stream_get_stream_flags(stream.get());
         gst_stream_set_stream_flags(stream.get(), static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
     }
