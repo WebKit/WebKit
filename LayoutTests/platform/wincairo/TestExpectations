@@ -992,6 +992,66 @@ http/tests/xmlhttprequest/upload-progress-events.html [ Failure ]
 
 http/tests/xmlviewer [ Skip ]
 
+#//////////////////////////////////////////////////////////////////////////////////////////
+# imported/w3c
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+imported/w3c/canvas [ Skip ]
+imported/w3c/common [ Skip ]
+imported/w3c/fonts [ Skip ]
+imported/w3c/i18n [ Skip ]
+imported/w3c/IndexedDB-private-browsing [ Skip ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# web-platform-tests
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+# Not ready to enable this part.
+imported/w3c/web-platform-tests [ Skip ]
+
+# sendBeacon is not implemented.
+http/wpt/beacon [ Skip ]
+
+# self.caches is not implemented.
+http/wpt/cache-storage [ Skip ]
+
+# CredentialsContainer is not implemented.
+http/wpt/credential-management [ Skip ]
+
+# crypto is not implemented.
+http/wpt/crypto [ Skip ]
+
+# Service Worker is not implemented.
+http/wpt/service-workers [ Skip ]
+
+# WebAuthN API is not implemented.
+http/wpt/webauthn [ Skip ]
+
+# webrtc is not implemented.
+http/wpt/webrtc [ Skip ]
+
+http/wpt/entries-api/interfaces.html [ Failure ]
+http/wpt/fetch/dnt-header-after-redirection.html [ Failure ]
+http/wpt/fetch/inspect-preflight.html [ Failure ]
+http/wpt/fetch/response-status-text.html [ Failure ]
+http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
+http/wpt/loading/redirect-headers.html [ Failure ]
+http/wpt/resource-timing/rt-cors.html [ Failure Pass ]
+http/wpt/resource-timing/rt-cors.worker.html [ Failure Pass ]
+http/wpt/resource-timing/rt-initiatorType-css.html [ Failure Pass ]
+http/wpt/resource-timing/rt-initiatorType-element.html [ Failure Pass ]
+http/wpt/resource-timing/rt-initiatorType-fetch.html [ Failure Pass ]
+http/wpt/resource-timing/rt-initiatorType-media.html [ Failure Pass ]
+http/wpt/resource-timing/rt-initiatorType-other.html [ Failure Pass ]
+http/wpt/resource-timing/rt-initiatorType-script-module.html [ Failure Pass ]
+http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html [ Failure Pass ]
+http/wpt/resource-timing/rt-initiatorType.worker.html [ Failure Pass ]
+http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
+http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
+http/wpt/resource-timing/rt-revalidate-requests.html [ Failure Pass ]
+http/wpt/resource-timing/rt-shared-resource-in-frames.html [ Failure Pass ]
+http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure Pass ]
+
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
 #///////////////////////////////////////////////////////////////////////////////
@@ -1742,10 +1802,8 @@ fast/xsl [ Skip ]
 fonts/use-typo-metrics-1.html [ Skip ]
 fullscreen [ Skip ]
 html5lib [ Skip ]
-http/wpt [ Skip ]
 imported/blink [ Skip ]
 imported/mozilla [ Skip ]
-imported/w3c [ Skip ]
 inspector [ Skip ]
 js/dom [ Skip ]
 js/intl-numberformat.html [ Skip ]

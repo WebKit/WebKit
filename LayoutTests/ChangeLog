@@ -1,3 +1,14 @@
+2018-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Enable some wpt tests.
+        https://bugs.webkit.org/show_bug.cgi?id=190129
+
+        Unreviewed test gardening..
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/http/wpt/html/browsers/browsing-the-web/navigating-across-documents/click-expected.txt: Added.
+        * platform/wincairo/http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href-expected.txt: Added.
+
 2018-10-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed test gardening.
