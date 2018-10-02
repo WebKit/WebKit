@@ -1417,7 +1417,7 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
 
     String error;
     bool base64Encoded;
-    InspectorPageAgent::resourceContent(error, ownerDocument()->frame(), URL(ParsedURLString, m_pageStyleSheet->href()), result, &base64Encoded);
+    InspectorPageAgent::resourceContent(error, ownerDocument()->frame(), URL({ }, m_pageStyleSheet->href()), result, &base64Encoded);
     return error.isEmpty() && !base64Encoded;
 }
 

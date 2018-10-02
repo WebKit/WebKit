@@ -1,3 +1,103 @@
+2018-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ParsedURLString
+        https://bugs.webkit.org/show_bug.cgi?id=190154
+
+        Reviewed by Chris Dumez.
+
+        Before the introduction of URLParser, it would indicate that we should assume the String
+        is from a valid URL so we can skip canonicalization and just find the offsets inside the String
+        to quickly create a URL.  It was a performance optimization that caused security issues when
+        misused.  Since the introduction of URLParser, we have a fast path for all URL parsing, so
+        right now it actually doesn't change any behavior.  It's just a relic of the past that complicates
+        the URL class, making it harder to express which constructor to use and making it harder to move
+        the class.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::NavigatorContentUtils::registerProtocolHandler):
+        (WebCore::NavigatorContentUtils::isProtocolHandlerRegistered):
+        (WebCore::NavigatorContentUtils::unregisterProtocolHandler):
+        * dom/Document.cpp:
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::initSecurityContext):
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::updateInjectedStyleSheetCache const):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        * fileapi/BlobURL.cpp:
+        (WebCore::BlobURL::createBlobURL):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::url const):
+        (WebCore::HistoryItem::originalURL const):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::location const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        * html/PublicURLManager.cpp:
+        (WebCore::PublicURLManager::stop):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText const):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::deleteCookie):
+        (WebCore::InspectorPageAgent::getResourceContent):
+        (WebCore::InspectorPageAgent::searchInResource):
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::sourceMapURLForScript):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresources const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::initForSynthesizedDocument):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::addResource):
+        (WebCore::ApplicationCache::resourceForURL):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        (WebCore::ApplicationCacheGroup::addEntry):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::loadCache):
+        (WebCore::ApplicationCacheStorage::manifestURLs):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::urlForBlankFrame):
+        * platform/URL.cpp:
+        (WebCore::blankURL):
+        * platform/URL.h:
+        (): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::populateBlobsForFileWriting):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::decodeBase):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::sanitizeSuggestedFilename):
+        * platform/network/cf/DNSResolveQueueCFNet.cpp:
+        (WebCore::DNSResolveQueueCFNet::updateIsUsingProxy):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::searchCookies):
+        (WebCore::CookieJarDB::setCookie):
+        (WebCore::CookieJarDB::deleteCookie):
+        * platform/network/curl/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+
 2018-10-02  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Cue with line setting is not rendered correctly

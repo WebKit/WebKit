@@ -52,7 +52,7 @@ TEST_F(URLTest, URLConstructorDefault)
 
 TEST_F(URLTest, URLConstructorConstChar)
 {
-    URL kurl(ParsedURLString, "http://username:password@www.example.com:8080/index.html?var=val#fragment");
+    URL kurl({ }, "http://username:password@www.example.com:8080/index.html?var=val#fragment");
 
     EXPECT_FALSE(kurl.isEmpty());
     EXPECT_FALSE(kurl.isNull());
@@ -121,7 +121,7 @@ TEST_F(URLTest, URLProtocolHostAndPort)
 
 TEST_F(URLTest, URLDataURIStringSharing)
 {
-    URL baseURL(ParsedURLString, "http://www.webkit.org/");
+    URL baseURL({ }, "http://www.webkit.org/");
     String threeApples = "data:text/plain;charset=utf-8;base64,76O/76O/76O/";
 
     URL url(baseURL, threeApples);

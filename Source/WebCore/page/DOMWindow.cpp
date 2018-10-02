@@ -2247,7 +2247,7 @@ ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, cons
     if (!activeDocument)
         return RefPtr<Frame> { nullptr };
 
-    URL completedURL = urlString.isEmpty() ? URL(ParsedURLString, emptyString()) : firstFrame.document()->completeURL(urlString);
+    URL completedURL = urlString.isEmpty() ? URL({ }, emptyString()) : firstFrame.document()->completeURL(urlString);
     if (!completedURL.isEmpty() && !completedURL.isValid())
         return Exception { SyntaxError };
 

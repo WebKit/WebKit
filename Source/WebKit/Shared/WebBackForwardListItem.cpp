@@ -104,8 +104,8 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
     if (mainFrameState.stateObjectData || otherMainFrameState.stateObjectData)
         return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
 
-    WebCore::URL url = WebCore::URL(WebCore::ParsedURLString, mainFrameState.urlString);
-    WebCore::URL otherURL = WebCore::URL(WebCore::ParsedURLString, otherMainFrameState.urlString);
+    WebCore::URL url = WebCore::URL({ }, mainFrameState.urlString);
+    WebCore::URL otherURL = WebCore::URL({ }, otherMainFrameState.urlString);
 
     if ((url.hasFragmentIdentifier() || otherURL.hasFragmentIdentifier()) && equalIgnoringFragmentIdentifier(url, otherURL))
         return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;

@@ -876,7 +876,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
     if (m_frame.page()->usesEphemeralSession())
         return;
 
-    addVisitedLink(*page, URL(ParsedURLString, urlString));
+    addVisitedLink(*page, URL({ }, urlString));
     m_frame.loader().client().updateGlobalHistory();
 }
 
@@ -898,7 +898,7 @@ void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject
     if (m_frame.page()->usesEphemeralSession())
         return;
 
-    addVisitedLink(*m_frame.page(), URL(ParsedURLString, urlString));
+    addVisitedLink(*m_frame.page(), URL({ }, urlString));
     m_frame.loader().client().updateGlobalHistory();
 }
 

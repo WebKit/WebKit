@@ -304,7 +304,7 @@ ALWAYS_INLINE bool ResourceRequestBase::decodeBase(Decoder& decoder)
     String firstPartyForCookies;
     if (!decoder.decode(firstPartyForCookies))
         return false;
-    m_firstPartyForCookies = URL(ParsedURLString, firstPartyForCookies);
+    m_firstPartyForCookies = URL({ }, firstPartyForCookies);
 
     if (!decoder.decode(m_httpMethod))
         return false;

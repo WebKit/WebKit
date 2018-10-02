@@ -3159,7 +3159,7 @@ void Document::updateBaseURL()
         // The documentURI attribute is read-only from JavaScript, but writable from Objective C, so we need to retain
         // this fallback behavior. We use a null base URL, since the documentURI attribute is an arbitrary string
         // and DOM 3 Core does not specify how it should be resolved.
-        m_baseURL = URL(ParsedURLString, documentURI());
+        m_baseURL = URL({ }, documentURI());
     }
 
     clearSelectorQueryCache();
@@ -5606,9 +5606,9 @@ void Document::initSecurityContext()
     if (!m_frame) {
         // No source for a security context.
         // This can occur via document.implementation.createDocument().
-        setCookieURL(URL(ParsedURLString, emptyString()));
+        setCookieURL(URL({ }, emptyString()));
         setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
-        setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { ParsedURLString, emptyString() }, *this));
+        setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { { }, emptyString() }, *this));
         return;
     }
 

@@ -88,19 +88,6 @@ void URL::invalidate()
     m_queryEnd = 0;
 }
 
-URL::URL(ParsedURLStringTag, const String& url)
-{
-    URLParser parser(url);
-    *this = parser.result();
-
-#if OS(WINDOWS)
-    // FIXME(148598): Work around Windows local file handling bug in CFNetwork
-    ASSERT(isLocalFile() || url == m_string);
-#else
-    ASSERT(url == m_string);
-#endif
-}
-
 URL::URL(const URL& base, const String& relative, const URLTextEncoding* encoding)
 {
     URLParser parser(relative, base, encoding);
@@ -910,7 +897,7 @@ bool protocolIsInHTTPFamily(const String& url)
 
 const URL& blankURL()
 {
-    static NeverDestroyed<URL> staticBlankURL(ParsedURLString, "about:blank");
+    static NeverDestroyed<URL> staticBlankURL(URL(), "about:blank");
     return staticBlankURL;
 }
 

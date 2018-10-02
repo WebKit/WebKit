@@ -122,7 +122,7 @@ void ProcessingInstruction::checkStyleSheet()
             // We need to make a synthetic XSLStyleSheet that is embedded.  It needs to be able
             // to kick off import/include loads that can hang off some parent sheet.
             if (m_isXSL) {
-                URL finalURL(ParsedURLString, m_localHref);
+                URL finalURL({ }, m_localHref);
                 m_sheet = XSLStyleSheet::createEmbedded(this, finalURL);
                 m_loading = false;
                 document().scheduleToApplyXSLTransforms();

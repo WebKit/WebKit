@@ -97,7 +97,7 @@ HRESULT WebDownload::initWithRequest(
         return E_FAIL;
 
     ResourceRequest resourceRequest;
-    resourceRequest.setURL(URL(ParsedURLString, String(url)));
+    resourceRequest.setURL(URL({ }, String(url)));
 
     const HTTPHeaderMap& headerMap = webRequest->httpHeaderFields();
     for (HTTPHeaderMap::const_iterator it = headerMap.begin(); it != headerMap.end(); ++it)

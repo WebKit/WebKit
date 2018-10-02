@@ -113,7 +113,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
 {
     Vector<AttributeChange> changes;
 
-    URL parsedBaseURL(ParsedURLString, baseURL);
+    URL parsedBaseURL({ }, baseURL);
 
     for (auto& element : descendantsOfType<Element>(*fragment)) {
         if (!element.hasAttributes())

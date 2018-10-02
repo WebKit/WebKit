@@ -227,7 +227,7 @@ WebURLResponse* WebURLResponse::createInstance()
 {
     WebURLResponse* instance = new WebURLResponse();
     // fake an http response - so it has the IWebHTTPURLResponse interface
-    instance->m_response = ResourceResponse(WebCore::URL(ParsedURLString, "http://"), String(), 0, String());
+    instance->m_response = ResourceResponse(WebCore::URL({ }, "http://"), String(), 0, String());
     instance->AddRef();
     return instance;
 }

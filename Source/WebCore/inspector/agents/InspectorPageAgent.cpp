@@ -439,7 +439,7 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector
 
         for (auto& url : allResourcesURLsForFrame(frame)) {
             Vector<Cookie> docCookiesList;
-            rawCookiesImplemented = getRawCookies(*document, URL(ParsedURLString, url), docCookiesList);
+            rawCookiesImplemented = getRawCookies(*document, URL({ }, url), docCookiesList);
 
             if (!rawCookiesImplemented) {
                 // FIXME: We need duplication checking for the String representation of cookies.
@@ -462,7 +462,7 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector
 
 void InspectorPageAgent::deleteCookie(ErrorString&, const String& cookieName, const String& url)
 {
-    URL parsedURL(ParsedURLString, url);
+    URL parsedURL({ }, url);
     for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document())
             WebCore::deleteCookie(*document, parsedURL, cookieName);
@@ -480,7 +480,7 @@ void InspectorPageAgent::getResourceContent(ErrorString& errorString, const Stri
     if (!frame)
         return;
 
-    resourceContent(errorString, frame, URL(ParsedURLString, url), content, base64Encoded);
+    resourceContent(errorString, frame, URL({ }, url), content, base64Encoded);
 }
 
 void InspectorPageAgent::searchInResource(ErrorString& errorString, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
@@ -505,7 +505,7 @@ void InspectorPageAgent::searchInResource(ErrorString& errorString, const String
     if (!loader)
         return;
 
-    URL kurl(ParsedURLString, url);
+    URL kurl({ }, url);
 
     String content;
     bool success = false;

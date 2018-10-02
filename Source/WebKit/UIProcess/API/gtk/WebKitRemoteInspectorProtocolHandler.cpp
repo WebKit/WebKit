@@ -47,7 +47,7 @@ public:
         if (tokens.size() != 2)
             return;
 
-        URL requestURL = URL(ParsedURLString, page.pageLoadState().url());
+        URL requestURL = URL({ }, page.pageLoadState().url());
         m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), tokens[0].toUInt64(), tokens[1].toUInt64());
     }
 
@@ -88,7 +88,7 @@ void RemoteInspectorProtocolHandler::userContentManagerDestroyed(RemoteInspector
 
 void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
 {
-    URL requestURL = URL(ParsedURLString, webkit_uri_scheme_request_get_uri(request));
+    URL requestURL = URL({ }, webkit_uri_scheme_request_get_uri(request));
     if (!requestURL.port()) {
         GUniquePtr<GError> error(g_error_new_literal(WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI, "Cannot show inspector URL: no port provided"));
         webkit_uri_scheme_request_finish_error(request, error.get());
@@ -165,7 +165,7 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
         if (webkit_web_view_is_loading(webView))
             continue;
 
-        URL webViewURL = URL(ParsedURLString, webkit_web_view_get_uri(webView));
+        URL webViewURL = URL({ }, webkit_web_view_get_uri(webView));
         auto clientForWebView = m_inspectorClients.get(webViewURL.hostAndPort());
         if (!clientForWebView) {
             // This view is not showing a inspector view anymore.

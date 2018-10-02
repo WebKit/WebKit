@@ -332,7 +332,7 @@ void PluginProcessProxy::openURL(const String& urlString, bool& result, int32_t&
 
     result = true;
     CFURLRef launchedURL;
-    status = LSOpenCFURLRef(URL(ParsedURLString, urlString).createCFURL().get(), &launchedURL);
+    status = LSOpenCFURLRef(URL({ }, urlString).createCFURL().get(), &launchedURL);
 
     if (launchedURL) {
         launchedURLString = URL(launchedURL).string();

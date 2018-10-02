@@ -2027,7 +2027,7 @@ ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(u
 
 void WebProcessPool::addProcessToOriginCacheSet(WebPageProxy& page)
 {
-    auto registrableDomain = toRegistrableDomain({ ParsedURLString, page.pageLoadState().url() });
+    auto registrableDomain = toRegistrableDomain({ { }, page.pageLoadState().url() });
     auto result = m_swappedProcessesPerRegistrableDomain.add(registrableDomain, &page.process());
     if (!result.isNewEntry)
         result.iterator->value = &page.process();
@@ -2141,7 +2141,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         if (isInitialLoadInNewWindowOpenedByDOM && !navigation.requesterOrigin().isEmpty())
             url = URL { URL(), navigation.requesterOrigin().toString() };
         else
-            url = URL { ParsedURLString, page.pageLoadState().url() };
+            url = URL { { }, page.pageLoadState().url() };
         if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || registrableDomainsAreEqual(url, targetURL)) {
             reason = "Navigation is same-site"_s;
             return page.process();

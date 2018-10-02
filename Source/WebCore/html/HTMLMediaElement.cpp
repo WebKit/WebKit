@@ -7199,7 +7199,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
 
 #ifndef NDEBUG
     // Setting a scriptURL allows the source to be debuggable in the inspector.
-    URL scriptURL = URL(ParsedURLString, "mediaControlsScript"_s);
+    URL scriptURL = URL({ }, "mediaControlsScript"_s);
 #else
     URL scriptURL;
 #endif

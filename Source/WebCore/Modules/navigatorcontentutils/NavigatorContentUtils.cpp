@@ -107,7 +107,7 @@ ExceptionOr<void> NavigatorContentUtils::registerProtocolHandler(Navigator& navi
     if (!verifyProtocolHandlerScheme(scheme))
         return Exception { SecurityError };
 
-    NavigatorContentUtils::from(navigator.frame()->page())->client()->registerProtocolHandler(scheme, baseURL, URL(ParsedURLString, url), navigator.frame()->displayStringModifiedByEncoding(title));
+    NavigatorContentUtils::from(navigator.frame()->page())->client()->registerProtocolHandler(scheme, baseURL, URL({ }, url), navigator.frame()->displayStringModifiedByEncoding(title));
     return { };
 }
 
@@ -147,7 +147,7 @@ ExceptionOr<String> NavigatorContentUtils::isProtocolHandlerRegistered(Navigator
     if (!verifyProtocolHandlerScheme(scheme))
         return Exception { SecurityError };
 
-    return customHandlersStateString(NavigatorContentUtils::from(navigator.frame()->page())->client()->isProtocolHandlerRegistered(scheme, baseURL, URL(ParsedURLString, url)));
+    return customHandlersStateString(NavigatorContentUtils::from(navigator.frame()->page())->client()->isProtocolHandlerRegistered(scheme, baseURL, URL({ }, url)));
 }
 
 ExceptionOr<void> NavigatorContentUtils::unregisterProtocolHandler(Navigator& navigator, const String& scheme, const String& url)
@@ -163,7 +163,7 @@ ExceptionOr<void> NavigatorContentUtils::unregisterProtocolHandler(Navigator& na
     if (!verifyProtocolHandlerScheme(scheme))
         return Exception { SecurityError };
 
-    NavigatorContentUtils::from(navigator.frame()->page())->client()->unregisterProtocolHandler(scheme, baseURL, URL(ParsedURLString, url));
+    NavigatorContentUtils::from(navigator.frame()->page())->client()->unregisterProtocolHandler(scheme, baseURL, URL({ }, url));
     return { };
 }
 

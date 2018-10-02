@@ -162,7 +162,7 @@ void HTMLFrameElementBase::didAttachRenderers()
 URL HTMLFrameElementBase::location() const
 {
     if (hasAttributeWithoutSynchronization(srcdocAttr))
-        return URL(ParsedURLString, "about:srcdoc");
+        return URL({ }, "about:srcdoc");
     return document().completeURL(attributeWithoutSynchronization(srcAttr));
 }
 

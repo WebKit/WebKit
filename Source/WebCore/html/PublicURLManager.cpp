@@ -74,7 +74,7 @@ void PublicURLManager::stop()
     m_isStopped = true;
     for (auto& registry : m_registryToURL) {
         for (auto& url : registry.value)
-            registry.key->unregisterURL(URL(ParsedURLString, url));
+            registry.key->unregisterURL(URL({ }, url));
     }
 
     m_registryToURL.clear();

@@ -308,7 +308,7 @@ FrameLoader::~FrameLoader()
 void FrameLoader::init()
 {
     // This somewhat odd set of steps gives the frame an initial empty document.
-    setPolicyDocumentLoader(m_client.createDocumentLoader(ResourceRequest(URL(ParsedURLString, emptyString())), SubstituteData()).ptr());
+    setPolicyDocumentLoader(m_client.createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData()).ptr());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_provisionalDocumentLoader->startLoadingMainResource(ShouldContinue::Yes);
 
@@ -325,7 +325,7 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     // FIXME: We need to initialize the document URL to the specified URL. Currently the URL is empty and hence
     // FrameLoader::checkCompleted() will overwrite the URL of the document to be activeDocumentLoader()->documentURL().
 
-    auto loader = m_client.createDocumentLoader(ResourceRequest(URL(ParsedURLString, emptyString())), SubstituteData());
+    auto loader = m_client.createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData());
     loader->attachToFrame(m_frame);
     loader->setResponse(ResourceResponse(URL(), "text/html"_s, 0, String()));
     loader->setCommitted(true);

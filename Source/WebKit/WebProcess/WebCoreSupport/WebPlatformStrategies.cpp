@@ -239,7 +239,7 @@ URL WebPlatformStrategies::url(const String& pasteboardName)
 {
     String urlString;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardURL(pasteboardName), Messages::WebPasteboardProxy::GetPasteboardURL::Reply(urlString), 0);
-    return URL(ParsedURLString, urlString);
+    return URL({ }, urlString);
 }
 
 long WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
@@ -368,7 +368,7 @@ WebCore::URL WebPlatformStrategies::readURLFromPasteboard(int index, const Strin
 {
     String urlString;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadURLFromPasteboard(index, pasteboardName), Messages::WebPasteboardProxy::ReadURLFromPasteboard::Reply(urlString, title), 0);
-    return URL(ParsedURLString, urlString);
+    return URL({ }, urlString);
 }
 
 String WebPlatformStrategies::readStringFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName)

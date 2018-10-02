@@ -1,3 +1,15 @@
+2018-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ParsedURLString
+        https://bugs.webkit.org/show_bug.cgi?id=190154
+
+        Reviewed by Chris Dumez.
+
+        * WebDownloadCurl.cpp:
+        (WebDownload::initWithRequest):
+        * WebURLResponse.cpp:
+        (WebURLResponse::createInstance):
+
 2018-09-28  Chris Dumez  <cdumez@apple.com>
 
         Drop support for cross-origin-window-policy header

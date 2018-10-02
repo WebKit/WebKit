@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIUserContentURLPattern_h
-#define APIUserContentURLPattern_h
+#pragma once
 
 #include "APIObject.h"
 
@@ -43,7 +42,7 @@ public:
     const WTF::String& host() const { return m_pattern.host(); }
     const WTF::String& scheme() const { return m_pattern.scheme(); }
     bool isValid() const { return m_pattern.isValid(); };
-    bool matchesURL(const WTF::String& url) const { return m_pattern.matches(WebCore::URL(WebCore::ParsedURLString, url)); }
+    bool matchesURL(const WTF::String& url) const { return m_pattern.matches(WebCore::URL({ }, url)); }
     bool matchesSubdomains() const { return m_pattern.matchSubdomains(); }
 
     const WTF::String& patternString() const { return m_patternString; }
@@ -60,5 +59,3 @@ private:
 };
 
 }
-
-#endif

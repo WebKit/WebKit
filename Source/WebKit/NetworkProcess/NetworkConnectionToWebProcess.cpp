@@ -550,7 +550,7 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
 {
     Vector<RefPtr<BlobDataFileReference>> fileReferences;
     for (auto& url : blobURLs)
-        fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(*this, { ParsedURLString, url }));
+        fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(*this, { { }, url }));
 
     for (auto& file : fileReferences)
         file->prepareForFileAccess();

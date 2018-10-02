@@ -265,7 +265,7 @@ String ResourceResponseBase::sanitizeSuggestedFilename(const String& suggestedFi
     if (suggestedFilename.isEmpty())
         return suggestedFilename;
 
-    ResourceResponse response(URL(ParsedURLString, "http://example.com/"), String(), -1, String());
+    ResourceResponse response(URL({ }, "http://example.com/"), String(), -1, String());
     response.setHTTPStatusCode(200);
     String escapedSuggestedFilename = String(suggestedFilename).replace('\\', "\\\\").replace('"', "\\\"");
     String value = makeString("attachment; filename=\"", escapedSuggestedFilename, '"');

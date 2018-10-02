@@ -1032,7 +1032,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 
     URL resourceDirectoryURL;
     if (resourceDirectoryURLString.isNull())
-        resourceDirectoryURL = URL(ParsedURLString, "file:///"_s);
+        resourceDirectoryURL = URL({ }, "file:///"_s);
     else {
         resourceDirectoryURL = URL(URL(), resourceDirectoryURLString);
         if (!resourceDirectoryURL.isLocalFile())
@@ -4121,7 +4121,7 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, const W
             sourceFrameInfo = API::FrameInfo::create(originatingFrameInfoData, originatingPageID ? m_process->webPage(originatingPageID) : nullptr);
 
         auto userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-        bool shouldOpenAppLinks = !m_shouldSuppressAppLinksInNextNavigationPolicyDecision && destinationFrameInfo->isMainFrame() && !hostsAreEqual(URL(ParsedURLString, m_mainFrame->url()), request.url()) && navigationActionData.navigationType != WebCore::NavigationType::BackForward;
+        bool shouldOpenAppLinks = !m_shouldSuppressAppLinksInNextNavigationPolicyDecision && destinationFrameInfo->isMainFrame() && !hostsAreEqual(URL({ }, m_mainFrame->url()), request.url()) && navigationActionData.navigationType != WebCore::NavigationType::BackForward;
 
         auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), destinationFrameInfo.ptr(), std::nullopt, WTFMove(request), originalRequest.url(), shouldOpenAppLinks, WTFMove(userInitiatedActivity), mainFrameNavigation);
 
@@ -4178,7 +4178,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const Securi
             sourceFrameInfo = API::FrameInfo::create(*frame, frameSecurityOrigin.securityOrigin());
 
         auto userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-        bool shouldOpenAppLinks = !hostsAreEqual(URL(ParsedURLString, m_mainFrame->url()), request.url());
+        bool shouldOpenAppLinks = !hostsAreEqual(URL({ }, m_mainFrame->url()), request.url());
         auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), nullptr, frameName, WTFMove(request), URL { }, shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
         m_navigationClient->decidePolicyForNavigationAction(*this, navigationAction.get(), WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
@@ -4332,7 +4332,7 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
         reply(newPage->pageID(), newPage->creationParameters());
 
         WebsiteDataStore::cloneSessionData(*this, *newPage);
-        newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = hostsAreEqual(URL(ParsedURLString, mainFrameURL), request.url());
+        newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = hostsAreEqual(URL({ }, mainFrameURL), request.url());
     });
 }
     
@@ -5952,7 +5952,7 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
 
 #if PLATFORM(IOS)
     if (m_process->isUnderMemoryPressure()) {
-        String domain = WebCore::topPrivatelyControlledDomain(WebCore::URL(WebCore::ParsedURLString, currentURL()).host().toString());
+        String domain = WebCore::topPrivatelyControlledDomain(WebCore::URL({ }, currentURL()).host().toString());
         if (!domain.isEmpty())
             logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingJetsamKey(), domain, WebCore::ShouldSample::No);
     }

@@ -218,7 +218,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
     
     int result;
     while ((result = statement.step()) == SQLITE_ROW) {
-        URL manifestURL = URL(ParsedURLString, statement.getColumnText(1));
+        URL manifestURL = URL({ }, statement.getColumnText(1));
 
         if (m_cachesInMemory.contains(manifestURL))
             continue;
@@ -285,7 +285,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
     
     int result;
     while ((result = statement.step()) == SQLITE_ROW) {
-        URL manifestURL = URL(ParsedURLString, statement.getColumnText(1));
+        URL manifestURL = URL({ }, statement.getColumnText(1));
 
         if (m_cachesInMemory.contains(manifestURL))
             continue;
@@ -1109,7 +1109,7 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
 
     int result;
     while ((result = cacheStatement.step()) == SQLITE_ROW) {
-        URL url(ParsedURLString, cacheStatement.getColumnText(0));
+        URL url({ }, cacheStatement.getColumnText(0));
         
         int httpStatusCode = cacheStatement.getColumnInt(1);
 
@@ -1162,7 +1162,7 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
     
     Vector<URL> whitelist;
     while ((result = whitelistStatement.step()) == SQLITE_ROW) 
-        whitelist.append(URL(ParsedURLString, whitelistStatement.getColumnText(0)));
+        whitelist.append(URL({ }, whitelistStatement.getColumnText(0)));
 
     if (result != SQLITE_DONE)
         LOG_ERROR("Could not load cache online whitelist, error \"%s\"", m_database.lastErrorMsg());
@@ -1192,7 +1192,7 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
     
     FallbackURLVector fallbackURLs;
     while ((result = fallbackStatement.step()) == SQLITE_ROW) 
-        fallbackURLs.append(std::make_pair(URL(ParsedURLString, fallbackStatement.getColumnText(0)), URL(ParsedURLString, fallbackStatement.getColumnText(1))));
+        fallbackURLs.append(std::make_pair(URL({ }, fallbackStatement.getColumnText(0)), URL({ }, fallbackStatement.getColumnText(1))));
 
     if (result != SQLITE_DONE)
         LOG_ERROR("Could not load fallback URLs, error \"%s\"", m_database.lastErrorMsg());
@@ -1323,7 +1323,7 @@ std::optional<Vector<URL>> ApplicationCacheStorage::manifestURLs()
 
     Vector<URL> urls;
     while (selectURLs.step() == SQLITE_ROW)
-        urls.append(URL(ParsedURLString, selectURLs.getColumnText(0)));
+        urls.append(URL({ }, selectURLs.getColumnText(0)));
 
     return WTFMove(urls);
 }

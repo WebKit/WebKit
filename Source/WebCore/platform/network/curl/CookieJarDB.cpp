@@ -315,7 +315,7 @@ bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bo
     if (!isEnabled() || !m_database.isOpen())
         return false;
 
-    URL requestUrlObj(ParsedURLString, requestUrl);
+    URL requestUrlObj({ }, requestUrl);
     String requestHost(requestUrlObj.host().toString().convertToASCIILowercase());
     String requestPath(requestUrlObj.path().convertToASCIILowercase());
 
@@ -454,7 +454,7 @@ int CookieJarDB::setCookie(const String& url, const String& cookie, bool fromJav
     if (url.isEmpty() || cookie.isEmpty())
         return -1;
 
-    URL urlObj(ParsedURLString, url);
+    URL urlObj({ }, url);
     String host(urlObj.host().toString());
     String path(urlObj.path());
 
@@ -488,7 +488,7 @@ int CookieJarDB::deleteCookie(const String& url, const String& name)
     if (urlCopied.startsWith('.'))
         urlCopied.remove(0, 1);
 
-    URL urlObj(ParsedURLString, urlCopied);
+    URL urlObj({ }, urlCopied);
     if (urlObj.isValid()) {
         String hostStr(urlObj.host().toString());
         String pathStr(urlObj.path());

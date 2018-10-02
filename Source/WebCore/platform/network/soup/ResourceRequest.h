@@ -36,7 +36,7 @@ namespace WebCore {
     class ResourceRequest : public ResourceRequestBase {
     public:
         ResourceRequest(const String& url)
-            : ResourceRequestBase(URL(ParsedURLString, url), ResourceRequestCachePolicy::UseProtocolCachePolicy)
+            : ResourceRequestBase(URL({ }, url), ResourceRequestCachePolicy::UseProtocolCachePolicy)
             , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
             , m_initiatingPageID(0)

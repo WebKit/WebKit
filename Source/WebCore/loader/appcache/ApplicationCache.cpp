@@ -76,7 +76,7 @@ void ApplicationCache::addResource(Ref<ApplicationCacheResource>&& resource)
 {
     auto& url = resource->url();
 
-    ASSERT(!URL(ParsedURLString, url).hasFragmentIdentifier());
+    ASSERT(!URL({ }, url).hasFragmentIdentifier());
     ASSERT(!m_resources.contains(url));
 
     if (m_storageID) {
@@ -94,7 +94,7 @@ void ApplicationCache::addResource(Ref<ApplicationCacheResource>&& resource)
 
 ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
 {
-    ASSERT(!URL(ParsedURLString, url).hasFragmentIdentifier());
+    ASSERT(!URL({ }, url).hasFragmentIdentifier());
     return m_resources.get(url);
 }    
 

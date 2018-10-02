@@ -251,7 +251,7 @@ bool BlobRegistryImpl::populateBlobsForFileWriting(const Vector<String>& blobURL
         blobsForWriting.append({ });
         blobsForWriting.last().blobURL = url.isolatedCopy();
 
-        auto* blobData = getBlobDataFromURL({ ParsedURLString, url });
+        auto* blobData = getBlobDataFromURL({ { }, url });
         if (!blobData)
             return false;
 

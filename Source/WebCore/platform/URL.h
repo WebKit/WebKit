@@ -55,17 +55,11 @@ public:
 
 struct URLHash;
 
-enum ParsedURLStringTag { ParsedURLString };
-
 class URL {
 public:
     // Generates a URL which contains a null string.
     URL() { invalidate(); }
 
-    // The argument is an absolute URL string. The string is assumed to be output of URL::string() called on a valid
-    // URL object, or indiscernible from such.
-    // It is usually best to avoid repeatedly parsing a string, unless memory saving outweigh the possible slow-downs.
-    WEBCORE_EXPORT URL(ParsedURLStringTag, const String&);
     explicit URL(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return string().isHashTableDeletedValue(); }
 

@@ -708,7 +708,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     if (pages.size() == 1) {
         auto& page = *pages[0];
-        String domain = topPrivatelyControlledDomain(WebCore::URL(WebCore::ParsedURLString, page.currentURL()).host().toString());
+        String domain = topPrivatelyControlledDomain(WebCore::URL({ }, page.currentURL()).host().toString());
         if (!domain.isEmpty())
             page.logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingCrashKey(), domain, WebCore::ShouldSample::No);
     }

@@ -146,7 +146,7 @@ void NetworkBlobRegistry::writeBlobToFilePath(const URL& blobURL, const String& 
         return;
     }
 
-    auto blobFiles = filesInBlob({ ParsedURLString, blobURL });
+    auto blobFiles = filesInBlob({ { }, blobURL });
     for (auto& file : blobFiles)
         file->prepareForFileAccess();
 

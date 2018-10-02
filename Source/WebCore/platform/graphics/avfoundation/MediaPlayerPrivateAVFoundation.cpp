@@ -171,7 +171,7 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
     setNetworkState(m_preload == MediaPlayer::None ? MediaPlayer::Idle : MediaPlayer::Loading);
     setReadyState(MediaPlayer::HaveNothing);
 
-    m_assetURL = URL(ParsedURLString, url);
+    m_assetURL = URL({ }, url);
     m_requestedOrigin = SecurityOrigin::create(m_assetURL);
 
     // Don't do any more work if the url is empty.

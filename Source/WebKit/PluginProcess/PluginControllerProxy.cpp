@@ -470,12 +470,12 @@ void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const Stri
 
 void PluginControllerProxy::streamWillSendRequest(uint64_t streamID, const String& requestURLString, const String& redirectResponseURLString, uint32_t redirectResponseStatusCode)
 {
-    m_plugin->streamWillSendRequest(streamID, URL(ParsedURLString, requestURLString), URL(ParsedURLString, redirectResponseURLString), redirectResponseStatusCode);
+    m_plugin->streamWillSendRequest(streamID, URL({ }, requestURLString), URL({ }, redirectResponseURLString), redirectResponseStatusCode);
 }
 
 void PluginControllerProxy::streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
-    m_plugin->streamDidReceiveResponse(streamID, URL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers, String());
+    m_plugin->streamDidReceiveResponse(streamID, URL({ }, responseURLString), streamLength, lastModifiedTime, mimeType, headers, String());
 }
 
 void PluginControllerProxy::streamDidReceiveData(uint64_t streamID, const IPC::DataReference& data)
@@ -498,7 +498,7 @@ void PluginControllerProxy::manualStreamDidReceiveResponse(const String& respons
     if (m_pluginCanceledManualStreamLoad)
         return;
 
-    m_plugin->manualStreamDidReceiveResponse(URL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers, String());
+    m_plugin->manualStreamDidReceiveResponse(URL({ }, responseURLString), streamLength, lastModifiedTime, mimeType, headers, String());
 }
 
 void PluginControllerProxy::manualStreamDidReceiveData(const IPC::DataReference& data)

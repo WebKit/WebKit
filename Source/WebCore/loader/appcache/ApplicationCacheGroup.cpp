@@ -896,7 +896,7 @@ void ApplicationCacheGroup::startLoadingEntry()
     ASSERT(!m_manifestLoader);
     ASSERT(!m_entryLoader);
 
-    auto request = createRequest(URL { ParsedURLString, firstPendingEntryURL }, m_newestCache ? m_newestCache->resourceForURL(firstPendingEntryURL) : nullptr);
+    auto request = createRequest(URL { { }, firstPendingEntryURL }, m_newestCache ? m_newestCache->resourceForURL(firstPendingEntryURL) : nullptr);
 
     m_currentResourceIdentifier = m_frame->page()->progress().createUniqueIdentifier();
     InspectorInstrumentation::willSendRequest(m_frame, m_currentResourceIdentifier, m_frame->loader().documentLoader(), request, ResourceResponse { });
@@ -937,7 +937,7 @@ void ApplicationCacheGroup::deliverDelayedMainResources()
 void ApplicationCacheGroup::addEntry(const String& url, unsigned type)
 {
     ASSERT(m_cacheBeingUpdated);
-    ASSERT(!URL(ParsedURLString, url).hasFragmentIdentifier());
+    ASSERT(!URL({ }, url).hasFragmentIdentifier());
 
     // Don't add the URL if we already have an master resource in the cache
     // (i.e., the main resource finished loading before the manifest).

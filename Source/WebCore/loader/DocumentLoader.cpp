@@ -1411,7 +1411,7 @@ Vector<Ref<ArchiveResource>> DocumentLoader::subresources() const
 
     Vector<Ref<ArchiveResource>> subresources;
     for (auto& handle : m_cachedResourceLoader->allCachedResources().values()) {
-        if (auto subresource = this->subresource({ ParsedURLString, handle->url() }))
+        if (auto subresource = this->subresource({ { }, handle->url() }))
             subresources.append(subresource.releaseNonNull());
     }
     return subresources;

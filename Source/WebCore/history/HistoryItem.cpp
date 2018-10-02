@@ -174,12 +174,12 @@ bool HistoryItem::hasCachedPageExpired() const
 
 URL HistoryItem::url() const
 {
-    return URL(ParsedURLString, m_urlString);
+    return URL({ }, m_urlString);
 }
 
 URL HistoryItem::originalURL() const
 {
-    return URL(ParsedURLString, m_originalURLString);
+    return URL({ }, m_originalURLString);
 }
 
 const String& HistoryItem::referrer() const

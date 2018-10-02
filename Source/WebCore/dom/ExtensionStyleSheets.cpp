@@ -140,7 +140,7 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     
     if (!owningPage->captionUserPreferencesStyleSheet().isEmpty()) {
         // Identify our override style sheet with a unique URL - a new scheme and a UUID.
-        static NeverDestroyed<URL> captionsStyleSheetURL(ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23");
+        static NeverDestroyed<URL> captionsStyleSheetURL(URL(), "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23");
 
         auto sheet = createExtensionsStyleSheet(const_cast<Document&>(m_document), captionsStyleSheetURL, owningPage->captionUserPreferencesStyleSheet(), UserStyleAuthorLevel);
 

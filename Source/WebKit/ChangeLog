@@ -1,3 +1,53 @@
+2018-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ParsedURLString
+        https://bugs.webkit.org/show_bug.cgi?id=190154
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::writeBlobToFilePath):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::streamWillSendRequest):
+        (WebKit::PluginControllerProxy::streamDidReceiveResponse):
+        (WebKit::PluginControllerProxy::manualStreamDidReceiveResponse):
+        * Shared/API/APIUserContentURLPattern.h:
+        (API::UserContentURLPattern::matchesURL const):
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::itemIsInSameDocument const):
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest):
+        (WebKit::RemoteInspectorProtocolHandler::targetListChanged):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::openURL):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::processDidTerminate):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::addProcessToOriginCacheSet):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::createShareMenuItem):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addUserScript):
+        (WebKit::InjectedBundle::addUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScript):
+        (WebKit::InjectedBundle::removeUserStyleSheet):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::decode):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::url):
+        (WebKit::WebPlatformStrategies::readURLFromPasteboard):
+
 2018-10-01  Dean Jackson  <dino@apple.com>
 
         Remove CSS Animation Triggers

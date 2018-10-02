@@ -73,7 +73,7 @@ URL BlobURL::createBlobURL(const String& originString)
 {
     ASSERT(!originString.isEmpty());
     String urlString = "blob:" + originString + '/' + createCanonicalUUIDString();
-    return URL(ParsedURLString, urlString);
+    return URL({ }, urlString);
 }
 
 } // namespace WebCore

@@ -270,13 +270,13 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem()
     auto items = adoptNS([[NSMutableArray alloc] init]);
 
     if (!hitTestData.absoluteLinkURL.isEmpty()) {
-        auto absoluteLinkURL = URL(ParsedURLString, hitTestData.absoluteLinkURL);
+        auto absoluteLinkURL = URL({ }, hitTestData.absoluteLinkURL);
         if (!absoluteLinkURL.isEmpty())
             [items addObject:(NSURL *)absoluteLinkURL];
     }
 
     if (hitTestData.isDownloadableMedia && !hitTestData.absoluteMediaURL.isEmpty()) {
-        auto downloadableMediaURL = URL(ParsedURLString, hitTestData.absoluteMediaURL);
+        auto downloadableMediaURL = URL({ }, hitTestData.absoluteMediaURL);
         if (!downloadableMediaURL.isEmpty())
             [items addObject:(NSURL *)downloadableMediaURL];
     }

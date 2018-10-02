@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 
 static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
 {
-    String uaString = standardUserAgentForURL(URL(ParsedURLString, url));
+    String uaString = standardUserAgentForURL(URL({ }, url));
 
     EXPECT_TRUE(uaString.contains("Chrome"));
     EXPECT_TRUE(uaString.contains("Safari"));
@@ -44,7 +44,7 @@ static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
 
 static void assertUserAgentForURLHasLinuxPlatformQuirk(const char* url)
 {
-    String uaString = standardUserAgentForURL(URL(ParsedURLString, url));
+    String uaString = standardUserAgentForURL(URL({ }, url));
 
     EXPECT_TRUE(uaString.contains("Linux"));
     EXPECT_FALSE(uaString.contains("Macintosh"));
@@ -56,7 +56,7 @@ static void assertUserAgentForURLHasLinuxPlatformQuirk(const char* url)
 
 static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
 {
-    String uaString = standardUserAgentForURL(URL(ParsedURLString, url));
+    String uaString = standardUserAgentForURL(URL({ }, url));
 
     EXPECT_TRUE(uaString.contains("Macintosh"));
     EXPECT_TRUE(uaString.contains("Mac OS X"));
@@ -69,12 +69,12 @@ static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
 TEST(UserAgentTest, Quirks)
 {
     // A site with not quirks should return a null String.
-    String uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.webkit.org/"));
+    String uaString = standardUserAgentForURL(URL({ }, "http://www.webkit.org/"));
     EXPECT_TRUE(uaString.isNull());
 
 #if !OS(LINUX) || !CPU(X86_64)
     // Google quirk should not affect sites with similar domains.
-    uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.googleblog.com/"));
+    uaString = standardUserAgentForURL(URL({ }, "http://www.googleblog.com/"));
     EXPECT_FALSE(uaString.contains("Linux x86_64"));
 #endif
 

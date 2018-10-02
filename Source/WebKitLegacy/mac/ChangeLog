@@ -1,3 +1,13 @@
+2018-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ParsedURLString
+        https://bugs.webkit.org/show_bug.cgi?id=190154
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebScriptDebugger.mm:
+        (toNSURL):
+
 2018-10-01  Dean Jackson  <dino@apple.com>
 
         Remove CSS Animation Triggers

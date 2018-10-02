@@ -83,7 +83,7 @@ String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
     static NeverDestroyed<String> sourceMapHTTPHeaderDeprecated(MAKE_STATIC_STRING_IMPL("X-SourceMap"));
 
     if (!script.url.isEmpty()) {
-        CachedResource* resource = m_pageAgent->cachedResource(&m_page.mainFrame(), URL(ParsedURLString, script.url));
+        CachedResource* resource = m_pageAgent->cachedResource(&m_page.mainFrame(), URL({ }, script.url));
         if (resource) {
             String sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeader);
             if (!sourceMapHeader.isEmpty())
