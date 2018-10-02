@@ -59,7 +59,7 @@ static const unsigned jitAllocationGranule = 32;
 
 typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(JIT)
 
 extern JS_EXPORT_PRIVATE void* taggedStartOfFixedExecutableMemoryPool;
 extern JS_EXPORT_PRIVATE void* taggedEndOfFixedExecutableMemoryPool;
@@ -158,8 +158,44 @@ private:
 };
 
 #else
+
+class ExecutableAllocator {
+    enum ProtectionSetting { Writable, Executable };
+
+public:
+    static ExecutableAllocator& singleton();
+    static void initializeAllocator();
+
+    bool isValid() const { return false; }
+
+    static bool underMemoryPressure() { return false; }
+
+    static double memoryPressureMultiplier(size_t) { return 1.0; }
+
+    static void dumpProfile() { }
+
+    RefPtr<ExecutableMemoryHandle> allocate(size_t, void*, JITCompilationEffort) { return nullptr; }
+
+    bool isValidExecutableMemory(const AbstractLocker&, void*) { return false; }
+
+    static size_t committedByteCount() { return 0; }
+
+    Lock& getLock() const
+    {
+        return m_lock;
+    }
+
+private:
+    mutable Lock m_lock;
+};
+
+static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
+{
+    return memcpy(dst, src, n);
+}
+
 inline bool isJITPC(void*) { return false; }
-#endif // ENABLE(ASSEMBLER)
+#endif // ENABLE(JIT)
 
 
 } // namespace JSC

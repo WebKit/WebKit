@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ExecutableAllocator.h"
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(JIT)
 
 #include "CodeProfiling.h"
 #include "ExecutableAllocationFuzz.h"
@@ -497,4 +497,23 @@ void ExecutableAllocator::dumpProfile()
 
 }
 
-#endif // ENABLE(ASSEMBLER)
+#else // !ENABLE(JIT)
+
+namespace JSC {
+
+static ExecutableAllocator* executableAllocator;
+
+void ExecutableAllocator::initializeAllocator()
+{
+    executableAllocator = new ExecutableAllocator;
+}
+
+ExecutableAllocator& ExecutableAllocator::singleton()
+{
+    ASSERT(executableAllocator);
+    return *executableAllocator;
+}
+
+} // namespace JSC
+
+#endif // ENABLE(JIT)
