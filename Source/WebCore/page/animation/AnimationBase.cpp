@@ -228,10 +228,6 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 m_pauseTime = std::nullopt;
             }
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-            if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger())
-                m_compositeAnimation->animationController().addToAnimationsDependentOnScroll(this);
-#endif
             break;
         case AnimationState::StartWaitTimer:
             ASSERT(input == AnimationStateInput::StartTimerFired || input == AnimationStateInput::PlayStatePaused);
@@ -493,30 +489,12 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     
     // Check for start timeout
     if (m_animationState == AnimationState::StartWaitTimer) {
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-        if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
-            if (m_element) {
-                float offset = m_compositeAnimation->animationController().scrollPosition();
-                auto& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger());
-                if (offset > scrollTrigger.startValue().value())
-                    updateStateMachine(AnimationStateInput::StartTimerFired, 0);
-            }
-
-            return;
-        }
-#endif
         if (beginAnimationUpdateTime() - m_requestedStartTime >= m_animation->delay())
             updateStateMachine(AnimationStateInput::StartTimerFired, 0);
         return;
     }
 
     double elapsedDuration = beginAnimationUpdateTime() - m_startTime.value_or(0);
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    // If we are a triggered animation that depends on scroll, our elapsed
-    // time is determined by the scroll position.
-    if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger())
-        elapsedDuration = getElapsedTime();
-#endif
 
     // FIXME: we need to ensure that elapsedDuration is never < 0. If it is, this suggests that
     // we had a recalcStyle() outside of beginAnimationUpdate()/endAnimationUpdate().
@@ -576,17 +554,6 @@ std::optional<Seconds> AnimationBase::timeToNextService()
         return std::nullopt;
     
     if (m_animationState == AnimationState::StartWaitTimer) {
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-        if (m_animation->trigger()->isScrollAnimationTrigger()) {
-            if (m_element) {
-                float currentScrollPosition = m_element->document().view()->scrollPositionForFixedPosition().y().toFloat();
-                auto& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger());
-                if (currentScrollPosition >= scrollTrigger.startValue().value() && (!scrollTrigger.hasEndValue() || currentScrollPosition <= scrollTrigger.endValue().value()))
-                    return 0_s;
-            }
-            return std::nullopt;
-        }
-#endif
         double timeFromNow = m_animation->delay() - (beginAnimationUpdateTime() - m_requestedStartTime);
         return std::max(Seconds { timeFromNow }, 0_s);
     }
@@ -726,22 +693,6 @@ double AnimationBase::beginAnimationUpdateTime() const
 
 double AnimationBase::getElapsedTime() const
 {
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
-        auto& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger());
-        if (scrollTrigger.hasEndValue() && m_element) {
-            float offset = m_compositeAnimation->animationController().scrollPosition();
-            float startValue = scrollTrigger.startValue().value();
-            if (offset < startValue)
-                return 0;
-            float endValue = scrollTrigger.endValue().value();
-            if (offset > endValue)
-                return m_animation->duration();
-            return m_animation->duration() * (offset - startValue) / (endValue - startValue);
-        }
-    }
-#endif
-
     if (paused()) {
         double delayOffset = (!m_startTime && m_animation->delay() < 0) ? m_animation->delay() : 0;
         return m_pauseTime.value_or(0) - m_startTime.value_or(0) - delayOffset;

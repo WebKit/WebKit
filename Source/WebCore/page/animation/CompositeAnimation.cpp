@@ -209,10 +209,6 @@ void CompositeAnimation::updateKeyframeAnimations(Element& element, const Render
     if (currentStyle && currentStyle->hasAnimations() && targetStyle.hasAnimations() && *(currentStyle->animations()) == *(targetStyle.animations()))
         return;
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    m_hasScrollTriggeredAnimation = false;
-#endif
-
     AnimationNameMap newAnimations;
 
     // Toss the animation order map.
@@ -238,11 +234,6 @@ void CompositeAnimation::updateKeyframeAnimations(Element& element, const Render
                 if (keyframeAnim->postActive())
                     continue;
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-                if (animation.trigger()->isScrollAnimationTrigger())
-                    m_hasScrollTriggeredAnimation = true;
-#endif
-
                 // Animations match, but play states may differ. Update if needed.
                 keyframeAnim->updatePlayState(animation.playState());
 
@@ -259,11 +250,6 @@ void CompositeAnimation::updateKeyframeAnimations(Element& element, const Render
 #if !LOG_DISABLED
                 for (auto propertyID : keyframeAnim->keyframes().properties())
                     LOG(Animations, "  property %s", getPropertyName(propertyID));
-#endif
-
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-                if (animation.trigger()->isScrollAnimationTrigger())
-                    m_hasScrollTriggeredAnimation = true;
 #endif
 
                 newAnimations.set(keyframeAnim->name().impl(), keyframeAnim);

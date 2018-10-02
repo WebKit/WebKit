@@ -579,9 +579,6 @@ void CSSAnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animat
 
     removeFromAnimationsWaitingForStyle(animation);
     removeFromAnimationsWaitingForStartTimeResponse(animation);
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    removeFromAnimationsDependentOnScroll(animation);
-#endif
 
     bool anyAnimationsWaitingForAsyncStart = false;
     for (auto& animation : m_animationsWaitingForStartTimeResponse) {
@@ -594,33 +591,6 @@ void CSSAnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animat
     if (!anyAnimationsWaitingForAsyncStart)
         m_waitingForAsyncStartNotification = false;
 }
-
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-void CSSAnimationControllerPrivate::addToAnimationsDependentOnScroll(AnimationBase* animation)
-{
-    m_animationsDependentOnScroll.add(animation);
-}
-
-void CSSAnimationControllerPrivate::removeFromAnimationsDependentOnScroll(AnimationBase* animation)
-{
-    m_animationsDependentOnScroll.remove(animation);
-}
-
-void CSSAnimationControllerPrivate::scrollWasUpdated()
-{
-    auto* view = m_frame.view();
-    if (!view || !wantsScrollUpdates())
-        return;
-
-    m_scrollPosition = view->scrollPositionForFixedPosition().y().toFloat();
-
-    // FIXME: This is updating all the animations, rather than just the ones
-    // that are dependent on scroll. We to go from our AnimationBase to its CompositeAnimation
-    // so we can execute code similar to updateAnimations.
-    // https://bugs.webkit.org/show_bug.cgi?id=144170
-    updateAnimations(CallSetChanged);
-}
-#endif
 
 CSSAnimationController::CSSAnimationController(Frame& frame)
     : m_data(std::make_unique<CSSAnimationControllerPrivate>(frame))
@@ -823,18 +793,6 @@ bool CSSAnimationController::supportsAcceleratedAnimationOfProperty(CSSPropertyI
 {
     return CSSPropertyAnimation::animationOfPropertyIsAccelerated(property);
 }
-
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-bool CSSAnimationController::wantsScrollUpdates() const
-{
-    return m_data->wantsScrollUpdates();
-}
-
-void CSSAnimationController::scrollWasUpdated()
-{
-    m_data->scrollWasUpdated();
-}
-#endif
 
 bool CSSAnimationController::hasAnimations() const
 {

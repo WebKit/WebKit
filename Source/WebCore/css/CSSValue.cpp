@@ -28,7 +28,6 @@
 #include "config.h"
 #include "CSSValue.h"
 
-#include "CSSAnimationTriggerScrollValue.h"
 #include "CSSAspectRatioValue.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSCalculationValue.h"
@@ -200,10 +199,6 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSCalcValue>(*this, other);
         case ImageSetClass:
             return compareCSSValues<CSSImageSetValue>(*this, other);
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-        case AnimationTriggerScrollClass:
-            return compareCSSValues<CSSAnimationTriggerScrollValue>(*this, other);
-#endif
         case CSSContentDistributionClass:
             return compareCSSValues<CSSContentDistributionValue>(*this, other);
         case CustomPropertyClass:
@@ -302,10 +297,6 @@ String CSSValue::cssText() const
         return downcast<CSSCalcValue>(*this).customCSSText();
     case ImageSetClass:
         return downcast<CSSImageSetValue>(*this).customCSSText();
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    case AnimationTriggerScrollClass:
-        return downcast<CSSAnimationTriggerScrollValue>(*this).customCSSText();
-#endif
     case CSSContentDistributionClass:
         return downcast<CSSContentDistributionValue>(*this).customCSSText();
     case CustomPropertyClass:
@@ -436,11 +427,6 @@ void CSSValue::destroy()
     case FilterImageClass:
         delete downcast<CSSFilterImageValue>(this);
         return;
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    case AnimationTriggerScrollClass:
-        delete downcast<CSSAnimationTriggerScrollValue>(this);
-        return;
-#endif
     case CSSContentDistributionClass:
         delete downcast<CSSContentDistributionValue>(this);
         return;

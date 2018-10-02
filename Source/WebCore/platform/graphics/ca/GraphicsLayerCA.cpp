@@ -1009,15 +1009,6 @@ bool GraphicsLayerCA::animationCanBeAccelerated(const KeyframeValueList& valueLi
     if (animationHasFramesTimingFunction(valueList, anim))
         return false;
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    // If there is a trigger that depends on the scroll position, we cannot accelerate the animation.
-    if (is<ScrollAnimationTrigger>(anim->trigger())) {
-        auto& scrollTrigger = downcast<ScrollAnimationTrigger>(*anim->trigger());
-        if (scrollTrigger.hasEndValue())
-            return false;
-    }
-#endif
-
     return true;
 }
 

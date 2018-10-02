@@ -218,10 +218,6 @@ fast/history/page-cache-media-source-closed.html [ Skip ]
 fast/history/page-cache-media-source-opened.html [ Skip ]
 fast/history/page-cache-removed-source-buffer.html [ Skip ]
 
-# TODO Animation triggers not supported
-animations/trigger-container-scroll-boundaries.html [ Failure ]
-legacy-animation-engine/animations/trigger-container-scroll-boundaries.html [ Failure ]
-
 # Quota API is not supported on iOS
 storage/domstorage/quota.html
 storage/storageinfo-missing-arguments.html

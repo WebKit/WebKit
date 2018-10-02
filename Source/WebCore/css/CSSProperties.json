@@ -4141,16 +4141,6 @@
             },
             "status": "non-standard"
         },
-        "-webkit-animation-trigger": {
-            "animatable": true,
-            "codegen-properties": {
-                "name-for-methods": "Trigger",
-                "enable-if": "ENABLE_CSS_ANIMATIONS_LEVEL_2"
-            },
-            "status": {
-                "status": "experimental"
-            }
-        },
         "-webkit-appearance": {
             "values": [
                 "checkbox",

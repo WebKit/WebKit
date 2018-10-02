@@ -187,11 +187,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     }
 #endif
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    if (preference == "WebKitCSSAnimationTriggersEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(enabled);
-#endif
-
     if (preference == "WebKitWebAnimationsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
 
@@ -634,15 +629,6 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(WebPageGroup
 void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)
 {
     page->corePage()->setTabKeyCyclesThroughElements(enabled);
-}
-
-void InjectedBundle::setCSSAnimationTriggersEnabled(bool enabled)
-{
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
 }
 
 void InjectedBundle::setWebAnimationsEnabled(bool enabled)

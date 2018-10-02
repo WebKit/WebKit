@@ -238,12 +238,6 @@ public:
     bool gamepadsEnabled() const { return m_areGamepadsEnabled; }
 #endif
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    // FIXME: This is not used.
-    void setAnimationTriggersEnabled(bool areEnabled) { m_areAnimationTriggersEnabled = areEnabled; }
-    bool animationTriggersEnabled() const { return m_areAnimationTriggersEnabled; }
-#endif
-
 #if ENABLE(WEBGL2)
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
@@ -389,10 +383,6 @@ private:
 
 #if ENABLE(GAMEPAD)
     bool m_areGamepadsEnabled { false };
-#endif
-
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool m_areAnimationTriggersEnabled { false };
 #endif
 
 #if ENABLE(STREAMS_API)

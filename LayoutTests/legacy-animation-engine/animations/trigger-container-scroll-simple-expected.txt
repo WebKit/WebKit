@@ -1,6 +1,0 @@
-This element should begin animating only when the page scrolls to 20px from the top. The animation is almost instantaneous, so it will snap to its final position. Remember to scroll to the top of the page before reloading!
-
-Value before animation is applied: 0px (should be 0px)
-Value with animation but no scroll: 0px (should be 0px)
-Value with animation after scroll: 100px (should be 100px)
-

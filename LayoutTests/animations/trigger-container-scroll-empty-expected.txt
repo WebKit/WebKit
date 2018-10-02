@@ -1,6 +1,0 @@
-This element should begin animating only when the page scrolls to 20px from the top. It specifies an end value, but that should be ignored because it is not greater than the start. This means the animation will run to completion rather than take the scroll value as input. Remember to scroll to the top of the page before reloading!
-
-Value before animation is applied: 0px (should be 0px)
-Value with animation but no scroll: 0px (should be 0px)
-PASS: Animation was not depending on scroll.
-

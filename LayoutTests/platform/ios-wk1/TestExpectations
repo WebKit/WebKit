@@ -1016,8 +1016,6 @@ animations/stop-animation-on-suspend.html [ Pass Failure ]
 legacy-animation-engine/animations/stop-animation-on-suspend.html [ Pass Failure ]
 animations/suspend-resume-animation-events.html [ Pass Failure ]
 legacy-animation-engine/animations/suspend-resume-animation-events.html [ Pass Failure ]
-animations/trigger-container-scroll-empty.html [ Failure ]
-legacy-animation-engine/animations/trigger-container-scroll-empty.html [ Failure ]
 
 # IndexedDB is not supported on iOS WK1.
 storage/indexeddb

@@ -92,13 +92,6 @@ Accelerated2dCanvasEnabled:
   type: bool
   defaultValue: false
 
-CSSAnimationTriggersEnabled:
-  type: bool
-  defaultValue: false
-  webcoreBinding: RuntimeEnabledFeatures
-  webcoreName: animationTriggersEnabled
-  condition: ENABLE(CSS_ANIMATIONS_LEVEL_2)
-
 ForceFTPDirectoryListings:
   type: bool
   defaultValue: false

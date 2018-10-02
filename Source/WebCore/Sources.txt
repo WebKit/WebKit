@@ -545,7 +545,6 @@ crypto/keys/CryptoKeyRSAComponents.cpp
 crypto/keys/CryptoKeyRaw.cpp
 
 css/BasicShapeFunctions.cpp
-css/CSSAnimationTriggerScrollValue.cpp
 css/CSSAspectRatioValue.cpp
 css/CSSBasicShapes.cpp
 css/CSSBorderImage.cpp

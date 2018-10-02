@@ -1053,16 +1053,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->viewGestureDebuggingEnabled();
 }
 
-- (void)_setCSSAnimationTriggersEnabled:(BOOL)enabled
-{
-    _preferences->setCSSAnimationTriggersEnabled(enabled);
-}
-
-- (BOOL)_cssAnimationTriggersEnabled
-{
-    return _preferences->cssAnimationTriggersEnabled();
-}
-
 - (void)_setWebAnimationsCSSIntegrationEnabled:(BOOL)enabled
 {
     _preferences->setWebAnimationsCSSIntegrationEnabled(enabled);

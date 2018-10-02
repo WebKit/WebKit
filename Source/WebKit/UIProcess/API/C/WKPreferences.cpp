@@ -509,16 +509,6 @@ bool WKPreferencesGetAccelerated2DCanvasEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->accelerated2dCanvasEnabled();
 }
 
-void WKPreferencesSetCSSAnimationTriggersEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setCSSAnimationTriggersEnabled(flag);
-}
-
-bool WKPreferencesGetCSSAnimationTriggersEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->cssAnimationTriggersEnabled();
-}
-
 void WKPreferencesSetWebAnimationsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebAnimationsEnabled(flag);

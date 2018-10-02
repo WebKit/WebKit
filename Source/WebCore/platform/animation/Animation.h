@@ -29,10 +29,6 @@
 #include "StyleScope.h"
 #include "TimingFunction.h"
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-#include "AnimationTrigger.h"
-#endif
-
 namespace WebCore {
 
 class Animation : public RefCounted<Animation> {
@@ -51,9 +47,6 @@ public:
     bool isPlayStateSet() const { return m_playStateSet; }
     bool isPropertySet() const { return m_propertySet; }
     bool isTimingFunctionSet() const { return m_timingFunctionSet; }
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool isTriggerSet() const { return m_triggerSet; }
-#endif
 
     // Flags this to be the special "none" animation (animation-name: none)
     bool isNoneAnimation() const { return m_isNone; }
@@ -64,10 +57,6 @@ public:
 
     bool isEmpty() const
     {
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-        if (m_triggerSet)
-            return false;
-#endif
         return !m_directionSet && !m_durationSet && !m_fillModeSet
             && !m_nameSet && !m_playStateSet && !m_iterationCountSet
             && !m_delaySet && !m_timingFunctionSet && !m_propertySet;
@@ -87,9 +76,6 @@ public:
     void clearPlayState() { m_playStateSet = false; }
     void clearProperty() { m_propertySet = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; }
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    void clearTrigger() { m_triggerSet = false; }
-#endif
 
     void clearAll()
     {
@@ -102,9 +88,6 @@ public:
         clearPlayState();
         clearProperty();
         clearTimingFunction();
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-        clearTrigger();
-#endif
     }
 
     double delay() const { return m_delay; }
@@ -139,9 +122,6 @@ public:
     const String& unknownProperty() const { return m_unknownProperty; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     AnimationMode animationMode() const { return static_cast<AnimationMode>(m_mode); }
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    AnimationTrigger* trigger() const { return m_trigger.get(); }
-#endif
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(AnimationDirection d) { m_direction = d; m_directionSet = true; }
@@ -159,9 +139,6 @@ public:
     void setUnknownProperty(const String& property) { m_unknownProperty = property; }
     void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
     void setAnimationMode(AnimationMode mode) { m_mode = static_cast<unsigned>(mode); }
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    void setTrigger(RefPtr<AnimationTrigger>&& trigger) { m_trigger = WTFMove(trigger); m_triggerSet = true; }
-#endif
 
     void setIsNoneAnimation(bool n) { m_isNone = n; }
 
@@ -190,9 +167,6 @@ private:
     double m_delay;
     double m_duration;
     RefPtr<TimingFunction> m_timingFunction;
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    RefPtr<AnimationTrigger> m_trigger;
-#endif
 
     Style::ScopeOrdinal m_nameStyleScopeOrdinal { Style::ScopeOrdinal::Element };
 
@@ -210,9 +184,6 @@ private:
     bool m_playStateSet : 1;
     bool m_propertySet : 1;
     bool m_timingFunctionSet : 1;
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool m_triggerSet : 1;
-#endif
 
     bool m_isNone : 1;
 
@@ -226,9 +197,6 @@ public:
     static AnimationPlayState initialPlayState() { return AnimationPlayState::Playing; }
     static CSSPropertyID initialProperty() { return CSSPropertyInvalid; }
     static Ref<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    static Ref<AnimationTrigger> initialTrigger() { return AutoAnimationTrigger::create(); }
-#endif
 };
 
 } // namespace WebCore

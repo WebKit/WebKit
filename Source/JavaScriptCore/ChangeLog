@@ -1,3 +1,13 @@
+2018-10-01  Dean Jackson  <dino@apple.com>
+
+        Remove CSS Animation Triggers
+        https://bugs.webkit.org/show_bug.cgi?id=190175
+        <rdar://problem/44925626>
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-10-02  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] BigInt.proptotype.toString is broken when radix is power of 2

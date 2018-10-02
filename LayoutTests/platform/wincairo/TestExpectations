@@ -1332,16 +1332,6 @@ webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Fail
 webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 webkit.org/b/49182 legacy-animation-engine/animations/stop-animation-on-suspend.html [ Pass Failure ]
 
-# TODO Animation triggers not supported
-animations/trigger-computed-style.html [ Skip ]
-legacy-animation-engine/animations/trigger-computed-style.html [ Skip ]
-animations/trigger-parsing.html [ Skip ]
-legacy-animation-engine/animations/trigger-parsing.html [ Skip ]
-animations/trigger-container-scroll-simple.html [ Skip ]
-legacy-animation-engine/animations/trigger-container-scroll-simple.html [ Skip ]
-animations/trigger-container-scroll-boundaries.html [ Skip ]
-legacy-animation-engine/animations/trigger-container-scroll-boundaries.html [ Skip ]
-
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 

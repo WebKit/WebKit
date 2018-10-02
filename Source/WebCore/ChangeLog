@@ -1,3 +1,81 @@
+2018-10-01  Dean Jackson  <dino@apple.com>
+
+        Remove CSS Animation Triggers
+        https://bugs.webkit.org/show_bug.cgi?id=190175
+        <rdar://problem/44925626>
+
+        Reviewed by Simon Fraser.
+
+        Remove the never-properly specified CSS Animation Triggers.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAnimationTriggerScrollValue.cpp: Removed.
+        * css/CSSAnimationTriggerScrollValue.h: Removed.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        (WebCore::createAnimationTriggerValue): Deleted.
+        (WebCore::animationTriggerValue): Deleted.
+        * css/CSSProperties.json:
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationTrigger): Deleted.
+        * css/CSSToStyleMap.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals const):
+        (WebCore::CSSValue::cssText const):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isAnimationTriggerScrollValue const): Deleted.
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeAnimationValue):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::consumeWebkitAnimationTrigger): Deleted.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendScrollEvent):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setAnimationTriggersEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::animationTriggersEnabled const): Deleted.
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::timeToNextService):
+        (WebCore::AnimationBase::getElapsedTime const):
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::animationWillBeRemoved):
+        (WebCore::CSSAnimationControllerPrivate::addToAnimationsDependentOnScroll): Deleted.
+        (WebCore::CSSAnimationControllerPrivate::removeFromAnimationsDependentOnScroll): Deleted.
+        (WebCore::CSSAnimationControllerPrivate::scrollWasUpdated): Deleted.
+        (WebCore::CSSAnimationController::wantsScrollUpdates const): Deleted.
+        (WebCore::CSSAnimationController::scrollWasUpdated): Deleted.
+        * page/animation/CSSAnimationController.h:
+        * page/animation/CSSAnimationControllerPrivate.h:
+        (WebCore::CSSAnimationControllerPrivate::wantsScrollUpdates const): Deleted.
+        (WebCore::CSSAnimationControllerPrivate::scrollPosition const): Deleted.
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::hasScrollTriggeredAnimation const): Deleted.
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::Animation):
+        (WebCore::Animation::operator=):
+        (WebCore::Animation::animationsMatch const):
+        * platform/animation/Animation.h:
+        (WebCore::Animation::isTimingFunctionSet const):
+        (WebCore::Animation::isEmpty const):
+        (WebCore::Animation::clearTimingFunction):
+        (WebCore::Animation::clearAll):
+        (WebCore::Animation::animationMode const):
+        (WebCore::Animation::setAnimationMode):
+        (WebCore::Animation::initialTimingFunction):
+        (WebCore::Animation::isTriggerSet const): Deleted.
+        (WebCore::Animation::clearTrigger): Deleted.
+        (WebCore::Animation::trigger const): Deleted.
+        (WebCore::Animation::setTrigger): Deleted.
+        (WebCore::Animation::initialTrigger): Deleted.
+        * platform/animation/AnimationTrigger.h: Removed.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::animationCanBeAccelerated const):
 2018-10-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r236624 and r236671.

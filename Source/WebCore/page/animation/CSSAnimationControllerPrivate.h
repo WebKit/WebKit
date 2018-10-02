@@ -108,15 +108,6 @@ public:
 
     void setRequiresLayout() { m_requiresLayout = true; }
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool wantsScrollUpdates() const { return !m_animationsDependentOnScroll.isEmpty(); }
-    void addToAnimationsDependentOnScroll(AnimationBase*);
-    void removeFromAnimationsDependentOnScroll(AnimationBase*);
-
-    void scrollWasUpdated();
-    float scrollPosition() const { return m_scrollPosition; }
-#endif
-
 private:
     void animationTimerFired();
 
@@ -155,11 +146,6 @@ private:
     // behavior of allowing new transitions and animations to
     // run even when this object is suspended.
     bool m_allowsNewAnimationsWhileSuspended;
-
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    AnimationsSet m_animationsDependentOnScroll;
-    float m_scrollPosition { 0 };
-#endif
 };
 
 } // namespace WebCore

@@ -80,10 +80,6 @@ public:
     bool pauseTransitionAtTime(CSSPropertyID, double);
     unsigned numberOfActiveAnimations() const;
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool hasScrollTriggeredAnimation() const { return m_hasScrollTriggeredAnimation; }
-#endif
-
     bool hasAnimationThatDependsOnLayout() const { return m_hasAnimationThatDependsOnLayout; }
 
 private:
@@ -97,9 +93,6 @@ private:
 
     bool m_suspended { false };
     bool m_hasAnimationThatDependsOnLayout { false };
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool m_hasScrollTriggeredAnimation { false };
-#endif
 
     CSSAnimationControllerPrivate& m_animationController;
     CSSPropertyTransitionsMap m_transitions;

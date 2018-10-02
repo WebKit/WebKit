@@ -112,10 +112,6 @@ public:
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool isAnimationTriggerScrollValue() const { return m_classType == AnimationTriggerScrollClass; }
-#endif
-
     bool isCustomIdentValue() const { return m_classType == CustomIdentClass; }
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
     bool isPendingSubstitutionValue() const { return m_classType == PendingSubstitutionValueClass; }
@@ -178,12 +174,9 @@ protected:
         LineBoxContainClass,
         CalculationClass,
         GridTemplateAreasClass,
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-        AnimationTriggerScrollClass,
-#endif
 
         CSSContentDistributionClass,
-        
+
         CustomIdentClass,
 
         CustomPropertyClass,
