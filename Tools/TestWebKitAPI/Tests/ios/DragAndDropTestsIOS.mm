@@ -27,7 +27,6 @@
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS) && WK_API_ENABLED
 
-#import "ClassMethodSwizzler.h"
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -908,15 +907,8 @@ TEST(DragAndDropTests, RespectsExternalSourceFidelityRankings)
     EXPECT_TRUE([webView editorContainsImageElement]);
 }
 
-static BOOL overrideIsInHardwareKeyboardMode()
-{
-    return NO;
-}
-
 TEST(DragAndDropTests, ExternalSourceUTF8PlainTextOnly)
 {
-    ClassMethodSwizzler swizzler([UIKeyboard class], @selector(isInHardwareKeyboardMode), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
-
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
 
@@ -936,8 +928,6 @@ TEST(DragAndDropTests, ExternalSourceUTF8PlainTextOnly)
 
 TEST(DragAndDropTests, ExternalSourceJPEGOnly)
 {
-    ClassMethodSwizzler swizzler([UIKeyboard class], @selector(isInHardwareKeyboardMode), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
-
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
 
