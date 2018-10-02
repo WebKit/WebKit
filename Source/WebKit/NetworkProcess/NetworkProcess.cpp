@@ -772,7 +772,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && !sessionID.isEphemeral()) {
         auto& server = swServerForSession(sessionID);
         for (auto& originData : originDatas)
-            server.clear(originData, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+            server.clear(originData, [clearTasksHandler = clearTasksHandler.copyRef()] { });
     }
 #endif
 

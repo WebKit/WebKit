@@ -1,3 +1,13 @@
+2018-10-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix a potential crash in NetworkProcess::deleteWebsiteDataForOrigins
+        https://bugs.webkit.org/show_bug.cgi?id=190220
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+
 2018-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit2] Format > Bold and Format > Italic don't toggle between bold and italic style
