@@ -323,7 +323,7 @@ public:
     void selectionDidChange();
     
     void didBecomeEditable();
-    void updateFontPanelIfNeeded();
+    void updateFontManagerIfNeeded();
     void changeFontFromFontManager();
     void changeFontAttributesFromSender(id);
     void changeFontColorFromSender(id);

@@ -1,3 +1,19 @@
+2018-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit2] Format > Bold and Format > Italic don't toggle between bold and italic style
+        https://bugs.webkit.org/show_bug.cgi?id=179787
+        <rdar://problem/35593389>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that NSFontManager's selected font is updated when applying italic and bold styles using
+        menu items.
+
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (webViewForFontManagerTesting):
+        (menuItemCellForFontAction):
+        (TestWebKitAPI::TEST):
+
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: TestWebKitAPI.WKWebView.ProvisionalURLNotChange API test is failing

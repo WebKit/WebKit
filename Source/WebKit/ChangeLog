@@ -1,3 +1,30 @@
+2018-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit2] Format > Bold and Format > Italic don't toggle between bold and italic style
+        https://bugs.webkit.org/show_bug.cgi?id=179787
+        <rdar://problem/35593389>
+
+        Reviewed by Tim Horton.
+
+        Fixes the bug by relaxing our policy in WebViewImpl::updateFontManagerIfNeeded. Instead of updating only when
+        the font panel is visible, update when either the font panel is visible, or the selection is in a richly
+        editable area. In the latter case, an up-to-date NSFontManager state is needed in order for certain font
+        formatting menu items, such as bold and italic, to correctly toggle state.
+
+        Test: FontManagerTests.ToggleBoldAndItalicWithMenuItems
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKWindowVisibilityObserver observeValueForKeyPath:ofObject:change:context:]):
+        (WebKit::WebViewImpl::selectionDidChange):
+        (WebKit::WebViewImpl::updateFontManagerIfNeeded):
+
+        Rename updateFontPanelIfNeeded to updateFontManagerIfNeeded, to reflect the new behavior.
+
+        (WebKit::WebViewImpl::changeFontAttributesFromSender):
+        (WebKit::WebViewImpl::changeFontFromFontManager):
+        (WebKit::WebViewImpl::updateFontPanelIfNeeded): Deleted.
+
 2018-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove ParsedURLString

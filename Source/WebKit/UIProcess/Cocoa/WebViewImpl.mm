@@ -374,7 +374,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 
     if ([keyPath isEqualToString:@"visible"] && [NSFontPanel sharedFontPanelExists] && object == [NSFontPanel sharedFontPanel]) {
-        _impl->updateFontPanelIfNeeded();
+        _impl->updateFontManagerIfNeeded();
         return;
     }
     if ([keyPath isEqualToString:@"contentLayoutRect"] || [keyPath isEqualToString:@"titlebarAppearsTransparent"])
@@ -2736,7 +2736,7 @@ void WebViewImpl::centerSelectionInVisibleArea()
 
 void WebViewImpl::selectionDidChange()
 {
-    updateFontPanelIfNeeded();
+    updateFontManagerIfNeeded();
     if (!m_isHandlingAcceptedCandidate)
         m_softSpaceRange = NSMakeRange(NSNotFound, 0);
 #if HAVE(TOUCH_BAR)
@@ -2787,18 +2787,16 @@ void WebViewImpl::didBecomeEditable()
     });
 }
 
-void WebViewImpl::updateFontPanelIfNeeded()
+void WebViewImpl::updateFontManagerIfNeeded()
 {
-    const EditorState& editorState = m_page->editorState();
-    if (editorState.selectionIsNone || !editorState.isContentEditable)
+    BOOL fontPanelIsVisible = NSFontPanel.sharedFontPanelExists && NSFontPanel.sharedFontPanel.visible;
+    if (!fontPanelIsVisible && !m_page->editorState().isContentRichlyEditable)
         return;
-    if ([NSFontPanel sharedFontPanelExists] && [[NSFontPanel sharedFontPanel] isVisible]) {
-        m_page->fontAtSelection([](const String& fontName, double fontSize, bool selectionHasMultipleFonts, WebKit::CallbackBase::Error error) {
-            NSFont *font = [NSFont fontWithName:fontName size:fontSize];
-            if (font)
-                [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:selectionHasMultipleFonts];
-        });
-    }
+
+    m_page->fontAtSelection([](const String& fontName, double fontSize, bool selectionHasMultipleFonts, WebKit::CallbackBase::Error error) {
+        if (NSFont *font = [NSFont fontWithName:fontName size:fontSize])
+            [NSFontManager.sharedFontManager setSelectedFont:font isMultiple:selectionHasMultipleFonts];
+    });
 }
 
 void WebViewImpl::typingAttributesWithCompletionHandler(void(^completion)(NSDictionary<NSString *, id> *))
@@ -2845,7 +2843,7 @@ void WebViewImpl::changeFontAttributesFromSender(id sender)
         return;
 
     m_page->changeFontAttributes(WebCore::computedFontAttributeChanges(NSFontManager.sharedFontManager, sender));
-    updateFontPanelIfNeeded();
+    updateFontManagerIfNeeded();
 }
 
 void WebViewImpl::changeFontFromFontManager()
@@ -2855,7 +2853,7 @@ void WebViewImpl::changeFontFromFontManager()
         return;
 
     m_page->changeFont(WebCore::computedFontChanges(NSFontManager.sharedFontManager));
-    updateFontPanelIfNeeded();
+    updateFontManagerIfNeeded();
 }
 
 static NSMenuItem *menuItem(id <NSValidatedUserInterfaceItem> item)

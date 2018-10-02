@@ -120,20 +120,48 @@ static RetainPtr<FontManagerTestWKWebView> webViewForFontManagerTesting(NSFontMa
         "<span id='foo'>foo</span> <span id='bar'>bar</span> <span id='baz'>baz</span>"
         "</body><script>document.body.addEventListener('input', event => lastInputEvent = event)</script>"];
     [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _setEditable:YES];
     fontManager.target = webView.get();
     return webView;
 }
 
-static RetainPtr<NSMenuItemCell> menuItemCellForFontAction(NSFontAction action)
+static RetainPtr<NSMenuItemCell> menuItemCellForFontAction(NSUInteger tag)
 {
     auto menuItem = adoptNS([[NSMenuItem alloc] init]);
     auto menuItemCell = adoptNS([[NSMenuItemCell alloc] init]);
     [menuItemCell setMenuItem:menuItem.get()];
-    [menuItemCell setTag:action];
+    [menuItemCell setTag:tag];
     return menuItemCell;
 }
 
 namespace TestWebKitAPI {
+
+TEST(FontManagerTests, ToggleBoldAndItalicWithMenuItems)
+{
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
+    auto webView = webViewForFontManagerTesting(fontManager);
+
+    [webView selectWord:nil];
+    [fontManager addFontTrait:menuItemCellForFontAction(NSBoldFontMask).autorelease()];
+    EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
+    EXPECT_WK_STREQ("Times-Bold", [fontManager selectedFont].fontName);
+
+    [fontManager addFontTrait:menuItemCellForFontAction(NSUnboldFontMask).autorelease()];
+    EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
+    EXPECT_WK_STREQ("Times-Roman", [fontManager selectedFont].fontName);
+
+    [fontManager addFontTrait:menuItemCellForFontAction(NSItalicFontMask).autorelease()];
+    EXPECT_WK_STREQ("italic", [webView stylePropertyAtSelectionStart:@"font-style"]);
+    EXPECT_WK_STREQ("italic", [webView stylePropertyAtSelectionEnd:@"font-style"]);
+    EXPECT_WK_STREQ("Times-Italic", [fontManager selectedFont].fontName);
+
+    [fontManager addFontTrait:menuItemCellForFontAction(NSUnitalicFontMask).autorelease()];
+    EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-style"]);
+    EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionEnd:@"font-style"]);
+    EXPECT_WK_STREQ("Times-Roman", [fontManager selectedFont].fontName);
+}
 
 TEST(FontManagerTests, ChangeFontSizeWithMenuItems)
 {
