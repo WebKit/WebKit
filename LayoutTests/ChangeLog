@@ -1,3 +1,9 @@
+2018-10-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed test gardening.
+
+        * platform/wincairo/TestExpectations:
+
 2018-10-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Removed a failing test expectation on imported/w3c/web-platform-tests/shadow-dom/slotchange.html
