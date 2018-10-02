@@ -1,3 +1,22 @@
+2018-10-02  Thibault Saunier  <tsaunier@igalia.com>
+
+        [Flatpak] Implement icecream and ccache support
+        https://bugs.webkit.org/show_bug.cgi?id=190146
+
+        Reviewed by Alejandro G. Castro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.save_config):
+        (WebkitFlatpak):
+        (WebkitFlatpak.setup_ccache):
+        (WebkitFlatpak.setup_icecc):
+        (WebkitFlatpak.setup_dev_env):
+        * flatpak/org.webkit.WebKit.yaml:
+
 2018-10-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix missing return value in TestController::keyExistsInKeychain

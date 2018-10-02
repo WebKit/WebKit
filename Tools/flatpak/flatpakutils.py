@@ -23,6 +23,7 @@ except ImportError:
 from contextlib import contextmanager
 import errno
 import json
+import multiprocessing
 import os
 import shlex
 import shutil
@@ -505,6 +506,7 @@ class WebkitFlatpak:
                             help="Automatically answer yes for all questions.",
                             action="store_true")
         general.add_argument('--available', action='store_true', dest="check_available", help='Check if required dependencies are available.'),
+        general.add_argument("--use-icecream", help="Use the distributed icecream (icecc) compiler.", action="store_true")
 
         debugoptions = parser.add_argument_group("Debugging")
         debugoptions.add_argument("--gdb", nargs="?", help="Activate gdb, passing extra args to it if wanted.")
@@ -574,6 +576,9 @@ class WebkitFlatpak:
         self.cmakeargs = ""
         self.makeargs = ""
 
+        self.use_icecream = False
+        self.icc_version = None
+
     def clean_args(self):
         configure_logging(logging.DEBUG if self.verbose else logging.INFO)
         if not self.debug and not self.release:
@@ -605,6 +610,7 @@ class WebkitFlatpak:
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise e
+        self.config_file = os.path.join(self.build_path, 'webkit_flatpak_config.json')
 
         Console.quiet = self.quiet
         if not check_flatpak():
@@ -643,6 +649,12 @@ class WebkitFlatpak:
             self.packs.append(self.sdk_debug)
         self.manifest_generated_path = os.path.join(self.cache_path,
                                                     self.build_name + ".json")
+        try:
+            with open(self.config_file) as config:
+                json_config = json.load(config)
+                self.icc_version = json_config['icecc_version']
+        except IOError as e:
+            pass
 
         return True
 
@@ -677,6 +689,7 @@ class WebkitFlatpak:
             forwarded = {
                 "WEBKIT_TOP_LEVEL": "/app/",
                 "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": "/app/webkit/lib/libTestRunnerInjectedBundle.so",
+                "ICECC_VERSION": self.icc_version,
             }
 
             env_var_prefixes_to_keep = [
@@ -696,7 +709,17 @@ class WebkitFlatpak:
                 "WAYLAND_DISPLAY",
                 "DISPLAY",
                 "LANG",
+                "NUMBER_OF_PROCESSORS",
+                "CCACHE_PREFIX",
             ]
+
+            if self.use_icecream:
+                _log.debug('Enabling the icecream compiler')
+                forwarded["CCACHE_PREFIX"] = "icecc"
+                if not os.environ.get('NUMBER_OF_PROCESSORS'):
+                    n_cores = multiprocessing.cpu_count() * 3
+                    _log.debug('Follow icecream recommendation for the number of cores to use: %d' % n_cores)
+                    forwarded["NUMBER_OF_PROCESSORS"] = n_cores
 
             for envvar, value in os.environ.items():
                 if envvar.split("_")[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep:
@@ -757,6 +780,23 @@ class WebkitFlatpak:
     def has_environment(self):
         return os.path.exists(os.path.join(self.build_path, self.flatpak_build_path))
 
+    def save_config(self):
+        with open(self.config_file, 'w') as config:
+            json_config = {'icecc_version': self.icc_version}
+            json.dump(json_config, config)
+
+    def setup_ccache(self):
+        for compiler in ["c++", "cc", "clang", "clang++", "g++", "gcc"]:
+            self.run_in_sandbox("ln", "-s", "../../usr/bin/ccache", compiler, cwd="/app/bin")
+
+    def setup_icecc(self):
+        with tempfile.NamedTemporaryFile() as tmpfile:
+            self.run_in_sandbox('icecc', '--build-native', stdout=tmpfile, cwd=self.build_path)
+            tmpfile.flush()
+            tmpfile.seek(0)
+            icc_version_filename, = re.findall(r'.*creating (.*)', tmpfile.read())
+            self.icc_version = os.path.join(self.build_path, icc_version_filename)
+
     def setup_dev_env(self):
         if not os.path.exists(os.path.join(self.build_path, self.flatpak_build_path)) \
                 or self.update or self.build_all:
@@ -780,6 +820,9 @@ class WebkitFlatpak:
             builder_args.append("--build-only")
             builder_args.append("--stop-at=%s" % self.name)
             subprocess.check_call(builder_args)
+            self.setup_ccache()
+            self.setup_icecc()
+            self.save_config()
 
         if self.build_webkit:
             builder = [os.path.join(self.sandbox_source_root, 'Tools/Scripts/build-webkit'),
