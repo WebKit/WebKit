@@ -116,7 +116,6 @@ WI.loaded = function()
     this.cssStyleManager = new WI.CSSStyleManager;
     this.logManager = new WI.LogManager;
     this.issueManager = new WI.IssueManager;
-    this.analyzerManager = new WI.AnalyzerManager;
     this.runtimeManager = new WI.RuntimeManager;
     this.heapManager = new WI.HeapManager;
     this.memoryManager = new WI.MemoryManager;
