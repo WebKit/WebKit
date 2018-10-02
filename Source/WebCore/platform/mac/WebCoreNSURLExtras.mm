@@ -895,7 +895,7 @@ NSURL *URLWithUserTypedString(NSString *string, NSURL *nsURL)
 
     // Let's check whether the URL is bogus.
     URL url { URL { nsURL }, string };
-    if (!url.isValid() || !url.createCFURL())
+    if (!url.createCFURL())
         return nil;
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=186057
@@ -935,8 +935,6 @@ static BOOL hasQuestionMarkOnlyQueryString(NSURL *URL)
 
 NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
 {
-    if (!URL)
-        return nil;
     Vector<UInt8, URL_BYTES_BUFFER_LENGTH> allBytesBuffer(URL_BYTES_BUFFER_LENGTH);
     CFIndex bytesFilled = CFURLGetBytes((__bridge CFURLRef)URL, allBytesBuffer.data(), allBytesBuffer.size());
     if (bytesFilled == -1) {
@@ -986,8 +984,6 @@ NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
 
 static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComponentType component)
 {
-    if (!URL)
-        return nil;
     CFRange range = CFURLGetByteRangeForComponent((__bridge CFURLRef)URL, component, 0);
     if (range.location == kCFNotFound)
         return URL;
@@ -1025,8 +1021,6 @@ NSURL *URLByRemovingUserInfo(NSURL *URL)
 
 NSURL *URLByCanonicalizingURL(NSURL *URL)
 {
-    if (!URL)
-        return nil;
     RetainPtr<NSURLRequest> request = adoptNS([[NSURLRequest alloc] initWithURL:URL]);
     Class concreteClass = [NSURLProtocol _protocolClassForRequest:request.get()];
     if (!concreteClass) {
@@ -1044,8 +1038,6 @@ NSURL *URLByCanonicalizingURL(NSURL *URL)
 
 NSData *originalURLData(NSURL *URL)
 {
-    if (!URL)
-        return nil;
     UInt8 *buffer = (UInt8 *)malloc(URL_BYTES_BUFFER_LENGTH);
     CFIndex bytesFilled = CFURLGetBytes((__bridge CFURLRef)URL, buffer, URL_BYTES_BUFFER_LENGTH);
     if (bytesFilled == -1) {
@@ -1107,8 +1099,6 @@ static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
 
 NSString *userVisibleString(NSURL *URL)
 {
-    if (!URL)
-        return nil;
     NSData *data = originalURLData(URL);
     const unsigned char *before = static_cast<const unsigned char*>([data bytes]);
     int length = [data length];
