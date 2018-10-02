@@ -29,7 +29,9 @@
 
 #include <atomic>
 #include <gst/gst.h>
+#include <mutex>
 #include <wtf/Condition.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -64,6 +66,7 @@ public:
     void appsinkCapsChanged();
     void appsinkNewSample(GRefPtr<GstSample>&&);
     void appsinkEOS();
+    void handleEndOfAppend();
     void didReceiveInitializationSegment();
     AtomicString trackId();
     void abort();
@@ -85,19 +88,24 @@ public:
     void connectDemuxerSrcPadToAppsinkFromAnyThread(GstPad*);
     void connectDemuxerSrcPadToAppsink(GstPad*);
 
-    void reportAppsrcAtLeastABufferLeft();
-    void reportAppsrcNeedDataReceived();
-
 private:
     void resetPipeline();
     void checkEndOfAppend();
-    void handleAppsrcAtLeastABufferLeft();
-    void handleAppsrcNeedDataReceived();
-    void removeAppsrcDataLeavingProbe();
-    void setAppsrcDataLeavingProbe();
     void demuxerNoMorePads();
 
     void consumeAppsinkAvailableSamples();
+
+    GstPadProbeReturn appsrcEndOfAppendCheckerProbe(GstPadProbeInfo*);
+
+    static void staticInitialization();
+
+    static std::once_flag s_staticInitializationFlag;
+    static GType s_endOfAppendMetaType;
+    static const GstMetaInfo* s_webKitEndOfAppendMetaInfo;
+
+    // Used only for asserting that there is only one streaming thread.
+    // Only the pointers are compared.
+    WTF::Thread* m_streamingThread;
 
     Ref<MediaSourceClientGStreamerMSE> m_mediaSourceClient;
     Ref<SourceBufferPrivateGStreamer> m_sourceBufferPrivate;
@@ -130,10 +138,6 @@ private:
     GRefPtr<GstCaps> m_demuxerSrcPadCaps;
     FloatSize m_presentationSize;
 
-    bool m_appsrcAtLeastABufferLeft;
-    bool m_appsrcNeedDataReceived;
-
-    gulong m_appsrcDataLeavingProbeId;
 #if !LOG_DISABLED
     struct PadProbeInformation m_demuxerDataEnteringPadProbeInformation;
     struct PadProbeInformation m_appsinkDataEnteringPadProbeInformation;
