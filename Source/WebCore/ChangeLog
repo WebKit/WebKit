@@ -1,3 +1,11 @@
+2018-10-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix unused variable in RenderLayer::updateScrollableAreaSet
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const): This is a prepare-ChangeLog bug. I don't
+        have any changes in this function....
+
 2018-10-02  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Make same thread assert non-release

@@ -6340,17 +6340,24 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
         isVisibleToHitTest &= owner->renderer() && owner->renderer()->visibleToHitTesting();
 
     bool isScrollable = hasOverflow && isVisibleToHitTest;
+
+#if ENABLE(IOS_TOUCH_EVENTS)
     bool addedOrRemoved = false;
+#endif
     
     ASSERT(m_registeredScrollableArea == frameView.containsScrollableArea(this));
     
     if (isScrollable) {
         if (!m_registeredScrollableArea) {
+#if ENABLE(IOS_TOUCH_EVENTS)
             addedOrRemoved = frameView.addScrollableArea(this);
+#endif
             m_registeredScrollableArea = true;
         }
     } else if (m_registeredScrollableArea) {
+#if ENABLE(IOS_TOUCH_EVENTS)
         addedOrRemoved = frameView.removeScrollableArea(this);
+#endif
         m_registeredScrollableArea = false;
     }
 
