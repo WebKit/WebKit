@@ -1,3 +1,10 @@
+2018-10-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Removed a failing test expectation on imported/w3c/web-platform-tests/shadow-dom/slotchange.html
+        since we haven't seen a single failure after the fix in r236440.
+
+        * platform/mac/TestExpectations:
+
 2018-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Update delete-emoji expected results
