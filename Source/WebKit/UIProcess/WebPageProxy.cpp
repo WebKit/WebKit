@@ -1764,6 +1764,25 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
     m_process->send(Messages::WebPage::ExecuteEditCommand(commandName, argument), m_pageID);
 }
 
+void WebPageProxy::requestFontAttributesAtSelectionStart(Function<void(const WebCore::FontAttributes&, CallbackBase::Error)>&& callback)
+{
+    if (!isValid()) {
+        callback({ }, CallbackBase::Error::Unknown);
+        return;
+    }
+
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::RequestFontAttributesAtSelectionStart(callbackID), m_pageID);
+}
+
+void WebPageProxy::fontAttributesCallback(const WebCore::FontAttributes& attributes, CallbackID callbackID)
+{
+    m_cachedFontAttributesAtSelectionStart = attributes;
+
+    if (auto callback = m_callbacks.take<FontAttributesCallback>(callbackID))
+        callback->performCallbackWithReturnValue(attributes);
+}
+
 void WebPageProxy::setEditable(bool editable)
 {
     if (editable == m_isEditable)
@@ -6190,6 +6209,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_needsToFinishInitializingWebPageAfterProcessLaunch = false;
 
     m_editorState = EditorState();
+    m_cachedFontAttributesAtSelectionStart.reset();
 
     if (terminationReason == ProcessTerminationReason::NavigationSwap)
         pageClient().processWillSwap();

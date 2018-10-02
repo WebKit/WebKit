@@ -1205,6 +1205,8 @@ private:
     void didRemoveBackForwardItem(const WebCore::BackForwardItemIdentifier&);
     void updateBackForwardListForReattach(const Vector<WebKit::BackForwardListItemState>&);
 
+    void requestFontAttributesAtSelectionStart(CallbackID);
+
 #if ENABLE(REMOTE_INSPECTOR)
     void setAllowsRemoteInspection(bool);
     void setRemoteInspectionNameOverride(const String&);

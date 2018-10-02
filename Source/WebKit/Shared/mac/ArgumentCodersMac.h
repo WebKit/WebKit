@@ -38,6 +38,7 @@ OBJC_CLASS NSFont;
 OBJC_CLASS NSNumber;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
+OBJC_CLASS UIFont;
 
 namespace IPC {
 
@@ -70,6 +71,11 @@ bool decode(Decoder&, RetainPtr<NSArray>&);
 // NSFont
 void encode(Encoder&, NSFont *);
 bool decode(Decoder&, RetainPtr<NSFont>&);
+#endif
+
+#if PLATFORM(IOS)
+void encode(Encoder&, UIFont *);
+bool decode(Decoder&, RetainPtr<UIFont>&);
 #endif
 
 // NSNumber

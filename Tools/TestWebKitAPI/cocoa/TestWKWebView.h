@@ -40,6 +40,9 @@
 - (void)paste:(id)sender;
 - (void)changeAttributes:(id)sender;
 - (void)changeColor:(id)sender;
+- (void)superscript:(id)sender;
+- (void)subscript:(id)sender;
+- (void)unscript:(id)sender;
 #endif
 @end
 

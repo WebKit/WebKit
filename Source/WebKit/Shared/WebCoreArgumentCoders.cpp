@@ -45,6 +45,7 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
 #include <WebCore/FilterOperations.h>
+#include <WebCore/FontAttributes.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IDBGetResult.h>
@@ -2977,6 +2978,52 @@ bool ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::decode(Decoder& decoder, Vec
         origins.uncheckedAppend(decodedOriginRefPtr.releaseNonNull());
     }
     return true;
+}
+
+void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttributes& attributes)
+{
+    encoder << attributes.backgroundColor << attributes.foregroundColor << attributes.fontShadow << attributes.hasUnderline << attributes.hasStrikeThrough;
+    encoder.encodeEnum(attributes.subscriptOrSuperscript);
+#if PLATFORM(COCOA)
+    bool hasFont = attributes.font;
+    encoder << hasFont;
+    if (hasFont)
+        IPC::encode(encoder, attributes.font.get());
+#endif
+}
+
+std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& decoder)
+{
+    FontAttributes attributes;
+
+    if (!decoder.decode(attributes.backgroundColor))
+        return std::nullopt;
+
+    if (!decoder.decode(attributes.foregroundColor))
+        return std::nullopt;
+
+    if (!decoder.decode(attributes.fontShadow))
+        return std::nullopt;
+
+    if (!decoder.decode(attributes.hasUnderline))
+        return std::nullopt;
+
+    if (!decoder.decode(attributes.hasStrikeThrough))
+        return std::nullopt;
+
+    if (!decoder.decodeEnum(attributes.subscriptOrSuperscript))
+        return std::nullopt;
+
+#if PLATFORM(COCOA)
+    bool hasFont = false;
+    if (!decoder.decode(hasFont))
+        return std::nullopt;
+
+    if (hasFont && !IPC::decode(decoder, attributes.font))
+        return std::nullopt;
+#endif
+
+    return attributes;
 }
 
 } // namespace IPC

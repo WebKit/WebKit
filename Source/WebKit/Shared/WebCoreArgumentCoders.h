@@ -101,6 +101,7 @@ struct DictationAlternative;
 struct DictionaryPopupInfo;
 struct EventTrackingRegions;
 struct ExceptionDetails;
+struct FontAttributes;
 struct FileChooserSettings;
 struct ShareData;
 struct ShareDataWithParsedURL;
@@ -718,6 +719,11 @@ template<> struct ArgumentCoder<WebCore::PromisedAttachmentInfo> {
 template<> struct ArgumentCoder<Vector<RefPtr<WebCore::SecurityOrigin>>> {
     static void encode(Encoder&, const Vector<RefPtr<WebCore::SecurityOrigin>>&);
     static bool decode(Decoder&, Vector<RefPtr<WebCore::SecurityOrigin>>&);
+};
+
+template<> struct ArgumentCoder<WebCore::FontAttributes> {
+    static void encode(Encoder&, const WebCore::FontAttributes&);
+    static std::optional<WebCore::FontAttributes> decode(Decoder&);
 };
 
 } // namespace IPC

@@ -1,3 +1,84 @@
+2018-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Implement a way for the UI process to request typing attributes at the current selection
+        https://bugs.webkit.org/show_bug.cgi?id=189983
+        <rdar://problem/44648705>
+
+        Reviewed by Ryosuke Niwa.
+
+        Implements `-[WKWebView typingAttributesWithCompletionHandler:]`, which asynchronously retrieves an NSDictionary
+        containing the typing attributes at the start of the current selection. This is a new asynchronous text input
+        client hook on macOS that is needed in order to support NSInspectorBar on WKWebView.
+
+        At a high level, this patch builds on top of refactoring done in r236445 to make it possible to send typing
+        attributes from the web process to the UI process, and then adds plumbing in the WebKit2 client layer to surface
+        typing attributes to WKWebView on macOS.
+
+        Tests:  FontManagerTests.TypingAttributesAfterSubscriptAndSuperscript
+                FontManagerTests.ChangeTypingAttributesWithInspectorBar
+                FontManagerTests.ChangeAttributesWithFontEffectsBox
+
+        * Platform/spi/mac/AppKitSPI.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FontAttributes>::encode):
+        (IPC::ArgumentCoder<FontAttributes>::decode):
+
+        Implement IPC coding support for FontAttributes.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/ArgumentCodersMac.h:
+        * Shared/mac/ArgumentCodersMac.mm:
+        (IPC::encode):
+        (IPC::decode):
+
+        Add the ability to encode and decode UIFont. This allows Cocoa platforms to send `FontAttributes.font` over IPC
+        with a single call to IPC::encode/IPC::decode.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView typingAttributesWithCompletionHandler:]):
+
+        Add plumbing to WebViewImpl.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::selectionDidChange):
+
+        Update the NSInspectorBar on selection change, but only if it is present and visible, and WKWebView is currently
+        first responder.
+
+        (WebKit::WebViewImpl::typingAttributesWithCompletionHandler):
+
+        Call into WebPageProxy to retrieve FontAttributes from the web process, and invoke the callback with an
+        NSDictionary constructed from the retrieved FontAttributes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestFontAttributesAtSelectionStart):
+        (WebKit::WebPageProxy::fontAttributesCallback):
+
+        Add plumbing to retrieve FontAttributes from the web process at the current selection. Additionally, cache the
+        font attributes to avoid doing extra work during subsequent requests.
+
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::cachedFontAttributesAtSelectionStart const):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+
+        Invalidate cached font attributes.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestFontAttributesAtSelectionStart):
+
+        Use the currently focused frame's Editor to compute FontAttributes at the current selection, and send the
+        computed FontAttributes back to the UI process.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-10-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: remove analyzer manager

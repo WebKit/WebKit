@@ -176,11 +176,12 @@ static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 #endif
 
 #if PLATFORM(MAC)
+#import "AppKitSPI.h"
 #import "WKTextFinderClient.h"
 #import "WKViewInternal.h"
 #import <WebCore/ColorMac.h>
 
-@interface WKWebView () <WebViewImplDelegate, NSTextInputClient>
+@interface WKWebView () <WebViewImplDelegate, NSTextInputClient, NSTextInputClient_Async>
 @end
 
 #if HAVE(TOUCH_BAR)
@@ -3718,6 +3719,11 @@ WEBCORE_COMMAND(yankAndSelect)
 - (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
     return _impl->characterIndexForPoint(thePoint);
+}
+
+- (void)typingAttributesWithCompletionHandler:(void(^)(NSDictionary<NSString *, id> *))completion
+{
+    _impl->typingAttributesWithCompletionHandler(completion);
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange actualRange:(NSRangePointer)actualRange

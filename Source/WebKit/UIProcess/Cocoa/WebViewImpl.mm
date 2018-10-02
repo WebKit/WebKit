@@ -31,6 +31,7 @@
 #import "APIAttachment.h"
 #import "APILegacyContextHistoryClient.h"
 #import "APINavigation.h"
+#import "AppKitSPI.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "FullscreenClient.h"
@@ -81,6 +82,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/FontAttributeChanges.h>
+#import <WebCore/FontAttributes.h>
 #import <WebCore/KeypressCommand.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
@@ -2743,6 +2745,13 @@ void WebViewImpl::selectionDidChange()
         requestCandidatesForSelectionIfNeeded();
 #endif
 
+    NSWindow *window = [m_view window];
+    if (window.firstResponder == m_view.get().get()) {
+        NSInspectorBar *inspectorBar = window.inspectorBar;
+        if (inspectorBar.visible)
+            [inspectorBar _update];
+    }
+
     [m_view _web_editorStateDidChange];
 }
 
@@ -2790,6 +2799,25 @@ void WebViewImpl::updateFontPanelIfNeeded()
                 [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:selectionHasMultipleFonts];
         });
     }
+}
+
+void WebViewImpl::typingAttributesWithCompletionHandler(void(^completion)(NSDictionary<NSString *, id> *))
+{
+    if (auto attributes = m_page->cachedFontAttributesAtSelectionStart()) {
+        auto attributesAsDictionary = attributes->createDictionary();
+        completion(attributesAsDictionary.get());
+        return;
+    }
+
+    m_page->requestFontAttributesAtSelectionStart([completion = makeBlockPtr(completion)] (const WebCore::FontAttributes& attributes, CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None) {
+            completion(nil);
+            return;
+        }
+
+        auto attributesAsDictionary = attributes.createDictionary();
+        completion(attributesAsDictionary.get());
+    });
 }
 
 void WebViewImpl::changeFontColorFromSender(id sender)

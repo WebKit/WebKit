@@ -24,27 +24,58 @@
  */
 
 #import "config.h"
+#import "Test.h"
 
 #if PLATFORM(MAC) && WK_API_ENABLED
 
 #import "AppKitSPI.h"
 #import "NSFontPanelTesting.h"
 #import "PlatformUtilities.h"
+#import "TestInspectorBar.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
+
+@interface WKWebView (NSTextInputClient_Async) <NSTextInputClient_Async, NSTextInputClient_Async_Staging_44648564, NSInspectorBarClient>
+@end
 
 @interface TestWKWebView (FontManagerTests)
 
 @property (nonatomic, readonly) NSString *selectedText;
 
+- (NSDictionary<NSString *, id> *)typingAttributes;
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;
 - (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName;
 - (void)selectNextWord;
+- (void)collapseToStart;
 - (void)collapseToEnd;
 
 @end
 
+@interface FontManagerTestWKWebView : TestWKWebView
+@end
+
+@implementation FontManagerTestWKWebView
+
+- (NSArray<NSString *> *)inspectorBarItemIdentifiers
+{
+    return [TestInspectorBar standardTextItemIdentifiers];
+}
+
+@end
+
 @implementation TestWKWebView (FontManagerTests)
+
+- (NSDictionary<NSString *, id> *)typingAttributes
+{
+    __block bool done = false;
+    __block RetainPtr<NSDictionary> result;
+    [self typingAttributesWithCompletionHandler:^(NSDictionary<NSString *, id> *attributes) {
+        result = attributes;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
 
 - (NSString *)selectedText
 {
@@ -56,6 +87,11 @@
     [self moveRight:nil];
     [self moveRight:nil];
     [self selectWord:nil];
+}
+
+- (void)collapseToStart
+{
+    [self evaluateJavaScript:@"getSelection().collapseToStart()" completionHandler:nil];
 }
 
 - (void)collapseToEnd
@@ -77,9 +113,9 @@
 
 @end
 
-static RetainPtr<TestWKWebView> webViewForFontManagerTesting(NSFontManager *fontManager)
+static RetainPtr<FontManagerTestWKWebView> webViewForFontManagerTesting(NSFontManager *fontManager)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto webView = adoptNS([[FontManagerTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView synchronouslyLoadHTMLString:@"<body contenteditable>"
         "<span id='foo'>foo</span> <span id='bar'>bar</span> <span id='baz'>baz</span>"
         "</body><script>document.body.addEventListener('input', event => lastInputEvent = event)</script>"];
@@ -224,9 +260,11 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"single"];
     EXPECT_WK_STREQ("bar", [webView selectedText]);
     EXPECT_WK_STREQ("line-through", textDecorationsAroundSelection());
+    EXPECT_EQ(NSUnderlineStyleSingle, [[webView typingAttributes][NSStrikethroughStyleAttributeName] intValue]);
 
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"none"];
     EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
+    EXPECT_EQ(NSUnderlineStyleNone, [[webView typingAttributes][NSStrikethroughStyleAttributeName] intValue]);
 
     [webView selectNextWord];
     fontPanel.shadowBlur = 8;
@@ -234,9 +272,17 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [fontPanel toggleShadow];
     EXPECT_WK_STREQ("baz", [webView selectedText]);
     EXPECT_WK_STREQ("rgb(0, 0, 0) 0px 1px 8px", textShadowAroundSelection());
+    {
+        NSShadow *shadow = [webView typingAttributes][NSShadowAttributeName];
+        EXPECT_EQ(shadow.shadowOffset.width, 0);
+        EXPECT_EQ(shadow.shadowOffset.height, 1);
+        EXPECT_EQ(shadow.shadowBlurRadius, 8);
+        EXPECT_TRUE([shadow.shadowColor isEqual:[NSColor colorWithRed:0 green:0 blue:0 alpha:1]]);
+    }
 
     [fontPanel toggleShadow];
     EXPECT_WK_STREQ("none", textShadowAroundSelection());
+    EXPECT_NULL([webView typingAttributes][NSShadowAttributeName]);
 
     // Now combine all three attributes together.
     [webView selectAll:nil];
@@ -248,12 +294,25 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     EXPECT_WK_STREQ("foo bar baz", [webView selectedText]);
     EXPECT_WK_STREQ("rgba(0, 0, 0, 0.2) 0px 1px 5px", textShadowAroundSelection());
     EXPECT_WK_STREQ("underline line-through", textDecorationsAroundSelection());
+    {
+        NSDictionary *typingAttributes = [webView typingAttributes];
+        EXPECT_EQ(NSUnderlineStyleSingle, [typingAttributes[NSUnderlineStyleAttributeName] intValue]);
+        EXPECT_EQ(NSUnderlineStyleSingle, [typingAttributes[NSStrikethroughStyleAttributeName] intValue]);
+
+        NSShadow *shadow = typingAttributes[NSShadowAttributeName];
+        EXPECT_EQ(shadow.shadowOffset.width, 0);
+        EXPECT_EQ(shadow.shadowOffset.height, 1);
+        EXPECT_EQ(shadow.shadowBlurRadius, 5);
+        EXPECT_TRUE([shadow.shadowColor isEqual:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.2]]);
+    }
 
     [fontPanel toggleShadow];
     [fontPanel chooseUnderlineMenuItemWithTitle:@"none"];
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"none"];
     EXPECT_WK_STREQ("none", textShadowAroundSelection());
     EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
+    EXPECT_EQ(NSUnderlineStyleNone, [[webView typingAttributes][NSStrikethroughStyleAttributeName] intValue]);
+    EXPECT_NULL([webView typingAttributes][NSShadowAttributeName]);
 }
 
 TEST(FontManagerTests, ChangeFontColorWithColorPanel)
@@ -308,6 +367,83 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     [webView selectWord:nil];
     EXPECT_WK_STREQ("rgba(204, 179, 51, 0.2)", [webView stylePropertyAtSelectionStart:@"color"]);
     EXPECT_WK_STREQ("rgb(0, 255, 0)", [webView stylePropertyAtSelectionEnd:@"color"]);
+}
+
+TEST(FontManagerTests, ChangeTypingAttributesWithInspectorBar)
+{
+    auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager);
+    auto inspectorBar = adoptNS([[TestInspectorBar alloc] initWithWebView:webView.get()]);
+    {
+        [webView selectAll:nil];
+        NSFont *originalFont = [webView typingAttributes][NSFontAttributeName];
+        EXPECT_WK_STREQ("Times", originalFont.familyName);
+        EXPECT_EQ(16, originalFont.pointSize);
+    }
+    {
+        // Change font family.
+        [inspectorBar chooseFontFamily:@"Helvetica"];
+        [webView waitForNextPresentationUpdate];
+        NSFont *fontAfterSpecifyingHelvetica = [webView typingAttributes][NSFontAttributeName];
+        EXPECT_WK_STREQ("Helvetica", fontAfterSpecifyingHelvetica.familyName);
+        EXPECT_EQ(16, fontAfterSpecifyingHelvetica.pointSize);
+    }
+    {
+        // Change font size.
+        [webView collapseToStart];
+        [webView selectWord:nil];
+        [inspectorBar chooseFontSize:32];
+        [webView collapseToEnd];
+        [webView waitForNextPresentationUpdate];
+        NSFont *fontAfterDoublingFontSize = [webView typingAttributes][NSFontAttributeName];
+        EXPECT_WK_STREQ("Helvetica", fontAfterDoublingFontSize.familyName);
+        EXPECT_EQ(32, fontAfterDoublingFontSize.pointSize);
+    }
+    {
+        // Bold, italic, and underline.
+        [webView selectNextWord];
+        [inspectorBar formatBold:YES];
+        [inspectorBar formatItalic:YES];
+        [inspectorBar formatUnderline:YES];
+        [webView waitForNextPresentationUpdate];
+        NSDictionary *attributes = [webView typingAttributes];
+        EXPECT_WK_STREQ("Helvetica-BoldOblique", [attributes[NSFontAttributeName] fontName]);
+        EXPECT_EQ(16, [attributes[NSFontAttributeName] pointSize]);
+        EXPECT_EQ(NSUnderlineStyleSingle, [attributes[NSUnderlineStyleAttributeName] integerValue]);
+    }
+    {
+        // Add foreground and background colors.
+        [webView selectNextWord];
+        NSColor *foregroundColor = [NSColor colorWithRed:1 green:1 blue:1 alpha:0.2];
+        NSColor *backgroundColor = [NSColor colorWithRed:0.8 green:0.2 blue:0.6 alpha:1];
+        [inspectorBar chooseForegroundColor:foregroundColor];
+        [inspectorBar chooseBackgroundColor:backgroundColor];
+        [webView waitForNextPresentationUpdate];
+        NSDictionary *attributes = [webView typingAttributes];
+        EXPECT_TRUE([attributes[NSForegroundColorAttributeName] isEqual:foregroundColor]);
+        EXPECT_TRUE([attributes[NSBackgroundColorAttributeName] isEqual:backgroundColor]);
+    }
+}
+
+TEST(FontManagerTests, TypingAttributesAfterSubscriptAndSuperscript)
+{
+    auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager);
+
+    [webView moveToBeginningOfDocument:nil];
+    [webView selectWord:nil];
+    [webView superscript:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(1, [[webView typingAttributes][NSSuperscriptAttributeName] integerValue]);
+
+    [webView selectNextWord];
+    [webView subscript:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(-1, [[webView typingAttributes][NSSuperscriptAttributeName] integerValue]);
+
+    [webView selectNextWord];
+    [webView subscript:nil];
+    [webView unscript:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(0, [[webView typingAttributes][NSSuperscriptAttributeName] integerValue]);
 }
 
 } // namespace TestWebKitAPI

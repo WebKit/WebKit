@@ -27,8 +27,12 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <AppKit/NSInspectorBar.h>
+#import <AppKit/NSInspectorBarItemController.h>
+#import <AppKit/NSInspectorBar_Private.h>
 #import <AppKit/NSTextInputClient_Private.h>
 #import <AppKit/NSTextInputContext_Private.h>
+#import <AppKit/NSWindow_Private.h>
 
 #else
 
@@ -43,6 +47,60 @@
 - (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
 @end
 
+@protocol NSInspectorBarClient <NSObject>
+@property (readonly) NSArray<NSString *> *inspectorBarItemIdentifiers;
+@property (readonly) NSWindow *window;
+@end
+
+@interface NSInspectorBar : NSObject
++ (Class)standardItemControllerClass;
++ (NSArray<NSString *> *)standardTextItemIdentifiers;
+@property (strong) id <NSInspectorBarClient> client;
+@property (getter=isVisible) BOOL visible;
+@end
+
+NSString * const NSInspectorBarFontFamilyItemIdentifier = @"NSInspectorBarFontFamilyItemIdentifier";
+NSString * const NSInspectorBarFontSizeItemIdentifier = @"NSInspectorBarFontSizeItemIdentifier";
+NSString * const NSInspectorBarTextForegroundColorItemIdentifier = @"NSInspectorBarTextForegroundColorItemIdentifier";
+NSString * const NSInspectorBarTextBackgroundColorItemIdentifier = @"NSInspectorBarTextBackgroundColorItemIdentifier";
+NSString * const NSInspectorBarFontStyleItemIdentifier = @"NSInspectorBarFontStyleItemIdentifier";
+NSString * const NSInspectorBarTextAlignmentItemIdentifier = @"NSInspectorBarTextAlignmentItemIdentifier";
+
+@interface __NSInspectorBarItemController : NSObject
+- (instancetype)initWithInspectorBar:(NSInspectorBar *)bar NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+- (void)updateSelectedAttributes;
+- (void)fontSizeItemWasClicked:(NSNumber *)size;
+@property (readonly) NSPopUpButton *stylePopup;
+@property (readonly) NSPopUpButton *fontFamilyPopup;
+@property (readonly) NSComboBox *fontSizeComboBox;
+@property (readonly) NSColorWell *foregroundColorWell;
+@property (readonly) NSColorWell *backgroundColorWell;
+@property (readonly) NSSegmentedControl *textStyleSwitches;
+@end
+
+@interface NSWindow (NSInspectorBarSupport)
+- (NSInspectorBar *)inspectorBar;
+- (void)setInspectorBar:(NSInspectorBar *)bar;
+@end
+
 #endif
+
+@protocol NSTextInputClient_Async_Staging_44648564
+@optional
+- (void)typingAttributesWithCompletionHandler:(void(^)(NSDictionary<NSString *, id> *))completionHandler;
+@end
+
+@interface NSInspectorBar (IPI)
+- (NSFont *)convertFont:(NSFont *)font;
+- (NSDictionary *)convertAttributes:(NSDictionary *)attributes;
+@end
+
+@interface __NSInspectorBarItemController (IPI)
+- (void)_fontPopupAction:(id)sender;
+- (void)_fontStyleAction:(id)sender;
+- (void)_colorAction:(id)sender;
+- (void)menuNeedsUpdate:(NSMenu *)menu;
+@end
 
 #endif // PLATFORM(MAC)
