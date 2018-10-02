@@ -1,5 +1,23 @@
 2018-10-01  Alex Christensen  <achristensen@webkit.org>
 
+        Don't read from WebCore's bundle for IDNScriptWhiteList
+        https://bugs.webkit.org/show_bug.cgi?id=190157
+
+        Reviewed by Dan Bernstein.
+
+        No change in behavior.  This increases performance by not reading from the WebCore bundle,
+        and it makes it so that URL-related functionality can be moved to a place without
+        a bundle for resources.
+
+        * Resources/IDNScriptWhiteList.txt: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::whiteListIDNScripts):
+        (WebCore::allCharactersInIDNScriptWhiteList):
+        (WebCore::readIDNScriptWhiteListFile): Deleted.
+
+2018-10-01  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, rolling out r236551.
 
         Fails URL validating too aggressively

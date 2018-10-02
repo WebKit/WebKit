@@ -247,6 +247,16 @@ static BOOL isLookalikeCharacter(std::optional<UChar32> previousCodePoint, UChar
     }
 }
 
+static void whiteListIDNScript(const char* scriptName)
+{
+    int32_t script = u_getPropertyValueEnum(UCHAR_SCRIPT, scriptName);
+    if (script >= 0 && script < USCRIPT_CODE_LIMIT) {
+        size_t index = script / 32;
+        uint32_t mask = 1 << (script % 32);
+        IDNScriptWhiteList[index] |= mask;
+    }
+}
+
 static BOOL readIDNScriptWhiteListFile(NSString *filename)
 {
     if (!filename)
@@ -271,12 +281,7 @@ static BOOL readIDNScriptWhiteListFile(NSString *filename)
         
         if (result == 1) {
             // Got a word, map to script code and put it into the array.
-            int32_t script = u_getPropertyValueEnum(UCHAR_SCRIPT, word);
-            if (script >= 0 && script < USCRIPT_CODE_LIMIT) {
-                size_t index = script / 32;
-                uint32_t mask = 1 << (script % 32);
-                IDNScriptWhiteList[index] |= mask;
-            }
+            whiteListIDNScript(word);
         }
     }
     fclose(file);
@@ -294,12 +299,30 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
             if (readIDNScriptWhiteListFile([[dirs objectAtIndex:i] stringByAppendingPathComponent:@"IDNScriptWhiteList.txt"]))
                 return;
         }
-
-        // Fall back on white list inside bundle.
-        NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
-
-        if (!readIDNScriptWhiteListFile([bundle pathForResource:@"IDNScriptWhiteList" ofType:@"txt"]))
-            CRASH();
+        const char* defaultIDNScriptWhiteList[20] = {
+            "Common",
+            "Inherited",
+            "Arabic",
+            "Armenian",
+            "Bopomofo",
+            "Canadian_Aboriginal",
+            "Devanagari",
+            "Deseret",
+            "Gujarati",
+            "Gurmukhi",
+            "Hangul",
+            "Han",
+            "Hebrew",
+            "Hiragana",
+            "Katakana_Or_Hiragana",
+            "Katakana",
+            "Latin",
+            "Tamil",
+            "Thai",
+            "Yi",
+        };
+        for (const char* scriptName : defaultIDNScriptWhiteList)
+            whiteListIDNScript(scriptName);
     });
     
     int32_t i = 0;
