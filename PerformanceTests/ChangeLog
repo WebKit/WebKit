@@ -1,3 +1,13 @@
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236613): Parser/html-parser.html performance test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190201
+
+        Unreviewed, apply the same fix as in r236699 to make sure the iframe is treated as
+        same origin, so that calls to document.open() / document.write() succeed.
+
+        * Parser/html-parser.html:
+
 2018-10-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236613): Parser/HTML5-8266-ParseOnly.html performance tests no longer runs
