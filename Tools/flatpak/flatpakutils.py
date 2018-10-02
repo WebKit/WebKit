@@ -55,6 +55,12 @@ FLATPAK_REQ = [
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 _log = logging.getLogger(__name__)
 
+os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", os.path.realpath(os.path.join(scriptdir, "../../WebKitBuild", "UserFlatpak")))
+try:
+    os.makedirs(os.environ["FLATPAK_USER_DIR"])
+except OSError as e:
+    pass
+
 
 class Colors:
     HEADER = "\033[95m"
@@ -390,7 +396,7 @@ class FlatpakRepo(FlatpakObject):
 class FlatpakPackage(FlatpakObject):
     """A flatpak app."""
 
-    def __init__(self, name, branch, repo, arch, user=True, hash=None, assumeyes=False):
+    def __init__(self, name, branch, repo, arch, user=True, hash=None):
         FlatpakObject.__init__(self, user=user)
 
         self.name = name
@@ -398,7 +404,6 @@ class FlatpakPackage(FlatpakObject):
         self.repo = repo
         self.arch = arch
         self.hash = hash
-        self.assumeyes = assumeyes
 
     def __str__(self):
         return "%s/%s/%s %s" % (self.name, self.arch, self.branch, self.repo.name)
@@ -421,10 +426,7 @@ class FlatpakPackage(FlatpakObject):
         if not self.repo:
             return False
 
-        args = ["install", self.repo.name, self.name, "--reinstall", self.branch]
-
-        if self.assumeyes:
-            args.append("--assumeyes")
+        args = ["install", self.repo.name, self.name, "--reinstall", self.branch, "--assumeyes"]
 
         self.flatpak(*args, show_output=True,
                      comment="Installing from " + self.repo.name + " " +
@@ -440,8 +442,7 @@ class FlatpakPackage(FlatpakObject):
             extra_args = ["--commit", self.hash]
             comment += " to %s" % self.hash
 
-        if self.assumeyes:
-            extra_args.append("--assumeyes")
+        extra_args.append("--assumeyes")
 
         self.flatpak("update", self.name, self.branch, show_output=True,
                     *extra_args, comment=comment)
@@ -502,9 +503,6 @@ class WebkitFlatpak:
                             nargs=argparse.REMAINDER,
                             help="The command to run in the sandbox",
                             dest="user_command")
-        general.add_argument("-y", "--assumeyes",
-                            help="Automatically answer yes for all questions.",
-                            action="store_true")
         general.add_argument('--available', action='store_true', dest="check_available", help='Check if required dependencies are available.'),
         general.add_argument("--use-icecream", help="Use the distributed icecream (icecc) compiler.", action="store_true")
 
@@ -562,7 +560,6 @@ class WebkitFlatpak:
         self.app_module = None
         self.flatpak_default_args = []
         self.check_available = False
-        self.assumeyes = False
 
         # Default application to run in the sandbox
         self.command = None
@@ -581,6 +578,8 @@ class WebkitFlatpak:
 
     def clean_args(self):
         configure_logging(logging.DEBUG if self.verbose else logging.INFO)
+        _log.debug("Using flatpak user dir: %s" % os.environ["FLATPAK_USER_DIR"])
+
         if not self.debug and not self.release:
             factory = PortFactory(SystemHost())
             port = factory.get(self.platform)
@@ -631,21 +630,17 @@ class WebkitFlatpak:
         self.finish_args = remove_extension_points(self.finish_args)
         self.runtime = FlatpakPackage("org.gnome.Platform", self.sdk_branch,
                                       self.sdk_repo, "x86_64",
-                                      hash=manifest.get("runtime-hash"),
-                                      assumeyes=self.assumeyes)
+                                      hash=manifest.get("runtime-hash"))
         self.locale = FlatpakPackage("org.gnome.Platform.Locale",
-                                     self.sdk_branch, self.sdk_repo, "x86_64",
-                                     assumeyes=self.assumeyes)
+                                     self.sdk_branch, self.sdk_repo, "x86_64")
         self.sdk = FlatpakPackage("org.gnome.Sdk", self.sdk_branch,
                                   self.sdk_repo, "x86_64",
-                                  hash=manifest.get("sdk-hash"),
-                                  assumeyes=self.assumeyes)
+                                  hash=manifest.get("sdk-hash"))
         self.packs = [self.runtime, self.locale, self.sdk]
 
         if self.debug:
             self.sdk_debug = FlatpakPackage("org.gnome.Sdk.Debug", self.sdk_branch,
-                                      self.sdk_repo, "x86_64",
-                                      assumeyes=self.assumeyes)
+                                      self.sdk_repo, "x86_64")
             self.packs.append(self.sdk_debug)
         self.manifest_generated_path = os.path.join(self.cache_path,
                                                     self.build_name + ".json")

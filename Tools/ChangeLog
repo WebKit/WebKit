@@ -1,3 +1,21 @@
+2018-10-02  Thibault Saunier  <tsaunier@igalia.com>
+
+        [Flatpak] Use our own check of flatpak repos
+        https://bugs.webkit.org/show_bug.cgi?id=190194
+
+        Allowing us to not mess up with user installation
+        and "--assumeyes" everywhere.
+
+        Reviewed by Michael Catanzaro.
+
+        * flatpak/flatpakutils.py:
+        (FlatpakPackage.__init__):
+        (FlatpakPackage.install):
+        (FlatpakPackage.update):
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+
 2018-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Implement a way for the UI process to request typing attributes at the current selection
