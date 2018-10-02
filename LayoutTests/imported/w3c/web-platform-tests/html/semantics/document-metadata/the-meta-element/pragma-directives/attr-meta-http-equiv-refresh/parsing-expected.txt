@@ -1,137 +1,137 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL <meta>: "" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "" 
 PASS Refresh header: "" 
-TIMEOUT <meta>: "1" Test timed out
+PASS <meta>: "1" 
 PASS Refresh header: "1" 
-TIMEOUT <meta>: "1 " Test timed out
+PASS <meta>: "1 " 
 PASS Refresh header: "1 " 
-TIMEOUT <meta>: "1\t" Test timed out
+PASS <meta>: "1\t" 
 PASS Refresh header: "1\t" 
-TIMEOUT <meta>: "1\r" Test timed out
-TIMEOUT <meta>: "1\n" Test timed out
-TIMEOUT <meta>: "1\f" Test timed out
-TIMEOUT <meta>: "1;" Test timed out
+PASS <meta>: "1\r" 
+PASS <meta>: "1\n" 
+PASS <meta>: "1\f" 
+PASS <meta>: "1;" 
 PASS Refresh header: "1;" 
-TIMEOUT <meta>: "1," Test timed out
+PASS <meta>: "1," 
 PASS Refresh header: "1," 
-TIMEOUT <meta>: "1; url=foo" Test timed out
+PASS <meta>: "1; url=foo" 
 PASS Refresh header: "1; url=foo" 
-TIMEOUT <meta>: "1, url=foo" Test timed out
+PASS <meta>: "1, url=foo" 
 PASS Refresh header: "1, url=foo" 
-TIMEOUT <meta>: "1 url=foo" Test timed out
+PASS <meta>: "1 url=foo" 
 TIMEOUT Refresh header: "1 url=foo" Test timed out
-TIMEOUT <meta>: "1;\turl=foo" Test timed out
+PASS <meta>: "1;\turl=foo" 
 PASS Refresh header: "1;\turl=foo" 
-TIMEOUT <meta>: "1,\turl=foo" Test timed out
+PASS <meta>: "1,\turl=foo" 
 PASS Refresh header: "1,\turl=foo" 
-TIMEOUT <meta>: "1\turl=foo" Test timed out
+PASS <meta>: "1\turl=foo" 
 TIMEOUT Refresh header: "1\turl=foo" Test timed out
-TIMEOUT <meta>: "1;\rurl=foo" Test timed out
-TIMEOUT <meta>: "1,\rurl=foo" Test timed out
-TIMEOUT <meta>: "1\rurl=foo" Test timed out
-TIMEOUT <meta>: "1;\nurl=foo" Test timed out
-TIMEOUT <meta>: "1,\nurl=foo" Test timed out
-TIMEOUT <meta>: "1\nurl=foo" Test timed out
-TIMEOUT <meta>: "1;\furl=foo" Test timed out
-TIMEOUT <meta>: "1,\furl=foo" Test timed out
-TIMEOUT <meta>: "1\furl=foo" Test timed out
-FAIL <meta>: "1url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "1;\rurl=foo" 
+PASS <meta>: "1,\rurl=foo" 
+PASS <meta>: "1\rurl=foo" 
+PASS <meta>: "1;\nurl=foo" 
+PASS <meta>: "1,\nurl=foo" 
+PASS <meta>: "1\nurl=foo" 
+PASS <meta>: "1;\furl=foo" 
+PASS <meta>: "1,\furl=foo" 
+PASS <meta>: "1\furl=foo" 
+PASS <meta>: "1url=foo" 
 PASS Refresh header: "1url=foo" 
-FAIL <meta>: "1x;url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "1x;url=foo" 
 PASS Refresh header: "1x;url=foo" 
-TIMEOUT <meta>: "1 x;url=foo" Test timed out
+PASS <meta>: "1 x;url=foo" 
 TIMEOUT Refresh header: "1 x;url=foo" Test timed out
-TIMEOUT <meta>: "1;;url=foo" Test timed out
+PASS <meta>: "1;;url=foo" 
 PASS Refresh header: "1;;url=foo" 
-TIMEOUT <meta>: "  1  ;  url  =  foo" Test timed out
+PASS <meta>: "  1  ;  url  =  foo" 
 PASS Refresh header: "  1  ;  url  =  foo" 
-TIMEOUT <meta>: "  1  ,  url  =  foo" Test timed out
+PASS <meta>: "  1  ,  url  =  foo" 
 PASS Refresh header: "  1  ,  url  =  foo" 
-TIMEOUT <meta>: "  1  ;  foo" Test timed out
+PASS <meta>: "  1  ;  foo" 
 PASS Refresh header: "  1  ;  foo" 
-TIMEOUT <meta>: "  1  ,  foo" Test timed out
+PASS <meta>: "  1  ,  foo" 
 PASS Refresh header: "  1  ,  foo" 
-TIMEOUT <meta>: "  1  url  =  foo" Test timed out
+PASS <meta>: "  1  url  =  foo" 
 TIMEOUT Refresh header: "  1  url  =  foo" Test timed out
-TIMEOUT <meta>: "1; url=foo " Test timed out
+PASS <meta>: "1; url=foo " 
 PASS Refresh header: "1; url=foo " 
-TIMEOUT <meta>: "1; url=f\to\no" Test timed out
-TIMEOUT <meta>: "1; url=\"foo\"bar" Test timed out
+PASS <meta>: "1; url=f\to\no" 
+PASS <meta>: "1; url=\"foo\"bar" 
 PASS Refresh header: "1; url=\"foo\"bar" 
-TIMEOUT <meta>: "1; url='foo'bar" Test timed out
+PASS <meta>: "1; url='foo'bar" 
 PASS Refresh header: "1; url='foo'bar" 
-TIMEOUT <meta>: "1; url=\"foo'bar" Test timed out
+PASS <meta>: "1; url=\"foo'bar" 
 PASS Refresh header: "1; url=\"foo'bar" 
-TIMEOUT <meta>: "1; url foo" Test timed out
+PASS <meta>: "1; url foo" 
 PASS Refresh header: "1; url foo" 
-TIMEOUT <meta>: "1; urlfoo" Test timed out
+PASS <meta>: "1; urlfoo" 
 PASS Refresh header: "1; urlfoo" 
-TIMEOUT <meta>: "1; urfoo" Test timed out
+PASS <meta>: "1; urfoo" 
 PASS Refresh header: "1; urfoo" 
-TIMEOUT <meta>: "1; ufoo" Test timed out
+PASS <meta>: "1; ufoo" 
 PASS Refresh header: "1; ufoo" 
-TIMEOUT <meta>: "1; \"foo\"bar" Test timed out
+PASS <meta>: "1; \"foo\"bar" 
 PASS Refresh header: "1; \"foo\"bar" 
-FAIL <meta>: "; foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "; foo" 
 PASS Refresh header: "; foo" 
-FAIL <meta>: ";foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: ";foo" 
 PASS Refresh header: ";foo" 
-FAIL <meta>: ", foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: ", foo" 
 PASS Refresh header: ", foo" 
-FAIL <meta>: ",foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: ",foo" 
 PASS Refresh header: ",foo" 
-FAIL <meta>: "foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "foo" 
 PASS Refresh header: "foo" 
-FAIL <meta>: "+1; url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "+1; url=foo" 
 FAIL Refresh header: "+1; url=foo" assert_equals: expected "refresh.py" but got "foo"
-FAIL <meta>: "-1; url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "-1; url=foo" 
 PASS Refresh header: "-1; url=foo" 
-FAIL <meta>: "+0; url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "+0; url=foo" 
 FAIL Refresh header: "+0; url=foo" assert_equals: expected "refresh.py" but got "foo"
-FAIL <meta>: "-0; url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "-0; url=foo" 
 FAIL Refresh header: "-0; url=foo" assert_equals: expected "refresh.py" but got "foo"
-TIMEOUT <meta>: "0; url=foo" Test timed out
+PASS <meta>: "0; url=foo" 
 PASS Refresh header: "0; url=foo" 
-FAIL <meta>: "+1; foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "+1; foo" 
 FAIL Refresh header: "+1; foo" assert_equals: expected "refresh.py" but got "foo"
-FAIL <meta>: "-1; foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "-1; foo" 
 PASS Refresh header: "-1; foo" 
-FAIL <meta>: "+0; foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "+0; foo" 
 FAIL Refresh header: "+0; foo" assert_equals: expected "refresh.py" but got "foo"
-FAIL <meta>: "-0; foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "-0; foo" 
 FAIL Refresh header: "-0; foo" assert_equals: expected "refresh.py" but got "foo"
-TIMEOUT <meta>: "0; foo" Test timed out
+PASS <meta>: "0; foo" 
 PASS Refresh header: "0; foo" 
-FAIL <meta>: "+1" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "+1" 
 FAIL Refresh header: "+1" assert_unreached: Got > 1 load events Reached unreachable code
-FAIL <meta>: "-1" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "-1" 
 PASS Refresh header: "-1" 
-FAIL <meta>: "+0" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "+0" 
 FAIL Refresh header: "+0" assert_unreached: Got > 1 load events Reached unreachable code
-FAIL <meta>: "-0" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "-0" 
 FAIL Refresh header: "-0" assert_unreached: Got > 1 load events Reached unreachable code
-TIMEOUT <meta>: "0" Test timed out
+PASS <meta>: "0" 
 PASS Refresh header: "0" 
-TIMEOUT <meta>: "1.9; url=foo" Test timed out
+PASS <meta>: "1.9; url=foo" 
 PASS Refresh header: "1.9; url=foo" 
-TIMEOUT <meta>: "1.9..5.; url=foo" Test timed out
+PASS <meta>: "1.9..5.; url=foo" 
 TIMEOUT Refresh header: "1.9..5.; url=foo" Test timed out
-TIMEOUT <meta>: ".9; url=foo" Test timed out
+PASS <meta>: ".9; url=foo" 
 PASS Refresh header: ".9; url=foo" 
-TIMEOUT <meta>: "0.9; url=foo" Test timed out
+PASS <meta>: "0.9; url=foo" 
 PASS Refresh header: "0.9; url=foo" 
-TIMEOUT <meta>: "0...9; url=foo" Test timed out
+PASS <meta>: "0...9; url=foo" 
 TIMEOUT Refresh header: "0...9; url=foo" Test timed out
-TIMEOUT <meta>: "0...; url=foo" Test timed out
+PASS <meta>: "0...; url=foo" 
 TIMEOUT Refresh header: "0...; url=foo" Test timed out
-FAIL <meta>: "1e0; url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "1e0; url=foo" 
 FAIL Refresh header: "1e0; url=foo" assert_equals: expected "refresh.py" but got "foo"
-FAIL <meta>: "1e1; url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "1e1; url=foo" 
 PASS Refresh header: "1e1; url=foo" 
-FAIL <meta>: "10e-1; url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "10e-1; url=foo" 
 FAIL Refresh header: "10e-1; url=foo" assert_equals: expected "refresh.py" but got "foo"
-FAIL <meta>: "-0.1; url=foo" assert_equals: expected "refresh.sub.html" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS <meta>: "-0.1; url=foo" 
 PASS Refresh header: "-0.1; url=foo" 
 

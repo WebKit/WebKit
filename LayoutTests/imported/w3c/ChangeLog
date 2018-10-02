@@ -1,5 +1,21 @@
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
+        Refresh imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh
+        https://bugs.webkit.org/show_bug.cgi?id=190212
+
+        Reviewed by Youenn Fablet.
+
+        Refresh imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh
+        from upstream f15449622a76d0.
+
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/remove-from-document-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/support/refresh.sub.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/support/w3c-import.log:
+
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
         Image.__proto__ should be Function.prototype, not HTMLElement.prototype
         https://bugs.webkit.org/show_bug.cgi?id=190216
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 29: TypeError: null is not an object (evaluating 'sourceIFrame.contentDocument.querySelector("meta").remove')
 
-FAIL A meta must refresh the original document even if it was removed. TypeError: null is not an object (evaluating 'sourceIFrame.contentDocument.querySelector("meta").remove')
+PASS A meta must refresh the original document even if it was removed. 
 
