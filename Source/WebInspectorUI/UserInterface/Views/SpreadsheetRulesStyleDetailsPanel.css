@@ -41,7 +41,7 @@
 }
 
 .sidebar > .panel.details.css-style > .content > .rules .section-header .node-link:hover {
-    color: black;
+    color: var(--text-color);
 }
 
 .sidebar > .panel.details.css-style > .content > .rules > .message-text-view {
@@ -55,10 +55,6 @@
 @media (prefers-dark-interface) {
     .sidebar > .panel.details.css-style > .content > .rules .section-header {
         color: var(--text-color-secondary);
-        border-bottom: 0.5px solid hsla(0, 0%, var(--background-color), 0.2);
-    }
-
-    .sidebar > .panel.details.css-style > .content > .rules .section-header .node-link:hover {
-        color: var(--text-color);
+        border-bottom-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
     }
 }

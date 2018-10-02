@@ -32,9 +32,15 @@
     --z-index-glass-pane-for-drag: 2048;
     --z-index-uncaught-exception-sheet: 4096;
 
+    --foreground-lightness: 0%;
+
+    --text-color: black;
     --text-color-active: black;
 
+    --background-color: white;
+
     --background-color-content: white;
+    --background-color-code: white;
 
     --selected-foreground-color: white;
     --selected-secondary-text-color: hsla(0, 100%, 100%, 0.7);
@@ -147,6 +153,8 @@ body.window-inactive * {
     :root {
         color: var(--text-color);
 
+        --foreground-lightness: 100%;
+
         --text-color: hsl(0, 0%, 88%);
         --text-color-active: white;
         --text-color-secondary: hsl(0, 0%, 65%);
@@ -247,8 +255,6 @@ body.window-inactive * {
 
         /* Invert colors yet preserve the hue */
         --filter-invert: invert(100%) hue-rotate(180deg);
-
-        --foreground-lightness: 100%;
 
         /* TODO: Use the same variable for the default theme */
         --overlay-background: hsla(0, 0%, 24%, 0.9);

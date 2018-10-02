@@ -48,7 +48,7 @@
 }
 
 .spreadsheet-css-declaration .media-label {
-    color: black;
+    color: var(--text-color);
 }
 
 .spreadsheet-css-declaration .origin {
@@ -100,7 +100,7 @@
 
 .spreadsheet-css-declaration .selector:focus,
 .spreadsheet-css-declaration .selector > .matched {
-    color: black;
+    color: var(--text-color);
 }
 
 .spreadsheet-css-declaration.locked {
@@ -144,11 +144,6 @@
         color: var(--text-color-secondary);
     }
 
-    .spreadsheet-css-declaration .selector:focus,
-    .spreadsheet-css-declaration .selector > .matched {
-        color: var(--text-color);
-    }
-
     .spreadsheet-css-declaration.locked .origin::after {
         filter: var(--filter-invert);
     }
@@ -156,9 +151,5 @@
     .spreadsheet-css-declaration .origin .go-to-link,
     .spreadsheet-css-declaration .origin .go-to-link:hover {
         color: var(--text-color-secondary);
-    }
-
-    .spreadsheet-css-declaration .media-label {
-        color: var(--text-color);
     }
 }

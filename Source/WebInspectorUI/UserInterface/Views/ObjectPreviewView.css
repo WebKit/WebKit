@@ -24,7 +24,7 @@
  */
 
 .object-preview {
-    color: black;
+    color: var(--text-color);
     font-style: italic;
     font-family: Menlo, monospace;
     font-size: 11px;
@@ -46,4 +46,10 @@
 
 .object-preview > .title {
     line-height: 16px;
+}
+
+@media (prefers-dark-interface) {
+    .object-preview .name {
+        color: var(--syntax-highlight-boolean-color);
+    }
 }

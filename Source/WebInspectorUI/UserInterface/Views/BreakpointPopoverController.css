@@ -35,7 +35,6 @@
 }
 
 .popover .edit-breakpoint-popover-content > label.toggle {
-    color: black;
     font-weight: bold;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -64,7 +63,7 @@
     padding: 4px 0 2px 0;
     -webkit-appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
-    background: white;
+    background: var(--background-color-code);
 }
 
 .edit-breakpoint-popover-condition > .CodeMirror {
@@ -91,15 +90,7 @@ body[dir=rtl] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover
 }
 
 @media (prefers-dark-interface) {
-    .popover .edit-breakpoint-popover-content > label.toggle {
-        color: unset;
-    }
-
     .popover .edit-breakpoint-popover-content > table > tr > th {
         color: var(--text-color-secondary);
-    }
-
-    .edit-breakpoint-popover-condition {
-        background: var(--background-color-code);
     }
 }

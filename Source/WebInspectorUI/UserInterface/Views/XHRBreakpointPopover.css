@@ -39,7 +39,7 @@
     padding: 4px 0 2px 0;
     -webkit-appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
-    background: white;
+    background: var(--background-color-code);
 
     --editor-margin-start: 4px;
 }
@@ -66,6 +66,5 @@ body[dir=rtl] .popover .xhr-breakpoint-content > .editor-wrapper > .editor {
     .popover .xhr-breakpoint-content > .editor-wrapper > .editor {
         -webkit-appearance: unset;
         border-color: var(--text-color-quaternary);
-        background: var(--background-color-code);
     }
 }

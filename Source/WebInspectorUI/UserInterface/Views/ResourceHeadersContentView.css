@@ -61,7 +61,7 @@ body[dir=rtl] .resource-headers .details .pair {
 }
 
 .resource-headers .value {
-    color: black;
+    color: var(--text-color);
 }
 
 .resource-headers .header > .key {
@@ -82,10 +82,4 @@ body[dir=rtl] .resource-headers .details .pair {
     color: black;
     background-color: hsla(53, 83%, 53%, 0.2);
     border-bottom: 1px solid hsl(47, 82%, 60%);
-}
-
-@media (prefers-dark-interface) {
-    .resource-headers .value {
-        color: var(--text-color);
-    }
 }

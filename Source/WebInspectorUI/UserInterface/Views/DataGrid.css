@@ -84,7 +84,7 @@
     vertical-align: middle;
     font-weight: normal;
     white-space: nowrap;
-    background-color: white;
+    background-color: var(--background-color);
     overflow: hidden;
 }
 
@@ -426,24 +426,16 @@ body[dir=rtl] .data-grid :matches(th, td):first-child {
 }
 
 body:not(.window-inactive, .window-docked-inactive) .data-grid:matches(:focus, .force-focus) tr.editable.selected .cell-content > input {
-    color: white;
+    color: var(--text-color);
 }
 
 @media (prefers-dark-interface) {
-    .data-grid th {
-        background-color: var(--background-color);
-    }
-
     .data-grid td .subtitle {
         color: var(--selected-secondary-text-color);
     }
 
     .data-grid:matches(:focus, .force-focus) tr.selected td .subtitle {
         color: hsla(0, 0%, var(--foreground-lightness), 0.9);
-    }
-
-    body:not(.window-inactive, .window-docked-inactive) .data-grid:matches(:focus, .force-focus) tr.editable.selected .cell-content > input {
-        color: var(--text-color);
     }
 
     .data-grid tr.editable .cell-content > input {

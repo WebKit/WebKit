@@ -26,7 +26,7 @@
 .object-tree {
     position: relative;
     display: inline-block;
-    color: black;
+    color: var(--text-color);
     font-family: Menlo, monospace;
     font-size: 11px;
 }
@@ -131,19 +131,4 @@
 
 .object-tree-property :matches(.formatted-string, .formatted-regexp) {
     white-space: nowrap;
-}
-
-@media (prefers-dark-interface) {
-    .object-tree,
-    .object-preview {
-        color: var(--text-color);
-    }
-
-    .object-preview .name {
-        color: var(--syntax-highlight-boolean-color);
-    }
-
-    .object-preview > .size {
-        color: var(--console-secondary-text-color);
-    }
 }

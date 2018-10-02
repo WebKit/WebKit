@@ -31,7 +31,7 @@
     height: 1em;
     margin-right: 3px;
     vertical-align: -2px;
-    background-color: white;
+    background-color: var(--background-color);
     border-radius: 2px;
     overflow: hidden;
     cursor: default;
@@ -117,10 +117,4 @@
 
 .inline-swatch-variable-popover .CodeMirror pre {
     padding: 0 3px;
-}
-
-@media (prefers-dark-interface) {
-    .inline-swatch {
-        background: var(--background-color);
-    }
 }

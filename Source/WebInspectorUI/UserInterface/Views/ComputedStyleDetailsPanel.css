@@ -24,7 +24,7 @@
  */
 
 .details-section:matches(.computed-style-properties, .computed-style-box-model):not(.collapsed) > :matches(.header, .content) {
-    background-color: white;
+    background-color: var(--background-color);
 }
 
 .computed-style-properties .property .go-to-arrow {
@@ -37,14 +37,4 @@
 
 .computed-style-properties .property:hover .go-to-arrow {
     display: initial;
-}
-
-@media (prefers-dark-interface) {
-    .computed-style-properties.details-section {
-        background-color: var(--background-color);
-    }
-
-    .details-section.style-box-model:not(.collapsed) > :matches(.header, .content) {
-        background-color: var(--background-color);
-    }
 }

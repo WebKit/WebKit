@@ -55,11 +55,11 @@
 
 .content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple {
     background-color: transparent;
-    color: black;
+    color: var(--text-color);
 }
 
 .content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows {
-    color: black;
+    color: var(--text-color);
 }
 
 .content-view.timeline-recording > .content-browser .recording-progress {
@@ -85,14 +85,4 @@
     margin-top: -1px;
     margin-left: 8px;
     vertical-align: middle;
-}
-
-@media (prefers-dark-interface) {
-    .content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple {
-        color: var(--text-color);
-    }
-
-    .content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows {
-        color: unset;
-    }
 }

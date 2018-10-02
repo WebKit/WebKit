@@ -53,7 +53,7 @@
 }
 
 .resource-timing-breakdown > table > tr.header:not(.total-row) > td {
-    color: black;
+    color: var(--text-color);
 }
 
 .resource-timing-breakdown > table hr {
@@ -75,10 +75,6 @@
 @media (prefers-dark-interface) {
     .popover.waterfall-popover {
         --popover-background-color: var(--panel-background-color);
-    }
-
-    .resource-timing-breakdown > table > tr.header:not(.total-row) > td {
-        color: var(--text-color);
     }
 
     .resource-timing-breakdown > table > tr > td.label,

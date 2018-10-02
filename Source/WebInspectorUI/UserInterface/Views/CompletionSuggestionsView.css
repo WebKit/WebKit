@@ -67,7 +67,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
-    color: black;
+    color: var(--text-color);
 }
 
 .completion-suggestions-container:not(:active) > .item.selected,
@@ -79,9 +79,5 @@
 @media (prefers-dark-interface) {
     .completion-suggestions {
         background-color: var(--overlay-background);
-    }
-
-    .completion-suggestions-container > .item {
-        color: var(--text-color);
     }
 }

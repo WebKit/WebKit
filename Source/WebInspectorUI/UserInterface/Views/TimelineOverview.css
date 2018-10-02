@@ -53,7 +53,7 @@ body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .tim
     z-index: var(--z-index-header);
     width: var(--timeline-sidebar-width);
     height: 23px;
-    background-color: white;
+    background-color: var(--background-color);
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -235,10 +235,6 @@ body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer {
 }
 
 @media (prefers-dark-interface) {
-    .timeline-overview > .navigation-bar.timelines {
-        background-color: var(--background-color);
-    }
-
     .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
         background: var(--background-color-alternate);
     }

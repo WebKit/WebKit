@@ -30,7 +30,8 @@
     display: flex;
     align-items: flex-end;
 
-    background-color: white;
+    color: var(--text-color);
+    background-color: var(--background-color-code);
     border-top: 1px solid var(--border-color);
     padding: 3px 0 4px;
 
@@ -108,12 +109,6 @@
 }
 
 @media (prefers-dark-interface) {
-    .quick-console {
-        background-color: var(--background-color-code);
-        color: var(--text-color);
-        border-top: 1px solid var(--border-color);
-    }
-
     .CodeMirror .jump-to-symbol-highlight,
     .meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover {
         color: var(--syntax-highlight-link-color) !important;

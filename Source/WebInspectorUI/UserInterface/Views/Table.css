@@ -28,7 +28,7 @@
     outline: none;
     width: 100%;
     height: 100%;
-    background: white;
+    background: var(--background-color);
 
     --table-column-border-start: 1px solid transparent;
     --table-column-border-end: 0.5px solid var(--border-color);
@@ -40,7 +40,7 @@
     height: var(--navigation-bar-height);
     line-height: calc(var(--navigation-bar-height) - 1px);
     border-bottom: 1px solid var(--border-color);
-    background: white;
+    background: var(--background-color);
     overflow-x: hidden;
     vertical-align: middle;
     white-space: nowrap;

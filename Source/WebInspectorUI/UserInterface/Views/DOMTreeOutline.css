@@ -36,7 +36,7 @@
 
  /* Needed to make the negative z-index on .selection-area works. Otherwise the background-color from .syntax-highlighted hides the selection. */
     background-color: transparent !important;
-    color: black;
+    color: var(--text-color);
 
     --item-parent-margin-start: -15px;
 
@@ -308,10 +308,6 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
 }
 
 @media (prefers-dark-interface) {
-    .tree-outline.dom {
-        color: var(--text-color);
-    }
-
     .tree-outline.dom li.elements-drag-over .selection-area {
         border-top-color: var(--selected-background-color);
     }

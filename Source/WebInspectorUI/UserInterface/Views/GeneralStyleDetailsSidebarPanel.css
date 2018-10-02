@@ -109,6 +109,7 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-containe
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
     margin: 0 0 1px;
     padding: 2px 4px 3px;
+    color: var(--text-color);
     background: none;
     border: none;
     border-radius: 3px;
@@ -221,9 +222,5 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .class-list-conta
 
     .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
         filter: var(--filter-invert);
-    }
-
-    .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle{
-        color: var(--text-color);
     }
 }

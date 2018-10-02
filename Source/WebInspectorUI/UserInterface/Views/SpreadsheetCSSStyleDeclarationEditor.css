@@ -42,7 +42,7 @@
 }
 
 .spreadsheet-style-declaration-editor .property:not(.disabled) .value {
-    color: black;
+    color: var(--text-color);
 }
 
 .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
@@ -83,7 +83,7 @@
 
 .spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) .content > * {
     text-decoration: line-through;
-    -webkit-text-decoration-color: hsla(0, 0%, 0%, 0.6);
+    -webkit-text-decoration-color: hsla(0, 0%, var(--foreground-lightness), 0.6);
 }
 
 .spreadsheet-style-declaration-editor .property.invalid-name:not(.disabled) .content > * {
@@ -156,10 +156,6 @@
 }
 
 @media (prefers-dark-interface) {
-    .spreadsheet-style-declaration-editor .property:not(.disabled) .value {
-        color: rgb(227, 227, 227)
-    }
-
     .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
         outline-color: var(--background-color-secondary) !important;
     }
@@ -170,10 +166,5 @@
 
     .spreadsheet-style-declaration-editor .property.has-warning .warning {
         filter: invert(100%) hue-rotate(150deg);
-    }
-
-    .spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) .content > * {
-        text-decoration: line-through;
-        -webkit-text-decoration-color: hsla(0, 0%, var(--text-color), 0.6);
     }
 }

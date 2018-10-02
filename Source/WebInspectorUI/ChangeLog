@@ -1,3 +1,112 @@
+2018-10-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: use the same CSS variables for dark and light modes
+        https://bugs.webkit.org/show_bug.cgi?id=189766
+        <rdar://problem/44619650>
+
+        Use --text-color and --background-color CSS variables for both dark and light modes.
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (.popover .edit-breakpoint-popover-content > label.toggle):
+        Color of the label matches the color of the popover, no need to specify it.
+
+        (.edit-breakpoint-popover-condition):
+        (@media (prefers-dark-interface)):
+        (.popover .edit-breakpoint-popover-content > table > tr > th):
+        * UserInterface/Views/CompletionSuggestionsView.css:
+        (.completion-suggestions-container > .item):
+        (@media (prefers-dark-interface)):
+        (.completion-suggestions):
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.details-section:matches(.computed-style-properties, .computed-style-box-model):not(.collapsed) > :matches(.header, .content)):
+        (.computed-style-properties .property:hover .go-to-arrow):
+        (@media (prefers-dark-interface)): Deleted.
+        (.computed-style-properties.details-section): Deleted.
+        (.details-section.style-box-model:not(.collapsed) > :matches(.header, .content)): Deleted.
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom):
+        (@media (prefers-dark-interface)):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid th):
+        (body:not(.window-inactive, .window-docked-inactive) .data-grid:matches(:focus, .force-focus) tr.editable.selected .cell-content > input):
+        (@media (prefers-dark-interface)):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        (@media (prefers-dark-interface)):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule):
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch):
+        (.inline-swatch-variable-popover .CodeMirror pre):
+        (@media (prefers-dark-interface)): Deleted.
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (.network-resource-detail):
+        (.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected):
+        (@media (prefers-dark-interface)):
+        (.resource-headers .value): Deleted.
+        Move this rule to ResourceHeadersContentView.css.
+
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview):
+        (@media (prefers-dark-interface)):
+        (.object-preview .name):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree):
+        (.object-tree-property :matches(.formatted-string, .formatted-regexp)):
+        (@media (prefers-dark-interface)): Deleted.
+        (.object-tree,): Deleted.
+
+        (.object-preview .name): Deleted.
+        (.object-preview > .size): Deleted.
+        Move these rules to ObjectPreviewView.css.
+
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console):
+        (@media (prefers-dark-interface)):
+        * UserInterface/Views/ResourceHeadersContentView.css:
+        (.resource-headers .value):
+        (.resource-headers.showing-find-banner .search-highlight):
+        (@media (prefers-dark-interface)): Deleted.
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (.resource-timing-breakdown > table > tr.header:not(.total-row) > td):
+        (@media (prefers-dark-interface)):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .value):
+        (.spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) .content > *):
+        (@media (prefers-dark-interface)):
+        (.spreadsheet-style-declaration-editor .property.has-warning .warning):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .media-label):
+        (.spreadsheet-css-declaration .selector:focus,):
+        (@media (prefers-dark-interface)):
+        (.spreadsheet-css-declaration .origin .go-to-link,):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .rules .section-header .node-link:hover):
+        (@media (prefers-dark-interface)):
+        (.sidebar > .panel.details.css-style > .content > .rules .section-header):
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.cm-s-default,):
+        (@media (prefers-dark-interface)):
+        (.syntax-highlighted,): Deleted.
+        * UserInterface/Views/Table.css:
+        (.table):
+        (.table > .header):
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .navigation-bar.timelines):
+        (@media (prefers-dark-interface)):
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows):
+        (.content-view.timeline-recording > .content-browser .recording-progress > .status > .indeterminate-progress-spinner):
+        (@media (prefers-dark-interface)): Deleted.
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-dark-interface)):
+        * UserInterface/Views/XHRBreakpointPopover.css:
+        (.popover .xhr-breakpoint-content > .editor-wrapper > .editor):
+        (@media (prefers-dark-interface)):
+
 2018-09-28  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r236091): CSSKeywordCompletions.js has "checkout" instead of "check-out" as a value for -apple-pay-button-type

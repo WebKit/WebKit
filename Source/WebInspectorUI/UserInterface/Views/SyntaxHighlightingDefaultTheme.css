@@ -27,7 +27,7 @@
 
 .cm-s-default,
 .syntax-highlighted {
-    color: black;
+    color: var(--text-color);
 
     font-family: Menlo, monospace;
     font-size: 11px;
@@ -126,8 +126,6 @@
 }
 
 @media (prefers-dark-interface) {
-    .syntax-highlighted,
-    .cm-s-default,
     .CodeMirror {
         color: var(--text-color);
     }
