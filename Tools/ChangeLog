@@ -1,3 +1,14 @@
+2018-10-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win][DRT] Actually set "experimental:WebAnimationsCSSIntegrationEnabled" when requested
+        https://bugs.webkit.org/show_bug.cgi?id=190150
+
+        Reviewed by Fujii Hironori.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setWebPreferencesForTestOptions):
+        DRT has been recognizing this field, but not propagating its value to WebPreferences.
+
 2018-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r236551.

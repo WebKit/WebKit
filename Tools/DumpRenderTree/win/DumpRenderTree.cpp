@@ -895,6 +895,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
 {
     COMPtr<IWebPreferencesPrivate6> prefsPrivate { Query, preferences };
 
+    prefsPrivate->setWebAnimationsCSSIntegrationEnabled(options.enableWebAnimationsCSSIntegration);
     prefsPrivate->setMenuItemElementEnabled(options.enableMenuItemElement);
     prefsPrivate->setModernMediaControlsEnabled(options.enableModernMediaControls);
     prefsPrivate->setIsSecureContextAttributeEnabled(options.enableIsSecureContextAttribute);
