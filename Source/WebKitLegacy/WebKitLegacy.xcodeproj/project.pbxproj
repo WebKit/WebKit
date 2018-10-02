@@ -772,6 +772,8 @@
 		C0B88E8B10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */; };
+		C11EBF4121419CCE00D659E7 /* WebSwitchingGPUClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C11EBF3F21419CCE00D659E7 /* WebSwitchingGPUClient.cpp */; };
+		C11EBF4221419CCE00D659E7 /* WebSwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11EBF4021419CCE00D659E7 /* WebSwitchingGPUClient.h */; };
 		C1D81128202CD80000EE74F9 /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1D81127202CD80000EE74F9 /* WebVideoFullscreenController.mm */; };
 		C1D8112B202CDCC400EE74F9 /* WebVideoFullscreenHUDWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1D81129202CDCC200EE74F9 /* WebVideoFullscreenHUDWindowController.mm */; };
 		C1D8112E202CED0800EE74F9 /* WebWindowAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1D8112D202CED0700EE74F9 /* WebWindowAnimation.mm */; };
@@ -1525,6 +1527,8 @@
 		C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentURLPattern.h; sourceTree = "<group>"; };
 		C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebUserContentURLPattern.mm; sourceTree = "<group>"; };
+		C11EBF3F21419CCE00D659E7 /* WebSwitchingGPUClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSwitchingGPUClient.cpp; sourceTree = "<group>"; };
+		C11EBF4021419CCE00D659E7 /* WebSwitchingGPUClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSwitchingGPUClient.h; sourceTree = "<group>"; };
 		C1D81126202CD7FE00EE74F9 /* WebVideoFullscreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenController.h; sourceTree = "<group>"; };
 		C1D81127202CD80000EE74F9 /* WebVideoFullscreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenController.mm; sourceTree = "<group>"; };
 		C1D81129202CDCC200EE74F9 /* WebVideoFullscreenHUDWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenHUDWindowController.mm; sourceTree = "<group>"; };
@@ -2613,6 +2617,8 @@
 				A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */,
 				2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */,
 				2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */,
+				C11EBF3F21419CCE00D659E7 /* WebSwitchingGPUClient.cpp */,
+				C11EBF4021419CCE00D659E7 /* WebSwitchingGPUClient.h */,
 				4618DFF61DEF760A0033C3AA /* WebValidationMessageClient.h */,
 				4618DFF71DEF760A0033C3AA /* WebValidationMessageClient.mm */,
 				1430C12A1B2C5DF700DEA01D /* WebViewGroup.cpp */,
@@ -3157,6 +3163,7 @@
 				1A591D461A2E91BB000907C4 /* WebStorageNamespaceProvider.h in Headers */,
 				3ABB3C7A1309C3B500E93D94 /* WebStorageTrackerClient.h in Headers */,
 				939810270824BF01008DF038 /* WebStringTruncator.h in Headers */,
+				C11EBF4221419CCE00D659E7 /* WebSwitchingGPUClient.h in Headers */,
 				936A2DEA0FD2D08400D312DB /* WebTextCompletionController.h in Headers */,
 				1A74A28E0F4F75400082E228 /* WebTextInputWindowController.h in Headers */,
 				F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */,
@@ -3674,6 +3681,7 @@
 				1A591D451A2E91BB000907C4 /* WebStorageNamespaceProvider.cpp in Sources */,
 				3ABB3C7B1309C3B500E93D94 /* WebStorageTrackerClient.mm in Sources */,
 				939810CC0824BF01008DF038 /* WebStringTruncator.mm in Sources */,
+				C11EBF4121419CCE00D659E7 /* WebSwitchingGPUClient.cpp in Sources */,
 				936A2DE80FD2D08000D312DB /* WebTextCompletionController.mm in Sources */,
 				1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */,
 				F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */,

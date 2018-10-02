@@ -224,6 +224,11 @@ public:
     void cacheMediaMIMETypes(const Vector<String>&);
 #endif
 
+#if PLATFORM(MAC)
+    void requestHighPerformanceGPU();
+    void releaseHighPerformanceGPU();
+#endif
+
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
     void shutDown();

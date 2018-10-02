@@ -44,10 +44,11 @@ class HostWindow;
 using PlatformDisplayID = uint32_t;
 
 #if HAVE(APPLE_GRAPHICS_CONTROL)
-bool hasMuxableGPU();
+WEBCORE_EXPORT bool hasLowAndHighPowerGPUs();
 #endif
 
 class GraphicsContext3DManager {
+    friend NeverDestroyed<GraphicsContext3DManager>;
 public:
     static GraphicsContext3DManager& sharedManager();
     
@@ -70,8 +71,6 @@ public:
 #endif
     
 private:
-    friend NeverDestroyed<GraphicsContext3DManager>;
-
     GraphicsContext3DManager()
         : m_disableHighPerformanceGPUTimer(*this, &GraphicsContext3DManager::disableHighPerformanceGPUTimerFired)
     {
@@ -85,10 +84,7 @@ private:
     HashSet<GraphicsContext3D*> m_contextsRequiringHighPerformance;
     
     Timer m_disableHighPerformanceGPUTimer;
-    
-#if PLATFORM(MAC)
-    CGLPixelFormatObj m_pixelFormatObj { nullptr };
-#endif
+    bool m_requestingHighPerformance { false };
 };
 
 }

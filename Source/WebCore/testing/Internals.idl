@@ -642,6 +642,7 @@ enum CompositingPolicy {
 
     [Conditional=WEBGL] void simulateWebGLContextChanged(WebGLRenderingContext context);
     [Conditional=WEBGL] void failNextGPUStatusCheck(WebGLRenderingContext context);
+    [Conditional=WEBGL] boolean hasLowAndHighPowerGPUs();
 
     void setPageVisibility(boolean isVisible);
     void setPageIsFocusedAndActive(boolean isFocused);

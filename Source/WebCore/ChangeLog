@@ -1,3 +1,62 @@
+2018-10-01  Dean Jackson  <dino@apple.com>
+
+        [macOS] Switching to discrete GPU should be done in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=189361
+        <rdar://problem/43949622>
+
+        Reviewed by Simon Fraser.
+
+        Based on an earlier patch by Per Arne Vollan.
+
+        Due to the fact we can't talk to the Window Server, the Web Process can
+        no longer muxing to the discrete GPU directly. Instead we have to get the
+        UI Process to process the change. Do this by adding a new Chrome client
+        called GPUClient, that will have implementations provided by both WebKit
+        and legacy WebKit.
+
+        Unfortunately this can't be tested by a regular WKTR since:
+        - it requires specific hardware
+        - swapping to/from the discrete GPU takes about 20 seconds
+        - running concurrent tests could confuse the tests into thinking
+          the wrong GPU is active
+
+        Instead we'll write a specific test for this functionality and
+        run it on a separate bot.
+
+        * WebCore.xcodeproj/project.pbxproj: Add GPUClient files.
+
+        * page/Chrome.cpp: Drive by clean-up.
+        (WebCore::Chrome::windowScreenDidChange):
+
+        * platform/graphics/GraphicsContext3D.h: We need to keep track of
+        whether we've muxed for this context, in order to not respond to
+        the screen change notifications (they are misleading in the case
+        of muxing).
+
+        * platform/graphics/GraphicsContext3DManager.cpp: Rather than try
+        to mux directly, call into GPUClient.
+        (WebCore::GraphicsContext3DManager::displayWasReconfigured):
+        (WebCore::GraphicsContext3DManager::updateHighPerformanceState):
+        (WebCore::GraphicsContext3DManager::disableHighPerformanceGPUTimerFired):
+        (WebCore::GraphicsContext3DManager::recycleContextIfNecessary):
+        * platform/graphics/GraphicsContext3DManager.h:
+
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm: Only reconfigure
+        the virtual display if it didn't happen from muxing.
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::updateCGLContext):
+        (WebCore::GraphicsContext3D::screenDidChange):
+
+        * platform/graphics/mac/SwitchingGPUClient.cpp: Added.
+        (WebCore::SwitchingGPUClient::singleton):
+        (WebCore::SwitchingGPUClient::setSingleton):
+        * platform/graphics/mac/SwitchingGPUClient.h: Added.
+
+        * testing/Internals.cpp: Testing helper.
+        (WebCore::Internals::hasMuxableGPU):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
         Image.__proto__ should be Function.prototype, not HTMLElement.prototype

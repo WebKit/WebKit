@@ -1519,6 +1519,10 @@ private:
 #if USE(CAIRO)
     Platform3DObject m_vao { 0 };
 #endif
+
+#if PLATFORM(MAC)
+    bool m_hasSwitchedToHighPerformanceGPU { false };
+#endif
 };
 
 } // namespace WebCore

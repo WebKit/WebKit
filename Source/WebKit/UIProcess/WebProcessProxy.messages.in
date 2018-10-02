@@ -67,4 +67,9 @@ messages -> WebProcessProxy LegacyReceiver {
 #if PLATFORM(COCOA)
     CacheMediaMIMETypes(Vector<String> types)
 #endif
+
+#if PLATFORM(MAC)
+    RequestHighPerformanceGPU()
+    ReleaseHighPerformanceGPU()
+#endif
 }

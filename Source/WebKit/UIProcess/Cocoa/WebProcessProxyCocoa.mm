@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebProcessProxy.h"
 
+#import "HighPerformanceGPUManager.h"
+#import "Logging.h"
 #import "ObjCObjectGraph.h"
 #import "SandboxUtilities.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -178,5 +180,19 @@ Vector<String> WebProcessProxy::mediaMIMETypes()
 {
     return mediaTypeCache();
 }
+
+#if PLATFORM(MAC)
+void WebProcessProxy::requestHighPerformanceGPU()
+{
+    LOG(WebGL, "WebProcessProxy::requestHighPerformanceGPU()");
+    HighPerformanceGPUManager::singleton().addProcessRequiringHighPerformance(this);
+}
+
+void WebProcessProxy::releaseHighPerformanceGPU()
+{
+    LOG(WebGL, "WebProcessProxy::releaseHighPerformanceGPU()");
+    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(this);
+}
+#endif
 
 }

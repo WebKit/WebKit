@@ -527,10 +527,7 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
 #if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_3D)
     GraphicsContext3DManager::sharedManager().screenDidChange(displayID, this);
 #endif
-
 }
-
-// --------
 
 #if ENABLE(DASHBOARD_SUPPORT)
 void ChromeClient::annotatedRegionsChanged()

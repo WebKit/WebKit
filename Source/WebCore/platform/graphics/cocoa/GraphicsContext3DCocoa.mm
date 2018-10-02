@@ -289,7 +289,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     bool useMultisampling = m_attrs.antialias;
 
 #if HAVE(APPLE_GRAPHICS_CONTROL)
-    m_powerPreferenceUsedForCreation = (hasMuxableGPU() && attrs.powerPreference == GraphicsContext3DPowerPreference::HighPerformance) ? GraphicsContext3DPowerPreference::HighPerformance : GraphicsContext3DPowerPreference::Default;
+    m_powerPreferenceUsedForCreation = (hasLowAndHighPowerGPUs() && attrs.powerPreference == GraphicsContext3DPowerPreference::HighPerformance) ? GraphicsContext3DPowerPreference::HighPerformance : GraphicsContext3DPowerPreference::Default;
 #else
     m_powerPreferenceUsedForCreation = GraphicsContext3DPowerPreference::Default;
 #endif
@@ -335,7 +335,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 
 #else
     UNUSED_PARAM(hostWindow);
-#endif // !PLATFORM(MAC)
+#endif
 
     CGLDestroyPixelFormat(pixelFormatObj);
     
@@ -347,7 +347,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 
     m_isForWebGL2 = attrs.isWebGL2;
 
-    // Set the current context to the one given to us.
     CGLSetCurrentContext(m_contextObj);
 
     // WebGL 2 expects ES 3-only PRIMITIVE_RESTART_FIXED_INDEX to be enabled; we must emulate this on non-ES 3 systems.
@@ -603,6 +602,7 @@ void GraphicsContext3D::updateCGLContext()
 
     makeContextCurrent();
     CGLUpdateContext(m_contextObj);
+    m_hasSwitchedToHighPerformanceGPU = true;
 }
 
 void GraphicsContext3D::setContextVisibility(bool isVisible)
@@ -648,7 +648,7 @@ bool GraphicsContext3D::allowOfflineRenderers() const
 #endif
         
 #if HAVE(APPLE_GRAPHICS_CONTROL)
-    if (hasMuxableGPU())
+    if (hasLowAndHighPowerGPUs())
         return true;
 #endif
     
@@ -661,7 +661,8 @@ void GraphicsContext3D::screenDidChange(PlatformDisplayID displayID)
     if (!m_contextObj)
         return;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
-    setGPUByRegistryID(m_contextObj, CGLGetPixelFormat(m_contextObj), gpuIDForDisplay(displayID));
+    if (!m_hasSwitchedToHighPerformanceGPU)
+        setGPUByRegistryID(m_contextObj, CGLGetPixelFormat(m_contextObj), gpuIDForDisplay(displayID));
 #else
     setGPUByDisplayMask(m_contextObj, CGLGetPixelFormat(m_contextObj), displayMaskForDisplay(displayID));
 #endif

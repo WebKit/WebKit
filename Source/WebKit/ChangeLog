@@ -1,3 +1,49 @@
+2018-10-01  Dean Jackson  <dino@apple.com>
+
+        [macOS] Switching to discrete GPU should be done in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=189361
+        <rdar://problem/43949622>
+
+        Reviewed by Simon Fraser.
+
+        Implement the UI-side process for triggering a GPU mux.
+
+        * Platform/Logging.h: Add a WebGL logging channel.
+
+        * SourcesCocoa.txt: Add the new files: WebSwitchingGPUClient and HighPerformanceGPUManager.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm: UI process calls that use HighPerformanceGPUManager
+        to keep track of whether or not this process needs the high-performance GPU.
+        (WebKit::WebProcessProxy::requestHighPerformanceGPU):
+        (WebKit::WebProcessProxy::releaseHighPerformanceGPU):
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy): Make sure to unregister with the HighPerformanceGPUManager
+        as the process disappears without manually removing itself (e.g. crashes).
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in: New messages.
+
+        * UIProcess/mac/HighPerformanceGPUManager.cpp: New class that copies most of what used
+        to live in GraphicsContext3DManager. It creates a CGLPixelFormat object when it sees
+        that at least one process needs the high-performance GPU.
+        (WebKit::HighPerformanceGPUManager::singleton):
+        (WebKit::HighPerformanceGPUManager::addProcessRequiringHighPerformance):
+        (WebKit::HighPerformanceGPUManager::removeProcessRequiringHighPerformance):
+        (WebKit::HighPerformanceGPUManager::updateState):
+        * UIProcess/mac/HighPerformanceGPUManager.h: Added.
+
+        * WebKit.xcodeproj/project.pbxproj: Add new files.
+
+        * WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp: Implementation of the SwitchingGPUClient for
+        WebCore, which sends messages to the UI process.
+        (WebKit::WebSwitchingGPUClient::singleton):
+        (WebKit::WebSwitchingGPUClient::requestHighPerformanceGPU):
+        (WebKit::WebSwitchingGPUClient::releaseHighPerformanceGPU):
+        * WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.h: Added.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm: Register the GPUClient.
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2018-10-02  Sihui Liu  <sihui_liu@apple.com>
 
         Fix a potential crash in NetworkProcess::deleteWebsiteDataForOrigins

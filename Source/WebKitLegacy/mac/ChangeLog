@@ -1,3 +1,20 @@
+2018-10-01  Dean Jackson  <dino@apple.com>
+
+        [macOS] Switching to discrete GPU should be done in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=189361
+        <rdar://problem/43949622>
+
+        Reviewed by Simon Fraser.
+
+        Implement a no-op SwitchingGPUClient instance in legacy WebKit. We will
+        not support swapping to the discrete GPU in this configuration.
+
+        * WebCoreSupport/WebSwitchingGPUClient.cpp: Added.
+        (WebKit::WebSwitchingGPUClient::singleton):
+        * WebCoreSupport/WebSwitchingGPUClient.h: Added.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2018-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove ParsedURLString

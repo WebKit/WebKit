@@ -272,6 +272,10 @@
 #include <webrtc/sdk/WebKit/VideoProcessingSoftLink.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "GraphicsContext3DManager.h"
+#endif
+
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
@@ -4354,6 +4358,15 @@ void Internals::simulateWebGLContextChanged(WebGLRenderingContext& context)
 void Internals::failNextGPUStatusCheck(WebGLRenderingContext& context)
 {
     context.setFailNextGPUStatusCheck();
+}
+
+bool Internals::hasLowAndHighPowerGPUs()
+{
+#if PLATFORM(MAC)
+    return WebCore::hasLowAndHighPowerGPUs();
+#else
+    return false;
+#endif
 }
 #endif
 

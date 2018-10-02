@@ -401,6 +401,7 @@ UIProcess/Launcher/mac/ProcessLauncherMac.mm
 
 UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayLink.cpp
+UIProcess/mac/HighPerformanceGPUManager.cpp
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/RemoteWebInspectorProxyMac.mm
@@ -532,6 +533,7 @@ WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
 WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
 WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm
+WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp
 WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm
 
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp

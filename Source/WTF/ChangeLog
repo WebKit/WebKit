@@ -1,3 +1,15 @@
+2018-10-01  Dean Jackson  <dino@apple.com>
+
+        [macOS] Switching to discrete GPU should be done in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=189361
+        <rdar://problem/43949622>
+
+        Reviewed by Simon Fraser.
+
+        Define GL_SILENCE_DEPRECATION to avoid deprecation warnings for OpenGL.
+
+        * wtf/Platform.h:
+
 2018-10-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r236624 and r236671.

@@ -70,6 +70,10 @@
 #include "VersionChecks.h"
 #endif
 
+#if PLATFORM(MAC)
+#include "HighPerformanceGPUManager.h"
+#endif
+
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShimProxy.h"
 #endif
@@ -165,6 +169,10 @@ WebProcessProxy::~WebProcessProxy()
 
     for (auto& callback : m_localPortActivityCompletionHandlers.values())
         callback(MessagePortChannelProvider::HasActivity::No);
+
+#if PLATFORM(MAC)
+    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(this);
+#endif
 }
 
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

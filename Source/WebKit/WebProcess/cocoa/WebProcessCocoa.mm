@@ -89,6 +89,7 @@
 
 #if PLATFORM(MAC)
 #import "WKAccessibilityWebPageObjectMac.h"
+#import "WebSwitchingGPUClient.h"
 #import <WebCore/GraphicsContext3DManager.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
@@ -330,6 +331,8 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
     RELEASE_ASSERT(retval == kCGErrorSuccess);
     // Make sure that we close any WindowServer connections after checking in with Launch Services.
     CGSShutdownServerConnections();
+
+    SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
 #else
     if (![NSApp isRunning]) {
         // This call is needed when the WebProcess is not running the NSApplication event loop.

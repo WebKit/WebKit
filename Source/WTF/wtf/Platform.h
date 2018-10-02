@@ -1079,6 +1079,11 @@
 #define USE_OPENGL 0
 #define USE_OPENGL_ES 1
 #endif
+#if PLATFORM(COCOA)
+#ifndef GL_SILENCE_DEPRECATION
+#define GL_SILENCE_DEPRECATION 1
+#endif
+#endif
 #endif
 
 #define USE_METAL 1

@@ -653,6 +653,7 @@ public:
 #if ENABLE(WEBGL)
     void simulateWebGLContextChanged(WebGLRenderingContext&);
     void failNextGPUStatusCheck(WebGLRenderingContext&);
+    bool hasLowAndHighPowerGPUs();
 #endif
 
     void setPageVisibility(bool isVisible);
