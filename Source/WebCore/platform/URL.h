@@ -261,13 +261,6 @@ std::optional<URL> URL::decode(Decoder& decoder)
     return URL(URL(), string);
 }
 
-bool operator==(const URL&, const URL&);
-bool operator==(const URL&, const String&);
-bool operator==(const String&, const URL&);
-bool operator!=(const URL&, const URL&);
-bool operator!=(const URL&, const String&);
-bool operator!=(const String&, const URL&);
-
 WEBCORE_EXPORT bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
 WEBCORE_EXPORT bool equalIgnoringQueryAndFragment(const URL&, const URL&);
 WEBCORE_EXPORT bool protocolHostAndPortAreEqual(const URL&, const URL&);
@@ -298,10 +291,6 @@ String mimeTypeFromDataURL(const String& url);
 
 // FIXME: This is a wrong concept to expose, different parts of a URL need different escaping per the URL Standard.
 WEBCORE_EXPORT String encodeWithURLEscapeSequences(const String&);
-
-#if PLATFORM(IOS)
-WEBCORE_EXPORT void enableURLSchemeCanonicalization(bool);
-#endif
 
 // Inlines.
 

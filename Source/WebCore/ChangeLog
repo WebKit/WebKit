@@ -1,5 +1,20 @@
 2018-10-02  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused linked-on-or-before-iOS5 check
+        https://bugs.webkit.org/show_bug.cgi?id=190164
+
+        Reviewed by Michael Saboff.
+
+        If an app hasn't been updated since iOS5, it can't run supported iOS.
+        This value is also only checked in an uninstantiated template function.
+
+        * platform/URL.cpp:
+        (WebCore::enableURLSchemeCanonicalization): Deleted.
+        (WebCore::equal): Deleted.
+        * platform/URL.h:
+
+2018-10-02  Alex Christensen  <achristensen@webkit.org>
+
         Remove ParsedURLString
         https://bugs.webkit.org/show_bug.cgi?id=190154
 

@@ -664,42 +664,6 @@ void URL::setPath(const String& s)
     *this = parser.result();
 }
 
-#if PLATFORM(IOS)
-
-static bool shouldCanonicalizeScheme = true;
-
-void enableURLSchemeCanonicalization(bool enableSchemeCanonicalization)
-{
-    shouldCanonicalizeScheme = enableSchemeCanonicalization;
-}
-
-#endif
-
-template<size_t length>
-static inline bool equal(const char* a, const char (&b)[length])
-{
-#if PLATFORM(IOS)
-    if (!shouldCanonicalizeScheme) {
-        for (size_t i = 0; i < length; ++i) {
-            if (toASCIILower(a[i]) != b[i])
-                return false;
-        }
-        return true;
-    }
-#endif
-    for (size_t i = 0; i < length; ++i) {
-        if (a[i] != b[i])
-            return false;
-    }
-    return true;
-}
-
-template<size_t lengthB>
-static inline bool equal(const char* stringA, size_t lengthA, const char (&stringB)[lengthB])
-{
-    return lengthA == lengthB && equal(stringA, stringB);
-}
-
 bool equalIgnoringFragmentIdentifier(const URL& a, const URL& b)
 {
     if (a.m_queryEnd != b.m_queryEnd)
