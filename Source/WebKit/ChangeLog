@@ -1,3 +1,17 @@
+2018-10-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r236662): Fix -Wformat warnings in CacheStorageEngineCaches.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=190205
+
+        Reviewed by Chris Dumez.
+
+        Passing enums to %d is not kosher, at least not according to GCC's -Wformat. Avoid it.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::initialize):
+        (WebKit::CacheStorage::Caches::readCachesFromDisk):
+        (WebKit::CacheStorage::Caches::writeCachesToDisk):
+
 2018-10-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r236624 and r236671.

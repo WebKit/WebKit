@@ -153,7 +153,7 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
 
     storeOrigin([this] (std::optional<Error>&& error) mutable {
         if (error) {
-            RELEASE_LOG_ERROR(CacheStorage, "Caches::initialize failed storing origin with error %d", *error);
+            RELEASE_LOG_ERROR(CacheStorage, "Caches::initialize failed storing origin with error %d", static_cast<int>(*error));
 
             auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
             for (auto& callback : pendingCallbacks)
@@ -167,7 +167,7 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
             makeDirty();
 
             if (!result.has_value()) {
-                RELEASE_LOG_ERROR(CacheStorage, "Caches::initialize failed reading caches from disk with error %d", result.error());
+                RELEASE_LOG_ERROR(CacheStorage, "Caches::initialize failed reading caches from disk with error %d", static_cast<int>(result.error()));
 
                 auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
                 for (auto& callback : pendingCallbacks)
@@ -427,7 +427,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
 
         auto result = decodeCachesNames(data);
         if (!result.has_value()) {
-            RELEASE_LOG_ERROR(CacheStorage, "Caches::decodeCachesNames failed decoding caches with error %d", result.error());
+            RELEASE_LOG_ERROR(CacheStorage, "Caches::decodeCachesNames failed decoding caches with error %d", static_cast<int>(result.error()));
             callback(makeUnexpected(result.error()));
             return;
         }
@@ -458,7 +458,7 @@ void Caches::writeCachesToDisk(CompletionCallback&& callback)
     m_engine->writeFile(cachesListFilename(m_rootPath), encodeCacheNames(m_caches), [this, protectedThis = makeRef(*this), callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
         m_isWritingCachesToDisk = false;
         if (error)
-            RELEASE_LOG_ERROR(CacheStorage, "Caches::writeCachesToDisk failed writing caches to disk with error %d", *error);
+            RELEASE_LOG_ERROR(CacheStorage, "Caches::writeCachesToDisk failed writing caches to disk with error %d", static_cast<int>(*error));
 
         callback(WTFMove(error));
         while (!m_pendingWritingCachesToDiskCallbacks.isEmpty() && !m_isWritingCachesToDisk)
