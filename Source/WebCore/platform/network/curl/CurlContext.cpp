@@ -733,6 +733,7 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::S
     double connect = 0.0;
     double appConnect = 0.0;
     double startTransfer = 0.0;
+    long version = 0;
 
     if (!m_handle)
         return std::nullopt;
@@ -753,6 +754,10 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::S
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
     NetworkLoadMetrics networkLoadMetrics;
 
     networkLoadMetrics.domainLookupStart = domainLookupStart;
@@ -768,6 +773,13 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::S
     networkLoadMetrics.requestStart = networkLoadMetrics.connectEnd;
     networkLoadMetrics.responseStart = domainLookupStart + Seconds(startTransfer);
 
+    if (version == CURL_HTTP_VERSION_1_0)
+        networkLoadMetrics.protocol = httpVersion10;
+    else if (version == CURL_HTTP_VERSION_1_1)
+        networkLoadMetrics.protocol = httpVersion11;
+    else if (version == CURL_HTTP_VERSION_2)
+        networkLoadMetrics.protocol = httpVersion2;
+
     return networkLoadMetrics;
 }
 
@@ -777,7 +789,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     curl_off_t requestBodySize = 0;
     long responseHeaderSize = 0;
     curl_off_t responseBodySize = 0;
-    long version = 0;
     char* ip = nullptr;
     long port = 0;
 
@@ -806,10 +817,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     if (errorCode != CURLE_OK)
         return;
 
-    errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
-    if (errorCode != CURLE_OK)
-        return;
-
     networkLoadMetrics.requestHeaderBytesSent = requestHeaderSize;
     networkLoadMetrics.requestBodyBytesSent = requestBodySize;
     networkLoadMetrics.responseHeaderBytesReceived = responseHeaderSize;
@@ -820,13 +827,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
         if (port)
             networkLoadMetrics.remoteAddress.append(":" + String::number(port));
     }
-
-    if (version == CURL_HTTP_VERSION_1_0)
-        networkLoadMetrics.protocol = httpVersion10;
-    else if (version == CURL_HTTP_VERSION_1_1)
-        networkLoadMetrics.protocol = httpVersion11;
-    else if (version == CURL_HTTP_VERSION_2)
-        networkLoadMetrics.protocol = httpVersion2;
 }
 
 std::optional<CertificateInfo> CurlHandle::certificateInfo() const

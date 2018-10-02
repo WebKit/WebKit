@@ -1,3 +1,12 @@
+2018-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Fix missing values of  resource timing API.
+        https://bugs.webkit.org/show_bug.cgi?id=190193
+
+        Reviewed by Alex Christensen.
+
+        * platform/wincairo/TestExpectations:
+
 2018-10-02  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Cue with line setting is not rendered correctly

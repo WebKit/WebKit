@@ -1,3 +1,20 @@
+2018-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Fix missing values of  resource timing API.
+        https://bugs.webkit.org/show_bug.cgi?id=190193
+
+        Reviewed by Alex Christensen.
+
+        The property nextHopProtocol was not returned correctly. It was
+        returned only when remote inspector is opened.
+
+        Tests: http/wpt/resource-timing/rt-nextHopProtocol.html
+               http/wpt/resource-timing/rt-nextHopProtocol.worker.html
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::getNetworkLoadMetrics):
+        (WebCore::CurlHandle::addExtraNetworkLoadMetrics):
+
 2018-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused linked-on-or-before-iOS5 check
