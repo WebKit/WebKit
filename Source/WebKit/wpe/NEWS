@@ -1,3 +1,21 @@
+=================
+WPE WebKit 2.20.0
+=================
+
+What's new in WPE WebKit 2.20.0?
+
+  - Several fixes for video playback with media source extensions (MSE).
+    This allows using WebM support for YouTube, which no longer works through
+    regular video source. Note that MSE is still disabled by default and
+    webkit_settings_set_enable_mediasource() has to be used to enable the
+    feature.
+  - Add warn_unused_result attribute to some JavaScriptCore GLib APIs.
+  - Fix the build in several platforms: s390x, ppc64le, armv7hl, mips64.
+  - Fix the build with video disabled.
+  - Fix symbols with jsc_ prefix not being exported.
+  - Fix a memory leak during media playback when using playbin3.
+  - Fix several crashes and rendering issues.
+
 ==================
 WPE WebKit 2.21.92
 ==================
