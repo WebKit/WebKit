@@ -31,7 +31,7 @@ WI.MainTarget = class MainTarget extends WI.Target
 
         super("main", displayName, type, InspectorBackend.mainConnection);
 
-        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
+        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelExecutionContextIdentifier, displayName, true, null);
         this._mainResource = null;
     }
 

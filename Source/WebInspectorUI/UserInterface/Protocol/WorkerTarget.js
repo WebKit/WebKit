@@ -32,7 +32,7 @@ WI.WorkerTarget = class WorkerTarget extends WI.Target
         WI.frameResourceManager.adoptOrphanedResourcesForTarget(this);
 
         if (this.RuntimeAgent) {
-            this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
+            this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelExecutionContextIdentifier, this.displayName, false, null);
             this.RuntimeAgent.enable();
             if (WI.showJavaScriptTypeInformationSetting && WI.showJavaScriptTypeInformationSetting.value)
                 this.RuntimeAgent.enableTypeProfiler();
