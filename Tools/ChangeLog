@@ -1,3 +1,15 @@
+2018-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Enable WPT tests environment.
+        https://bugs.webkit.org/show_bug.cgi?id=190128
+
+        Reviewed by Youenn Fablet.
+
+        Escaping backslash of the path not to confuse the JSON parser.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer._prepare_config):
+
 2018-10-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win][DRT] Actually set "experimental:WebAnimationsCSSIntegrationEnabled" when requested

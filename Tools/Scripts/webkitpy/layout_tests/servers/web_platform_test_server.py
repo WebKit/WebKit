@@ -119,8 +119,9 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         _log.debug('Copying WebKit web platform server config.json')
         config_wk_filename = self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "config.json")
         if self._filesystem.isfile(config_wk_filename):
-            config_json = self._filesystem.read_text_file(config_wk_filename).replace("%CERTS_DIR%", self._filesystem.join(self._output_dir, "_wpt_certs"))
-            self._filesystem.write_text_file(self._config_filename, config_json)
+            config = json.loads(self._filesystem.read_text_file(config_wk_filename))
+            config['ssl']['openssl']['base_path'] = self._filesystem.join(self._output_dir, "_wpt_certs")
+            self._filesystem.write_text_file(self._config_filename, json.dumps(config))
 
     def _spawn_process(self):
         self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
