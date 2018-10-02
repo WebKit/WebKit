@@ -1,3 +1,10 @@
+2018-10-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix missing return value in TestController::keyExistsInKeychain
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::keyExistsInKeychain):
+
 2018-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Enable WPT tests environment.

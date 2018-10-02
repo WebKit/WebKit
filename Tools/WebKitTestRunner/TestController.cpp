@@ -3141,6 +3141,7 @@ void TestController::cleanUpKeychain(const String&)
 
 bool TestController::keyExistsInKeychain(const String&, const String&)
 {
+    return false;
 }
 #endif
 
