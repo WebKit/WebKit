@@ -1,3 +1,20 @@
+2018-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Update delete-emoji expected results
+        https://bugs.webkit.org/show_bug.cgi?id=190182
+
+        Unreviewed.
+
+        Simply update the expected results.
+
+        * platform/mac-highsierra/editing/deleting/delete-emoji-1-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-emoji-1-expected.txt.
+        * platform/mac-highsierra/editing/deleting/delete-emoji-9-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-emoji-9-expected.txt.
+        * platform/mac-highsierra/editing/deleting/delete-emoji-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-emoji-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/deleting/delete-emoji-1-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-9-expected.txt:
+        * platform/mac/editing/deleting/delete-emoji-expected.txt:
+
 2018-10-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a new variant of serializePreservingVisualAppearance which takes VisibleSelection

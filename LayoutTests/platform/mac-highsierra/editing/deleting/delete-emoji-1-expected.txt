@@ -51,8 +51,12 @@ Dump of markup 12:
 
 Dump of markup 13:
 | "
-💋‍👨<#selection-caret>"
+💋‍👨☝️<#selection-caret>"
 
 Dump of markup 14:
+| "
+💋‍👨<#selection-caret>"
+
+Dump of markup 15:
 | <#selection-caret>
 | <br>
