@@ -168,7 +168,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             for (var i = 0; computedPropertiesPayload && i < computedPropertiesPayload.length; ++i) {
                 var propertyPayload = computedPropertiesPayload[i];
 
-                var canonicalName = WI.cssStyleManager.canonicalNameForPropertyName(propertyPayload.name);
+                var canonicalName = WI.cssManager.canonicalNameForPropertyName(propertyPayload.name);
                 propertyPayload.implicit = !this._propertyNameToEffectivePropertyMap[canonicalName];
 
                 var property = this._parseStylePropertyPayload(propertyPayload, NaN, this._computedStyle);
@@ -251,7 +251,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
 
         // FIXME: Convert to pushing StyleSheet information to the frontend. <rdar://problem/13213680>
-        WI.cssStyleManager.fetchStyleSheetsIfNeeded();
+        WI.cssManager.fetchStyleSheetsIfNeeded();
 
         CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, wrap.call(this, fetchedMatchedStyles, fetchedMatchedStylesPromise));
         CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
@@ -312,9 +312,9 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
 
         if (styleSheetId)
-            inspectorStyleSheetAvailable.call(this, WI.cssStyleManager.styleSheetForIdentifier(styleSheetId));
+            inspectorStyleSheetAvailable.call(this, WI.cssManager.styleSheetForIdentifier(styleSheetId));
         else
-            WI.cssStyleManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
+            WI.cssManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
     }
 
     rulesForSelector(selector)
@@ -374,7 +374,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         if (property)
             return property;
 
-        let canonicalName = WI.cssStyleManager.canonicalNameForPropertyName(name);
+        let canonicalName = WI.cssManager.canonicalNameForPropertyName(name);
         return this._propertyNameToEffectivePropertyMap[canonicalName] || null;
     }
 
@@ -452,7 +452,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         // Try to use the node to find the frame which has the correct resource first.
         if (this._node.ownerDocument) {
-            var mainResource = WI.frameResourceManager.resourceForURL(this._node.ownerDocument.documentURL);
+            var mainResource = WI.networkManager.resourceForURL(this._node.ownerDocument.documentURL);
             if (mainResource) {
                 var parentFrame = mainResource.parentFrame;
                 sourceCode = parentFrame.resourceForURL(sourceURL);
@@ -461,7 +461,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         // If that didn't find the resource, then search all frames.
         if (!sourceCode)
-            sourceCode = WI.frameResourceManager.resourceForURL(sourceURL);
+            sourceCode = WI.networkManager.resourceForURL(sourceURL);
 
         if (!sourceCode)
             return null;
@@ -632,7 +632,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             return styleDeclaration;
         }
 
-        var styleSheet = id ? WI.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
+        var styleSheet = id ? WI.cssManager.styleSheetForIdentifier(id.styleSheetId) : null;
         if (styleSheet) {
             if (type === WI.CSSStyleDeclaration.Type.Inline)
                 styleSheet.markAsInlineStyleAttributeStyleSheet();
@@ -714,11 +714,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         if (!style)
             return null;
 
-        var styleSheet = id ? WI.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
+        var styleSheet = id ? WI.cssManager.styleSheetForIdentifier(id.styleSheetId) : null;
 
         var selectorText = payload.selectorList.text;
         var selectors = this._parseSelectorListPayload(payload.selectorList);
-        var type = WI.CSSStyleManager.protocolStyleSheetOriginToEnum(payload.origin);
+        var type = WI.CSSManager.protocolStyleSheetOriginToEnum(payload.origin);
 
         var sourceCodeLocation = null;
         var sourceRange = payload.selectorList.range;
@@ -739,7 +739,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         var mediaList = [];
         for (var i = 0; payload.media && i < payload.media.length; ++i) {
             var mediaItem = payload.media[i];
-            var mediaType = WI.CSSStyleManager.protocolMediaSourceToEnum(mediaItem.source);
+            var mediaType = WI.CSSManager.protocolMediaSourceToEnum(mediaItem.source);
             var mediaText = mediaItem.text;
             var mediaSourceCodeLocation = this._createSourceCodeLocation(mediaItem.sourceURL, mediaItem.sourceLine);
             if (styleSheet)

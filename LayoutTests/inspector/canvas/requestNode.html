@@ -63,14 +63,14 @@ function test() {
             }
 
             canvases.forEach((canvas) => {
-                WI.domTreeManager.requestDocument((documentNode) => {
+                WI.domManager.requestDocument((documentNode) => {
                     CanvasAgent.requestNode(canvas.identifier, (error, nodeId) => {
                         if (error) {
                             reject(error);
                             return;
                         }
 
-                        nodesMap.set(canvas, WI.domTreeManager.nodeForId(nodeId));
+                        nodesMap.set(canvas, WI.domManager.nodeForId(nodeId));
                         if (nodesMap.size === expectedLength)
                             finish();
                     });

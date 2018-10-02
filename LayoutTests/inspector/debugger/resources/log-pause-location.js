@@ -7,7 +7,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.findScript = function(regex) {
-        for (let resource of WI.frameResourceManager.mainFrame.resourceCollection) {
+        for (let resource of WI.networkManager.mainFrame.resourceCollection) {
             if (regex.test(resource.url))
                 return resource.scripts[0];
         }
@@ -27,12 +27,12 @@ TestPage.registerInitializer(() => {
     }
 
     window.loadMainPageContent = function() {
-        return loadLinesFromSourceCode(WI.frameResourceManager.mainFrame.mainResource);
+        return loadLinesFromSourceCode(WI.networkManager.mainFrame.mainResource);
     }
 
     window.setBreakpointsOnLinesWithBreakpointComment = function(resource) {
         if (!resource)
-            resource = WI.frameResourceManager.mainFrame.mainResource;
+            resource = WI.networkManager.mainFrame.mainResource;
 
         function createLocation(resource, lineNumber, columnNumber) {
             return {url: resource.url, lineNumber, columnNumber};
@@ -53,7 +53,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.logResolvedBreakpointLinesWithContext = function(inputLocation, resolvedLocation, context) {
-        if (resolvedLocation.sourceCode !== linesSourceCode && !WI.frameResourceManager.mainFrame.mainResource.scripts.includes(resolvedLocation.sourceCode)) {
+        if (resolvedLocation.sourceCode !== linesSourceCode && !WI.networkManager.mainFrame.mainResource.scripts.includes(resolvedLocation.sourceCode)) {
             InspectorTest.log("--- Source Unavailable ---");
             return;
         }
@@ -94,7 +94,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.logLinesWithContext = function(location, context) {
-        if (location.sourceCode !== linesSourceCode && !WI.frameResourceManager.mainFrame.mainResource.scripts.includes(location.sourceCode)) {
+        if (location.sourceCode !== linesSourceCode && !WI.networkManager.mainFrame.mainResource.scripts.includes(location.sourceCode)) {
             InspectorTest.log("--- Source Unavailable ---");
             return;
         }

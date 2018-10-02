@@ -40,7 +40,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
     closed()
     {
-        WI.domTreeManager.removeEventListener(null, null, this);
+        WI.domManager.removeEventListener(null, null, this);
 
         super.closed();
     }
@@ -51,10 +51,10 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
     {
         super.initialLayout();
 
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeModified, this._attributesChanged, this);
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeRemoved, this._attributesChanged, this);
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.CharacterDataModified, this._characterDataModified, this);
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.AttributeModified, this._attributesChanged, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.AttributeRemoved, this._attributesChanged, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._characterDataModified, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
 
         this._identityNodeTypeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Type"));
         this._identityNodeNameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Name"));
@@ -334,7 +334,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         function generateGroupsByEvent(eventListeners) {
             let eventListenerTypes = new Map;
             for (let eventListener of eventListeners) {
-                eventListener.node = WI.domTreeManager.nodeForId(eventListener.nodeId);
+                eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
 
                 let eventListenersForType = eventListenerTypes.get(eventListener.type);
                 if (!eventListenersForType)
@@ -356,7 +356,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         function generateGroupsByNode(eventListeners) {
             let eventListenerNodes = new Map;
             for (let eventListener of eventListeners) {
-                eventListener.node = WI.domTreeManager.nodeForId(eventListener.nodeId);
+                eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
 
                 let eventListenersForNode = eventListenerNodes.get(eventListener.node);
                 if (!eventListenersForNode)
@@ -441,7 +441,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         function linkForNodeId(nodeId) {
             var link = null;
             if (nodeId !== undefined && typeof nodeId === "number") {
-                var node = WI.domTreeManager.nodeForId(nodeId);
+                var node = WI.domManager.nodeForId(nodeId);
                 if (node)
                     link = WI.linkifyAccessibilityNodeReference(node);
             }
@@ -460,7 +460,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
             let linkList = container.createChild("ul", "node-link-list");
             let initiallyHiddenItems = [];
             for (let nodeId of nodeIds) {
-                let node = WI.domTreeManager.nodeForId(nodeId);
+                let node = WI.domManager.nodeForId(nodeId);
                 if (!node)
                     continue;
                 let link = WI.linkifyAccessibilityNodeReference(node);

@@ -161,7 +161,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         };
 
         let allResources = [];
-        for (let frame of WI.frameResourceManager.frames) {
+        for (let frame of WI.networkManager.frames) {
             // The main resource isn't in the list of resources, so add it as a candidate.
             allResources.push(frame.mainResource, ...frame.resourceCollection);
         }

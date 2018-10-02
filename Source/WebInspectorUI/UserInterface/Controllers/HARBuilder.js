@@ -67,9 +67,9 @@ WI.HARBuilder = class HARBuilder
     static pages()
     {
         return [{
-            startedDateTime: HARBuilder.date(WI.frameResourceManager.mainFrame.mainResource.requestSentDate),
+            startedDateTime: HARBuilder.date(WI.networkManager.mainFrame.mainResource.requestSentDate),
             id: "page_0",
-            title: WI.frameResourceManager.mainFrame.url || "",
+            title: WI.networkManager.mainFrame.url || "",
             pageTimings: HARBuilder.pageTimings(),
         }];
     }
@@ -78,11 +78,11 @@ WI.HARBuilder = class HARBuilder
     {
         let result = {};
 
-        let domContentReadyEventTimestamp = WI.frameResourceManager.mainFrame.domContentReadyEventTimestamp;
+        let domContentReadyEventTimestamp = WI.networkManager.mainFrame.domContentReadyEventTimestamp;
         if (!isNaN(domContentReadyEventTimestamp))
             result.onContentLoad = domContentReadyEventTimestamp * 1000;
 
-        let loadEventTimestamp = WI.frameResourceManager.mainFrame.loadEventTimestamp;
+        let loadEventTimestamp = WI.networkManager.mainFrame.loadEventTimestamp;
         if (!isNaN(loadEventTimestamp))
             result.onLoad = loadEventTimestamp * 1000;
 

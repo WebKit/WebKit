@@ -14,16 +14,16 @@ function test()
         name: "AddTestMessage",
         description: "Add a new message, it should have a single repeat count.",
         test(resolve, reject) {
-            let listener = WI.logManager.singleFireEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+            let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated yet.");
                 reject();
             });
 
-            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {
                 InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
                 InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
-                WI.logManager.removeEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
             })
             .then(resolve, reject);
 
@@ -36,16 +36,16 @@ function test()
             name: `RepeatTestMessage${i}`,
             description: "Repeat the last message, it should trigger messageRepeatCountUpdated.",
             test(resolve, reject) {
-                let listener = WI.logManager.singleFireEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+                let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                     InspectorTest.assert(false, "Should not fire MessageAdded, this should be a repeat.");
                     reject();
                 });
 
-                WI.logManager.awaitEvent(WI.LogManager.Event.PreviousMessageRepeatCountUpdated)
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated)
                 .then((event) => {
                     InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire.");
                     InspectorTest.expectThat(event.data.count === (i + 1), `Count should be ${i + 1}.`);
-                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, listener, null);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener, null);
                 })
                 .then(resolve, reject);
 
@@ -58,16 +58,16 @@ function test()
         name: "AddDifferentMessage",
         description: "Add a different message, it should reset the repeat count.",
         test(resolve, reject) {
-            let listener = WI.logManager.singleFireEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+            let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated, this message is different.");
                 reject();
             });
 
-            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {
                 InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
                 InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
-                WI.logManager.removeEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
             })
             .then(resolve, reject);
 
@@ -79,16 +79,16 @@ function test()
         name: "RepeatDifferentMessage",
         description: "Repeat this different message, it should increment the repeat count.",
         test(resolve, reject) {
-            let listener = WI.logManager.singleFireEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+            let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                 InspectorTest.assert(false, "Should not fire MessageAdded, this should be a repeat.");
                 reject();
             });
 
-            WI.logManager.awaitEvent(WI.LogManager.Event.PreviousMessageRepeatCountUpdated)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated)
             .then((event) => {
                 InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire.");
                 InspectorTest.expectThat(event.data.count === 2, "Count should be 2.");
-                WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, listener, null);
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener, null);
             })
             .then(resolve, reject);
 
@@ -100,16 +100,16 @@ function test()
         name: "AddTestMessageAgain",
         description: "Add the original message again, it should have a single repeat count.",
         test(resolve, reject) {
-            let listener = WI.logManager.singleFireEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+            let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated yet.");
                 reject();
             });
 
-            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {
                 InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
                 InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
-                WI.logManager.removeEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
             })
             .then(resolve, reject);
 
@@ -123,7 +123,7 @@ function test()
         name: "MessagesWithEqualValuesRepeats",
         description: "Repeat messages with equal values should trigger messageRepeatCountUpdated.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.PreviousMessageRepeatCountUpdated)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated)
             .then((event) => {
                 InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire for repeat messages with equal values.");
             })
@@ -139,18 +139,18 @@ function test()
         name: "MessagesWithObjectsDoNotRepeat",
         description: "Repeat messages with objects should not trigger messageRepeatCountUpdated.",
         test(resolve, reject) {
-            let repeatListener = WI.logManager.singleFireEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+            let repeatListener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "PreviousMessageRepeatCountUpdated should not fire for repeat messages with object arguments.");
                 reject();
             });
 
             let remaining = 2;
-            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, function addListener(event) {
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, function addListener(event) {
                 InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
                 remaining--;
                 if (!remaining) {
-                    WI.logManager.removeEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, repeatListener, null);
-                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, addListener, null);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, repeatListener, null);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, addListener, null);
                     resolve();
                 }
             });
@@ -165,18 +165,18 @@ function test()
         name: "MessagesWithDifferentLevelsDoNotRepeat",
         description: "Repeat messages with different levels should not trigger messageRepeatCountUpdated.",
         test(resolve, reject) {
-            let repeatListener = WI.logManager.singleFireEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+            let repeatListener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
                 InspectorTest.assert(false, "PreviousMessageRepeatCountUpdated should not fire for repeat messages with different levels.");
                 reject();
             });
 
             let remaining = 2;
-            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, function addListener(event) {
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, function addListener(event) {
                 InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
                 remaining--;
                 if (!remaining) {
-                    WI.logManager.removeEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, repeatListener, null);
-                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, addListener, null);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, repeatListener, null);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, addListener, null);
                     resolve();
                 }
             });

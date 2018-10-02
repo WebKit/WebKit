@@ -13,7 +13,7 @@ function test()
         description: "Test evaluating an import expression from console.",
         test(resolve, reject) {
             function testSource(expression, count) {
-                let promise = WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded);
+                let promise = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded);
                 return new Promise((resolve, reject) => {
                     WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
                         promise.then(() => {

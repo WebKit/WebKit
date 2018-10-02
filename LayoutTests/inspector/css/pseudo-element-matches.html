@@ -39,11 +39,11 @@ function test() {
         validateMatchedSelectors();
     }
 
-    WI.domTreeManager.requestDocument(function(documentNode) {
-        WI.domTreeManager.querySelector(documentNode.id, "#node1", function(contentNodeId) {
+    WI.domManager.requestDocument(function(documentNode) {
+        WI.domManager.querySelector(documentNode.id, "#node1", function(contentNodeId) {
             try { 
                 if (contentNodeId) {
-                    var domNode = WI.domTreeManager.nodeForId(contentNodeId);
+                    var domNode = WI.domManager.nodeForId(contentNodeId);
                     domNode.getSubtree(1, function() {
                         var shadowRootDocument = domNode.children[0];
                         shadowRootDocument.getSubtree(2, function() {
@@ -51,7 +51,7 @@ function test() {
                             for (var i = 0; i < shadowRoot.children.length; ++i) {
                                 var shadowNode = shadowRoot.children[i];
                                 if (shadowNode.getAttribute("pseudo") === "-webkit-media-text-track-container") {
-                                    nodeStyles = WI.cssStyleManager.stylesForNode(shadowNode);
+                                    nodeStyles = WI.cssManager.stylesForNode(shadowNode);
                                     if (nodeStyles.needsRefresh)
                                         nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
                                     else

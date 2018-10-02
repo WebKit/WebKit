@@ -104,7 +104,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         if (this.nodeStyles.node.isInUserAgentShadowTree())
             return;
 
-        let styleSheets = WI.cssStyleManager.styleSheets.filter(styleSheet => styleSheet.hasInfo() && !styleSheet.isInlineStyleTag() && !styleSheet.isInlineStyleAttributeStyleSheet());
+        let styleSheets = WI.cssManager.styleSheets.filter(styleSheet => styleSheet.hasInfo() && !styleSheet.isInlineStyleTag() && !styleSheet.isInlineStyleAttributeStyleSheet());
         if (!styleSheets.length)
             return;
 
@@ -278,7 +278,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         }
 
         let pseudoElements = Array.from(this.nodeStyles.node.pseudoElements().values());
-        Promise.all(pseudoElements.map((pseudoElement) => WI.cssStyleManager.stylesForNode(pseudoElement).refreshIfNeeded()))
+        Promise.all(pseudoElements.map((pseudoElement) => WI.cssManager.stylesForNode(pseudoElement).refreshIfNeeded()))
         .then((pseudoNodeStyles) => {
             for (let pseudoNodeStyle of pseudoNodeStyles) {
                 createHeader(WI.UIString("Pseudo Element"), pseudoNodeStyle.node);

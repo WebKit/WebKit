@@ -377,11 +377,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         // Called from WI.PageObserver.
 
         console.assert(this._activeRecording);
-        console.assert(isNaN(WI.frameResourceManager.mainFrame.domContentReadyEventTimestamp));
+        console.assert(isNaN(WI.networkManager.mainFrame.domContentReadyEventTimestamp));
 
         let computedTimestamp = this.activeRecording.computeElapsedTime(timestamp);
 
-        WI.frameResourceManager.mainFrame.markDOMContentReadyEvent(computedTimestamp);
+        WI.networkManager.mainFrame.markDOMContentReadyEvent(computedTimestamp);
 
         let eventMarker = new WI.TimelineMarker(computedTimestamp, WI.TimelineMarker.Type.DOMContentEvent);
         this._activeRecording.addEventMarker(eventMarker);
@@ -392,11 +392,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         // Called from WI.PageObserver.
 
         console.assert(this._activeRecording);
-        console.assert(isNaN(WI.frameResourceManager.mainFrame.loadEventTimestamp));
+        console.assert(isNaN(WI.networkManager.mainFrame.loadEventTimestamp));
 
         let computedTimestamp = this.activeRecording.computeElapsedTime(timestamp);
 
-        WI.frameResourceManager.mainFrame.markLoadEvent(computedTimestamp);
+        WI.networkManager.mainFrame.markLoadEvent(computedTimestamp);
 
         let eventMarker = new WI.TimelineMarker(computedTimestamp, WI.TimelineMarker.Type.LoadEvent);
         this._activeRecording.addEventMarker(eventMarker);
@@ -505,7 +505,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         case TimelineAgent.EventType.EvaluateScript:
             if (!sourceCodeLocation) {
-                var mainFrame = WI.frameResourceManager.mainFrame;
+                var mainFrame = WI.networkManager.mainFrame;
                 var scriptResource = mainFrame.url === recordPayload.data.url ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.url, true);
                 if (scriptResource) {
                     // The lineNumber is 1-based, but we expect 0-based.
@@ -552,7 +552,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             }
 
             if (!sourceCodeLocation) {
-                var mainFrame = WI.frameResourceManager.mainFrame;
+                var mainFrame = WI.networkManager.mainFrame;
                 var scriptResource = mainFrame.url === recordPayload.data.scriptName ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.scriptName, true);
                 if (scriptResource) {
                     // The lineNumber is 1-based, but we expect 0-based.
@@ -701,7 +701,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._activeRecording.addRecord(record);
 
         // Only worry about dead time after the load event.
-        if (WI.frameResourceManager.mainFrame && isNaN(WI.frameResourceManager.mainFrame.loadEventTimestamp))
+        if (WI.networkManager.mainFrame && isNaN(WI.networkManager.mainFrame.loadEventTimestamp))
             this._resetAutoRecordingDeadTimeTimeout();
     }
 
@@ -822,7 +822,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         // Ignore resource events when there isn't a main frame yet. Those events are triggered by
         // loading the cached resources when the inspector opens, and they do not have timing information.
-        if (!WI.frameResourceManager.mainFrame)
+        if (!WI.networkManager.mainFrame)
             return;
 
         if (this._attemptAutoCapturingForFrame(frame))
@@ -845,7 +845,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         // Ignore resource events when there isn't a main frame yet. Those events are triggered by
         // loading the cached resources when the inspector opens, and they do not have timing information.
-        if (!WI.frameResourceManager.mainFrame)
+        if (!WI.networkManager.mainFrame)
             return;
 
         if (!this._isCapturing)

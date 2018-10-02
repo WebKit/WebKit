@@ -196,7 +196,7 @@ function createErrorSheet() {
 
     let inspectedPageURL = null;
     try {
-        inspectedPageURL = WI.frameResourceManager.mainFrame.url;
+        inspectedPageURL = WI.networkManager.mainFrame.url;
     } catch { }
 
     let topLevelItems = [

@@ -96,7 +96,7 @@ function test() {
         }
     });
 
-    WI.domTreeManager.requestDocument((documentNode) => {
+    WI.domManager.requestDocument((documentNode) => {
         DOMAgent.getEventListenersForNode(documentNode.id, (error, eventListeners) => {
             if (error) {
                 InspectorTest.fail("Unable to retrieve event listeners.");

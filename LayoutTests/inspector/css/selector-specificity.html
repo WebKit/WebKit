@@ -41,11 +41,11 @@ function test() {
         validateSelectors();
     }
 
-    WI.domTreeManager.requestDocument(function(documentNode) {
-        WI.domTreeManager.querySelector(documentNode.id, "#node1", function(contentNodeId) {
+    WI.domManager.requestDocument(function(documentNode) {
+        WI.domManager.querySelector(documentNode.id, "#node1", function(contentNodeId) {
             if (contentNodeId) {
-                var domNode = WI.domTreeManager.nodeForId(contentNodeId);
-                nodeStyles = WI.cssStyleManager.stylesForNode(domNode);
+                var domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
 
                 if (nodeStyles.needsRefresh)
                     nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);

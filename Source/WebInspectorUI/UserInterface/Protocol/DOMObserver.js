@@ -29,86 +29,86 @@ WI.DOMObserver = class DOMObserver
 
     documentUpdated()
     {
-        WI.domTreeManager._documentUpdated();
+        WI.domManager._documentUpdated();
     }
 
     inspect(nodeId)
     {
-        WI.domTreeManager.inspectElement(nodeId);
+        WI.domManager.inspectElement(nodeId);
     }
 
     setChildNodes(parentId, payloads)
     {
-        WI.domTreeManager._setChildNodes(parentId, payloads);
+        WI.domManager._setChildNodes(parentId, payloads);
     }
 
     attributeModified(nodeId, name, value)
     {
-        WI.domTreeManager._attributeModified(nodeId, name, value);
+        WI.domManager._attributeModified(nodeId, name, value);
     }
 
     attributeRemoved(nodeId, name)
     {
-        WI.domTreeManager._attributeRemoved(nodeId, name);
+        WI.domManager._attributeRemoved(nodeId, name);
     }
 
     inlineStyleInvalidated(nodeIds)
     {
-        WI.domTreeManager._inlineStyleInvalidated(nodeIds);
+        WI.domManager._inlineStyleInvalidated(nodeIds);
     }
 
     characterDataModified(nodeId, characterData)
     {
-        WI.domTreeManager._characterDataModified(nodeId, characterData);
+        WI.domManager._characterDataModified(nodeId, characterData);
     }
 
     childNodeCountUpdated(nodeId, childNodeCount)
     {
-        WI.domTreeManager._childNodeCountUpdated(nodeId, childNodeCount);
+        WI.domManager._childNodeCountUpdated(nodeId, childNodeCount);
     }
 
     childNodeInserted(parentNodeId, previousNodeId, payload)
     {
-        WI.domTreeManager._childNodeInserted(parentNodeId, previousNodeId, payload);
+        WI.domManager._childNodeInserted(parentNodeId, previousNodeId, payload);
     }
 
     childNodeRemoved(parentNodeId, nodeId)
     {
-        WI.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
+        WI.domManager._childNodeRemoved(parentNodeId, nodeId);
     }
 
     shadowRootPushed(parentNodeId, nodeId)
     {
-        WI.domTreeManager._childNodeInserted(parentNodeId, 0, nodeId);
+        WI.domManager._childNodeInserted(parentNodeId, 0, nodeId);
     }
 
     shadowRootPopped(parentNodeId, nodeId)
     {
-        WI.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
+        WI.domManager._childNodeRemoved(parentNodeId, nodeId);
     }
 
     customElementStateChanged(nodeId, customElementState)
     {
-        WI.domTreeManager._customElementStateChanged(nodeId, customElementState);
+        WI.domManager._customElementStateChanged(nodeId, customElementState);
     }
 
     pseudoElementAdded(parentNodeId, pseudoElement)
     {
-        WI.domTreeManager._pseudoElementAdded(parentNodeId, pseudoElement);
+        WI.domManager._pseudoElementAdded(parentNodeId, pseudoElement);
     }
 
     pseudoElementRemoved(parentNodeId, pseudoElementId)
     {
-        WI.domTreeManager._pseudoElementRemoved(parentNodeId, pseudoElementId);
+        WI.domManager._pseudoElementRemoved(parentNodeId, pseudoElementId);
     }
 
     didAddEventListener(nodeId)
     {
-        WI.domTreeManager.didAddEventListener(nodeId);
+        WI.domManager.didAddEventListener(nodeId);
     }
 
     willRemoveEventListener(nodeId)
     {
-        WI.domTreeManager.willRemoveEventListener(nodeId);
+        WI.domManager.willRemoveEventListener(nodeId);
     }
 };

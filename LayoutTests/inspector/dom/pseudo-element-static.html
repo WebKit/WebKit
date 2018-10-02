@@ -3,9 +3,9 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function test() {
-    WI.domTreeManager.requestDocument(function(documentNode) {
-        WI.domTreeManager.querySelector(documentNode.id, "#none", function(nodeId) {
-            var domNode = WI.domTreeManager.nodeForId(nodeId);
+    WI.domManager.requestDocument(function(documentNode) {
+        WI.domManager.querySelector(documentNode.id, "#none", function(nodeId) {
+            var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for #none");
             InspectorTest.assert(!domNode.pseudoType());
@@ -15,8 +15,8 @@ function test() {
             InspectorTest.assert(!domNode.afterPseudoElement());
         });
 
-        WI.domTreeManager.querySelector(documentNode.id, "#b", function(nodeId) {
-            var domNode = WI.domTreeManager.nodeForId(nodeId);
+        WI.domManager.querySelector(documentNode.id, "#b", function(nodeId) {
+            var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for #b");
             InspectorTest.assert(!domNode.pseudoType());
@@ -27,8 +27,8 @@ function test() {
             InspectorTest.expectThat(domNode.beforePseudoElement().pseudoType() === WI.DOMNode.PseudoElementType.Before, "DOMNode for before pseudo element has the right type");
         });
 
-        WI.domTreeManager.querySelector(documentNode.id, "#a", function(nodeId) {
-            var domNode = WI.domTreeManager.nodeForId(nodeId);
+        WI.domManager.querySelector(documentNode.id, "#a", function(nodeId) {
+            var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for #a");
             InspectorTest.assert(!domNode.pseudoType());
@@ -39,8 +39,8 @@ function test() {
             InspectorTest.expectThat(domNode.afterPseudoElement().pseudoType() === WI.DOMNode.PseudoElementType.After, "DOMNode for after pseudo element has the right type");
         });
 
-        WI.domTreeManager.querySelector(documentNode.id, "#x", function(nodeId) {
-            var domNode = WI.domTreeManager.nodeForId(nodeId);
+        WI.domManager.querySelector(documentNode.id, "#x", function(nodeId) {
+            var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for #x");
             InspectorTest.assert(!domNode.pseudoType());

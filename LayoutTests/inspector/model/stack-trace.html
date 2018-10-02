@@ -31,7 +31,7 @@ function test()
         name: "WI.ConsoleMessage.StackTrace",
         description: "Test we can create a StackTrace from console messages (Console.StackTrace).",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {
                 // Trace message should always have a stack trace.
                 let consoleMessage = event.data.message;

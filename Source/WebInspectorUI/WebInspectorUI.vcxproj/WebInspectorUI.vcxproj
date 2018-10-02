@@ -317,6 +317,7 @@
     <None Include="..\UserInterface\ConsoleCommand.js" />
     <None Include="..\UserInterface\ConsoleCommandResult.js" />
     <None Include="..\UserInterface\ConsoleGroup.js" />
+    <None Include="..\UserInterface\ConsoleManager.js" />
     <None Include="..\UserInterface\LegacyConsoleMessage.js" />
     <None Include="..\UserInterface\LegacyConsoleMessageImpl.js" />
     <None Include="..\UserInterface\ConsoleObserver.js" />
@@ -340,14 +341,13 @@
     <None Include="..\UserInterface\ColorPicker.js" />
     <None Include="..\UserInterface\CSSCompletions.js" />
     <None Include="..\UserInterface\CSSKeywordCompletions.js" />
+    <None Include="..\UserInterface\CSSManager.js" />
     <None Include="..\UserInterface\CSSMedia.js" />
     <None Include="..\UserInterface\CSSObserver.js" />
     <None Include="..\UserInterface\CSSProperty.js" />
     <None Include="..\UserInterface\CSSRule.js" />
     <None Include="..\UserInterface\CSSStyleDeclaration.js" />
-    <None Include="..\UserInterface\CSSStyleManager.js" />
     <None Include="..\UserInterface\CSSStyleSheet.js" />
-    <None Include="..\UserInterface\DashboardManager.js" />
     <None Include="..\UserInterface\DashboardView.css" />
     <None Include="..\UserInterface\DashboardView.js" />
     <None Include="..\UserInterface\DatabaseContentView.css" />
@@ -379,6 +379,7 @@
     <None Include="..\UserInterface\DividerNavigationItem.css" />
     <None Include="..\UserInterface\DividerNavigationItem.js" />
     <None Include="..\UserInterface\DOMDetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\DOMManager.js" />
     <None Include="..\UserInterface\DOMNode.js" />
     <None Include="..\UserInterface\DOMNodeDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\DOMNodeStyles.js" />
@@ -387,6 +388,7 @@
     <None Include="..\UserInterface\DOMStorageContentView.css" />
     <None Include="..\UserInterface\DOMStorageContentView.js" />
     <None Include="..\UserInterface\DOMStorageIcons.css" />
+    <None Include="..\UserInterface\DOMStorageManager.js" />
     <None Include="..\UserInterface\DOMStorageObject.js" />
     <None Include="..\UserInterface\DOMStorageObserver.js" />
     <None Include="..\UserInterface\DOMStorageTreeElement.js" />
@@ -395,7 +397,6 @@
     <None Include="..\UserInterface\DOMTreeContentView.js" />
     <None Include="..\UserInterface\DOMTreeElement.js" />
     <None Include="..\UserInterface\DOMTreeElementPathComponent.js" />
-    <None Include="..\UserInterface\DOMTreeManager.js" />
     <None Include="..\UserInterface\DOMTreeOutline.css" />
     <None Include="..\UserInterface\DOMTreeOutline.js" />
     <None Include="..\UserInterface\DOMTreeUpdater.js" />
@@ -445,7 +446,6 @@
     <None Include="..\UserInterface\FormatterSourceMap.js" />
     <None Include="..\UserInterface\Frame.js" />
     <None Include="..\UserInterface\FrameContentView.js" />
-    <None Include="..\UserInterface\FrameResourceManager.js" />
     <None Include="..\UserInterface\FrameTreeElement.js" />
     <None Include="..\UserInterface\GeneralTreeElement.js" />
     <None Include="..\UserInterface\GeneralTreeElementPathComponent.js" />
@@ -659,7 +659,6 @@
     <None Include="..\UserInterface\InstrumentIcons.css" />
     <None Include="..\UserInterface\InstrumentSidebarPanel.css" />
     <None Include="..\UserInterface\InstrumentSidebarPanel.js" />
-    <None Include="..\UserInterface\IssueManager.js" />
     <None Include="..\UserInterface\IssueMessage.js" />
     <None Include="..\UserInterface\JavaScriptLogViewController.js" />
     <None Include="..\UserInterface\JavaScriptProfileObject.js" />
@@ -684,7 +683,6 @@
     <None Include="..\UserInterface\LogContentView.css" />
     <None Include="..\UserInterface\LogContentView.js" />
     <None Include="..\UserInterface\LogIcon.css" />
-    <None Include="..\UserInterface\LogManager.js" />
     <None Include="..\UserInterface\LogObject.js" />
     <None Include="..\UserInterface\LogTreeElement.js" />
     <None Include="..\UserInterface\Main.css" />
@@ -700,6 +698,7 @@
     <None Include="..\UserInterface\NetworkDataGrid.css" />
     <None Include="..\UserInterface\NetworkDataGrid.js" />
     <None Include="..\UserInterface\NetworkGraphCalculator.js" />
+    <None Include="..\UserInterface\NetworkManager.js" />
     <None Include="..\UserInterface\NetworkObserver.js" />
     <None Include="..\UserInterface\NetworkTimeline.css" />
     <None Include="..\UserInterface\Object.js" />
@@ -779,7 +778,6 @@
     <None Include="..\UserInterface\SourceMapManager.js" />
     <None Include="..\UserInterface\SourceMapResource.js" />
     <None Include="..\UserInterface\SourceMapResourceTreeElement.js" />
-    <None Include="..\UserInterface\StorageManager.js" />
     <None Include="..\UserInterface\StorageTreeElement.js" />
     <None Include="..\UserInterface\StyleDetailsPanel.js" />
     <None Include="..\UserInterface\StyleRuleIcons.css" />

@@ -6,7 +6,7 @@
 function test()
 {
     let addedStyleSheet;
-    let mainFrame = WI.frameResourceManager.mainFrame;
+    let mainFrame = WI.networkManager.mainFrame;
 
     let suite = InspectorTest.createAsyncSuite("CSS.createStyleSheet");
 
@@ -14,7 +14,7 @@ function test()
         name: "CheckNoStyleSheets",
         description: "Ensure there are no stylesheets.",
         test(resolve, reject) {
-            InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 0, "Should be no stylesheets.");
+            InspectorTest.expectThat(WI.cssManager.styleSheets.length === 0, "Should be no stylesheets.");
             resolve();
         }
     });
@@ -24,9 +24,9 @@ function test()
             name: "CreateInspectorStyleSheetCall" + i,
             description: "Should create a new inspector stylesheet.",
             test(resolve, reject) {
-                WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetAdded)
+                WI.cssManager.awaitEvent(WI.CSSManager.Event.StyleSheetAdded)
                 .then((event) => {
-                    InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === i, "Should increase the list of stylesheets.");
+                    InspectorTest.expectThat(WI.cssManager.styleSheets.length === i, "Should increase the list of stylesheets.");
                     InspectorTest.expectThat(event.data.styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
                     InspectorTest.expectThat(event.data.styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
                     InspectorTest.expectThat(event.data.styleSheet.parentFrame === mainFrame, "Added StyleSheet frame should be the main frame.");
@@ -41,7 +41,7 @@ function test()
         });
     }
 
-    WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetRemoved)
+    WI.cssManager.awaitEvent(WI.CSSManager.Event.StyleSheetRemoved)
     .then((event) => {
         InspectorTest.fail("Should not be removing any StyleSheets in this test.");
     });

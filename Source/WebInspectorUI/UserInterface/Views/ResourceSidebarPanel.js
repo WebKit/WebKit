@@ -53,13 +53,13 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-        WI.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+        WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, this._scriptWasAdded, this);
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptRemoved, this._scriptWasRemoved, this);
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptsCleared, this._scriptsCleared, this);
 
-        WI.cssStyleManager.addEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+        WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
 
@@ -94,15 +94,15 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         super.closed();
 
         WI.Frame.removeEventListener(null, null, this);
-        WI.frameResourceManager.removeEventListener(null, null, this);
+        WI.networkManager.removeEventListener(null, null, this);
         WI.debuggerManager.removeEventListener(null, null, this);
         WI.notifications.removeEventListener(null, null, this);
     }
 
     showDefaultContentView()
     {
-        if (WI.frameResourceManager.mainFrame) {
-            this.contentBrowser.showContentViewForRepresentedObject(WI.frameResourceManager.mainFrame);
+        if (WI.networkManager.mainFrame) {
+            this.contentBrowser.showContentViewForRepresentedObject(WI.networkManager.mainFrame);
             return;
         }
 
@@ -197,8 +197,8 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
     {
         super.initialLayout();
 
-        if (WI.frameResourceManager.mainFrame)
-            this._mainFrameMainResourceDidChange(WI.frameResourceManager.mainFrame);
+        if (WI.networkManager.mainFrame)
+            this._mainFrameMainResourceDidChange(WI.networkManager.mainFrame);
 
         for (let script of WI.debuggerManager.knownNonResourceScripts) {
             this._addScript(script);
@@ -264,7 +264,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
     _mainFrameDidChange(event)
     {
-        this._mainFrameMainResourceDidChange(WI.frameResourceManager.mainFrame);
+        this._mainFrameMainResourceDidChange(WI.networkManager.mainFrame);
     }
 
     _mainFrameMainResourceDidChange(mainFrame)

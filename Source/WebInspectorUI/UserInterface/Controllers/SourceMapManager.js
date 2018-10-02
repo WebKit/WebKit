@@ -46,8 +46,8 @@ WI.SourceMapManager = class SourceMapManager extends WI.Object
     {
         // The baseURL could have come from a "//# sourceURL". Attempt to get a
         // reasonable absolute URL for the base by using the main resource's URL.
-        if (WI.frameResourceManager.mainFrame)
-            baseURL = absoluteURL(baseURL, WI.frameResourceManager.mainFrame.url);
+        if (WI.networkManager.mainFrame)
+            baseURL = absoluteURL(baseURL, WI.networkManager.mainFrame.url);
 
         if (sourceMapURL.startsWith("data:")) {
             this._loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode);
@@ -75,7 +75,7 @@ WI.SourceMapManager = class SourceMapManager extends WI.Object
             this._loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode);
         }
 
-        if (!WI.frameResourceManager.mainFrame) {
+        if (!WI.networkManager.mainFrame) {
             // If we don't have a main frame, then we are likely in the middle of building the resource tree.
             // Delaying until the next runloop is enough in this case to then start loading the source map.
             setTimeout(loadAndParseSourceMap.bind(this), 0);
@@ -135,7 +135,7 @@ WI.SourceMapManager = class SourceMapManager extends WI.Object
             frameIdentifier = originalSourceCode.parentFrame.id;
 
         if (!frameIdentifier)
-            frameIdentifier = WI.frameResourceManager.mainFrame ? WI.frameResourceManager.mainFrame.id : "";
+            frameIdentifier = WI.networkManager.mainFrame ? WI.networkManager.mainFrame.id : "";
 
         NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
     }

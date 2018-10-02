@@ -8,8 +8,8 @@ function test()
     let documentNode;
 
     function nodeForSelector(selector, callback) {
-        WI.domTreeManager.querySelector(documentNode.id, selector, (nodeId) => {
-            callback(WI.domTreeManager.nodeForId(nodeId));
+        WI.domManager.querySelector(documentNode.id, selector, (nodeId) => {
+            callback(WI.domManager.nodeForId(nodeId));
         });
     }
 
@@ -141,7 +141,7 @@ function test()
 
     // FIXME: Write tests for nodes inside a Shadow DOM Tree.
 
-    WI.domTreeManager.requestDocument((node) => {
+    WI.domManager.requestDocument((node) => {
         documentNode = node;
         suite.runTestCasesAndFinish();
     });

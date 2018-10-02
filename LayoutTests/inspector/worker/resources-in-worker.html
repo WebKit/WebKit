@@ -109,7 +109,7 @@ function test()
                     InspectorTest.expectThat(resource instanceof WI.Resource, "Frame should dispatch ResourceWasAdded event.");
                     InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR.");
                     InspectorTest.expectEqual(resource.target, mainTarget, "Resource should be tied to the Main Target.");
-                    InspectorTest.expectEqual(resource.parentFrame, WI.frameResourceManager.mainFrame, "Resource parentFrame is the main frame.");
+                    InspectorTest.expectEqual(resource.parentFrame, WI.networkManager.mainFrame, "Resource parentFrame is the main frame.");
                     InspectorTest.expectEqual(workerTarget.resourceCollection.size, 2, "Worker Target should still have 2 resources.");
                     dumpWorkerResources();
                     resolve();
@@ -149,7 +149,7 @@ function test()
                     InspectorTest.expectThat(resource instanceof WI.Resource, "Frame should dispatch ResourceWasAdded event.");
                     // FIXME: Add resource type for Fetch that is not XHR?
                     InspectorTest.expectEqual(resource.target, mainTarget, "Resource should be tied to the Main Target.");
-                    InspectorTest.expectEqual(resource.parentFrame, WI.frameResourceManager.mainFrame, "Resource parentFrame is the main frame.");
+                    InspectorTest.expectEqual(resource.parentFrame, WI.networkManager.mainFrame, "Resource parentFrame is the main frame.");
                     InspectorTest.expectEqual(workerTarget.resourceCollection.size, 3, "Worker Target should still have 3 resources.");
                     dumpWorkerResources();
                     resolve();

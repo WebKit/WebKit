@@ -80,7 +80,7 @@ function test()
 
     function listenForConsoleWarning(resolve, reject) {
         // Detect console warning for $('foo').
-        WI.logManager.singleFireEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+        WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
             let message = event.data.message;
             InspectorTest.assert(message instanceof WI.ConsoleMessage);
             InspectorTest.log(`CONSOLE: ${message.messageText}`);
@@ -90,14 +90,14 @@ function test()
     }
 
     function selectElementForDollarZero(resolve, reject) {
-        WI.domTreeManager.requestDocument((documentNode) => {
+        WI.domManager.requestDocument((documentNode) => {
             if (!documentNode) {
                 InspectorTest.log("FAIL: DOM node not found.");
                 return reject();
             }
 
             // Select div#foo for $0.
-            WI.domTreeManager.querySelector(documentNode.id, "#foo", (contentNodeId) => {
+            WI.domManager.querySelector(documentNode.id, "#foo", (contentNodeId) => {
                 if (!contentNodeId) {
                     InspectorTest.log("FAIL: DOM node not found.");
                     return reject();

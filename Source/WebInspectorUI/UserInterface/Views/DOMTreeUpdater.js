@@ -30,13 +30,13 @@
 
 WI.DOMTreeUpdater = function(treeOutline)
 {
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeInserted, this._nodeInserted, this);
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeModified, this._attributesUpdated, this);
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeRemoved, this._attributesUpdated, this);
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.CharacterDataModified, this._characterDataModified, this);
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.DocumentUpdated, this._documentUpdated, this);
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, this._nodeInserted, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._nodeRemoved, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.AttributeModified, this._attributesUpdated, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.AttributeRemoved, this._attributesUpdated, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._characterDataModified, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.DocumentUpdated, this._documentUpdated, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
 
     this._treeOutline = treeOutline;
 
@@ -53,7 +53,7 @@ WI.DOMTreeUpdater = function(treeOutline)
 WI.DOMTreeUpdater.prototype = {
     close: function()
     {
-        WI.domTreeManager.removeEventListener(null, null, this);
+        WI.domManager.removeEventListener(null, null, this);
     },
 
     _documentUpdated: function(event)
@@ -151,7 +151,7 @@ WI.DOMTreeUpdater.prototype = {
 
     _reset: function()
     {
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
 
         this._recentlyInsertedNodes.clear();
         this._recentlyDeletedNodes.clear();

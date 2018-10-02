@@ -7,7 +7,7 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("CommandLineAPI.$0.cross-frame");
 
-    let mainFrame = WI.frameResourceManager.mainFrame;
+    let mainFrame = WI.networkManager.mainFrame;
     let childFrames = Array.from(mainFrame.childFrameCollection);
     InspectorTest.expectEqual(childFrames.length, 1, "Page should have a subframe.");
 
@@ -78,11 +78,11 @@ function test()
         }
     });
 
-    WI.domTreeManager.requestDocument((documentNode) => {
-        WI.domTreeManager.querySelector(documentNode.id, "iframe#myframe", (nodeId) => {
-            let iframeNode = WI.domTreeManager.nodeForId(nodeId);
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "iframe#myframe", (nodeId) => {
+            let iframeNode = WI.domManager.nodeForId(nodeId);
             let iframeDocumentNodeId = iframeNode.children[0].id;
-            WI.domTreeManager.querySelector(iframeDocumentNodeId, "div#rootDiv", (nodeId) => {
+            WI.domManager.querySelector(iframeDocumentNodeId, "div#rootDiv", (nodeId) => {
                 nodeInMainFrameId = iframeNode.id;
                 nodeInSubFrameId = nodeId;
                 suite.runTestCasesAndFinish();

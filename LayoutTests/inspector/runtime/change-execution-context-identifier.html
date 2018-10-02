@@ -34,7 +34,7 @@ function test()
         name: "ScriptExecutionContextMainFrameContext",
         description: "Test that evaluateInInspectedWindow works when activeExecutionContext is the main frame execution context. This is equivalent to the main context.",
         test(resolve, reject) {
-            WI.runtimeManager.activeExecutionContext = WI.frameResourceManager.mainFrame.pageExecutionContext;
+            WI.runtimeManager.activeExecutionContext = WI.networkManager.mainFrame.pageExecutionContext;
             WI.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
                 InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
                 InspectorTest.expectEqual(remoteObject.value, "coldwater", "The passphrase should match the phrase defined in the main frame.");
@@ -47,8 +47,8 @@ function test()
         name: "ScriptExecutionContextSubFrame",
         description: "Test that evaluateInInspectedWindow works when activeExecutionContext is a subframe context.",
         test(resolve, reject) {
-            let mainFrame = WI.frameResourceManager.mainFrame;
-            let subframes = WI.frameResourceManager.frames.filter((frame) => frame !== mainFrame);
+            let mainFrame = WI.networkManager.mainFrame;
+            let subframes = WI.networkManager.frames.filter((frame) => frame !== mainFrame);
             InspectorTest.expectEqual(subframes.length, 1, "The test page should only have one sub-frame.");
 
             WI.runtimeManager.activeExecutionContext = subframes[0].pageExecutionContext;
@@ -64,7 +64,7 @@ function test()
         name: "ScriptExecutionContextMainFrameAgain",
         description: "Test that evaluateInInspectedWindow works when activeExecutionContext switches back to the main frame execution context.",
         test(resolve, reject) {
-            let mainFrame = WI.frameResourceManager.mainFrame;
+            let mainFrame = WI.networkManager.mainFrame;
 
             WI.runtimeManager.activeExecutionContext = mainFrame.pageExecutionContext;
             WI.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
@@ -79,8 +79,8 @@ function test()
         name: "ScriptExecutionContextRemoveSubframe",
         description: "Test that evaluateInInspectedWindow works when the activeExecutionContext is destroyed and reverts to the top-level context.",
         test(resolve, reject) {
-            let mainFrame = WI.frameResourceManager.mainFrame;
-            let subframes = WI.frameResourceManager.frames.filter((frame) => frame !== mainFrame);
+            let mainFrame = WI.networkManager.mainFrame;
+            let subframes = WI.networkManager.frames.filter((frame) => frame !== mainFrame);
             InspectorTest.expectEqual(subframes.length, 1, "The test page should only have one sub-frame.");
 
             // Set the execution context to the subframe so we can switch away from it when the frame is detached.
@@ -91,7 +91,7 @@ function test()
             let objectGroup = "test";
             let contextId = WI.RuntimeManager.TopLevelExecutionContextIdentifier;
             RuntimeAgent.evaluate.invoke({expression, objectGroup, contextId}, () => {
-                InspectorTest.expectEqual(WI.frameResourceManager.frames.length, 1, "The test page should now have no sub-frames.");
+                InspectorTest.expectEqual(WI.networkManager.frames.length, 1, "The test page should now have no sub-frames.");
                 InspectorTest.expectEqual(WI.runtimeManager.activeExecutionContext.id, WI.RuntimeManager.TopLevelExecutionContextIdentifier, "When a selected non-top-level execution context is removed, the active execution context should revert to the main frame context.");
                 resolve();
             });

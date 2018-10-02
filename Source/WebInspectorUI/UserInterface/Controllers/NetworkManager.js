@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.FrameResourceManager = class FrameResourceManager extends WI.Object
+WI.NetworkManager = class NetworkManager extends WI.Object
 {
     constructor()
     {
@@ -160,7 +160,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
 
         frame.clearExecutionContexts();
 
-        this.dispatchEventToListeners(WI.FrameResourceManager.Event.FrameWasRemoved, {frame});
+        this.dispatchEventToListeners(WI.NetworkManager.Event.FrameWasRemoved, {frame});
 
         if (this._mainFrame !== oldMainFrame)
             this._mainFrameDidChange(oldMainFrame);
@@ -219,8 +219,8 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         }
 
         // FIXME: <webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
-        let frameIdentifier = WI.frameResourceManager.mainFrame.id;
-        let loaderIdentifier = WI.frameResourceManager.mainFrame.id;
+        let frameIdentifier = WI.networkManager.mainFrame.id;
+        let loaderIdentifier = WI.networkManager.mainFrame.id;
         let targetId;
 
         let frame = this.frameForIdentifier(frameIdentifier);
@@ -619,7 +619,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         if (!url || isNaN(lineNumber) || lineNumber < 0)
             return null;
 
-        var sourceCode = WI.frameResourceManager.resourceForURL(url);
+        var sourceCode = WI.networkManager.resourceForURL(url);
         if (!sourceCode)
             sourceCode = WI.debuggerManager.scriptsForURL(url, WI.mainTarget)[0];
 
@@ -756,7 +756,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
 
     _dispatchFrameWasAddedEvent(frame)
     {
-        this.dispatchEventToListeners(WI.FrameResourceManager.Event.FrameWasAdded, {frame});
+        this.dispatchEventToListeners(WI.NetworkManager.Event.FrameWasAdded, {frame});
     }
 
     _mainFrameDidChange(oldMainFrame)
@@ -766,7 +766,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         if (this._mainFrame)
             this._mainFrame.markAsMainFrame();
 
-        this.dispatchEventToListeners(WI.FrameResourceManager.Event.MainFrameDidChange, {oldMainFrame});
+        this.dispatchEventToListeners(WI.NetworkManager.Event.MainFrameDidChange, {oldMainFrame});
     }
 
     _extraDomainsActivated(event)
@@ -776,8 +776,8 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
     }
 };
 
-WI.FrameResourceManager.Event = {
-    FrameWasAdded: "frame-resource-manager-frame-was-added",
-    FrameWasRemoved: "frame-resource-manager-frame-was-removed",
-    MainFrameDidChange: "frame-resource-manager-main-frame-did-change",
+WI.NetworkManager.Event = {
+    FrameWasAdded: "network-manager-frame-was-added",
+    FrameWasRemoved: "network-manager-frame-was-removed",
+    MainFrameDidChange: "network-manager-main-frame-did-change",
 };

@@ -9,7 +9,7 @@ function test() {
 
     let suite = InspectorTest.createAsyncSuite("CSS.addRule");
 
-    let mainFrame = WI.frameResourceManager.mainFrame;
+    let mainFrame = WI.networkManager.mainFrame;
 
     function stringify(range) {
         return `${range.startLine}:${range.startColumn},${range.endLine}:${range.endColumn}`;
@@ -46,9 +46,9 @@ function test() {
             }
 
             const doNotCreateIfMissing = true;
-            WI.cssStyleManager.preferredInspectorStyleSheetForFrame(mainFrame, usedExistingInspectorStylesheet, doNotCreateIfMissing);
+            WI.cssManager.preferredInspectorStyleSheetForFrame(mainFrame, usedExistingInspectorStylesheet, doNotCreateIfMissing);
 
-            WI.cssStyleManager.preferredInspectorStyleSheetForFrame(mainFrame, inspectorStyleSheetAvailable);
+            WI.cssManager.preferredInspectorStyleSheetForFrame(mainFrame, inspectorStyleSheetAvailable);
         }
     });
 
@@ -70,7 +70,7 @@ function test() {
             }
 
             let inspectorStyleSheet = null;
-            for (let styleSheet of WI.cssStyleManager.styleSheets) {
+            for (let styleSheet of WI.cssManager.styleSheets) {
                 if (styleSheet.isInspectorStyleSheet()) {
                     if (inspectorStyleSheet) {
                         reject("There should only be one inspector style sheet");
@@ -106,7 +106,7 @@ function test() {
             }
 
             let externalStyleSheet = null;
-            for (let styleSheet of WI.cssStyleManager.styleSheets) {
+            for (let styleSheet of WI.cssManager.styleSheets) {
                 if (styleSheet.displayName === "external.css") {
                     if (externalStyleSheet) {
                         reject("There should only be one external style sheet");

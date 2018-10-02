@@ -127,11 +127,11 @@ function test() {
         }
     });
 
-    WI.domTreeManager.requestDocument((documentNode) => {
-        WI.domTreeManager.querySelector(documentNode.id, "#x", (contentNodeId) => {
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "#x", (contentNodeId) => {
             if (contentNodeId) {
-                let domNode = WI.domTreeManager.nodeForId(contentNodeId);
-                nodeStyles = WI.cssStyleManager.stylesForNode(domNode);
+                let domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
 
                 if (nodeStyles.needsRefresh) {
                     nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {

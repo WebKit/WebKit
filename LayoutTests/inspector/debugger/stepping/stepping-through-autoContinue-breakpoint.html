@@ -22,7 +22,7 @@ function test()
         description: "Stepping through statements should still work after encountering an autoContinue breakpoint.",
         test(resolve, reject) {
             // Set autoContinue breakpoint.
-            let script = WI.frameResourceManager.mainFrame.mainResource.scripts[0];
+            let script = WI.networkManager.mainFrame.mainResource.scripts[0];
             var location = script.createSourceCodeLocation(8, 0);
             var breakpoint = new WI.Breakpoint(location);
             breakpoint.autoContinue = true;

@@ -69,7 +69,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     hidden()
     {
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
 
         super.hidden();
     }
@@ -145,7 +145,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         let canvas = contentView.representedObject;
         if (canvas.cssCanvasName) {
             canvas.requestCSSCanvasClientNodes((cssCanvasClientNodes) => {
-                WI.domTreeManager.highlightDOMNodeList(cssCanvasClientNodes.map((node) => node.id));
+                WI.domManager.highlightDOMNodeList(cssCanvasClientNodes.map((node) => node.id));
             });
             return;
         }
@@ -153,12 +153,12 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         canvas.requestNode().then((node) => {
             if (!node || !node.ownerDocument)
                 return;
-            WI.domTreeManager.highlightDOMNode(node.id);
+            WI.domManager.highlightDOMNode(node.id);
         });
     }
 
     _contentViewMouseLeave(event)
     {
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
     }
 };

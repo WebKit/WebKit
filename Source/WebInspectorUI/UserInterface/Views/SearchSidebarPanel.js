@@ -149,7 +149,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                 if (error || !resourceMatches || !resourceMatches.length)
                     return;
 
-                var frame = WI.frameResourceManager.frameForIdentifier(frameId);
+                var frame = WI.networkManager.frameForIdentifier(frameId);
                 if (!frame)
                     return;
 
@@ -250,7 +250,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                     if (this._domSearchIdentifier !== searchId)
                         return;
 
-                    var domNode = WI.domTreeManager.nodeForId(nodeIds[i]);
+                    var domNode = WI.domManager.nodeForId(nodeIds[i]);
                     if (!domNode || !domNode.ownerDocument)
                         continue;
 
@@ -259,7 +259,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                         continue;
 
                     // FIXME: This should use a frame to do resourceForURL, but DOMAgent does not provide a frameId.
-                    var resource = WI.frameResourceManager.resourceForURL(domNode.ownerDocument.documentURL);
+                    var resource = WI.networkManager.resourceForURL(domNode.ownerDocument.documentURL);
                     if (!resource)
                         continue;
 
@@ -288,7 +288,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         }
 
         if (window.DOMAgent)
-            WI.domTreeManager.ensureDocument();
+            WI.domManager.ensureDocument();
 
         if (window.PageAgent)
             PageAgent.searchInResources(searchQuery, isCaseSensitive, isRegex, resourcesCallback.bind(this));

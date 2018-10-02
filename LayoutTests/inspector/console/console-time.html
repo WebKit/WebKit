@@ -13,13 +13,13 @@ function test()
         test(resolve, reject) {
             let seen = 0;
             const expected = 3;
-            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, handler);
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
                 InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
                 InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
                 if (++seen === expected) {
-                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, handler);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
                     resolve();
                 }
             }
@@ -39,7 +39,7 @@ function test()
         name: "UserLabels",
         description: "Test that user labels works as expected.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {
                 let message = event.data.message;
                 InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
@@ -58,14 +58,14 @@ function test()
         test(resolve, reject) {
             let seen = 0;
             const expected = 2;
-            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, handler);
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
                 let expectedLabel = seen === 0 ? "my-label-2" : "my-label-1";
                 InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
                 InspectorTest.expectThat(message.messageText.includes(expectedLabel), "Message should contain the '" + expectedLabel + "' label name somewhere.");
                 if (++seen === expected) {
-                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, handler);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
                     resolve();
                 }
             }
@@ -81,7 +81,7 @@ function test()
         name: "WarnWhenExisting",
         description: "Test for a warning when trying to start an already started timer.",
         test(resolve, reject) {
-            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, handler);
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
                 if (message.level === WI.ConsoleMessage.MessageLevel.Warning) {
@@ -91,7 +91,7 @@ function test()
                     return;
                 }
                 if (message.type === WI.ConsoleMessage.MessageType.Timing) {
-                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, handler);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
                     resolve();
                 }
             }
@@ -106,7 +106,7 @@ function test()
         name: "WarnWhenNotExisting",
         description: "Test for a warning when trying to start an already started timer.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {
                 let message = event.data.message;
                 InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");

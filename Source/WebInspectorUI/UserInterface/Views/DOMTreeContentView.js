@@ -70,9 +70,9 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._domTreeOutline.editable = true;
         this.element.appendChild(this._domTreeOutline.element);
 
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeModified, this._domNodeChanged, this);
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeRemoved, this._domNodeChanged, this);
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.CharacterDataModified, this._domNodeChanged, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.AttributeModified, this._domNodeChanged, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.AttributeRemoved, this._domNodeChanged, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._domNodeChanged, this);
 
         this._lastSelectedNodePathSetting = new WI.Setting("last-selected-node-path", null);
 
@@ -151,7 +151,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         super.hidden();
 
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
         this._domTreeOutline.setVisible(false);
     }
 
@@ -163,7 +163,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.showShadowDOMSetting.removeEventListener(null, null, this);
         WI.settings.showRulers.removeEventListener(null, null, this);
         WI.debuggerManager.removeEventListener(null, null, this);
-        WI.domTreeManager.removeEventListener(null, null, this);
+        WI.domManager.removeEventListener(null, null, this);
         WI.domDebuggerManager.removeEventListener(null, null, this);
         WI.DOMBreakpoint.removeEventListener(null, null, this);
 
@@ -372,7 +372,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
             console.assert(nodeIdentifiers.length === 1);
 
-            var domNode = WI.domTreeManager.nodeForId(nodeIdentifiers[0]);
+            var domNode = WI.domManager.nodeForId(nodeIdentifiers[0]);
             console.assert(domNode);
             if (!domNode)
                 return;
@@ -389,7 +389,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _restoreSelectedNodeAfterUpdate(documentURL, defaultNode)
     {
-        if (!WI.domTreeManager.restoreSelectedNodeIsAllowed)
+        if (!WI.domManager.restoreSelectedNodeIsAllowed)
             return;
 
         function selectNode(lastSelectedNode)
@@ -412,14 +412,14 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         function selectLastSelectedNode(nodeId)
         {
-            if (!WI.domTreeManager.restoreSelectedNodeIsAllowed)
+            if (!WI.domManager.restoreSelectedNodeIsAllowed)
                 return;
 
-            selectNode.call(this, WI.domTreeManager.nodeForId(nodeId));
+            selectNode.call(this, WI.domManager.nodeForId(nodeId));
         }
 
         if (documentURL && this._lastSelectedNodePathSetting.value && this._lastSelectedNodePathSetting.value.path && this._lastSelectedNodePathSetting.value.url === documentURL.hash)
-            WI.domTreeManager.pushNodeByPathToFrontend(this._lastSelectedNodePathSetting.value.path, selectLastSelectedNode.bind(this));
+            WI.domManager.pushNodeByPathToFrontend(this._lastSelectedNodePathSetting.value.path, selectLastSelectedNode.bind(this));
         else
             selectNode.call(this);
     }
@@ -445,10 +445,10 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         var selectedDOMNode = this._domTreeOutline.selectedDOMNode();
         if (selectedDOMNode && !this._dontSetLastSelectedNodePath)
-            this._lastSelectedNodePathSetting.value = {url: WI.frameResourceManager.mainFrame.url.hash, path: selectedDOMNode.path()};
+            this._lastSelectedNodePathSetting.value = {url: WI.networkManager.mainFrame.url.hash, path: selectedDOMNode.path()};
 
         if (selectedDOMNode)
-            WI.domTreeManager.setInspectedNode(selectedDOMNode);
+            WI.domManager.setInspectedNode(selectedDOMNode);
 
         this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
@@ -573,7 +573,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         let mediaType = WI.printStylesEnabled ? "print" : "";
         PageAgent.setEmulatedMedia(mediaType);
 
-        WI.cssStyleManager.mediaTypeChanged();
+        WI.cssManager.mediaTypeChanged();
     }
 
     _togglePrintStyles(event)
@@ -618,7 +618,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             console.assert(nodeIdentifiers.length === this._numberOfSearchResults);
 
             for (var i = 0; i < nodeIdentifiers.length; ++i) {
-                var domNode = WI.domTreeManager.nodeForId(nodeIdentifiers[i]);
+                var domNode = WI.domManager.nodeForId(nodeIdentifiers[i]);
                 console.assert(domNode);
                 if (!domNode)
                     continue;
@@ -668,7 +668,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _updateBreakpointStatus(nodeIdentifier)
     {
-        let domNode = WI.domTreeManager.nodeForId(nodeIdentifier);
+        let domNode = WI.domManager.nodeForId(nodeIdentifier);
         if (!domNode)
             return;
 

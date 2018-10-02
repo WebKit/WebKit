@@ -52,22 +52,22 @@ function test() {
         ++index;
     }
 
-    WI.domTreeManager.requestDocument(function(documentNode) {
+    WI.domManager.requestDocument(function(documentNode) {
         if (!documentNode) {
             InspectorTest.log("ERROR: document not found.");
             InspectorTest.completeTest();
             return;
         }
 
-        WI.domTreeManager.querySelector(documentNode.id, ".foo", function(contentNodeId) {
+        WI.domManager.querySelector(documentNode.id, ".foo", function(contentNodeId) {
             if (!contentNodeId) {
                 InspectorTest.log("ERROR: DOM node not found.");
                 InspectorTest.completeTest();
                 return;
             }
 
-            var domNode = WI.domTreeManager.nodeForId(contentNodeId);
-            nodeStyles = WI.cssStyleManager.stylesForNode(domNode);
+            var domNode = WI.domManager.nodeForId(contentNodeId);
+            nodeStyles = WI.cssManager.stylesForNode(domNode);
 
             nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
             if (!nodeStyles.needsRefresh)

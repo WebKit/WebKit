@@ -24,11 +24,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.LogManager = class LogManager extends WI.Object
+WI.ConsoleManager = class ConsoleManager extends WI.Object
 {
     constructor()
     {
         super();
+
+        this._issues = [];
 
         this._clearMessagesRequested = false;
         this._isNewPageOrReload = false;
@@ -38,7 +40,7 @@ WI.LogManager = class LogManager extends WI.Object
         this._customLoggingChannels = [];
         this._loggingChannelSources = [];
 
-        if (WI.LogManager.supportsLogChannels()) {
+        if (WI.ConsoleManager.supportsLogChannels()) {
             this._loggingChannelSources = [WI.ConsoleMessage.MessageSource.Media, WI.ConsoleMessage.MessageSource.WebRTC];
             ConsoleAgent.getLoggingChannels((error, channels) => {
                 if (error)
@@ -60,10 +62,34 @@ WI.LogManager = class LogManager extends WI.Object
         return !!ConsoleAgent.getLoggingChannels;
     }
 
+    static issueMatchSourceCode(issue, sourceCode)
+    {
+        if (sourceCode instanceof WI.SourceMapResource)
+            return issue.sourceCodeLocation && issue.sourceCodeLocation.displaySourceCode === sourceCode;
+        if (sourceCode instanceof WI.Resource)
+            return issue.url === sourceCode.url && (!issue.sourceCodeLocation || issue.sourceCodeLocation.sourceCode === sourceCode);
+        if (sourceCode instanceof WI.Script)
+            return issue.sourceCodeLocation && issue.sourceCodeLocation.sourceCode === sourceCode;
+        return false;
+    }
+
     // Public
 
     get customLoggingChannels() { return this._customLoggingChannels; }
     get logChannelSources() { return this._loggingChannelSources; }
+
+    issuesForSourceCode(sourceCode)
+    {
+        var issues = [];
+
+        for (var i = 0; i < this._issues.length; ++i) {
+            var issue = this._issues[i];
+            if (WI.IssueManager.issueMatchSourceCode(issue, sourceCode))
+                issues.push(issue);
+        }
+
+        return issues;
+    }
 
     messageWasAdded(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
     {
@@ -76,10 +102,14 @@ WI.LogManager = class LogManager extends WI.Object
 
         let message = new WI.ConsoleMessage(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
 
-        this.dispatchEventToListeners(WI.LogManager.Event.MessageAdded, {message});
+        this.dispatchEventToListeners(WI.ConsoleManager.Event.MessageAdded, {message});
 
-        if (message.level === "warning" || message.level === "error")
-            WI.issueManager.issueWasAdded(message);
+        if (message.level === "warning" || message.level === "error") {
+            let issue = new WI.IssueMessage(message);
+            this._issues.push(issue);
+
+            this.dispatchEventToListeners(WI.ConsoleManager.Event.IssueAdded, {issue});
+        }
     }
 
     messagesCleared()
@@ -91,11 +121,14 @@ WI.LogManager = class LogManager extends WI.Object
         if (this._clearMessagesRequested) {
             // Frontend requested "clear console" and Backend successfully completed the request.
             this._clearMessagesRequested = false;
-            this.dispatchEventToListeners(WI.LogManager.Event.Cleared);
+
+            this._issues = [];
+
+            this.dispatchEventToListeners(WI.ConsoleManager.Event.Cleared);
         } else {
             // Received an unrequested clear console event.
             // This could be for a navigation or other reasons (like console.clear()).
-            // If this was a reload, we may not want to dispatch WI.LogManager.Event.Cleared.
+            // If this was a reload, we may not want to dispatch WI.ConsoleManager.Event.Cleared.
             // To detect if this is a reload we wait a turn and check if there was a main resource change reload.
             setTimeout(this._delayedMessagesCleared.bind(this), 0);
         }
@@ -110,15 +143,17 @@ WI.LogManager = class LogManager extends WI.Object
                 return;
         }
 
+        this._issues = [];
+
         // A console.clear() or command line clear() happened.
-        this.dispatchEventToListeners(WI.LogManager.Event.Cleared);
+        this.dispatchEventToListeners(WI.ConsoleManager.Event.Cleared);
     }
 
     messageRepeatCountUpdated(count)
     {
         // Called from WI.ConsoleObserver.
 
-        this.dispatchEventToListeners(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, {count});
+        this.dispatchEventToListeners(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, {count});
     }
 
     requestClearMessages()
@@ -142,15 +177,16 @@ WI.LogManager = class LogManager extends WI.Object
 
         let timestamp = Date.now();
         let wasReloaded = event.data.oldMainResource && event.data.oldMainResource.url === event.target.mainResource.url;
-        this.dispatchEventToListeners(WI.LogManager.Event.SessionStarted, {timestamp, wasReloaded});
+        this.dispatchEventToListeners(WI.ConsoleManager.Event.SessionStarted, {timestamp, wasReloaded});
 
         WI.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
     }
 };
 
-WI.LogManager.Event = {
-    SessionStarted: "log-manager-session-was-started",
-    Cleared: "log-manager-cleared",
-    MessageAdded: "log-manager-message-added",
-    PreviousMessageRepeatCountUpdated: "log-manager-previous-message-repeat-count-updated"
+WI.ConsoleManager.Event = {
+    SessionStarted: "console-manager-session-was-started",
+    Cleared: "console-manager-cleared",
+    MessageAdded: "console-manager-message-added",
+    IssueAdded: "console-manager-issue-added",
+    PreviousMessageRepeatCountUpdated: "console-manager-previous-message-repeat-count-updated",
 };

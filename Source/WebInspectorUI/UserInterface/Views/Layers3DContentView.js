@@ -178,7 +178,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         if (this.layoutReason === WI.View.LayoutReason.Resize)
             return;
 
-        WI.domTreeManager.requestDocument((node) => {
+        WI.domManager.requestDocument((node) => {
             let documentWasUpdated = this._updateDocument(node);
 
             WI.layerTreeManager.layersForNode(node, (layers) => {

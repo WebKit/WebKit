@@ -55,7 +55,7 @@ InspectorFrontendAPI = {
 
     setElementSelectionEnabled: function(enabled)
     {
-        WI.domTreeManager.inspectModeEnabled = enabled;
+        WI.domManager.inspectModeEnabled = enabled;
     },
 
     setDockingUnavailable: function(unavailable)

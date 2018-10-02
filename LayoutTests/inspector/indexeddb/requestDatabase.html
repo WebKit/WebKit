@@ -14,7 +14,7 @@ function test()
         test(resolve, reject) {
             // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
             // <https://webkit.org/b/148006> Each test should run with its own clean data store
-            IndexedDBAgent.requestDatabaseNames(WI.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+            IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")", resolve);
             });
         }
@@ -25,7 +25,7 @@ function test()
         test(resolve, reject) {
             InspectorTest.awaitEvent("DatabaseCreated")
             .then((event) => {
-                IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "EmptyDatabase", (error, databaseWithObjectStores) => {
+                IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "EmptyDatabase", (error, databaseWithObjectStores) => {
                     InspectorTest.expectNoError(error);
                     InspectorTest.expectThat(databaseWithObjectStores.name === "EmptyDatabase", "Database name should be 'EmptyDatabase'.");
                     InspectorTest.expectThat(databaseWithObjectStores.version === 123, "Database version should be 123.");
@@ -43,7 +43,7 @@ function test()
         test(resolve, reject) {
             InspectorTest.awaitEvent("DatabaseCreated")
             .then((event) => {
-                IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "CompleteDatabase", (error, databaseWithObjectStores) => {
+                IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "CompleteDatabase", (error, databaseWithObjectStores) => {
                     InspectorTest.expectNoError(error);
                     let objectStores = databaseWithObjectStores.objectStores;
                     InspectorTest.expectThat(databaseWithObjectStores.name === "CompleteDatabase", "Database name should be 'EmptyDatabase'.");
@@ -83,7 +83,7 @@ function test()
     //     name: "NoSuchDatabase",
     //     description: "Request a database that does not exist.",
     //     test(resolve, reject) {
-    //         IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "NameDoesNotExist", (error, databaseWithObjectStores) => {
+    //         IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "NameDoesNotExist", (error, databaseWithObjectStores) => {
     //             InspectorTest.expectThat(error, "Should be an error trying to request a database that does not exist.");
     //             InspectorTest.log(JSON.stringify(databaseWithObjectStores));
     //             resolve();

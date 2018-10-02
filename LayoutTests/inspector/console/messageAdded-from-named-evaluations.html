@@ -21,7 +21,7 @@ function test()
         name: "TriggerMessageFromNameEvaluation",
         description: "Message from named evaluation should have a source location.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {
                 let message = event.data.message;
                 let topCallFrame = message.stackTrace.callFrames[0];
@@ -37,7 +37,7 @@ function test()
         name: "TriggerExceptionFromNameFunctionConstructorEvaluation",
         description: "Exception message from named Function constructor evaluation should have a source location.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {
                 let message = event.data.message;
                 let topCallFrame = message.stackTrace.callFrames[0];

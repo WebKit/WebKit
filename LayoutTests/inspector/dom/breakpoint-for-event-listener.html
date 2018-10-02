@@ -180,14 +180,14 @@ function test() {
         }
     });
 
-    WI.domTreeManager.requestDocument((documentNode) => {
+    WI.domManager.requestDocument((documentNode) => {
         Promise.all([
-            WI.domTreeManager.querySelector(documentNode.id, "#button1"),
-            WI.domTreeManager.querySelector(documentNode.id, "#button2"),
+            WI.domManager.querySelector(documentNode.id, "#button1"),
+            WI.domManager.querySelector(documentNode.id, "#button2"),
         ])
         .then(([button1Id, button2Id]) => {
-            button1Node = WI.domTreeManager.nodeForId(button1Id);
-            button2Node = WI.domTreeManager.nodeForId(button2Id);
+            button1Node = WI.domManager.nodeForId(button1Id);
+            button2Node = WI.domManager.nodeForId(button2Id);
 
             suite.runTestCasesAndFinish();
         })

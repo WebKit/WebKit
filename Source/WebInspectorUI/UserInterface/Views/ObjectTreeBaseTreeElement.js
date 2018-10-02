@@ -246,7 +246,7 @@ WI.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends WI.Genera
         if (resolvedValue.subtype === "node") {
             contextMenu.appendItem(WI.UIString("Copy as HTML"), function() {
                 resolvedValue.pushNodeToFrontend(function(nodeId) {
-                    WI.domTreeManager.nodeForId(nodeId).copyNode();
+                    WI.domManager.nodeForId(nodeId).copyNode();
                 });
             });
 
@@ -259,7 +259,7 @@ WI.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends WI.Genera
 
             contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), function() {
                 resolvedValue.pushNodeToFrontend(function(nodeId) {
-                    WI.domTreeManager.inspectElement(nodeId);
+                    WI.domManager.inspectElement(nodeId);
                 });
             });
             return;

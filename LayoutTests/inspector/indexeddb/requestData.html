@@ -22,7 +22,7 @@ function test()
         test(resolve, reject) {
             // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
             // <https://webkit.org/b/148006> Each test should run with its own clean data store
-            IndexedDBAgent.requestDatabaseNames(WI.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+            IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")", resolve);
             });
         }
@@ -33,11 +33,11 @@ function test()
         description: "Request data for an object store with different indexes.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database1', 1)");
-            IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "Database1", (error, database) => {
+            IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "Database1", (error, database) => {
                 InspectorTest.expectNoError(error);
 
                 let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
-                const securityOrigin = WI.frameResourceManager.mainFrame.securityOrigin;
+                const securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                 const skipCount = 0;
                 const pageSize = 10;
 
@@ -111,11 +111,11 @@ function test()
         description: "Request data for an object store with paginated requests.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database2', 1)");
-            IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "Database2", (error, database) => {
+            IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "Database2", (error, database) => {
                 InspectorTest.expectNoError(error);
 
                 let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
-                const securityOrigin = WI.frameResourceManager.mainFrame.securityOrigin;
+                const securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                 const indexName = "";
                 const pageSize = 2;
 
@@ -165,11 +165,11 @@ function test()
         description: "Request key range bounded data for an object store.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database3', 1)");
-            IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "Database3", (error, database) => {
+            IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "Database3", (error, database) => {
                 InspectorTest.expectNoError(error);
 
                 let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
-                const securityOrigin = WI.frameResourceManager.mainFrame.securityOrigin;
+                const securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                 const indexName = "Name Index";
                 const skipCount = 0;
                 const pageSize = 10;

@@ -76,7 +76,7 @@ WI.Canvas = class Canvas extends WI.Object
         }
 
         return new WI.Canvas(payload.canvasId, contextType, {
-            domNode: payload.nodeId ? WI.domTreeManager.nodeForId(payload.nodeId) : null,
+            domNode: payload.nodeId ? WI.domManager.nodeForId(payload.nodeId) : null,
             cssCanvasName: payload.cssCanvasName,
             contextAttributes: payload.contextAttributes,
             memoryCost: payload.memoryCost,
@@ -158,10 +158,10 @@ WI.Canvas = class Canvas extends WI.Object
     {
         if (!this._requestNodePromise) {
             this._requestNodePromise = new Promise((resolve, reject) => {
-                WI.domTreeManager.ensureDocument();
+                WI.domManager.ensureDocument();
 
                 CanvasAgent.requestNode(this._identifier).then((result) => {
-                    this._domNode = WI.domTreeManager.nodeForId(result.nodeId);
+                    this._domNode = WI.domManager.nodeForId(result.nodeId);
                     if (!this._domNode) {
                         reject(`No DOM node for identifier: ${result.nodeId}.`);
                         return;
@@ -191,7 +191,7 @@ WI.Canvas = class Canvas extends WI.Object
             return;
         }
 
-        WI.domTreeManager.ensureDocument();
+        WI.domManager.ensureDocument();
 
         CanvasAgent.requestCSSCanvasClientNodes(this._identifier, (error, clientNodeIds) => {
             if (error) {
@@ -200,7 +200,7 @@ WI.Canvas = class Canvas extends WI.Object
             }
 
             clientNodeIds = Array.isArray(clientNodeIds) ? clientNodeIds : [];
-            this._cssCanvasClientNodes = clientNodeIds.map((clientNodeId) => WI.domTreeManager.nodeForId(clientNodeId));
+            this._cssCanvasClientNodes = clientNodeIds.map((clientNodeId) => WI.domManager.nodeForId(clientNodeId));
             callback(this._cssCanvasClientNodes);
         });
     }

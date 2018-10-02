@@ -34,8 +34,8 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Object
         if (domNodeOrInfo instanceof WI.DOMNode) {
             this._domNodeIdentifier = domNodeOrInfo.id;
             this._path = domNodeOrInfo.path();
-            console.assert(WI.frameResourceManager.mainFrame);
-            this._url = WI.frameResourceManager.mainFrame.url;
+            console.assert(WI.networkManager.mainFrame);
+            this._url = WI.networkManager.mainFrame.url;
         } else if (domNodeOrInfo && typeof domNodeOrInfo === "object") {
             this._domNodeIdentifier = null;
             this._path = domNodeOrInfo.path;

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CSSStyleManager = class CSSStyleManager extends WI.Object
+WI.CSSManager = class CSSManager extends WI.Object
 {
     constructor()
     {
@@ -171,7 +171,7 @@ WI.CSSStyleManager = class CSSStyleManager extends WI.Object
     {
         var inspectorStyleSheets = this._inspectorStyleSheetsForFrame(frame);
         for (let styleSheet of inspectorStyleSheets) {
-            if (styleSheet[WI.CSSStyleManager.PreferredInspectorStyleSheetSymbol]) {
+            if (styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol]) {
                 callback(styleSheet);
                 return;
             }
@@ -182,8 +182,8 @@ WI.CSSStyleManager = class CSSStyleManager extends WI.Object
 
         if (CSSAgent.createStyleSheet) {
             CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
-                let styleSheet = WI.cssStyleManager.styleSheetForIdentifier(styleSheetId);
-                styleSheet[WI.CSSStyleManager.PreferredInspectorStyleSheetSymbol] = true;
+                let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId);
+                styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol] = true;
                 callback(styleSheet);
             });
             return;
@@ -241,13 +241,13 @@ WI.CSSStyleManager = class CSSStyleManager extends WI.Object
             }
 
             let styleSheetId = payload.ruleId.styleSheetId;
-            let styleSheet = WI.cssStyleManager.styleSheetForIdentifier(styleSheetId);
+            let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId);
             if (!styleSheet) {
                 callback(null);
                 return;
             }
 
-            styleSheet[WI.CSSStyleManager.PreferredInspectorStyleSheetSymbol] = true;
+            styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol] = true;
 
             console.assert(styleSheet.isInspectorStyleSheet());
             console.assert(styleSheet.parentFrame === frame);
@@ -290,11 +290,11 @@ WI.CSSStyleManager = class CSSStyleManager extends WI.Object
     {
         console.assert(!this._styleSheetIdentifierMap.has(styleSheetInfo.styleSheetId), "Attempted to add a CSSStyleSheet but identifier was already in use");
         let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
-        let parentFrame = WI.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
-        let origin = WI.CSSStyleManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
+        let parentFrame = WI.networkManager.frameForIdentifier(styleSheetInfo.frameId);
+        let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
         styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
 
-        this.dispatchEventToListeners(WI.CSSStyleManager.Event.StyleSheetAdded, {styleSheet});
+        this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetAdded, {styleSheet});
     }
 
     styleSheetRemoved(styleSheetIdentifier)
@@ -306,7 +306,7 @@ WI.CSSStyleManager = class CSSStyleManager extends WI.Object
 
         this._styleSheetIdentifierMap.delete(styleSheetIdentifier);
 
-        this.dispatchEventToListeners(WI.CSSStyleManager.Event.StyleSheetRemoved, {styleSheet});
+        this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetRemoved, {styleSheet});
     }
 
     // Private
@@ -435,8 +435,8 @@ WI.CSSStyleManager = class CSSStyleManager extends WI.Object
             }
 
             for (let styleSheetInfo of styleSheets) {
-                let parentFrame = WI.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
-                let origin = WI.CSSStyleManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
+                let parentFrame = WI.networkManager.frameForIdentifier(styleSheetInfo.frameId);
+                let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
 
                 // COMPATIBILITY (iOS 9): The info did not have 'isInline', 'startLine', and 'startColumn', so make false and 0 in these cases.
                 let isInline = styleSheetInfo.isInline || false;
@@ -551,11 +551,11 @@ WI.CSSStyleManager = class CSSStyleManager extends WI.Object
     }
 };
 
-WI.CSSStyleManager.Event = {
-    StyleSheetAdded: "css-style-manager-style-sheet-added",
-    StyleSheetRemoved: "css-style-manager-style-sheet-removed",
+WI.CSSManager.Event = {
+    StyleSheetAdded: "css-manager-style-sheet-added",
+    StyleSheetRemoved: "css-manager-style-sheet-removed",
 };
 
-WI.CSSStyleManager.PseudoElementNames = ["before", "after"];
-WI.CSSStyleManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
-WI.CSSStyleManager.PreferredInspectorStyleSheetSymbol = Symbol("css-style-manager-preferred-inspector-stylesheet");
+WI.CSSManager.PseudoElementNames = ["before", "after"];
+WI.CSSManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
+WI.CSSManager.PreferredInspectorStyleSheetSymbol = Symbol("css-manager-preferred-inspector-stylesheet");

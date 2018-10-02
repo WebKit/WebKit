@@ -45,7 +45,7 @@ function test()
         description: "Test that the existing websocket is sent to the frontend when it is first opened.",
         test(resolve, reject) {
             const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
-            let webSocketResources = WI.frameResourceManager.mainFrame.resourceCollectionForType(WI.Resource.Type.WebSocket);
+            let webSocketResources = WI.networkManager.mainFrame.resourceCollectionForType(WI.Resource.Type.WebSocket);
             InspectorTest.expectEqual(webSocketResources.size, 1, "Should have 1 WebSocketResource");
 
             let webSocketResource = Array.from(webSocketResources)[0];

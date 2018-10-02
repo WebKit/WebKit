@@ -158,7 +158,7 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
 
         this._fetchingMoreData = true;
 
-        WI.storageManager.requestIndexedDatabaseData(this._objectStore, this._objectStoreIndex, this._entries.length, 25, processEntries.bind(this));
+        WI.indexedDBManager.requestIndexedDatabaseData(this._objectStore, this._objectStoreIndex, this._entries.length, 25, processEntries.bind(this));
     }
 
     _refreshButtonClicked()
@@ -169,7 +169,7 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
 
     _clearButtonClicked()
     {
-        WI.storageManager.clearObjectStore(this._objectStore);
+        WI.indexedDBManager.clearObjectStore(this._objectStore);
         this._reset();
     }
 };

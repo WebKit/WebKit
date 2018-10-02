@@ -5,7 +5,7 @@
 <script>
 function test()
 {
-    let mainFrame = WI.frameResourceManager.mainFrame;
+    let mainFrame = WI.networkManager.mainFrame;
     let childFrames = Array.from(mainFrame.childFrameCollection);
     InspectorTest.expectEqual(childFrames.length, 1, "Page should have a subframe.");
 
@@ -15,7 +15,7 @@ function test()
         name: "CheckNoStyleSheets",
         description: "Ensure there are no stylesheets.",
         test(resolve, reject) {
-            InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 0, "Should be no stylesheets.");
+            InspectorTest.expectThat(WI.cssManager.styleSheets.length === 0, "Should be no stylesheets.");
             resolve();
         }
     });
@@ -24,14 +24,14 @@ function test()
         name: "CreateMainFrameInspectorStyleSheet",
         description: "First request for main frame should create inspector stylesheet.",
         test(resolve, reject) {
-            WI.cssStyleManager.singleFireEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, (event) => {
+            WI.cssManager.singleFireEventListener(WI.CSSManager.Event.StyleSheetAdded, (event) => {
                 InspectorTest.expectThat(event.data.styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
                 InspectorTest.expectThat(event.data.styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
                 InspectorTest.expectThat(event.data.styleSheet.parentFrame === mainFrame, "Added StyleSheet frame should be the main frame.");
             });
 
-            WI.cssStyleManager.preferredInspectorStyleSheetForFrame(mainFrame, (styleSheet) => {
-                InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 1, "Should be one stylesheet.");
+            WI.cssManager.preferredInspectorStyleSheetForFrame(mainFrame, (styleSheet) => {
+                InspectorTest.expectThat(WI.cssManager.styleSheets.length === 1, "Should be one stylesheet.");
                 InspectorTest.expectThat(styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "StyleSheet origin is inspector.");
                 InspectorTest.expectThat(styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
                 resolve();
@@ -43,14 +43,14 @@ function test()
         name: "AnotherMainFrameRequestDoesNothing",
         description: "Second request for main frame should not create a new stylesheet.",
         test(resolve, reject) {
-            let listener = WI.cssStyleManager.singleFireEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, (event) => {
+            let listener = WI.cssManager.singleFireEventListener(WI.CSSManager.Event.StyleSheetAdded, (event) => {
                 InspectorTest.assert(false, "Should not create a new StyleSheet, should reuse the existing one");
             });
-            WI.cssStyleManager.preferredInspectorStyleSheetForFrame(mainFrame, (styleSheet) => {
-                InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 1, "Should still be one stylesheet.");
+            WI.cssManager.preferredInspectorStyleSheetForFrame(mainFrame, (styleSheet) => {
+                InspectorTest.expectThat(WI.cssManager.styleSheets.length === 1, "Should still be one stylesheet.");
                 InspectorTest.expectThat(styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "StyleSheet origin should be 'inspector'.");
                 InspectorTest.expectThat(styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
-                WI.cssStyleManager.removeEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, listener, null);
+                WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetAdded, listener, null);
                 resolve();
             });
         }
@@ -60,14 +60,14 @@ function test()
         name: "CreateSubFrameInspectorStyleSheet",
         description: "First request for subframe should create inspector stylesheet.",
         test(resolve, reject) {
-            WI.cssStyleManager.singleFireEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, (event) => {
+            WI.cssManager.singleFireEventListener(WI.CSSManager.Event.StyleSheetAdded, (event) => {
                 InspectorTest.expectThat(event.data.styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
                 InspectorTest.expectThat(event.data.styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
                 InspectorTest.expectThat(event.data.styleSheet.parentFrame === childFrames[0], "Added StyleSheet frame should be a child frame.");
             });
 
-            WI.cssStyleManager.preferredInspectorStyleSheetForFrame(childFrames[0], (styleSheet) => {
-                InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 2, "Should be two stylesheets.");
+            WI.cssManager.preferredInspectorStyleSheetForFrame(childFrames[0], (styleSheet) => {
+                InspectorTest.expectThat(WI.cssManager.styleSheets.length === 2, "Should be two stylesheets.");
                 InspectorTest.expectThat(styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "StyleSheet origin should be 'inspector'.");
                 InspectorTest.expectThat(styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
                 resolve();
@@ -79,20 +79,20 @@ function test()
         name: "AnotherSubFrameRequestDoesNothing",
         description: "Second request for main frame should not create a new stylesheet.",
         test(resolve, reject) {
-            let listener = WI.cssStyleManager.singleFireEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, (event) => {
+            let listener = WI.cssManager.singleFireEventListener(WI.CSSManager.Event.StyleSheetAdded, (event) => {
                 InspectorTest.assert(false, "Should not create a new StyleSheet, should reuse the existing one");
             });
-            WI.cssStyleManager.preferredInspectorStyleSheetForFrame(childFrames[0], (styleSheet) => {
-                InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 2, "Should be two stylesheets.");
+            WI.cssManager.preferredInspectorStyleSheetForFrame(childFrames[0], (styleSheet) => {
+                InspectorTest.expectThat(WI.cssManager.styleSheets.length === 2, "Should be two stylesheets.");
                 InspectorTest.expectThat(styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "StyleSheet origin should be 'inspector'.");
                 InspectorTest.expectThat(styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
-                WI.cssStyleManager.removeEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, listener, null);
+                WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetAdded, listener, null);
                 resolve();
             });
         }
     });
 
-    WI.cssStyleManager.singleFireEventListener(WI.CSSStyleManager.Event.StyleSheetRemoved, function(event) {
+    WI.cssManager.singleFireEventListener(WI.CSSManager.Event.StyleSheetRemoved, function(event) {
         InspectorTest.assert(false, "Should not be removing any StyleSheets in this test.");
     });
 

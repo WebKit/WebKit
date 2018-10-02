@@ -35,7 +35,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
 
         super(identifier || "elements", "elements", tabBarItem, null, detailsSidebarPanelConstructors, true);
 
-        WI.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+        WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
@@ -99,7 +99,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
     {
         super.closed();
 
-        WI.frameResourceManager.removeEventListener(null, null, this);
+        WI.networkManager.removeEventListener(null, null, this);
         WI.Frame.removeEventListener(null, null, this);
     }
 
@@ -109,7 +109,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
     {
         this.contentBrowser.contentViewContainer.closeAllContentViews();
 
-        var mainFrame = WI.frameResourceManager.mainFrame;
+        var mainFrame = WI.networkManager.mainFrame;
         if (mainFrame)
             this.contentBrowser.showContentViewForRepresentedObject(mainFrame.domTree);
     }

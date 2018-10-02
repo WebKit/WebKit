@@ -84,7 +84,7 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
         this.__deletedViaDeleteKeyboardShortcut = true;
 
         if (this.representedObject.eventListener)
-            WI.domTreeManager.removeBreakpointForEventListener(this.representedObject.eventListener);
+            WI.domManager.removeBreakpointForEventListener(this.representedObject.eventListener);
         else
             WI.domDebuggerManager.removeEventBreakpoint(this.representedObject);
         return true;
@@ -114,7 +114,7 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
 
         contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
             if (breakpoint.eventListener)
-                WI.domTreeManager.removeBreakpointForEventListener(breakpoint.eventListener);
+                WI.domManager.removeBreakpointForEventListener(breakpoint.eventListener);
             else
                 WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
         });
@@ -142,7 +142,7 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
     _toggleBreakpoint()
     {
         if (this.representedObject.eventListener) {
-            WI.domTreeManager.removeBreakpointForEventListener(this.representedObject.eventListener);
+            WI.domManager.removeBreakpointForEventListener(this.representedObject.eventListener);
             return;
         }
 

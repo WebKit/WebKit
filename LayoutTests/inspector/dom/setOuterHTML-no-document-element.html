@@ -19,7 +19,7 @@ function test()
         }
     });
 
-    WI.domTreeManager.requestDocument((documentNode) => {
+    WI.domManager.requestDocument((documentNode) => {
         documentNodeId = documentNode.id;
         suite.runTestCasesAndFinish();
     });

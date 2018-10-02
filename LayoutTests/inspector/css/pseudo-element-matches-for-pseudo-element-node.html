@@ -37,14 +37,14 @@ function test() {
         InspectorTest.completeTest();                
     }
 
-    WI.domTreeManager.requestDocument(function(documentNode) {
-        WI.domTreeManager.querySelector(documentNode.id, "#x", function(contentNodeId) {
-            var domNode = WI.domTreeManager.nodeForId(contentNodeId);
+    WI.domManager.requestDocument(function(documentNode) {
+        WI.domManager.querySelector(documentNode.id, "#x", function(contentNodeId) {
+            var domNode = WI.domManager.nodeForId(contentNodeId);
             InspectorTest.assert(domNode);
             var beforePseudoElementDOMNode = domNode.beforePseudoElement();
             InspectorTest.expectThat(beforePseudoElementDOMNode, "Got ::before pseudo element for #x");
             InspectorTest.log("Refreshing styles for ::before pseudo element");
-            nodeStyles = WI.cssStyleManager.stylesForNode(beforePseudoElementDOMNode);
+            nodeStyles = WI.cssManager.stylesForNode(beforePseudoElementDOMNode);
             nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, validateStyles);
             nodeStyles.refresh();
         });

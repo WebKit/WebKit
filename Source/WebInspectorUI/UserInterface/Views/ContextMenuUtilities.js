@@ -100,7 +100,7 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options)
         WI.openURL(url, frame, {alwaysOpenExternally: true});
     });
 
-    if (WI.frameResourceManager.resourceForURL(url)) {
+    if (WI.networkManager.resourceForURL(url)) {
         if (!WI.isShowingResourcesTab()) {
             contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
                 showResourceWithOptions({ignoreNetworkTab: true, ignoreSearchTab: true});
@@ -203,7 +203,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
 
     if (!options.excludeRevealElement && window.DOMAgent && domNode.ownerDocument) {
         contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), () => {
-            WI.domTreeManager.inspectElement(domNode.id);
+            WI.domManager.inspectElement(domNode.id);
         });
     }
 

@@ -51,14 +51,14 @@ function test()
                     reject();
                 }
 
-                InspectorTest.expectThat(WI.LogManager.supportsLogChannels(), "Log channels should be supported.");
-                InspectorTest.expectThat(WI.logManager.customLoggingChannels, "Has WI.logManager.customLoggingChannels.");
-                InspectorTest.expectThat(WI.logManager.customLoggingChannels.length, "WI.logManager.customLoggingChannels is not empty.");
-                InspectorTest.expectThat(WI.logManager.logChannelSources, "Has WI.logManager.logChannelSources.");
-                InspectorTest.expectThat(WI.logManager.logChannelSources.length, "WI.logManager.logChannelSources is not empty.");
+                InspectorTest.expectThat(WI.ConsoleManager.supportsLogChannels(), "Log channels should be supported.");
+                InspectorTest.expectThat(WI.consoleManager.customLoggingChannels, "Has WI.consoleManager.customLoggingChannels.");
+                InspectorTest.expectThat(WI.consoleManager.customLoggingChannels.length, "WI.consoleManager.customLoggingChannels is not empty.");
+                InspectorTest.expectThat(WI.consoleManager.logChannelSources, "Has WI.consoleManager.logChannelSources.");
+                InspectorTest.expectThat(WI.consoleManager.logChannelSources.length, "WI.consoleManager.logChannelSources is not empty.");
 
                 let sources = Object.values(WI.ConsoleMessage.MessageSource);
-                WI.logManager.customLoggingChannels.forEach((channel) => {
+                WI.consoleManager.customLoggingChannels.forEach((channel) => {
                     InspectorTest.expectThat(sources.includes(channel.source), "Log channel has known source.");
                     InspectorTest.expectEqual(channel.level, WI.LoggingChannel.Level.Off, "Log channel disabled by default.");
                 });
@@ -104,10 +104,10 @@ function test()
         name: "Console.Logging.NoLogging",
         description: "No <video> logging when disabled.",
         test(resolve, reject) {
-            let channel = WI.logManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
+            let channel = WI.consoleManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
             InspectorTest.expectThat(channel.level === WI.LoggingChannel.Level.Off, "Media logging disabled.");
 
-            let logListener = WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+            let logListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                 InspectorTest.fail("Nothing should be logged to the console.");
                 reject();
             });
@@ -118,7 +118,7 @@ function test()
 
             InspectorTest.awaitEvent("PauseEvent").then((event) => {
                 InspectorTest.log("Stopped Playing");
-                WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, logListener, null);
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, logListener, null);
             }).then(resolve, reject);
 
             InspectorTest.evaluateInPage(`play()`);
@@ -133,7 +133,7 @@ function test()
         test(resolve, reject) {
             ConsoleAgent.clearMessages();
 
-            let channel = WI.logManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
+            let channel = WI.consoleManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
             InspectorTest.expectThat(channel.level === WI.LoggingChannel.Level.Off, "Media logging disabled.");
 
             ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Basic)
@@ -146,11 +146,11 @@ function test()
                 let mediaChannel = channels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
                 InspectorTest.expectThat(mediaChannel.level === WI.LoggingChannel.Level.Basic, "Media logging has been enabled.");
 
-                let logListener = WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+                let logListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                     let message = event.data.message;
                     InspectorTest.assert(message instanceof WI.ConsoleMessage);
                     InspectorTest.expectThat(message.source === WI.ConsoleMessage.MessageSource.Media, "Media log message should have source 'media'.");
-                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, logListener, null);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, logListener, null);
                     ConsoleAgent.setLoggingChannelLevel(mediaChannel.source, WI.LoggingChannel.Level.Off)
                     resolve();
                 });
@@ -167,7 +167,7 @@ function test()
         test(resolve, reject) {
             ConsoleAgent.clearMessages();
 
-            let channel = WI.logManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
+            let channel = WI.consoleManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
             InspectorTest.expectThat(channel.level === WI.LoggingChannel.Level.Off, "Media logging disabled.");
 
             ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Verbose)
@@ -181,7 +181,7 @@ function test()
                 InspectorTest.expectThat(mediaChannel.level === WI.LoggingChannel.Level.Verbose, "Verbose media logging has been enabled.");
 
                 let messageCount = 0;
-                let logListener = WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+                let logListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                     let message = event.data.message;
                     InspectorTest.assert(message instanceof WI.ConsoleMessage);
                     InspectorTest.assert(message.source === WI.ConsoleMessage.MessageSource.Media);
@@ -191,7 +191,7 @@ function test()
                         InspectorTest.expectThat(message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
                         if (++messageCount === 3) {
                             InspectorTest.log("Received three JSON messages.");
-                            WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, logListener, null);
+                            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, logListener, null);
                             ConsoleAgent.setLoggingChannelLevel(mediaChannel.source, WI.LoggingChannel.Level.Off)
                             resolve();
                         }

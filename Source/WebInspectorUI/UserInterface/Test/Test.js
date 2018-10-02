@@ -49,12 +49,11 @@ WI.loaded = function()
 
     // Instantiate controllers used by tests.
     this.targetManager = new WI.TargetManager;
-    this.frameResourceManager = new WI.FrameResourceManager;
-    this.storageManager = new WI.StorageManager;
-    this.domTreeManager = new WI.DOMTreeManager;
-    this.cssStyleManager = new WI.CSSStyleManager;
-    this.logManager = new WI.LogManager;
-    this.issueManager = new WI.IssueManager;
+    this.networkManager = new WI.NetworkManager;
+    this.domStorageManager = new WI.DOMStorageManager;
+    this.domManager = new WI.DOMManager;
+    this.cssManager = new WI.CSSManager;
+    this.consoleManager = new WI.ConsoleManager;
     this.runtimeManager = new WI.RuntimeManager;
     this.heapManager = new WI.HeapManager;
     this.memoryManager = new WI.MemoryManager;

@@ -130,7 +130,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
 
         toggleElement.addEventListener("change", (event) => {
             this._eventListener.disabled = !toggleElement.checked;
-            WI.domTreeManager.setEventListenerDisabled(this._eventListener, this._eventListener.disabled);
+            WI.domManager.setEventListenerDisabled(this._eventListener, this._eventListener.disabled);
             updateTitle();
         });
 
@@ -161,9 +161,9 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         checkboxElement.addEventListener("change", (event) => {
             this._eventListener.hasBreakpoint = !!checkboxElement.checked;
             if (this._eventListener.hasBreakpoint)
-                WI.domTreeManager.setBreakpointForEventListener(this._eventListener);
+                WI.domManager.setBreakpointForEventListener(this._eventListener);
             else
-                WI.domTreeManager.removeBreakpointForEventListener(this._eventListener);
+                WI.domManager.removeBreakpointForEventListener(this._eventListener);
 
             updateTitle();
         });

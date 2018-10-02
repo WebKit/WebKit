@@ -29,7 +29,7 @@ function test()
         });
     }
 
-    WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, function(event) {
+    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, function(event) {
         let message = event.data.message;
         InspectorTest.assert(message instanceof WI.ConsoleMessage);
         if (triggerNextConsoleMessage)

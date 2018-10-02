@@ -71,7 +71,7 @@ WI.MainTarget = class MainTarget extends WI.Target
         if (this._mainResource)
             return this._mainResource;
 
-        let mainFrame = WI.frameResourceManager.mainFrame;
+        let mainFrame = WI.networkManager.mainFrame;
         return mainFrame ? mainFrame.mainResource : null;
     }
 

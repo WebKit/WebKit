@@ -33,8 +33,8 @@ function test()
     }
 
     let currentStyleSheetAddedHandler, currentStyleSheetRemovedHandler;
-    WI.cssStyleManager.addEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, (event) => { currentStyleSheetAddedHandler(event); });
-    WI.cssStyleManager.addEventListener(WI.CSSStyleManager.Event.StyleSheetRemoved, (event) => { currentStyleSheetRemovedHandler(event); });
+    WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, (event) => { currentStyleSheetAddedHandler(event); });
+    WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetRemoved, (event) => { currentStyleSheetRemovedHandler(event); });
 
     let suite = InspectorTest.createAsyncSuite("CSS.StyleSheetEvents.Imports");
 
@@ -42,7 +42,7 @@ function test()
         name: "CheckStyleSheets",
         description: "Ensure there are currently two stylesheets.",
         test(resolve, reject) {
-            let styleSheets = WI.cssStyleManager.styleSheets;
+            let styleSheets = WI.cssManager.styleSheets;
             InspectorTest.expectThat(styleSheets.length === 3, "Should be 3 stylesheets.");
             for (let styleSheet of styleSheets)
                 InspectorTest.log(sanitizeURL(styleSheet.url));

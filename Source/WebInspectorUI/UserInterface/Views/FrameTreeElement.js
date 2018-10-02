@@ -115,12 +115,12 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         // Immediate superclasses are skipped, since Frames handle their own SourceMapResources.
         WI.GeneralTreeElement.prototype.onattach.call(this);
 
-        WI.cssStyleManager.addEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+        WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
     }
 
     ondetach()
     {
-        WI.cssStyleManager.removeEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+        WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
 
         super.ondetach();
     }
@@ -179,7 +179,7 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         }
 
         const doNotCreateIfMissing = true;
-        WI.cssStyleManager.preferredInspectorStyleSheetForFrame(this._frame, this.addRepresentedObjectToNewChildQueue.bind(this), doNotCreateIfMissing);
+        WI.cssManager.preferredInspectorStyleSheetForFrame(this._frame, this.addRepresentedObjectToNewChildQueue.bind(this), doNotCreateIfMissing);
     }
 
     onexpand()

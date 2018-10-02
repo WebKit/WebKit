@@ -111,9 +111,9 @@ function test() {
         InspectorTest.completeTest();
     }
 
-    WI.domTreeManager.requestDocument(function(documentNode) {
-        WI.domTreeManager.querySelector(documentNode.id, "#x", function(nodeId) {
-            testDOMNode = WI.domTreeManager.nodeForId(nodeId);
+    WI.domManager.requestDocument(function(documentNode) {
+        WI.domManager.querySelector(documentNode.id, "#x", function(nodeId) {
+            testDOMNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(testDOMNode, "Got DOMNode for #x");
             InspectorTest.assert(!testDOMNode.pseudoType());
@@ -125,7 +125,7 @@ function test() {
         });
     });
 
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeInserted, function(event) {
+    WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, function(event) {
         // Test logging will add nodes to the test page. Ignore any elements added that are not children of our test node.
         if (event.data.parent !== testDOMNode)
             return;
@@ -135,7 +135,7 @@ function test() {
         next();
     });
 
-    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeRemoved, function(event) {
+    WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, function(event) {
         InspectorTest.log("EVENT: NodeRemoved");
         insertedOrRemovedDOMNode = event.data.node;
         next();

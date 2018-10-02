@@ -3,7 +3,7 @@ TestPage.registerInitializer(function() {
 InspectorTest.Shapes = {
     getShapeOutsideInfoForSelector: function(selector, callback)
     {
-        WI.domTreeManager.requestDocument(requestDocumentCallback);
+        WI.domManager.requestDocument(requestDocumentCallback);
 
         function requestDocumentCallback(node) {
             InspectorTest.assert(node instanceof WI.DOMNode, "Unexpected argument to requestDocument callback.")

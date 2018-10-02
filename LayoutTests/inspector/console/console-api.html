@@ -57,7 +57,7 @@ function test()
         return value;
     }
 
-    WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, function(event) {
+    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, function(event) {
         var message = event.data.message;
         InspectorTest.assert(message instanceof WI.ConsoleMessage);
         InspectorTest.log("\nSTEP: " + steps[currentStepIndex]);

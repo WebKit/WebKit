@@ -102,7 +102,7 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
             }
         });
         this._domEventNameInputElement.addEventListener("input", (event) => {
-            WI.domTreeManager.getSupportedEventNames()
+            WI.domManager.getSupportedEventNames()
             .then((eventNames) => {
                 this._currentCompletions = [];
                 for (let eventName of eventNames) {

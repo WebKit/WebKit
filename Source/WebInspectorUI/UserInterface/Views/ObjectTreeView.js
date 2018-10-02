@@ -356,8 +356,8 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         this._trackingEntries = true;
 
         if (this._inConsole) {
-            WI.logManager.addEventListener(WI.LogManager.Event.Cleared, this._untrackWeakEntries, this);
-            WI.logManager.addEventListener(WI.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, this._untrackWeakEntries, this);
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.SessionStarted, this._untrackWeakEntries, this);
         }
     }
 
@@ -374,8 +374,8 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         this._object.releaseWeakCollectionEntries();
 
         if (this._inConsole) {
-            WI.logManager.removeEventListener(WI.LogManager.Event.Cleared, this._untrackWeakEntries, this);
-            WI.logManager.removeEventListener(WI.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.Cleared, this._untrackWeakEntries, this);
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.SessionStarted, this._untrackWeakEntries, this);
         }
 
         // FIXME: This only tries to release weak entries if this object was a WeakMap.

@@ -29,22 +29,22 @@ WI.CSSObserver = class CSSObserver
 
     mediaQueryResultChanged()
     {
-        WI.cssStyleManager.mediaQueryResultChanged();
+        WI.cssManager.mediaQueryResultChanged();
     }
 
     styleSheetChanged(styleSheetId)
     {
-        WI.cssStyleManager.styleSheetChanged(styleSheetId);
+        WI.cssManager.styleSheetChanged(styleSheetId);
     }
 
     styleSheetAdded(styleSheetInfo)
     {
-        WI.cssStyleManager.styleSheetAdded(styleSheetInfo);
+        WI.cssManager.styleSheetAdded(styleSheetInfo);
     }
 
     styleSheetRemoved(id)
     {
-        WI.cssStyleManager.styleSheetRemoved(id);
+        WI.cssManager.styleSheetRemoved(id);
     }
 
     namedFlowCreated(namedFlow)

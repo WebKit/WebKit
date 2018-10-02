@@ -39,10 +39,10 @@ function test()
         }
     }
 
-    WI.domTreeManager.requestDocument((documentNode) => {
+    WI.domManager.requestDocument((documentNode) => {
         // Push all the nodes to the frontend.
-        WI.domTreeManager.querySelector(documentNode.id, "html", (nodeId) => {
-            let htmlNode = WI.domTreeManager.nodeForId(nodeId);
+        WI.domManager.querySelector(documentNode.id, "html", (nodeId) => {
+            let htmlNode = WI.domManager.nodeForId(nodeId);
             htmlNode.getSubtree(10, () => {
                 buildNodeList(htmlNode, 0);
 

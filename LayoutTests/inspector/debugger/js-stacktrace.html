@@ -76,7 +76,7 @@ function test()
         return stackTrace;
     }
 
-    WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
         InspectorTest.log("\nconsole.trace():");
 
         let stackTrace = [];

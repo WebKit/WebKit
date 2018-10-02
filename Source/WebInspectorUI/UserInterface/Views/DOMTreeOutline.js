@@ -322,7 +322,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
                 element._createTooltipForNode();
         }
 
-        WI.domTreeManager.highlightDOMNode(element ? element.representedObject.id : 0);
+        WI.domManager.highlightDOMNode(element ? element.representedObject.id : 0);
     }
 
     _onmouseout(event)
@@ -336,7 +336,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             this._previousHoveredElement = null;
         }
 
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
     }
 
     _ondragstart(event)
@@ -355,7 +355,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         event.dataTransfer.effectAllowed = "copyMove";
         this._nodeBeingDragged = treeElement.representedObject;
 
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
 
         return true;
     }
@@ -423,7 +423,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
                 return;
 
             this._updateModifiedNodes();
-            var newNode = WI.domTreeManager.nodeForId(newNodeId);
+            var newNode = WI.domManager.nodeForId(newNodeId);
             if (newNode)
                 this.selectDOMNode(newNode, true);
         }

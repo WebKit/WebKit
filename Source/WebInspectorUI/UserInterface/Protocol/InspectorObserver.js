@@ -41,7 +41,7 @@ WI.InspectorObserver = class InspectorObserver
     {
         let remoteObject = WI.RemoteObject.fromPayload(payload, WI.mainTarget);
         if (remoteObject.subtype === "node") {
-            WI.domTreeManager.inspectNodeObject(remoteObject);
+            WI.domManager.inspectNodeObject(remoteObject);
             return;
         }
 
@@ -59,9 +59,9 @@ WI.InspectorObserver = class InspectorObserver
         }
 
         if (hints.databaseId)
-            WI.storageManager.inspectDatabase(hints.databaseId);
+            WI.databaseManager.inspectDatabase(hints.databaseId);
         else if (hints.domStorageId)
-            WI.storageManager.inspectDOMStorage(hints.domStorageId);
+            WI.domStorageManager.inspectDOMStorage(hints.domStorageId);
 
         remoteObject.release();
     }

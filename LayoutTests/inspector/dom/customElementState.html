@@ -14,8 +14,8 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Builtin",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "#builtin", (nodeId) => {
-                const node = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "#builtin", (nodeId) => {
+                const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "builtin", "#builtin should be CustomElementState.Builtin.");
                 resolve();
             });
@@ -25,8 +25,8 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Custom.Constructed",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "constructed-element", (nodeId) => {
-                const node = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "constructed-element", (nodeId) => {
+                const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "custom", "constructed-element should be CustomElementState.Custom.");
                 resolve();
             });
@@ -36,8 +36,8 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Custom.Upgraded",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "upgraded-element", (nodeId) => {
-                const node = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "upgraded-element", (nodeId) => {
+                const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "custom", "upgraded-element should be CustomElementState.Custom.");
                 resolve();
             });
@@ -47,8 +47,8 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Waiting",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "undefined-element", (nodeId) => {
-                const node = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "undefined-element", (nodeId) => {
+                const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "waiting", "undefined-element should be CustomElementState.Waiting.");
                 resolve();
             });
@@ -58,15 +58,15 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Failed",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "failed-element", (nodeId) => {
-                const node = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "failed-element", (nodeId) => {
+                const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "failed", "failed-element should be CustomElementState.Failed.");
                 resolve();
             });
         }
     });
 
-    WI.domTreeManager.requestDocument((node) => {
+    WI.domManager.requestDocument((node) => {
         documentNode = node;
         suite.runTestCasesAndFinish();
     });

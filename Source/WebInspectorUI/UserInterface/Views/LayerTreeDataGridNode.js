@@ -60,7 +60,7 @@ WI.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WI.DataGridNode
     {
         this._layer = layer;
 
-        var domNode = WI.domTreeManager.nodeForId(layer.nodeId);
+        var domNode = WI.domManager.nodeForId(layer.nodeId);
 
         this.data = {
             name: domNode ? domNode.displayName : WI.UIString("Unknown node"),
@@ -135,7 +135,7 @@ WI.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WI.DataGridNode
 
         this._outlets.nameLabel.textContent = data;
 
-        if (WI.domTreeManager.nodeForId(layer.nodeId))
+        if (WI.domManager.nodeForId(layer.nodeId))
             label.parentNode.insertBefore(this._outlets.goToButton, label.parentNode.firstChild);
         else if (this._outlets.goToButton.parentNode)
             label.parentNode.removeChild(this._outlets.goToButton);
@@ -159,7 +159,7 @@ WI.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WI.DataGridNode
 
     _goToArrowWasClicked()
     {
-        var domNode = WI.domTreeManager.nodeForId(this._layer.nodeId);
+        var domNode = WI.domManager.nodeForId(this._layer.nodeId);
         WI.showMainFrameDOMTree(domNode, {ignoreSearchTab: true});
     }
 };

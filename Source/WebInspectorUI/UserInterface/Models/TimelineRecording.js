@@ -222,7 +222,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             return;
 
         // Add the record to the source code timelines.
-        var activeMainResource = WI.frameResourceManager.mainFrame.provisionalMainResource || WI.frameResourceManager.mainFrame.mainResource;
+        var activeMainResource = WI.networkManager.mainFrame.provisionalMainResource || WI.networkManager.mainFrame.mainResource;
         var sourceCode = record.sourceCodeLocation ? record.sourceCodeLocation.sourceCode : activeMainResource;
 
         var sourceCodeTimelines = this._sourceCodeTimelinesMap.get(sourceCode);

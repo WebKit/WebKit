@@ -188,7 +188,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
     requestClearMessages()
     {
-        WI.logManager.requestClearMessages();
+        WI.consoleManager.requestClearMessages();
     }
 
     // Protected

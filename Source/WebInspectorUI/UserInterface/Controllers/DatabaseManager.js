@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,79 +24,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.IssueManager = class IssueManager extends WI.Object
+WI.DatabaseManager = class DatabaseManager extends WI.Object
 {
     constructor()
     {
         super();
 
+        if (window.DatabaseAgent)
+            DatabaseAgent.enable();
+
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WI.logManager.addEventListener(WI.LogManager.Event.Cleared, this._logCleared, this);
 
         this.initialize();
-    }
-
-    static issueMatchSourceCode(issue, sourceCode)
-    {
-        if (sourceCode instanceof WI.SourceMapResource)
-            return issue.sourceCodeLocation && issue.sourceCodeLocation.displaySourceCode === sourceCode;
-        if (sourceCode instanceof WI.Resource)
-            return issue.url === sourceCode.url && (!issue.sourceCodeLocation || issue.sourceCodeLocation.sourceCode === sourceCode);
-        if (sourceCode instanceof WI.Script)
-            return issue.sourceCodeLocation && issue.sourceCodeLocation.sourceCode === sourceCode;
-        return false;
     }
 
     // Public
 
     initialize()
     {
-        this._issues = [];
-
-        this.dispatchEventToListeners(WI.IssueManager.Event.Cleared);
+        this._databaseObjects = [];
     }
 
-    issueWasAdded(consoleMessage)
+    get databases()
     {
-        let issue = new WI.IssueMessage(consoleMessage);
-
-        this._issues.push(issue);
-
-        this.dispatchEventToListeners(WI.IssueManager.Event.IssueWasAdded, {issue});
+        return this._databaseObjects;
     }
 
-    issuesForSourceCode(sourceCode)
+    databaseWasAdded(id, host, name, version)
     {
-        var issues = [];
+        // Called from WI.DatabaseObserver.
 
-        for (var i = 0; i < this._issues.length; ++i) {
-            var issue = this._issues[i];
-            if (WI.IssueManager.issueMatchSourceCode(issue, sourceCode))
-                issues.push(issue);
-        }
+        var database = new WI.DatabaseObject(id, host, name, version);
 
-        return issues;
+        this._databaseObjects.push(database);
+        this.dispatchEventToListeners(WI.DatabaseManager.Event.DatabaseWasAdded, {database});
+    }
+
+    inspectDatabase(id)
+    {
+        var database = this._databaseForIdentifier(id);
+        console.assert(database);
+        if (!database)
+            return;
+        this.dispatchEventToListeners(WI.DatabaseManager.Event.DatabaseWasInspected, {database});
     }
 
     // Private
-
-    _logCleared(event)
-    {
-        this.initialize();
-    }
 
     _mainResourceDidChange(event)
     {
         console.assert(event.target instanceof WI.Frame);
 
-        if (!event.target.isMainFrame())
-            return;
+        if (event.target.isMainFrame()) {
+            // If we are dealing with the main frame, we want to clear our list of objects, because we are navigating to a new page.
+            this.initialize();
+            this.dispatchEventToListeners(WI.DatabaseManager.Event.Cleared);
+        }
+    }
 
-        this.initialize();
+    _databaseForIdentifier(id)
+    {
+        for (var i = 0; i < this._databaseObjects.length; ++i) {
+            if (this._databaseObjects[i].id === id)
+                return this._databaseObjects[i];
+        }
+
+        return null;
     }
 };
 
-WI.IssueManager.Event = {
-    IssueWasAdded: "issue-manager-issue-was-added",
-    Cleared: "issue-manager-cleared"
+WI.DatabaseManager.Event = {
+    DatabaseWasAdded: "database-manager-database-was-added",
+    DatabaseWasInspected: "database-manager-database-was-inspected",
+    Cleared: "database-manager-cleared",
 };

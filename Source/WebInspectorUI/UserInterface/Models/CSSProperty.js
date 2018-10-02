@@ -183,7 +183,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         if (this._canonicalName)
             return this._canonicalName;
 
-        this._canonicalName = WI.cssStyleManager.canonicalNameForPropertyName(this.name);
+        this._canonicalName = WI.cssManager.canonicalNameForPropertyName(this.name);
 
         return this._canonicalName;
     }
@@ -320,7 +320,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         if ("_hasOtherVendorNameOrKeyword" in this)
             return this._hasOtherVendorNameOrKeyword;
 
-        this._hasOtherVendorNameOrKeyword = WI.cssStyleManager.propertyNameHasOtherVendorPrefix(this.name) || WI.cssStyleManager.propertyValueHasOtherVendorKeyword(this.value);
+        this._hasOtherVendorNameOrKeyword = WI.cssManager.propertyNameHasOtherVendorPrefix(this.name) || WI.cssManager.propertyValueHasOtherVendorKeyword(this.value);
 
         return this._hasOtherVendorNameOrKeyword;
     }

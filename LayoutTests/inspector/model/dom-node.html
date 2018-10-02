@@ -11,9 +11,9 @@ function test()
         name: "WI.DOMNode.attributes",
         description: "Test getting the attributes of a node.",
         test(resolve, reject) {
-            WI.domTreeManager.requestDocument((documentNode) => {
-                WI.domTreeManager.querySelector(documentNode.id, "#test-id", (nodeId) => {
-                    let domNode = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.requestDocument((documentNode) => {
+                WI.domManager.querySelector(documentNode.id, "#test-id", (nodeId) => {
+                    let domNode = WI.domManager.nodeForId(nodeId);
                     InspectorTest.assert(domNode, "DOMNode exists");
 
                     for (let attribute of domNode.attributes())

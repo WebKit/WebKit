@@ -19,9 +19,9 @@ document.head.appendChild(style);
 <script>
 function test()
 {
-    WI.cssStyleManager.fetchStyleSheetsIfNeeded();
+    WI.cssManager.fetchStyleSheetsIfNeeded();
     InspectorBackend.runAfterPendingDispatches(function() {
-        let styleSheets = WI.cssStyleManager.styleSheets;
+        let styleSheets = WI.cssManager.styleSheets;
         InspectorTest.expectThat(styleSheets.length === 4, "There should be four stylesheets.");
 
         for (let styleSheet of styleSheets) {

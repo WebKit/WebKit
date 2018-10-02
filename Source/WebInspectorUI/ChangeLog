@@ -1,5 +1,104 @@
 2018-10-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: rename frontend managers to be more consistent with backend agents
+        https://bugs.webkit.org/show_bug.cgi?id=190160
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/DOMUtilities.js:
+        * UserInterface/Controllers/ApplicationCacheManager.js:
+        * UserInterface/Controllers/CSSManager.js: Renamed from Source/WebInspectorUI/UserInterface/Controllers/CSSStyleManager.js.
+        * UserInterface/Controllers/ConsoleManager.js: Renamed from Source/WebInspectorUI/UserInterface/Controllers/LogManager.js.
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        * UserInterface/Controllers/DOMManager.js: Renamed from Source/WebInspectorUI/UserInterface/Controllers/DOMTreeManager.js.
+        * UserInterface/Controllers/DOMStorageManager.js: Renamed from Source/WebInspectorUI/UserInterface/Controllers/StorageManager.js.
+        * UserInterface/Controllers/DashboardManager.js: Removed.
+        * UserInterface/Controllers/DatabaseManager.js: Copied from Source/WebInspectorUI/UserInterface/Controllers/DOMStorageManager.js.
+        * UserInterface/Controllers/HARBuilder.js:
+        * UserInterface/Controllers/IndexedDBManager.js: Copied from Source/WebInspectorUI/UserInterface/Controllers/DOMStorageManager.js.
+        * UserInterface/Controllers/IssueManager.js: Removed.
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        * UserInterface/Controllers/NetworkManager.js: Renamed from Source/WebInspectorUI/UserInterface/Controllers/FrameResourceManager.js.
+        * UserInterface/Controllers/SourceMapManager.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        * UserInterface/Models/CSSProperty.js:
+        * UserInterface/Models/CSSSelector.js:
+        * UserInterface/Models/CallFrame.js:
+        * UserInterface/Models/Canvas.js:
+        * UserInterface/Models/ConsoleMessage.js:
+        * UserInterface/Models/DOMBreakpoint.js:
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        * UserInterface/Models/DOMTree.js:
+        * UserInterface/Models/DefaultDashboard.js:
+        * UserInterface/Models/Script.js:
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        * UserInterface/Models/SourceMapResource.js:
+        * UserInterface/Models/TimelineRecording.js:
+        * UserInterface/Protocol/CSSObserver.js:
+        * UserInterface/Protocol/ConsoleObserver.js:
+        * UserInterface/Protocol/DOMObserver.js:
+        * UserInterface/Protocol/DOMStorageObserver.js:
+        * UserInterface/Protocol/DatabaseObserver.js:
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        * UserInterface/Protocol/InspectorObserver.js:
+        * UserInterface/Protocol/MainTarget.js:
+        * UserInterface/Protocol/NetworkObserver.js:
+        * UserInterface/Protocol/PageObserver.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        * UserInterface/Protocol/RuntimeObserver.js:
+        * UserInterface/Protocol/WorkerTarget.js:
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        * UserInterface/Views/CanvasTreeElement.js:
+        * UserInterface/Views/ContentView.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        * UserInterface/Views/DOMDetailsSidebarPanel.js:
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        * UserInterface/Views/DOMTreeDataGrid.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        * UserInterface/Views/DOMTreeElementPathComponent.js:
+        * UserInterface/Views/DOMTreeOutline.js:
+        * UserInterface/Views/DOMTreeUpdater.js:
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/ElementsTabContentView.js:
+        * UserInterface/Views/EventBreakpointPopover.js:
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        * UserInterface/Views/FormattedValue.js:
+        * UserInterface/Views/FrameTreeElement.js:
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        * UserInterface/Views/LayerTreeDataGridNode.js:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        * UserInterface/Views/Layers3DContentView.js:
+        * UserInterface/Views/LogContentView.js:
+        * UserInterface/Views/NetworkTableContentView.js:
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        * UserInterface/Views/ObjectTreeView.js:
+        * UserInterface/Views/OpenResourceDialog.js:
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        * UserInterface/Views/SearchSidebarPanel.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        * UserInterface/Views/StorageSidebarPanel.js:
+        * UserInterface/Views/StyleDetailsPanel.js:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
+2018-10-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: replace constant numbers with their associated name on WebGL contexts
         https://bugs.webkit.org/show_bug.cgi?id=190026
 

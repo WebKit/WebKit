@@ -11,7 +11,7 @@ function test()
         name: "LayerTreeManager.layersForNode.root",
         description: "Calling the LayerTreeManager#layersForNode method with the root node should return the full layer list.",
         test(resolve, reject) {
-            WI.domTreeManager.requestDocument((node) => {
+            WI.domManager.requestDocument((node) => {
                 WI.layerTreeManager.layersForNode(node, (layers) => {
                     InspectorTest.expectEqual(layers.length, 5, "Returned array should include all layers.");
                     InspectorTest.expectThat(layers.every((layer) => layer instanceof WI.Layer), "Array elements should be Layer instances.");

@@ -14,7 +14,7 @@ function test()
         test(resolve, reject) {
             // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
             // <https://webkit.org/b/148006> Each test should run with its own clean data store
-            IndexedDBAgent.requestDatabaseNames(WI.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+            IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")", resolve);
             });
         }
@@ -25,11 +25,11 @@ function test()
         description: "Ensure that clearing an object store clears entries in that object store.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('CompleteDatabase', 1)");
-            IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "CompleteDatabase", (error, database) => {
+            IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "CompleteDatabase", (error, database) => {
                 InspectorTest.expectNoError(error);
 
                 function expectObjectStoreEntryCount(objectStore, expectedCount, message) {
-                    const securityOrigin = WI.frameResourceManager.mainFrame.securityOrigin;
+                    const securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                     const indexName = "";
                     const skipCount = 0;
                     const pageSize = 10;
@@ -39,7 +39,7 @@ function test()
                     });
                 }
 
-                let securityOrigin = WI.frameResourceManager.mainFrame.securityOrigin;
+                let securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                 let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
 
                 expectObjectStoreEntryCount(emptyObjectStore, 0, "'Empty' object store should always be empty.");
@@ -72,8 +72,8 @@ function test()
         test(resolve, reject) {
             InspectorTest.awaitEvent("DatabaseCreated")
             .then((event) => {
-                IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "EmptyDatabase", (error, database) => {
-                    IndexedDBAgent.clearObjectStore(WI.frameResourceManager.mainFrame.securityOrigin, database.name, "NoSuchObjectStore", (error) => {
+                IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "EmptyDatabase", (error, database) => {
+                    IndexedDBAgent.clearObjectStore(WI.networkManager.mainFrame.securityOrigin, database.name, "NoSuchObjectStore", (error) => {
                         InspectorTest.expectThat(error, "Should be an error attempting to clear an object store that does not exist.");
                         resolve();
                     });

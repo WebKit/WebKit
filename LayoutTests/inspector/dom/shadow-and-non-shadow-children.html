@@ -16,8 +16,8 @@ function test()
         name: "DOMNode.ShadowAndNonShadowChildren.VideoWithSource",
         description: "Check for all children of a video with a source child.",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNodeId, "#test-video", (nodeId) => {
-                let domNode = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNodeId, "#test-video", (nodeId) => {
+                let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(domNode.nodeName(), "VIDEO", "DOMNode should be a `video` element.");
                 InspectorTest.expectThat(domNode.hasChildNodes(), "DOMNode should have child nodes.");
                 InspectorTest.expectThat(domNode.childNodeCount, "DOMNode should indicate it has 2 child nodes.");
@@ -33,7 +33,7 @@ function test()
         }
     });
 
-    WI.domTreeManager.requestDocument((documentNode) => {
+    WI.domManager.requestDocument((documentNode) => {
         documentNodeId = documentNode.id;
         suite.runTestCasesAndFinish();
     });

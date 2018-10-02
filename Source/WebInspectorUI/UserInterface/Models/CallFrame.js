@@ -233,7 +233,7 @@ WI.CallFrame = class CallFrame
                     sourceCode = sourceCode.resource;
             }
             if (!sourceCode)
-                sourceCode = WI.frameResourceManager.resourceForURL(url);
+                sourceCode = WI.networkManager.resourceForURL(url);
             if (!sourceCode)
                 sourceCode = WI.debuggerManager.scriptsForURL(url, target)[0];
 

@@ -102,7 +102,7 @@ WI.DOMDetailsSidebarPanel = class DOMDetailsSidebarPanel extends WI.DetailsSideb
     _mouseWasClicked(event)
     {
         if (this._domNode && this._domNode.ownerDocument) {
-            var mainResource = WI.frameResourceManager.resourceForURL(this._domNode.ownerDocument.documentURL);
+            var mainResource = WI.networkManager.resourceForURL(this._domNode.ownerDocument.documentURL);
             if (mainResource)
                 var parentFrame = mainResource.parentFrame;
         }

@@ -69,7 +69,7 @@ function test()
         description: "Test backend generated DOMStorage added, removed, updated, and cleared events for sessionStorage.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerActions(sessionStorage)");
-            let sessionStorage = WI.storageManager.domStorageObjects.find((x) => !x.isLocalStorage());
+            let sessionStorage = WI.domStorageManager.domStorageObjects.find((x) => !x.isLocalStorage());
             InspectorTest.expectThat(sessionStorage, "Should have a DOMStorageObject for sessionStorage.");
             testStorageEvents(sessionStorage, resolve);
         }
@@ -80,7 +80,7 @@ function test()
         description: "Test backend generated DOMStorage added, removed, updated, and cleared events for localStorage.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerActions(localStorage)");
-            let localStorage = WI.storageManager.domStorageObjects.find((x) => x.isLocalStorage());
+            let localStorage = WI.domStorageManager.domStorageObjects.find((x) => x.isLocalStorage());
             InspectorTest.expectThat(localStorage, "Should have a DOMStorageObject for localStorage.");
             testStorageEvents(localStorage, resolve);
         }

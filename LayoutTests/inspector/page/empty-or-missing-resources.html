@@ -15,7 +15,7 @@ function test()
         name: "Page.getResourceTree.EmptyResources",
         description: "Should not crash if there are empty or missing resources.",
         async test(resolve, reject) {
-            let resources = Array.from(WI.frameResourceManager.mainFrame.resourceCollection);
+            let resources = Array.from(WI.networkManager.mainFrame.resourceCollection);
             let resourceURLs = resources.map(x => x.url).filter(x => /(empty|missing)/.test(x)).sort();
             for (let url of resourceURLs)
                 InspectorTest.log(sanitizeURL(url));

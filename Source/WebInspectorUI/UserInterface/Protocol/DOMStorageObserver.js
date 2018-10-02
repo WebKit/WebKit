@@ -30,21 +30,21 @@ WI.DOMStorageObserver = class DOMStorageObserver
 
     domStorageItemsCleared(storageId)
     {
-        WI.storageManager.itemsCleared(storageId);
+        WI.domStorageManager.itemsCleared(storageId);
     }
 
     domStorageItemRemoved(storageId, key)
     {
-        WI.storageManager.itemRemoved(storageId, key);
+        WI.domStorageManager.itemRemoved(storageId, key);
     }
 
     domStorageItemAdded(storageId, key, value)
     {
-        WI.storageManager.itemAdded(storageId, key, value);
+        WI.domStorageManager.itemAdded(storageId, key, value);
     }
 
     domStorageItemUpdated(storageId, key, oldValue, value)
     {
-        WI.storageManager.itemUpdated(storageId, key, oldValue, value);
+        WI.domStorageManager.itemUpdated(storageId, key, oldValue, value);
     }
 };

@@ -36,11 +36,11 @@ WI.DOMTree = class DOMTree extends WI.Object
 
         this._frame.addEventListener(WI.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextChanged, this);
 
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.DocumentUpdated, this._documentUpdated, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.DocumentUpdated, this._documentUpdated, this);
 
         // Only add extra event listeners when not the main frame. Since DocumentUpdated is enough for the main frame.
         if (!this._frame.isMainFrame()) {
-            WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
+            WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._nodeRemoved, this);
             this._frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._frameMainResourceDidChange, this);
         }
     }
@@ -51,7 +51,7 @@ WI.DOMTree = class DOMTree extends WI.Object
 
     disconnect()
     {
-        WI.domTreeManager.removeEventListener(null, null, this);
+        WI.domManager.removeEventListener(null, null, this);
         this._frame.removeEventListener(null, null, this);
     }
 
@@ -149,7 +149,7 @@ WI.DOMTree = class DOMTree extends WI.Object
                 return;
             }
 
-            this._rootDOMNode = WI.domTreeManager.nodeForId(nodeId);
+            this._rootDOMNode = WI.domManager.nodeForId(nodeId);
 
             console.assert(this._rootDOMNode);
             if (!this._rootDOMNode) {
@@ -185,7 +185,7 @@ WI.DOMTree = class DOMTree extends WI.Object
         // a specific way to request a document given a frame identifier. The child frame approach
         // involves evaluating the JavaScript "document" and resolving that into a DOMNode.
         if (this._frame.isMainFrame())
-            WI.domTreeManager.requestDocument(mainDocumentAvailable.bind(this));
+            WI.domManager.requestDocument(mainDocumentAvailable.bind(this));
         else {
             var contextId = this._frame.pageExecutionContext.id;
             RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL("document"), objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));

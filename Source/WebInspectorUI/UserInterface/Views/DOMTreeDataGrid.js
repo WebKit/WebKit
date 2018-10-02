@@ -50,13 +50,13 @@ WI.DOMTreeDataGrid = class DOMTreeDataGrid extends WI.DataGrid
         if (!gridNode || this._previousHoveredElement === gridNode.domNode)
             return;
         this._previousHoveredElement = gridNode.domNode;
-        WI.domTreeManager.highlightDOMNode(gridNode.domNode.id);
+        WI.domManager.highlightDOMNode(gridNode.domNode.id);
     }
 
     _onmouseout(event) {
         if (!this._previousHoveredElement)
             return;
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
         this._previousHoveredElement = null;
     }
 };

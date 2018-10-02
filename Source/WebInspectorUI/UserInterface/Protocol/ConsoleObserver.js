@@ -35,17 +35,17 @@ WI.ConsoleObserver = class ConsoleObserver
         if (message.type === "assert" && !message.text)
             message.text = WI.UIString("Assertion");
 
-        WI.logManager.messageWasAdded(this.target, message.source, message.level, message.text, message.type, message.url, message.line, message.column || 0, message.repeatCount, message.parameters, message.stackTrace, message.networkRequestId);
+        WI.consoleManager.messageWasAdded(this.target, message.source, message.level, message.text, message.type, message.url, message.line, message.column || 0, message.repeatCount, message.parameters, message.stackTrace, message.networkRequestId);
     }
 
     messageRepeatCountUpdated(count)
     {
-        WI.logManager.messageRepeatCountUpdated(count);
+        WI.consoleManager.messageRepeatCountUpdated(count);
     }
 
     messagesCleared()
     {
-        WI.logManager.messagesCleared();
+        WI.consoleManager.messagesCleared();
     }
 
     heapSnapshot(timestamp, snapshotStringData, title)

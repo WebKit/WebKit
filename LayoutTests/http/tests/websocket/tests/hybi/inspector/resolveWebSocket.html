@@ -24,7 +24,7 @@ function test()
         description: "Should return a valid response for the given request identifier.",
         test(resolve, reject) {
             const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
-            let webSocketResource = WI.frameResourceManager.resourceForURL(url);
+            let webSocketResource = WI.networkManager.resourceForURL(url);
             if (!webSocketResource) {
                 reject("Missing WebSocket resource.");
                 return;

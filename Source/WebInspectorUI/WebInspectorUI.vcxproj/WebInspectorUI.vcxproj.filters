@@ -201,6 +201,9 @@
     <None Include="..\UserInterface\ConsoleGroup.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\ConsoleManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\LegacyConsoleMessage.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -270,6 +273,9 @@
     <None Include="..\UserInterface\CSSKeywordCompletions.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\CSSManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\CSSMedia.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -285,13 +291,7 @@
     <None Include="..\UserInterface\CSSStyleDeclaration.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\CSSStyleManager.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\CSSStyleSheet.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\DashboardManager.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\DashboardView.css">
@@ -387,6 +387,9 @@
     <None Include="..\UserInterface\DOMDetailsSidebarPanel.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\DOMManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\DOMNode.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -411,6 +414,9 @@
     <None Include="..\UserInterface\DOMStorageIcons.css">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\DOMStorageManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\DOMStorageObject.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -433,9 +439,6 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\DOMTreeElementPathComponent.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\DOMTreeManager.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\DOMTreeOutline.css">
@@ -522,9 +525,6 @@
     <None Include="..\UserInterface\FrameContentView.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\FrameResourceManager.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\FrameTreeElement.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -580,9 +580,6 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\InstrumentSidebarPanel.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\IssueManager.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\IssueMessage.js">
@@ -648,9 +645,6 @@
     <None Include="..\UserInterface\LogIcon.css">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\LogManager.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\LogObject.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -694,6 +688,9 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\NetworkGraphCalculator.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NetworkManager.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\NetworkObserver.js">
@@ -931,9 +928,6 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\SourceMapResourceTreeElement.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\StorageManager.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\StorageTreeElement.js">

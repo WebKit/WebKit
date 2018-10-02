@@ -176,7 +176,7 @@ function test()
         name: "DocumentWithInlineScripts",
         description: "A document resource may be associated with multiple inline scripts.",
         test(resolve, reject) {
-            let mainResource = WI.frameResourceManager.mainFrame.mainResource;
+            let mainResource = WI.networkManager.mainFrame.mainResource;
             let scripts = mainResource.scripts.slice().sort((a, b) => a.range.startLine - b.range.startLine);
 
             // Scripts are:

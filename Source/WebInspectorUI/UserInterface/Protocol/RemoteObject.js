@@ -457,7 +457,7 @@ WI.RemoteObject = class RemoteObject
     pushNodeToFrontend(callback)
     {
         if (this._objectId)
-            WI.domTreeManager.pushNodeToFrontend(this._objectId, callback);
+            WI.domManager.pushNodeToFrontend(this._objectId, callback);
         else
             callback(0);
     }

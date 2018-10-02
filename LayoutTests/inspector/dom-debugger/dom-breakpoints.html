@@ -61,20 +61,20 @@ function test()
 
     function awaitQuerySelector(selector) {
         return new Promise((resolve, reject) => {
-            WI.domTreeManager.requestDocument((documentNode) => {
+            WI.domManager.requestDocument((documentNode) => {
                 if (!documentNode) {
                     reject();
                     return;
                 }
 
-                WI.domTreeManager.querySelector(documentNode.id, selector, (nodeId) => {
+                WI.domManager.querySelector(documentNode.id, selector, (nodeId) => {
                     if (!nodeId) {
                         InspectorTest.fail("Selector returned no nodes.", selector);
                         reject();
                         return;
                     }
 
-                    let node = WI.domTreeManager.nodeForId(nodeId);
+                    let node = WI.domManager.nodeForId(nodeId);
                     InspectorTest.assert(node, "Missing node for id.", nodeId);
                     if (!node) {
                         reject();
@@ -142,8 +142,8 @@ function test()
                 InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled.");
                 InspectorTest.expectThat(breakpoint.domNodeIdentifier, "Breakpoint should have node identifier.");
 
-                InspectorTest.assert(WI.frameResourceManager.mainFrame, "Missing main frame.");
-                let documentURL = WI.frameResourceManager.mainFrame.url;
+                InspectorTest.assert(WI.networkManager.mainFrame, "Missing main frame.");
+                let documentURL = WI.networkManager.mainFrame.url;
                 InspectorTest.expectEqual(breakpoint.url, documentURL, "Breakpoint URL should match document URL.");
             })
             .then(resolve, reject);
@@ -227,7 +227,7 @@ function test()
                     return;
                 }
 
-                let node = WI.domTreeManager.nodeForId(breakpoints[0].domNodeIdentifier);
+                let node = WI.domManager.nodeForId(breakpoints[0].domNodeIdentifier);
                 if (!node) {
                     InspectorTest.fail("No DOM node associated with breakpoint.");
                     reject();

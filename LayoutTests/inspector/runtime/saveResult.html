@@ -17,7 +17,7 @@ function test()
         InspectorTest.evaluateInPage("(" + JSON.stringify(simpleObject) + ")", callback);
     }
 
-    let contextId = WI.frameResourceManager.mainFrame.pageExecutionContext.id;
+    let contextId = WI.networkManager.mainFrame.pageExecutionContext.id;
     let remoteObject1;
 
     let suite = InspectorTest.createAsyncSuite("Runtime.saveResult");

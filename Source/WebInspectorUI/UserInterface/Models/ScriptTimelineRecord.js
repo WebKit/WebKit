@@ -111,7 +111,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
             console.assert("id" in nodePayload);
 
             if (nodePayload.url) {
-                var sourceCode = WI.frameResourceManager.resourceForURL(nodePayload.url);
+                var sourceCode = WI.networkManager.resourceForURL(nodePayload.url);
                 if (!sourceCode)
                     sourceCode = WI.debuggerManager.scriptsForURL(nodePayload.url, WI.assumingMainTarget())[0];
 

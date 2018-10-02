@@ -19,10 +19,10 @@ function test() {
         {selector: "#paragraph", hash: undefined},
     ];
 
-    WI.domTreeManager.requestDocument(function(documentNode) {
+    WI.domManager.requestDocument(function(documentNode) {
         for (let {selector, hash} of testCases) {
-            WI.domTreeManager.querySelector(documentNode.id, selector, function(nodeId) {
-                let domNode = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, selector, function(nodeId) {
+                let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.log("");
                 InspectorTest.expectThat(domNode, `Got DOMNode for ${selector}`);
                 InspectorTest.expectThat(domNode.contentSecurityPolicyHash() === hash, `DOMNode has hash ${hash}`);

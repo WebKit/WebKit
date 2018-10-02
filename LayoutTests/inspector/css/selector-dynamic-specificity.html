@@ -69,10 +69,10 @@ function test() {
         }
 
         currentSelector = steps[currentStepIndex++];
-        WI.domTreeManager.querySelector(documentNode.id, currentSelector, function(contentNodeId) {
+        WI.domManager.querySelector(documentNode.id, currentSelector, function(contentNodeId) {
             if (contentNodeId) {
-                var domNode = WI.domTreeManager.nodeForId(contentNodeId);
-                nodeStyles = WI.cssStyleManager.stylesForNode(domNode);
+                var domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
 
                 if (nodeStyles.needsRefresh)
                     nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
@@ -85,7 +85,7 @@ function test() {
         });
     }
 
-    WI.domTreeManager.requestDocument(function(node) {
+    WI.domManager.requestDocument(function(node) {
         documentNode = node;
         runNextStep();
     });

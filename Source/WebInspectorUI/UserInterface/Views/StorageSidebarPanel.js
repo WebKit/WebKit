@@ -73,29 +73,31 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
         this._applicationCacheRootTreeElement = null;
         this._applicationCacheURLTreeElementMap = new Map;
 
-        WI.storageManager.addEventListener(WI.StorageManager.Event.CookieStorageObjectWasAdded, this._cookieStorageObjectWasAdded, this);
-        WI.storageManager.addEventListener(WI.StorageManager.Event.DOMStorageObjectWasAdded, this._domStorageObjectWasAdded, this);
-        WI.storageManager.addEventListener(WI.StorageManager.Event.DOMStorageObjectWasInspected, this._domStorageObjectWasInspected, this);
-        WI.storageManager.addEventListener(WI.StorageManager.Event.DatabaseWasAdded, this._databaseWasAdded, this);
-        WI.storageManager.addEventListener(WI.StorageManager.Event.DatabaseWasInspected, this._databaseWasInspected, this);
-        WI.storageManager.addEventListener(WI.StorageManager.Event.IndexedDatabaseWasAdded, this._indexedDatabaseWasAdded, this);
-        WI.storageManager.addEventListener(WI.StorageManager.Event.Cleared, this._storageCleared, this);
-
+        WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.CookieStorageObjectWasAdded, this._cookieStorageObjectWasAdded, this);
+        WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasAdded, this._domStorageObjectWasAdded, this);
+        WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, this._domStorageObjectWasInspected, this);
+        WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.Cleared, this._storageCleared, this);
+        WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasAdded, this._databaseWasAdded, this);
+        WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, this._databaseWasInspected, this);
+        WI.databaseManager.addEventListener(WI.DatabaseManager.Event.Cleared, this._storageCleared, this);
+        WI.indexedDBManager.addEventListener(WI.IndexedDBManager.Event.IndexedDatabaseWasAdded, this._indexedDatabaseWasAdded, this);
+        WI.indexedDBManager.addEventListener(WI.IndexedDBManager.Event.Cleared, this._storageCleared, this);
         WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.FrameManifestAdded, this._frameManifestAdded, this);
         WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.FrameManifestRemoved, this._frameManifestRemoved, this);
+        WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.Cleared, this._storageCleared, this);
 
         this.contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
-        for (var domStorageObject of WI.storageManager.domStorageObjects)
+        for (var domStorageObject of WI.domStorageManager.domStorageObjects)
             this._addDOMStorageObject(domStorageObject);
 
-        for (var cookieStorageObject of WI.storageManager.cookieStorageObjects)
+        for (var cookieStorageObject of WI.domStorageManager.cookieStorageObjects)
             this._addCookieStorageObject(cookieStorageObject);
 
-        for (var database of WI.storageManager.databases)
+        for (var database of WI.databaseManager.databases)
             this._addDatabase(database);
 
-        for (var indexedDatabase of WI.storageManager.indexedDatabases)
+        for (var indexedDatabase of WI.indexedDBManager.indexedDatabases)
             this._addIndexedDatabase(indexedDatabase);
 
         for (var applicationCacheObject of WI.applicationCacheManager.applicationCacheObjects)
@@ -118,7 +120,9 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
     {
         super.closed();
 
-        WI.storageManager.removeEventListener(null, null, this);
+        WI.domStorageManager.removeEventListener(null, null, this);
+        WI.databaseManager.removeEventListener(null, null, this);
+        WI.indexedDBManager.removeEventListener(null, null, this);
         WI.applicationCacheManager.removeEventListener(null, null, this);
     }
 

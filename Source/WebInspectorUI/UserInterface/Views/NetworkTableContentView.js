@@ -130,7 +130,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._resourceLoadingDidFail, this);
         WI.Resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
-        WI.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+        WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
         WI.timelineManager.persistentNetworkTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
         this._needsInitialPopulate = true;
@@ -248,7 +248,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Resource.removeEventListener(null, null, this);
         WI.resourceCachingDisabledSetting.removeEventListener(null, null, this);
         WI.settings.clearNetworkOnNavigate.removeEventListener(null, null, this);
-        WI.frameResourceManager.removeEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+        WI.networkManager.removeEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
         WI.timelineManager.persistentNetworkTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
         super.closed();
@@ -926,7 +926,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         for (let target of WI.targets) {
             if (target === WI.pageTarget)
-                populateResourcesForFrame(WI.frameResourceManager.mainFrame);
+                populateResourcesForFrame(WI.networkManager.mainFrame);
             else
                 populateResourcesForTarget(target);
         }
@@ -1426,7 +1426,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         WI.HARBuilder.buildArchive(resources).then((har) => {
-            let mainFrame = WI.frameResourceManager.mainFrame;
+            let mainFrame = WI.networkManager.mainFrame;
             let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
             let url = "web-inspector:///" + encodeURI(archiveName) + ".har";
             WI.saveDataToFile({

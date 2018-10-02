@@ -414,7 +414,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         let url;
         if (sourceCode.urlComponents.scheme === "data") {
-            let mainResource = WI.frameResourceManager.mainFrame.mainResource;
+            let mainResource = WI.networkManager.mainFrame.mainResource;
             if (mainResource.urlComponents.lastPathComponent.endsWith(".html"))
                 url = mainResource.url.replace(/\.html$/, "-data.css");
             else {
@@ -463,17 +463,17 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     _highlightNodesWithSelector()
     {
         if (!this._style.ownerRule) {
-            WI.domTreeManager.highlightDOMNode(this._style.node.id);
+            WI.domManager.highlightDOMNode(this._style.node.id);
             return;
         }
 
         let selectorText = this._selectorElement.textContent.trim();
-        WI.domTreeManager.highlightSelector(selectorText, this._style.node.ownerDocument.frameIdentifier);
+        WI.domManager.highlightSelector(selectorText, this._style.node.ownerDocument.frameIdentifier);
     }
 
     _hideDOMNodeHighlight()
     {
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
     }
 
     _handleEditorFilterApplied(event)

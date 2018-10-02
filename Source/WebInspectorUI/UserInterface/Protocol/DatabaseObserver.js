@@ -29,6 +29,6 @@ WI.DatabaseObserver = class DatabaseObserver
 
     addDatabase(database)
     {
-        WI.storageManager.databaseWasAdded(database.id, database.domain, database.name, database.version);
+        WI.databaseManager.databaseWasAdded(database.id, database.domain, database.name, database.version);
     }
 };

@@ -106,8 +106,8 @@ function test()
                 marginColor: {r: 255, g: 255, b: 255},
             };
 
-            WI.domTreeManager.requestDocument((documentNode) => {
-                WI.domTreeManager.querySelector(documentNode.id, "#target", (nodeId) => {
+            WI.domManager.requestDocument((documentNode) => {
+                WI.domManager.querySelector(documentNode.id, "#target", (nodeId) => {
                     DOMAgent.highlightNode(highlightConfig, nodeId, (error) => {
                         InspectorTest.assert(!error, "Should not have an error.");
                         dumpHighlight(resolve);

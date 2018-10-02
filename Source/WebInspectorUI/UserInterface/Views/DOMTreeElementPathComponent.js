@@ -124,12 +124,12 @@ WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.Hi
     mouseOver()
     {
         var nodeId = this._domTreeElement.representedObject.id;
-        WI.domTreeManager.highlightDOMNode(nodeId);
+        WI.domManager.highlightDOMNode(nodeId);
     }
 
     mouseOut()
     {
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
     }
 };
 

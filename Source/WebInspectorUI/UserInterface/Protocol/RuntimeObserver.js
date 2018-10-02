@@ -29,6 +29,6 @@ WI.RuntimeObserver = class RuntimeObserver
 
     executionContextCreated(contextPayload)
     {
-        WI.frameResourceManager.executionContextCreated(contextPayload);
+        WI.networkManager.executionContextCreated(contextPayload);
     }
 };

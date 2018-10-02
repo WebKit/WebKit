@@ -135,8 +135,8 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         WI.Target.addEventListener(WI.Target.Event.ResourceAdded, this._resourceWasAdded, this);
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
 
-        if (WI.frameResourceManager.mainFrame)
-            this._addResourcesForFrame(WI.frameResourceManager.mainFrame);
+        if (WI.networkManager.mainFrame)
+            this._addResourcesForFrame(WI.networkManager.mainFrame);
 
         for (let target of WI.targets) {
             if (target !== WI.mainTarget)

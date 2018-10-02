@@ -118,21 +118,21 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
     {
         if (this.representedObject.cssCanvasName) {
             this.representedObject.requestCSSCanvasClientNodes((cssCanvasClientNodes) => {
-                WI.domTreeManager.highlightDOMNodeList(cssCanvasClientNodes.map((node) => node.id), "all");
+                WI.domManager.highlightDOMNodeList(cssCanvasClientNodes.map((node) => node.id), "all");
             });
         } else {
             this.representedObject.requestNode((node) => {
                 if (!node || !node.ownerDocument)
                     return;
 
-                WI.domTreeManager.highlightDOMNode(node.id, "all");
+                WI.domManager.highlightDOMNode(node.id, "all");
             });
         }
     }
 
     _handleMouseOut(event)
     {
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
     }
 
     _updateStatus()

@@ -94,10 +94,10 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             if (this._highlightMode === mode)
                 return;
             this._highlightMode = mode;
-            WI.domTreeManager.highlightDOMNode(nodeId, mode);
+            WI.domManager.highlightDOMNode(nodeId, mode);
         } else {
             this._highlightMode = null;
-            WI.domTreeManager.hideDOMNodeHighlight();
+            WI.domManager.hideDOMNodeHighlight();
         }
 
         for (var i = 0; this._boxElements && i < this._boxElements.length; ++i) {

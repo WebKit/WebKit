@@ -72,7 +72,7 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
 
     applicationCacheStatusUpdated(frameId, manifestURL, status)
     {
-        var frame = WI.frameResourceManager.frameForIdentifier(frameId);
+        var frame = WI.networkManager.frameForIdentifier(frameId);
         if (!frame)
             return;
 
@@ -123,7 +123,7 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
         if (error)
             return;
 
-        var frame = WI.frameResourceManager.frameForIdentifier(frameId);
+        var frame = WI.networkManager.frameForIdentifier(frameId);
         if (!frame)
             return;
 
@@ -137,7 +137,7 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
             return;
 
         for (var i = 0; i < framesWithManifests.length; ++i) {
-            var frame = WI.frameResourceManager.frameForIdentifier(framesWithManifests[i].frameId);
+            var frame = WI.networkManager.frameForIdentifier(framesWithManifests[i].frameId);
             if (!frame)
                 continue;
 

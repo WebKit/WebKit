@@ -112,13 +112,13 @@ function test()
 
             // We can resolve after receiving the expected number of console.info messages.
             let seen = 0;
-            let listener = WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+            let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                 let consoleMessage = event.data.message;
                 if (consoleMessage.level !== WI.ConsoleMessage.MessageLevel.Info)
                     return;
                 if (++seen !== expected)
                     return;
-                WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, listener);
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
                 resolve();
             });
         }

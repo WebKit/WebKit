@@ -110,12 +110,13 @@ WI.loaded = function()
     // as event listeners on these managers.
     this.targetManager = new WI.TargetManager;
     this.branchManager = new WI.BranchManager;
-    this.frameResourceManager = new WI.FrameResourceManager;
-    this.storageManager = new WI.StorageManager;
-    this.domTreeManager = new WI.DOMTreeManager;
-    this.cssStyleManager = new WI.CSSStyleManager;
-    this.logManager = new WI.LogManager;
-    this.issueManager = new WI.IssueManager;
+    this.networkManager = new WI.NetworkManager;
+    this.domStorageManager = new WI.DOMStorageManager;
+    this.databaseManager = new WI.DatabaseManager;
+    this.indexedDBManager = new WI.IndexedDBManager;
+    this.domManager = new WI.DOMManager;
+    this.cssManager = new WI.CSSManager;
+    this.consoleManager = new WI.ConsoleManager;
     this.runtimeManager = new WI.RuntimeManager;
     this.heapManager = new WI.HeapManager;
     this.memoryManager = new WI.MemoryManager;
@@ -124,7 +125,6 @@ WI.loaded = function()
     this.debuggerManager = new WI.DebuggerManager;
     this.sourceMapManager = new WI.SourceMapManager;
     this.layerTreeManager = new WI.LayerTreeManager;
-    this.dashboardManager = new WI.DashboardManager;
     this.probeManager = new WI.ProbeManager;
     this.workerManager = new WI.WorkerManager;
     this.domDebuggerManager = new WI.DOMDebuggerManager;
@@ -143,12 +143,12 @@ WI.loaded = function()
     // Register for events.
     this.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, this._debuggerDidPause, this);
     this.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
-    this.domTreeManager.addEventListener(WI.DOMTreeManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
-    this.domTreeManager.addEventListener(WI.DOMTreeManager.Event.DOMNodeWasInspected, this._domNodeWasInspected, this);
-    this.storageManager.addEventListener(WI.StorageManager.Event.DOMStorageObjectWasInspected, this._storageWasInspected, this);
-    this.storageManager.addEventListener(WI.StorageManager.Event.DatabaseWasInspected, this._storageWasInspected, this);
-    this.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
-    this.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.FrameWasAdded, this._frameWasAdded, this);
+    this.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
+    this.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, this._domNodeWasInspected, this);
+    this.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, this._domStorageWasInspected, this);
+    this.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, this._databaseWasInspected, this);
+    this.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+    this.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, this._frameWasAdded, this);
 
     WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
@@ -393,8 +393,13 @@ WI.contentLoaded = function()
     this._updateDownloadToolbarButton();
     this._updateInspectModeToolbarButton();
 
+    this._dashboards = {
+        default: new WI.DefaultDashboard,
+        debugger: new WI.DebuggerDashboard,
+    };
+
     this._dashboardContainer = new WI.DashboardContainerView;
-    this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
+    this._dashboardContainer.showDashboardViewForRepresentedObject(this._dashboards.default);
 
     this.toolbar.addToolbarItem(this._closeToolbarButton, WI.Toolbar.Section.Control);
 
@@ -688,7 +693,7 @@ WI.activateExtraDomains = function(domains)
 
 WI.updateWindowTitle = function()
 {
-    var mainFrame = this.frameResourceManager.mainFrame;
+    var mainFrame = this.networkManager.mainFrame;
     if (!mainFrame)
         return;
 
@@ -812,7 +817,7 @@ WI.openURL = function(url, frame, options = {})
 
     let searchChildFrames = false;
     if (!frame) {
-        frame = this.frameResourceManager.mainFrame;
+        frame = this.networkManager.mainFrame;
         searchChildFrames = true;
     }
 
@@ -1149,15 +1154,15 @@ WI.showRepresentedObject = function(representedObject, cookie, options = {})
 
 WI.showMainFrameDOMTree = function(nodeToSelect, options = {})
 {
-    console.assert(WI.frameResourceManager.mainFrame);
-    if (!WI.frameResourceManager.mainFrame)
+    console.assert(WI.networkManager.mainFrame);
+    if (!WI.networkManager.mainFrame)
         return;
-    this.showRepresentedObject(WI.frameResourceManager.mainFrame.domTree, {nodeToSelect}, options);
+    this.showRepresentedObject(WI.networkManager.mainFrame.domTree, {nodeToSelect}, options);
 };
 
 WI.showSourceCodeForFrame = function(frameIdentifier, options = {})
 {
-    var frame = WI.frameResourceManager.frameForIdentifier(frameIdentifier);
+    var frame = WI.networkManager.frameForIdentifier(frameIdentifier);
     if (!frame) {
         this._frameIdentifierToShowSourceCodeWhenAvailable = frameIdentifier;
         return;
@@ -1351,14 +1356,14 @@ WI._debuggerDidPause = function(event)
 {
     this.showDebuggerTab({showScopeChainSidebar: WI.settings.showScopeChainOnPause.value});
 
-    this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
+    this._dashboardContainer.showDashboardViewForRepresentedObject(this._dashboards.debugger);
 
     InspectorFrontendHost.bringToFront();
 };
 
 WI._debuggerDidResume = function(event)
 {
-    this._dashboardContainer.closeDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
+    this._dashboardContainer.closeDashboardViewForRepresentedObject(this._dashboards.debugger);
 };
 
 WI._frameWasAdded = function(event)
@@ -1777,15 +1782,21 @@ WI._moveWindowMouseDown = function(event)
     WI.elementDragStart(event.target, toolbarDrag, toolbarDragEnd, event, "default");
 };
 
-WI._storageWasInspected = function(event)
+WI._domStorageWasInspected = function(event)
 {
     this.showStorageTab();
     this.showRepresentedObject(event.data.domStorage, null, {ignoreSearchTab: true});
 };
 
+WI._databaseWasInspected = function(event)
+{
+    this.showStorageTab();
+    this.showRepresentedObject(event.data.database, null, {ignoreSearchTab: true});
+};
+
 WI._domNodeWasInspected = function(event)
 {
-    this.domTreeManager.highlightDOMNodeForTwoSeconds(event.data.node.id);
+    this.domManager.highlightDOMNodeForTwoSeconds(event.data.node.id);
 
     InspectorFrontendHost.bringToFront();
 
@@ -1795,12 +1806,12 @@ WI._domNodeWasInspected = function(event)
 
 WI._inspectModeStateChanged = function(event)
 {
-    this._inspectModeToolbarButton.activated = this.domTreeManager.inspectModeEnabled;
+    this._inspectModeToolbarButton.activated = this.domManager.inspectModeEnabled;
 };
 
 WI._toggleInspectMode = function(event)
 {
-    this.domTreeManager.inspectModeEnabled = !this.domTreeManager.inspectModeEnabled;
+    this.domManager.inspectModeEnabled = !this.domManager.inspectModeEnabled;
 };
 
 WI._downloadWebArchive = function(event)
@@ -1869,7 +1880,7 @@ WI._updateInspectModeToolbarButton = function()
 
 WI._toggleInspectMode = function(event)
 {
-    this.domTreeManager.inspectModeEnabled = !this.domTreeManager.inspectModeEnabled;
+    this.domManager.inspectModeEnabled = !this.domManager.inspectModeEnabled;
 };
 
 WI._showConsoleTab = function(event)
@@ -2007,7 +2018,7 @@ WI._clear = function(event)
     if (!contentView || typeof contentView.handleClearShortcut !== "function") {
         // If the current content view is unable to handle this event, clear the console to reset
         // the dashboard counters.
-        this.logManager.requestClearMessages();
+        this.consoleManager.requestClearMessages();
         return;
     }
 
@@ -2374,7 +2385,7 @@ WI.linkifyElement = function(linkElement, sourceCodeLocation, options = {}) {
 
 WI.sourceCodeForURL = function(url)
 {
-    var sourceCode = WI.frameResourceManager.resourceForURL(url);
+    var sourceCode = WI.networkManager.resourceForURL(url);
     if (!sourceCode) {
         sourceCode = WI.debuggerManager.scriptsForURL(url, WI.assumingMainTarget())[0];
         if (sourceCode)
@@ -2600,7 +2611,7 @@ WI.archiveMainFrame = function()
         if (error)
             return;
 
-        let mainFrame = WI.frameResourceManager.mainFrame;
+        let mainFrame = WI.networkManager.mainFrame;
         let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
         let url = "web-inspector:///" + encodeURI(archiveName) + ".webarchive";
 
@@ -2613,10 +2624,10 @@ WI.canArchiveMainFrame = function()
     if (this.sharedApp.debuggableType !== WI.DebuggableType.Web)
         return false;
 
-    if (!WI.frameResourceManager.mainFrame || !WI.frameResourceManager.mainFrame.mainResource)
+    if (!WI.networkManager.mainFrame || !WI.networkManager.mainFrame.mainResource)
         return false;
 
-    return WI.Resource.typeFromMIMEType(WI.frameResourceManager.mainFrame.mainResource.mimeType) === WI.Resource.Type.Document;
+    return WI.Resource.typeFromMIMEType(WI.networkManager.mainFrame.mainResource.mimeType) === WI.Resource.Type.Document;
 };
 
 WI.addWindowKeydownListener = function(listener)

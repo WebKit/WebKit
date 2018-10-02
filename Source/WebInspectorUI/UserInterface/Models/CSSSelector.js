@@ -42,6 +42,6 @@ WI.CSSSelector = class CSSSelector
 
     isPseudoElementSelector()
     {
-        return WI.CSSStyleManager.PseudoElementNames.some((name) => this._text.includes(`:${name}`));
+        return WI.CSSManager.PseudoElementNames.some((name) => this._text.includes(`:${name}`));
     }
 };

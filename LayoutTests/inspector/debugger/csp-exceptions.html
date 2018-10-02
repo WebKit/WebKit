@@ -31,7 +31,7 @@ function test()
                 WI.debuggerManager.resume();
             });
 
-            WI.logManager.singleFireEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+            WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                 InspectorTest.assert(event.data.message.level === WI.ConsoleMessage.MessageLevel.Error);
                 InspectorTest.pass("CSP Exception Console Message: " + event.data.message.messageText);
                 resolve();
@@ -51,7 +51,7 @@ function test()
                 WI.debuggerManager.resume();
                 reject();
             });
-            WI.logManager.singleFireEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+            WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                 WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, tempPauseFailListener, null);
                 InspectorTest.assert(event.data.message.level === WI.ConsoleMessage.MessageLevel.Error);
                 InspectorTest.expectFalse(didPause, "CSP Exception caused outside of script evaluation should not pause.");

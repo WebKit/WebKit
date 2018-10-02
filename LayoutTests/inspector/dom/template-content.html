@@ -3,15 +3,15 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function test() {
-    WI.domTreeManager.requestDocument(function(documentNode) {
-        WI.domTreeManager.querySelector(documentNode.id, "#div", function(nodeId) {
-            var domNode = WI.domTreeManager.nodeForId(nodeId);
+    WI.domManager.requestDocument(function(documentNode) {
+        WI.domManager.querySelector(documentNode.id, "#div", function(nodeId) {
+            var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.expectThat(domNode, "Got DOMNode for div element");
             InspectorTest.expectThat(!domNode.templateContent(), "DOMNode does not have template content");
         });
 
-        WI.domTreeManager.querySelector(documentNode.id, "#template", function(nodeId) {
-            var domNode = WI.domTreeManager.nodeForId(nodeId);
+        WI.domManager.querySelector(documentNode.id, "#template", function(nodeId) {
+            var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for template element");
             InspectorTest.expectThat(domNode.templateContent(), "DOMNode has template content");

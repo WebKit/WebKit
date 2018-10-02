@@ -46,10 +46,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         WI.EventBreakpoint.addEventListener(WI.EventBreakpoint.Event.DisabledStateDidChange, this._eventBreakpointDisabledStateDidChange, this);
         WI.XHRBreakpoint.addEventListener(WI.XHRBreakpoint.Event.DisabledStateDidChange, this._xhrBreakpointDisabledStateDidChange, this);
 
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeInserted, this._nodeInserted, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._nodeRemoved, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, this._nodeInserted, this);
 
-        WI.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+        WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
         WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
@@ -96,7 +96,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     get domBreakpoints()
     {
-        let mainFrame = WI.frameResourceManager.mainFrame;
+        let mainFrame = WI.networkManager.mainFrame;
         if (!mainFrame)
             return [];
 
@@ -341,7 +341,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     _detachDOMBreakpoint(breakpoint)
     {
         let nodeIdentifier = breakpoint.domNodeIdentifier;
-        let node = WI.domTreeManager.nodeForId(nodeIdentifier);
+        let node = WI.domManager.nodeForId(nodeIdentifier);
         console.assert(node, "Missing DOM node for breakpoint.", breakpoint);
         if (!node)
             return;
@@ -384,7 +384,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _speculativelyResolveBreakpoints()
     {
-        let mainFrame = WI.frameResourceManager.mainFrame;
+        let mainFrame = WI.networkManager.mainFrame;
         if (!mainFrame)
             return;
 
@@ -394,7 +394,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
                 if (breakpoint.domNodeIdentifier)
                     continue;
 
-                WI.domTreeManager.pushNodeByPathToFrontend(breakpoint.path, (nodeIdentifier) => {
+                WI.domManager.pushNodeByPathToFrontend(breakpoint.path, (nodeIdentifier) => {
                     if (!nodeIdentifier)
                         return;
 
@@ -412,7 +412,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _resolveDOMBreakpoint(breakpoint, nodeIdentifier)
     {
-        let node = WI.domTreeManager.nodeForId(nodeIdentifier);
+        let node = WI.domManager.nodeForId(nodeIdentifier);
         console.assert(node, "Missing DOM node for nodeIdentifier.", nodeIdentifier);
         if (!node)
             return;

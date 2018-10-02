@@ -68,9 +68,9 @@ function test()
         }
     });
 
-    WI.domTreeManager.requestDocument((documentNode) => {
-        WI.domTreeManager.querySelector(documentNode.id, "#reference", (nodeId) => {
-            domNode = WI.domTreeManager.nodeForId(nodeId);
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "#reference", (nodeId) => {
+            domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.assert(domNode, `Node with id "reference" should exist.`);
 
             suite.runTestCasesAndFinish();

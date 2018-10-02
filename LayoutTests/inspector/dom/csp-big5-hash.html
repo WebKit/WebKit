@@ -9,10 +9,10 @@ function test() {
        {selector: "#stylesheet-1", hash: "sha256-duNBvCmzrFc3RVVqS8ufweBf2QOq1THuEh3UZWP7ZpU="},
        {selector: "#script-1", hash: "sha256-0eDk4my9q3qcCQTZ02clVW0RxDNPW9n9lXTCdyGY4Js="},
     ];
-    WI.domTreeManager.requestDocument(function(documentNode) {
+    WI.domManager.requestDocument(function(documentNode) {
         for (let {selector, hash} of testCases) {
-            WI.domTreeManager.querySelector(documentNode.id, selector, function(nodeId) {
-                let domNode = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, selector, function(nodeId) {
+                let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.log("");
                 InspectorTest.expectThat(domNode, `Got DOMNode for ${selector}`);
                 InspectorTest.expectThat(domNode.contentSecurityPolicyHash() === hash, `DOMNode has hash ${hash}`);

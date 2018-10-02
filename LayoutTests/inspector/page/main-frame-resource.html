@@ -6,7 +6,7 @@
 function test()
 {
     WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, function(event) {
-        var url = WI.frameResourceManager.mainFrame.url;
+        var url = WI.networkManager.mainFrame.url;
         InspectorTest.log("Main frame: " + url.substring(url.lastIndexOf("/") + 1));
         InspectorTest.completeTest();
     });

@@ -241,7 +241,7 @@ WI.Script = class Script extends WI.SourceCode
         if (!this._url)
             return null;
 
-        let resolver = WI.frameResourceManager;
+        let resolver = WI.networkManager;
         if (this._target !== WI.mainTarget)
             resolver = this._target.resourceCollection;
 

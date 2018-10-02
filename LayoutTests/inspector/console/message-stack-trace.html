@@ -56,7 +56,7 @@ function test()
         });
     }
 
-    WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
         let message = event.data.message;
         InspectorTest.assert(message instanceof WI.ConsoleMessage);
         if (messageChecker && messageChecker(message)) {

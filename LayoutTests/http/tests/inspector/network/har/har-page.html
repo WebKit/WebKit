@@ -88,7 +88,7 @@ function test()
             InspectorTest.evaluateInPage("setup()");
             await InspectorTest.awaitEvent("SetupComplete");
 
-            let resources = [WI.frameResourceManager.mainFrame.mainResource, ...WI.frameResourceManager.mainFrame.resourceCollection];
+            let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
             let har = await WI.HARBuilder.buildArchive(resources);
             InspectorTest.json(har, HARJSONFilter);
             InspectorTest.evaluateInPage("cleanup()");

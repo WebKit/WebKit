@@ -207,8 +207,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.DisplayLocationDidChange, this._handleDebuggerObjectDisplayLocationDidChange, this);
         WI.IssueMessage.addEventListener(WI.IssueMessage.Event.DisplayLocationDidChange, this._handleDebuggerObjectDisplayLocationDidChange, this);
-        WI.issueManager.addEventListener(WI.IssueManager.Event.IssueWasAdded, this._handleIssueAdded, this);
-        WI.issueManager.addEventListener(WI.IssueManager.Event.Cleared, this._handleIssuesCleared, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.IssueAdded, this._handleIssueAdded, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, this._handleIssuesCleared, this);
 
         WI.debuggerManager.addBreakpoint(WI.debuggerManager.allExceptionsBreakpoint);
         WI.debuggerManager.addBreakpoint(WI.debuggerManager.uncaughtExceptionsBreakpoint);
@@ -217,8 +217,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (DebuggerAgent.setPauseOnAssertions && WI.settings.showAssertionFailuresBreakpoint.value)
             WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
 
-        if (WI.frameResourceManager.mainFrame)
-            this._addResourcesRecursivelyForFrame(WI.frameResourceManager.mainFrame);
+        if (WI.networkManager.mainFrame)
+            this._addResourcesRecursivelyForFrame(WI.networkManager.mainFrame);
 
         for (var script of WI.debuggerManager.knownNonResourceScripts)
             this._addScript(script);
@@ -233,7 +233,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             for (let domBreakpoint of WI.domDebuggerManager.domBreakpoints)
                 this._addBreakpoint(domBreakpoint);
 
-            for (let eventListenerBreakpoint of WI.domTreeManager.eventListenerBreakpoints)
+            for (let eventListenerBreakpoint of WI.domManager.eventListenerBreakpoints)
                 this._addBreakpoint(eventListenerBreakpoint);
 
             for (let xhrBreakpoints of WI.domDebuggerManager.xhrBreakpoints)
@@ -273,8 +273,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     showDefaultContentView()
     {
-        if (WI.frameResourceManager.mainFrame) {
-            let mainTreeElement = this._scriptsContentTreeOutline.findTreeElement(WI.frameResourceManager.mainFrame.mainResource);
+        if (WI.networkManager.mainFrame) {
+            let mainTreeElement = this._scriptsContentTreeOutline.findTreeElement(WI.networkManager.mainFrame.mainResource);
             if (mainTreeElement && this.showDefaultContentViewForTreeElement(mainTreeElement))
                 return;
         }
@@ -477,7 +477,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
             constructor = WI.DOMBreakpointTreeElement;
 
-            let domNode = WI.domTreeManager.nodeForId(breakpoint.domNodeIdentifier);
+            let domNode = WI.domManager.nodeForId(breakpoint.domNodeIdentifier);
             parentTreeElement = getDOMNodeTreeElement(domNode);
         } else if (breakpoint instanceof WI.EventBreakpoint) {
             constructor = WI.EventBreakpointTreeElement;
@@ -540,7 +540,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     _addIssuesForSourceCode(sourceCode)
     {
-        var issues = WI.issueManager.issuesForSourceCode(sourceCode);
+        var issues = WI.consoleManager.issuesForSourceCode(sourceCode);
         for (var issue of issues)
             this._addIssue(issue);
     }
@@ -707,7 +707,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
         this._scriptsContentTreeOutline.removeChildren();
 
-        this._addResourcesRecursivelyForFrame(WI.frameResourceManager.mainFrame);
+        this._addResourcesRecursivelyForFrame(WI.networkManager.mainFrame);
     }
 
     _breakpointAdded(event)
@@ -1099,7 +1099,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             console.assert(WI.domDebuggerManager.supported);
             console.assert(pauseData, "Expected DOM breakpoint data, but found none.");
             if (pauseData && pauseData.nodeId) {
-                let domNode = WI.domTreeManager.nodeForId(pauseData.nodeId);
+                let domNode = WI.domManager.nodeForId(pauseData.nodeId);
                 let domBreakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);
                 let domBreakpoint;
                 for (let breakpoint of domBreakpoints) {
@@ -1137,7 +1137,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                     if (!nodeId)
                         return;
 
-                    let node = WI.domTreeManager.nodeForId(nodeId);
+                    let node = WI.domManager.nodeForId(nodeId);
                     console.assert(node, "Missing node for id.", nodeId);
                     if (!node)
                         return;
@@ -1163,7 +1163,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
             var eventBreakpoint = null;
             if (pauseData.eventListenerId)
-                eventBreakpoint = WI.domTreeManager.breakpointForEventListenerId(pauseData.eventListenerId);
+                eventBreakpoint = WI.domManager.breakpointForEventListenerId(pauseData.eventListenerId);
             if (!eventBreakpoint)
                 eventBreakpoint = WI.domDebuggerManager.eventBreakpointForTypeAndEventName(WI.EventBreakpoint.Type.Listener, pauseData.eventName);
 

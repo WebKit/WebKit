@@ -11,7 +11,7 @@ function test()
         name: "ClearViaConsoleClearMessagesAPI",
         description: "Calling Console.clearMessages should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })
@@ -25,7 +25,7 @@ function test()
         name: "ClearViaConsoleAPI",
         description: "Calling console.clear() should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })
@@ -39,7 +39,7 @@ function test()
         name: "ClearViaCommandLineAPI",
         description: "Calling `clear()` in the command line API should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })
@@ -53,7 +53,7 @@ function test()
         name: "ClearViaPageReload",
         description: "Reloading the page should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })

@@ -88,7 +88,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             this._activeCallFrameDidChange();
         }
 
-        WI.issueManager.addEventListener(WI.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.IssueAdded, this._issueWasAdded, this);
 
         if (this._sourceCode instanceof WI.SourceMapResource || this._sourceCode.sourceMaps.length > 0)
             WI.notifications.addEventListener(WI.Notification.GlobalModifierKeysDidChange, this._updateTokenTrackingControllerState, this);
@@ -99,7 +99,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, "G", this.showGoToLineDialog.bind(this), this.element);
 
-        WI.logManager.addEventListener(WI.LogManager.Event.Cleared, this._logCleared, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, this._logCleared, this);
     }
 
     // Public
@@ -178,7 +178,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             }
         }
 
-        WI.issueManager.removeEventListener(WI.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.IssueAdded, this._issueWasAdded, this);
 
         if (this._sourceCode instanceof WI.SourceMapResource || this._sourceCode.sourceMaps.length > 0)
             WI.notifications.removeEventListener(WI.Notification.GlobalModifierKeysDidChange, this._updateTokenTrackingControllerState, this);
@@ -1005,7 +1005,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     _issueWasAdded(event)
     {
         var issue = event.data.issue;
-        if (!WI.IssueManager.issueMatchSourceCode(issue, this._sourceCode))
+        if (!WI.ConsoleManager.issueMatchSourceCode(issue, this._sourceCode))
             return;
 
         this._addIssue(issue);
@@ -1552,7 +1552,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         this._issuesLineNumberMap.clear();
         this._clearIssueWidgets();
 
-        let issues = WI.issueManager.issuesForSourceCode(this._sourceCode);
+        let issues = WI.consoleManager.issuesForSourceCode(this._sourceCode);
         for (let issue of issues)
             this._addIssue(issue);
     }
@@ -1911,13 +1911,13 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 if (!nodeId)
                     return;
 
-                var domNode = WI.domTreeManager.nodeForId(nodeId);
+                var domNode = WI.domManager.nodeForId(nodeId);
                 if (!domNode.ownerDocument)
                     return;
 
                 var goToButton = titleElement.appendChild(WI.createGoToArrowButton());
                 goToButton.addEventListener("click", function() {
-                    WI.domTreeManager.inspectElement(nodeId);
+                    WI.domManager.inspectElement(nodeId);
                 });
             });
         }

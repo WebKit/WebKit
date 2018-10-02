@@ -77,9 +77,9 @@ WI.linkifyNodeReferenceElement = function(node, element, options = {})
     if ((nodeType !== Node.DOCUMENT_NODE || node.parentNode) && nodeType !== Node.TEXT_NODE)
         element.classList.add("node-link");
 
-    element.addEventListener("click", WI.domTreeManager.inspectElement.bind(WI.domTreeManager, node.id));
-    element.addEventListener("mouseover", WI.domTreeManager.highlightDOMNode.bind(WI.domTreeManager, node.id, "all"));
-    element.addEventListener("mouseout", WI.domTreeManager.hideDOMNodeHighlight.bind(WI.domTreeManager));
+    element.addEventListener("click", WI.domManager.inspectElement.bind(WI.domManager, node.id));
+    element.addEventListener("mouseover", WI.domManager.highlightDOMNode.bind(WI.domManager, node.id, "all"));
+    element.addEventListener("mouseout", WI.domManager.hideDOMNodeHighlight.bind(WI.domManager));
     element.addEventListener("contextmenu", (event) => {
         let contextMenu = WI.ContextMenu.createFromEvent(event);
         WI.appendContextMenuItemsForDOMNode(contextMenu, node, options);

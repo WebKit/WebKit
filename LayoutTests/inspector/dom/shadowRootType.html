@@ -12,8 +12,8 @@ function test()
     suite.addTestCase({
         name: "ShadowRootType.UserAgent",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "#host-user-agent", (nodeId) => {
-                let domNode = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "#host-user-agent", (nodeId) => {
+                let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, "Got DOMNode for #host-user-agent");
                 InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
                 InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WI.DOMNode.ShadowRootType.UserAgent, "DOMNode has UserAgent shadow root type.");
@@ -26,8 +26,8 @@ function test()
     suite.addTestCase({
         name: "ShadowRootType.Closed",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "#host-closed", (nodeId) => {
-                let domNode = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "#host-closed", (nodeId) => {
+                let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, "Got DOMNode for #host-closed");
                 InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
                 InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WI.DOMNode.ShadowRootType.Closed, "DOMNode has Closed shadow root type.");
@@ -40,8 +40,8 @@ function test()
     suite.addTestCase({
         name: "ShadowRootType.Open",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "#host-open", (nodeId) => {
-                let domNode = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "#host-open", (nodeId) => {
+                let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, "Got DOMNode for #host-open");
                 InspectorTest.expectThat(domNode.shadowRoots().length === 1, "DOMNode has a single shadow root.");
                 InspectorTest.expectThat(domNode.shadowRoots()[0].shadowRootType() === WI.DOMNode.ShadowRootType.Open, "DOMNode has Open shadow root type.");
@@ -54,8 +54,8 @@ function test()
     suite.addTestCase({
         name: "NoShadowRootType",
         test(resolve, reject) {
-            WI.domTreeManager.querySelector(documentNode.id, "#no-host", (nodeId) => {
-                let domNode = WI.domTreeManager.nodeForId(nodeId);
+            WI.domManager.querySelector(documentNode.id, "#no-host", (nodeId) => {
+                let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, "Got DOMNode for #no-host");
                 InspectorTest.expectThat(domNode.shadowRoots().length === 0, "DOMNode has no shadow roots.");
                 InspectorTest.expectThat(domNode.shadowRootType() === undefined, "DOMNode has no shadow root type.");
@@ -64,7 +64,7 @@ function test()
         }
     });
 
-    WI.domTreeManager.requestDocument((node) => {
+    WI.domManager.requestDocument((node) => {
         documentNode = node;
         suite.runTestCasesAndFinish();
     });

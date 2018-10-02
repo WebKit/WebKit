@@ -86,7 +86,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
         this._hasNonDefaultLogChannelMessage = false;
-        if (WI.LogManager.supportsLogChannels()) {
+        if (WI.ConsoleManager.supportsLogChannels()) {
             let messageChannelBarItems = [
                 new WI.ScopeBarItem(WI.LogContentView.Scopes.AllChannels, WI.UIString("All"), true),
                 new WI.ScopeBarItem(WI.LogContentView.Scopes.Media, WI.UIString("Media"), false, "media"),
@@ -111,10 +111,10 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
 
-        WI.logManager.addEventListener(WI.LogManager.Event.SessionStarted, this._sessionStarted, this);
-        WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, this._messageAdded, this);
-        WI.logManager.addEventListener(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, this._previousMessageRepeatCountUpdated, this);
-        WI.logManager.addEventListener(WI.LogManager.Event.Cleared, this._logCleared, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.SessionStarted, this._sessionStarted, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, this._messageAdded, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, this._previousMessageRepeatCountUpdated, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, this._logCleared, this);
 
         WI.Frame.addEventListener(WI.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
     }
@@ -422,7 +422,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (this._startedProvisionalLoad)
             this._provisionalMessages.push(message);
 
-        if (!this._hasNonDefaultLogChannelMessage && WI.logManager.logChannelSources.includes(message.source)) {
+        if (!this._hasNonDefaultLogChannelMessage && WI.consoleManager.logChannelSources.includes(message.source)) {
             this._hasNonDefaultLogChannelMessage = true;
             this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
             this._scopeBar.item(WI.LogContentView.Scopes.Infos).hidden = false;
@@ -774,7 +774,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _clearLog()
     {
-        WI.logManager.requestClearMessages();
+        WI.consoleManager.requestClearMessages();
     }
 
     _garbageCollect()

@@ -223,7 +223,7 @@ function test() {
         }
     });
 
-    WI.domTreeManager.requestDocument((documentNode) => {
+    WI.domManager.requestDocument((documentNode) => {
         node = documentNode;
 
         suite.runTestCasesAndFinish();

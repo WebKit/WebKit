@@ -78,7 +78,7 @@ WI.FormattedValue.createElementForNode = function(object)
 
         var treeOutline = new WI.DOMTreeOutline;
         treeOutline.setVisible(true);
-        treeOutline.rootDOMNode = WI.domTreeManager.nodeForId(nodeId);
+        treeOutline.rootDOMNode = WI.domManager.nodeForId(nodeId);
         if (!treeOutline.children[0].hasChildren)
             treeOutline.element.classList.add("single-node");
         span.appendChild(treeOutline.element);

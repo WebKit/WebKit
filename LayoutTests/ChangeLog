@@ -1,3 +1,118 @@
+2018-10-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rename frontend managers to be more consistent with backend agents
+        https://bugs.webkit.org/show_bug.cgi?id=190160
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/inspector/dom/cross-domain-inspected-node-access.html:
+        * http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html:
+        * http/tests/inspector/dom/shapes-test.js:
+        * http/tests/inspector/network/har/har-page.html:
+        * http/tests/inspector/network/loadResource-insecure-resource.html:
+        * http/tests/inspector/network/resource-response-source-memory-cache-revalidate-expired-only.html:
+        * http/tests/inspector/network/resource-response-source-memory-cache.html:
+        * http/tests/inspector/network/resource-sizes-memory-cache.html:
+        * http/tests/inspector/network/set-resource-caching-disabled-memory-cache.html:
+        * http/tests/websocket/tests/hybi/inspector/before-load.html:
+        * http/tests/websocket/tests/hybi/inspector/resolveWebSocket.html:
+        * inspector/canvas/requestNode.html:
+        * inspector/codemirror/resources/prettyprinting/utilities.js:
+        (TestPage.registerInitializer.loadPrettyPrintingTestAndExpectedResults):
+        (TestPage.registerInitializer.window.addPrettyPrintingTests):
+        (TestPage.registerInitializer):
+        * inspector/console/clearMessages.html:
+        * inspector/console/command-line-api.html:
+        * inspector/console/console-api.html:
+        * inspector/console/console-count.html:
+        * inspector/console/console-table.html:
+        * inspector/console/console-time.html:
+        * inspector/console/message-stack-trace.html:
+        * inspector/console/messageAdded-from-named-evaluations.html:
+        * inspector/console/messageRepeatCountUpdated.html:
+        * inspector/console/messagesCleared.html:
+        * inspector/console/webcore-logging-expected.txt:
+        * inspector/console/webcore-logging.html:
+        * inspector/controller/runtime-controller-import.html:
+        * inspector/controller/runtime-controller.html:
+        * inspector/css/add-rule.html:
+        * inspector/css/createStyleSheet.html:
+        * inspector/css/css-property.html:
+        * inspector/css/getAllStyleSheets.html:
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame.html:
+        * inspector/css/matched-style-properties.html:
+        * inspector/css/modify-css-property.html:
+        * inspector/css/modify-rule-selector.html:
+        * inspector/css/pseudo-element-matches-for-pseudo-element-node.html:
+        * inspector/css/pseudo-element-matches.html:
+        * inspector/css/selector-dynamic-specificity.html:
+        * inspector/css/selector-specificity.html:
+        * inspector/css/shadow-scoped-style.html:
+        * inspector/css/stylesheet-events-basic.html:
+        * inspector/css/stylesheet-events-imports.html:
+        * inspector/css/stylesheet-events-inspector-stylesheet.html:
+        * inspector/css/stylesheet-events-multiple-documents.html:
+        * inspector/css/stylesheet-with-mutations.html:
+        * inspector/debugger/csp-exceptions.html:
+        * inspector/debugger/js-stacktrace.html:
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.window.findScript):
+        (TestPage.registerInitializer.window.loadMainPageContent):
+        (TestPage.registerInitializer.window.logResolvedBreakpointLinesWithContext):
+        (TestPage.registerInitializer.window.logLinesWithContext):
+        * inspector/debugger/stepping/stepping-through-autoContinue-breakpoint.html:
+        * inspector/dom-debugger/dom-breakpoints.html:
+        * inspector/dom-debugger/xhr-breakpoints.html:
+        * inspector/dom/breakpoint-for-event-listener.html:
+        * inspector/dom/csp-big5-hash.html:
+        * inspector/dom/csp-hash.html:
+        * inspector/dom/customElementState.html:
+        * inspector/dom/domutilities-csspath.html:
+        * inspector/dom/domutilities-path-dump.html:
+        * inspector/dom/domutilities-xpath.html:
+        * inspector/dom/event-listener-add-remove.html:
+        * inspector/dom/getEventListenersForNode.html:
+        * inspector/dom/getOuterHTML.html:
+        * inspector/dom/hideHighlight.html:
+        * inspector/dom/highlightFrame.html:
+        * inspector/dom/highlightNode.html:
+        * inspector/dom/highlightNodeList.html:
+        * inspector/dom/highlightSelector.html:
+        * inspector/dom/insertAdjacentHTML.html:
+        * inspector/dom/inspect.html:
+        * inspector/dom/pseudo-element-dynamic.html:
+        * inspector/dom/pseudo-element-static.html:
+        * inspector/dom/push-node-by-path-to-frontend.html:
+        * inspector/dom/setEventListenerDisabled.html:
+        * inspector/dom/setInspectedNode.html:
+        * inspector/dom/setOuterHTML-no-document-element.html:
+        * inspector/dom/setOuterHTML.html:
+        * inspector/dom/shadow-and-non-shadow-children.html:
+        * inspector/dom/shadowRootType.html:
+        * inspector/dom/template-content.html:
+        * inspector/formatting/resources/utilities.js:
+        (TestPage.registerInitializer.loadFormattingTestAndExpectedResults):
+        (TestPage.registerInitializer.window.addFormattingTests):
+        (TestPage.registerInitializer):
+        * inspector/indexeddb/clearObjectStore.html:
+        * inspector/indexeddb/deleteDatabaseNamesWithSpace.html:
+        * inspector/indexeddb/requestData.html:
+        * inspector/indexeddb/requestDatabase.html:
+        * inspector/indexeddb/requestDatabaseNames.html:
+        * inspector/layers/layer-tree-manager.html:
+        * inspector/model/dom-node.html:
+        * inspector/model/frame-extra-scripts.html:
+        * inspector/model/script-resource-relationship.html:
+        * inspector/model/stack-trace.html:
+        * inspector/page/empty-or-missing-resources.html:
+        * inspector/page/hidpi-snapshot-size.html:
+        * inspector/page/main-frame-resource.html:
+        * inspector/runtime/change-execution-context-identifier.html:
+        * inspector/runtime/saveResult.html:
+        * inspector/storage/domStorage-events.html:
+        * inspector/worker/console-basic.html:
+        * inspector/worker/resources-in-worker.html:
+
 2018-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix missing values of  resource timing API.

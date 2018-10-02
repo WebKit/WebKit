@@ -43,7 +43,7 @@ function test()
 
     function addBreakpoint(type, url) {
         return new Promise((resolve, reject) => {
-            let mainFrame = WI.frameResourceManager.mainFrame;
+            let mainFrame = WI.networkManager.mainFrame;
             InspectorTest.assert(mainFrame, "Missing main frame.");
             if (!mainFrame)
                 reject();

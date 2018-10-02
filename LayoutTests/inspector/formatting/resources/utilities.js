@@ -2,8 +2,8 @@ TestPage.registerInitializer(function() {
     function loadFormattingTestAndExpectedResults(testURL) {
         let expectedURL = testURL.replace(/\.([^\.]+)$/, "-expected.$1");
         return Promise.all([
-            NetworkAgent.loadResource(WI.frameResourceManager.mainFrame.id, testURL),
-            NetworkAgent.loadResource(WI.frameResourceManager.mainFrame.id, expectedURL)
+            NetworkAgent.loadResource(WI.networkManager.mainFrame.id, testURL),
+            NetworkAgent.loadResource(WI.networkManager.mainFrame.id, expectedURL)
         ]).then(function(results) {
             return Promise.resolve({testText: results[0].content, expectedText: results[1].content });
         });
@@ -42,7 +42,7 @@ TestPage.registerInitializer(function() {
     }
 
     window.addFormattingTests = function(suite, mode, tests) {
-        let testPageURL = WI.frameResourceManager.mainFrame.mainResource.url;
+        let testPageURL = WI.networkManager.mainFrame.mainResource.url;
         let testPageResourcesURL = testPageURL.substring(0, testPageURL.lastIndexOf("/"));            
 
         for (let test of tests) {

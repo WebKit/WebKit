@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.DOMTreeManager = class DOMTreeManager extends WI.Object
+WI.DOMManager = class DOMManager extends WI.Object
 {
     constructor()
     {
@@ -157,7 +157,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
             return;
 
         node._setAttribute(name, value);
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.AttributeModified, {node, name});
+        this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node, name});
         node.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name});
     }
 
@@ -168,7 +168,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
             return;
 
         node._removeAttribute(name);
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.AttributeRemoved, {node, name});
+        this.dispatchEventToListeners(WI.DOMManager.Event.AttributeRemoved, {node, name});
         node.dispatchEventToListeners(WI.DOMNode.Event.AttributeRemoved, {name});
     }
 
@@ -192,7 +192,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
             var node = this._idToDOMNode[nodeId];
             if (node) {
                 node._setAttributesPayload(attributes);
-                this.dispatchEventToListeners(WI.DOMTreeManager.Event.AttributeModified, {node, name: "style"});
+                this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node, name: "style"});
                 node.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name: "style"});
             }
         }
@@ -210,7 +210,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
     {
         var node = this._idToDOMNode[nodeId];
         node._nodeValue = newValue;
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.CharacterDataModified, {node});
+        this.dispatchEventToListeners(WI.DOMManager.Event.CharacterDataModified, {node});
     }
 
     nodeForId(nodeId)
@@ -236,7 +236,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
             return;
 
         this._document = newDocument;
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.DocumentUpdated, {document: this._document});
+        this.dispatchEventToListeners(WI.DOMManager.Event.DocumentUpdated, {document: this._document});
     }
 
     _setDetachedRoot(payload)
@@ -259,7 +259,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
     {
         var node = this._idToDOMNode[nodeId];
         node.childNodeCount = newValue;
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.ChildNodeCountUpdated, node);
+        this.dispatchEventToListeners(WI.DOMManager.Event.ChildNodeCountUpdated, node);
     }
 
     _childNodeInserted(parentId, prevId, payload)
@@ -268,7 +268,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         var prev = this._idToDOMNode[prevId];
         var node = parent._insertChild(prev, payload);
         this._idToDOMNode[node.id] = node;
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.NodeInserted, {node, parent});
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
     }
 
     _childNodeRemoved(parentId, nodeId)
@@ -277,14 +277,14 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         var node = this._idToDOMNode[nodeId];
         parent._removeChild(node);
         this._unbind(node);
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.NodeRemoved, {node, parent});
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node, parent});
     }
 
     _customElementStateChanged(elementId, newState)
     {
         const node = this._idToDOMNode[elementId];
         node._customElementState = newState;
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.CustomElementStateChanged, {node});
+        this.dispatchEventToListeners(WI.DOMManager.Event.CustomElementStateChanged, {node});
     }
 
     _pseudoElementAdded(parentId, pseudoElement)
@@ -298,7 +298,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         this._idToDOMNode[node.id] = node;
         console.assert(!parent.pseudoElements().get(node.pseudoType()));
         parent.pseudoElements().set(node.pseudoType(), node);
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.NodeInserted, {node, parent});
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
     }
 
     _pseudoElementRemoved(parentId, pseudoElementId)
@@ -315,7 +315,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
 
         parent._removeChild(pseudoElement);
         this._unbind(pseudoElement);
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.NodeRemoved, {node: pseudoElement, parent});
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node: pseudoElement, parent});
     }
 
     _unbind(node)
@@ -346,10 +346,10 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         if (!node || !node.ownerDocument)
             return;
 
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.DOMNodeWasInspected, {node});
+        this.dispatchEventToListeners(WI.DOMManager.Event.DOMNodeWasInspected, {node});
 
         this._inspectModeEnabled = false;
-        this.dispatchEventToListeners(WI.DOMTreeManager.Event.InspectModeStateChanged);
+        this.dispatchEventToListeners(WI.DOMManager.Event.InspectModeStateChanged);
     }
 
     inspectNodeObject(remoteObject)
@@ -519,7 +519,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
 
         DOMAgent.setInspectModeEnabled(enabled, this._buildHighlightConfig(), (error) => {
             this._inspectModeEnabled = error ? false : enabled;
-            this.dispatchEventToListeners(WI.DOMTreeManager.Event.InspectModeStateChanged);
+            this.dispatchEventToListeners(WI.DOMManager.Event.InspectModeStateChanged);
         });
     }
 
@@ -633,15 +633,15 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
     }
 };
 
-WI.DOMTreeManager.Event = {
-    AttributeModified: "dom-tree-manager-attribute-modified",
-    AttributeRemoved: "dom-tree-manager-attribute-removed",
-    CharacterDataModified: "dom-tree-manager-character-data-modified",
-    NodeInserted: "dom-tree-manager-node-inserted",
-    NodeRemoved: "dom-tree-manager-node-removed",
-    CustomElementStateChanged: "dom-tree-manager-custom-element-state-changed",
-    DocumentUpdated: "dom-tree-manager-document-updated",
-    ChildNodeCountUpdated: "dom-tree-manager-child-node-count-updated",
-    DOMNodeWasInspected: "dom-tree-manager-dom-node-was-inspected",
-    InspectModeStateChanged: "dom-tree-manager-inspect-mode-state-changed",
+WI.DOMManager.Event = {
+    AttributeModified: "dom-manager-attribute-modified",
+    AttributeRemoved: "dom-manager-attribute-removed",
+    CharacterDataModified: "dom-manager-character-data-modified",
+    NodeInserted: "dom-manager-node-inserted",
+    NodeRemoved: "dom-manager-node-removed",
+    CustomElementStateChanged: "dom-manager-custom-element-state-changed",
+    DocumentUpdated: "dom-manager-document-updated",
+    ChildNodeCountUpdated: "dom-manager-child-node-count-updated",
+    DOMNodeWasInspected: "dom-manager-dom-node-was-inspected",
+    InspectModeStateChanged: "dom-manager-inspect-mode-state-changed",
 };

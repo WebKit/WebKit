@@ -200,7 +200,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
             this._highlightSelectedNode();
             this._showPopoverForSelectedNode();
         } else {
-            WI.domTreeManager.hideDOMNodeHighlight();
+            WI.domManager.hideDOMNodeHighlight();
             this._hidePopover();
         }
     }
@@ -213,7 +213,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
 
     _dataGridLostFocus(event)
     {
-        WI.domTreeManager.hideDOMNodeHighlight();
+        WI.domManager.hideDOMNodeHighlight();
         this._hidePopover();
     }
 
@@ -231,9 +231,9 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
 
         var layer = dataGridNode.layer;
         if (layer.isGeneratedContent || layer.isReflection || layer.isAnonymous)
-            WI.domTreeManager.highlightRect(layer.bounds, true);
+            WI.domManager.highlightRect(layer.bounds, true);
         else
-            WI.domTreeManager.highlightDOMNode(layer.nodeId);
+            WI.domManager.highlightDOMNode(layer.nodeId);
     }
 
     _updateDisplayWithLayers(layerForNode, childLayers)
