@@ -46,11 +46,7 @@ static gboolean webkitWebViewDialogDraw(GtkWidget* widget, cairo_t* cr)
 #else
         GtkStyleContext* styleContext = WEBKIT_WEB_VIEW_DIALOG(widget)->priv->styleContext.get();
 #endif
-        gtk_style_context_save(styleContext);
-        gtk_style_context_add_class(styleContext, GTK_STYLE_CLASS_BACKGROUND);
-        gtk_style_context_add_class(styleContext, GTK_STYLE_CLASS_TITLEBAR);
         gtk_render_background(styleContext, cr, allocation.x, allocation.y, allocation.width, allocation.height);
-        gtk_style_context_restore(styleContext);
     }
 
     GTK_WIDGET_CLASS(webkit_web_view_dialog_parent_class)->draw(widget, cr);
@@ -83,8 +79,11 @@ static void webkitWebViewDialogConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_view_dialog_parent_class)->constructed(object);
 
+    gtk_widget_set_app_paintable(GTK_WIDGET(object), TRUE);
+
 #if GTK_CHECK_VERSION(3, 20, 0)
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(object)), GTK_STYLE_CLASS_CSD);
+    gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(object)), GTK_STYLE_CLASS_BACKGROUND);
 #else
     WebKitWebViewDialogPrivate* priv = WEBKIT_WEB_VIEW_DIALOG(object)->priv;
     priv->styleContext = adoptGRef(gtk_style_context_new());

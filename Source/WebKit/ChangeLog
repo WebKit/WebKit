@@ -1,3 +1,27 @@
+2018-10-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Theming of authentication dialog breaks with themes other than Adwaita
+        https://bugs.webkit.org/show_bug.cgi?id=190117
+
+        Reviewed by Michael Catanzaro.
+
+        Adds the missing GTK_STYLE_CLASS_BACKGROUND to the WebKitWebViewDialog
+        widget, which was missing for GTK+ 3.20 or newer, and set the widget
+        as app-paintable to avoid the base class paint method to add an opaque
+        background.
+
+        Thanks to Benjamin Otte for the guidance to debug the theming issues.
+
+        * UIProcess/API/gtk/WebKitWebViewDialog.cpp:
+        (webkitWebViewDialogDraw): Remove the style context save/restore, it
+        is unneeded because the style classes are set at widget construction
+        time and not changed ever after.
+        (webkitWebViewDialogConstructed): Mark the widget as app-paintable to
+        avoid the base widget paint operation to fill the whole background,
+        because the dialog widget paints the translucent overlay itself; and
+        also add the missing GTK_STYLE_CLASS_BACKGROUND class at construction
+        when building against GTK+ 3.20 or newer.
+
 2018-10-02  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] RealtimeMediaSource should be able to vend hashed IDs
