@@ -1,3 +1,13 @@
+2018-10-01  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Adopt NSURLSessionCompanionProxyPreference
+        https://bugs.webkit.org/show_bug.cgi?id=190177
+        <rdar://problem/43402114>
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/FeatureDefines.h:
+
 2018-10-01  Koby Boyango  <koby.b@mce-sys.com>
 
         [WTF][JSCONLY] Use MainThreadWin on Windows in the JSCOnly port

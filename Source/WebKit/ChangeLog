@@ -1,3 +1,14 @@
+2018-10-01  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Adopt NSURLSessionCompanionProxyPreference
+        https://bugs.webkit.org/show_bug.cgi?id=190177
+        <rdar://problem/43402114>
+
+        Reviewed by Wenson Hsieh.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2018-10-01  Chris Dumez  <cdumez@apple.com>
 
         [Mac] The UIProcess should listen to memory pressure signals

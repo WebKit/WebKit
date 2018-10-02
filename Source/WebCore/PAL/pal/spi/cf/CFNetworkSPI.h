@@ -161,6 +161,14 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 - (NSDate *)_lastModifiedDate;
 @end
 
+#if PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 60000
+typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
+    NSURLSessionCompanionProxyPreferenceDefault = 0,
+    NSURLSessionCompanionProxyPreferencePreferCompanion,
+    NSURLSessionCompanionProxyPreferencePreferDirectToCloud,
+};
+#endif
+
 @interface NSURLSessionConfiguration ()
 @property (assign) _TimingDataOptions _timingDataOptions;
 @property (copy) NSData *_sourceApplicationAuditTokenData;
@@ -172,6 +180,9 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #endif
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 @property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
+#endif
+#if PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 60000
+@property NSURLSessionCompanionProxyPreference _companionProxyPreference;
 #endif
 @end
 

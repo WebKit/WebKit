@@ -707,6 +707,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
         configuration._socketStreamProperties = @{ @"kCFStreamPropertyAutoErrorOnSystemChange" : @(NO) };
 #endif
 
+#if PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 60000
+    configuration._companionProxyPreference = NSURLSessionCompanionProxyPreferencePreferDirectToCloud;
+#endif
+
     auto* storageSession = WebCore::NetworkStorageSession::storageSession(parameters.sessionID);
     RELEASE_ASSERT(storageSession);
     if (CFHTTPCookieStorageRef storage = storageSession->cookieStorage().get())
