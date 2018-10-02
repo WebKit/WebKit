@@ -1,3 +1,22 @@
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
+        Image.__proto__ should be Function.prototype, not HTMLElement.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=190216
+
+        Reviewed by Alex Christensen.
+
+        Properties created for named constructors should always use Function.prototype as prototype, as per:
+        - https://heycam.github.io/webidl/#named-constructors
+
+        Gecko and Blink agree with the Web IDL specification. However, WebKit was using the parent interface's
+        prototype if such a parent existing. So Image.__proto__ would end up being HTMLElement.prototype
+        instead of Function.prototype.
+
+        No new tests, rebaselined existing test.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorHelperMethods):
+
 2018-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Prepare WebCoreNSURLExtras for ARC

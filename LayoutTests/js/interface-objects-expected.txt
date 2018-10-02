@@ -16,7 +16,7 @@ PASS object.toString.call(Event) is "[object Function]"
 * Interface with named constructor
 PASS window.Audio instanceof Function is true
 PASS typeof Audio is "function"
-PASS Object.getPrototypeOf(Audio) is HTMLMediaElement
+PASS Object.getPrototypeOf(Audio) is Function.prototype
 PASS Audio() threw exception TypeError: Constructor requires 'new' operator.
 PASS Audio.call() threw exception TypeError: Constructor requires 'new' operator.
 PASS new Audio() did not throw exception.

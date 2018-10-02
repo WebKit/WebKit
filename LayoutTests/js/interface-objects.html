@@ -19,7 +19,7 @@ debug("");
 debug("* Interface with named constructor");
 shouldBeTrue("window.Audio instanceof Function");
 shouldBeEqualToString("typeof Audio", "function");
-shouldBe("Object.getPrototypeOf(Audio)", "HTMLMediaElement");
+shouldBe("Object.getPrototypeOf(Audio)", "Function.prototype");
 shouldThrow("Audio()");
 shouldThrow("Audio.call()");
 shouldNotThrow("new Audio()");

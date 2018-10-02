@@ -3,9 +3,5 @@ PASS Image constructor works
 PASS Image and HTMLImageElement share a prototype 
 PASS Image localName is img 
 PASS Image namespace URI is correct 
-FAIL NamedConstructor creates the correct object structure. assert_equals: Image __proto__ is Function prototype expected function "function () {
-    [native code]
-}" but got function "function HTMLElement() {
-    [native code]
-}"
+PASS NamedConstructor creates the correct object structure. 
 
