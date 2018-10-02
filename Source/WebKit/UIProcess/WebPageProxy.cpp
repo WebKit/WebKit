@@ -694,8 +694,18 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 
 void WebPageProxy::reattachToWebProcess()
 {
-    auto process = makeRef(m_process->processPool().createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get()));
-    reattachToWebProcess(WTFMove(process), nullptr);
+    ASSERT(!m_isClosed);
+    ASSERT(!isValid());
+    RELEASE_LOG_IF_ALLOWED(Process, "%p WebPageProxy::reattachToWebProcess\n", this);
+
+    m_process->removeWebPage(*this, m_pageID);
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+
+    auto& processPool = m_process->processPool();
+    m_process = processPool.createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get());
+    m_isValid = true;
+
+    finishAttachingToWebProcess();
 }
 
 SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& process, API::Navigation& navigation)
@@ -721,27 +731,18 @@ void WebPageProxy::suspendedPageClosed(SuspendedPageProxy& page)
     m_suspendedPage = nullptr;
 }
 
-void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation* navigation)
+void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation& navigation)
 {
     ASSERT(!m_isClosed);
-    ASSERT(!isValid());
-
-    m_isValid = true;
+    RELEASE_LOG_IF_ALLOWED(Process, "%p WebPageProxy::swapToWebProcess\n", this);
 
     // If the process we're attaching to is kept alive solely by our current suspended page,
     // we need to maintain that by temporarily keeping the suspended page alive.
-    std::unique_ptr<SuspendedPageProxy> currentSuspendedPage;
-    if (!navigation) {
-        m_process->removeWebPage(*this, m_pageID);
-        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
-    } else {
-        currentSuspendedPage = WTFMove(m_suspendedPage);
-        m_process->suspendWebPageProxy(*this, *navigation);
-    }
+    auto currentSuspendedPage = WTFMove(m_suspendedPage);
+    m_process->suspendWebPageProxy(*this, navigation);
 
     m_process = WTFMove(process);
-    if (m_process->state() == WebProcessProxy::State::Running)
-        m_webProcessLifetimeTracker.webPageEnteringWebProcess();
+    m_isValid = true;
 
     // If we are reattaching to a SuspendedPage, then the WebProcess' WebPage already exists and
     // WebPageProxy::didCreateMainFrame() will not be called to initialize m_mainFrame. In such
@@ -754,11 +755,18 @@ void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Nav
         m_process->frameCreated(*m_mainFrameID, *m_mainFrame);
     }
 
-    RELEASE_LOG_IF_ALLOWED(Process, "%p WebPageProxy::reattachToWebProcess\n", this);
+    finishAttachingToWebProcess();
+}
 
+void WebPageProxy::finishAttachingToWebProcess()
+{
     ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
-    if (m_process->state() == ChildProcessProxy::State::Running)
+
+    if (m_process->state() == ChildProcessProxy::State::Running) {
+        m_webProcessLifetimeTracker.webPageEnteringWebProcess();
         processDidFinishLaunching();
+    }
+
     m_process->addExistingWebPage(*this, m_pageID);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
@@ -2517,9 +2525,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 
     processDidTerminate(ProcessTerminationReason::NavigationSwap);
 
-    // FIXME: this is to fix the ASSERT(isValid()) inside reattachToWebProcess, some other way to fix this is needed.
-    m_isValid = false;
-    reattachToWebProcess(WTFMove(process), &navigation);
+    swapToWebProcess(WTFMove(process), navigation);
 
     if (auto* item = navigation.targetItem()) {
         LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());

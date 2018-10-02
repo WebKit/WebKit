@@ -1521,7 +1521,8 @@ private:
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
     void reattachToWebProcess();
-    void reattachToWebProcess(Ref<WebProcessProxy>&&, API::Navigation*);
+    void swapToWebProcess(Ref<WebProcessProxy>&&, API::Navigation&);
+    void finishAttachingToWebProcess();
 
     RefPtr<API::Navigation> reattachToWebProcessForReload();
     RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem&);

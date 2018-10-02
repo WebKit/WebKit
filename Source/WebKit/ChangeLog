@@ -1,3 +1,25 @@
+2018-10-02  Antti Koivisto  <antti@apple.com>
+
+        WebPageProxy::reattachToWebProcess cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=189881
+
+        Reviewed by Chris Dumez.
+
+        Change the factoring to separate swap and crash code paths into different functions.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::swapToWebProcess):
+
+        Separate function for the swap case.
+
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+
+        Factor the common parts here.
+
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        * UIProcess/WebPageProxy.h:
+
 2018-10-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Theming of authentication dialog breaks with themes other than Adwaita
