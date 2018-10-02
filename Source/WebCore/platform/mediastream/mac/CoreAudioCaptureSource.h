@@ -55,7 +55,7 @@ class WebAudioSourceProviderAVFObjC;
 class CoreAudioCaptureSource : public RealtimeMediaSource {
 public:
 
-    static CaptureSourceOrError create(const String& deviceID, const MediaConstraints*);
+    static CaptureSourceOrError create(String&& deviceID, String&& hashSalt, const MediaConstraints*);
 
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
@@ -74,7 +74,7 @@ public:
     void scheduleReconfiguration();
 
 protected:
-    CoreAudioCaptureSource(const String& deviceID, const String& label, uint32_t persistentID);
+    CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t persistentID);
     virtual ~CoreAudioCaptureSource();
 
 private:
@@ -126,9 +126,9 @@ public:
 #endif
 
 private:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
-        return CoreAudioCaptureSource::create(device.persistentId(), constraints);
+        return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
     }
 };
 

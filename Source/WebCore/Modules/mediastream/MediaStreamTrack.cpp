@@ -197,7 +197,7 @@ void MediaStreamTrack::stopTrack(StopMode mode)
     configureTrackRendering();
 }
 
-MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings(Document& document) const
+MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
 {
     auto& settings = m_private->settings();
     TrackSettings result;
@@ -220,9 +220,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings(Document& document
     if (settings.supportsEchoCancellation())
         result.echoCancellation = settings.echoCancellation();
     if (settings.supportsDeviceId())
-        result.deviceId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(settings.deviceId(), document.deviceIDHashSalt());
+        result.deviceId = settings.deviceId();
     if (settings.supportsGroupId())
-        result.groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(settings.groupId(), document.deviceIDHashSalt());
+        result.groupId = settings.groupId();
 
     // FIXME: shouldn't this include displaySurface and logicalSurface?
 
@@ -287,7 +287,7 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Ech
     return result;
 }
 
-MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities(Document& document) const
+MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
 {
     auto capabilities = m_private->capabilities();
     TrackCapabilities result;
@@ -310,9 +310,9 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities(Document& 
     if (capabilities.supportsEchoCancellation())
         result.echoCancellation = capabilityBooleanVector(capabilities.echoCancellation());
     if (capabilities.supportsDeviceId())
-        result.deviceId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(capabilities.deviceId(), document.deviceIDHashSalt());
+        result.deviceId = capabilities.deviceId();
     if (capabilities.supportsGroupId())
-        result.groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(capabilities.groupId(), document.deviceIDHashSalt());
+        result.groupId = capabilities.groupId();
     return result;
 }
 

@@ -51,8 +51,8 @@ static uint64_t nextSessionID()
 
 class UserMediaCaptureManager::Source : public RealtimeMediaSource {
 public:
-    Source(const String& sourceID, Type type, const String& name, uint64_t id, UserMediaCaptureManager& manager)
-        : RealtimeMediaSource(sourceID, type, name)
+    Source(String&& sourceID, Type type, String&& name, String&& hashSalt, uint64_t id, UserMediaCaptureManager& manager)
+        : RealtimeMediaSource(type, WTFMove(name), WTFMove(sourceID), WTFMove(hashSalt))
         , m_id(id)
         , m_manager(manager)
         , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(nullptr))
@@ -177,7 +177,7 @@ void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& par
         RealtimeMediaSourceCenter::singleton().setAudioFactory(*this);
 }
 
-WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const CaptureDevice& device, WebCore::RealtimeMediaSource::Type sourceType, const WebCore::MediaConstraints* constraints)
+WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const CaptureDevice& device, WebCore::RealtimeMediaSource::Type sourceType, String&& hashSalt, const WebCore::MediaConstraints* constraints)
 {
     if (!constraints)
         return { };
@@ -186,10 +186,10 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
     RealtimeMediaSourceSettings settings;
     String errorMessage;
     bool succeeded;
-    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, sourceType, *constraints), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
+    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, sourceType, hashSalt, *constraints), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
         return WTFMove(errorMessage);
 
-    auto source = adoptRef(*new Source(String::number(id), sourceType, settings.label(), id, *this));
+    auto source = adoptRef(*new Source(String::number(id), sourceType, String { settings.label() }, WTFMove(hashSalt), id, *this));
     source->setSettings(WTFMove(settings));
     m_sources.set(id, source.copyRef());
     return WebCore::CaptureSourceOrError(WTFMove(source));

@@ -26,14 +26,13 @@
 #include "config.h"
 #include "RealtimeMediaSourceFactory.h"
 
-#include "CaptureDevice.h"
-#include "RealtimeMediaSource.h"
-
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDevice.h"
 #include "CaptureDeviceManager.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/SHA1.h>
 
 namespace WebCore {

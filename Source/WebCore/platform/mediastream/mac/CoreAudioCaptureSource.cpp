@@ -694,20 +694,20 @@ OSStatus CoreAudioSharedUnit::defaultOutputDevice(uint32_t* deviceID)
     return err;
 }
 
-CaptureSourceOrError CoreAudioCaptureSource::create(const String& deviceID, const MediaConstraints* constraints)
+CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& hashSalt, const MediaConstraints* constraints)
 {
 #if PLATFORM(MAC)
     auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(deviceID);
     if (!device)
         return { };
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(deviceID, device->label(), device->deviceID()));
+    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), String { device->label() }, WTFMove(hashSalt), device->deviceID()));
 #elif PLATFORM(IOS)
-    auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(deviceID);
+    auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(WTFMove(deviceID));
     if (!device)
         return { };
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(deviceID, device->label(), 0));
+    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), String { device->label() }, WTFMove(hashSalt), 0));
 #endif
 
     if (constraints) {
@@ -774,8 +774,8 @@ AudioCaptureFactory& CoreAudioCaptureSource::factory()
     return CoreAudioCaptureSourceFactory::singleton();
 }
 
-CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const String& label, uint32_t persistentID)
-    : RealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Audio, label)
+CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t persistentID)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(label), WTFMove(deviceID), WTFMove(hashSalt))
     , m_captureDeviceID(persistentID)
 {
     auto& unit = CoreAudioSharedUnit::singleton();
@@ -845,7 +845,7 @@ const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities()
 {
     if (!m_capabilities) {
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
-        capabilities.setDeviceId(id());
+        capabilities.setDeviceId(hashedId());
         capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
         capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
         capabilities.setSampleRate(CapabilityValueOrRange(8000, 96000));
@@ -860,7 +860,7 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings()
         RealtimeMediaSourceSettings settings;
         settings.setVolume(volume());
         settings.setSampleRate(sampleRate());
-        settings.setDeviceId(id());
+        settings.setDeviceId(hashedId());
         settings.setLabel(name());
         settings.setEchoCancellation(echoCancellation());
 

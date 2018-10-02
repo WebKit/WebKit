@@ -53,9 +53,16 @@ using namespace PAL;
 
 static const int videoSampleRate = 90000;
 
-CaptureSourceOrError MockRealtimeVideoSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(*new MockRealtimeVideoSourceMac(deviceID, name));
+#ifndef NDEBUG
+    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
+    ASSERT(device);
+    if (!device)
+        return { };
+#endif
+
+    auto source = adoptRef(*new MockRealtimeVideoSourceMac(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
     // FIXME: We should report error messages
     if (constraints && source->applyConstraints(*constraints))
         return { };
@@ -63,8 +70,8 @@ CaptureSourceOrError MockRealtimeVideoSource::create(const String& deviceID, con
     return CaptureSourceOrError(WTFMove(source));
 }
 
-MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(const String& deviceID, const String& name)
-    : MockRealtimeVideoSource(deviceID, name)
+MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(String&& deviceID, String&& name, String&& hashSalt)
+    : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
 {
 }
 

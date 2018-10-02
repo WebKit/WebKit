@@ -48,7 +48,7 @@ class WebAudioSourceProviderAVFObjC;
 class MockRealtimeAudioSourceMac final : public MockRealtimeAudioSource {
 private:
     friend class MockRealtimeAudioSource;
-    MockRealtimeAudioSourceMac(const String& deviceID, const String& name);
+    MockRealtimeAudioSourceMac(String&& deviceID, String&& name, String&& hashSalt);
 
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     std::optional<Vector<int>> discreteSampleRates() const final { return { { 44100, 48000 } }; }

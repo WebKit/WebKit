@@ -38,10 +38,9 @@
 namespace WebCore {
 
 RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
-    : RealtimeMediaSource(WTFMove(audioTrackId), RealtimeMediaSource::Type::Audio, String())
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, "remote audio"_s, WTFMove(audioTrackId))
     , m_audioTrack(WTFMove(audioTrack))
 {
-    setName("remote audio");
     notifyMutedChange(!m_audioTrack);
 }
 

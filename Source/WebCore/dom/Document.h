@@ -1387,7 +1387,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
     bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
-    void setDeviceIDHashSalt(const String& salt) { m_idHashSalt = salt; }
+    void setDeviceIDHashSalt(const String&);
     String deviceIDHashSalt() const { return m_idHashSalt; }
     void stopMediaCapture();
     void registerForMediaStreamStateChangeCallbacks(HTMLMediaElement&);

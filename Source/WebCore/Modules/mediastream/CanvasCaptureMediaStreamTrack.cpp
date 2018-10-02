@@ -66,7 +66,7 @@ Ref<CanvasCaptureMediaStreamTrack::Source> CanvasCaptureMediaStreamTrack::Source
 
 // FIXME: Give source id and name
 CanvasCaptureMediaStreamTrack::Source::Source(HTMLCanvasElement& canvas, std::optional<double>&& frameRequestRate)
-    : RealtimeMediaSource(String(), Type::Video, String())
+    : RealtimeMediaSource(Type::Video, "CanvasCaptureMediaStreamTrack"_s)
     , m_frameRequestRate(WTFMove(frameRequestRate))
     , m_requestFrameTimer(*this, &Source::requestFrameTimerFired)
     , m_canvasChangedTimer(*this, &Source::captureCanvas)

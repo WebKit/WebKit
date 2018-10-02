@@ -55,9 +55,9 @@ private:
     void initialize(const WebProcessCreationParameters&) final;
 
     // WebCore::RealtimeMediaSource factories
-    WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice& device, const WebCore::MediaConstraints* constraints) final { return createCaptureSource(device, WebCore::RealtimeMediaSource::Type::Audio, constraints); }
-    WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice& device, const WebCore::MediaConstraints* constraints) final { return createCaptureSource(device, WebCore::RealtimeMediaSource::Type::Video, constraints); }
-    WebCore::CaptureSourceOrError createCaptureSource(const WebCore::CaptureDevice&, WebCore::RealtimeMediaSource::Type, const WebCore::MediaConstraints*);
+    WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints) final { return createCaptureSource(device, WebCore::RealtimeMediaSource::Type::Audio, WTFMove(hashSalt), constraints); }
+    WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints) final { return createCaptureSource(device, WebCore::RealtimeMediaSource::Type::Video, WTFMove(hashSalt), constraints); }
+    WebCore::CaptureSourceOrError createCaptureSource(const WebCore::CaptureDevice&, WebCore::RealtimeMediaSource::Type, String&&, const WebCore::MediaConstraints*);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

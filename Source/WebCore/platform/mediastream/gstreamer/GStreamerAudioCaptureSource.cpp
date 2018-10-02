@@ -53,9 +53,9 @@ static void initializeGStreamerDebug()
 
 class GStreamerAudioCaptureSourceFactory : public AudioCaptureFactory {
 public:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
-        return GStreamerAudioCaptureSource::create(device.persistentId(), constraints);
+        return GStreamerAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
     }
 };
 
@@ -65,7 +65,7 @@ static GStreamerAudioCaptureSourceFactory& libWebRTCAudioCaptureSourceFactory()
     return factory.get();
 }
 
-CaptureSourceOrError GStreamerAudioCaptureSource::create(const String& deviceID, const MediaConstraints* constraints)
+CaptureSourceOrError GStreamerAudioCaptureSource::create(String&& deviceID, String&& hashSalt, const MediaConstraints* constraints)
 {
     auto device = GStreamerAudioCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
@@ -73,7 +73,7 @@ CaptureSourceOrError GStreamerAudioCaptureSource::create(const String& deviceID,
         return CaptureSourceOrError(WTFMove(errorMessage));
     }
 
-    auto source = adoptRef(*new GStreamerAudioCaptureSource(device.value()));
+    auto source = adoptRef(*new GStreamerAudioCaptureSource(device.value(), WTFMove(hashSalt)));
 
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
@@ -88,15 +88,15 @@ AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
     return libWebRTCAudioCaptureSourceFactory();
 }
 
-GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice device)
-    : RealtimeMediaSource(device.persistentId(), RealtimeMediaSource::Type::Audio, device.label())
+GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice device, String&& hashSalt)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
     , m_capturer(std::make_unique<GStreamerAudioCapturer>(device))
 {
     initializeGStreamerDebug();
 }
 
-GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(const String& deviceID, const String& name)
-    : RealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Audio, name)
+GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
     , m_capturer(std::make_unique<GStreamerAudioCapturer>())
 {
     initializeGStreamerDebug();
@@ -163,7 +163,7 @@ const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities
     }
 
     RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
-    capabilities.setDeviceId(id());
+    capabilities.setDeviceId(hashedId());
     capabilities.setEchoCancellation(defaultEchoCancellationCapability);
     capabilities.setVolume(defaultVolumeCapability());
     capabilities.setSampleRate(CapabilityValueOrRange(minSampleRate, maxSampleRate));
@@ -182,7 +182,7 @@ const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings()
 {
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;
-        settings.setDeviceId(id());
+        settings.setDeviceId(hashedId());
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;
         supportedConstraints.setSupportsDeviceId(true);

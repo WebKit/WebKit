@@ -125,15 +125,15 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, WebCore::RealtimeMediaSource::Type type, const MediaConstraints& constraints, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings& settings)
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, WebCore::RealtimeMediaSource::Type type, String&& hashSalt, const MediaConstraints& constraints, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings& settings)
 {
     CaptureSourceOrError sourceOrError;
     switch (type) {
     case WebCore::RealtimeMediaSource::Type::Audio:
-        sourceOrError = RealtimeMediaSourceCenter::singleton().audioFactory().createAudioCaptureSource(device, &constraints);
+        sourceOrError = RealtimeMediaSourceCenter::singleton().audioFactory().createAudioCaptureSource(device, WTFMove(hashSalt), &constraints);
         break;
     case WebCore::RealtimeMediaSource::Type::Video:
-        sourceOrError = RealtimeMediaSourceCenter::singleton().videoFactory().createVideoCaptureSource(device, &constraints);
+        sourceOrError = RealtimeMediaSourceCenter::singleton().videoFactory().createVideoCaptureSource(device, WTFMove(hashSalt), &constraints);
         break;
     case WebCore::RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();

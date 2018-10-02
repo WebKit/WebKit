@@ -47,14 +47,16 @@
 
 namespace WebCore {
 
-RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const String& name)
-    : m_id(id)
+RealtimeMediaSource::RealtimeMediaSource(Type type, String&& name, String&& deviceID, String&& hashSalt)
+    : m_idHashSalt(WTFMove(hashSalt))
+    , m_persistentID(WTFMove(deviceID))
     , m_type(type)
-    , m_name(name)
+    , m_name(WTFMove(name))
 {
-    if (m_id.isEmpty())
-        m_id = createCanonicalUUIDString();
-    m_persistentID = m_id;
+    if (m_persistentID.isEmpty())
+        m_persistentID = createCanonicalUUIDString();
+    else
+        m_hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, m_idHashSalt);
 }
 
 void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
@@ -608,10 +610,9 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
                 return false;
 
             ASSERT(constraint.isString());
-            ASSERT(!constraints.deviceIDHashSalt.isEmpty());
+            ASSERT(!m_hashedID.isEmpty());
 
-            auto hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, constraints.deviceIDHashSalt);
-            double constraintDistance = downcast<StringConstraint>(constraint).fitnessDistance(hashedID);
+            double constraintDistance = downcast<StringConstraint>(constraint).fitnessDistance(m_hashedID);
             if (std::isinf(constraintDistance)) {
                 failedConstraint = constraint.name();
                 return true;
@@ -956,6 +957,17 @@ void RealtimeMediaSource::scheduleDeferredTask(WTF::Function<void()>&& function)
 
         function();
     });
+}
+
+const String& RealtimeMediaSource::hashedId() const
+{
+    ASSERT(!m_hashedID.isEmpty());
+    return m_hashedID;
+}
+
+String RealtimeMediaSource::deviceIDHashSalt() const
+{
+    return m_idHashSalt;
 }
 
 RealtimeMediaSource::Observer::~Observer()

@@ -42,12 +42,12 @@ namespace WebCore {
 class MockRealtimeAudioSource : public RealtimeMediaSource {
 public:
 
-    static CaptureSourceOrError create(const String& deviceID, const String& name, const MediaConstraints*);
+    static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);
 
     virtual ~MockRealtimeAudioSource();
 
 protected:
-    MockRealtimeAudioSource(const String& deviceID, const String& name);
+    MockRealtimeAudioSource(String&& deviceID, String&& name, String&& hashSalt);
 
     void startProducingData() final;
     void stopProducingData() final;

@@ -102,7 +102,7 @@ static RetainPtr<CFDictionaryRef> windowDescription(CGWindowID id)
     return checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(windows.get(), 0));
 }
 
-CaptureSourceOrError WindowDisplayCaptureSourceMac::create(const String& windowID, const MediaConstraints* constraints)
+CaptureSourceOrError WindowDisplayCaptureSourceMac::create(String&& windowID, const MediaConstraints* constraints)
 {
     bool ok;
     auto actualID = windowID.toUIntStrict(&ok);

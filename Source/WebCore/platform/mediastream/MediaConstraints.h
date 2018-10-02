@@ -879,7 +879,6 @@ struct MediaConstraints {
 
     MediaTrackConstraintSetMap mandatoryConstraints;
     Vector<MediaTrackConstraintSetMap> advancedConstraints;
-    String deviceIDHashSalt;
     bool isValid { false };
 };
     

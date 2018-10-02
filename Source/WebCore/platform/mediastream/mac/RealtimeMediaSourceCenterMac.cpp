@@ -48,10 +48,10 @@ namespace WebCore {
 
 class VideoCaptureSourceFactoryMac final : public VideoCaptureFactory {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
-        return AVVideoCaptureSource::create(device.persistentId(), constraints);
+        return AVVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
     }
 
 #if PLATFORM(IOS)
@@ -75,11 +75,11 @@ public:
         switch (device.type()) {
         case CaptureDevice::DeviceType::Screen:
 #if PLATFORM(MAC)
-            return ScreenDisplayCaptureSourceMac::create(device.persistentId(), constraints);
+            return ScreenDisplayCaptureSourceMac::create(String { device.persistentId() }, constraints);
 #endif
         case CaptureDevice::DeviceType::Window:
 #if PLATFORM(MAC)
-            return WindowDisplayCaptureSourceMac::create(device.persistentId(), constraints);
+            return WindowDisplayCaptureSourceMac::create(String { device.persistentId() }, constraints);
 #endif
         case CaptureDevice::DeviceType::Application:
         case CaptureDevice::DeviceType::Browser:
