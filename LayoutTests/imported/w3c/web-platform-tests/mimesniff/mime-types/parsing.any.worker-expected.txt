@@ -1,0 +1,1889 @@
+
+PASS Loading data… 
+FAIL text/html;charset=gbk (Blob/File) Can't find variable: File
+FAIL text/html;charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL TEXT/HTML;CHARSET=GBK (Blob/File) assert_equals: Blob expected "text/html;charset=GBK" but got "text/html;charset=gbk"
+FAIL TEXT/HTML;CHARSET=GBK (Request/Response) assert_equals: expected "text/html;charset=GBK" but got "text/html"
+FAIL text/html;charset=gbk( (Blob/File) assert_equals: Blob expected "text/html;charset=\"gbk(\"" but got "text/html;charset=gbk("
+FAIL text/html;charset=gbk( (Request/Response) assert_equals: expected "text/html;charset=\"gbk(\"" but got "text/html"
+FAIL text/html;x=(;charset=gbk (Blob/File) assert_equals: Blob expected "text/html;x=\"(\";charset=gbk" but got "text/html;x=(;charset=gbk"
+FAIL text/html;x=(;charset=gbk (Request/Response) assert_equals: expected "text/html;x=\"(\";charset=gbk" but got "text/html"
+FAIL text/html;charset=gbk;charset=windows-1255 (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;charset=gbk;charset=windows-1255"
+FAIL text/html;charset=gbk;charset=windows-1255 (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;charset=();charset=GBK (Blob/File) assert_equals: Blob expected "text/html;charset=\"()\"" but got "text/html;charset=();charset=gbk"
+FAIL text/html;charset=();charset=GBK (Request/Response) assert_equals: expected "text/html;charset=\"()\"" but got "text/html"
+FAIL text/html;charset =gbk (Blob/File) assert_equals: Blob expected "text/html" but got "text/html;charset =gbk"
+PASS text/html;charset =gbk (Request/Response) 
+FAIL text/html ;charset=gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html ;charset=gbk"
+FAIL text/html ;charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html; charset=gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html; charset=gbk"
+FAIL text/html; charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;charset= gbk (Blob/File) assert_equals: Blob expected "text/html;charset=\" gbk\"" but got "text/html;charset= gbk"
+FAIL text/html;charset= gbk (Request/Response) assert_equals: expected "text/html;charset=\" gbk\"" but got "text/html"
+FAIL text/html;charset= "gbk" (Blob/File) assert_equals: Blob expected "text/html;charset=\" \\\"gbk\\"\"" but got "text/html;charset= \"gbk\""
+FAIL text/html;charset= "gbk" (Request/Response) assert_equals: expected "text/html;charset=\" \\\"gbk\\"\"" but got "text/html"
+FAIL text/html;charset='gbk' (Blob/File) Can't find variable: File
+FAIL text/html;charset='gbk' (Request/Response) assert_equals: expected "text/html;charset='gbk'" but got "text/html"
+FAIL text/html;charset='gbk (Blob/File) Can't find variable: File
+FAIL text/html;charset='gbk (Request/Response) assert_equals: expected "text/html;charset='gbk" but got "text/html"
+FAIL text/html;charset=gbk' (Blob/File) Can't find variable: File
+FAIL text/html;charset=gbk' (Request/Response) assert_equals: expected "text/html;charset=gbk'" but got "text/html"
+FAIL text/html;charset=';charset=GBK (Blob/File) assert_equals: Blob expected "text/html;charset='" but got "text/html;charset=';charset=gbk"
+FAIL text/html;charset=';charset=GBK (Request/Response) assert_equals: expected "text/html;charset='" but got "text/html"
+FAIL text/html;test;charset=gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;test;charset=gbk"
+FAIL text/html;test;charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;test=;charset=gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;test=;charset=gbk"
+FAIL text/html;test=;charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;';charset=gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;';charset=gbk"
+FAIL text/html;';charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;";charset=gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;\";charset=gbk"
+FAIL text/html;";charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html ; ; charset=gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html ; ; charset=gbk"
+FAIL text/html ; ; charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;;;;charset=gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;;;;charset=gbk"
+FAIL text/html;;;;charset=gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;charset= ";charset=GBK (Blob/File) assert_equals: Blob expected "text/html;charset=GBK" but got ""
+FAIL text/html;charset= ";charset=GBK (Request/Response) assert_equals: expected "text/html;charset=GBK" but got "text/html"
+FAIL text/html;charset=";charset=foo";charset=GBK (Blob/File) assert_equals: Blob expected "text/html;charset=GBK" but got ""
+FAIL text/html;charset=";charset=foo";charset=GBK (Request/Response) assert_equals: expected "text/html;charset=GBK" but got "text/html"
+FAIL text/html;charset="gbk" (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;charset=\"gbk\""
+FAIL text/html;charset="gbk" (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;charset="gbk (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;charset=\"gbk"
+FAIL text/html;charset="gbk (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;charset=gbk" (Blob/File) assert_equals: Blob expected "text/html;charset=\"gbk\\\"\"" but got "text/html;charset=gbk\""
+FAIL text/html;charset=gbk" (Request/Response) assert_equals: expected "text/html;charset=\"gbk\\\"\"" but got "text/html"
+FAIL text/html;charset=" gbk" (Blob/File) Can't find variable: File
+FAIL text/html;charset=" gbk" (Request/Response) assert_equals: expected "text/html;charset=\" gbk\"" but got "text/html"
+FAIL text/html;charset="gbk " (Blob/File) Can't find variable: File
+FAIL text/html;charset="gbk " (Request/Response) assert_equals: expected "text/html;charset=\"gbk \"" but got "text/html"
+FAIL text/html;charset="\ gbk" (Blob/File) assert_equals: Blob expected "text/html;charset=\" gbk\"" but got "text/html;charset=\"\\ gbk\""
+FAIL text/html;charset="\ gbk" (Request/Response) assert_equals: expected "text/html;charset=\" gbk\"" but got "text/html"
+FAIL text/html;charset="\g\b\k" (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;charset=\"\\g\b\k\""
+FAIL text/html;charset="\g\b\k" (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;charset="gbk"x (Blob/File) assert_equals: Blob expected "text/html;charset=gbk" but got "text/html;charset=\"gbk\"x"
+FAIL text/html;charset="gbk"x (Request/Response) assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL text/html;charset="";charset=GBK (Blob/File) assert_equals: Blob expected "text/html;charset=GBK" but got "text/html;charset=\"\";charset=gbk"
+FAIL text/html;charset="";charset=GBK (Request/Response) assert_equals: expected "text/html;charset=GBK" but got "text/html"
+FAIL text/html;charset=";charset=GBK (Blob/File) assert_equals: Blob expected "text/html;charset=\";charset=GBK\"" but got "text/html;charset=\";charset=gbk"
+FAIL text/html;charset=";charset=GBK (Request/Response) assert_equals: expected "text/html;charset=\";charset=GBK\"" but got "text/html"
+FAIL text/html;charset={gbk} (Blob/File) assert_equals: Blob expected "text/html;charset=\"{gbk}\"" but got "text/html;charset={gbk}"
+FAIL text/html;charset={gbk} (Request/Response) assert_equals: expected "text/html;charset=\"{gbk}\"" but got "text/html"
+FAIL text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk (Blob/File) Can't find variable: File
+FAIL text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk (Request/Response) assert_equals: expected "text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk" but got "text/html"
+FAIL 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789/0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789 (Blob/File) Can't find variable: File
+PASS 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789/0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789 (Request/Response) 
+FAIL !#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz (Blob/File) assert_equals: Blob expected "!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" but got "!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+FAIL !#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz (Request/Response) assert_equals: expected "!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" but got "!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+FAIL x/x;x="	 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ" (Blob/File) assert_equals: Blob expected "x/x;x=\"\t !\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ\"" but got ""
+FAIL x/x;x="	 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ" (Request/Response) assert_equals: expected "x/x;x=\"\t !\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ\"" but got "x/x"
+FAIL x/x;test (Blob/File) assert_equals: Blob expected "x/x" but got "x/x;test"
+PASS x/x;test (Request/Response) 
+FAIL x/x;test="\ (Blob/File) assert_equals: Blob expected "x/x;test=\"\\\\"" but got "x/x;test=\"\\"
+FAIL x/x;test="\ (Request/Response) assert_equals: expected "x/x;test=\"\\\\"" but got "x/x"
+FAIL x/x;x=  (Blob/File) assert_equals: Blob expected "x/x" but got "x/x;x= "
+PASS x/x;x=  (Request/Response) 
+FAIL x/x;x=	 (Blob/File) assert_equals: Blob expected "x/x" but got ""
+PASS x/x;x=	 (Request/Response) 
+FAIL text/html;test=ÿ;charset=gbk (Blob/File) assert_equals: Blob expected "text/html;test=\"ÿ\";charset=gbk" but got ""
+FAIL text/html;test=ÿ;charset=gbk (Request/Response) assert_equals: expected "text/html;test=\"ÿ\";charset=gbk" but got "text/html"
+FAIL x/x;test=�;x=x (Blob/File) assert_equals: Blob expected "x/x;x=x" but got ""
+PASS x/x;test=�;x=x (Request/Response) 
+FAIL  (Blob/File) Can't find variable: File
+PASS  (Request/Response) 
+FAIL 	 (Blob/File) Can't find variable: File
+PASS 	 (Request/Response) 
+FAIL / (Blob/File) assert_equals: Blob expected "" but got "/"
+FAIL / (Request/Response) assert_equals: expected "" but got "/"
+FAIL bogus (Blob/File) assert_equals: Blob expected "" but got "bogus"
+FAIL bogus (Request/Response) assert_equals: expected "" but got "bogus"
+FAIL bogus/ (Blob/File) assert_equals: Blob expected "" but got "bogus/"
+FAIL bogus/ (Request/Response) assert_equals: expected "" but got "bogus/"
+FAIL bogus/  (Blob/File) assert_equals: Blob expected "" but got "bogus/ "
+FAIL bogus/  (Request/Response) assert_equals: expected "" but got "bogus/"
+FAIL bogus/bogus/; (Blob/File) assert_equals: Blob expected "" but got "bogus/bogus/;"
+FAIL bogus/bogus/; (Request/Response) assert_equals: expected "" but got "bogus/bogus/"
+FAIL </> (Blob/File) assert_equals: Blob expected "" but got "</>"
+FAIL </> (Request/Response) assert_equals: expected "" but got "</>"
+FAIL (/) (Blob/File) assert_equals: Blob expected "" but got "(/)"
+FAIL (/) (Request/Response) assert_equals: expected "" but got "(/)"
+FAIL ÿ/ÿ (Blob/File) Can't find variable: File
+PASS ÿ/ÿ (Request/Response) 
+FAIL text/html(;doesnot=matter (Blob/File) assert_equals: Blob expected "" but got "text/html(;doesnot=matter"
+FAIL text/html(;doesnot=matter (Request/Response) assert_equals: expected "" but got "text/html("
+FAIL {/} (Blob/File) assert_equals: Blob expected "" but got "{/}"
+FAIL {/} (Request/Response) assert_equals: expected "" but got "{/}"
+FAIL Ā/Ā (Blob/File) Can't find variable: File
+PASS Ā/Ā (Request/Response) 
+FAIL \0/x (Blob/File) Can't find variable: File
+PASS \0/x (Request/Response) 
+FAIL x/\0 (Blob/File) Can't find variable: File
+PASS x/\0 (Request/Response) 
+FAIL x/x;\0=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;\0=x;bonus=x (Request/Response) 
+FAIL x/x;x=\0;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;x=\0;bonus=x (Request/Response) 
+FAIL x/x;x="\0";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;x="\0";bonus=x (Request/Response) 
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL 	/x (Blob/File) Can't find variable: File
+FAIL 	/x (Request/Response) assert_equals: expected "" but got "/x"
+FAIL x/	 (Blob/File) Can't find variable: File
+FAIL x/	 (Request/Response) assert_equals: expected "" but got "x/"
+FAIL x/x;	=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;	=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL 
+/x (Blob/File) Can't find variable: File
+FAIL 
+/x (Request/Response) assert_throws: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+FAIL x/
+ (Blob/File) Can't find variable: File
+FAIL x/
+ (Request/Response) assert_throws: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+FAIL x/x;
+=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;
+=x;bonus=x (Request/Response) 
+FAIL x/x;x=
+;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;x=
+;bonus=x (Request/Response) 
+FAIL x/x;x="
+";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;x="
+";bonus=x (Request/Response) 
+FAIL /x (Blob/File) Can't find variable: File
+FAIL /x (Request/Response) assert_equals: expected "" but got "/x"
+FAIL x/ (Blob/File) Can't find variable: File
+FAIL x/ (Request/Response) assert_equals: expected "" but got "x/"
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+FAIL /x (Request/Response) assert_equals: expected "" but got "/x"
+FAIL x/ (Blob/File) Can't find variable: File
+FAIL x/ (Request/Response) assert_equals: expected "" but got "x/"
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL \r/x (Blob/File) Can't find variable: File
+FAIL \r/x (Request/Response) assert_throws: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+FAIL x/\r (Blob/File) Can't find variable: File
+FAIL x/\r (Request/Response) assert_throws: function "() => new Request("about:blank", { headers: [["Content-Type", val.input]] })" did not throw
+FAIL x/x;\r=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;\r=x;bonus=x (Request/Response) 
+FAIL x/x;x=\r;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;x=\r;bonus=x (Request/Response) 
+FAIL x/x;x="\r";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+PASS x/x;x="\r";bonus=x (Request/Response) 
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL  /x (Blob/File) assert_equals: Blob expected "" but got " /x"
+FAIL  /x (Request/Response) assert_equals: expected "" but got "/x"
+FAIL x/  (Blob/File) assert_equals: Blob expected "" but got "x/ "
+FAIL x/  (Request/Response) assert_equals: expected "" but got "x/"
+FAIL x/x; =x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x; =x;bonus=x"
+FAIL x/x; =x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL "/x (Blob/File) assert_equals: Blob expected "" but got "\"/x"
+FAIL "/x (Request/Response) assert_equals: expected "" but got "\"/x"
+FAIL x/" (Blob/File) assert_equals: Blob expected "" but got "x/\""
+FAIL x/" (Request/Response) assert_equals: expected "" but got "x/\""
+FAIL x/x;"=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;\"=x;bonus=x"
+FAIL x/x;"=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL (/x (Blob/File) assert_equals: Blob expected "" but got "(/x"
+FAIL (/x (Request/Response) assert_equals: expected "" but got "(/x"
+FAIL x/( (Blob/File) assert_equals: Blob expected "" but got "x/("
+FAIL x/( (Request/Response) assert_equals: expected "" but got "x/("
+FAIL x/x;(=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;(=x;bonus=x"
+FAIL x/x;(=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=(;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"(\";bonus=x" but got "x/x;x=(;bonus=x"
+FAIL x/x;x=(;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"(\";bonus=x" but got "x/x"
+FAIL x/x;x="(";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="(";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"(\";bonus=x" but got "x/x"
+FAIL )/x (Blob/File) assert_equals: Blob expected "" but got ")/x"
+FAIL )/x (Request/Response) assert_equals: expected "" but got ")/x"
+FAIL x/) (Blob/File) assert_equals: Blob expected "" but got "x/)"
+FAIL x/) (Request/Response) assert_equals: expected "" but got "x/)"
+FAIL x/x;)=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;)=x;bonus=x"
+FAIL x/x;)=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=);bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\")\";bonus=x" but got "x/x;x=);bonus=x"
+FAIL x/x;x=);bonus=x (Request/Response) assert_equals: expected "x/x;x=\")\";bonus=x" but got "x/x"
+FAIL x/x;x=")";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x=")";bonus=x (Request/Response) assert_equals: expected "x/x;x=\")\";bonus=x" but got "x/x"
+FAIL ,/x (Blob/File) assert_equals: Blob expected "" but got ",/x"
+PASS ,/x (Request/Response) 
+FAIL x/, (Blob/File) assert_equals: Blob expected "" but got "x/,"
+FAIL x/, (Request/Response) assert_equals: expected "" but got "x/"
+FAIL x/x;,=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;,=x;bonus=x"
+FAIL x/x;,=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=,;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\",\";bonus=x" but got "x/x;x=,;bonus=x"
+FAIL x/x;x=,;bonus=x (Request/Response) assert_equals: expected "x/x;x=\",\";bonus=x" but got "x/x"
+FAIL x/x;x=",";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x=",";bonus=x (Request/Response) assert_equals: expected "x/x;x=\",\";bonus=x" but got "x/x"
+FAIL x/x;/=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;/=x;bonus=x"
+FAIL x/x;/=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=/;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"/\";bonus=x" but got "x/x;x=/;bonus=x"
+FAIL x/x;x=/;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"/\";bonus=x" but got "x/x"
+FAIL x/x;x="/";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="/";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"/\";bonus=x" but got "x/x"
+FAIL :/x (Blob/File) assert_equals: Blob expected "" but got ":/x"
+FAIL :/x (Request/Response) assert_equals: expected "" but got ":/x"
+FAIL x/: (Blob/File) assert_equals: Blob expected "" but got "x/:"
+FAIL x/: (Request/Response) assert_equals: expected "" but got "x/:"
+FAIL x/x;:=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;:=x;bonus=x"
+FAIL x/x;:=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=:;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\":\";bonus=x" but got "x/x;x=:;bonus=x"
+FAIL x/x;x=:;bonus=x (Request/Response) assert_equals: expected "x/x;x=\":\";bonus=x" but got "x/x"
+FAIL x/x;x=":";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x=":";bonus=x (Request/Response) assert_equals: expected "x/x;x=\":\";bonus=x" but got "x/x"
+FAIL ;/x (Blob/File) assert_equals: Blob expected "" but got ";/x"
+PASS ;/x (Request/Response) 
+FAIL x/; (Blob/File) assert_equals: Blob expected "" but got "x/;"
+FAIL x/; (Request/Response) assert_equals: expected "" but got "x/"
+FAIL </x (Blob/File) assert_equals: Blob expected "" but got "</x"
+FAIL </x (Request/Response) assert_equals: expected "" but got "</x"
+FAIL x/< (Blob/File) assert_equals: Blob expected "" but got "x/<"
+FAIL x/< (Request/Response) assert_equals: expected "" but got "x/<"
+FAIL x/x;<=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;<=x;bonus=x"
+FAIL x/x;<=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=<;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"<\";bonus=x" but got "x/x;x=<;bonus=x"
+FAIL x/x;x=<;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"<\";bonus=x" but got "x/x"
+FAIL x/x;x="<";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="<";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"<\";bonus=x" but got "x/x"
+FAIL =/x (Blob/File) assert_equals: Blob expected "" but got "=/x"
+FAIL =/x (Request/Response) assert_equals: expected "" but got "=/x"
+FAIL x/= (Blob/File) assert_equals: Blob expected "" but got "x/="
+FAIL x/= (Request/Response) assert_equals: expected "" but got "x/="
+FAIL x/x;x==;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"=\";bonus=x" but got "x/x;x==;bonus=x"
+FAIL x/x;x==;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"=\";bonus=x" but got "x/x"
+FAIL x/x;x="=";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="=";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"=\";bonus=x" but got "x/x"
+FAIL >/x (Blob/File) assert_equals: Blob expected "" but got ">/x"
+FAIL >/x (Request/Response) assert_equals: expected "" but got ">/x"
+FAIL x/> (Blob/File) assert_equals: Blob expected "" but got "x/>"
+FAIL x/> (Request/Response) assert_equals: expected "" but got "x/>"
+FAIL x/x;>=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;>=x;bonus=x"
+FAIL x/x;>=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=>;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\">\";bonus=x" but got "x/x;x=>;bonus=x"
+FAIL x/x;x=>;bonus=x (Request/Response) assert_equals: expected "x/x;x=\">\";bonus=x" but got "x/x"
+FAIL x/x;x=">";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x=">";bonus=x (Request/Response) assert_equals: expected "x/x;x=\">\";bonus=x" but got "x/x"
+FAIL ?/x (Blob/File) assert_equals: Blob expected "" but got "?/x"
+FAIL ?/x (Request/Response) assert_equals: expected "" but got "?/x"
+FAIL x/? (Blob/File) assert_equals: Blob expected "" but got "x/?"
+FAIL x/? (Request/Response) assert_equals: expected "" but got "x/?"
+FAIL x/x;?=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;?=x;bonus=x"
+FAIL x/x;?=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=?;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"?\";bonus=x" but got "x/x;x=?;bonus=x"
+FAIL x/x;x=?;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"?\";bonus=x" but got "x/x"
+FAIL x/x;x="?";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="?";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"?\";bonus=x" but got "x/x"
+FAIL @/x (Blob/File) assert_equals: Blob expected "" but got "@/x"
+FAIL @/x (Request/Response) assert_equals: expected "" but got "@/x"
+FAIL x/@ (Blob/File) assert_equals: Blob expected "" but got "x/@"
+FAIL x/@ (Request/Response) assert_equals: expected "" but got "x/@"
+FAIL x/x;@=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;@=x;bonus=x"
+FAIL x/x;@=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=@;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"@\";bonus=x" but got "x/x;x=@;bonus=x"
+FAIL x/x;x=@;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"@\";bonus=x" but got "x/x"
+FAIL x/x;x="@";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="@";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"@\";bonus=x" but got "x/x"
+FAIL [/x (Blob/File) assert_equals: Blob expected "" but got "[/x"
+FAIL [/x (Request/Response) assert_equals: expected "" but got "[/x"
+FAIL x/[ (Blob/File) assert_equals: Blob expected "" but got "x/["
+FAIL x/[ (Request/Response) assert_equals: expected "" but got "x/["
+FAIL x/x;[=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;[=x;bonus=x"
+FAIL x/x;[=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=[;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"[\";bonus=x" but got "x/x;x=[;bonus=x"
+FAIL x/x;x=[;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"[\";bonus=x" but got "x/x"
+FAIL x/x;x="[";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="[";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"[\";bonus=x" but got "x/x"
+FAIL \/x (Blob/File) assert_equals: Blob expected "" but got "\\/x"
+FAIL \/x (Request/Response) assert_equals: expected "" but got "\\/x"
+FAIL x/\ (Blob/File) assert_equals: Blob expected "" but got "x/\\"
+FAIL x/\ (Request/Response) assert_equals: expected "" but got "x/\\"
+FAIL x/x;\=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;\\=x;bonus=x"
+FAIL x/x;\=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL ]/x (Blob/File) assert_equals: Blob expected "" but got "]/x"
+FAIL ]/x (Request/Response) assert_equals: expected "" but got "]/x"
+FAIL x/] (Blob/File) assert_equals: Blob expected "" but got "x/]"
+FAIL x/] (Request/Response) assert_equals: expected "" but got "x/]"
+FAIL x/x;]=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;]=x;bonus=x"
+FAIL x/x;]=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=];bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"]\";bonus=x" but got "x/x;x=];bonus=x"
+FAIL x/x;x=];bonus=x (Request/Response) assert_equals: expected "x/x;x=\"]\";bonus=x" but got "x/x"
+FAIL x/x;x="]";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="]";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"]\";bonus=x" but got "x/x"
+FAIL {/x (Blob/File) assert_equals: Blob expected "" but got "{/x"
+FAIL {/x (Request/Response) assert_equals: expected "" but got "{/x"
+FAIL x/{ (Blob/File) assert_equals: Blob expected "" but got "x/{"
+FAIL x/{ (Request/Response) assert_equals: expected "" but got "x/{"
+FAIL x/x;{=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;{=x;bonus=x"
+FAIL x/x;{=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x={;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"{\";bonus=x" but got "x/x;x={;bonus=x"
+FAIL x/x;x={;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"{\";bonus=x" but got "x/x"
+FAIL x/x;x="{";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="{";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"{\";bonus=x" but got "x/x"
+FAIL }/x (Blob/File) assert_equals: Blob expected "" but got "}/x"
+FAIL }/x (Request/Response) assert_equals: expected "" but got "}/x"
+FAIL x/} (Blob/File) assert_equals: Blob expected "" but got "x/}"
+FAIL x/} (Request/Response) assert_equals: expected "" but got "x/}"
+FAIL x/x;}=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got "x/x;}=x;bonus=x"
+FAIL x/x;}=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=};bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"}\";bonus=x" but got "x/x;x=};bonus=x"
+FAIL x/x;x=};bonus=x (Request/Response) assert_equals: expected "x/x;x=\"}\";bonus=x" but got "x/x"
+FAIL x/x;x="}";bonus=x (Blob/File) Can't find variable: File
+FAIL x/x;x="}";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"}\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL /x (Blob/File) Can't find variable: File
+PASS /x (Request/Response) 
+FAIL x/ (Blob/File) Can't find variable: File
+PASS x/ (Request/Response) 
+FAIL x/x;=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x=;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL x/x;x="";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"\";bonus=x" but got ""
+FAIL x/x;x="";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"\";bonus=x" but got "x/x"
+FAIL  /x (Blob/File) Can't find variable: File
+PASS  /x (Request/Response) 
+FAIL x/  (Blob/File) Can't find variable: File
+PASS x/  (Request/Response) 
+FAIL x/x; =x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x; =x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x= ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\" \";bonus=x" but got ""
+FAIL x/x;x= ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\" \";bonus=x" but got "x/x"
+FAIL x/x;x=" ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\" \";bonus=x" but got ""
+FAIL x/x;x=" ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\" \";bonus=x" but got "x/x"
+FAIL ¡/x (Blob/File) Can't find variable: File
+PASS ¡/x (Request/Response) 
+FAIL x/¡ (Blob/File) Can't find variable: File
+PASS x/¡ (Request/Response) 
+FAIL x/x;¡=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¡=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¡;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¡\";bonus=x" but got ""
+FAIL x/x;x=¡;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¡\";bonus=x" but got "x/x"
+FAIL x/x;x="¡";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¡\";bonus=x" but got ""
+FAIL x/x;x="¡";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¡\";bonus=x" but got "x/x"
+FAIL ¢/x (Blob/File) Can't find variable: File
+PASS ¢/x (Request/Response) 
+FAIL x/¢ (Blob/File) Can't find variable: File
+PASS x/¢ (Request/Response) 
+FAIL x/x;¢=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¢=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¢;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¢\";bonus=x" but got ""
+FAIL x/x;x=¢;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¢\";bonus=x" but got "x/x"
+FAIL x/x;x="¢";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¢\";bonus=x" but got ""
+FAIL x/x;x="¢";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¢\";bonus=x" but got "x/x"
+FAIL £/x (Blob/File) Can't find variable: File
+PASS £/x (Request/Response) 
+FAIL x/£ (Blob/File) Can't find variable: File
+PASS x/£ (Request/Response) 
+FAIL x/x;£=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;£=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=£;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"£\";bonus=x" but got ""
+FAIL x/x;x=£;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"£\";bonus=x" but got "x/x"
+FAIL x/x;x="£";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"£\";bonus=x" but got ""
+FAIL x/x;x="£";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"£\";bonus=x" but got "x/x"
+FAIL ¤/x (Blob/File) Can't find variable: File
+PASS ¤/x (Request/Response) 
+FAIL x/¤ (Blob/File) Can't find variable: File
+PASS x/¤ (Request/Response) 
+FAIL x/x;¤=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¤=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¤;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¤\";bonus=x" but got ""
+FAIL x/x;x=¤;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¤\";bonus=x" but got "x/x"
+FAIL x/x;x="¤";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¤\";bonus=x" but got ""
+FAIL x/x;x="¤";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¤\";bonus=x" but got "x/x"
+FAIL ¥/x (Blob/File) Can't find variable: File
+PASS ¥/x (Request/Response) 
+FAIL x/¥ (Blob/File) Can't find variable: File
+PASS x/¥ (Request/Response) 
+FAIL x/x;¥=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¥=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¥;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¥\";bonus=x" but got ""
+FAIL x/x;x=¥;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¥\";bonus=x" but got "x/x"
+FAIL x/x;x="¥";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¥\";bonus=x" but got ""
+FAIL x/x;x="¥";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¥\";bonus=x" but got "x/x"
+FAIL ¦/x (Blob/File) Can't find variable: File
+PASS ¦/x (Request/Response) 
+FAIL x/¦ (Blob/File) Can't find variable: File
+PASS x/¦ (Request/Response) 
+FAIL x/x;¦=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¦=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¦;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¦\";bonus=x" but got ""
+FAIL x/x;x=¦;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¦\";bonus=x" but got "x/x"
+FAIL x/x;x="¦";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¦\";bonus=x" but got ""
+FAIL x/x;x="¦";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¦\";bonus=x" but got "x/x"
+FAIL §/x (Blob/File) Can't find variable: File
+PASS §/x (Request/Response) 
+FAIL x/§ (Blob/File) Can't find variable: File
+PASS x/§ (Request/Response) 
+FAIL x/x;§=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;§=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=§;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"§\";bonus=x" but got ""
+FAIL x/x;x=§;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"§\";bonus=x" but got "x/x"
+FAIL x/x;x="§";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"§\";bonus=x" but got ""
+FAIL x/x;x="§";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"§\";bonus=x" but got "x/x"
+FAIL ¨/x (Blob/File) Can't find variable: File
+PASS ¨/x (Request/Response) 
+FAIL x/¨ (Blob/File) Can't find variable: File
+PASS x/¨ (Request/Response) 
+FAIL x/x;¨=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¨=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¨;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¨\";bonus=x" but got ""
+FAIL x/x;x=¨;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¨\";bonus=x" but got "x/x"
+FAIL x/x;x="¨";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¨\";bonus=x" but got ""
+FAIL x/x;x="¨";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¨\";bonus=x" but got "x/x"
+FAIL ©/x (Blob/File) Can't find variable: File
+PASS ©/x (Request/Response) 
+FAIL x/© (Blob/File) Can't find variable: File
+PASS x/© (Request/Response) 
+FAIL x/x;©=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;©=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=©;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"©\";bonus=x" but got ""
+FAIL x/x;x=©;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"©\";bonus=x" but got "x/x"
+FAIL x/x;x="©";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"©\";bonus=x" but got ""
+FAIL x/x;x="©";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"©\";bonus=x" but got "x/x"
+FAIL ª/x (Blob/File) Can't find variable: File
+PASS ª/x (Request/Response) 
+FAIL x/ª (Blob/File) Can't find variable: File
+PASS x/ª (Request/Response) 
+FAIL x/x;ª=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ª=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ª;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ª\";bonus=x" but got ""
+FAIL x/x;x=ª;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ª\";bonus=x" but got "x/x"
+FAIL x/x;x="ª";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ª\";bonus=x" but got ""
+FAIL x/x;x="ª";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ª\";bonus=x" but got "x/x"
+FAIL «/x (Blob/File) Can't find variable: File
+PASS «/x (Request/Response) 
+FAIL x/« (Blob/File) Can't find variable: File
+PASS x/« (Request/Response) 
+FAIL x/x;«=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;«=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=«;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"«\";bonus=x" but got ""
+FAIL x/x;x=«;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"«\";bonus=x" but got "x/x"
+FAIL x/x;x="«";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"«\";bonus=x" but got ""
+FAIL x/x;x="«";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"«\";bonus=x" but got "x/x"
+FAIL ¬/x (Blob/File) Can't find variable: File
+PASS ¬/x (Request/Response) 
+FAIL x/¬ (Blob/File) Can't find variable: File
+PASS x/¬ (Request/Response) 
+FAIL x/x;¬=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¬=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¬;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¬\";bonus=x" but got ""
+FAIL x/x;x=¬;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¬\";bonus=x" but got "x/x"
+FAIL x/x;x="¬";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¬\";bonus=x" but got ""
+FAIL x/x;x="¬";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¬\";bonus=x" but got "x/x"
+FAIL ­/x (Blob/File) Can't find variable: File
+PASS ­/x (Request/Response) 
+FAIL x/­ (Blob/File) Can't find variable: File
+PASS x/­ (Request/Response) 
+FAIL x/x;­=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;­=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=­;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"­\";bonus=x" but got ""
+FAIL x/x;x=­;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"­\";bonus=x" but got "x/x"
+FAIL x/x;x="­";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"­\";bonus=x" but got ""
+FAIL x/x;x="­";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"­\";bonus=x" but got "x/x"
+FAIL ®/x (Blob/File) Can't find variable: File
+PASS ®/x (Request/Response) 
+FAIL x/® (Blob/File) Can't find variable: File
+PASS x/® (Request/Response) 
+FAIL x/x;®=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;®=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=®;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"®\";bonus=x" but got ""
+FAIL x/x;x=®;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"®\";bonus=x" but got "x/x"
+FAIL x/x;x="®";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"®\";bonus=x" but got ""
+FAIL x/x;x="®";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"®\";bonus=x" but got "x/x"
+FAIL ¯/x (Blob/File) Can't find variable: File
+PASS ¯/x (Request/Response) 
+FAIL x/¯ (Blob/File) Can't find variable: File
+PASS x/¯ (Request/Response) 
+FAIL x/x;¯=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¯=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¯;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¯\";bonus=x" but got ""
+FAIL x/x;x=¯;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¯\";bonus=x" but got "x/x"
+FAIL x/x;x="¯";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¯\";bonus=x" but got ""
+FAIL x/x;x="¯";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¯\";bonus=x" but got "x/x"
+FAIL °/x (Blob/File) Can't find variable: File
+PASS °/x (Request/Response) 
+FAIL x/° (Blob/File) Can't find variable: File
+PASS x/° (Request/Response) 
+FAIL x/x;°=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;°=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=°;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"°\";bonus=x" but got ""
+FAIL x/x;x=°;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"°\";bonus=x" but got "x/x"
+FAIL x/x;x="°";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"°\";bonus=x" but got ""
+FAIL x/x;x="°";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"°\";bonus=x" but got "x/x"
+FAIL ±/x (Blob/File) Can't find variable: File
+PASS ±/x (Request/Response) 
+FAIL x/± (Blob/File) Can't find variable: File
+PASS x/± (Request/Response) 
+FAIL x/x;±=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;±=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=±;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"±\";bonus=x" but got ""
+FAIL x/x;x=±;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"±\";bonus=x" but got "x/x"
+FAIL x/x;x="±";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"±\";bonus=x" but got ""
+FAIL x/x;x="±";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"±\";bonus=x" but got "x/x"
+FAIL ²/x (Blob/File) Can't find variable: File
+PASS ²/x (Request/Response) 
+FAIL x/² (Blob/File) Can't find variable: File
+PASS x/² (Request/Response) 
+FAIL x/x;²=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;²=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=²;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"²\";bonus=x" but got ""
+FAIL x/x;x=²;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"²\";bonus=x" but got "x/x"
+FAIL x/x;x="²";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"²\";bonus=x" but got ""
+FAIL x/x;x="²";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"²\";bonus=x" but got "x/x"
+FAIL ³/x (Blob/File) Can't find variable: File
+PASS ³/x (Request/Response) 
+FAIL x/³ (Blob/File) Can't find variable: File
+PASS x/³ (Request/Response) 
+FAIL x/x;³=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;³=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=³;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"³\";bonus=x" but got ""
+FAIL x/x;x=³;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"³\";bonus=x" but got "x/x"
+FAIL x/x;x="³";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"³\";bonus=x" but got ""
+FAIL x/x;x="³";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"³\";bonus=x" but got "x/x"
+FAIL ´/x (Blob/File) Can't find variable: File
+PASS ´/x (Request/Response) 
+FAIL x/´ (Blob/File) Can't find variable: File
+PASS x/´ (Request/Response) 
+FAIL x/x;´=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;´=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=´;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"´\";bonus=x" but got ""
+FAIL x/x;x=´;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"´\";bonus=x" but got "x/x"
+FAIL x/x;x="´";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"´\";bonus=x" but got ""
+FAIL x/x;x="´";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"´\";bonus=x" but got "x/x"
+FAIL µ/x (Blob/File) Can't find variable: File
+PASS µ/x (Request/Response) 
+FAIL x/µ (Blob/File) Can't find variable: File
+PASS x/µ (Request/Response) 
+FAIL x/x;µ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;µ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=µ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"µ\";bonus=x" but got ""
+FAIL x/x;x=µ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"µ\";bonus=x" but got "x/x"
+FAIL x/x;x="µ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"µ\";bonus=x" but got ""
+FAIL x/x;x="µ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"µ\";bonus=x" but got "x/x"
+FAIL ¶/x (Blob/File) Can't find variable: File
+PASS ¶/x (Request/Response) 
+FAIL x/¶ (Blob/File) Can't find variable: File
+PASS x/¶ (Request/Response) 
+FAIL x/x;¶=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¶=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¶;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¶\";bonus=x" but got ""
+FAIL x/x;x=¶;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¶\";bonus=x" but got "x/x"
+FAIL x/x;x="¶";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¶\";bonus=x" but got ""
+FAIL x/x;x="¶";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¶\";bonus=x" but got "x/x"
+FAIL ·/x (Blob/File) Can't find variable: File
+PASS ·/x (Request/Response) 
+FAIL x/· (Blob/File) Can't find variable: File
+PASS x/· (Request/Response) 
+FAIL x/x;·=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;·=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=·;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"·\";bonus=x" but got ""
+FAIL x/x;x=·;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"·\";bonus=x" but got "x/x"
+FAIL x/x;x="·";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"·\";bonus=x" but got ""
+FAIL x/x;x="·";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"·\";bonus=x" but got "x/x"
+FAIL ¸/x (Blob/File) Can't find variable: File
+PASS ¸/x (Request/Response) 
+FAIL x/¸ (Blob/File) Can't find variable: File
+PASS x/¸ (Request/Response) 
+FAIL x/x;¸=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¸=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¸;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¸\";bonus=x" but got ""
+FAIL x/x;x=¸;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¸\";bonus=x" but got "x/x"
+FAIL x/x;x="¸";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¸\";bonus=x" but got ""
+FAIL x/x;x="¸";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¸\";bonus=x" but got "x/x"
+FAIL ¹/x (Blob/File) Can't find variable: File
+PASS ¹/x (Request/Response) 
+FAIL x/¹ (Blob/File) Can't find variable: File
+PASS x/¹ (Request/Response) 
+FAIL x/x;¹=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¹=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¹;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¹\";bonus=x" but got ""
+FAIL x/x;x=¹;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¹\";bonus=x" but got "x/x"
+FAIL x/x;x="¹";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¹\";bonus=x" but got ""
+FAIL x/x;x="¹";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¹\";bonus=x" but got "x/x"
+FAIL º/x (Blob/File) Can't find variable: File
+PASS º/x (Request/Response) 
+FAIL x/º (Blob/File) Can't find variable: File
+PASS x/º (Request/Response) 
+FAIL x/x;º=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;º=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=º;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"º\";bonus=x" but got ""
+FAIL x/x;x=º;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"º\";bonus=x" but got "x/x"
+FAIL x/x;x="º";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"º\";bonus=x" but got ""
+FAIL x/x;x="º";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"º\";bonus=x" but got "x/x"
+FAIL »/x (Blob/File) Can't find variable: File
+PASS »/x (Request/Response) 
+FAIL x/» (Blob/File) Can't find variable: File
+PASS x/» (Request/Response) 
+FAIL x/x;»=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;»=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=»;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"»\";bonus=x" but got ""
+FAIL x/x;x=»;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"»\";bonus=x" but got "x/x"
+FAIL x/x;x="»";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"»\";bonus=x" but got ""
+FAIL x/x;x="»";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"»\";bonus=x" but got "x/x"
+FAIL ¼/x (Blob/File) Can't find variable: File
+PASS ¼/x (Request/Response) 
+FAIL x/¼ (Blob/File) Can't find variable: File
+PASS x/¼ (Request/Response) 
+FAIL x/x;¼=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¼=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¼;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¼\";bonus=x" but got ""
+FAIL x/x;x=¼;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¼\";bonus=x" but got "x/x"
+FAIL x/x;x="¼";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¼\";bonus=x" but got ""
+FAIL x/x;x="¼";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¼\";bonus=x" but got "x/x"
+FAIL ½/x (Blob/File) Can't find variable: File
+PASS ½/x (Request/Response) 
+FAIL x/½ (Blob/File) Can't find variable: File
+PASS x/½ (Request/Response) 
+FAIL x/x;½=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;½=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=½;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"½\";bonus=x" but got ""
+FAIL x/x;x=½;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"½\";bonus=x" but got "x/x"
+FAIL x/x;x="½";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"½\";bonus=x" but got ""
+FAIL x/x;x="½";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"½\";bonus=x" but got "x/x"
+FAIL ¾/x (Blob/File) Can't find variable: File
+PASS ¾/x (Request/Response) 
+FAIL x/¾ (Blob/File) Can't find variable: File
+PASS x/¾ (Request/Response) 
+FAIL x/x;¾=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¾=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¾;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¾\";bonus=x" but got ""
+FAIL x/x;x=¾;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¾\";bonus=x" but got "x/x"
+FAIL x/x;x="¾";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¾\";bonus=x" but got ""
+FAIL x/x;x="¾";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¾\";bonus=x" but got "x/x"
+FAIL ¿/x (Blob/File) Can't find variable: File
+PASS ¿/x (Request/Response) 
+FAIL x/¿ (Blob/File) Can't find variable: File
+PASS x/¿ (Request/Response) 
+FAIL x/x;¿=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;¿=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=¿;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¿\";bonus=x" but got ""
+FAIL x/x;x=¿;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¿\";bonus=x" but got "x/x"
+FAIL x/x;x="¿";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"¿\";bonus=x" but got ""
+FAIL x/x;x="¿";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"¿\";bonus=x" but got "x/x"
+FAIL À/x (Blob/File) Can't find variable: File
+PASS À/x (Request/Response) 
+FAIL x/À (Blob/File) Can't find variable: File
+PASS x/À (Request/Response) 
+FAIL x/x;À=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;À=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=À;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"À\";bonus=x" but got ""
+FAIL x/x;x=À;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"À\";bonus=x" but got "x/x"
+FAIL x/x;x="À";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"À\";bonus=x" but got ""
+FAIL x/x;x="À";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"À\";bonus=x" but got "x/x"
+FAIL Á/x (Blob/File) Can't find variable: File
+PASS Á/x (Request/Response) 
+FAIL x/Á (Blob/File) Can't find variable: File
+PASS x/Á (Request/Response) 
+FAIL x/x;Á=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Á=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Á;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Á\";bonus=x" but got ""
+FAIL x/x;x=Á;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Á\";bonus=x" but got "x/x"
+FAIL x/x;x="Á";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Á\";bonus=x" but got ""
+FAIL x/x;x="Á";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Á\";bonus=x" but got "x/x"
+FAIL Â/x (Blob/File) Can't find variable: File
+PASS Â/x (Request/Response) 
+FAIL x/Â (Blob/File) Can't find variable: File
+PASS x/Â (Request/Response) 
+FAIL x/x;Â=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Â=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Â;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Â\";bonus=x" but got ""
+FAIL x/x;x=Â;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Â\";bonus=x" but got "x/x"
+FAIL x/x;x="Â";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Â\";bonus=x" but got ""
+FAIL x/x;x="Â";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Â\";bonus=x" but got "x/x"
+FAIL Ã/x (Blob/File) Can't find variable: File
+PASS Ã/x (Request/Response) 
+FAIL x/Ã (Blob/File) Can't find variable: File
+PASS x/Ã (Request/Response) 
+FAIL x/x;Ã=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ã=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ã;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ã\";bonus=x" but got ""
+FAIL x/x;x=Ã;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ã\";bonus=x" but got "x/x"
+FAIL x/x;x="Ã";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ã\";bonus=x" but got ""
+FAIL x/x;x="Ã";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ã\";bonus=x" but got "x/x"
+FAIL Ä/x (Blob/File) Can't find variable: File
+PASS Ä/x (Request/Response) 
+FAIL x/Ä (Blob/File) Can't find variable: File
+PASS x/Ä (Request/Response) 
+FAIL x/x;Ä=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ä=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ä;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ä\";bonus=x" but got ""
+FAIL x/x;x=Ä;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ä\";bonus=x" but got "x/x"
+FAIL x/x;x="Ä";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ä\";bonus=x" but got ""
+FAIL x/x;x="Ä";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ä\";bonus=x" but got "x/x"
+FAIL Å/x (Blob/File) Can't find variable: File
+PASS Å/x (Request/Response) 
+FAIL x/Å (Blob/File) Can't find variable: File
+PASS x/Å (Request/Response) 
+FAIL x/x;Å=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Å=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Å;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Å\";bonus=x" but got ""
+FAIL x/x;x=Å;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Å\";bonus=x" but got "x/x"
+FAIL x/x;x="Å";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Å\";bonus=x" but got ""
+FAIL x/x;x="Å";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Å\";bonus=x" but got "x/x"
+FAIL Æ/x (Blob/File) Can't find variable: File
+PASS Æ/x (Request/Response) 
+FAIL x/Æ (Blob/File) Can't find variable: File
+PASS x/Æ (Request/Response) 
+FAIL x/x;Æ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Æ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Æ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Æ\";bonus=x" but got ""
+FAIL x/x;x=Æ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Æ\";bonus=x" but got "x/x"
+FAIL x/x;x="Æ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Æ\";bonus=x" but got ""
+FAIL x/x;x="Æ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Æ\";bonus=x" but got "x/x"
+FAIL Ç/x (Blob/File) Can't find variable: File
+PASS Ç/x (Request/Response) 
+FAIL x/Ç (Blob/File) Can't find variable: File
+PASS x/Ç (Request/Response) 
+FAIL x/x;Ç=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ç=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ç;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ç\";bonus=x" but got ""
+FAIL x/x;x=Ç;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ç\";bonus=x" but got "x/x"
+FAIL x/x;x="Ç";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ç\";bonus=x" but got ""
+FAIL x/x;x="Ç";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ç\";bonus=x" but got "x/x"
+FAIL È/x (Blob/File) Can't find variable: File
+PASS È/x (Request/Response) 
+FAIL x/È (Blob/File) Can't find variable: File
+PASS x/È (Request/Response) 
+FAIL x/x;È=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;È=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=È;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"È\";bonus=x" but got ""
+FAIL x/x;x=È;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"È\";bonus=x" but got "x/x"
+FAIL x/x;x="È";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"È\";bonus=x" but got ""
+FAIL x/x;x="È";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"È\";bonus=x" but got "x/x"
+FAIL É/x (Blob/File) Can't find variable: File
+PASS É/x (Request/Response) 
+FAIL x/É (Blob/File) Can't find variable: File
+PASS x/É (Request/Response) 
+FAIL x/x;É=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;É=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=É;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"É\";bonus=x" but got ""
+FAIL x/x;x=É;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"É\";bonus=x" but got "x/x"
+FAIL x/x;x="É";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"É\";bonus=x" but got ""
+FAIL x/x;x="É";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"É\";bonus=x" but got "x/x"
+FAIL Ê/x (Blob/File) Can't find variable: File
+PASS Ê/x (Request/Response) 
+FAIL x/Ê (Blob/File) Can't find variable: File
+PASS x/Ê (Request/Response) 
+FAIL x/x;Ê=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ê=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ê;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ê\";bonus=x" but got ""
+FAIL x/x;x=Ê;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ê\";bonus=x" but got "x/x"
+FAIL x/x;x="Ê";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ê\";bonus=x" but got ""
+FAIL x/x;x="Ê";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ê\";bonus=x" but got "x/x"
+FAIL Ë/x (Blob/File) Can't find variable: File
+PASS Ë/x (Request/Response) 
+FAIL x/Ë (Blob/File) Can't find variable: File
+PASS x/Ë (Request/Response) 
+FAIL x/x;Ë=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ë=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ë;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ë\";bonus=x" but got ""
+FAIL x/x;x=Ë;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ë\";bonus=x" but got "x/x"
+FAIL x/x;x="Ë";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ë\";bonus=x" but got ""
+FAIL x/x;x="Ë";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ë\";bonus=x" but got "x/x"
+FAIL Ì/x (Blob/File) Can't find variable: File
+PASS Ì/x (Request/Response) 
+FAIL x/Ì (Blob/File) Can't find variable: File
+PASS x/Ì (Request/Response) 
+FAIL x/x;Ì=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ì=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ì;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ì\";bonus=x" but got ""
+FAIL x/x;x=Ì;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ì\";bonus=x" but got "x/x"
+FAIL x/x;x="Ì";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ì\";bonus=x" but got ""
+FAIL x/x;x="Ì";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ì\";bonus=x" but got "x/x"
+FAIL Í/x (Blob/File) Can't find variable: File
+PASS Í/x (Request/Response) 
+FAIL x/Í (Blob/File) Can't find variable: File
+PASS x/Í (Request/Response) 
+FAIL x/x;Í=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Í=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Í;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Í\";bonus=x" but got ""
+FAIL x/x;x=Í;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Í\";bonus=x" but got "x/x"
+FAIL x/x;x="Í";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Í\";bonus=x" but got ""
+FAIL x/x;x="Í";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Í\";bonus=x" but got "x/x"
+FAIL Î/x (Blob/File) Can't find variable: File
+PASS Î/x (Request/Response) 
+FAIL x/Î (Blob/File) Can't find variable: File
+PASS x/Î (Request/Response) 
+FAIL x/x;Î=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Î=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Î;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Î\";bonus=x" but got ""
+FAIL x/x;x=Î;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Î\";bonus=x" but got "x/x"
+FAIL x/x;x="Î";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Î\";bonus=x" but got ""
+FAIL x/x;x="Î";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Î\";bonus=x" but got "x/x"
+FAIL Ï/x (Blob/File) Can't find variable: File
+PASS Ï/x (Request/Response) 
+FAIL x/Ï (Blob/File) Can't find variable: File
+PASS x/Ï (Request/Response) 
+FAIL x/x;Ï=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ï=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ï;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ï\";bonus=x" but got ""
+FAIL x/x;x=Ï;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ï\";bonus=x" but got "x/x"
+FAIL x/x;x="Ï";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ï\";bonus=x" but got ""
+FAIL x/x;x="Ï";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ï\";bonus=x" but got "x/x"
+FAIL Ð/x (Blob/File) Can't find variable: File
+PASS Ð/x (Request/Response) 
+FAIL x/Ð (Blob/File) Can't find variable: File
+PASS x/Ð (Request/Response) 
+FAIL x/x;Ð=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ð=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ð;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ð\";bonus=x" but got ""
+FAIL x/x;x=Ð;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ð\";bonus=x" but got "x/x"
+FAIL x/x;x="Ð";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ð\";bonus=x" but got ""
+FAIL x/x;x="Ð";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ð\";bonus=x" but got "x/x"
+FAIL Ñ/x (Blob/File) Can't find variable: File
+PASS Ñ/x (Request/Response) 
+FAIL x/Ñ (Blob/File) Can't find variable: File
+PASS x/Ñ (Request/Response) 
+FAIL x/x;Ñ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ñ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ñ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ñ\";bonus=x" but got ""
+FAIL x/x;x=Ñ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ñ\";bonus=x" but got "x/x"
+FAIL x/x;x="Ñ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ñ\";bonus=x" but got ""
+FAIL x/x;x="Ñ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ñ\";bonus=x" but got "x/x"
+FAIL Ò/x (Blob/File) Can't find variable: File
+PASS Ò/x (Request/Response) 
+FAIL x/Ò (Blob/File) Can't find variable: File
+PASS x/Ò (Request/Response) 
+FAIL x/x;Ò=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ò=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ò;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ò\";bonus=x" but got ""
+FAIL x/x;x=Ò;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ò\";bonus=x" but got "x/x"
+FAIL x/x;x="Ò";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ò\";bonus=x" but got ""
+FAIL x/x;x="Ò";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ò\";bonus=x" but got "x/x"
+FAIL Ó/x (Blob/File) Can't find variable: File
+PASS Ó/x (Request/Response) 
+FAIL x/Ó (Blob/File) Can't find variable: File
+PASS x/Ó (Request/Response) 
+FAIL x/x;Ó=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ó=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ó;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ó\";bonus=x" but got ""
+FAIL x/x;x=Ó;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ó\";bonus=x" but got "x/x"
+FAIL x/x;x="Ó";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ó\";bonus=x" but got ""
+FAIL x/x;x="Ó";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ó\";bonus=x" but got "x/x"
+FAIL Ô/x (Blob/File) Can't find variable: File
+PASS Ô/x (Request/Response) 
+FAIL x/Ô (Blob/File) Can't find variable: File
+PASS x/Ô (Request/Response) 
+FAIL x/x;Ô=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ô=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ô;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ô\";bonus=x" but got ""
+FAIL x/x;x=Ô;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ô\";bonus=x" but got "x/x"
+FAIL x/x;x="Ô";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ô\";bonus=x" but got ""
+FAIL x/x;x="Ô";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ô\";bonus=x" but got "x/x"
+FAIL Õ/x (Blob/File) Can't find variable: File
+PASS Õ/x (Request/Response) 
+FAIL x/Õ (Blob/File) Can't find variable: File
+PASS x/Õ (Request/Response) 
+FAIL x/x;Õ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Õ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Õ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Õ\";bonus=x" but got ""
+FAIL x/x;x=Õ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Õ\";bonus=x" but got "x/x"
+FAIL x/x;x="Õ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Õ\";bonus=x" but got ""
+FAIL x/x;x="Õ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Õ\";bonus=x" but got "x/x"
+FAIL Ö/x (Blob/File) Can't find variable: File
+PASS Ö/x (Request/Response) 
+FAIL x/Ö (Blob/File) Can't find variable: File
+PASS x/Ö (Request/Response) 
+FAIL x/x;Ö=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ö=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ö;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ö\";bonus=x" but got ""
+FAIL x/x;x=Ö;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ö\";bonus=x" but got "x/x"
+FAIL x/x;x="Ö";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ö\";bonus=x" but got ""
+FAIL x/x;x="Ö";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ö\";bonus=x" but got "x/x"
+FAIL ×/x (Blob/File) Can't find variable: File
+PASS ×/x (Request/Response) 
+FAIL x/× (Blob/File) Can't find variable: File
+PASS x/× (Request/Response) 
+FAIL x/x;×=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;×=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=×;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"×\";bonus=x" but got ""
+FAIL x/x;x=×;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"×\";bonus=x" but got "x/x"
+FAIL x/x;x="×";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"×\";bonus=x" but got ""
+FAIL x/x;x="×";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"×\";bonus=x" but got "x/x"
+FAIL Ø/x (Blob/File) Can't find variable: File
+PASS Ø/x (Request/Response) 
+FAIL x/Ø (Blob/File) Can't find variable: File
+PASS x/Ø (Request/Response) 
+FAIL x/x;Ø=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ø=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ø;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ø\";bonus=x" but got ""
+FAIL x/x;x=Ø;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ø\";bonus=x" but got "x/x"
+FAIL x/x;x="Ø";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ø\";bonus=x" but got ""
+FAIL x/x;x="Ø";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ø\";bonus=x" but got "x/x"
+FAIL Ù/x (Blob/File) Can't find variable: File
+PASS Ù/x (Request/Response) 
+FAIL x/Ù (Blob/File) Can't find variable: File
+PASS x/Ù (Request/Response) 
+FAIL x/x;Ù=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ù=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ù;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ù\";bonus=x" but got ""
+FAIL x/x;x=Ù;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ù\";bonus=x" but got "x/x"
+FAIL x/x;x="Ù";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ù\";bonus=x" but got ""
+FAIL x/x;x="Ù";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ù\";bonus=x" but got "x/x"
+FAIL Ú/x (Blob/File) Can't find variable: File
+PASS Ú/x (Request/Response) 
+FAIL x/Ú (Blob/File) Can't find variable: File
+PASS x/Ú (Request/Response) 
+FAIL x/x;Ú=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ú=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ú;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ú\";bonus=x" but got ""
+FAIL x/x;x=Ú;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ú\";bonus=x" but got "x/x"
+FAIL x/x;x="Ú";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ú\";bonus=x" but got ""
+FAIL x/x;x="Ú";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ú\";bonus=x" but got "x/x"
+FAIL Û/x (Blob/File) Can't find variable: File
+PASS Û/x (Request/Response) 
+FAIL x/Û (Blob/File) Can't find variable: File
+PASS x/Û (Request/Response) 
+FAIL x/x;Û=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Û=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Û;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Û\";bonus=x" but got ""
+FAIL x/x;x=Û;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Û\";bonus=x" but got "x/x"
+FAIL x/x;x="Û";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Û\";bonus=x" but got ""
+FAIL x/x;x="Û";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Û\";bonus=x" but got "x/x"
+FAIL Ü/x (Blob/File) Can't find variable: File
+PASS Ü/x (Request/Response) 
+FAIL x/Ü (Blob/File) Can't find variable: File
+PASS x/Ü (Request/Response) 
+FAIL x/x;Ü=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ü=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ü;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ü\";bonus=x" but got ""
+FAIL x/x;x=Ü;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ü\";bonus=x" but got "x/x"
+FAIL x/x;x="Ü";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ü\";bonus=x" but got ""
+FAIL x/x;x="Ü";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ü\";bonus=x" but got "x/x"
+FAIL Ý/x (Blob/File) Can't find variable: File
+PASS Ý/x (Request/Response) 
+FAIL x/Ý (Blob/File) Can't find variable: File
+PASS x/Ý (Request/Response) 
+FAIL x/x;Ý=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Ý=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Ý;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ý\";bonus=x" but got ""
+FAIL x/x;x=Ý;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ý\";bonus=x" but got "x/x"
+FAIL x/x;x="Ý";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Ý\";bonus=x" but got ""
+FAIL x/x;x="Ý";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Ý\";bonus=x" but got "x/x"
+FAIL Þ/x (Blob/File) Can't find variable: File
+PASS Þ/x (Request/Response) 
+FAIL x/Þ (Blob/File) Can't find variable: File
+PASS x/Þ (Request/Response) 
+FAIL x/x;Þ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;Þ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=Þ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Þ\";bonus=x" but got ""
+FAIL x/x;x=Þ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Þ\";bonus=x" but got "x/x"
+FAIL x/x;x="Þ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"Þ\";bonus=x" but got ""
+FAIL x/x;x="Þ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"Þ\";bonus=x" but got "x/x"
+FAIL ß/x (Blob/File) Can't find variable: File
+PASS ß/x (Request/Response) 
+FAIL x/ß (Blob/File) Can't find variable: File
+PASS x/ß (Request/Response) 
+FAIL x/x;ß=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ß=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ß;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ß\";bonus=x" but got ""
+FAIL x/x;x=ß;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ß\";bonus=x" but got "x/x"
+FAIL x/x;x="ß";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ß\";bonus=x" but got ""
+FAIL x/x;x="ß";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ß\";bonus=x" but got "x/x"
+FAIL à/x (Blob/File) Can't find variable: File
+PASS à/x (Request/Response) 
+FAIL x/à (Blob/File) Can't find variable: File
+PASS x/à (Request/Response) 
+FAIL x/x;à=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;à=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=à;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"à\";bonus=x" but got ""
+FAIL x/x;x=à;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"à\";bonus=x" but got "x/x"
+FAIL x/x;x="à";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"à\";bonus=x" but got ""
+FAIL x/x;x="à";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"à\";bonus=x" but got "x/x"
+FAIL á/x (Blob/File) Can't find variable: File
+PASS á/x (Request/Response) 
+FAIL x/á (Blob/File) Can't find variable: File
+PASS x/á (Request/Response) 
+FAIL x/x;á=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;á=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=á;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"á\";bonus=x" but got ""
+FAIL x/x;x=á;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"á\";bonus=x" but got "x/x"
+FAIL x/x;x="á";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"á\";bonus=x" but got ""
+FAIL x/x;x="á";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"á\";bonus=x" but got "x/x"
+FAIL â/x (Blob/File) Can't find variable: File
+PASS â/x (Request/Response) 
+FAIL x/â (Blob/File) Can't find variable: File
+PASS x/â (Request/Response) 
+FAIL x/x;â=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;â=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=â;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"â\";bonus=x" but got ""
+FAIL x/x;x=â;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"â\";bonus=x" but got "x/x"
+FAIL x/x;x="â";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"â\";bonus=x" but got ""
+FAIL x/x;x="â";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"â\";bonus=x" but got "x/x"
+FAIL ã/x (Blob/File) Can't find variable: File
+PASS ã/x (Request/Response) 
+FAIL x/ã (Blob/File) Can't find variable: File
+PASS x/ã (Request/Response) 
+FAIL x/x;ã=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ã=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ã;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ã\";bonus=x" but got ""
+FAIL x/x;x=ã;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ã\";bonus=x" but got "x/x"
+FAIL x/x;x="ã";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ã\";bonus=x" but got ""
+FAIL x/x;x="ã";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ã\";bonus=x" but got "x/x"
+FAIL ä/x (Blob/File) Can't find variable: File
+PASS ä/x (Request/Response) 
+FAIL x/ä (Blob/File) Can't find variable: File
+PASS x/ä (Request/Response) 
+FAIL x/x;ä=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ä=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ä;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ä\";bonus=x" but got ""
+FAIL x/x;x=ä;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ä\";bonus=x" but got "x/x"
+FAIL x/x;x="ä";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ä\";bonus=x" but got ""
+FAIL x/x;x="ä";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ä\";bonus=x" but got "x/x"
+FAIL å/x (Blob/File) Can't find variable: File
+PASS å/x (Request/Response) 
+FAIL x/å (Blob/File) Can't find variable: File
+PASS x/å (Request/Response) 
+FAIL x/x;å=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;å=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=å;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"å\";bonus=x" but got ""
+FAIL x/x;x=å;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"å\";bonus=x" but got "x/x"
+FAIL x/x;x="å";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"å\";bonus=x" but got ""
+FAIL x/x;x="å";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"å\";bonus=x" but got "x/x"
+FAIL æ/x (Blob/File) Can't find variable: File
+PASS æ/x (Request/Response) 
+FAIL x/æ (Blob/File) Can't find variable: File
+PASS x/æ (Request/Response) 
+FAIL x/x;æ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;æ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=æ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"æ\";bonus=x" but got ""
+FAIL x/x;x=æ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"æ\";bonus=x" but got "x/x"
+FAIL x/x;x="æ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"æ\";bonus=x" but got ""
+FAIL x/x;x="æ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"æ\";bonus=x" but got "x/x"
+FAIL ç/x (Blob/File) Can't find variable: File
+PASS ç/x (Request/Response) 
+FAIL x/ç (Blob/File) Can't find variable: File
+PASS x/ç (Request/Response) 
+FAIL x/x;ç=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ç=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ç;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ç\";bonus=x" but got ""
+FAIL x/x;x=ç;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ç\";bonus=x" but got "x/x"
+FAIL x/x;x="ç";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ç\";bonus=x" but got ""
+FAIL x/x;x="ç";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ç\";bonus=x" but got "x/x"
+FAIL è/x (Blob/File) Can't find variable: File
+PASS è/x (Request/Response) 
+FAIL x/è (Blob/File) Can't find variable: File
+PASS x/è (Request/Response) 
+FAIL x/x;è=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;è=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=è;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"è\";bonus=x" but got ""
+FAIL x/x;x=è;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"è\";bonus=x" but got "x/x"
+FAIL x/x;x="è";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"è\";bonus=x" but got ""
+FAIL x/x;x="è";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"è\";bonus=x" but got "x/x"
+FAIL é/x (Blob/File) Can't find variable: File
+PASS é/x (Request/Response) 
+FAIL x/é (Blob/File) Can't find variable: File
+PASS x/é (Request/Response) 
+FAIL x/x;é=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;é=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=é;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"é\";bonus=x" but got ""
+FAIL x/x;x=é;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"é\";bonus=x" but got "x/x"
+FAIL x/x;x="é";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"é\";bonus=x" but got ""
+FAIL x/x;x="é";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"é\";bonus=x" but got "x/x"
+FAIL ê/x (Blob/File) Can't find variable: File
+PASS ê/x (Request/Response) 
+FAIL x/ê (Blob/File) Can't find variable: File
+PASS x/ê (Request/Response) 
+FAIL x/x;ê=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ê=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ê;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ê\";bonus=x" but got ""
+FAIL x/x;x=ê;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ê\";bonus=x" but got "x/x"
+FAIL x/x;x="ê";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ê\";bonus=x" but got ""
+FAIL x/x;x="ê";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ê\";bonus=x" but got "x/x"
+FAIL ë/x (Blob/File) Can't find variable: File
+PASS ë/x (Request/Response) 
+FAIL x/ë (Blob/File) Can't find variable: File
+PASS x/ë (Request/Response) 
+FAIL x/x;ë=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ë=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ë;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ë\";bonus=x" but got ""
+FAIL x/x;x=ë;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ë\";bonus=x" but got "x/x"
+FAIL x/x;x="ë";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ë\";bonus=x" but got ""
+FAIL x/x;x="ë";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ë\";bonus=x" but got "x/x"
+FAIL ì/x (Blob/File) Can't find variable: File
+PASS ì/x (Request/Response) 
+FAIL x/ì (Blob/File) Can't find variable: File
+PASS x/ì (Request/Response) 
+FAIL x/x;ì=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ì=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ì;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ì\";bonus=x" but got ""
+FAIL x/x;x=ì;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ì\";bonus=x" but got "x/x"
+FAIL x/x;x="ì";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ì\";bonus=x" but got ""
+FAIL x/x;x="ì";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ì\";bonus=x" but got "x/x"
+FAIL í/x (Blob/File) Can't find variable: File
+PASS í/x (Request/Response) 
+FAIL x/í (Blob/File) Can't find variable: File
+PASS x/í (Request/Response) 
+FAIL x/x;í=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;í=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=í;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"í\";bonus=x" but got ""
+FAIL x/x;x=í;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"í\";bonus=x" but got "x/x"
+FAIL x/x;x="í";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"í\";bonus=x" but got ""
+FAIL x/x;x="í";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"í\";bonus=x" but got "x/x"
+FAIL î/x (Blob/File) Can't find variable: File
+PASS î/x (Request/Response) 
+FAIL x/î (Blob/File) Can't find variable: File
+PASS x/î (Request/Response) 
+FAIL x/x;î=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;î=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=î;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"î\";bonus=x" but got ""
+FAIL x/x;x=î;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"î\";bonus=x" but got "x/x"
+FAIL x/x;x="î";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"î\";bonus=x" but got ""
+FAIL x/x;x="î";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"î\";bonus=x" but got "x/x"
+FAIL ï/x (Blob/File) Can't find variable: File
+PASS ï/x (Request/Response) 
+FAIL x/ï (Blob/File) Can't find variable: File
+PASS x/ï (Request/Response) 
+FAIL x/x;ï=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ï=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ï;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ï\";bonus=x" but got ""
+FAIL x/x;x=ï;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ï\";bonus=x" but got "x/x"
+FAIL x/x;x="ï";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ï\";bonus=x" but got ""
+FAIL x/x;x="ï";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ï\";bonus=x" but got "x/x"
+FAIL ð/x (Blob/File) Can't find variable: File
+PASS ð/x (Request/Response) 
+FAIL x/ð (Blob/File) Can't find variable: File
+PASS x/ð (Request/Response) 
+FAIL x/x;ð=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ð=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ð;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ð\";bonus=x" but got ""
+FAIL x/x;x=ð;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ð\";bonus=x" but got "x/x"
+FAIL x/x;x="ð";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ð\";bonus=x" but got ""
+FAIL x/x;x="ð";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ð\";bonus=x" but got "x/x"
+FAIL ñ/x (Blob/File) Can't find variable: File
+PASS ñ/x (Request/Response) 
+FAIL x/ñ (Blob/File) Can't find variable: File
+PASS x/ñ (Request/Response) 
+FAIL x/x;ñ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ñ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ñ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ñ\";bonus=x" but got ""
+FAIL x/x;x=ñ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ñ\";bonus=x" but got "x/x"
+FAIL x/x;x="ñ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ñ\";bonus=x" but got ""
+FAIL x/x;x="ñ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ñ\";bonus=x" but got "x/x"
+FAIL ò/x (Blob/File) Can't find variable: File
+PASS ò/x (Request/Response) 
+FAIL x/ò (Blob/File) Can't find variable: File
+PASS x/ò (Request/Response) 
+FAIL x/x;ò=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ò=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ò;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ò\";bonus=x" but got ""
+FAIL x/x;x=ò;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ò\";bonus=x" but got "x/x"
+FAIL x/x;x="ò";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ò\";bonus=x" but got ""
+FAIL x/x;x="ò";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ò\";bonus=x" but got "x/x"
+FAIL ó/x (Blob/File) Can't find variable: File
+PASS ó/x (Request/Response) 
+FAIL x/ó (Blob/File) Can't find variable: File
+PASS x/ó (Request/Response) 
+FAIL x/x;ó=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ó=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ó;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ó\";bonus=x" but got ""
+FAIL x/x;x=ó;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ó\";bonus=x" but got "x/x"
+FAIL x/x;x="ó";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ó\";bonus=x" but got ""
+FAIL x/x;x="ó";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ó\";bonus=x" but got "x/x"
+FAIL ô/x (Blob/File) Can't find variable: File
+PASS ô/x (Request/Response) 
+FAIL x/ô (Blob/File) Can't find variable: File
+PASS x/ô (Request/Response) 
+FAIL x/x;ô=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ô=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ô;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ô\";bonus=x" but got ""
+FAIL x/x;x=ô;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ô\";bonus=x" but got "x/x"
+FAIL x/x;x="ô";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ô\";bonus=x" but got ""
+FAIL x/x;x="ô";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ô\";bonus=x" but got "x/x"
+FAIL õ/x (Blob/File) Can't find variable: File
+PASS õ/x (Request/Response) 
+FAIL x/õ (Blob/File) Can't find variable: File
+PASS x/õ (Request/Response) 
+FAIL x/x;õ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;õ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=õ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"õ\";bonus=x" but got ""
+FAIL x/x;x=õ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"õ\";bonus=x" but got "x/x"
+FAIL x/x;x="õ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"õ\";bonus=x" but got ""
+FAIL x/x;x="õ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"õ\";bonus=x" but got "x/x"
+FAIL ö/x (Blob/File) Can't find variable: File
+PASS ö/x (Request/Response) 
+FAIL x/ö (Blob/File) Can't find variable: File
+PASS x/ö (Request/Response) 
+FAIL x/x;ö=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ö=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ö;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ö\";bonus=x" but got ""
+FAIL x/x;x=ö;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ö\";bonus=x" but got "x/x"
+FAIL x/x;x="ö";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ö\";bonus=x" but got ""
+FAIL x/x;x="ö";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ö\";bonus=x" but got "x/x"
+FAIL ÷/x (Blob/File) Can't find variable: File
+PASS ÷/x (Request/Response) 
+FAIL x/÷ (Blob/File) Can't find variable: File
+PASS x/÷ (Request/Response) 
+FAIL x/x;÷=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;÷=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=÷;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"÷\";bonus=x" but got ""
+FAIL x/x;x=÷;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"÷\";bonus=x" but got "x/x"
+FAIL x/x;x="÷";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"÷\";bonus=x" but got ""
+FAIL x/x;x="÷";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"÷\";bonus=x" but got "x/x"
+FAIL ø/x (Blob/File) Can't find variable: File
+PASS ø/x (Request/Response) 
+FAIL x/ø (Blob/File) Can't find variable: File
+PASS x/ø (Request/Response) 
+FAIL x/x;ø=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ø=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ø;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ø\";bonus=x" but got ""
+FAIL x/x;x=ø;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ø\";bonus=x" but got "x/x"
+FAIL x/x;x="ø";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ø\";bonus=x" but got ""
+FAIL x/x;x="ø";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ø\";bonus=x" but got "x/x"
+FAIL ù/x (Blob/File) Can't find variable: File
+PASS ù/x (Request/Response) 
+FAIL x/ù (Blob/File) Can't find variable: File
+PASS x/ù (Request/Response) 
+FAIL x/x;ù=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ù=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ù;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ù\";bonus=x" but got ""
+FAIL x/x;x=ù;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ù\";bonus=x" but got "x/x"
+FAIL x/x;x="ù";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ù\";bonus=x" but got ""
+FAIL x/x;x="ù";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ù\";bonus=x" but got "x/x"
+FAIL ú/x (Blob/File) Can't find variable: File
+PASS ú/x (Request/Response) 
+FAIL x/ú (Blob/File) Can't find variable: File
+PASS x/ú (Request/Response) 
+FAIL x/x;ú=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ú=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ú;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ú\";bonus=x" but got ""
+FAIL x/x;x=ú;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ú\";bonus=x" but got "x/x"
+FAIL x/x;x="ú";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ú\";bonus=x" but got ""
+FAIL x/x;x="ú";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ú\";bonus=x" but got "x/x"
+FAIL û/x (Blob/File) Can't find variable: File
+PASS û/x (Request/Response) 
+FAIL x/û (Blob/File) Can't find variable: File
+PASS x/û (Request/Response) 
+FAIL x/x;û=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;û=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=û;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"û\";bonus=x" but got ""
+FAIL x/x;x=û;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"û\";bonus=x" but got "x/x"
+FAIL x/x;x="û";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"û\";bonus=x" but got ""
+FAIL x/x;x="û";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"û\";bonus=x" but got "x/x"
+FAIL ü/x (Blob/File) Can't find variable: File
+PASS ü/x (Request/Response) 
+FAIL x/ü (Blob/File) Can't find variable: File
+PASS x/ü (Request/Response) 
+FAIL x/x;ü=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ü=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ü;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ü\";bonus=x" but got ""
+FAIL x/x;x=ü;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ü\";bonus=x" but got "x/x"
+FAIL x/x;x="ü";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ü\";bonus=x" but got ""
+FAIL x/x;x="ü";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ü\";bonus=x" but got "x/x"
+FAIL ý/x (Blob/File) Can't find variable: File
+PASS ý/x (Request/Response) 
+FAIL x/ý (Blob/File) Can't find variable: File
+PASS x/ý (Request/Response) 
+FAIL x/x;ý=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ý=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ý;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ý\";bonus=x" but got ""
+FAIL x/x;x=ý;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ý\";bonus=x" but got "x/x"
+FAIL x/x;x="ý";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ý\";bonus=x" but got ""
+FAIL x/x;x="ý";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ý\";bonus=x" but got "x/x"
+FAIL þ/x (Blob/File) Can't find variable: File
+PASS þ/x (Request/Response) 
+FAIL x/þ (Blob/File) Can't find variable: File
+PASS x/þ (Request/Response) 
+FAIL x/x;þ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;þ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=þ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"þ\";bonus=x" but got ""
+FAIL x/x;x=þ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"þ\";bonus=x" but got "x/x"
+FAIL x/x;x="þ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"þ\";bonus=x" but got ""
+FAIL x/x;x="þ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"þ\";bonus=x" but got "x/x"
+FAIL ÿ/x (Blob/File) Can't find variable: File
+PASS ÿ/x (Request/Response) 
+FAIL x/ÿ (Blob/File) Can't find variable: File
+PASS x/ÿ (Request/Response) 
+FAIL x/x;ÿ=x;bonus=x (Blob/File) assert_equals: Blob expected "x/x;bonus=x" but got ""
+FAIL x/x;ÿ=x;bonus=x (Request/Response) assert_equals: expected "x/x;bonus=x" but got "x/x"
+FAIL x/x;x=ÿ;bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ÿ\";bonus=x" but got ""
+FAIL x/x;x=ÿ;bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ÿ\";bonus=x" but got "x/x"
+FAIL x/x;x="ÿ";bonus=x (Blob/File) assert_equals: Blob expected "x/x;x=\"ÿ\";bonus=x" but got ""
+FAIL x/x;x="ÿ";bonus=x (Request/Response) assert_equals: expected "x/x;x=\"ÿ\";bonus=x" but got "x/x"
+

@@ -263,6 +263,7 @@
     "web-platform-tests/mediacapture-streams": "import", 
     "web-platform-tests/mediasession": "skip", 
     "web-platform-tests/microdata": "skip", 
+    "web-platform-tests/mimesniff": "import", 
     "web-platform-tests/mixed-content": "skip", 
     "web-platform-tests/mst-content-hint": "import", 
     "web-platform-tests/navigation-timing": "skip", 

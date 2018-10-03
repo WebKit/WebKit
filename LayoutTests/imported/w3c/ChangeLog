@@ -1,3 +1,41 @@
+2018-10-03  Rob Buis  <rbuis@igalia.com>
+
+        Import WPT mimesniff resources
+        https://bugs.webkit.org/show_bug.cgi?id=190074
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/mimesniff/META.yml: Added.
+        * web-platform-tests/mimesniff/README.md: Added.
+        * web-platform-tests/mimesniff/mime-types/README.md: Added.
+        * web-platform-tests/mimesniff/mime-types/charset-parameter.window-expected.txt: Added.
+        * web-platform-tests/mimesniff/mime-types/charset-parameter.window.html: Added.
+        * web-platform-tests/mimesniff/mime-types/charset-parameter.window.js: Added.
+        (promise_test):
+        (isByteCompatible):
+        (encodeForURL):
+        (runTests):
+        * web-platform-tests/mimesniff/mime-types/parsing.any-expected.txt: Added.
+        * web-platform-tests/mimesniff/mime-types/parsing.any.html: Added.
+        * web-platform-tests/mimesniff/mime-types/parsing.any.js: Added.
+        (promise_test):
+        (isByteCompatible):
+        (runTests):
+        * web-platform-tests/mimesniff/mime-types/parsing.any.worker-expected.txt: Added.
+        * web-platform-tests/mimesniff/mime-types/parsing.any.worker.html: Added.
+        * web-platform-tests/mimesniff/mime-types/resources/generated-mime-types.json: Added.
+        * web-platform-tests/mimesniff/mime-types/resources/generated-mime-types.py: Added.
+        (isHTTPTokenCodePoint):
+        (isHTTPQuotedStringTokenCodePoint):
+        * web-platform-tests/mimesniff/mime-types/resources/mime-charset.py: Added.
+        (main):
+        * web-platform-tests/mimesniff/mime-types/resources/mime-types.json: Added.
+        * web-platform-tests/mimesniff/mime-types/resources/w3c-import.log: Added.
+        * web-platform-tests/mimesniff/mime-types/w3c-import.log: Added.
+        * web-platform-tests/mimesniff/w3c-import.log: Added.
+        * web-platform-tests/xhr/overridemimetype-blob-expected.txt:
+
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
         MessageEvent.ports should return the same object
