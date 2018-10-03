@@ -1292,10 +1292,9 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     /**
      * WebKitSettings:enable-mediasource:
      *
-     * Enable or disable support for MediaSource on pages. MediaSource is an
-     * experimental proposal which extends HTMLMediaElement to allow
-     * JavaScript to generate media streams for playback.  The standard is
-     * currently a work-in-progress by the W3C HTML Media Task Force.
+     * Enable or disable support for MediaSource on pages. MediaSource
+     * extends HTMLMediaElement to allow JavaScript to generate media
+     * streams for playback.
      *
      * See also http://www.w3.org/TR/media-source/
      *
@@ -1306,7 +1305,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         g_param_spec_boolean("enable-mediasource",
             _("Enable MediaSource"),
             _("Whether MediaSource should be enabled."),
-            FALSE,
+            TRUE,
             readWriteConstructParamFlags));
 
 
