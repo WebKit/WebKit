@@ -766,6 +766,24 @@ bool testIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
     return true;
 }
 
+JSObject* objectConstructorSeal(ExecState* exec, JSObject* object)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (jsDynamicCast<JSFinalObject*>(vm, object) && !hasIndexedProperties(object->indexingType())) {
+        object->seal(vm);
+        return object;
+    }
+
+    bool success = setIntegrityLevel<IntegrityLevel::Sealed>(exec, vm, object);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (UNLIKELY(!success))
+        return throwTypeError(exec, scope, "Unable to prevent extension in Object.seal"_s);
+
+    return object;
+}
+
 EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -775,21 +793,8 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return JSValue::encode(obj);
-    JSObject* object = asObject(obj);
 
-    if (jsDynamicCast<JSFinalObject*>(vm, object) && !hasIndexedProperties(object->indexingType())) {
-        object->seal(vm);
-        return JSValue::encode(obj);
-    }
-
-    bool success = setIntegrityLevel<IntegrityLevel::Sealed>(exec, vm, object);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    if (UNLIKELY(!success)) {
-        throwTypeError(exec, scope, "Unable to prevent extension in Object.seal"_s);
-        return encodedJSValue();
-    }
-
-    return JSValue::encode(obj);
+    RELEASE_AND_RETURN(scope, JSValue::encode(objectConstructorSeal(exec, asObject(obj))));
 }
 
 JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
