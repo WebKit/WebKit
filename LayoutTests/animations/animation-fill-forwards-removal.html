@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<style>
+    @keyframes animation {
+        to { margin-left: 100px }
+    }
+</style>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+async_test(t => {
+    const target = document.body.appendChild(document.createElement("div"));
+    target.style.animation = "animation 10ms forwards";
+
+    target.addEventListener("animationend", () => {
+        assert_equals(getComputedStyle(target).marginLeft, "100px", "The target element has style values from the final keyframe of its animation.");
+        target.style.animation = "none";
+        assert_equals(getComputedStyle(target).marginLeft, "0px", "The target element has no animation after setting 'animation-name: none'.");
+        t.done();
+    });
+}, "Setting 'animation-name: none' after a 'fill: forwards' animation has completed reverts to the unanimated style.");
+
+</script>
+</body>

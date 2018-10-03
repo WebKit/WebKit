@@ -1,3 +1,16 @@
+2018-10-03  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] REGRESSION: setting 'animation-name: none' after a 'fill: forwards' animation has completed does not revert to the unanimated style
+        https://bugs.webkit.org/show_bug.cgi?id=190257
+        <rdar://problem/41341473>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that checks that an animation with fill: forwards no longer applies to an element once it's been removed.
+
+        * animations/animation-fill-forwards-removal-expected.txt: Added.
+        * animations/animation-fill-forwards-removal.html: Added.
+
 2018-10-03  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236779): Crash when changing the input element type from inside an 'input' event listener

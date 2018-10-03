@@ -477,14 +477,8 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
 void AnimationTimeline::cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAnimation> animation)
 {
     ASSERT(animation);
-    if (auto* effect = animation->effect()) {
-        auto phase = effect->phase();
-        if (phase != AnimationEffectReadOnly::Phase::Idle && phase != AnimationEffectReadOnly::Phase::After) {
-            animation->cancel();
-            return;
-        }
-    }
-
+    animation->cancel();
+    animationWasRemovedFromElement(*animation, animation->target());
     removeAnimation(animation.releaseNonNull());
 }
 

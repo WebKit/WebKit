@@ -1,3 +1,23 @@
+2018-10-03  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] REGRESSION: setting 'animation-name: none' after a 'fill: forwards' animation has completed does not revert to the unanimated style
+        https://bugs.webkit.org/show_bug.cgi?id=190257
+        <rdar://problem/41341473>
+
+        Reviewed by Dean Jackson.
+
+        Test: animations/animation-fill-forwards-removal.html
+
+        While we removed a declarative animation that was no longer targetting its element, we were not removing it from the declarative animation maps
+        on the timeline, which means that the animation would still be picked up when resolving styles. We now notify the timeline that the animation
+        was detached from the element. This preserves the DeclarativeAnimation relationship returning the element as its effect's target and the document
+        timeline as its timeline, but the document timeline will no longer see this animation as targeting this element.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::cancelOrRemoveDeclarativeAnimation):
+        * animation/DeclarativeAnimation.h:
+        (WebCore::DeclarativeAnimation::target const):
+
 2018-10-03  Jer Noble  <jer.noble@apple.com>
 
         CRASH in CVPixelBufferGetBytePointerCallback()
