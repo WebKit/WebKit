@@ -1,3 +1,22 @@
+2018-10-03  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in CVPixelBufferGetBytePointerCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=190092
+
+        Reviewed by Eric Carlson.
+
+        Speculative fix for crash that occurs when callers of CVPixelBufferGetBytePointerCallback() attempt
+        to read the last byte of a CVPixelBuffer (as a pre-flight check) and crash due to a memory access
+        error. It's speculated that mismatching CVPixelBufferLockBytePointer / CVPixelBufferUnlockBytePointer
+        calls could result in an incorrect state inside the CVPixelBuffer. Add log count checks, locking, and
+        release logging to try to pinpoint if mismatch lock counts are occurring in this code path.
+
+        * platform/graphics/cv/PixelBufferConformerCV.cpp:
+        (WebCore::CVPixelBufferGetBytePointerCallback):
+        (WebCore::CVPixelBufferReleaseBytePointerCallback):
+        (WebCore::CVPixelBufferReleaseInfoCallback):
+        (WebCore::PixelBufferConformerCV::createImageFromPixelBuffer):
+
 2018-10-03  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236779): Crash when changing the input element type from inside an 'input' event listener
