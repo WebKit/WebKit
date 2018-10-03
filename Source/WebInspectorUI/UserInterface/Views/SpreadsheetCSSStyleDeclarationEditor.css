@@ -52,6 +52,10 @@
     padding-bottom: 0 !important;
 }
 
+.multiple-properties-selection .spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing) {
+    outline: none;
+}
+
 .spreadsheet-style-declaration-editor .value.editing {
     display: inline-block;
     position: relative;

@@ -31,6 +31,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         let element = document.createElement("section");
         element.classList.add("spreadsheet-css-declaration");
+
+        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value)
+            element.classList.add("multiple-properties-selection");
+
         super(element);
 
         this._delegate = delegate || null;

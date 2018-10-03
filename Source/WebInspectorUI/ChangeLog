@@ -1,3 +1,23 @@
+2018-10-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: start editing property name/value on mouseup instead of mousedown
+        https://bugs.webkit.org/show_bug.cgi?id=190114
+        <rdar://problem/44891030>
+
+        Reviewed by Matt Baker.
+
+        This change only affects the experimental multiple properties selection.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing)):
+        Without this code, the focus outline flickers on click (after mousedown but before mouseup event).
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField):
+        (WI.SpreadsheetTextField.prototype._handleMouseUp):
+
 2018-10-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: prevent layer events from firing until the layer information is re-requested
