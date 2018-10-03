@@ -158,7 +158,7 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
     else if (equalLettersIgnoringASCIICase(key, "scrollbars"))
         features.scrollbarsVisible = numericValue;
     else if (equalLettersIgnoringASCIICase(key, "noopener"))
-        features.noopener = numericValue;
+        features.noopener = true;
     else if (numericValue == 1)
         features.additionalFeatures.append(key.toString());
 }

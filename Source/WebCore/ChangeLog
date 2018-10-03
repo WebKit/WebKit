@@ -1,3 +1,22 @@
+2018-10-03  Chris Dumez  <cdumez@apple.com>
+
+        Passing noopener=NOOPENER to window.open() should cause the new window to not have an opener
+        https://bugs.webkit.org/show_bug.cgi?id=190251
+
+        Reviewed by Alex Christensen.
+
+        Passing noopener=NOOPENER to window.open() should cause the new window to not have an opener,
+        similarly to noopener=1:
+        - https://html.spec.whatwg.org/#window-open-steps (step 5)
+
+        It does not matter what the value is, if there is a key named "noopener", then the new window
+        should not have an opener.
+
+        No new tests, rebaselined existing test.
+
+        * page/WindowFeatures.cpp:
+        (WebCore::setWindowFeature):
+
 2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         GC can collect JS wrappers of nodes in the mutation records waiting to be delivered
