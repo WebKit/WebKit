@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "GCReachableRef.h"
 #include "MutationObserver.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
@@ -47,7 +48,7 @@ public:
 
     void resetObservation(MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
     void observedSubtreeNodeWillDetach(Node&);
-    void clearTransientRegistrations();
+    std::unique_ptr<HashSet<GCReachableRef<Node>>> takeTransientRegistrations();
     bool hasTransientRegistrations() const { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
 
     bool shouldReceiveMutationFrom(Node&, MutationObserver::MutationType, const QualifiedName* attributeName) const;
@@ -64,7 +65,7 @@ private:
     Ref<MutationObserver> m_observer;
     Node& m_node;
     RefPtr<Node> m_nodeKeptAlive;
-    std::unique_ptr<HashSet<RefPtr<Node>>> m_transientRegistrationNodes;
+    std::unique_ptr<HashSet<GCReachableRef<Node>>> m_transientRegistrationNodes;
     MutationObserverOptions m_options;
     HashSet<AtomicString> m_attributeFilter;
 };

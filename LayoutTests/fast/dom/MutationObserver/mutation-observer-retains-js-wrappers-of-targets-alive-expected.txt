@@ -1,0 +1,23 @@
+This tests that JS wrappers of nodes in a tree mutation record do not get collected.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+

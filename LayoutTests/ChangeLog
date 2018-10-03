@@ -1,3 +1,15 @@
+2018-10-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GC can collect JS wrappers of nodes in the mutation records waiting to be delivered
+        https://bugs.webkit.org/show_bug.cgi?id=190115
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test.
+
+        * fast/dom/MutationObserver/mutation-observer-retains-js-wrappers-of-targets-alive-expected.txt: Added.
+        * fast/dom/MutationObserver/mutation-observer-retains-js-wrappers-of-targets-alive.html: Added.
+
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
         radio / checkbox inputs should fire "click, input, change" events in order when clicked
