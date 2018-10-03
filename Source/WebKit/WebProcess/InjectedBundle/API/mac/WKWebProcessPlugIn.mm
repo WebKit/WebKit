@@ -91,10 +91,12 @@ static void setUpBundleClient(WKWebProcessPlugInController *plugInController, We
     setUpBundleClient(self, *_bundle);
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (WKConnection *)connection
 {
     return wrapper(*_bundle->webConnectionToUIProcess());
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)parameters
 {

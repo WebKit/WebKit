@@ -33,7 +33,9 @@
 namespace WebKit {
 
 template<> struct WrapperTraits<WebConnection> {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     using WrapperClass = WKConnection;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 }

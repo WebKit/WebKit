@@ -39,7 +39,10 @@
 
 @required
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)processGroup:(WKProcessGroup *)processGroup didCreateConnectionToWebProcessPlugIn:(WKConnection *)connection;
+#pragma clang diagnostic pop
 
 @end
 

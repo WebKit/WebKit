@@ -49,7 +49,9 @@
 
 static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto connection = (__bridge WKConnection *)clientInfo;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto delegate = connection->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
@@ -61,7 +63,9 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
 
 static void didClose(WKConnectionRef, const void* clientInfo)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto connection = (__bridge WKConnection *)clientInfo;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto delegate = connection->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(connectionDidClose:)])

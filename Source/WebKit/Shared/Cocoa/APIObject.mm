@@ -178,7 +178,9 @@ void* Object::newObject(size_t size, Type type)
     case Type::Connection:
         // While not actually a WKObject instance, WKConnection uses allocateWKObject to allocate extra space
         // instead of using ObjectStorage because the wrapped C++ object is a subclass of WebConnection.
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         wrapper = allocateWKObject([WKConnection self], size);
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::Preferences:
