@@ -861,7 +861,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     auto finishUpdate =
         [this, &layerState] {
             auto& update = layerState.update;
-            m_nicosia.performLayerSync = !update.tilesToCreate.isEmpty()
+            m_nicosia.performLayerSync |= !update.tilesToCreate.isEmpty()
                 || !update.tilesToRemove.isEmpty() || !update.tilesToUpdate.isEmpty();
             layerState.isFlushing = false;
         };

@@ -1,3 +1,16 @@
+2018-10-03  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Incorrect rendering of layers whose backingStore hasn't changed
+        https://bugs.webkit.org/show_bug.cgi?id=190249
+
+        Reviewed by Žan Doberšek.
+
+        Do not overwrite m_nicosia.performLayerSync when updating the content buffers or we lose
+        the value calculated during the layer flush. Use an OR instead to keep the old value.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffers):
+
 2018-10-03  Youenn Fablet  <youenn@apple.com>
 
         Enable H264 simulcast
