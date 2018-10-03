@@ -744,10 +744,8 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // restore. We shouldn't call setChecked() even if this has the checked
         // attribute. So, delay the setChecked() call until
         // finishParsingChildren() is called if parsing is in progress.
-        if (!m_parsingInProgress && m_reflectsCheckedAttribute) {
+        if ((!m_parsingInProgress || !document().formController().hasFormStateToRestore()) && m_reflectsCheckedAttribute)
             setChecked(!value.isNull());
-            m_reflectsCheckedAttribute = true;
-        }
     } else if (name == maxlengthAttr)
         maxLengthAttributeChanged(value);
     else if (name == minlengthAttr)

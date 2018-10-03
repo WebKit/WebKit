@@ -55,6 +55,7 @@ public:
     void willDeleteForm(HTMLFormElement&);
     void restoreControlStateFor(HTMLFormControlElementWithState&);
     void restoreControlStateIn(HTMLFormElement&);
+    bool hasFormStateToRestore() const;
 
     WEBCORE_EXPORT static Vector<String> referencedFilePaths(const Vector<String>& stateVector);
 

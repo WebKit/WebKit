@@ -470,6 +470,11 @@ void FormController::restoreControlStateIn(HTMLFormElement& form)
     }
 }
 
+bool FormController::hasFormStateToRestore() const
+{
+    return !m_savedFormStateMap.isEmpty();
+}
+
 Vector<String> FormController::referencedFilePaths(const Vector<String>& stateVector)
 {
     Vector<String> paths;

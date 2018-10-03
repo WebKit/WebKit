@@ -1,3 +1,3 @@
 
-FAIL input@checked is immediately reflected to 'checked' IDL attribute assert_true: Examining "checked" IDL attribute value: expected true got false
+PASS input@checked is immediately reflected to 'checked' IDL attribute 
 

@@ -1,3 +1,28 @@
+2018-10-03  Chris Dumez  <cdumez@apple.com>
+
+        input.checked is incorrect while we're parsing its children
+        https://bugs.webkit.org/show_bug.cgi?id=190227
+
+        Reviewed by Ryosuke Niwa.
+
+        input.checked was incorrect while we're parsing its children because we were delaying updating the
+        checked state until HTMLInputElement::finishParsingChildren() is called, to avoid a bad interaction
+        with form state restoration.
+
+        In this patch, we update the checked state as soon as the 'checked' attribute is set, when we know
+        that no form state to restore.
+
+        fast/forms/radio/state-restore-radio-group.html covers the form restoration case and is still
+        passing.
+
+        No new tests, rebaselined existing test.
+
+        * html/FormController.cpp:
+        (WebCore::FormController::hasFormStateToRestore const):
+        * html/FormController.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+
 2018-10-03  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Incorrect rendering of layers whose backingStore hasn't changed
