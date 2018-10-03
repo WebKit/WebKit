@@ -1,3 +1,17 @@
+2018-10-03  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236779): Crash when changing the input element type from inside an 'input' event listener
+        https://bugs.webkit.org/show_bug.cgi?id=190252
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLInputElement/change-type-in-click-event-listener-expected.txt: Added.
+        * fast/dom/HTMLInputElement/change-type-in-click-event-listener.html: Added.
+        * fast/dom/HTMLInputElement/change-type-in-input-event-listener-expected.txt: Added.
+        * fast/dom/HTMLInputElement/change-type-in-input-event-listener.html: Added.
+
 2018-10-03  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r236781.
