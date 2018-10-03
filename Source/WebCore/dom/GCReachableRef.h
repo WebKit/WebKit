@@ -27,7 +27,7 @@
 
 #include <wtf/DumbPtrTraits.h>
 #include <wtf/HashCountedSet.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -69,83 +69,12 @@ public:
     T* operator->() const { return &get(); }
     T* ptr() const RETURNS_NONNULL { return &get(); }
     T& get() const { ASSERT(m_ptr); return *m_ptr; }
-    operator T&() const { return get(); }
+    operator T&() const { ASSERT(m_ptr); return *m_ptr; }
     bool operator!() const { return !get(); }
 
-    // Hash table deleted values, which are only constructed and never copied or destroyed.
-    GCReachableRef(WTF::HashTableDeletedValueType)
-        : m_ptr(RefPtr<T>::hashTableDeletedValue())
-    { }
-    bool isHashTableDeletedValue() const { return m_ptr.isHashTableDeletedValue(); }
-
-    GCReachableRef(WTF::HashTableEmptyValueType)
-        : m_ptr(nullptr)
-    { }
-    bool isHashTableEmptyValue() const { return !m_ptr; }
-
-    const T* ptrAllowingHashTableEmptyValue() const { ASSERT(m_ptr || isHashTableEmptyValue()); return m_ptr.get(); }
-    T* ptrAllowingHashTableEmptyValue() { ASSERT(m_ptr || isHashTableEmptyValue()); return m_ptr.get(); }
-
-    void assignToHashTableEmptyValue(GCReachableRef&& reference)
-    {
-        ASSERT(!m_ptr);
-        m_ptr = WTFMove(reference.m_ptr);
-        ASSERT(m_ptr);
-    }
-
 private:
+
     RefPtr<T> m_ptr;
 };
 
-} // namespace WebCore
-
-namespace WTF {
-
-template<typename P> struct HashTraits<WebCore::GCReachableRef<P>> : SimpleClassHashTraits<WebCore::GCReachableRef<P>> {
-    static const bool emptyValueIsZero = true;
-    static WebCore::GCReachableRef<P> emptyValue() { return HashTableEmptyValue; }
-
-    template <typename>
-    static void constructEmptyValue(WebCore::GCReachableRef<P>& slot)
-    {
-        new (NotNull, std::addressof(slot)) WebCore::GCReachableRef<P>(HashTableEmptyValue);
-    }
-
-    static const bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const WebCore::GCReachableRef<P>& value) { return value.isHashTableEmptyValue(); }
-
-    static void assignToEmpty(WebCore::GCReachableRef<P>& emptyValue, WebCore::GCReachableRef<P>&& newValue)
-    {
-        ASSERT(isEmptyValue(emptyValue));
-        emptyValue.assignToHashTableEmptyValue(WTFMove(newValue));
-    }
-
-    typedef P* PeekType;
-    static PeekType peek(const Ref<P>& value) { return const_cast<PeekType>(value.ptrAllowingHashTableEmptyValue()); }
-    static PeekType peek(P* value) { return value; }
-
-    typedef std::optional<Ref<P>> TakeType;
-    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? std::nullopt : std::optional<Ref<P>>(WTFMove(value)); }
-};
-
-template <typename T, typename U>
-struct GetPtrHelper<WebCore::GCReachableRef<T, U>> {
-    typedef T* PtrType;
-    static T* getPtr(const WebCore::GCReachableRef<T, U>& reference) { return const_cast<T*>(reference.ptr()); }
-};
-
-template <typename T, typename U>
-struct IsSmartPtr<WebCore::GCReachableRef<T, U>> {
-    static const bool value = true;
-};
-
-template<typename P> struct PtrHash<WebCore::GCReachableRef<P>> : PtrHashBase<WebCore::GCReachableRef<P>, IsSmartPtr<WebCore::GCReachableRef<P>>::value> {
-    static const bool safeToCompareToEmptyOrDeleted = false;
-};
-
-template<typename P> struct DefaultHash<WebCore::GCReachableRef<P>> {
-    typedef PtrHash<WebCore::GCReachableRef<P>> Hash;
-};
-
-} // namespace WTF
-
+}

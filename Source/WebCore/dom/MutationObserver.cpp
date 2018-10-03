@@ -114,14 +114,11 @@ Vector<Ref<MutationRecord>> MutationObserver::takeRecords()
 {
     Vector<Ref<MutationRecord>> records;
     records.swap(m_records);
-    // Don't clear m_pendingTargets here because we can collect JS wrappers
-    // between the time takeRecords is called and nodes in records are accesssed.
     return records;
 }
 
 void MutationObserver::disconnect()
 {
-    m_pendingTargets.clear();
     m_records.clear();
     HashSet<MutationObserverRegistration*> registrations(m_registrations);
     for (auto* registration : registrations)
@@ -184,8 +181,6 @@ static void queueMutationObserverCompoundMicrotask()
 void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 {
     ASSERT(isMainThread());
-    ASSERT(mutation->target());
-    m_pendingTargets.add(*mutation->target());
     m_records.append(WTFMove(mutation));
     activeMutationObservers().add(this);
 
@@ -226,18 +221,15 @@ void MutationObserver::deliver()
 {
     ASSERT(canDeliver());
 
-    // Calling takeTransientRegistrations() can modify m_registrations, so it's necessary
+    // Calling clearTransientRegistrations() can modify m_registrations, so it's necessary
     // to make a copy of the transient registrations before operating on them.
     Vector<MutationObserverRegistration*, 1> transientRegistrations;
-    Vector<std::unique_ptr<HashSet<GCReachableRef<Node>>>, 1> nodesToKeepAlive;
-    HashSet<GCReachableRef<Node>> pendingTargets;
-    pendingTargets.swap(m_pendingTargets);
     for (auto* registration : m_registrations) {
         if (registration->hasTransientRegistrations())
             transientRegistrations.append(registration);
     }
     for (auto& registration : transientRegistrations)
-        nodesToKeepAlive.append(registration->takeTransientRegistrations());
+        registration->clearTransientRegistrations();
 
     if (m_records.isEmpty())
         return;

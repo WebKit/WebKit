@@ -48,13 +48,13 @@ MutationObserverRegistration::MutationObserverRegistration(MutationObserver& obs
 
 MutationObserverRegistration::~MutationObserverRegistration()
 {
-    takeTransientRegistrations();
+    clearTransientRegistrations();
     m_observer->observationEnded(*this);
 }
 
 void MutationObserverRegistration::resetObservation(MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
 {
-    takeTransientRegistrations();
+    clearTransientRegistrations();
     m_options = options;
     m_attributeFilter = attributeFilter;
 }
@@ -68,30 +68,28 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node& node)
     m_observer->setHasTransientRegistration();
 
     if (!m_transientRegistrationNodes) {
-        m_transientRegistrationNodes = std::make_unique<HashSet<GCReachableRef<Node>>>();
+        m_transientRegistrationNodes = std::make_unique<HashSet<RefPtr<Node>>>();
 
         ASSERT(!m_nodeKeptAlive);
-        m_nodeKeptAlive = &m_node; // Balanced in takeTransientRegistrations.
+        m_nodeKeptAlive = &m_node; // Balanced in clearTransientRegistrations.
     }
-    m_transientRegistrationNodes->add(node);
+    m_transientRegistrationNodes->add(&node);
 }
 
-std::unique_ptr<HashSet<GCReachableRef<Node>>> MutationObserverRegistration::takeTransientRegistrations()
+void MutationObserverRegistration::clearTransientRegistrations()
 {
     if (!m_transientRegistrationNodes) {
         ASSERT(!m_nodeKeptAlive);
-        return nullptr;
+        return;
     }
 
     for (auto& node : *m_transientRegistrationNodes)
         node->unregisterTransientMutationObserver(*this);
 
-    auto returnValue = WTFMove(m_transientRegistrationNodes);
+    m_transientRegistrationNodes = nullptr;
 
     ASSERT(m_nodeKeptAlive);
     m_nodeKeptAlive = nullptr; // Balanced in observeSubtreeNodeWillDetach.
-
-    return returnValue;
 }
 
 bool MutationObserverRegistration::shouldReceiveMutationFrom(Node& node, MutationObserver::MutationType type, const QualifiedName* attributeName) const
@@ -118,7 +116,7 @@ void MutationObserverRegistration::addRegistrationNodesToSet(HashSet<Node*>& nod
     if (!m_transientRegistrationNodes)
         return;
     for (auto& node : *m_transientRegistrationNodes)
-        nodes.add(node.ptr());
+        nodes.add(node.get());
 }
 
 } // namespace WebCore
