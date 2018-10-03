@@ -1520,7 +1520,7 @@ private:
     Platform3DObject m_vao { 0 };
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA) && USE(OPENGL)
     bool m_hasSwitchedToHighPerformanceGPU { false };
 #endif
 };
