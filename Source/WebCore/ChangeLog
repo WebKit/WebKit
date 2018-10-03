@@ -1,3 +1,12 @@
+2018-10-03  Dean Jackson  <dino@apple.com>
+
+        Make the Pointer Events feature description valid
+        https://bugs.webkit.org/show_bug.cgi?id=190254
+
+        Reviewed by Simon Fraser.
+
+        * features.json:
+
 2018-10-03  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r236781.
