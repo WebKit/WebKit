@@ -84,7 +84,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
         for (var i = 0; i < this._issues.length; ++i) {
             var issue = this._issues[i];
-            if (WI.IssueManager.issueMatchSourceCode(issue, sourceCode))
+            if (WI.ConsoleManager.issueMatchSourceCode(issue, sourceCode))
                 issues.push(issue);
         }
 
