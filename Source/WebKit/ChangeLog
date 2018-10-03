@@ -1,3 +1,25 @@
+2018-10-03  Zamiul Haque  <zhaque@apple.com>
+
+        Search does not cancel after number of matching terms exceed set max limit
+        https://bugs.webkit.org/show_bug.cgi?id=190020
+        <rdar://problem/39585214>
+
+        Reviewed by Andy Estes.
+
+        When searching a PDF document on MobileSafari, the maximum number of matching
+        terms are limited to a set constant. Beyond this limit, a PDF document should not
+        be searched, since the UI will not be updated correspondingly. To this effect,
+        a new SPI was made to cancel a search when the maximum limit of matching terms
+        is reached. This is done without clearing the highlighting for the all the terms
+        that were found under the limit. This bug was a result of not having implemented 
+        the new SPI in WKPDFView.
+
+        This will be tested in a follow-up patch, after re-enabling WKPDFView tests
+        on iOS 12.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView pdfHostViewController:findStringUpdate:done:]):
+
 2018-10-03  Brian Burg  <bburg@apple.com>
 
         [Cocoa] REGRESSION: web content process paused in debugger is considered to be unresponsive if WebKit client is sandboxed

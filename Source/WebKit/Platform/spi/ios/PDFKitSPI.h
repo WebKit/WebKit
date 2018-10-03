@@ -45,6 +45,7 @@
 
 - (void) findString:(NSString*) string withOptions:(NSStringCompareOptions) options;
 - (void) cancelFindString;
+- (void) cancelFindStringWithHighlightsCleared:(BOOL)cleared;
 - (void) focusOnSearchResultAtIndex:(NSUInteger) searchIndex;
 
 - (NSInteger) currentPageIndex;

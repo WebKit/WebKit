@@ -392,14 +392,18 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller findStringUpdate:(NSUInteger)numFound done:(BOOL)done
 {
-    // FIXME: We should stop searching once numFound exceeds _findStringMaxCount, but PDFKit doesn't
-    // allow us to stop the search without also clearing the search highlights. See <rdar://problem/39546973>.
+    if (numFound > _findStringMaxCount && !done) {
+        [controller cancelFindStringWithHighlightsCleared:NO];
+        done = YES;
+    }
+    
     if (!done)
         return;
-
-    _findStringCount = numFound;
-    if (auto findCompletion = std::exchange(_findCompletion, nil))
+    
+    if (auto findCompletion = std::exchange(_findCompletion, nil)) {
+        _findStringCount = numFound;
         findCompletion();
+    }
 }
 
 - (NSURL *)_URLWithPageIndex:(NSInteger)pageIndex
