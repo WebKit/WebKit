@@ -72,8 +72,9 @@ static inline bool isStandardFrameSize(int32_t width, int32_t height)
 }
 #endif
 
-@interface RTCVideoEncoderH264 ()
-
+__attribute__((objc_runtime_name("WK_RTCSingleVideoEncoderH264")))
+@interface RTCSingleVideoEncoderH264 : NSObject <RTCVideoEncoder>
+- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo simulcastIndex: (int)index;
 - (void)frameWasEncoded:(OSStatus)status
                   flags:(VTEncodeInfoFlags)infoFlags
            sampleBuffer:(CMSampleBufferRef)sampleBuffer
@@ -83,7 +84,6 @@ static inline bool isStandardFrameSize(int32_t width, int32_t height)
            renderTimeMs:(int64_t)renderTimeMs
               timestamp:(uint32_t)timestamp
                rotation:(RTCVideoRotation)rotation;
-
 @end
 
 namespace {  // anonymous namespace
@@ -102,7 +102,7 @@ const OSType kNV12PixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
 // Struct that we pass to the encoder per frame to encode. We receive it again
 // in the encoder callback.
 struct RTCFrameEncodeParams {
-  RTCFrameEncodeParams(RTCVideoEncoderH264 *e,
+  RTCFrameEncodeParams(RTCSingleVideoEncoderH264 *e,
                        RTCCodecSpecificInfoH264 *csi,
                        int32_t w,
                        int32_t h,
@@ -117,7 +117,7 @@ struct RTCFrameEncodeParams {
     }
   }
 
-  RTCVideoEncoderH264 *encoder;
+  RTCSingleVideoEncoderH264 *encoder;
   RTCCodecSpecificInfoH264 *codecSpecificInfo;
   int32_t width;
   int32_t height;
@@ -312,7 +312,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 }
 }  // namespace
 
-@implementation RTCVideoEncoderH264 {
+@implementation RTCSingleVideoEncoderH264 {
   RTCVideoCodecInfo *_codecInfo;
   std::unique_ptr<webrtc::BitrateAdjuster> _bitrateAdjuster;
   uint32_t _targetBitrateBps;
@@ -327,6 +327,9 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 
   webrtc::H264BitstreamParser _h264BitstreamParser;
   std::vector<uint8_t> _frameScaleBuffer;
+
+  webrtc::VideoCodec _nativeVideoCodec;
+  int _simulcastIndex;
 }
 
 // .5 is set as a mininum to prevent overcompensating for large temporary
@@ -336,12 +339,13 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 // drastically reduced bitrate, so we want to avoid that. In steady state
 // conditions, 0.95 seems to give us better overall bitrate over long periods
 // of time.
-- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo {
+- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo simulcastIndex:(int)index {
   if (self = [super init]) {
     _codecInfo = codecInfo;
     _bitrateAdjuster.reset(new webrtc::BitrateAdjuster(.5, .95));
     _packetizationMode = RTCH264PacketizationModeNonInterleaved;
     _profile = ExtractProfile([codecInfo nativeSdpVideoFormat]);
+    _simulcastIndex = index;
     RTC_LOG(LS_INFO) << "Using profile " << CFStringToString(_profile);
     RTC_CHECK([codecInfo.name isEqualToString:kRTCVideoCodecH264Name]);
 
@@ -364,6 +368,9 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   _width = settings.width;
   _height = settings.height;
   _mode = settings.mode;
+  _nativeVideoCodec = settings.nativeVideoCodec;
+
+  RTC_DCHECK(_nativeVideoCodec.numberOfSimulcastStreams != 1);
 
   // We can only set average bitrate on the HW encoder.
   _targetBitrateBps = settings.startBitrate;
@@ -475,6 +482,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
                                               frame.timeStamp,
                                               frame.rotation));
   encodeParams->codecSpecificInfo.packetizationMode = _packetizationMode;
+  encodeParams->codecSpecificInfo.simulcastIndex = _simulcastIndex;
 
   // Update the bitrate if needed.
   [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps()];
@@ -503,8 +511,8 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   _callback = callback;
 }
 
-- (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
-  _targetBitrateBps = 1000 * bitrateKbit;
+- (int)setBitrate:(uint32_t)bitrateBps framerate:(uint32_t)framerate {
+  _targetBitrateBps = bitrateBps;
   _bitrateAdjuster->SetTargetBitrateBps(_targetBitrateBps);
   [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps()];
   return WEBRTC_VIDEO_CODEC_OK;
@@ -662,7 +670,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     }
 
     if (!getkVTVideoEncoderSpecification_Usage()) {
-      RTC_LOG(LS_ERROR) << "RTCVideoEncoderH264 cannot create a H264 software encoder";
+      RTC_LOG(LS_ERROR) << "RTCSingleVideoEncoderH264 cannot create a H264 software encoder";
       return WEBRTC_VIDEO_CODEC_ERROR;
     }
 
@@ -879,8 +887,86 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 }
 
 - (RTCVideoEncoderQpThresholds *)scalingSettings {
-  return [[RTCVideoEncoderQpThresholds alloc] initWithThresholdsLow:kLowH264QpThreshold
-                                                               high:kHighH264QpThreshold];
+  return [[RTCVideoEncoderQpThresholds alloc] initWithThresholdsLow:kLowH264QpThreshold high:kHighH264QpThreshold];
+}
+
+- (int)setRateAllocation:(nonnull const webrtc::VideoBitrateAllocation *)allocation framerate:(uint32_t)framerate {
+  return 0;
+}
+
+@end
+
+@implementation RTCVideoEncoderH264 {
+    NSMutableArray<RTCSingleVideoEncoderH264*> *_codecs;
+    RTCVideoCodecInfo *_codecInfo;
+}
+- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo {
+    if (self = [super init]) {
+        _codecInfo = codecInfo;
+    }
+    return self;
+}
+
+- (void)setCallback:(RTCVideoEncoderCallback)callback {
+    for (RTCSingleVideoEncoderH264 *codec : _codecs)
+        [codec setCallback:callback];
+}
+
+- (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings numberOfCores:(int)numberOfCores {
+    auto nativeCodecSettings = settings.nativeVideoCodec;
+
+    _codecs = [[NSMutableArray alloc] init];
+    for (unsigned index = 0 ; index < nativeCodecSettings.numberOfSimulcastStreams; ++index) {
+        auto codec = [[RTCSingleVideoEncoderH264 alloc] initWithCodecInfo:_codecInfo simulcastIndex:index];
+        [_codecs addObject:codec];
+
+        auto codecSettings = nativeCodecSettings;
+        codecSettings.width = nativeCodecSettings.simulcastStream[index].width;
+        codecSettings.height = nativeCodecSettings.simulcastStream[index].height;
+        codecSettings.maxBitrate = nativeCodecSettings.simulcastStream[index].maxBitrate;
+        codecSettings.targetBitrate = nativeCodecSettings.simulcastStream[index].targetBitrate;
+        codecSettings.minBitrate = nativeCodecSettings.simulcastStream[index].minBitrate;
+        codecSettings.qpMax = nativeCodecSettings.simulcastStream[index].qpMax;
+        codecSettings.active = true;
+
+        auto *settings = [[RTCVideoEncoderSettings alloc] initWithNativeVideoCodec:&codecSettings];
+        [codec startEncodeWithSettings:settings numberOfCores:numberOfCores];
+    }
+    return 0;
+}
+
+- (NSInteger)releaseEncoder {
+    for (RTCSingleVideoEncoderH264 *codec : _codecs)
+        [codec releaseEncoder];
+    _codecs = nil;
+    return 0;
+}
+
+- (NSInteger)encode:(RTCVideoFrame *)frame codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info frameTypes:(NSArray<NSNumber *> *)frameTypes {
+    int result = 0;
+    for (RTCSingleVideoEncoderH264 *codec : _codecs)
+        result |= [codec encode:frame codecSpecificInfo:info frameTypes:frameTypes];
+    return result;
+}
+
+- (int)setRateAllocation:(const webrtc::VideoBitrateAllocation *)bitRateAllocation framerate:(uint32_t) framerate {
+    int result = 0;
+    unsigned counter = 0;
+    for (RTCSingleVideoEncoderH264 *codec : _codecs)
+        result |= [codec setBitrate:bitRateAllocation->GetSpatialLayerSum(counter++) framerate:framerate];
+    return result;
+}
+
+- (NSString *)implementationName {
+    return @"VideoToolbox";
+}
+
+- (RTCVideoEncoderQpThresholds *)scalingSettings {
+    return [[RTCVideoEncoderQpThresholds alloc] initWithThresholdsLow:kLowH264QpThreshold high:kHighH264QpThreshold];
+}
+
+- (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
+    return 0;
 }
 
 @end

@@ -18,9 +18,10 @@
 #include "rtc_base/timeutils.h"
 
 // H264 specific settings.
-@implementation RTCCodecSpecificInfoH264
+@implementation RTCCodecSpecificInfoH264 { }
 
 @synthesize packetizationMode = _packetizationMode;
+@synthesize simulcastIndex = _simulcastIndex;
 
 - (webrtc::CodecSpecificInfo)nativeCodecSpecificInfo {
   webrtc::CodecSpecificInfo codecSpecificInfo;
@@ -28,6 +29,7 @@
   codecSpecificInfo.codec_name = [kRTCVideoCodecH264Name cStringUsingEncoding:NSUTF8StringEncoding];
   codecSpecificInfo.codecSpecific.H264.packetization_mode =
       (webrtc::H264PacketizationMode)_packetizationMode;
+  codecSpecificInfo.codecSpecific.H264.simulcast_idx = _simulcastIndex;
 
   return codecSpecificInfo;
 }

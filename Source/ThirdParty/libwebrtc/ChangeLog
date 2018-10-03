@@ -1,3 +1,49 @@
+2018-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Enable H264 simulcast
+        https://bugs.webkit.org/show_bug.cgi?id=190167
+
+        Reviewed by Eric Carlson.
+
+        Rename .m files to .mm to enable C++ compilation of included header files.
+        Rename RTCH264VideoEncoder to RTCSingleH264Encoder.
+        Implement a new RTCH264VideoEncoder that spawns as many RTCSingleH264Encoder as needed for simulcast.
+        Update ObjC API to allow passing simulcast parameters to/from RTCH264VideoEncoder.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDefaultVideoDecoderFactory.mm: Renamed from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDefaultVideoDecoderFactory.m.
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDefaultVideoEncoderFactory.mm: Renamed from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDefaultVideoEncoderFactory.m.
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoCodec+Private.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoCodecH264.mm:
+        (-[RTCCodecSpecificInfoH264 nativeCodecSpecificInfo]):
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoEncoderSettings.mm:
+        (-[RTCVideoEncoderSettings initWithNativeVideoCodec:]):
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoEncoder.mm:
+        (-[RTCWrappedNativeVideoEncoder setBitrate:framerate:]):
+        (-[RTCWrappedNativeVideoEncoder setRateAllocation:framerate:]):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm:
+        (-[RTCSingleVideoEncoderH264 initWithCodecInfo:simulcastIndex:]):
+        (-[RTCSingleVideoEncoderH264 startEncodeWithSettings:numberOfCores:]):
+        (-[RTCSingleVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCSingleVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        (-[RTCSingleVideoEncoderH264 scalingSettings]):
+        (-[RTCSingleVideoEncoderH264 setRateAllocation:framerate:]):
+        (-[RTCVideoEncoderH264 initWithCodecInfo:]):
+        (-[RTCVideoEncoderH264 setCallback:]):
+        (-[RTCVideoEncoderH264 startEncodeWithSettings:numberOfCores:]):
+        (-[RTCVideoEncoderH264 releaseEncoder]):
+        (-[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCVideoEncoderH264 setRateAllocation:framerate:]):
+        (-[RTCVideoEncoderH264 implementationName]):
+        (-[RTCVideoEncoderH264 scalingSettings]):
+        (-[RTCVideoEncoderH264 setBitrate:framerate:]):
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodec.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecH264.h:
+        * Source/webrtc/sdk/objc/Framework/Native/src/objc_video_encoder_factory.mm:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-09-29  Youenn Fablet  <youenn@apple.com>
 
         Add yasm as third party tool for libwebrtc compilation

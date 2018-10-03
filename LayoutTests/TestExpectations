@@ -1211,6 +1211,7 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 # Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)
 media/session [ Skip ]
 
+webrtc/simulcast-h264.html [ Slow ]
 webrtc/datachannel/multiple-connections.html [ Slow ]
 webkit.org/b/187180 webrtc/datachannel/mdns-ice-candidates.html [ Pass Failure ]
 webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]

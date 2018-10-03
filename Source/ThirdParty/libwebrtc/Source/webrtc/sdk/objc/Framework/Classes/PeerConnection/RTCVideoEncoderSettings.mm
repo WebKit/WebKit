@@ -26,12 +26,15 @@
 @synthesize maxFramerate = _maxFramerate;
 @synthesize qpMax = _qpMax;
 @synthesize mode = _mode;
+@synthesize nativeVideoCodec = _nativeVideoCodec;
 
 - (instancetype)initWithNativeVideoCodec:(const webrtc::VideoCodec *)videoCodec {
   if (self = [super init]) {
     if (videoCodec) {
       const char *codecName = CodecTypeToPayloadString(videoCodec->codecType);
       _name = [NSString stringWithUTF8String:codecName];
+
+      _nativeVideoCodec = *videoCodec;
 
       _width = videoCodec->width;
       _height = videoCodec->height;
@@ -46,21 +49,6 @@
   }
 
   return self;
-}
-
-- (webrtc::VideoCodec)nativeVideoCodec {
-  webrtc::VideoCodec videoCodec;
-  videoCodec.width = _width;
-  videoCodec.height = _height;
-  videoCodec.startBitrate = _startBitrate;
-  videoCodec.maxBitrate = _maxBitrate;
-  videoCodec.minBitrate = _minBitrate;
-  videoCodec.targetBitrate = _targetBitrate;
-  videoCodec.maxBitrate = _maxBitrate;
-  videoCodec.qpMax = _qpMax;
-  videoCodec.mode = (webrtc::VideoCodecMode)_mode;
-
-  return videoCodec;
 }
 
 @end

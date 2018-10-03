@@ -90,6 +90,10 @@ class ObjCVideoEncoder : public VideoEncoder {
     return [encoder_ setBitrate:bitrate framerate:framerate];
   }
 
+  int32_t SetRateAllocation(const VideoBitrateAllocation& allocation, uint32_t framerate) {
+    return [encoder_ setRateAllocation: &allocation framerate:framerate];
+  }
+
   bool SupportsNativeHandle() const { return true; }
 
   VideoEncoder::ScalingSettings GetScalingSettings() const {

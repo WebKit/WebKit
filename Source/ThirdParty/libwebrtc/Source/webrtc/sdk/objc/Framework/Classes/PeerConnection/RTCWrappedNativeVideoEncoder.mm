@@ -54,6 +54,11 @@
 }
 
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
+    RTC_NOTREACHED();
+    return 0;
+}
+
+- (int)setRateAllocation:(const webrtc::VideoBitrateAllocation *)bitRateAllocation framerate:(uint32_t) framerate {
   RTC_NOTREACHED();
   return 0;
 }

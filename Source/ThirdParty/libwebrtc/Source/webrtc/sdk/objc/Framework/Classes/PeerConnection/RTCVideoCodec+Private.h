@@ -30,7 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RTCVideoEncoderSettings ()
 
 - (instancetype)initWithNativeVideoCodec:(const webrtc::VideoCodec *__nullable)videoCodec;
-- (webrtc::VideoCodec)nativeVideoCodec;
+
+@property(nonatomic, assign) webrtc::VideoCodec nativeVideoCodec;
 
 @end
 

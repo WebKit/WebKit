@@ -70,6 +70,7 @@
 		41109AAF1E5FA19200C0955A /* frame_callback.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AA81E5FA19200C0955A /* frame_callback.h */; };
 		41109AB01E5FA19200C0955A /* bitrate_adjuster.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AA91E5FA19200C0955A /* bitrate_adjuster.h */; };
 		41109AB11E5FA19200C0955A /* incoming_video_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 41109AAA1E5FA19200C0955A /* incoming_video_stream.h */; };
+		41239B3E21476DC000396F81 /* RTCDefaultVideoDecoderFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41EAF1B2212E29C1009F73EC /* RTCDefaultVideoDecoderFactory.mm */; };
 		41239B3F21476DC400396F81 /* screenshare_layers.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419C84301FE24E7F0040C30F /* screenshare_layers.cc */; };
 		41239B4C2147716D00396F81 /* video_stream_encoder_create.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F263C02126818900274F59 /* video_stream_encoder_create.h */; };
 		41239B4D2147743A00396F81 /* video_stream_encoder_create.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4102F6D521273415006AE8D7 /* video_stream_encoder_create.cc */; };
@@ -1130,6 +1131,7 @@
 		41EA54111EFC2D1B002FF04C /* sqrt.c in Sources */ = {isa = PBXBuildFile; fileRef = 41EA53FB1EFC2D1B002FF04C /* sqrt.c */; };
 		41EA54191EFC2D53002FF04C /* md4.c in Sources */ = {isa = PBXBuildFile; fileRef = 41EA54131EFC2D4F002FF04C /* md4.c */; };
 		41EA541A1EFC2D53002FF04C /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 41EA54181EFC2D53002FF04C /* md5.c */; };
+		41EAF1B6212E29C1009F73EC /* RTCDefaultVideoEncoderFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41EAF1B3212E29C1009F73EC /* RTCDefaultVideoEncoderFactory.mm */; };
 		41ECEAB620630108009D5141 /* RTCVideoCodec+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 41ECEAB320630107009D5141 /* RTCVideoCodec+Private.h */; };
 		41ECEAB720630108009D5141 /* RTCVideoCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41ECEAB420630107009D5141 /* RTCVideoCodec.mm */; };
 		41ECEABC206403C2009D5141 /* WebKitUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 41ECEABB206403C1009D5141 /* WebKitUtilities.h */; };
@@ -4905,8 +4907,8 @@
 		41EA54161EFC2D53002FF04C /* md5-586.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "md5-586.pl"; sourceTree = "<group>"; };
 		41EA54171EFC2D53002FF04C /* md5-x86_64.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "md5-x86_64.pl"; sourceTree = "<group>"; };
 		41EA54181EFC2D53002FF04C /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
-		41EAF1B2212E29C1009F73EC /* RTCDefaultVideoDecoderFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RTCDefaultVideoDecoderFactory.m; path = PeerConnection/RTCDefaultVideoDecoderFactory.m; sourceTree = "<group>"; };
-		41EAF1B3212E29C1009F73EC /* RTCDefaultVideoEncoderFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RTCDefaultVideoEncoderFactory.m; path = PeerConnection/RTCDefaultVideoEncoderFactory.m; sourceTree = "<group>"; };
+		41EAF1B2212E29C1009F73EC /* RTCDefaultVideoDecoderFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RTCDefaultVideoDecoderFactory.mm; path = PeerConnection/RTCDefaultVideoDecoderFactory.mm; sourceTree = "<group>"; };
+		41EAF1B3212E29C1009F73EC /* RTCDefaultVideoEncoderFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RTCDefaultVideoEncoderFactory.mm; path = PeerConnection/RTCDefaultVideoEncoderFactory.mm; sourceTree = "<group>"; };
 		41EAF1B4212E29C1009F73EC /* RTCVideoCodecVP8.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RTCVideoCodecVP8.mm; path = PeerConnection/RTCVideoCodecVP8.mm; sourceTree = "<group>"; };
 		41EAF1B9212E2AAD009F73EC /* vpx_codec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vpx_codec.c; sourceTree = "<group>"; };
 		41EAF1BA212E2AAD009F73EC /* vpx_encoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vpx_encoder.c; sourceTree = "<group>"; };
@@ -9320,8 +9322,8 @@
 		41ECEAB2206300E3009D5141 /* PeerConnection */ = {
 			isa = PBXGroup;
 			children = (
-				41EAF1B2212E29C1009F73EC /* RTCDefaultVideoDecoderFactory.m */,
-				41EAF1B3212E29C1009F73EC /* RTCDefaultVideoEncoderFactory.m */,
+				41EAF1B2212E29C1009F73EC /* RTCDefaultVideoDecoderFactory.mm */,
+				41EAF1B3212E29C1009F73EC /* RTCDefaultVideoEncoderFactory.mm */,
 				41ECEAC720641328009D5141 /* RTCEncodedImage.mm */,
 				4192423F21276D4700634FCF /* RTCPeerConnectionFactory.mm */,
 				41ECEAD9206414A6009D5141 /* RTCRtpFragmentationHeader.mm */,
@@ -16005,6 +16007,8 @@
 				413A230F1FE18E0700373E99 /* rtccertificate.cc in Sources */,
 				413A22BE1FE18E0700373E99 /* rtccertificategenerator.cc in Sources */,
 				41ECEAC620641303009D5141 /* RTCCVPixelBuffer.mm in Sources */,
+				41239B3E21476DC000396F81 /* RTCDefaultVideoDecoderFactory.mm in Sources */,
+				41EAF1B6212E29C1009F73EC /* RTCDefaultVideoEncoderFactory.mm in Sources */,
 				41ECEAC820641328009D5141 /* RTCEncodedImage.mm in Sources */,
 				41F411B01EF8DA0100343C26 /* rtcerror.cc in Sources */,
 				41ECEACF20641370009D5141 /* RTCI420Buffer.mm in Sources */,

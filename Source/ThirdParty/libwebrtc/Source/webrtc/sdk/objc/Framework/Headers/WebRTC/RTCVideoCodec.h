@@ -37,6 +37,10 @@ typedef NS_ENUM(NSUInteger, RTCVideoContentType) {
   RTCVideoContentTypeScreenshare,
 };
 
+namespace webrtc {
+class VideoBitrateAllocation;
+};
+
 /** Represents an encoded frame. Corresponds to webrtc::EncodedImage. */
 RTC_EXPORT
 __attribute__((objc_runtime_name("WK_RTCEncodedImage")))
@@ -158,6 +162,8 @@ RTC_EXPORT
     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            frameTypes:(NSArray<NSNumber *> *)frameTypes;
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate;
+- (int)setRateAllocation: (const webrtc::VideoBitrateAllocation *)allocation framerate:(uint32_t)framerate;
+
 - (NSString *)implementationName;
 
 /** Returns QP scaling settings for encoder. The quality scaler adjusts the resolution in order to

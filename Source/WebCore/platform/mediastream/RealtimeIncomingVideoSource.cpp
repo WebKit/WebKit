@@ -42,6 +42,12 @@ RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webr
     , m_videoTrack(WTFMove(videoTrack))
 {
     notifyMutedChange(!m_videoTrack);
+
+    RealtimeMediaSourceSupportedConstraints constraints;
+    constraints.setSupportsWidth(true);
+    constraints.setSupportsHeight(true);
+    m_currentSettings = RealtimeMediaSourceSettings { };
+    m_currentSettings->setSupportedConstraints(WTFMove(constraints));
 }
 
 void RealtimeIncomingVideoSource::startProducingData()

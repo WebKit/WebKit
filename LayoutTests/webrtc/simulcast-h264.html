@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div>
+    <video id="low" playsinline autoplay width="320"></video>
+    <video id="mid" playsinline autoplay width="320"></video>
+    <video id="high" playsinline autoplay width="320"></video>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.setWebRTCUnifiedPlanEnabled(false);
+var state;
+var finished = false;
+// This test is largely inspired from Chrome/Firefox/Simulcast playground tests.
+promise_test(async (test) => {
+    if (window.testRunner && testRunner.timeout) {
+        setTimeout(() => {
+            if (!finished)
+                throw "test stucked in state: " + state;
+        }, testRunner.timeout * 0.9);
+    }
+
+    state = "start";
+
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+    pc1.onicecandidate = (e) => pc2.addIceCandidate(e.candidate);
+    pc2.onicecandidate = (e) => pc1.addIceCandidate(e.candidate);
+
+    let counter = 0;
+    pc2.ontrack = (e) => {
+        if (counter == 0)
+            low.srcObject = new MediaStream([e.track]);
+        else if (counter == 1)
+            mid.srcObject = new MediaStream([e.track]);
+        else
+            high.srcObject = new MediaStream([e.track]);
+        ++counter;
+    }
+
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+    pc1.addTrack(localStream.getVideoTracks()[0], localStream);
+    const offer = await pc1.createOffer();
+
+    state = "got offer";
+
+    match = offer.sdp.match(/a=ssrc:(\d+) cname:(.*)\r\n/);
+    msid = offer.sdp.match(/a=ssrc:(\d+) msid:(.*)\r\n/);
+    var lines = offer.sdp.trim().split('\r\n');
+    var removed = lines.splice(lines.length - 4, 4);
+    var videoSSRC1 = parseInt(match[1]);
+    rtxSSRC1 = offer.sdp.split('\r\n').filter((line) => { return line.startsWith('a=ssrc-group:FID ')})[0].split(' ')[2];
+    var videoSSRC2 = videoSSRC1 + 1;
+    var rtxSSRC2 = videoSSRC1 + 2;
+    var videoSSRC3 = videoSSRC1 + 3;
+    var rtxSSRC3 = videoSSRC1 + 4;
+    lines.push(removed[0]);
+    lines.push(removed[1]);
+    lines.push('a=ssrc:' + videoSSRC2 + ' cname:' + match[2]);
+    lines.push('a=ssrc:' + videoSSRC2 + ' msid:' + msid[2]);
+    lines.push('a=ssrc:' + rtxSSRC2 + ' cname:' + match[2]);
+    lines.push('a=ssrc:' + rtxSSRC2 + ' msid:' + msid[2]);
+
+    lines.push('a=ssrc:' + videoSSRC3 + ' cname:' + match[2]);
+    lines.push('a=ssrc:' + videoSSRC3 + ' msid:' + msid[2]);
+    lines.push('a=ssrc:' + rtxSSRC3 + ' cname:' + match[2]);
+    lines.push('a=ssrc:' + rtxSSRC3 + ' msid:' + msid[2]);
+
+    lines.push('a=ssrc-group:FID ' + videoSSRC2 + ' ' + rtxSSRC2);
+    lines.push('a=ssrc-group:FID ' + videoSSRC3 + ' ' + rtxSSRC3);
+    lines.push('a=ssrc-group:SIM ' + videoSSRC1 + ' ' + videoSSRC2 + ' ' + videoSSRC3);
+    offer.sdp = lines.join('\r\n') + '\r\n';
+
+    var offer2 = {
+        type: 'offer',
+        sdp: offer.sdp,
+    };
+    offer2.sdp = offer2.sdp.replace('a=ssrc-group:SIM ' + videoSSRC1 + ' ' + videoSSRC2 + ' ' + videoSSRC3 + '\r\n', '');
+
+    offer2.sdp = offer2.sdp.replace('a=ssrc:' + videoSSRC1 + ' msid:' + msid[2], 'a=ssrc:' + videoSSRC1 + ' msid:low low');
+    offer2.sdp = offer2.sdp.replace('a=ssrc:' + rtxSSRC1 + ' msid:' + msid[2], 'a=ssrc:' + rtxSSRC1 + ' msid:low low');
+
+    offer2.sdp = offer2.sdp.replace('a=ssrc:' + videoSSRC2 + ' msid:' + msid[2], 'a=ssrc:' + videoSSRC2 + ' msid:mid mid');
+    offer2.sdp = offer2.sdp.replace('a=ssrc:' + rtxSSRC2 + ' msid:' + msid[2], 'a=ssrc:' + rtxSSRC2 + ' msid:mid mid');
+
+    offer2.sdp = offer2.sdp.replace('a=ssrc:' + videoSSRC3 + ' msid:' + msid[2], 'a=ssrc:' + videoSSRC3 + ' msid:hi hi');
+    offer2.sdp = offer2.sdp.replace('a=ssrc:' + rtxSSRC3 + ' msid:' + msid[2], 'a=ssrc:' + rtxSSRC3 + ' msid:hi hi');
+    await Promise.all([
+        pc1.setLocalDescription(offer),
+        pc2.setRemoteDescription(offer2),
+    ]);
+
+    state = "set description";
+
+    const answer = await pc2.createAnswer();
+
+    state = "got answer";
+
+    await Promise.all([
+        pc2.setLocalDescription(answer),
+        pc1.setRemoteDescription(answer),
+    ]);
+
+    state = "set description 2";
+
+    await low.play();
+    state = "video low plays";
+
+    assert_equals(low.srcObject.getVideoTracks()[0].getSettings().height, 240);
+    assert_equals(low.srcObject.getVideoTracks()[0].getSettings().width, 320);
+
+    await mid.play();
+    state = "video mid plays";
+
+    assert_equals(mid.srcObject.getVideoTracks()[0].getSettings().height, 480);
+    assert_equals(mid.srcObject.getVideoTracks()[0].getSettings().width, 640);
+
+    finished = true;
+}, "Testing simulcast");
+</script>
+</body>
+</html>

@@ -57,6 +57,7 @@
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>
 #include <webrtc/p2p/client/basicportallocator.h>
 #include <webrtc/pc/peerconnectionfactory.h>
+#include <webrtc/system_wrappers/include/field_trial_default.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -75,6 +76,8 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
 {
     ASSERT(isMainThread());
     ASSERT(client.factory());
+
+    webrtc::field_trial::InitFieldTrialsFromString("WebRTC-H264Simulcast/Enabled/");
 }
 
 bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)

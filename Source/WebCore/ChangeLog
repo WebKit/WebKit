@@ -1,3 +1,21 @@
+2018-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Enable H264 simulcast
+        https://bugs.webkit.org/show_bug.cgi?id=190167
+
+        Reviewed by Eric Carlson.
+
+        Activate H264 simulcast trial field.
+        Make track.getSettings() expose width and height for incoming tracks.
+
+        Test: webrtc/simulcast-h264.html
+
+        * Configurations/WebCore.xcconfig:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint):
+        * platform/mediastream/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource):
+
 2018-10-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wunused-variable in RenderLayer::updateScrollableAreaSet

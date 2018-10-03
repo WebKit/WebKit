@@ -24,6 +24,7 @@ __attribute__((objc_runtime_name("WK_RTCCodecSpecificInfoH264")))
 @interface RTCCodecSpecificInfoH264 : NSObject <RTCCodecSpecificInfo>
 
 @property(nonatomic, assign) RTCH264PacketizationMode packetizationMode;
+@property(nonatomic, assign) int simulcastIndex;
 
 @end
 
