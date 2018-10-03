@@ -1,3 +1,18 @@
+2018-10-03  Dan Bernstein  <mitz@apple.com>
+
+        libwebrtc part of [Xcode] Update some build settings as recommended by Xcode 10
+        https://bugs.webkit.org/show_bug.cgi?id=190250
+
+        Reviewed by Andy Estes.
+
+        * Configurations/Base.xcconfig: Removed a duplicate reference to x_all.c and let Xcode
+          update LastUpgradeCheck.
+
+        * libwebrtc.xcodeproj/project.pbxproj: Enabled CLANG_WARN_INFINITE_RECURSION,
+          CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF, CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED, and
+          CLANG_WARN_SUSPICIOUS_MOVE. Other warnings that Xcode 10 recommended were incompatible
+          with one or more source files in the project.
+
 2018-10-03  Youenn Fablet  <youenn@apple.com>
 
         Enable H264 simulcast

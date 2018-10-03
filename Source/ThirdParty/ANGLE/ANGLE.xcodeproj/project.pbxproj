@@ -20,8 +20,8 @@
 		31012E2918B97B9B0039062F /* DirectiveHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DB818B97B9B0039062F /* DirectiveHandler.h */; };
 		31012E2A18B97B9B0039062F /* ExtensionBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DB918B97B9B0039062F /* ExtensionBehavior.h */; };
 		31012E2D18B97B9B0039062F /* glslang.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DBD18B97B9B0039062F /* glslang.h */; };
-		31012E3018B97B9B0039062F /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DC018B97B9B0039062F /* glslang_lex.cpp */; };
-		31012E3118B97B9B0039062F /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DC118B97B9B0039062F /* glslang_tab.cpp */; };
+		31012E3018B97B9B0039062F /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DC018B97B9B0039062F /* glslang_lex.cpp */; settings = {COMPILER_FLAGS = "-Wno-unreachable-code"; }; };
+		31012E3118B97B9B0039062F /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DC118B97B9B0039062F /* glslang_tab.cpp */; settings = {COMPILER_FLAGS = "-Wno-unreachable-code"; }; };
 		31012E3218B97B9B0039062F /* glslang_tab.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DC218B97B9B0039062F /* glslang_tab.h */; };
 		31012E3318B97B9B0039062F /* HashNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DC318B97B9B0039062F /* HashNames.h */; };
 		31012E3418B97B9B0039062F /* InfoSink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DC418B97B9B0039062F /* InfoSink.cpp */; };
@@ -516,8 +516,8 @@
 		5CCD81C01DBFEA5C006066B8 /* UseInterfaceBlockFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD81A91DBFEA5C006066B8 /* UseInterfaceBlockFields.h */; };
 		5CCD81C31DBFEAD9006066B8 /* EmulateGLFragColorBroadcast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81C11DBFEAD9006066B8 /* EmulateGLFragColorBroadcast.cpp */; };
 		5CCD81C41DBFEAD9006066B8 /* EmulateGLFragColorBroadcast.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD81C21DBFEAD9006066B8 /* EmulateGLFragColorBroadcast.h */; };
-		72309A56183C27DE00370B93 /* Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A55183C27DB00370B93 /* Tokenizer.cpp */; };
-		72309A58183C27F300370B93 /* ExpressionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A57183C27F100370B93 /* ExpressionParser.cpp */; };
+		72309A56183C27DE00370B93 /* Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A55183C27DB00370B93 /* Tokenizer.cpp */; settings = {COMPILER_FLAGS = "-Wno-unreachable-code"; }; };
+		72309A58183C27F300370B93 /* ExpressionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A57183C27F100370B93 /* ExpressionParser.cpp */; settings = {COMPILER_FLAGS = "-Wno-unreachable-code"; }; };
 		A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */; };
 		A08C3CDD16D6CB61003F0B83 /* ArrayBoundsClamper.h in Headers */ = {isa = PBXBuildFile; fileRef = A08C3CDB16D6CB61003F0B83 /* ArrayBoundsClamper.h */; };
 		A264F8AC16974DED006FAA5A /* DiagnosticsBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89316974DED006FAA5A /* DiagnosticsBase.cpp */; };
@@ -2282,7 +2282,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 1000;
 			};
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */;
 			compatibilityVersion = "Xcode 3.2";
