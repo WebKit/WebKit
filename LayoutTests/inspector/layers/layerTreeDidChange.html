@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function addCompositedLayer()
+{
+    var element = document.createElement("div");
+    element.className = "composited";
+    element.id = "last-element";
+    document.body.appendChild(element);
+
+    requestAnimationFrame(() => {
+        TestPage.dispatchEventToFrontend("TestPageDidAppendChild");
+    });
+};
+
+function test()
+{
+    let documentNode = null;
+
+    let suite = InspectorTest.createAsyncSuite("LayerTree.layerTreeDidChange");
+
+    suite.addTestCase({
+        name: "LayerTree.layerTreeDidChange.WithRequest",
+        description: "Check that layerTreeDidChange is able to be dispatched once LayerTree.commands.layersForNode is called.",
+        test(resolve, reject) {
+            let layerTreeDidChangeCount = 0;
+            let handleLayerTreeDidChange = WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, (event) => {
+                ++layerTreeDidChangeCount;
+
+                InspectorTest.log("Layer tree changed");
+
+                if (layerTreeDidChangeCount === 1) {
+                    WI.layerTreeManager.layersForNode(documentNode, (layers) => {
+                        InspectorTest.log("Creating layer...");
+                        InspectorTest.evaluateInPage(`addCompositedLayer()`);
+                    });
+                }
+            });
+
+            let testPageDidAppendChildCount = 0;
+            let handleTestPageDidAppendChild = InspectorTest.addEventListener("TestPageDidAppendChild", (event) => {
+                ++testPageDidAppendChildCount;
+
+                if (testPageDidAppendChildCount === 2) {
+                    WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, handleLayerTreeDidChange);
+                    InspectorTest.removeEventListener("TestPageDidAppendChild", handleTestPageDidAppendChild);
+
+                    InspectorTest.expectEqual(layerTreeDidChangeCount, 2, "LayerTreeDidChange should fire after layersForNode is called");
+
+                    resolve();
+                }
+            });
+
+            WI.layerTreeManager.layersForNode(documentNode, (layers) => {
+                InspectorTest.log("Creating layer...");
+                InspectorTest.evaluateInPage(`addCompositedLayer()`);
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "LayerTree.layerTreeDidChange.WithoutRequest",
+        description: "Check that layerTreeDidChange doesn't dispatch more than once until LayerTree.commands.layersForNode is called.",
+        test(resolve, reject) {
+            let layerTreeDidChangeCount = 0;
+            let handleLayerTreeDidChange = WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, (event) => {
+                ++layerTreeDidChangeCount;
+
+                InspectorTest.log("Layer tree changed");
+
+                if (layerTreeDidChangeCount === 1) {
+                    InspectorTest.log("Creating layer...");
+                    InspectorTest.evaluateInPage(`addCompositedLayer()`);
+                }
+            });
+
+            let testPageDidAppendChildCount = 0;
+            let handleTestPageDidAppendChild = InspectorTest.addEventListener("TestPageDidAppendChild", (event) => {
+                ++testPageDidAppendChildCount;
+
+                if (testPageDidAppendChildCount === 2) {
+                    WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, handleLayerTreeDidChange);
+                    InspectorTest.removeEventListener("TestPageDidAppendChild", handleTestPageDidAppendChild);
+
+                    InspectorTest.expectEqual(layerTreeDidChangeCount, 1, "LayerTreeDidChange should not fire before layersForNode is called");
+
+                    resolve();
+                }
+            });
+
+            WI.layerTreeManager.layersForNode(documentNode, (layers) => {
+                InspectorTest.log("Creating layer...");
+                InspectorTest.evaluateInPage(`addCompositedLayer()`);
+            });
+        },
+    });
+
+    WI.domManager.requestDocument((node) => {
+        documentNode = node;
+        if (!documentNode) {
+            InspectorTest.fail("Missing document node.");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+<style>
+.composited {
+    -webkit-transform: translateZ(0);
+}
+</style>
+</head>
+<body onload="runTest()">
+<p>Tests for LayerTree.event.layerTreeDidChange.</p>
+</body>
+</html>

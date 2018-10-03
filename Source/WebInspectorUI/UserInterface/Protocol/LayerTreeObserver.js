@@ -29,7 +29,6 @@ WI.LayerTreeObserver = class LayerTreeObserver
 
     layerTreeDidChange()
     {
-        if (WI.layerTreeManager.supported)
-            WI.layerTreeManager.layerTreeDidChange();
+        WI.layerTreeManager.layerTreeDidChange();
     }
 };

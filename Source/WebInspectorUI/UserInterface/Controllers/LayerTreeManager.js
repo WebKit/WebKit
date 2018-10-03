@@ -29,9 +29,7 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
     {
         super();
 
-        this._supported = !!window.LayerTreeAgent;
-
-        if (this._supported)
+        if (window.LayerTreeAgent)
             LayerTreeAgent.enable();
     }
 
@@ -39,7 +37,7 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
 
     get supported()
     {
-        return this._supported;
+        return !!window.LayerTreeAgent;
     }
 
     layerTreeMutations(previousLayers, newLayers)

@@ -1,3 +1,18 @@
+2018-10-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: prevent layer events from firing until the layer information is re-requested
+        https://bugs.webkit.org/show_bug.cgi?id=190159
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/layers/layerTreeDidChange.html
+
+        * inspector/agents/InspectorLayerTreeAgent.h:
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::reset):
+        (WebCore::InspectorLayerTreeAgent::layerTreeDidChange):
+        (WebCore::InspectorLayerTreeAgent::layersForNode):
+
 2018-10-02  Brian Burg  <bburg@apple.com>
 
         Web Automation: tab default key handler should always cycle focus when page is controlled by automation

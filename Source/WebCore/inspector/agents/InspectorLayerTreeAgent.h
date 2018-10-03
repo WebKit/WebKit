@@ -90,6 +90,8 @@ private:
 
     HashMap<PseudoElement*, String> m_pseudoElementToIdMap;
     HashMap<String, PseudoElement*> m_idToPseudoElement;
+
+    bool m_suppressLayerChangeEvents { false };
 };
 
 } // namespace WebCore
