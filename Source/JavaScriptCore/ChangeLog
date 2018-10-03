@@ -1,3 +1,15 @@
+2018-10-03  Michael Saboff  <msaboff@apple.com>
+
+        Command line jsc should report memory footprint in bytes
+        https://bugs.webkit.org/show_bug.cgi?id=190267
+
+        Reviewed by Mark Lam.
+
+        Change to leave the footprint values from the system unmodified.
+
+        * jsc.cpp:
+        (JSCMemoryFootprint::finishCreation):
+
 2018-10-03  Mark Lam  <mark.lam@apple.com>
 
         Suppress unreachable code warning for LLIntAssembly.h code.

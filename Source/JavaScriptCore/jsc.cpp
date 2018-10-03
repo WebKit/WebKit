@@ -1231,9 +1231,8 @@ public:
 
         MemoryFootprint footprint = MemoryFootprint::now();
 
-        // Report sizes in KBytes so that values up to GB are still integers.
-        addProperty(vm, "current", jsNumber(footprint.current / 1024));
-        addProperty(vm, "peak", jsNumber(footprint.peak / 1024));
+        addProperty(vm, "current", jsNumber(footprint.current));
+        addProperty(vm, "peak", jsNumber(footprint.peak));
     }
 
     DECLARE_INFO;
