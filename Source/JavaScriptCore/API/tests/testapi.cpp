@@ -520,7 +520,7 @@ int testCAPIViaCpp(const char* filter)
                     {
                         LockHolder locker(lock);
                         if (tasks.isEmpty())
-                            return;
+                            break;
                         task = tasks.takeFirst();
                     }
 

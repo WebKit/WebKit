@@ -53,7 +53,7 @@ void printAllRegisters(PrintStream& out, Context& context)
     };
 #define INDENT indent()
 
-    INDENT, out.print("cpu: {\n");
+    INDENT; out.print("cpu: {\n");
 
 #if USE(JSVALUE32_64)
     #define INTPTR_HEX_VALUE_FORMAT "0x%08" PRIxPTR
@@ -63,21 +63,21 @@ void printAllRegisters(PrintStream& out, Context& context)
 
     for (auto id = MacroAssembler::firstRegister(); id <= MacroAssembler::lastRegister(); id = nextID(id)) {
         intptr_t value = static_cast<intptr_t>(cpu.gpr(id));
-        INDENT, out.printf("    %6s: " INTPTR_HEX_VALUE_FORMAT "  %" PRIdPTR "\n", cpu.gprName(id), value, value);
+        INDENT; out.printf("    %6s: " INTPTR_HEX_VALUE_FORMAT "  %" PRIdPTR "\n", cpu.gprName(id), value, value);
     }
     for (auto id = MacroAssembler::firstSPRegister(); id <= MacroAssembler::lastSPRegister(); id = nextID(id)) {
         intptr_t value = static_cast<intptr_t>(cpu.spr(id));
-        INDENT, out.printf("    %6s: " INTPTR_HEX_VALUE_FORMAT "  %" PRIdPTR "\n", cpu.sprName(id), value, value);
+        INDENT; out.printf("    %6s: " INTPTR_HEX_VALUE_FORMAT "  %" PRIdPTR "\n", cpu.sprName(id), value, value);
     }
     #undef INTPTR_HEX_VALUE_FORMAT
 
     for (auto id = MacroAssembler::firstFPRegister(); id <= MacroAssembler::lastFPRegister(); id = nextID(id)) {
         uint64_t u = bitwise_cast<uint64_t>(cpu.fpr(id));
         double d = cpu.fpr(id);
-        INDENT, out.printf("    %6s: 0x%016" PRIx64 "  %.13g\n", cpu.fprName(id), u, d);
+        INDENT; out.printf("    %6s: 0x%016" PRIx64 "  %.13g\n", cpu.fprName(id), u, d);
     }
 
-    INDENT, out.print("}\n");
+    INDENT; out.print("}\n");
 #undef INDENT
 
 }

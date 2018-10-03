@@ -1,3 +1,19 @@
+2018-10-03  Dan Bernstein  <mitz@apple.com>
+
+        WTF part of [Xcode] Update some build settings as recommended by Xcode 10
+        https://bugs.webkit.org/show_bug.cgi?id=190250
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/Base.xcconfig: Enabled CLANG_WARN_COMMA, CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS,
+          and CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF.
+
+        * WTF.xcodeproj/project.pbxproj: Let Xcode update LastUpgradeCheck.
+
+        * wtf/MathExtras.h:
+        (WTF::fastLog2): Addressed newly-enabled CLANG_WARN_COMMA by splitting some comma-separated
+          expressions into individual statements.
+
 2018-10-03  Mark Lam  <mark.lam@apple.com>
 
         Make string MaxLength for all WTF and JS strings consistently equal to INT_MAX.

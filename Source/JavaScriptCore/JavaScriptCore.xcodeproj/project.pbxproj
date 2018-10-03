@@ -793,7 +793,6 @@
 		14AD91241DCA9FA40014F9FE /* UnlinkedEvalCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD911E1DCA9FA40014F9FE /* UnlinkedEvalCodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14AD91251DCA9FA40014F9FE /* UnlinkedModuleProgramCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD911F1DCA9FA40014F9FE /* UnlinkedModuleProgramCodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14AD91261DCA9FA40014F9FE /* UnlinkedProgramCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD91201DCA9FA40014F9FE /* UnlinkedProgramCodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14AD91271DCA9FA40014F9FE /* UnlinkedFunctionExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD91211DCA9FA40014F9FE /* UnlinkedFunctionExecutable.h */; };
 		14B723B812D7DA6F003BD5ED /* MachineStackMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14B8EC720A5652090062BE54 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BA78F013AAB88F005B7C2C /* SlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1110,6 +1109,7 @@
 		70ECA6061AFDBEA200449739 /* JSTemplateObjectDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6011AFDBEA200449739 /* JSTemplateObjectDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70ECA6091AFDBEA200449739 /* TemplateObjectDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6041AFDBEA200449739 /* TemplateObjectDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */; };
+		7593C898BE714A64BE93A6E7 /* WasmContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		790081391E95A8EC0052D7CD /* WasmModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 790081371E95A8EC0052D7CD /* WasmModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7905BB691D12050E0019FE57 /* InlineAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 7905BB671D12050E0019FE57 /* InlineAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79160DBE1C8E3EC8008C085A /* ProxyRevoke.h in Headers */ = {isa = PBXBuildFile; fileRef = 79160DBC1C8E3EC8008C085A /* ProxyRevoke.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1523,7 +1523,6 @@
 		AD2FCC211DB59CB200B3E736 /* WebAssemblyTablePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCC151DB59C5900B3E736 /* WebAssemblyTablePrototype.lut.h */; };
 		AD2FCC2D1DB838FD00B3E736 /* WebAssemblyPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCC271DB838C400B3E736 /* WebAssemblyPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */ = {isa = PBXBuildFile; fileRef = AD412B321E7B2E8A008AF157 /* WasmContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7593C898BE714A64BE93A6E7 /* WasmContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4252511E5D0E14009D2A97 /* FullCodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */; };
 		AD4937C41DDBE6140077C807 /* AbstractModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C21DDBE60A0077C807 /* AbstractModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4937C81DDD0AAE0077C807 /* WebAssemblyModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C61DDCDCF00077C807 /* WebAssemblyModuleRecord.h */; };
@@ -3167,7 +3166,6 @@
 		14AD911E1DCA9FA40014F9FE /* UnlinkedEvalCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedEvalCodeBlock.h; sourceTree = "<group>"; };
 		14AD911F1DCA9FA40014F9FE /* UnlinkedModuleProgramCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedModuleProgramCodeBlock.h; sourceTree = "<group>"; };
 		14AD91201DCA9FA40014F9FE /* UnlinkedProgramCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedProgramCodeBlock.h; sourceTree = "<group>"; };
-		14AD91211DCA9FA40014F9FE /* UnlinkedFunctionExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedFunctionExecutable.h; sourceTree = "<group>"; };
 		14AD91281DCAAAB00014F9FE /* UnlinkedEvalCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedEvalCodeBlock.cpp; sourceTree = "<group>"; };
 		14AD91291DCAAAB00014F9FE /* UnlinkedProgramCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedProgramCodeBlock.cpp; sourceTree = "<group>"; };
 		14AD912A1DCAAAB00014F9FE /* UnlinkedModuleProgramCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedModuleProgramCodeBlock.cpp; sourceTree = "<group>"; };
@@ -3993,6 +3991,7 @@
 		A1D792FB1B43864B004516F5 /* IntlNumberFormatPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormatPrototype.h; sourceTree = "<group>"; };
 		A1E0451B1C25B4B100BB663C /* StringPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = StringPrototype.js; sourceTree = "<group>"; };
 		A1FE1EB01C2C537E00A289FF /* DatePrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DatePrototype.js; sourceTree = "<group>"; };
+		A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContextInlines.h; sourceTree = "<group>"; };
 		A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCallFrame.cpp; sourceTree = "<group>"; };
 		A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCallFrame.h; sourceTree = "<group>"; };
 		A503FA15188E0FB000110F14 /* JSJavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptCallFrame.cpp; sourceTree = "<group>"; };
@@ -4346,7 +4345,6 @@
 		AD2FCC271DB838C400B3E736 /* WebAssemblyPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyPrototype.h; path = js/WebAssemblyPrototype.h; sourceTree = "<group>"; };
 		AD2FCC321DC4045300B3E736 /* WasmFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFormat.cpp; sourceTree = "<group>"; };
 		AD412B321E7B2E8A008AF157 /* WasmContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContext.h; sourceTree = "<group>"; };
-		A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContextInlines.h; sourceTree = "<group>"; };
 		AD412B351E7B57C0008AF157 /* AllowMacroScratchRegisterUsageIf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllowMacroScratchRegisterUsageIf.h; sourceTree = "<group>"; };
 		AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullCodeOrigin.h; sourceTree = "<group>"; };
 		AD4252521E5D0F22009D2A97 /* FullCodeOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullCodeOrigin.cpp; sourceTree = "<group>"; };
@@ -7779,7 +7777,6 @@
 				14AD912B1DCAAAB00014F9FE /* UnlinkedFunctionCodeBlock.cpp */,
 				14AD911D1DCA9FA40014F9FE /* UnlinkedFunctionCodeBlock.h */,
 				14142E541B7973C000F4BF4B /* UnlinkedFunctionExecutable.cpp */,
-				14AD91211DCA9FA40014F9FE /* UnlinkedFunctionExecutable.h */,
 				14142E501B796ECE00F4BF4B /* UnlinkedFunctionExecutable.h */,
 				14AD911C1DCA9FA40014F9FE /* UnlinkedGlobalCodeBlock.h */,
 				B59F89381891ADB500D5CCDC /* UnlinkedInstructionStream.cpp */,
@@ -7812,7 +7809,7 @@
 		9959E9251BD17F1E001AA413 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				99DA00971BD598E000F4575C /* builtins */,
+				99DA00971BD598E000F4575C /* wkbuiltins */,
 				9959E9271BD17FA0001AA413 /* cssmin.py */,
 				9959E92F1BD181F6001AA413 /* generate-combined-inspector-json.py */,
 				99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */,
@@ -9571,7 +9568,6 @@
 				A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */,
 				14AD91241DCA9FA40014F9FE /* UnlinkedEvalCodeBlock.h in Headers */,
 				14AD91231DCA9FA40014F9FE /* UnlinkedFunctionCodeBlock.h in Headers */,
-				14AD91271DCA9FA40014F9FE /* UnlinkedFunctionExecutable.h in Headers */,
 				14142E511B796ECE00F4BF4B /* UnlinkedFunctionExecutable.h in Headers */,
 				14AD91221DCA9FA40014F9FE /* UnlinkedGlobalCodeBlock.h in Headers */,
 				14AD91251DCA9FA40014F9FE /* UnlinkedModuleProgramCodeBlock.h in Headers */,
@@ -9914,7 +9910,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 1000;
 			};
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
 			compatibilityVersion = "Xcode 3.2";
