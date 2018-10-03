@@ -1,3 +1,19 @@
+2018-10-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Ref<FetchResponse> use-after-move in DOMCache::put()
+        https://bugs.webkit.org/show_bug.cgi?id=190239
+
+        Reviewed by Youenn Fablet.
+
+        Retrieve reference from the Ref<FetchResponse> object before it's
+        move-captured in the lambda that's passed to the
+        FetchResponse::consumeBodyReceivedByChunk() method that is invoked on
+        that very same object. This is a classic use-after-move bug that pops
+        up on compilers with different C++ calling convention.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::put):
+
 2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable selectionAcrossShadowBoundariesEnabled by default in WebKitLegacy
