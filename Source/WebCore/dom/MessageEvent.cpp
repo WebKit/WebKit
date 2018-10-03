@@ -116,6 +116,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_lastEventId = lastEventId;
     m_source = WTFMove(source);
     m_ports = WTFMove(ports);
+    m_cachedPorts = { };
 }
 
 EventInterface MessageEvent::eventInterface() const

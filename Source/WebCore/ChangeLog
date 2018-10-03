@@ -1,3 +1,23 @@
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
+        MessageEvent.ports should return the same object
+        https://bugs.webkit.org/show_bug.cgi?id=190151
+
+        Reviewed by Darin Adler.
+
+        MessageEvent.ports should return the same object it was initialized to instead of
+        constructing a new JSValue every time.
+
+        No new tests, rebaselined existing test.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::ports const):
+        (WebCore::JSMessageEvent::visitAdditionalChildren):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::initMessageEvent):
+        * dom/MessageEvent.h:
+        * dom/MessageEvent.idl:
+
 2018-10-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         GC can collect JS wrappers of nodes in the mutation records waiting to be delivered

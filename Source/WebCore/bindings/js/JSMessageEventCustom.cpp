@@ -45,6 +45,15 @@
 
 namespace WebCore {
 
+JSC::JSValue JSMessageEvent::ports(JSC::ExecState& state) const
+{
+    auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+    return cachedPropertyValue(state, *this, wrapped().cachedPorts(), [&] {
+        JSC::JSValue ports = toJS<IDLFrozenArray<IDLInterface<MessagePort>>>(state, *globalObject(), throwScope, wrapped().ports());
+        return ports;
+    });
+}
+
 JSC::JSValue JSMessageEvent::data(JSC::ExecState& state) const
 {
     return cachedPropertyValue(state, *this, wrapped().cachedData(), [this, &state] {
@@ -74,6 +83,7 @@ void JSMessageEvent::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     });
 
     wrapped().cachedData().visit(visitor);
+    wrapped().cachedPorts().visit(visitor);
 }
 
 } // namespace WebCore

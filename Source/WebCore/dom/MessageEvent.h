@@ -76,6 +76,7 @@ public:
     const DataType& data() const { return m_data; }
 
     JSValueInWrappedObject& cachedData() { return m_cachedData; }
+    JSValueInWrappedObject& cachedPorts() { return m_cachedPorts; }
 
 private:
     MessageEvent();
@@ -92,6 +93,7 @@ private:
     Vector<RefPtr<MessagePort>> m_ports;
 
     JSValueInWrappedObject m_cachedData;
+    JSValueInWrappedObject m_cachedPorts;
 };
 
 } // namespace WebCore

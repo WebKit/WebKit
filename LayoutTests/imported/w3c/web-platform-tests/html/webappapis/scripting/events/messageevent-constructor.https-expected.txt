@@ -2,7 +2,7 @@
 PASS Default event values 
 PASS MessageEventInit dictionary 
 PASS Passing null for ports member 
-FAIL ports attribute should be a FrozenArray assert_true: ev.ports should return the same object expected true got false
+PASS ports attribute should be a FrozenArray 
 PASS initMessageEvent operation 
 PASS Passing null for ports parameter to initMessageEvent 
 PASS initMessageEvent operation default parameter values 

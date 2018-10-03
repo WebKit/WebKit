@@ -1,5 +1,16 @@
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
+        MessageEvent.ports should return the same object
+        https://bugs.webkit.org/show_bug.cgi?id=190151
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that it is passing.
+
+        * web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https-expected.txt:
+
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
         radio / checkbox inputs should fire "click, input, change" events in order when clicked
         https://bugs.webkit.org/show_bug.cgi?id=190223
 
