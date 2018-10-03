@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:selectionAcrossShadowBoundariesEnabled=true ] -->
+<html>
+<body>
+<p id="description">This tests copying and pasting content across shadow boundaries.<br>
+To test manually, copy text blow starting from "world" ending with "rocks", and paste into the green box below. All the text shoul be copied & pasted.</p>
+<style> .box { border: solid 1px; padding: 0.2rem; margin-bottom: 1rem; } </style>
+<div id="source" class="box" style="border-color: blue">hello <span id="host">world</span> rocks</div>
+<div id="destination" class="box" style="border-color: blue" contenteditable></div>
+<pre id="htmlResult"></pre>
+<pre id="textResult"></pre>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description(description.textContent);
+Markup.waitUntilDone();
+
+const shadowRoot = host.attachShadow({mode: 'open'});
+shadowRoot.innerHTML = '<slot></slot> WebKit';
+
+destination.addEventListener('paste', (event) => {
+    htmlResult.textContent = event.clipboardData.getData('text/html');
+    textResult.textContent = event.clipboardData.getData('text/plain');
+    setTimeout(() => {
+        Markup.dump(destination, 'pasted html');
+        Markup.dump(textResult, 'text/plain');
+        Markup.notifyDone();
+    }, 0);
+});
+
+if (window.testRunner) {
+    internals.setSelectionWithoutValidation(host.firstChild, 0, source.lastChild, source.lastChild.data.length);
+    document.execCommand('copy');
+    destination.focus();
+    document.execCommand('paste');
+}
+
+</script>
+</body>
+</html>

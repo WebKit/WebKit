@@ -1,3 +1,86 @@
+2018-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Copying content with shadow DOM doesn't copy any contents
+        https://bugs.webkit.org/show_bug.cgi?id=157443
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds the support for copying and pasting content across shadow boundaries in HTML and plain text,
+        which is enabled whenever selection across shadow boundaries is enabled.
+
+        To do this, TextIterator now has a constructor which takes two Positions, and the node traversal code in
+        StyledMarkupAccumulator has been abstracted via helper functions as done for TextIterator.
+
+        When serializing a HTMl slot element, serialize it as a span with "display: contents" to make sure when
+        the content is pasted into a shadow tree, it wouldn't affect the slot assignment of the shadow tree.
+
+        Tests: editing/pasteboard/copy-paste-across-shadow-boundaries-1.html
+               editing/pasteboard/copy-paste-across-shadow-boundaries-2.html
+               editing/pasteboard/copy-paste-across-shadow-boundaries-3.html
+               editing/pasteboard/copy-paste-across-shadow-boundaries-4.html
+               editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-1.html
+               editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html
+               editing/pasteboard/copy-paste-with-shadow-content.html
+
+        * dom/ComposedTreeIterator.h:
+        (WebCore::assignedSlotIgnoringUserAgentShadow): Moved from TextIterator.cpp.
+        (WebCore::shadowRootIgnoringUserAgentShadow): Ditto.
+        (WebCore::firstChildInComposedTreeIgnoringUserAgentShadow): Ditto.
+        (WebCore::nextSiblingInComposedTreeIgnoringUserAgentShadow): Ditto.
+        * dom/Position.h:
+        (WebCore::Position::treeScope const): Added.
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::addDisplayContents): Added.
+        * editing/EditingStyle.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectedText const): Use the new behavior when selectionAcrossShadowBoundariesEnabled is set.
+        (WebCore::Editor::selectedTextForDataTransfer const): Ditto.
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendEndElement): Renamed from appendEndTag. Now takes StringBuilder.
+        * editing/MarkupAccumulator.h:
+        (WebCore::MarkupAccumulator::appendEndTag):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator): Added a new variant which takes two positions.
+        (WebCore::TextIterator::init):
+        (WebCore::firstChild):
+        (WebCore::nextSibling):
+        (WebCore::plainText): Ditto.
+        * editing/TextIterator.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::selectionInHTMLFormat): Use the new behavior if selectionAcrossShadowBoundariesEnabled is set.
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard): Ditto.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::parentNode): Added.
+        (WebCore::StyledMarkupAccumulator::firstChild): Added.
+        (WebCore::StyledMarkupAccumulator::nextSibling): Added.
+        (WebCore::StyledMarkupAccumulator::nextSkippingChildren): Added.
+        (WebCore::StyledMarkupAccumulator::hasChildNodes): Added.
+        (WebCore::StyledMarkupAccumulator::isDescendantOf): Added.
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator):
+        (WebCore::StyledMarkupAccumulator::appendElement): Serialize a slot element as a span with display: contents.
+        (WebCore::StyledMarkupAccumulator::appendEndElement): Added. Ditto.
+        (WebCore::StyledMarkupAccumulator::serializeNodes):
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization): Use the newly added helper functions to
+        traverse the composed tree when m_useComposedTree is set.
+        (WebCore::commonShadowIncludingAncestor): Added.
+        (WebCore::serializePreservingVisualAppearanceInternal): Added SerializeComposedTree as an argument. Also use
+        StyledMarkupAccumulator::parentNode to serialize special common ancestors; e.g. to preserve b, i, etc...
+        (WebCore::serializePreservingVisualAppearance): Ditto to the variant which takes VisibleSelection.
+        (WebCore::sanitizedMarkupForFragmentInDocument):
+        * editing/markup.h:
+        * editing/wpe/EditorWPE.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::SerializerMarkupAccumulator::appendEndElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setSelectionWithoutValidation): Added. A helper function to create a selection across
+        shadow boundaries for testing purposes.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
         MessageEvent.ports should return the same object

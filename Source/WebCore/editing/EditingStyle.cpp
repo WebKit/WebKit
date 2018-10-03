@@ -1369,6 +1369,13 @@ void EditingStyle::forceInline()
     m_mutableStyle->setProperty(CSSPropertyDisplay, CSSValueInline, propertyIsImportant);
 }
 
+void EditingStyle::addDisplayContents()
+{
+    if (!m_mutableStyle)
+        m_mutableStyle = MutableStyleProperties::create();
+    m_mutableStyle->setProperty(CSSPropertyDisplay, CSSValueContents);
+}
+
 bool EditingStyle::convertPositionStyle()
 {
     if (!m_mutableStyle)

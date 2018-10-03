@@ -149,6 +149,7 @@ public:
     void removeStyleFromRulesAndContext(StyledElement&, Node* context);
     void removePropertiesInElementDefaultStyle(Element&);
     void forceInline();
+    void addDisplayContents();
     bool convertPositionStyle();
     bool isFloating();
     int legacyFontSize(Document&) const;

@@ -3182,18 +3182,25 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
 
 String Editor::selectedText() const
 {
-    return selectedText(TextIteratorDefaultBehavior);
+    TextIteratorBehavior behavior = TextIteratorDefaultBehavior;
+    if (m_frame.settings().selectionAcrossShadowBoundariesEnabled())
+        behavior |= TextIteratorTraversesFlatTree;
+    return selectedText(behavior);
 }
 
 String Editor::selectedTextForDataTransfer() const
 {
-    return selectedText(TextIteratorEmitsImageAltText);
+    TextIteratorBehavior behavior = TextIteratorEmitsImageAltText;
+    if (m_frame.settings().selectionAcrossShadowBoundariesEnabled())
+        behavior |= TextIteratorTraversesFlatTree;
+    return selectedText(behavior);
 }
 
 String Editor::selectedText(TextIteratorBehavior behavior) const
 {
     // We remove '\0' characters because they are not visibly rendered to the user.
-    return plainText(m_frame.selection().toNormalizedRange().get(), behavior).replaceWithLiteral('\0', "");
+    auto& selection = m_frame.selection().selection();
+    return plainText(selection.start(), selection.end(), behavior).replaceWithLiteral('\0', "");
 }
 
 static inline void collapseCaretWidth(IntRect& rect)

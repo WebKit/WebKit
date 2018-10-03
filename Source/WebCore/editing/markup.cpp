@@ -37,6 +37,7 @@
 #include "CacheStorageProvider.h"
 #include "ChildListMutationScope.h"
 #include "Comment.h"
+#include "ComposedTreeIterator.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
@@ -219,8 +220,8 @@ class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
-    StyledMarkupAccumulator(const Position& start, const Position& end, Vector<Node*>* nodes,
-        ResolveURLs, AnnotateForInterchange, MSOListMode, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = nullptr);
+    StyledMarkupAccumulator(const Position& start, const Position& end, Vector<Node*>* nodes, ResolveURLs, SerializeComposedTree,
+        AnnotateForInterchange, MSOListMode, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = nullptr);
 
     Node* serializeNodes(const Position& start, const Position& end);
     void wrapWithNode(Node&, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
@@ -232,6 +233,13 @@ public:
 
     using MarkupAccumulator::appendString;
 
+    ContainerNode* parentNode(Node& node)
+    {
+        if (UNLIKELY(m_useComposedTree))
+            return node.parentInComposedTree();
+        return node.parentOrShadowHostNode();
+    }
+
 private:
     void appendStyleNodeOpenTag(StringBuilder&, StyleProperties*, Document&, bool isBlock = false);
     const String& styleNodeCloseTag(bool isBlock = false);
@@ -242,12 +250,55 @@ private:
     bool shouldPreserveMSOListStyleForElement(const Element&);
 
     void appendElement(StringBuilder& out, const Element&, bool addDisplayInline, RangeFullySelectsNode);
+    void appendEndElement(StringBuilder& out, const Element&) override;
     void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) override;
 
     void appendText(StringBuilder& out, const Text&) override;
     void appendElement(StringBuilder& out, const Element& element, Namespaces*) override
     {
         appendElement(out, element, false, DoesFullySelectNode);
+    }
+
+    Node* firstChild(Node& node)
+    {
+        if (UNLIKELY(m_useComposedTree))
+            return firstChildInComposedTreeIgnoringUserAgentShadow(node);
+        return node.firstChild();
+    }
+
+    Node* nextSibling(Node& node)
+    {
+        if (UNLIKELY(m_useComposedTree))
+            return nextSiblingInComposedTreeIgnoringUserAgentShadow(node);
+        return node.nextSibling();
+    }
+    
+    Node* nextSkippingChildren(Node& node)
+    {
+        if (UNLIKELY(m_useComposedTree)) {
+            if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(node))
+                return sibling;
+            for (auto* ancestor = node.parentInComposedTree(); ancestor; ancestor = ancestor->parentInComposedTree()) {
+                if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(*ancestor))
+                    return sibling;
+            }
+            return nullptr;
+        }
+        return NodeTraversal::nextSkippingChildren(node);
+    }
+
+    bool hasChildNodes(Node& node)
+    {
+        if (UNLIKELY(m_useComposedTree))
+            return firstChildInComposedTreeIgnoringUserAgentShadow(node);
+        return node.hasChildNodes();
+    }
+
+    bool isDescendantOf(Node& node, Node& possibleAncestor)
+    {
+        if (UNLIKELY(m_useComposedTree))
+            return node.isDescendantOrShadowDescendantOf(&possibleAncestor);
+        return node.isDescendantOf(&possibleAncestor);
     }
 
     enum class NodeTraversalMode { EmitString, DoNotEmitString };
@@ -271,6 +322,7 @@ private:
     const AnnotateForInterchange m_annotate;
     RefPtr<Node> m_highestNodeToBeSerialized;
     RefPtr<EditingStyle> m_wrappingStyle;
+    bool m_useComposedTree;
     bool m_needsPositionStyleConversion;
     bool m_needRelativeStyleWrapper { false };
     bool m_needClearingDiv { false };
@@ -278,13 +330,14 @@ private:
     bool m_inMSOList { false };
 };
 
-inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, const Position& end, Vector<Node*>* nodes,
-    ResolveURLs urlsToResolve, AnnotateForInterchange annotate, MSOListMode msoListMode, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
+inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, const Position& end, Vector<Node*>* nodes, ResolveURLs urlsToResolve, SerializeComposedTree serializeComposedTree,
+    AnnotateForInterchange annotate, MSOListMode msoListMode, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
     : MarkupAccumulator(nodes, urlsToResolve)
     , m_start(start)
     , m_end(end)
     , m_annotate(annotate)
     , m_highestNodeToBeSerialized(highestNodeToBeSerialized)
+    , m_useComposedTree(serializeComposedTree == SerializeComposedTree::Yes)
     , m_needsPositionStyleConversion(needsPositionStyleConversion)
     , m_shouldPreserveMSOList(msoListMode == MSOListMode::Preserve)
 {
@@ -445,12 +498,16 @@ bool StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement(const Element
 void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
 {
     const bool documentIsHTML = element.document().isHTMLDocument();
-    appendOpenTag(out, element, 0);
+    const bool isSlotElement = is<HTMLSlotElement>(element);
+    if (UNLIKELY(isSlotElement))
+        out.append("<span");
+    else
+        appendOpenTag(out, element, nullptr);
 
     appendCustomAttributes(out, element, nullptr);
 
     const bool shouldAnnotateOrForceInline = element.isHTMLElement() && (shouldAnnotate() || addDisplayInline);
-    bool shouldOverrideStyleAttr = (shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element)) && !shouldPreserveMSOListStyleForElement(element);
+    bool shouldOverrideStyleAttr = (shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element) || isSlotElement) && !shouldPreserveMSOListStyleForElement(element);
     if (element.hasAttributes()) {
         for (const Attribute& attribute : element.attributesIterator()) {
             // We'll handle the style attribute separately, below.
@@ -471,6 +528,9 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
             newInlineStyle->removeStyleConflictingWithStyleOfNode(*const_cast<Element*>(&element));
         } else
             newInlineStyle = EditingStyle::create();
+
+        if (isSlotElement)
+            newInlineStyle->addDisplayContents();
 
         if (is<StyledElement>(element) && downcast<StyledElement>(element).inlineStyle())
             newInlineStyle->overrideWithStyle(*downcast<StyledElement>(element).inlineStyle());
@@ -503,13 +563,21 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
     appendCloseTag(out, element);
 }
 
+void StyledMarkupAccumulator::appendEndElement(StringBuilder& out, const Element& element)
+{
+    if (UNLIKELY(is<HTMLSlotElement>(element)))
+        out.append("</span>");
+    else
+        MarkupAccumulator::appendEndElement(out, element);
+}
+
 Node* StyledMarkupAccumulator::serializeNodes(const Position& start, const Position& end)
 {
     ASSERT(comparePositions(start, end) <= 0);
     auto startNode = start.firstNode();
     Node* pastEnd = end.computeNodeAfterPosition();
-    if (!pastEnd)
-        pastEnd = NodeTraversal::nextSkippingChildren(*end.containerNode());
+    if (!pastEnd && end.containerNode())
+        pastEnd = nextSkippingChildren(*end.containerNode());
 
     if (!m_highestNodeToBeSerialized) {
         Node* lastClosed = traverseNodesForSerialization(startNode.get(), pastEnd, NodeTraversalMode::DoNotEmitString);
@@ -535,7 +603,8 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
                 return false;
         }
 
-        if (!node.renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(&node), selectTag))
+        bool isDisplayContents = is<Element>(node) && downcast<Element>(node).hasDisplayContents();
+        if (!node.renderer() && !isDisplayContents && !enclosingElementWithTag(firstPositionInOrBeforeNode(&node), selectTag))
             return false;
 
         ++depth;
@@ -561,20 +630,19 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
 
     Node* lastNode = nullptr;
     Node* next = nullptr;
-    for (Node* n = startNode; n != pastEnd; n = next) {
-        lastNode = n;
+    for (auto* n = startNode; n != pastEnd; lastNode = n, n = next) {
 
         Vector<Node*, 8> exitedAncestors;
         next = nullptr;
-        if (auto* firstChild = n->firstChild())
-            next = firstChild;
-        else if (auto* nextSibling = n->nextSibling())
-            next = nextSibling;
+        if (auto* child = firstChild(*n))
+            next = child;
+        else if (auto* sibling = nextSibling(*n))
+            next = sibling;
         else {
-            for (auto* ancestor = n->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+            for (auto* ancestor = parentNode(*n); ancestor; ancestor = parentNode(*ancestor)) {
                 exitedAncestors.append(ancestor);
-                if (auto* nextSibling = ancestor->nextSibling()) {
-                    next = nextSibling;
+                if (auto* sibling = nextSibling(*ancestor)) {
+                    next = sibling;
                     break;
                 }
             }
@@ -588,10 +656,10 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
         if (!enterNode(*n)) {
             next = NodeTraversal::nextSkippingChildren(*n);
             // Don't skip over pastEnd.
-            if (pastEnd && pastEnd->isDescendantOf(*n))
+            if (pastEnd && isDescendantOf(*pastEnd, *n))
                 next = pastEnd;
         } else {
-            if (!n->hasChildNodes())
+            if (!hasChildNodes(*n))
                 exitNode(*n);
         }
 
@@ -601,9 +669,12 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
             exitNode(*ancestor);
         }
     }
-
-    for (auto* ancestor = (pastEnd ? pastEnd : lastNode)->parentNode(); ancestor && depth; ancestor = ancestor->parentNode())
-        exitNode(*ancestor);
+    
+    ASSERT(lastNode || !depth);
+    if (depth) {
+        for (auto* ancestor = parentNode(pastEnd ? *pastEnd : *lastNode); ancestor && depth; ancestor = parentNode(*ancestor))
+            exitNode(*ancestor);
+    }
 
     return lastClosed;
 }
@@ -754,15 +825,27 @@ static Node* highestAncestorToWrapMarkup(const Position& start, const Position& 
     return specialCommonAncestor;
 }
 
-static String serializePreservingVisualAppearanceInternal(const Position& start, const Position& end, Vector<Node*>* nodes,
-    AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs urlsToResolve, MSOListMode msoListMode)
+static RefPtr<Node> commonShadowIncludingAncestor(const Position& a, const Position& b)
+{
+    TreeScope* commonScope = commonTreeScope(a.containerNode(), b.containerNode());
+    if (!commonScope)
+        return nullptr;
+    auto* nodeA = commonScope->ancestorNodeInThisScope(a.containerNode());
+    ASSERT(nodeA);
+    auto* nodeB = commonScope->ancestorNodeInThisScope(b.containerNode());
+    ASSERT(nodeB);
+    return Range::commonAncestorContainer(nodeA, nodeB);
+}
+
+static String serializePreservingVisualAppearanceInternal(const Position& start, const Position& end, Vector<Node*>* nodes, ResolveURLs urlsToResolve, SerializeComposedTree serializeComposedTree,
+    AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, MSOListMode msoListMode)
 {
     static NeverDestroyed<const String> interchangeNewlineString(MAKE_STATIC_STRING_IMPL("<br class=\"" AppleInterchangeNewline "\">"));
 
     if (!comparePositions(start, end))
         return emptyString();
 
-    RefPtr<Node> commonAncestor = Range::commonAncestorContainer(start.containerNode(), end.containerNode());
+    RefPtr<Node> commonAncestor = commonShadowIncludingAncestor(start, end);
     if (!commonAncestor)
         return emptyString();
 
@@ -781,7 +864,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
     Node* specialCommonAncestor = highestAncestorToWrapMarkup(start, end, *commonAncestor, annotate);
 
-    StyledMarkupAccumulator accumulator(start, end, nodes, urlsToResolve, annotate, msoListMode, needsPositionStyleConversion, specialCommonAncestor);
+    StyledMarkupAccumulator accumulator(start, end, nodes, urlsToResolve, serializeComposedTree, annotate, msoListMode, needsPositionStyleConversion, specialCommonAncestor);
 
     Position startAdjustedForInterchangeNewline = start;
     if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleStart)) {
@@ -799,7 +882,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
     if (specialCommonAncestor && lastClosed) {
         // Also include all of the ancestors of lastClosed up to this special ancestor.
-        for (ContainerNode* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        for (ContainerNode* ancestor = accumulator.parentNode(*lastClosed); ancestor; ancestor = accumulator.parentNode(*ancestor)) {
             if (ancestor == fullySelectedRoot && convertBlocksToInlines == ConvertBlocksToInlines::No) {
                 RefPtr<EditingStyle> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(*fullySelectedRoot);
 
@@ -849,13 +932,14 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
 String serializePreservingVisualAppearance(const Range& range, Vector<Node*>* nodes, AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs urlsToReslve)
 {
-    return serializePreservingVisualAppearanceInternal(range.startPosition(), range.endPosition(), nodes, annotate, convertBlocksToInlines, urlsToReslve, MSOListMode::DoNotPreserve);
+    return serializePreservingVisualAppearanceInternal(range.startPosition(), range.endPosition(), nodes, urlsToReslve, SerializeComposedTree::No,
+        annotate, convertBlocksToInlines, MSOListMode::DoNotPreserve);
 }
 
-String serializePreservingVisualAppearance(const VisibleSelection& selection, ResolveURLs resolveURLs, Vector<Node*>* nodes)
+String serializePreservingVisualAppearance(const VisibleSelection& selection, ResolveURLs resolveURLs, SerializeComposedTree serializeComposedTree, Vector<Node*>* nodes)
 {
-    return serializePreservingVisualAppearanceInternal(selection.start(), selection.end(), nodes,
-        AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, resolveURLs, MSOListMode::DoNotPreserve);
+    return serializePreservingVisualAppearanceInternal(selection.start(), selection.end(), nodes, resolveURLs, serializeComposedTree,
+        AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, MSOListMode::DoNotPreserve);
 }
 
 
@@ -880,8 +964,9 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
     ASSERT(bodyElement);
     bodyElement->appendChild(fragment.get());
 
+    // SerializeComposedTree::No because there can't be a shadow tree in the pasted fragment.
     auto result = serializePreservingVisualAppearanceInternal(firstPositionInNode(bodyElement.get()), lastPositionInNode(bodyElement.get()), nullptr,
-        AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, ResolveURLs::YesExcludingLocalFileURLsForPrivacy, msoListMode);
+        ResolveURLs::YesExcludingLocalFileURLsForPrivacy, SerializeComposedTree::No, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No,  msoListMode);
 
     if (msoListMode == MSOListMode::Preserve) {
         StringBuilder builder;

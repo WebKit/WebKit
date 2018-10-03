@@ -1,3 +1,27 @@
+2018-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Copying content with shadow DOM doesn't copy any contents
+        https://bugs.webkit.org/show_bug.cgi?id=157443
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests for copying and pasting across shadow boundaries with HTML and plain text.
+
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-1-expected.txt: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-1.html: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-2-expected.txt: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-2.html: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-3-expected.txt: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-3.html: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-4-expected.txt: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-4.html: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-1-expected.txt: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-1.html: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2-expected.txt: Added.
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html: Added.
+        * editing/pasteboard/copy-paste-with-shadow-content-expected.txt: Added.
+        * editing/pasteboard/copy-paste-with-shadow-content.html: Added.
+
 2018-10-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         GC can collect JS wrappers of nodes in the mutation records waiting to be delivered

@@ -192,9 +192,9 @@ void MarkupAccumulator::appendStartTag(const Node& node, Namespaces* namespaces)
         m_nodes->append(const_cast<Node*>(&node));
 }
 
-void MarkupAccumulator::appendEndTag(const Element& element)
+void MarkupAccumulator::appendEndElement(StringBuilder& out, const Element& element)
 {
-    appendEndMarkup(m_markup, element);
+    appendEndMarkup(out, element);
 }
 
 void MarkupAccumulator::appendTextSubstring(const Text& text, unsigned start, unsigned length)

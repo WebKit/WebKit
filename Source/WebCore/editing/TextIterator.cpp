@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextIterator.h"
 
+#include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "Editing.h"
 #include "FontCascade.h"
@@ -339,10 +340,35 @@ void TextIteratorCopyableText::appendToStringBuilder(StringBuilder& builder) con
 
 // --------
 
+
+TextIterator::TextIterator(Position start, Position end, TextIteratorBehavior behavior)
+    : m_behavior(behavior)
+{
+    if (start.isNull() || end.isNull())
+        return;
+    ASSERT(comparePositions(start, end) <= 0);
+
+    RELEASE_ASSERT(behavior & TextIteratorTraversesFlatTree || start.treeScope() == end.treeScope());
+
+    start.document()->updateLayoutIgnorePendingStylesheets();
+
+    // FIXME: Use Position / PositionIterator instead to avoid offset computation.
+    m_startContainer = start.containerNode();
+    m_startOffset = start.computeOffsetInContainerNode();
+
+    m_endContainer = end.containerNode();
+    m_endOffset = end.computeOffsetInContainerNode();
+
+    m_node = start.firstNode().get();
+    if (!m_node)
+        return;
+
+    init();
+}
+
 TextIterator::TextIterator(const Range* range, TextIteratorBehavior behavior)
     : m_behavior(behavior)
 {
-    // FIXME: Only m_positionNode above needs to be initialized if range is null.
     if (!range)
         return;
 
@@ -358,11 +384,15 @@ TextIterator::TextIterator(const Range* range, TextIteratorBehavior behavior)
     m_endContainer = &range->endContainer();
     m_endOffset = range->endOffset();
 
-    // Set up the current node for processing.
     m_node = range->firstNode();
     if (!m_node)
         return;
 
+    init();
+}
+
+void TextIterator::init()
+{
     if (isClippedByFrameAncestor(m_node->document(), m_behavior))
         return;
 
@@ -379,59 +409,18 @@ TextIterator::TextIterator(const Range* range, TextIteratorBehavior behavior)
 
 TextIterator::~TextIterator() = default;
 
-static HTMLSlotElement* assignedAuthorSlot(Node& node)
-{
-    auto* slot = node.assignedSlot();
-    if (!slot || slot->containingShadowRoot()->mode() == ShadowRootMode::UserAgent)
-        return nullptr;
-    return slot;
-}
-
-static ShadowRoot* authorShadowRoot(Node& node)
-{
-    auto* shadowRoot = node.shadowRoot();
-    if (!shadowRoot || shadowRoot->mode() == ShadowRootMode::UserAgent)
-        return nullptr;
-    return shadowRoot;
-}
-
 // FIXME: Use ComposedTreeIterator instead. These functions are more expensive because they might do O(n) work.
-static inline Node* firstChildInFlatTreeIgnoringUserAgentShadow(Node& node)
-{
-    if (auto* shadowRoot = authorShadowRoot(node))
-        return shadowRoot->firstChild();
-    if (is<HTMLSlotElement>(node)) {
-        if (auto* assignedNodes = downcast<HTMLSlotElement>(node).assignedNodes())
-            return assignedNodes->at(0);
-    }
-    return node.firstChild();
-}
-
-static inline Node* nextSiblingInFlatTreeIgnoringUserAgentShadow(Node& node)
-{
-    if (auto* slot = assignedAuthorSlot(node)) {
-        auto* assignedNodes = slot->assignedNodes();
-        ASSERT(assignedNodes);
-        auto nodeIndex = assignedNodes->find(&node);
-        ASSERT(nodeIndex != notFound);
-        if (assignedNodes->size() > nodeIndex + 1)
-            return assignedNodes->at(nodeIndex + 1);
-        return nullptr;
-    }
-    return node.nextSibling();
-}
-
 static inline Node* firstChild(TextIteratorBehavior options, Node& node)
 {
     if (UNLIKELY(options & TextIteratorTraversesFlatTree))
-        return firstChildInFlatTreeIgnoringUserAgentShadow(node);
+        return firstChildInComposedTreeIgnoringUserAgentShadow(node);
     return node.firstChild();
 }
 
 static inline Node* nextSibling(TextIteratorBehavior options, Node& node)
 {
     if (UNLIKELY(options & TextIteratorTraversesFlatTree))
-        return nextSiblingInFlatTreeIgnoringUserAgentShadow(node);
+        return nextSiblingInComposedTreeIgnoringUserAgentShadow(node);
     return node.nextSibling();
 }
 
@@ -2654,10 +2643,14 @@ bool hasAnyPlainText(const Range& range, TextIteratorBehavior behavior)
     return false;
 }
 
-String plainText(const Range* r, TextIteratorBehavior defaultBehavior, bool isDisplayString)
+String plainText(Position start, Position end, TextIteratorBehavior defaultBehavior, bool isDisplayString)
 {
     // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192
     static const unsigned initialCapacity = 1 << 15;
+
+    if (!start.document())
+        return { };
+    auto document = makeRef(*start.document());
 
     unsigned bufferLength = 0;
     StringBuilder builder;
@@ -2665,8 +2658,8 @@ String plainText(const Range* r, TextIteratorBehavior defaultBehavior, bool isDi
     TextIteratorBehavior behavior = defaultBehavior;
     if (!isDisplayString)
         behavior = static_cast<TextIteratorBehavior>(behavior | TextIteratorEmitsTextsWithoutTranscoding);
-    
-    for (TextIterator it(r, behavior); !it.atEnd(); it.advance()) {
+
+    for (TextIterator it(start, end, behavior); !it.atEnd(); it.advance()) {
         it.appendTextToStringBuilder(builder);
         bufferLength += it.text().length();
     }
@@ -2677,9 +2670,16 @@ String plainText(const Range* r, TextIteratorBehavior defaultBehavior, bool isDi
     String result = builder.toString();
 
     if (isDisplayString)
-        r->ownerDocument().displayStringModifiedByEncoding(result);
+        document->displayStringModifiedByEncoding(result);
 
     return result;
+}
+
+String plainText(const Range* range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
+{
+    if (!range)
+        return emptyString();
+    return plainText(range->startPosition(), range->endPosition(), defaultBehavior, isDisplayString);
 }
 
 String plainTextReplacingNoBreakSpace(const Range* range, TextIteratorBehavior defaultBehavior, bool isDisplayString)

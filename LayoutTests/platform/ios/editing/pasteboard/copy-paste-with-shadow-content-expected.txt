@@ -1,0 +1,33 @@
+This tests copying and pasting content with a shadow tree.
+To test manually, copy paste the content in the blue box to the green box below. All the text shoul be copied & pasted
+
+pasted:
+| <span>
+|   id="host"
+|   style="-webkit-text-size-adjust: auto;"
+|   "hello "
+|   <span>
+|     id="host"
+|     <span>
+|       style="display: contents;"
+|       "world"
+|     " "
+|     "WebKit"
+|   " rocks<#selection-caret>"
+
+text/html:
+| <span>
+|   id="host"
+|   style="-webkit-text-size-adjust: auto;"
+|   "hello "
+|   <span>
+|     id="host"
+|     <span>
+|       style="display: contents;"
+|       "world"
+|     " "
+|     "WebKit"
+|   " rocks<#selection-caret>"
+
+text/plain:
+| "hello world WebKit rocks"

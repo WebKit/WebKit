@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ElementAndTextDescendantIterator.h"
+#include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -198,5 +199,50 @@ inline ComposedTreeChildAdapter composedTreeChildren(ContainerNode& parent)
 
 enum class ComposedTreeAsTextMode { Normal, WithPointers };
 WEBCORE_EXPORT String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode = ComposedTreeAsTextMode::Normal);
+
+
+// Helper functions for walking the composed tree.
+// FIXME: Use ComposedTreeIterator instead. These functions are more expensive because they might do O(n) work.
+
+inline HTMLSlotElement* assignedSlotIgnoringUserAgentShadow(Node& node)
+{
+    auto* slot = node.assignedSlot();
+    if (!slot || slot->containingShadowRoot()->mode() == ShadowRootMode::UserAgent)
+        return nullptr;
+    return slot;
+}
+
+inline ShadowRoot* shadowRootIgnoringUserAgentShadow(Node& node)
+{
+    auto* shadowRoot = node.shadowRoot();
+    if (!shadowRoot || shadowRoot->mode() == ShadowRootMode::UserAgent)
+        return nullptr;
+    return shadowRoot;
+}
+
+inline Node* firstChildInComposedTreeIgnoringUserAgentShadow(Node& node)
+{
+    if (auto* shadowRoot = shadowRootIgnoringUserAgentShadow(node))
+        return shadowRoot->firstChild();
+    if (is<HTMLSlotElement>(node)) {
+        if (auto* assignedNodes = downcast<HTMLSlotElement>(node).assignedNodes())
+            return assignedNodes->at(0);
+    }
+    return node.firstChild();
+}
+
+inline Node* nextSiblingInComposedTreeIgnoringUserAgentShadow(Node& node)
+{
+    if (auto* slot = assignedSlotIgnoringUserAgentShadow(node)) {
+        auto* assignedNodes = slot->assignedNodes();
+        ASSERT(assignedNodes);
+        auto nodeIndex = assignedNodes->find(&node);
+        ASSERT(nodeIndex != notFound);
+        if (assignedNodes->size() > nodeIndex + 1)
+            return assignedNodes->at(nodeIndex + 1);
+        return nullptr;
+    }
+    return node.nextSibling();
+}
 
 } // namespace WebCore

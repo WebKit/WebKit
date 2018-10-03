@@ -76,10 +76,10 @@ protected:
     void appendEndTag(const Node& node)
     {
         if (is<Element>(node))
-            appendEndTag(downcast<Element>(node));
+            appendEndElement(m_markup, downcast<Element>(node));
     }
 
-    virtual void appendEndTag(const Element&);
+    virtual void appendEndElement(StringBuilder&, const Element&);
     virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*);
     virtual void appendText(StringBuilder&, const Text&);
     virtual void appendElement(StringBuilder&, const Element&, Namespaces*);
