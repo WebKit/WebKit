@@ -6364,6 +6364,8 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
             unregisterAsTouchEventListenerForScrolling();
         }
     }
+#else
+    UNUSED_VARIABLE(addedOrRemoved);
 #endif
 }
 

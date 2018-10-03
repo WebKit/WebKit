@@ -367,6 +367,11 @@
 #define UNUSED_PARAM(variable) (void)variable
 #endif
 
+/* UNUSED_VARIABLE */
+#if !defined(UNUSED_VARIABLE)
+#define UNUSED_VARIABLE(variable) UNUSED_PARAM(variable)
+#endif
+
 /* WARN_UNUSED_RETURN */
 
 #if !defined(WARN_UNUSED_RETURN) && COMPILER(GCC_COMPATIBLE)

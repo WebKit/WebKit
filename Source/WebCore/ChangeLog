@@ -1,3 +1,15 @@
+2018-10-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wunused-variable in RenderLayer::updateScrollableAreaSet
+        https://bugs.webkit.org/show_bug.cgi?id=190200
+
+        Reviewed by Yusuke Suzuki.
+
+        Pass it through UNUSED_VARIABLE().
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2018-10-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Ref<FetchResponse> use-after-move in DOMCache::put()
