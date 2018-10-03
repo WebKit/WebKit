@@ -65,7 +65,7 @@ WI.Script = class Script extends WI.SourceCode
         }
 
         if (this._sourceMappingURL)
-            WI.sourceMapManager.downloadSourceMap(this._sourceMappingURL, this._url, this);
+            WI.networkManager.downloadSourceMap(this._sourceMappingURL, this._url, this);
     }
 
     // Static

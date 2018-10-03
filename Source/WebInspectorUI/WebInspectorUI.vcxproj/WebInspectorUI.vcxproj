@@ -775,7 +775,6 @@
     <None Include="..\UserInterface\SourceCodeTextRange.js" />
     <None Include="..\UserInterface\SourceCodeTreeElement.js" />
     <None Include="..\UserInterface\SourceMap.js" />
-    <None Include="..\UserInterface\SourceMapManager.js" />
     <None Include="..\UserInterface\SourceMapResource.js" />
     <None Include="..\UserInterface\SourceMapResourceTreeElement.js" />
     <None Include="..\UserInterface\StorageTreeElement.js" />

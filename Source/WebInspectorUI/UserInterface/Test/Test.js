@@ -59,7 +59,6 @@ WI.loaded = function()
     this.memoryManager = new WI.MemoryManager;
     this.timelineManager = new WI.TimelineManager;
     this.debuggerManager = new WI.DebuggerManager;
-    this.sourceMapManager = new WI.SourceMapManager;
     this.layerTreeManager = new WI.LayerTreeManager;
     this.probeManager = new WI.ProbeManager;
     this.workerManager = new WI.WorkerManager;

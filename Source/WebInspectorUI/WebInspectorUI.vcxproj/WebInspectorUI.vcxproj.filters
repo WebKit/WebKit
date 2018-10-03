@@ -921,9 +921,6 @@
     <None Include="..\UserInterface\SourceMap.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\SourceMapManager.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\SourceMapResource.js">
       <Filter>UserInterface</Filter>
     </None>

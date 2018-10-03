@@ -1,3 +1,35 @@
+2018-10-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: merge SourceMapManager into NetworkManager
+        https://bugs.webkit.org/show_bug.cgi?id=190224
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager):
+        (WI.NetworkManager.prototype.downloadSourceMap): Added.
+        (WI.NetworkManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WI.NetworkManager.prototype.resourceRequestDidFinishLoading):
+        (WI.NetworkManager.prototype._createResource):
+        (WI.NetworkManager.prototype._loadAndParseSourceMap): Added.
+        (WI.NetworkManager.prototype._sourceMapLoadAndParseFailed): Added.
+        (WI.NetworkManager.prototype._sourceMapLoadAndParseSucceeded): Added.
+        (WI.NetworkManager.prototype._handleFrameMainResourceDidChange): Added.
+        * UserInterface/Controllers/SourceMapManager.js: Removed.
+
+        * UserInterface/Models/Script.js:
+        (WI.Script):
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2018-10-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: start editing property name/value on mouseup instead of mousedown

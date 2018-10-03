@@ -37,6 +37,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         this._waitingForMainFrameResourceTreePayload = true;
 
+        this._sourceMapURLMap = new Map;
+        this._downloadingSourceMaps = new Set;
+
         if (window.PageAgent) {
             PageAgent.enable();
             PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
@@ -49,6 +52,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             NetworkAgent.enable();
 
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
     }
 
     // Public
@@ -71,6 +75,45 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     resourceForRequestIdentifier(requestIdentifier)
     {
         return this._resourceRequestIdentifierMap.get(requestIdentifier) || null;
+    }
+
+    downloadSourceMap(sourceMapURL, baseURL, originalSourceCode)
+    {
+        // The baseURL could have come from a "//# sourceURL". Attempt to get a
+        // reasonable absolute URL for the base by using the main resource's URL.
+        if (WI.networkManager.mainFrame)
+            baseURL = absoluteURL(baseURL, WI.networkManager.mainFrame.url);
+
+        if (sourceMapURL.startsWith("data:")) {
+            this._loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode);
+            return;
+        }
+
+        sourceMapURL = absoluteURL(sourceMapURL, baseURL);
+        if (!sourceMapURL)
+            return;
+
+        console.assert(originalSourceCode.url);
+        if (!originalSourceCode.url)
+            return;
+
+        // FIXME: <rdar://problem/13265694> Source Maps: Better handle when multiple resources reference the same SourceMap
+
+        if (this._sourceMapURLMap.has(sourceMapURL) || this._downloadingSourceMaps.has(sourceMapURL))
+            return;
+
+        let loadAndParseSourceMap = () => {
+            this._loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode);
+        };
+
+        if (!WI.networkManager.mainFrame) {
+            // If we don't have a main frame, then we are likely in the middle of building the resource tree.
+            // Delaying until the next runloop is enough in this case to then start loading the source map.
+            setTimeout(loadAndParseSourceMap, 0);
+            return;
+        }
+
+        loadAndParseSourceMap();
     }
 
     frameDidNavigate(framePayload)
@@ -340,7 +383,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         console.assert(resource.cached, "This resource should be classified as cached since it was served from the MemoryCache", resource);
 
         if (cachedResourcePayload.sourceMapURL)
-            WI.sourceMapManager.downloadSourceMap(cachedResourcePayload.sourceMapURL, resource.url, resource);
+            this.downloadSourceMap(cachedResourcePayload.sourceMapURL, resource.url, resource);
 
         // No need to associate the resource with the requestIdentifier, since this is the only event
         // sent for memory cache resource loads.
@@ -435,7 +478,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         resource.markAsFinished(elapsedTime);
 
         if (sourceMapURL)
-            WI.sourceMapManager.downloadSourceMap(sourceMapURL, resource.url, resource);
+            this.downloadSourceMap(sourceMapURL, resource.url, resource);
 
         this._resourceRequestIdentifierMap.delete(requestIdentifier);
     }
@@ -701,7 +744,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         var resource = new WI.Resource(payload.url, payload.mimeType, payload.type, framePayload.loaderId, payload.targetId);
 
         if (payload.sourceMapURL)
-            WI.sourceMapManager.downloadSourceMap(payload.sourceMapURL, resource.url, resource);
+            this.downloadSourceMap(payload.sourceMapURL, resource.url, resource);
 
         return resource;
     }
@@ -769,10 +812,101 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this.dispatchEventToListeners(WI.NetworkManager.Event.MainFrameDidChange, {oldMainFrame});
     }
 
+    _loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode)
+    {
+        this._downloadingSourceMaps.add(sourceMapURL);
+
+        let sourceMapLoaded = (error, content, mimeType, statusCode) => {
+            if (error || statusCode >= 400) {
+                this._sourceMapLoadAndParseFailed(sourceMapURL);
+                return;
+            }
+
+            if (content.slice(0, 3) === ")]}") {
+                let firstNewlineIndex = content.indexOf("\n");
+                if (firstNewlineIndex === -1) {
+                    this._sourceMapLoadAndParseFailed(sourceMapURL);
+                    return;
+                }
+
+                content = content.substring(firstNewlineIndex);
+            }
+
+            try {
+                let payload = JSON.parse(content);
+                let baseURL = sourceMapURL.startsWith("data:") ? originalSourceCode.url : sourceMapURL;
+                let sourceMap = new WI.SourceMap(baseURL, payload, originalSourceCode);
+                this._sourceMapLoadAndParseSucceeded(sourceMapURL, sourceMap);
+            } catch {
+                this._sourceMapLoadAndParseFailed(sourceMapURL);
+            }
+        };
+
+        if (sourceMapURL.startsWith("data:")) {
+            let {mimeType, base64, data} = parseDataURL(sourceMapURL);
+            let content = base64 ? atob(data) : data;
+            sourceMapLoaded(null, content, mimeType, 0);
+            return;
+        }
+
+        if (!window.NetworkAgent) {
+            this._sourceMapLoadAndParseFailed(sourceMapURL);
+            return;
+        }
+
+        let frameIdentifier = null;
+        if (originalSourceCode instanceof WI.Resource && originalSourceCode.parentFrame)
+            frameIdentifier = originalSourceCode.parentFrame.id;
+
+        if (!frameIdentifier)
+            frameIdentifier = WI.networkManager.mainFrame ? WI.networkManager.mainFrame.id : "";
+
+        NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded);
+    }
+
+    _sourceMapLoadAndParseFailed(ssourceMapLurceMapURL)
+    {
+        this._downloadingSourceMaps.delete(sourceMapURL);
+    }
+
+    _sourceMapLoadAndParseSucceeded(sourceMapURL, sourceMap)
+    {
+        if (!this._downloadingSourceMaps.has(sourceMapURL))
+            return;
+
+        this._downloadingSourceMaps.delete(sourceMapURL);
+
+        this._sourceMapURLMap.set(sourceMapURL, sourceMap);
+
+        for (let source of sourceMap.sources())
+            sourceMap.addResource(new WI.SourceMapResource(source, sourceMap));
+
+        // Associate the SourceMap with the originalSourceCode.
+        sourceMap.originalSourceCode.addSourceMap(sourceMap);
+
+        // If the originalSourceCode was not a Resource, be sure to also associate with the Resource if one exists.
+        // FIXME: We should try to use the right frame instead of a global lookup by URL.
+        if (!(sourceMap.originalSourceCode instanceof WI.Resource)) {
+            console.assert(sourceMap.originalSourceCode instanceof WI.Script);
+            let resource = sourceMap.originalSourceCode.resource;
+            if (resource)
+                resource.addSourceMap(sourceMap);
+        }
+    }
+
     _extraDomainsActivated(event)
     {
         if (event.data.domains.includes("Page") && window.PageAgent)
             PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
+    }
+
+    _handleFrameMainResourceDidChange(event)
+    {
+        if (!event.target.isMainFrame())
+            return;
+
+        this._sourceMapURLMap.clear();
+        this._downloadingSourceMaps.clear();
     }
 };
 
