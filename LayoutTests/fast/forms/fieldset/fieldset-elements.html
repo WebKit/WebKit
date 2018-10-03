@@ -46,7 +46,7 @@ container.innerHTML = '<form id=formElement> <fieldset id="fs">' +
 
 var owner = document.getElementById('fs');
 
-shouldBe('owner.elements.length', '23');
+shouldBe('owner.elements.length', '24');
 shouldBe('owner.elements[0].id', "'button1'");
 shouldBe('owner.elements[1].id', "'fieldset1'");
 shouldBe('owner.elements[2].id', "'inputhidden'");
@@ -63,13 +63,14 @@ shouldBe('owner.elements[12].id', "'inputcheckbox'");
 shouldBe('owner.elements[13].id', "'inputradio'");
 shouldBe('owner.elements[14].id', "'inputfile'");
 shouldBe('owner.elements[15].id', "'inputsubmit'");
-shouldBe('owner.elements[16].id', "'inputreset'");
-shouldBe('owner.elements[17].id', "'inputbutton'");
-shouldBe('owner.elements[18].id', "'keygen1'");
-shouldBe('owner.elements[19].id', "'object1'");
-shouldBe('owner.elements[20].id', "'output1'");
-shouldBe('owner.elements[21].id', "'select1'");
-shouldBe('owner.elements[22].id', "'textarea1'");
+shouldBe('owner.elements[16].id', "'inputimage'");
+shouldBe('owner.elements[17].id', "'inputreset'");
+shouldBe('owner.elements[18].id', "'inputbutton'");
+shouldBe('owner.elements[19].id', "'keygen1'");
+shouldBe('owner.elements[20].id', "'object1'");
+shouldBe('owner.elements[21].id', "'output1'");
+shouldBe('owner.elements[22].id', "'select1'");
+shouldBe('owner.elements[23].id', "'textarea1'");
 
 var newElement = document.createElement("input");
 newElement.setAttribute("type", "text");
@@ -78,15 +79,15 @@ newElement.setAttribute("id", "inputcommon");
 
 debug("");
 debug("Check elements array is updated after adding a new element");
-shouldBe('owner.appendChild(newElement); owner.elements.length', '24');
+shouldBe('owner.appendChild(newElement); owner.elements.length', '25');
 
 debug("");
 debug("Check elements array is updated after remove an element");
-shouldBe('owner.removeChild(newElement); owner.elements.length', '23');
+shouldBe('owner.removeChild(newElement); owner.elements.length', '24');
 
 debug("");
 debug("Check owner.elements is updated properly");
-shouldBe('document.getElementById("inputfile").type="image"; owner.elements.length', '22');
+shouldBe('document.getElementById("inputfile").type="image"; owner.elements.length', '24');
 
 debug("");
 debug("Check owner.elements is updated properly after removing from parent");
@@ -94,9 +95,9 @@ owner.parentNode.removeChild(owner);
 var form = document.getElementById("formElement");
 shouldBe('form.appendChild(newElement); form.elements.length', '1');
 shouldBe('form.removeChild(newElement); form.elements.length', '0');
-shouldBe('owner.elements.length', '22');
-shouldBe('owner.appendChild(newElement); owner.elements.length', '23');
-shouldBe('owner.removeChild(newElement); owner.elements.length', '22');
+shouldBe('owner.elements.length', '24');
+shouldBe('owner.appendChild(newElement); owner.elements.length', '25');
+shouldBe('owner.removeChild(newElement); owner.elements.length', '24');
 
 container.parentNode.removeChild(container);
 </script>

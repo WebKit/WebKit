@@ -1,3 +1,38 @@
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
+        fieldset.elements should return an HTMLCollection instead of an HTMLFormControlsCollection
+        https://bugs.webkit.org/show_bug.cgi?id=190218
+
+        Reviewed by Alex Christensen.
+
+        fieldset.elements should return an HTMLCollection instead of an HTMLFormControlsCollection:
+        - https://github.com/whatwg/html/commit/8beedf0c2ffd38853caddec67490288f47afc8eb
+
+        Gecko has always behaved this way. Blink aligned with Gecko and the HTML specification in December 2016:
+        - https://bugs.chromium.org/p/chromium/issues/detail?id=665291
+
+        This simplifies our HTMLFieldSetElement code a lot.
+
+        Test: fast/forms/fieldset/fieldset-elements-htmlcollection.html
+
+        * html/CollectionType.h:
+        * html/GenericCachedHTMLCollection.cpp:
+        (WebCore::GenericCachedHTMLCollection<traversalType>::elementMatches const):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::rootTypeFromCollectionType):
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::elements):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::HTMLFormControlsCollection):
+        (WebCore:: const):
+        (WebCore::HTMLFormControlsCollection::copyFormControlElementsVector const):
+        (WebCore::HTMLFormControlsCollection::ownerNode const):
+        (WebCore::HTMLFormControlsCollection::updateNamedElementCache const):
+        * html/HTMLFormControlsCollection.h:
+
 2018-10-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: prevent layer events from firing until the layer information is re-requested

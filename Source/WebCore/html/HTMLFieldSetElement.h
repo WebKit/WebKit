@@ -38,12 +38,7 @@ public:
 
     HTMLLegendElement* legend() const;
 
-    Ref<HTMLFormControlsCollection> elements();
-    Ref<HTMLCollection> elementsForNativeBindings();
-
-    const Vector<FormAssociatedElement*>& unsafeAssociatedElements() const;
-    Vector<Ref<FormAssociatedElement>> copyAssociatedElementsVector() const;
-    unsigned length() const;
+    Ref<HTMLCollection> elements();
 
     void addInvalidDescendant(const HTMLFormControlElement&);
     void removeInvalidDescendant(const HTMLFormControlElement&);
@@ -65,11 +60,6 @@ private:
     bool matchesValidPseudoClass() const final;
     bool matchesInvalidPseudoClass() const final;
 
-    void updateAssociatedElements() const;
-
-    mutable Vector<FormAssociatedElement*> m_associatedElements;
-    // When the DOM tree is modified, we have to refresh the m_associatedElements array.
-    mutable uint64_t m_documentVersion { 0 };
     HashSet<const HTMLFormControlElement*> m_invalidDescendants;
     bool m_hasDisabledAttribute { false };
 };

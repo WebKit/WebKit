@@ -1,5 +1,16 @@
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
+        fieldset.elements should return an HTMLCollection instead of an HTMLFormControlsCollection
+        https://bugs.webkit.org/show_bug.cgi?id=190218
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline existing WPT test now that it is passing.
+
+        * web-platform-tests/html/semantics/forms/the-fieldset-element/HTMLFieldSetElement-expected.txt:
+
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
         Refresh imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh
         https://bugs.webkit.org/show_bug.cgi?id=190212
 

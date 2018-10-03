@@ -26,6 +26,7 @@
 #include "HTMLFieldSetElement.h"
 
 #include "ElementIterator.h"
+#include "GenericCachedHTMLCollection.h"
 #include "HTMLFormControlsCollection.h"
 #include "HTMLLegendElement.h"
 #include "HTMLNames.h"
@@ -167,58 +168,9 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
     return const_cast<HTMLLegendElement*>(childrenOfType<HTMLLegendElement>(*this).first());
 }
 
-Ref<HTMLFormControlsCollection> HTMLFieldSetElement::elements()
+Ref<HTMLCollection> HTMLFieldSetElement::elements()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, FormControls);
-}
-
-Ref<HTMLCollection> HTMLFieldSetElement::elementsForNativeBindings()
-{
-    return elements();
-}
-
-void HTMLFieldSetElement::updateAssociatedElements() const
-{
-    uint64_t documentVersion = document().domTreeVersion();
-    if (m_documentVersion == documentVersion)
-        return;
-
-    m_documentVersion = documentVersion;
-
-    m_associatedElements.clear();
-
-    for (auto& element : descendantsOfType<HTMLElement>(const_cast<HTMLFieldSetElement&>(*this))) {
-        if (is<HTMLObjectElement>(element))
-            m_associatedElements.append(&downcast<HTMLObjectElement>(element));
-        else if (is<HTMLFormControlElement>(element))
-            m_associatedElements.append(&downcast<HTMLFormControlElement>(element));
-    }
-}
-
-Vector<Ref<FormAssociatedElement>> HTMLFieldSetElement::copyAssociatedElementsVector() const
-{
-    updateAssociatedElements();
-    return WTF::map(m_associatedElements, [] (auto* rawElement) {
-        return Ref<FormAssociatedElement>(*rawElement);
-    });
-}
-
-const Vector<FormAssociatedElement*>& HTMLFieldSetElement::unsafeAssociatedElements() const
-{
-    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
-    updateAssociatedElements();
-    return m_associatedElements;
-}
-
-unsigned HTMLFieldSetElement::length() const
-{
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    unsigned length = 0;
-    for (auto* element : unsafeAssociatedElements()) {
-        if (element->isEnumeratable())
-            ++length;
-    }
-    return length;
+    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<FieldSetElements>::traversalType>>(*this, FieldSetElements);
 }
 
 void HTMLFieldSetElement::addInvalidDescendant(const HTMLFormControlElement& invalidFormControlElement)

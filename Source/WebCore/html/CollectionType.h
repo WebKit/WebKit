@@ -52,6 +52,7 @@ enum CollectionType {
     DataListOptions,
     MapAreas,
     FormControls,
+    FieldSetElements,
     ByClass,
     ByTag,
     ByHTMLTag,

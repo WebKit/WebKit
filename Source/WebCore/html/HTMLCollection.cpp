@@ -51,6 +51,7 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
     case ByClass:
     case ByTag:
     case ByHTMLTag:
+    case FieldSetElements:
     case NodeChildren:
     case TableTBodies:
     case TSectionRows:
@@ -100,6 +101,7 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     case DocumentNamedItems:
     case DocumentAllNamedItems:
         return InvalidateOnIdNameAttrChange;
+    case FieldSetElements:
     case FormControls:
         return InvalidateForFormControls;
     }
