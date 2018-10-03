@@ -1,3 +1,34 @@
+2018-10-03  Mark Lam  <mark.lam@apple.com>
+
+        Make string MaxLength for all WTF and JS strings consistently equal to INT_MAX.
+        https://bugs.webkit.org/show_bug.cgi?id=190187
+        <rdar://problem/42512909>
+
+        Reviewed by Michael Saboff.
+
+        Allowing different max string lengths at each level opens up opportunities for
+        bugs to creep in.  With 2 different max length values, it is more difficult to
+        keep the story straight on how we do overflow / bounds checks at each place in
+        the code.  It's also difficult to tell if a seemingly valid check at the WTF level
+        will have bad ramifications at the JSC level.  Also, it's also not meaningful to
+        support a max length > INT_MAX.  To eliminate this class of bugs, we'll
+        standardize on a MaxLength of INT_MAX at all levels.
+
+        We'll also standardize the way we do length overflow checks on using
+        CheckedArithmetic, and add some asserts to document the assumptions of the code.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        - Fix OOM error handling which crashed a test after the new MaxLength was applied.
+        * runtime/JSString.h:
+        (JSC::JSString::finishCreation):
+        (JSC::JSString::createHasOtherOwner):
+        (JSC::JSString::setLength):
+        * runtime/JSStringInlines.h:
+        (JSC::jsMakeNontrivialString):
+        * runtime/Operations.h:
+        (JSC::jsString):
+
 2018-10-03  Koby Boyango  <koby.b@mce-sys.com>
 
         [JSC] Add a C++ callable overload of objectConstructorSeal

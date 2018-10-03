@@ -1,3 +1,17 @@
+2018-10-03  Mark Lam  <mark.lam@apple.com>
+
+        Make string MaxLength for all WTF and JS strings consistently equal to INT_MAX.
+        https://bugs.webkit.org/show_bug.cgi?id=190187
+        <rdar://problem/42512909>
+
+        Reviewed by Michael Saboff.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeStringFromAdapters):
+        (WTF::sumWithOverflow): Deleted.
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.h:
+
 2018-10-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wunused-variable in RenderLayer::updateScrollableAreaSet

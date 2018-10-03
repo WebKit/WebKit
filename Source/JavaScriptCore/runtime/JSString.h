@@ -95,8 +95,12 @@ public:
         return &vm.stringSpace;
     }
     
-    static const unsigned MaxLength = std::numeric_limits<int32_t>::max();
-    
+    // We employ overflow checks in many places with the assumption that MaxLength
+    // is INT_MAX. Hence, it cannot be changed into another length value without
+    // breaking all the bounds and overflow checks that assume this.
+    static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
+    static_assert(MaxLength == String::MaxLength, "");
+
 private:
     JSString(VM& vm, Ref<StringImpl>&& value)
         : JSCell(vm, vm.stringStructure.get())
@@ -109,7 +113,7 @@ private:
     {
     }
 
-    void finishCreation(VM& vm, size_t length)
+    void finishCreation(VM& vm, unsigned length)
     {
         ASSERT(!m_value.isNull());
         Base::finishCreation(vm);
@@ -117,7 +121,7 @@ private:
         setIs8Bit(m_value.impl()->is8Bit());
     }
 
-    void finishCreation(VM& vm, size_t length, size_t cost)
+    void finishCreation(VM& vm, unsigned length, size_t cost)
     {
         ASSERT(!m_value.isNull());
         Base::finishCreation(vm);
@@ -145,7 +149,7 @@ public:
     }
     static JSString* createHasOtherOwner(VM& vm, Ref<StringImpl>&& value)
     {
-        size_t length = value->length();
+        unsigned length = value->length();
         JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, WTFMove(value));
         newString->finishCreation(vm, length);
         return newString;
@@ -209,6 +213,7 @@ protected:
 
     ALWAYS_INLINE void setLength(unsigned length)
     {
+        ASSERT(length <= MaxLength);
         m_length = length;
     }
 
@@ -255,10 +260,14 @@ public:
                 return false;
             if (m_index == JSRopeString::s_maxInternalRopeLength)
                 expand();
-            if (static_cast<int32_t>(m_jsString->length() + jsString->length()) < 0) {
+
+            static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
+            auto sum = checkedSum<int32_t>(m_jsString->length(), jsString->length());
+            if (sum.hasOverflowed()) {
                 this->overflowed();
                 return false;
             }
+            ASSERT(static_cast<unsigned>(sum.unsafeGet()) <= MaxLength);
             m_jsString->append(m_vm, m_index++, jsString);
             return true;
         }

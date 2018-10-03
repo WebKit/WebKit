@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -130,6 +130,9 @@ struct StringStats {
 
 class StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
+public:
+    static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
+
 protected:
     StringImplShape(unsigned refCount, unsigned length, const LChar*, unsigned hashAndFlags);
     StringImplShape(unsigned refCount, unsigned length, const UChar*, unsigned hashAndFlags);
@@ -179,6 +182,8 @@ class StringImpl : private StringImplShape {
 
 public:
     enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring, BufferExternal };
+
+    static constexpr unsigned MaxLength = StringImplShape::MaxLength;
 
     // The bottom 6 bits in the hash are flags.
     static constexpr const unsigned s_flagCount = 6;

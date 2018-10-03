@@ -144,7 +144,11 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         {
             // The spec mandates that the parameters parse as a valid parameter list
             // independent of the function body.
-            String program = makeString("(", prefix, "(", parameterBuilder.toString(), "){\n\n})");
+            String program = tryMakeString("(", prefix, "(", parameterBuilder.toString(), "){\n\n})");
+            if (UNLIKELY(!program)) {
+                throwOutOfMemoryError(exec, scope);
+                return nullptr;
+            }
             SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
             JSValue exception;
             checkSyntax(exec, source, &exception);
