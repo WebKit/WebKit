@@ -1,5 +1,36 @@
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
+        radio / checkbox inputs should fire "click, input, change" events in order when clicked
+        https://bugs.webkit.org/show_bug.cgi?id=190223
+
+        Reviewed by Ryosuke Niwa.
+
+        radio / checkbox inputs should fire "click, input, change" events in order when clicked:
+        - https://html.spec.whatwg.org/#radio-button-state-(type=radio)
+        - https://html.spec.whatwg.org/#checkbox-state-(type=checkbox)
+        - https://dom.spec.whatwg.org/#ref-for-eventtarget-activation-behavior③ (step 11)
+
+        Gecko and Blink already behave this way. However, WebKit has the following issues:
+        - the input event is not fired
+        - the click event is fired after the change event
+
+        No new tests, updated / rebaselined existing tests.
+
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::fireInputAndChangeEvents):
+        * html/BaseCheckableInputType.h:
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::willDispatchClick):
+        (WebCore::CheckboxInputType::didDispatchClick):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        * html/HTMLInputElement.h:
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::willDispatchClick):
+        (WebCore::RadioInputType::didDispatchClick):
+
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
         fieldset.elements should return an HTMLCollection instead of an HTMLFormControlsCollection
         https://bugs.webkit.org/show_bug.cgi?id=190218
 

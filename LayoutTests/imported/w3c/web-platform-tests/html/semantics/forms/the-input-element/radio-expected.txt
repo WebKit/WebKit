@@ -1,5 +1,5 @@
 
-FAIL click on mutable radio fires click event, then input event, then change event Can't find variable: click_fired
+PASS click on mutable radio fires click event, then input event, then change event 
 PASS click on non-mutable radio doesn't fire the input event 
 PASS click on non-mutable radio doesn't fire the change event 
 PASS canceled activation steps on unchecked radio 

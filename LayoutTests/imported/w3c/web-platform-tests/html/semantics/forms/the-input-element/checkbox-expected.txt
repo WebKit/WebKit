@@ -1,5 +1,5 @@
 
-FAIL click on mutable checkbox fires a click event, then an input event, then a change event assert_true: change event should fire after click event expected true got false
+PASS click on mutable checkbox fires a click event, then an input event, then a change event 
 PASS click on non-mutable checkbox doesn't fire the input or change event 
 PASS pre-activation steps on unchecked checkbox 
 PASS pre-activation steps on checked checkbox 

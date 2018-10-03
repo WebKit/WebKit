@@ -8,17 +8,17 @@
 radio button should fire change events.
 
 <p>
-<input type=radio name=aaa value=a checked onchange="handleChange(event)" onclick="handleClick(event)">a
-<input type=radio name=aaa value=b onchange="handleChange(event)" onclick="handleClick(event)">b
-<input type=radio name=aaa value=c onchange="handleChange(event)" onclick="handleClick(event)">c
+<input type=radio name=aaa value=a checked onchange="handleChange(event)" onclick="handleClick(event)" oninput="handleInput(event)">a
+<input type=radio name=aaa value=b onchange="handleChange(event)" onclick="handleClick(event)" oninput="handleInput(event)">b
+<input type=radio name=aaa value=c onchange="handleChange(event)" onclick="handleClick(event)" oninput="handleInput(event)">c
 
 <p>For manual testing, focus a radio button in the second group and use the arrow keys. Change events
 should still be dispatched but the checked radio should not change.
 
 <p>
-<input type=radio name=bbb value=d checked onchange="handleChange(event)" onclick="handleClick(event)">d
-<input type=radio name=bbb value=e onchange="handleChange(event)" onclick="handleClick(event)">e
-<input type=radio name=bbb value=f onchange="handleChange(event)" onclick="handleClick(event)">f
+<input type=radio name=bbb value=d checked onchange="handleChange(event)" onclick="handleClick(event)" oninput="handleInput(event)">d
+<input type=radio name=bbb value=e onchange="handleChange(event)" onclick="handleClick(event)" oninput="handleInput(event)">e
+<input type=radio name=bbb value=f onchange="handleChange(event)" onclick="handleClick(event)" oninput="handleInput(event)">f
 
 <pre id=out></pre>
 
@@ -26,15 +26,25 @@ should still be dispatched but the checked radio should not change.
 
 var preventClickValues = 'def';
 
+function handleInput(e)
+{
+    var value = e.target.value;
+    print(value + ' dispatched input event');
+    assertChecked(e.target.value);
+}
+
 function handleChange(e)
 {
     var value = e.target.value;
     print(value + ' dispatched change event');
+    assertChecked(e.target.value);
 }
 
 function handleClick(e)
 {
     var value = e.target.value;
+    print(value + ' dispatched click event');
+    assertChecked(e.target.value);
     if (preventClickValues.indexOf(value) !== -1)
         e.preventDefault();
 }

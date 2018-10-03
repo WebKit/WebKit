@@ -8,10 +8,22 @@ For manual testing, focus a radio button in the second group and use the arrow k
 
 d e f
 
+b dispatched click event
+PASS: b is checked
+b dispatched input event
+PASS: b is checked
 b dispatched change event
+PASS: b is checked
+c dispatched click event
+PASS: c is checked
+c dispatched input event
+PASS: c is checked
 c dispatched change event
-e dispatched change event
-f dispatched change event
+PASS: c is checked
+e dispatched click event
+PASS: e is checked
+f dispatched click event
+PASS: f is checked
 PASS: a is not checked
 PASS: b is not checked
 PASS: c is checked

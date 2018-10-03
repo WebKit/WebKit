@@ -1,5 +1,19 @@
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
+        radio / checkbox inputs should fire "click, input, change" events in order when clicked
+        https://bugs.webkit.org/show_bug.cgi?id=190223
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline a few WPT tests that are now passing. I have verified that those are passing in Gecko and Blink
+        as well.
+
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox-click-events-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/radio-expected.txt:
+
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
         fieldset.elements should return an HTMLCollection instead of an HTMLFormControlsCollection
         https://bugs.webkit.org/show_bug.cgi?id=190218
 

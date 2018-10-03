@@ -912,7 +912,7 @@ bool HTMLInputElement::isTextType() const
     return m_inputType->isTextType();
 }
 
-void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventBehavior)
+void HTMLInputElement::setChecked(bool nowChecked)
 {
     if (checked() == nowChecked)
         return;
@@ -933,16 +933,6 @@ void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventB
     if (renderer()) {
         if (AXObjectCache* cache = renderer()->document().existingAXObjectCache())
             cache->checkedStateChanged(this);
-    }
-
-    // Only send a change event for items in the document (avoid firing during
-    // parsing) and don't send a change event for a radio button that's getting
-    // unchecked to match other browsers. DOM is not a useful standard for this
-    // because it says only to fire change events at "lose focus" time, which is
-    // definitely wrong in practice for these types of elements.
-    if (eventBehavior != DispatchNoEvent && isConnected() && m_inputType->shouldSendChangeEventAfterCheckedChanged()) {
-        setTextAsOfLastFormControlChangeEvent(String());
-        dispatchFormControlChangeEvent();
     }
 
     invalidateStyleForSubtree();
