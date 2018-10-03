@@ -1,3 +1,52 @@
+2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GC can collect JS wrappers of nodes in the mutation records waiting to be delivered
+        https://bugs.webkit.org/show_bug.cgi?id=190115
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed the bug by retaining JS wrappers of elements in mutation records using GCReachableRef.
+
+        This patch deploys GCReachableRef in two places: MutationObserver where each mutation record's
+        target is kept alive and MutationObserverRegistration where each node which had been removed
+        from an observed tree is kept alive for a subtree observation.
+
+        No new test since the test which can reproduce this problem is too slow.
+
+        * dom/GCReachableRef.h:
+        (WebCore::GCReachableRef): Made it work with hash table.
+        (WebCore::GCReachableRef::operator T& const):
+        (WebCore::GCReachableRef::GCReachableRef):
+        (WebCore::GCReachableRef::isHashTableDeletedValue const):
+        (WebCore::GCReachableRef::isHashTableEmptyValue const):
+        (WebCore::GCReachableRef::ptrAllowingHashTableEmptyValue const):
+        (WebCore::GCReachableRef::ptrAllowingHashTableEmptyValue):
+        (WebCore::GCReachableRef::assignToHashTableEmptyValue):
+        (WTF::HashTraits<WebCore::GCReachableRef<P>>::emptyValue):
+        (WTF::HashTraits<WebCore::GCReachableRef<P>>::constructEmptyValue):
+        (WTF::HashTraits<WebCore::GCReachableRef<P>>::isEmptyValue):
+        (WTF::HashTraits<WebCore::GCReachableRef<P>>::assignToEmpty):
+        (WTF::HashTraits<WebCore::GCReachableRef<P>>::peek):
+        (WTF::HashTraits<WebCore::GCReachableRef<P>>::take):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::takeRecords): Don't clear m_pendingTargets because that would allow wrappers
+        to be collected before elements in mutation records are accessed. We delay until the end of the current
+        microtask at which point deliver() function is called.
+        (WebCore::MutationObserver::disconnect):
+        (WebCore::MutationObserver::enqueueMutationRecord): Add the target to the list of elements to keep alive.
+        This is needed for a newly inserted node, a node with attribute change, etc...
+        (WebCore::MutationObserver::deliver): Keep the set of transient registration targets alive until mutation
+        records are delivered to each observer. These are nodes which had been removed from a tree and whose
+        subtree had still been obsreved up until this point.
+        * dom/MutationObserver.h:
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach):
+        (WebCore::MutationObserverRegistration::takeTransientRegistrations): Return the hash set of elemenets
+        that need to be kept alive so that MutationObserver::deliver can keep them alive until the deliver
+        function had been called.
+        (WebCore::MutationObserverRegistration::addRegistrationNodesToSet const):
+        * dom/MutationObserverRegistration.h:
+
 2018-10-03  Dean Jackson  <dino@apple.com>
 
         Make the Pointer Events feature description valid
