@@ -1,3 +1,18 @@
+2018-10-03  Mark Lam  <mark.lam@apple.com>
+
+        Suppress unreachable code warning for LLIntAssembly.h code.
+        https://bugs.webkit.org/show_bug.cgi?id=190263
+        <rdar://problem/44986532>
+
+        Reviewed by Saam Barati.
+
+        This is needed because LLIntAssembly.h is template generated from LowLevelInterpreter
+        asm files, and may contain dead code which are harmless, but will trip up the warning.
+        We should suppress the warning so that it doesn't break builds.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+
 2018-10-03  Dan Bernstein  <mitz@apple.com>
 
         JavaScriptCore part of [Xcode] Update some build settings as recommended by Xcode 10

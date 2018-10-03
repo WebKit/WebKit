@@ -446,7 +446,9 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
         // bytecode handlers for the interpreter, as compiled from
         // LowLevelInterpreter.asm and its peers.
 
+        IGNORE_CLANG_WARNINGS_BEGIN("unreachable-code")
         #include "LLIntAssembly.h"
+        IGNORE_CLANG_WARNINGS_END
 
         OFFLINE_ASM_GLUE_LABEL(llint_return_to_host)
         {
