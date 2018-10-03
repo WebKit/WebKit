@@ -1,3 +1,19 @@
+2018-10-03  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] REGRESSION: web content process paused in debugger is considered to be unresponsive if WebKit client is sandboxed
+        https://bugs.webkit.org/show_bug.cgi?id=190256
+        <rdar://problem/44957921>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Instead of giving up when the client is sandboxed, check whether it has the
+        exception that's necessary to get process information. If it is possible,
+        proceed to check whether the web content process has a debugger attached.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::platformIsBeingDebugged const):
+        Check 'process-info-pidinfo' to see if the sysctl call would be allowed.
+
 2018-10-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Enable MSE by default

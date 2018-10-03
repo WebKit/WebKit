@@ -37,6 +37,7 @@
 #import "WebProcessPool.h"
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 
 namespace WebKit {
 
@@ -135,8 +136,8 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
 
 bool WebProcessProxy::platformIsBeingDebugged() const
 {
-    // If the UI process is sandboxed, it cannot find out whether other processes are being debugged.
-    if (currentProcessIsSandboxed())
+    // If the UI process is sandboxed and lacks 'process-info-pidinfo', it cannot find out whether other processes are being debugged.
+    if (currentProcessIsSandboxed() && !!sandbox_check(getpid(), "process-info-pidinfo", SANDBOX_CHECK_NO_REPORT))
         return false;
 
     struct kinfo_proc info;
