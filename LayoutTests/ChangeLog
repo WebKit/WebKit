@@ -1,3 +1,29 @@
+2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable selectionAcrossShadowBoundariesEnabled by default in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=190238
+
+        Reviewed by Antti Koivisto.
+
+        Removed the unnecessary webkit-test-runner directive.
+
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-1.html:
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-2.html:
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-3.html:
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-4.html:
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-1.html:
+        * editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html:
+        * editing/pasteboard/copy-paste-with-shadow-content.html:
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-1.html:
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-2.html:
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-3.html:
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-4.html:
+        * editing/selection/selection-across-shadow-boundaries-mixed-editability-5.html:
+        * editing/selection/selection-across-shadow-boundaries-readonly-1.html:
+        * editing/selection/selection-across-shadow-boundaries-readonly-2.html:
+        * editing/selection/selection-across-shadow-boundaries-readonly-3.html:
+        * editing/selection/selection-across-shadow-boundaries-user-select-all-1.html:
+
 2018-10-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][BuildBot] archive-test-results fails to delete pywebsocket.ws.log-err.txt

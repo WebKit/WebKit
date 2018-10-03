@@ -989,7 +989,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setCacheAPIEnabled:NO];
     preferences.mediaCapabilitiesEnabled = YES;
 
-    preferences.selectionAcrossShadowBoundariesEnabled = NO;
+    preferences.selectionAcrossShadowBoundariesEnabled = YES;
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];

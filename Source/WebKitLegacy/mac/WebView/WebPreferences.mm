@@ -663,7 +663,7 @@ public:
 #if ENABLE(WEB_RTC)
         [NSNumber numberWithBool:YES], WebKitPeerConnectionEnabledPreferenceKey,
 #endif
-        [NSNumber numberWithBool:NO], WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey,
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
 #endif

@@ -1,3 +1,15 @@
+2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable selectionAcrossShadowBoundariesEnabled by default in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=190238
+
+        Reviewed by Antti Koivisto.
+
+        Enabled the feature by default.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2018-10-01  Dean Jackson  <dino@apple.com>
 
         [macOS] Switching to discrete GPU should be done in the UI process

@@ -1,3 +1,14 @@
+2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable selectionAcrossShadowBoundariesEnabled by default in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=190238
+
+        Reviewed by Antti Koivisto.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+
 2018-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit2] Format > Bold and Format > Italic don't toggle between bold and italic style

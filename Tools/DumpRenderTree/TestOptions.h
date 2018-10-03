@@ -43,7 +43,7 @@ struct TestOptions {
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
     bool enableColorFilter { false };
-    bool enableSelectionAcrossShadowBoundaries { false };
+    bool enableSelectionAcrossShadowBoundaries { true };
     std::string jscOptions;
 
     TestOptions(const std::string& pathOrURL, const std::string& absolutePath);
