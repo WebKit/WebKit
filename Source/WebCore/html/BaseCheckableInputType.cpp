@@ -127,9 +127,11 @@ void BaseCheckableInputType::fireInputAndChangeEvents()
     if (!shouldSendChangeEventAfterCheckedChanged())
         return;
 
+    auto protectedThis = makeRef(*this);
     element()->setTextAsOfLastFormControlChangeEvent(String());
     element()->dispatchInputEvent();
-    element()->dispatchFormControlChangeEvent();
+    if (auto* element = this->element())
+        element->dispatchFormControlChangeEvent();
 }
 
 } // namespace WebCore
