@@ -86,7 +86,12 @@ public:
     };
 
     ExceptionOr<void> observe(Node&, const Init&);
-    Vector<Ref<MutationRecord>> takeRecords();
+    
+    struct TakenRecords {
+        Vector<Ref<MutationRecord>> records;
+        HashSet<GCReachableRef<Node>> pendingTargets;
+    };
+    TakenRecords takeRecords();
     void disconnect();
 
     void observationStarted(MutationObserverRegistration&);

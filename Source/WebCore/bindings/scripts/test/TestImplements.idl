@@ -47,5 +47,7 @@
 
     const unsigned short IMPLEMENTSCONSTANT1 = 1;
     [Reflect=CONST_IMPL] const unsigned short IMPLEMENTSCONSTANT2 = 2;
+
+    [ResultField=nodes] sequence<Node> takeNodes();
 };
 

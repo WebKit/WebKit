@@ -110,13 +110,9 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
     return { };
 }
 
-Vector<Ref<MutationRecord>> MutationObserver::takeRecords()
+auto MutationObserver::takeRecords() -> TakenRecords
 {
-    Vector<Ref<MutationRecord>> records;
-    records.swap(m_records);
-    // Don't clear m_pendingTargets here because we can collect JS wrappers
-    // between the time takeRecords is called and nodes in records are accesssed.
-    return records;
+    return { WTFMove(m_records), WTFMove(m_pendingTargets) };
 }
 
 void MutationObserver::disconnect()
@@ -239,8 +235,10 @@ void MutationObserver::deliver()
     for (auto& registration : transientRegistrations)
         nodesToKeepAlive.append(registration->takeTransientRegistrations());
 
-    if (m_records.isEmpty())
+    if (m_records.isEmpty()) {
+        ASSERT(m_pendingTargets.isEmpty());
         return;
+    }
 
     Vector<Ref<MutationRecord>> records;
     records.swap(m_records);

@@ -1,3 +1,35 @@
+2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Clear m_pendingTargets in MutationObserver::takeRecords
+        https://bugs.webkit.org/show_bug.cgi?id=190240
+
+        Reviewed by Geoffrey Garen.
+
+        In r236781, we delayed the clearing of m_pendingTargets until the end of microtask to avoid a race between
+        mutation record's JS wrappers getting created and GC marking JS wrappers of elements in mutation records.
+
+        This patch shortens this delay to until mutation record's JS wrappers are created. Specifically, we make
+        MutationObserver::takeRecords() return a struct which has both pending targets hash set and the vector of
+        mutation records so that the hash set survives through the creation of JS wrappers for mutation records.
+
+        To do this, a new IDL extended attribute "ResultField" is introduced to specify the member variable in
+        which the result is stored.
+
+        No new tests. Unfortunately, this race condition appears to be impossible to capture in a regression test.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOperationBodyDefinition):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfacePrototypeFunctionTakeNodesBody):
+        (WebCore::jsTestInterfacePrototypeFunctionTakeNodes):
+        * bindings/scripts/test/TestImplements.idl: Added a test case.
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::takeRecords):
+        (WebCore::MutationObserver::deliver):
+        * dom/MutationObserver.h:
+        * dom/MutationObserver.idl:
+
 2018-10-03  Youenn Fablet  <youenn@apple.com>
 
         Add VP8 support to WebRTC

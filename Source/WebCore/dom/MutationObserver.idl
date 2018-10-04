@@ -37,7 +37,7 @@
 ] interface MutationObserver {
     [MayThrowException] void observe(Node target, optional MutationObserverInit options);
     void disconnect();
-    sequence<MutationRecord> takeRecords();
+    [ResultField=records] sequence<MutationRecord> takeRecords();
 };
 
 dictionary MutationObserverInit {

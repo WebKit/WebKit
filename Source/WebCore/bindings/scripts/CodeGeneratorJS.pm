@@ -5151,7 +5151,14 @@ sub GenerateOperationBodyDefinition
 
         GenerateArgumentsCountCheck($outputArray, $operation, $interface, $indent);
         my $functionString = GenerateParametersCheck($outputArray, $operation, $interface, $functionImplementationName, $indent);
-        GenerateImplementationFunctionCall($outputArray, $operation, $interface, $functionString, $indent);
+
+        if ($operation->extendedAttributes->{ResultField}) {
+            my $resultName = $operation->extendedAttributes->{ResultField};
+            push(@$outputArray, "    auto implResult = $functionString;\n");
+            GenerateImplementationFunctionCall($outputArray, $operation, $interface, "WTFMove(implResult.$resultName)", $indent);
+        } else {
+            GenerateImplementationFunctionCall($outputArray, $operation, $interface, $functionString, $indent);
+        }
     }
 
     push(@$outputArray, "}\n\n");

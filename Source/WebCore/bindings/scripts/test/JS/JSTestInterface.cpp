@@ -56,6 +56,11 @@
 #include "JSTestObj.h"
 #endif
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+#include "JSDOMConvertSequences.h"
+#include <JavaScriptCore/JSArray.h>
+#endif
+
 
 namespace WebCore {
 using namespace JSC;
@@ -73,6 +78,9 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMeth
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(JSC::ExecState*);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionTakeNodes(JSC::ExecState*);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(JSC::ExecState*);
@@ -339,6 +347,11 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsMethod3", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionImplementsMethod3), (intptr_t) (0) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    { "takeNodes", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionTakeNodes), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -910,6 +923,23 @@ static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionImplementsMe
 EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(ExecState* state)
 {
     return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionImplementsMethod4Body>(*state, "implementsMethod4");
+}
+
+#endif
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionTakeNodesBody(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    auto implResult = impl.takeNodes();
+    return JSValue::encode(toJS<IDLSequence<IDLInterface<Node>>>(*state, *castedThis->globalObject(), WTFMove(implResult.nodes)));
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionTakeNodes(ExecState* state)
+{
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionTakeNodesBody>(*state, "takeNodes");
 }
 
 #endif
