@@ -519,7 +519,9 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
 
 // Do the right thing for a Carbon window.
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)_destroyRealWindow:(BOOL)orderingOut
+IGNORE_WARNINGS_END
 {
     // Complain, because this should never be called.  We don't support one-shot NSCarbonWindows.
     NSLog(@"-[NSCarbonWindow _destroyRealWindow:] is not implemented.");
@@ -1031,7 +1033,9 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 {
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSRect) _growBoxRect
+IGNORE_WARNINGS_END
 {
     WindowAttributes attrs;
     NSRect retRect = NSZeroRect;

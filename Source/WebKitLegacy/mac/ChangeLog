@@ -1,5 +1,13 @@
 2018-10-04  Dan Bernstein  <mitz@apple.com>
 
+        More Carbon build-fixing.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter _destroyRealWindow:]):
+        (-[CarbonWindowAdapter _growBoxRect]):
+
+2018-10-04  Dan Bernstein  <mitz@apple.com>
+
         Retried to fix 32-bit macOS builds after r236846.
 
         * WebView/WebHTMLView.mm:
