@@ -193,7 +193,9 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     });
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)streamDataParserWillProvideContentKeyRequestInitializationData:(AVStreamDataParser *)streamDataParser forTrackID:(CMPersistentTrackID)trackID
+IGNORE_WARNINGS_END
 {
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
@@ -217,7 +219,9 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     }
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeyRequestInitializationData:(NSData *)initData forTrackID:(CMPersistentTrackID)trackID
+IGNORE_WARNINGS_END
 {
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 

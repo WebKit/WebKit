@@ -1,3 +1,11 @@
+2018-10-04  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the Mojave build after r236832.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParserWillProvideContentKeyRequestInitializationData:forTrackID:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]):
+
 2018-10-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         ENABLE(ASSERT) used in grid code when !ASSERT_DISABLED is desired
