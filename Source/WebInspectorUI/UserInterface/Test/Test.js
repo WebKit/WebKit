@@ -101,6 +101,14 @@ WI.UIString = (string) => string;
 
 WI.indentString = () => "    ";
 
+WI.LayoutDirection = {
+    System: "system",
+    LTR: "ltr",
+    RTL: "rtl",
+};
+
+WI.resolvedLayoutDirection = () => { return InspectorFrontendHost.userInterfaceLayoutDirection(); }
+
 // Add stubs that are called by the frontend API.
 WI.updateDockedState = () => {};
 WI.updateDockingAvailability = () => {};

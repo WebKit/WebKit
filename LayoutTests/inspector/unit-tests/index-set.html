@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("IndexSet");
+
+    function createIndexSet(values = []) {
+        if (!Array.isArray(values))
+            values = [values];
+        InspectorTest.log(`Given an IndexSet with values [${values}]:`);
+
+        return new WI.IndexSet(values);
+    }
+
+    suite.addTestCase({
+        name: "IndexSet.constructor",
+        test() {
+            let indexSet = new WI.IndexSet;
+            InspectorTest.expectEqual(indexSet.size, 0, "size should be zero.");
+            InspectorTest.expectThat(isNaN(indexSet.firstIndex), "firstIndex should be NaN.");
+            InspectorTest.expectThat(isNaN(indexSet.lastIndex), "lastIndex should be NaN.");
+            InspectorTest.expectShallowEqual(Array.from(indexSet), [], "Should be [].");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.constructor array",
+        test() {
+            const values = [5, 1, 0, 100, 50];
+            const sortedValues = values.slice().sort((a, b) => a - b);
+
+            InspectorTest.log("Initialize IndexSet with an array.");
+            {
+                let indexSet = new WI.IndexSet(values);
+                InspectorTest.expectEqual(indexSet.size, values.length, `size should be ${values.length}.`);
+                InspectorTest.expectEqual(indexSet.firstIndex, sortedValues[0], `firstIndex should be ${sortedValues[0]}.`);
+                InspectorTest.expectEqual(indexSet.lastIndex, sortedValues.lastValue, `lastIndex should be ${sortedValues.lastValue}.`);
+                InspectorTest.expectShallowEqual(Array.from(indexSet), sortedValues, `Should be [${sortedValues}].`);
+            }
+
+            InspectorTest.log("Initialize IndexSet with an array containing duplicate indexes.");
+            {
+                let indexSet = new WI.IndexSet(values.concat(values));
+                InspectorTest.expectEqual(indexSet.size, values.length, `size should be ${values.length}.`);
+                InspectorTest.expectShallowEqual(Array.from(indexSet), sortedValues, `Should be [${sortedValues}].`);
+            }
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.constructor invalid",
+        test() {
+            let indexSet = new WI.IndexSet([-1, 1.5, "abc"]);
+            InspectorTest.expectEqual(indexSet.size, 0, "size should be zero.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.clear",
+        test() {
+            let indexSet = new WI.IndexSet([1, 2, 3]);
+            indexSet.add(42);
+            indexSet.clear();
+            InspectorTest.expectEqual(indexSet.size, 0, "size should be zero.");
+            InspectorTest.expectThat(isNaN(indexSet.firstIndex), "firstIndex should be NaN.");
+            InspectorTest.expectThat(isNaN(indexSet.lastIndex), "lastIndex should be NaN.");
+            InspectorTest.expectShallowEqual(Array.from(indexSet), [], "Should be [].");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.add",
+        test() {
+            let indexSet = new WI.IndexSet;
+            indexSet.add(42);
+            InspectorTest.expectEqual(indexSet.size, 1, "size should be 1.");
+            InspectorTest.expectThat(indexSet.has(42), "has should return true.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.add duplicate",
+        test() {
+            let indexSet = new WI.IndexSet;
+            indexSet.add(42);
+            indexSet.add(42);
+            InspectorTest.expectEqual(indexSet.size, 1, "size should be 1.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.add invalid",
+        test() {
+            let indexSet = new WI.IndexSet;
+            indexSet.add(-1);
+            indexSet.add(1.5);
+            indexSet.add("abc");
+            InspectorTest.expectEqual(indexSet.size, 0, "size should be zero.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.delete",
+        test() {
+            let indexSet = createIndexSet([1, 2, 3]);
+            const indexToDelete = indexSet.lastIndex;
+            let wasDeleted = indexSet.delete(indexToDelete);
+            InspectorTest.expectThat(wasDeleted, `delete ${indexToDelete} should succeed.`);
+            InspectorTest.expectFalse(indexSet.has(indexToDelete), `has ${indexToDelete} should return false.`);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.delete nonexistent",
+        test() {
+            let indexSet = createIndexSet([1, 2, 3]);
+            const indexToDelete = indexSet.lastIndex + 1;
+            let wasDeleted = indexSet.delete(indexToDelete);
+            InspectorTest.expectFalse(wasDeleted, `delete ${indexToDelete} should fail.`);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.delete invalid",
+        test() {
+            let indexSet = new WI.IndexSet;
+            indexSet.delete(-1);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype[Symbol.iterator]",
+        test() {
+            let indexSet = createIndexSet([20, 1, 10, 2]);
+            for (let index of indexSet)
+                InspectorTest.log(index);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.indexGreaterThan",
+        test() {
+            let indexSet = createIndexSet([1, 2]);
+            const {firstIndex, lastIndex} = indexSet;
+            const indexBefore = firstIndex - 1;
+            const indexAfter = lastIndex + 1;
+            InspectorTest.expectEqual(indexSet.indexGreaterThan(indexBefore), firstIndex, `Index greater than ${indexBefore} should be ${firstIndex}.`);
+            InspectorTest.expectEqual(indexSet.indexGreaterThan(firstIndex), lastIndex, `Index greater than ${firstIndex} should be ${lastIndex}.`);
+            InspectorTest.expectThat(isNaN(indexSet.indexGreaterThan(lastIndex)), `Index greater than ${lastIndex} should be NaN.`);
+            InspectorTest.expectThat(isNaN(indexSet.indexGreaterThan(indexAfter)), `Index greater than ${indexAfter} should be NaN.`);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.indexLessThan",
+        test() {
+            let indexSet = createIndexSet([1, 2]);
+            const {firstIndex, lastIndex} = indexSet;
+            const indexBefore = firstIndex - 1;
+            const indexAfter = lastIndex + 1;
+
+            InspectorTest.expectThat(isNaN(indexSet.indexLessThan(indexBefore)), `Index less than ${indexBefore} should be NaN.`);
+            InspectorTest.expectThat(isNaN(indexSet.indexLessThan(firstIndex)), `Index less than ${firstIndex} should be NaN.`);
+            InspectorTest.expectEqual(indexSet.indexLessThan(lastIndex), firstIndex, `Index less than ${lastIndex} should be ${firstIndex}.`);
+            InspectorTest.expectEqual(indexSet.indexLessThan(indexAfter), lastIndex, `Index less than ${indexAfter} should be ${lastIndex}.`);
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+    <p>Tests for WI.IndexSet.</p>
+</body>
+</html>

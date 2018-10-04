@@ -271,7 +271,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         if (this._table) {
             this._selectedResource = null;
-            this._table.clearSelectedRow();
+            this._table.deselectAll();
             this._table.reloadData();
             this._hidePopover();
             this._hideResourceDetailView();
@@ -285,7 +285,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let rowIndex = this._rowIndexForResource(representedObject);
         if (rowIndex === -1) {
             this._selectedResource = null;
-            this._table.clearSelectedRow();
+            this._table.deselectAll();
             this._hideResourceDetailView();
             return;
         }
@@ -300,7 +300,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     networkResourceDetailViewClose(resourceDetailView)
     {
         this._selectedResource = null;
-        this._table.clearSelectedRow();
+        this._table.deselectAll();
         this._hideResourceDetailView();
     }
 
@@ -347,8 +347,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         return column === this._nameColumn;
     }
 
-    tableSelectedRowChanged(table, rowIndex)
+    tableSelectionDidChange(table)
     {
+        let rowIndex = table.selectedRow;
         if (isNaN(rowIndex)) {
             this._selectedResource = null;
             this._hideResourceDetailView();
@@ -1403,7 +1404,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let rowIndex = this._rowIndexForResource(this._selectedResource);
         if (rowIndex === -1) {
             this._selectedResource = null;
-            this._table.clearSelectedRow();
+            this._table.deselectAll();
             return;
         }
 

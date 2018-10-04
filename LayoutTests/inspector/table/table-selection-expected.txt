@@ -1,0 +1,68 @@
+Tests for WI.Table.
+
+
+== Running test suite: Table
+-- Running test case: Table.constructor
+PASS: selectedRow should be NaN.
+PASS: Should have no selected rows.
+PASS: allowsMultipleSelection should initially be false.
+
+-- Running test case: Table.SelectRow
+Selecting row 0.
+PASS: Table selection changed.
+PASS: selectedRow should be 0.
+PASS: selectedRows should be [0].
+Selecting row 1.
+PASS: Table selection changed.
+PASS: selectedRow should be 1.
+PASS: selectedRows should be [1].
+
+-- Running test case: Table.DeselectRow
+Selecting row 0.
+PASS: Table selection changed.
+PASS: selectedRow should be 0.
+Deselecting row 0.
+PASS: Table selection changed.
+PASS: selectedRows should not include 0.
+PASS: Should have no selected rows.
+
+-- Running test case: Table.AllowsMultipleSelection
+PASS: allowsMultipleSelection enabled.
+PASS: allowsMultipleSelection disabled.
+
+-- Running test case: Table.SelectMultipleRows.ExtendSelection
+PASS: allowsMultipleSelection enabled.
+Selecting row 0.
+PASS: Table selection changed.
+PASS: selectedRow should be 0.
+Selecting row 1.
+PASS: Table selection changed.
+PASS: selectedRow should be 1.
+Selecting row 9.
+PASS: Table selection changed.
+PASS: selectedRow should be 9.
+PASS: selectedRows should be [0, 1, 9].
+
+-- Running test case: Table.SelectMultipleRows.SelectTheSameRowTwice.ExtendSelection
+Selecting row 0.
+PASS: Table selection changed.
+PASS: selectedRow should be 0.
+Selecting row 1.
+PASS: Table selection changed.
+PASS: selectedRow should be 1.
+Selecting row 1.
+PASS: selectedRow should be 1.
+PASS: selectedRows should be [0, 1].
+
+-- Running test case: Table.SelectMultipleRows.SelectTheSameRowTwice.NoExtendSelection
+Selecting row 0.
+PASS: Table selection changed.
+PASS: selectedRow should be 0.
+Selecting row 1.
+PASS: Table selection changed.
+PASS: selectedRow should be 1.
+Selecting row 1.
+PASS: Table selection changed.
+PASS: selectedRow should be 1.
+PASS: selectedRows should be [1].
+

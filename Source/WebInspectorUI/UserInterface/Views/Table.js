@@ -87,6 +87,8 @@ WI.Table = class Table extends WI.View
         this._fillerHeight = 0; // Calculated in _resizeColumnsAndFiller.
 
         this._selectedRowIndex = NaN;
+        this._allowsMultipleSelection = false;
+        this._selectedRows = new WI.IndexSet;
 
         this._resizers = [];
         this._currentResizer = null;
@@ -122,6 +124,12 @@ WI.Table = class Table extends WI.View
     get delegate() { return this._delegate; }
     get rowHeight() { return this._rowHeight; }
     get selectedRow() { return this._selectedRowIndex; }
+
+    get selectedRows()
+    {
+        return Array.from(this._selectedRows);
+    }
+
     get scrollContainer() { return this._scrollContainerElement; }
 
     get sortOrder()
@@ -200,6 +208,24 @@ WI.Table = class Table extends WI.View
             this._dataSource.tableSortChanged(this);
     }
 
+    get allowsMultipleSelection()
+    {
+        return this._allowsMultipleSelection;
+    }
+
+    set allowsMultipleSelection(flag)
+    {
+        if (this._allowsMultipleSelection === flag)
+            return;
+
+        this._allowsMultipleSelection = flag;
+
+        let numberOfSelectedRows = this._selectedRows.size;
+        this._selectedRows.clear();
+        if (numberOfSelectedRows > 1)
+            this._notifySelectionDidChange();
+    }
+
     resize()
     {
         this._cachedWidth = NaN;
@@ -211,6 +237,7 @@ WI.Table = class Table extends WI.View
     reloadData()
     {
         this._cachedRows.clear();
+        this._selectedRows.clear();
 
         this._previousRevealedRowCount = NaN;
         this.needsLayout();
@@ -277,35 +304,71 @@ WI.Table = class Table extends WI.View
         this._cachedRows.delete(rowIndex);
     }
 
-    selectRow(rowIndex)
+    selectRow(rowIndex, extendSelection = false)
     {
-        if (this._selectedRowIndex === rowIndex)
-            return;
+        console.assert(!extendSelection || this._allowsMultipleSelection, "Cannot extend selection with multiple selection disabled.");
 
-        let oldSelectedRow = this._cachedRows.get(this._selectedRowIndex);
-        if (oldSelectedRow)
-            oldSelectedRow.classList.remove("selected");
+        if (this._isRowSelected(rowIndex)) {
+            if (!extendSelection)
+                this._deselectAllAndSelect(rowIndex);
+            return;
+        }
+
+        if (!extendSelection && this._selectedRows.size) {
+            this._suppressNextSelectionDidChange = true;
+            this.deselectAll();
+        }
 
         this._selectedRowIndex = rowIndex;
+        this._selectedRows.add(rowIndex);
 
         let newSelectedRow = this._cachedRows.get(this._selectedRowIndex);
         if (newSelectedRow)
             newSelectedRow.classList.add("selected");
 
-        if (this._delegate.tableSelectedRowChanged)
-            this._delegate.tableSelectedRowChanged(this, this._selectedRowIndex);
+        this._notifySelectionDidChange();
     }
 
-    clearSelectedRow()
+    deselectRow(rowIndex)
     {
-        if (isNaN(this._selectedRowIndex))
+        if (!this._isRowSelected(rowIndex))
             return;
 
-        let oldSelectedRow = this._cachedRows.get(this._selectedRowIndex);
-        if (oldSelectedRow)
-            oldSelectedRow.classList.remove("selected");
+        let oldSelectedRow = this._cachedRows.get(rowIndex);
+        if (!oldSelectedRow)
+            return;
 
-        this._selectedRowIndex = NaN;
+        oldSelectedRow.classList.remove("selected");
+
+        this._selectedRows.delete(rowIndex);
+
+        if (this._selectedRowIndex === rowIndex) {
+            this._selectedRowIndex = NaN;
+            if (this._selectedRows.size) {
+                // Find selected row closest to deselected row.
+                let preceding = this._selectedRows.indexLessThan(rowIndex);
+                let following = this._selectedRows.indexGreaterThan(rowIndex);
+
+                if (isNaN(preceding))
+                    this._selectedRowIndex = following;
+                else if (isNaN(following))
+                    this._selectedRowIndex = preceding;
+                else {
+                    if ((following - rowIndex) < (rowIndex - preceding))
+                        this._selectedRowIndex = following;
+                    else
+                        this._selectedRowIndex = preceding;
+                }
+            }
+        }
+
+        this._notifySelectionDidChange();
+    }
+
+    deselectAll()
+    {
+        const rowIndex = NaN;
+        this._deselectAllAndSelect(rowIndex);
     }
 
     columnWithIdentifier(identifier)
@@ -678,7 +741,7 @@ WI.Table = class Table extends WI.View
         let row = document.createElement("li");
         row.__index = rowIndex;
         row.__widthGeneration = 0;
-        if (rowIndex === this._selectedRowIndex)
+        if (this._isRowSelected(rowIndex))
             row.classList.add("selected");
 
         this._cachedRows.set(rowIndex, row);
@@ -1201,10 +1264,19 @@ WI.Table = class Table extends WI.View
         let column = this._visibleColumns[columnIndex];
         let rowIndex = row.__index;
 
+        if (this._isRowSelected(rowIndex)) {
+            if (event.metaKey)
+                this.deselectRow(rowIndex)
+            else
+                this._deselectAllAndSelect(rowIndex);
+            return;
+        }
+
         if (this._delegate.tableShouldSelectRow && !this._delegate.tableShouldSelectRow(this, cell, column, rowIndex))
             return;
 
-        this.selectRow(rowIndex);
+        let extendSelection = this._allowsMultipleSelection && event.metaKey;
+        this.selectRow(rowIndex, extendSelection);
     }
 
     _handleContextMenu(event)
@@ -1281,6 +1353,47 @@ WI.Table = class Table extends WI.View
                     this.hideColumn(column);
             }, checked);
         }
+    }
+
+    _deselectAllAndSelect(rowIndex)
+    {
+        if (!this._selectedRows.size)
+            return;
+
+        if (this._selectedRows.size === 1 && this._selectedRows.firstIndex === rowIndex)
+            return;
+
+        for (let selectedRowIndex of this._selectedRows) {
+            if (selectedRowIndex === rowIndex)
+                continue;
+            let oldSelectedRow = this._cachedRows.get(selectedRowIndex);
+            if (oldSelectedRow)
+                oldSelectedRow.classList.remove("selected");
+        }
+
+        this._selectedRowIndex = rowIndex;
+        this._selectedRows.clear();
+
+        if (!isNaN(rowIndex))
+            this._selectedRows.add(rowIndex);
+
+        this._notifySelectionDidChange();
+    }
+
+    _isRowSelected(rowIndex)
+    {
+        return this._selectedRows.has(rowIndex);
+    }
+
+    _notifySelectionDidChange()
+    {
+        if (this._suppressNextSelectionDidChange) {
+            this._suppressNextSelectionDidChange = false;
+            return;
+        }
+
+        if (this._delegate.tableSelectionDidChange)
+            this._delegate.tableSelectionDidChange(this);
     }
 };
 

@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/table-utilities.js"></script>
+<script>
+function test()
+{
+    InspectorTest.redirectRequestAnimationFrame();
+
+    let suite = InspectorTest.createSyncSuite("Table");
+
+    // Import names.
+    let {createTable, cleanupTable} = InspectorTest;
+
+    suite.addTestCase({
+        name: "Table.constructor",
+        test() {
+            let table = createTable();
+
+            InspectorTest.expectThat(isNaN(table.selectedRow), "selectedRow should be NaN.");
+            InspectorTest.expectEqual(table.selectedRows.length, 0, "Should have no selected rows.");
+            InspectorTest.expectFalse(table.allowsMultipleSelection, "allowsMultipleSelection should initially be false.");
+
+            return true;
+        }
+    });
+
+    function triggerSelectRow(table, rowIndex, extendSelection) {
+        InspectorTest.log(`Selecting row ${rowIndex}.`);
+        table.selectRow(rowIndex, extendSelection);
+        InspectorTest.expectEqual(table.selectedRow, rowIndex, `selectedRow should be ${rowIndex}.`);
+    }
+
+    function triggerDeselectRow(table, rowIndex) {
+        InspectorTest.log(`Deselecting row ${rowIndex}.`);
+        table.deselectRow(rowIndex);
+        InspectorTest.expectFalse(table.selectedRows.includes(rowIndex), `selectedRows should not include ${rowIndex}.`);
+    }
+
+    suite.addTestCase({
+        name: "Table.SelectRow",
+        description: "Select a row, then select another row causing the frist to become deselected.",
+        test() {
+            let table = createTable();
+
+            triggerSelectRow(table, 0);
+            InspectorTest.expectShallowEqual(table.selectedRows, [0], "selectedRows should be [0].");
+            triggerSelectRow(table, 1);
+            InspectorTest.expectShallowEqual(table.selectedRows, [1], "selectedRows should be [1].");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Table.DeselectRow",
+        description: "Deselect the selected row.",
+        test() {
+            let table = createTable();
+
+            triggerSelectRow(table, 0);
+            triggerDeselectRow(table, 0);
+            InspectorTest.expectEqual(table.selectedRows.length, 0, "Should have no selected rows.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Table.AllowsMultipleSelection",
+        description: "Should be able to enable multiple selection.",
+        test() {
+            let table = createTable();
+
+            table.allowsMultipleSelection = true;
+            InspectorTest.expectThat(table.allowsMultipleSelection, "allowsMultipleSelection enabled.");
+            table.allowsMultipleSelection = false;
+            InspectorTest.expectFalse(table.allowsMultipleSelection, "allowsMultipleSelection disabled.");
+
+            return true;
+        }
+    });
+    suite.addTestCase({
+        name: "Table.SelectMultipleRows.ExtendSelection",
+        description: "Select multiple rows, extending the selection.",
+        test() {
+            let table = createTable();
+            table.allowsMultipleSelection = true;
+            InspectorTest.expectThat(table.allowsMultipleSelection, "allowsMultipleSelection enabled.");
+
+            const extendSelection = true;
+
+            triggerSelectRow(table, 0, extendSelection);
+            triggerSelectRow(table, 1, extendSelection);
+            triggerSelectRow(table, 9, extendSelection);
+            InspectorTest.expectShallowEqual(table.selectedRows, [0, 1, 9], "selectedRows should be [0, 1, 9].");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Table.SelectMultipleRows.SelectTheSameRowTwice.ExtendSelection",
+        description: "Select an already selected row, and extend the selection.",
+        test() {
+            let table = createTable();
+            table.allowsMultipleSelection = true;
+
+            const extendSelection = true;
+
+            triggerSelectRow(table, 0, extendSelection);
+            triggerSelectRow(table, 1, extendSelection);
+            triggerSelectRow(table, 1, extendSelection);
+            InspectorTest.expectShallowEqual(table.selectedRows, [0, 1], "selectedRows should be [0, 1].");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Table.SelectMultipleRows.SelectTheSameRowTwice.NoExtendSelection",
+        description: "Select an already selected row, and do not extend the selection.",
+        test() {
+            let table = createTable();
+            table.allowsMultipleSelection = true;
+
+            const extendSelection = true;
+
+            triggerSelectRow(table, 0, extendSelection);
+            triggerSelectRow(table, 1, extendSelection);
+            triggerSelectRow(table, 1);
+            InspectorTest.expectShallowEqual(table.selectedRows, [1], "selectedRows should be [1].");
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+    <p>Tests for WI.Table.</p>
+</body>
+</html>

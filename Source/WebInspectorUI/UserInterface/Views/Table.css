@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,11 +126,13 @@ body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)::af
     line-height: 20px;
     vertical-align: middle;
     white-space: nowrap;
+    border-bottom: solid 1px transparent;
 }
 
 .table > .data-container > .data-list > li.selected {
     background-color: var(--selected-background-color-unfocused) !important;
     color: inherit !important;
+    background-clip: padding-box;
 }
 
 .table:focus > .data-container > .data-list li.selected {
@@ -176,11 +178,6 @@ body[dir=rtl] .table .cell:first-child {
 }
 
 @media (prefers-dark-interface) {
-    .table,
-    .table > .header {
-        background: var(--background-color);
-    }
-
     .table > .header > .sortable:active {
         background-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
     }
