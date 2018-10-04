@@ -86,10 +86,8 @@ public:
     WEBCORE_EXPORT void requestHideAndExitFullscreen();
     WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect);
     WEBCORE_EXPORT void preparedToExitFullscreen();
-#if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT void setHasVideoContentLayer(bool);
     WEBCORE_EXPORT void setInlineRect(const IntRect&, bool visible);
-#endif
 
     enum class ExitFullScreenReason {
         DoneButtonTapped,
@@ -127,9 +125,7 @@ public:
     };
 
     Mode m_currentMode;
-#if ENABLE(FULLSCREEN_API)
     Mode m_targetMode;
-#endif
 
     VideoFullscreenModel* videoFullscreenModel() const { return m_videoFullscreenModel; }
     bool shouldExitFullscreenWithReason(ExitFullScreenReason);
@@ -146,10 +142,8 @@ public:
     void willStopPictureInPicture();
     void didStopPictureInPicture();
     void prepareForPictureInPictureStopWithCompletionHandler(void (^)(BOOL));
-#if ENABLE(FULLSCREEN_API)
     void exitFullscreenHandler(BOOL success, NSError *);
     void enterFullscreenHandler(BOOL success, NSError *);
-#endif
     bool isPlayingVideoInEnhancedFullscreen() const;
 
     WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
@@ -166,15 +160,10 @@ public:
 protected:
     WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);
 
-#if ENABLE(FULLSCREEN_API)
     void doSetup();
     void finalizeSetup();
     void doExitFullscreen();
     void returnToStandby();
-#else
-    void enterPictureInPicture();
-    void enterFullscreenStandard();
-#endif
     void doEnterFullscreen();
     void watchdogTimerFired();
     WebAVPlayerController *playerController() const;
@@ -200,7 +189,6 @@ protected:
     bool m_shouldReturnToFullscreenWhenStoppingPiP { false };
     bool m_restoringFullscreenForPictureInPictureStop { false };
 
-#if ENABLE(FULLSCREEN_API)
     bool m_setupNeedsInlineRect { false };
     bool m_exitFullscreenNeedInlineRect { false };
 
@@ -225,13 +213,8 @@ protected:
     bool m_inlineIsVisible { false };
     bool m_standby { false };
     bool m_targetStandby { false };
-#else
-    bool m_exitRequested { false };
-    bool m_exitCompleted { false };
-    bool m_enterRequested { false };
-    bool m_shouldReturnToFullscreenAfterEnteringForeground { false };
+
     bool m_waitingForPreparedToExit { false };
-#endif
 };
 
 }
