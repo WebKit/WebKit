@@ -1,3 +1,33 @@
+2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Fix some font attribute conversion bugs in preparation for "Font > Styles…" support in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=190289
+        <rdar://problem/45020806>
+
+        Reviewed by Ryosuke Niwa.
+
+        Makes some small adjustments to fix two bugs in font attribute conversion logic. See below for more detail.
+
+        Tests:  FontManagerTests.AddFontShadowUsingFontOptions
+                FontManagerTests.AddAndRemoveColorsUsingFontOptions
+
+        * editing/FontAttributeChanges.cpp:
+        (WebCore::cssValueListForShadow):
+        * editing/cocoa/FontAttributesCocoa.mm:
+
+        Currently, we bail from adding a font shadow if the shadow's offset is empty. However, valid shadow offsets may
+        have negative dimensions, so a check for `isZero()` should be used instead.
+
+        (WebCore::FontAttributes::createDictionary const):
+        * platform/mac/WebCoreNSFontManagerExtras.mm:
+
+        Fall back to a transparent background color; this allows senders to remove the current background color by just
+        removing NSBackgroundColorAttributeName from the attribute dictionary, rather than explicitly setting it to the
+        transparent color (this scenario is exercised when using "Font > Styles…" to specify a font style without a
+        background color).
+
+        (WebCore::computedFontAttributeChanges):
+
 2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         MutationRecord doesn't keep JS wrappers of target, addedNodes, and removedNodes alive

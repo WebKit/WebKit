@@ -81,7 +81,7 @@ Ref<MutableStyleProperties> FontChanges::createStyleProperties() const
 
 static RefPtr<CSSValueList> cssValueListForShadow(const FontShadow& shadow)
 {
-    if (shadow.offset.isEmpty() && !shadow.blurRadius)
+    if (shadow.offset.isZero() && !shadow.blurRadius)
         return nullptr;
 
     auto list = CSSValueList::createCommaSeparated();

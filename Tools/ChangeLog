@@ -1,3 +1,46 @@
+2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Fix some font attribute conversion bugs in preparation for "Font > Styles…" support in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=190289
+        <rdar://problem/45020806>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new API tests to exercise two corner cases when using NSFontOptions ("Font > Styles…") to change font
+        attributes at the current selection.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/TestWebKitAPI/mac/AppKitSPI.h:
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (webViewForFontManagerTesting):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/mac/TestFontOptions.h: Copied from Source/WebCore/editing/cocoa/FontAttributesCocoa.mm.
+        * TestWebKitAPI/mac/TestFontOptions.mm: Added.
+
+        Introduce TestFontOptions, which wraps the shared NSFontOptions and swizzles `-sharedFontOptions` to return a
+        global instance of itself. TestFontOptions supports several testing helpers to add or remove font shadows,
+        foreground colors, and background colors.
+
+        (sharedFontOptionsForTesting):
+        (+[TestFontOptions sharedInstance]):
+        (-[TestFontOptions initWithFontOptions:]):
+        (-[TestFontOptions selectedAttributes]):
+        (-[TestFontOptions fontOptions]):
+        (-[TestFontOptions shadowWidth]):
+        (-[TestFontOptions setShadowWidth:]):
+        (-[TestFontOptions shadowHeight]):
+        (-[TestFontOptions setShadowHeight:]):
+        (-[TestFontOptions setShadowBlurRadius:]):
+        (-[TestFontOptions setHasShadow:]):
+        (-[TestFontOptions foregroundColor]):
+        (-[TestFontOptions setForegroundColor:]):
+        (-[TestFontOptions backgroundColor]):
+        (-[TestFontOptions setBackgroundColor:]):
+        (-[TestFontOptions _dispatchFontAttributeChanges]):
+        (-[TestFontOptions convertAttributes:]):
+        (-[TestFontOptions setSelectedAttributes:isMultiple:]):
+        (-[TestFontOptions forwardInvocation:]):
+
 2018-10-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Move time out control from WebProcess to UIProcess

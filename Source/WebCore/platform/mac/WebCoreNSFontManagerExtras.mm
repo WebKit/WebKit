@@ -126,7 +126,7 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
 
     NSColor *convertedBackgroundColorA = [convertedAttributesA objectForKey:NSBackgroundColorAttributeName];
     if (convertedBackgroundColorA == [convertedAttributesB objectForKey:NSBackgroundColorAttributeName])
-        changes.setBackgroundColor(colorFromNSColor(convertedBackgroundColorA));
+        changes.setBackgroundColor(colorFromNSColor(convertedBackgroundColorA ?: NSColor.clearColor));
 
     changes.setFontChanges(computedFontChanges(fontManager, originalFontA, [convertedAttributesA objectForKey:NSFontAttributeName], [convertedAttributesB objectForKey:NSFontAttributeName]));
 

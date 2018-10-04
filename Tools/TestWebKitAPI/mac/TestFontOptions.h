@@ -23,40 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FontAttributes.h"
+#pragma once
 
-#import "ColorCocoa.h"
+#if PLATFORM(MAC) && WK_API_ENABLED
 
-namespace WebCore {
+#import <AppKit/AppKit.h>
 
-RetainPtr<NSDictionary> FontAttributes::createDictionary() const
-{
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    if (font)
-        attributes[NSFontAttributeName] = font.get();
+@interface TestFontOptions : NSObject
 
-    if (foregroundColor.isValid())
-        attributes[NSForegroundColorAttributeName] = platformColor(foregroundColor);
+@property (class, readonly) TestFontOptions *sharedInstance;
+@property (nonatomic, readonly) NSDictionary *selectedAttributes;
+@property (nonatomic, readonly) BOOL hasMultipleFonts;
 
-    if (backgroundColor.isValid())
-        attributes[NSBackgroundColorAttributeName] = platformColor(backgroundColor);
+// Font shadow manipulation.
+@property (nonatomic) BOOL hasShadow;
+@property (nonatomic) CGFloat shadowWidth;
+@property (nonatomic) CGFloat shadowHeight;
+@property (nonatomic) CGFloat shadowBlurRadius;
 
-    if (fontShadow.color.isValid() && (!fontShadow.offset.isZero() || fontShadow.blurRadius))
-        attributes[NSShadowAttributeName] = fontShadow.createShadow().get();
+// Font colors.
+@property (nonatomic, copy) NSColor *foregroundColor;
+@property (nonatomic, copy) NSColor *backgroundColor;
 
-    if (subscriptOrSuperscript == SubscriptOrSuperscript::Subscript)
-        attributes[NSSuperscriptAttributeName] = @(-1);
-    else if (subscriptOrSuperscript == SubscriptOrSuperscript::Superscript)
-        attributes[NSSuperscriptAttributeName] = @1;
+@end
 
-    if (hasUnderline)
-        attributes[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleSingle);
-
-    if (hasStrikeThrough)
-        attributes[NSStrikethroughStyleAttributeName] = @(NSUnderlineStyleSingle);
-
-    return attributes;
-}
-
-} // namespace WebCore
+#endif

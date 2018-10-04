@@ -103,4 +103,8 @@ NSString * const NSInspectorBarTextAlignmentItemIdentifier = @"NSInspectorBarTex
 - (void)menuNeedsUpdate:(NSMenu *)menu;
 @end
 
+@interface NSFontOptions : NSObject
++ (instancetype)sharedFontOptions;
+@end
+
 #endif // PLATFORM(MAC)

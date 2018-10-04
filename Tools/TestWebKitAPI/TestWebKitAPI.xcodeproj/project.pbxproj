@@ -856,6 +856,7 @@
 		F4F137921D9B683E002BEC57 /* large-video-test-now-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */; };
 		F4F405BC1D4C0D1C007A9707 /* full-size-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */; };
 		F4F405BD1D4C0D1C007A9707 /* skinny-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */; };
+		F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */; };
 		F4FA91811E61849B007B8C1D /* WKWebViewMacEditingTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */; };
 		F4FA91831E61857B007B8C1D /* double-click-does-not-select-trailing-space.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */; };
 		F4FC077720F013B600CA043C /* significant-text-milestone.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FC077620F0108100CA043C /* significant-text-milestone.html */; };
@@ -2114,6 +2115,8 @@
 		F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-test-now-playing.html"; sourceTree = "<group>"; };
 		F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-size-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
 		F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "skinny-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
+		F4F5BB5021667BAA002D06B9 /* TestFontOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFontOptions.h; sourceTree = "<group>"; };
+		F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFontOptions.mm; sourceTree = "<group>"; };
 		F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewMacEditingTests.mm; sourceTree = "<group>"; };
 		F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "double-click-does-not-select-trailing-space.html"; path = "Tests/WebKitCocoa/double-click-does-not-select-trailing-space.html"; sourceTree = SOURCE_ROOT; };
 		F4FC077620F0108100CA043C /* significant-text-milestone.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "significant-text-milestone.html"; sourceTree = "<group>"; };
@@ -3174,6 +3177,8 @@
 				F46128CA211D475100D9FADB /* TestDraggingInfo.mm */,
 				F4E0A2B62122847400AF7C7F /* TestFilePromiseReceiver.h */,
 				F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */,
+				F4F5BB5021667BAA002D06B9 /* TestFontOptions.h */,
+				F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */,
 				F45D388F215A7B4B002A2979 /* TestInspectorBar.h */,
 				F45D3890215A7B4B002A2979 /* TestInspectorBar.mm */,
 				C08587BE13FE956C001EF4E5 /* WebKitAgnosticTest.h */,
@@ -3995,6 +4000,7 @@
 				7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */,
 				F46128CB211D475100D9FADB /* TestDraggingInfo.mm in Sources */,
 				F4E0A2B82122847400AF7C7F /* TestFilePromiseReceiver.mm in Sources */,
+				F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */,
 				F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */,
 				F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */,
 				2D1C04A71D76298B000A6816 /* TestNavigationDelegate.mm in Sources */,
