@@ -971,7 +971,6 @@
 		419C84C11FE31A0B0040C30F /* encoder_vcp.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C849C1FE2FEC00040C30F /* encoder_vcp.h */; };
 		419C84CB1FE3252E0040C30F /* curve25519.c in Sources */ = {isa = PBXBuildFile; fileRef = 419C847C1FE256B90040C30F /* curve25519.c */; };
 		419EA1F3215C48C70082BFD2 /* macho-objfmt.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA1F2215C48C70082BFD2 /* macho-objfmt.c */; };
-		419EA1F6215C49590082BFD2 /* Makefile.inc in Sources */ = {isa = PBXBuildFile; fileRef = 419EA1F4215C49580082BFD2 /* Makefile.inc */; };
 		419EA1F9215C4A9E0082BFD2 /* module.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA1F8215C4A9E0082BFD2 /* module.c */; };
 		419EA201215C4B270082BFD2 /* x86expr.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA1FD215C4B260082BFD2 /* x86expr.c */; };
 		419EA202215C4B270082BFD2 /* x86arch.c in Sources */ = {isa = PBXBuildFile; fileRef = 419EA1FE215C4B260082BFD2 /* x86arch.c */; };
@@ -15328,7 +15327,6 @@
 				41BE717C215C459000A7B196 /* inttree.c in Sources */,
 				41BE71CC215C464800A7B196 /* linemap.c in Sources */,
 				419EA1F3215C48C70082BFD2 /* macho-objfmt.c in Sources */,
-				419EA1F6215C49590082BFD2 /* Makefile.inc in Sources */,
 				41BE717D215C459000A7B196 /* md5.c in Sources */,
 				41BE717E215C459000A7B196 /* mergesort.c in Sources */,
 				419EA1F9215C4A9E0082BFD2 /* module.c in Sources */,
