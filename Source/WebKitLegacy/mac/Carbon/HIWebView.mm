@@ -34,7 +34,6 @@
 #import "HIViewAdapter.h"
 #import "WebHTMLViewInternal.h"
 #import "WebKit.h"
-#import <AppKit/NSControl.h>
 #import <pal/spi/mac/NSEventSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/QuickDrawSPI.h>
@@ -1072,10 +1071,12 @@ static void RelinquishFocus(HIWebView* view, bool inAutodisplay)
 //
 static void ActiveStateChanged(HIWebView* view)
 {
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
     if ([view->fWebView respondsToSelector:@selector(setEnabled)]) {
         [(NSControl*)view->fWebView setEnabled: IsControlEnabled(view->fViewRef)];
         HIViewSetNeedsDisplay(view->fViewRef, true);
     }
+IGNORE_WARNINGS_END
 }
 
 

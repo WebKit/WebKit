@@ -1,5 +1,12 @@
 2018-10-04  Dan Bernstein  <mitz@apple.com>
 
+        Retried to fix 32-bit macOS builds after r236846.
+
+        * Carbon/HIWebView.mm:
+        (ActiveStateChanged):
+
+2018-10-04  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix 32-bit macOS builds after r236846.
 
         * Carbon/HIWebView.mm:
