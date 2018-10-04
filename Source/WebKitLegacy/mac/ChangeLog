@@ -1,5 +1,12 @@
 2018-10-04  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix 32-bit macOS builds after r236846.
+
+        * Carbon/HIWebView.mm:
+        (_NSSelectorForHICommand):
+
+2018-10-04  Dan Bernstein  <mitz@apple.com>
+
         WebKitLegacy part of [Xcode] Update some build settings as recommended by Xcode 10
         https://bugs.webkit.org/show_bug.cgi?id=190250
 

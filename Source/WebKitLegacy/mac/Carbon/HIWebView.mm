@@ -34,6 +34,7 @@
 #import "HIViewAdapter.h"
 #import "WebHTMLViewInternal.h"
 #import "WebKit.h"
+#import <AppKit/NSControl.h>
 #import <pal/spi/mac/NSEventSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/QuickDrawSPI.h>
@@ -1161,6 +1162,7 @@ UpdateCommandStatus(HIWebView* inView, const HICommand* inCommand)
 //
 static SEL _NSSelectorForHICommand(const HICommand* inCommand)
 {
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
     switch (inCommand->commandID) {
     case kHICommandUndo:
         return @selector(undo:);
@@ -1179,6 +1181,7 @@ static SEL _NSSelectorForHICommand(const HICommand* inCommand)
     default:
         return nullptr;
     }
+IGNORE_WARNINGS_END
 
     return nullptr;
 }
