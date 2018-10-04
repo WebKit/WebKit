@@ -1,3 +1,3 @@
 
-FAIL Initial values of registered properties can be referenced when no custom properties are explicitly set. assert_equals: expected "25px" but got "calc(10px + 15px)"
+FAIL Initial values of registered properties can be referenced when no custom properties are explicitly set. The given initial value does not parse for the given syntax.
 

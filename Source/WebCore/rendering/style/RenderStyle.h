@@ -183,8 +183,11 @@ public:
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
 
-    const CustomPropertyValueMap& customProperties() const { return m_rareInheritedData->customProperties->values; }
-    void setCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
+    const CustomPropertyValueMap& inheritedCustomProperties() const { return m_rareInheritedData->customProperties->values; }
+    const CustomPropertyValueMap& nonInheritedCustomProperties() const { return m_rareNonInheritedData->customProperties->values; }
+    const CSSCustomPropertyValue* getCustomProperty(const AtomicString&) const;
+    void setInheritedCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value, bool isRegistered = false) { return m_rareInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value), isRegistered); }
+    void setNonInheritedCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value, bool isRegistered = false) { return m_rareNonInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value), isRegistered); }
 
     void setHasViewportUnits(bool v = true) { m_nonInheritedFlags.hasViewportUnits = v; }
     bool hasViewportUnits() const { return m_nonInheritedFlags.hasViewportUnits; }
@@ -792,7 +795,7 @@ public:
     ApplePayButtonType applePayButtonType() const { return static_cast<ApplePayButtonType>(m_rareNonInheritedData->applePayButtonType); }
 #endif
 
-    void checkVariablesInCustomProperties(const CSSRegisteredCustomPropertySet&);
+    void checkVariablesInCustomProperties(const CSSRegisteredCustomPropertySet&, const RenderStyle* parentStyle, const StyleResolver&);
 
 // attribute setter methods
 
@@ -1996,6 +1999,15 @@ inline BorderStyle collapsedBorderStyle(BorderStyle style)
     if (style == BorderStyle::Inset)
         return BorderStyle::Ridge;
     return style;
+}
+
+inline const CSSCustomPropertyValue* RenderStyle::getCustomProperty(const AtomicString& name) const
+{
+    for (auto* map : { &nonInheritedCustomProperties(), &inheritedCustomProperties() }) {
+        if (auto* val = map->get(name))
+            return val;
+    }
+    return nullptr;
 }
 
 inline bool RenderStyle::hasBackground() const

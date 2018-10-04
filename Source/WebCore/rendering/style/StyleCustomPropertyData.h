@@ -54,15 +54,18 @@ public:
 
     bool operator!=(const StyleCustomPropertyData& other) const { return !(*this == other); }
     
-    void setCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value)
+    void setCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value, bool isRegistered)
     {
         if (value->containsVariables())
             containsVariables = true;
+        if (isRegistered)
+            containsUnresolvedRegisteredProperties = true;
         values.set(name, WTFMove(value));
     }
 
     CustomPropertyValueMap values;
     bool containsVariables { false };
+    bool containsUnresolvedRegisteredProperties { false };
 
 private:
     StyleCustomPropertyData() = default;
@@ -70,6 +73,7 @@ private:
         : RefCounted<StyleCustomPropertyData>()
         , values(other.values)
         , containsVariables(other.containsVariables)
+        , containsUnresolvedRegisteredProperties(other.containsUnresolvedRegisteredProperties)
     { }
 };
 

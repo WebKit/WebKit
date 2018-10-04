@@ -1,20 +1,6 @@
+CONSOLE MESSAGE: line 2: SyntaxError: The given initial value does not parse for the given syntax.
+CONSOLE MESSAGE: line 2: SyntaxError: The given initial value does not parse for the given syntax.
+CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
 
-PASS Unregistered property resolves against document (URL token) 
-PASS Unregistered property resolves against document (URL function) 
-FAIL Registered non-inherited <url> resolves against sheet (URL token) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered non-inherited <url> resolves against sheet (URL function) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered inherited <url> resolves against sheet (URL token) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered inherited <url> resolves against sheet (URL function) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered inherited <url> resolves against sheet (Child node, URL token) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered inherited <url> resolves against sheet (Child node, URL function) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered property with unregistered var reference resolves against sheet (URL token) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered property with unregistered var reference resolves against sheet. (URL function) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered property with registered var reference resolves against sheet of referenced property (URL token) assert_equals: expected "/css/css-properties-values-api/support/alt" but got "/css/css-properties-values-api"
-FAIL Registered property with registered var reference resolves against sheet of referenced property (URL function) assert_equals: expected "/css/css-properties-values-api/support/alt" but got "/css/css-properties-values-api"
-FAIL Unregistered property with registered var reference resolves against sheet of referenced property (URL token) assert_equals: expected "/css/css-properties-values-api/support/alt" but got "/css/css-properties-values-api"
-FAIL Unregistered property with registered var reference resolves against sheet of referenced property (URL function) assert_equals: expected "/css/css-properties-values-api/support/alt" but got "/css/css-properties-values-api"
-FAIL Multiple (registered) var reference resolve against respective sheets (URL token) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Multiple (registered) var reference resolve against respective sheets (URL function) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered UTF16BE-encoded var reference resolve against sheet (URL token) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
-FAIL Registered UTF16BE-encoded var reference resolve against sheet (URL function) assert_equals: expected "/css/css-properties-values-api/support/main" but got "/css/css-properties-values-api"
+FAIL Untitled SyntaxError: The given initial value does not parse for the given syntax.
 

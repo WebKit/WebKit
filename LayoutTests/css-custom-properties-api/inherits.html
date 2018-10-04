@@ -1,0 +1,431 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSCustomPropertiesAndValuesEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+  #parent1 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop: 100px;
+  }
+  #child1 {
+    background: green;
+    width: var(--my-custom-prop);
+  }
+
+  #parent2 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop2: 100px;
+  }
+  #child2 {
+    background: green;
+    width: var(--my-custom-prop2);
+  }
+
+  #parent3 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop3: 100px;
+  }
+  #child3 {
+    background: green;
+    width: var(--my-custom-prop3);
+  }
+
+  #parent4 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop: 100px;
+  }
+  #child4 {
+    background: green;
+    --my-custom-prop: initial;
+    width: var(--my-custom-prop, 300px);
+  }
+
+  #parent5 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop: 100px;
+  }
+  #child5 {
+    background: green;
+    --my-custom-prop: unset;
+    width: var(--my-custom-prop, 300px);
+  }
+
+  #parent6 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop2: 100px;
+  }
+  #child6 {
+    background: green;
+    --my-custom-prop2: unset;
+    width: var(--my-custom-prop2, 300px);
+  }
+
+  #parent7 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop: 100px;
+  }
+  #child7 {
+    background: green;
+    --my-custom-prop: var(--my-custom-prop2);
+    --my-custom-prop2: var(--my-custom-prop);
+    width: var(--my-custom-prop2, 300px);
+  }
+
+  #parent8 {
+    width: 500px;
+    background: blue;
+  }
+  #child8 {
+    background: green;
+    --my-custom-prop: 400px;
+    --my-custom-prop2: var(--my-custom-prop);
+    --my-custom-prop: var(--my-custom-prop2);
+    width: var(--my-custom-prop, 300px);
+  }
+
+  #parent9 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop: 100px;
+  }
+  #child9 {
+    background: green;
+    --my-custom-prop: var(--my-custom-prop2, 400px);
+    --my-custom-prop2: var(--my-custom-prop);
+    width: var(--my-custom-prop2, 300px);
+  }
+
+  #parent10 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop: 100px;
+  }
+  #child10 {
+    background: green;
+    --my-custom-prop2: calc(var(--my-custom-prop) + 10px);
+    width: var(--my-custom-prop2, 300px);
+  }
+
+  #parent11 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop-unreg2: 100px;
+  }
+  #child11 {
+    background: green;
+    --my-custom-prop-unreg: var(--my-custom-prop2-unreg);
+    --my-custom-prop2-unreg: var(--my-custom-prop-unreg);
+    width: var(--my-custom-prop2-unreg, 300px);
+  }
+
+  #parent12 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop: 100px;
+  }
+  #child12 {
+    background: green;
+    --my-custom-prop: 190px;
+    width: calc(var(--my-custom-prop, 300px) + 5px);
+  }
+  #childchild12 {
+    background: purple;
+    --my-custom-prop: revert;
+    width: var(--my-custom-prop, 300px);
+  }
+
+  #parent13 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop2: 100px;
+  }
+  #child13 {
+    background: green;
+    --my-custom-prop2: 190px;
+    width: var(--my-custom-prop2, 300px);
+  }
+  #childchild13 {
+    background: purple;
+    --my-custom-prop2: revert;
+    width: var(--my-custom-prop2, 300px);
+  }
+
+  #parent14 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop-unreg: 100px;
+  }
+  #child14 {
+    background: green;
+    --my-custom-prop-unreg: 190px;
+    width: calc(var(--my-custom-prop-unreg, 300px) + 5px);
+  }
+  #childchild14 {
+    background: purple;
+    --my-custom-prop-unreg: revert;
+    width: var(--my-custom-prop-unreg, 300px);
+  }
+
+  #parent14-1 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop-unreg: 100px;
+  }
+  #child14-1 {
+    background: green;
+    --my-custom-prop-unreg: 190px;
+    width: calc(var(--my-custom-prop-unreg, 300px) + 5px);
+  }
+  #childchild14-1 {
+    background: purple;
+    --my-custom-prop-unreg: inherit;
+    width: var(--my-custom-prop-unreg, 300px);
+  }
+
+  #parent15 {
+    width: 500px;
+    background: blue;
+    font-size: 16px;
+    --my-custom-prop: calc(1em + 10px);
+    word-spacing: var(--my-custom-prop);
+  }
+  #child15 {
+    font-size: 32px;
+  }
+
+  #parent16 {
+    width: 500px;
+    background: blue;
+    font-size: 16px;
+    --my-custom-prop-unreg: calc(1em + 10px);
+    word-spacing: var(--my-custom-prop-unreg);
+  }
+  #child16 {
+    font-size: 32px;
+  }
+
+  #parent17 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop2: 100px;
+  }
+  #child17 {
+    background: green;
+    width: var(--my-custom-prop2);
+  }
+
+  #parent18 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop-no-initial-value: 100px;
+  }
+  #child18 {
+    background: green;
+    width: var(--my-custom-prop-no-initial-value);
+  }
+
+  #parent19 {
+    width: 500px;
+    background: blue;
+    --my-custom-prop-unreg: 100px;
+  }
+  #child19 {
+    background: green;
+    --my-custom-prop-unreg: inherit;
+    width: var(--my-custom-prop-unreg);
+  }
+</style>
+<div>
+  <p> Specified in parent, inherits=true</p>
+  <div id="parent1"><div id="child1"><p>100px green</p></div> </div>
+  <p> Specified in parent, inherits=false </p>
+  <div id="parent2"><div id="child2"><p>200px green</p></div> </div>
+  <p> Specified in parent, not registered </p>
+  <div id="parent3"><div id="child3"><p>100px green</p></div> </div>
+  <p> Initial </p>
+  <div id="parent4"><div id="child4"><p>200px green</p></div> </div>
+  <p> Unset, inherits=true </p>
+  <div id="parent5"><div id="child5"><p>100px green</p></div> </div>
+  <p> Unset, inherits=false </p>
+  <div id="parent6"><div id="child6"><p>200px green</p></div> </div>
+  <p> A cycle between an inherits=true and inherits=false property </p>
+  <div id="parent7"><div id="child7"><p>200px green</p></div> </div>
+  <p> A cycle between an inherits=true and inherits=false property </p>
+  <div id="parent8"><div id="child8"><p>200px green</p></div> </div>
+  <p> A cycle between an inherits=true and inherits=false property with fallback </p>
+  <div id="parent9"><div id="child9"><p>200px green</p></div> </div>
+  <p> Inheritance should not create a cycle </p>
+  <div id="parent10"><div id="child10"><p>110px green</p></div></div>
+  <p> A cycle between two unregistered properties </p>
+  <div id="parent11"><div id="child11"><p>300px green</p></div> </div>
+
+  <p> Revert, inherits=true </p>
+  <div id="parent12"><div id="child12"><div id="childchild12"><p>190px purple</p></div></div></div>
+  <p> Revert, inherits=false </p>
+  <div id="parent13"><div id="child13"><div id="childchild13"><p>200px purple</p></div></div> </div>
+  <p> Revert, unregistered </p>
+  <div id="parent14"><div id="child14"><div id="childchild14"><p>purple</p></div></div> </div>
+  <p> Inherit, unregistered </p>
+  <div id="parent14-1"><div id="child14-1"><div id="childchild14-1"><p>purple</p></div></div> </div>
+
+  <p> Test that inherited properties do variable substitution before being inherited - registered</p>
+  <div id="parent15"><div id="child15"><p>test</p></div> </div>
+  <p> Test that inherited properties do variable substitution before being inherited - unregistered</p>
+  <div id="parent16"><div id="child16"><p>test</p></div> </div>
+
+  <p> No initial value in registered property should act like unregistered</p>
+  <div id="parent17"><div id="child17"><p>200px green</p></div> </div>
+  <p> (unregistered) </p>
+  <div id="parent18"><div id="child18"><p>500px green</p></div> </div>
+
+  <p>Inherit should be substituted for unregistered property</p>
+  <div id="parent19"><div id="child19"><p>500px green</p></div> </div>
+</div>
+<script>
+
+function test_prop(id, prop, expected) {
+  assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(prop).trim(), expected);
+}
+
+test(function() {
+  CSS.registerProperty({
+    name: '--my-custom-prop',
+    syntax: '<length>',
+    inherits: true,
+    initialValue: '200px'
+  })
+
+  CSS.registerProperty({
+    name: '--my-custom-prop2',
+    syntax: '<length>',
+    inherits: false,
+    initialValue: '200px'
+  })
+
+  CSS.registerProperty({
+    name: '--my-custom-prop-no-initial-value',
+    syntax: '*',
+    inherits: false
+  })
+}, "Registration is successful");
+test(function() {
+  test_prop('child1', 'width', '100px');
+  test_prop('child1', '--my-custom-prop', '100px');
+  test_prop('child1', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 1");
+test(function() {
+  test_prop('child2', 'width', '200px');
+  test_prop('child2', '--my-custom-prop', '200px');
+  test_prop('child2', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 2");
+test(function() {
+  test_prop('child3', 'width', '100px');
+  test_prop('child3', '--my-custom-prop3', '100px');
+  test_prop('child3', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 3");
+test(function() {
+  test_prop('child4', 'width', '200px');
+  test_prop('child4', '--my-custom-prop', '200px');
+  test_prop('child4', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 4");
+test(function() {
+  test_prop('child5', 'width', '100px');
+  test_prop('child5', '--my-custom-prop', '100px');
+  test_prop('child5', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 5");
+test(function() {
+  test_prop('child6', 'width', '200px');
+  test_prop('child6', '--my-custom-prop', '200px');
+  test_prop('child6', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 6");
+test(function() {
+  test_prop('child7', 'width', '200px');
+  test_prop('child7', '--my-custom-prop', '100px');
+  test_prop('child7', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 7");
+test(function() {
+  test_prop('child8', 'width', '200px');
+  test_prop('child8', '--my-custom-prop', '200px');
+  test_prop('child8', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 8");
+test(function() {
+  test_prop('child9', 'width', '200px');
+  test_prop('child9', '--my-custom-prop', '100px');
+  test_prop('child9', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 9");
+test(function() {
+  test_prop('child10', 'width', '110px');
+  test_prop('child10', '--my-custom-prop', '100px');
+  test_prop('child10', '--my-custom-prop2', '110px');
+}, "JS Attributes are valid for element 10");
+test(function() {
+  test_prop('child11', 'width', '300px');
+  test_prop('child11', '--my-custom-prop-unreg', '');
+  test_prop('child11', '--my-custom-prop2-unreg', '');
+}, "JS Attributes are valid for element 11");
+
+test(function() {
+  test_prop('childchild12', 'width', '190px');
+  test_prop('childchild12', '--my-custom-prop', '190px');
+  test_prop('child12', 'width', '195px');
+  test_prop('child12', '--my-custom-prop', '190px');
+  test_prop('parent12', '--my-custom-prop', '100px');
+}, "JS Attributes are valid for element 12");
+test(function() {
+  test_prop('childchild13', 'width', '200px');
+  test_prop('childchild13', '--my-custom-prop2', '200px');
+  test_prop('child13', 'width', '190px');
+  test_prop('child13', '--my-custom-prop2', '190px');
+  test_prop('parent13', '--my-custom-prop2', '100px');
+}, "JS Attributes are valid for element 13");
+test(function() {
+  // Chrome and firefox do not pass this because they do not
+  // support revert, as of September 2018
+  test_prop('childchild14', 'width', '190px');
+  test_prop('childchild14', '--my-custom-prop-unreg', '190px');
+  test_prop('child14', 'width', '195px');
+  test_prop('child14', '--my-custom-prop-unreg', '190px');
+  test_prop('parent14', '--my-custom-prop-unreg', '100px');
+}, "JS Attributes are valid for element 14");
+test(function() {
+  test_prop('childchild14-1', 'width', '190px');
+  test_prop('childchild14-1', '--my-custom-prop-unreg', '190px');
+  test_prop('child14-1', 'width', '195px');
+  test_prop('child14-1', '--my-custom-prop-unreg', '190px');
+  test_prop('parent14-1', '--my-custom-prop-unreg', '100px');
+}, "JS Attributes are valid for element 14-1");
+
+test(function() {
+  test_prop('parent15', 'word-spacing', '26px');
+  test_prop('child15', 'word-spacing', '26px');
+  test_prop('parent15', '--my-custom-prop', '26px');
+  test_prop('child15', '--my-custom-prop', '26px');
+}, "JS Attributes are valid for element 15");
+test(function() {
+  test_prop('parent16', 'word-spacing', '26px');
+  test_prop('child16', 'word-spacing', '26px');
+  test_prop('parent16', '--my-custom-prop-unreg', 'calc(1em + 10px)');
+  test_prop('child16', '--my-custom-prop-unreg', 'calc(1em + 10px)');
+}, "JS Attributes are valid for element 16");
+
+test(function() {
+  test_prop('child17', 'width', '200px');
+  test_prop('child17', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 17");
+test(function() {
+  test_prop('child18', 'width', '500px');
+  test_prop('child18', '--my-custom-prop-no-initial-value', '');
+}, "JS Attributes are valid for element 18");
+
+test(function() {
+  test_prop('child19', 'width', '100px');
+  test_prop('child19', '--my-custom-prop-unreg', '100px');
+}, "JS Attributes are valid for element 19");
+</script>

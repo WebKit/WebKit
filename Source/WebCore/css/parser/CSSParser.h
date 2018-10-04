@@ -39,6 +39,7 @@ class MutableStyleProperties;
 class StyleRuleBase;
 class StyleRuleKeyframe;
 class StyleSheetContents;
+class RenderStyle;
 
 class CSSParser {
 public:
@@ -76,7 +77,7 @@ public:
 
     void parseSelector(const String&, CSSSelectorList&);
 
-    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, TextDirection, WritingMode);
+    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, const CSSRegisteredCustomPropertySet&, const RenderStyle&);
 
     static Color parseColor(const String&, bool strict = false);
     static Color parseSystemColor(const String&, const CSSParserContext*);

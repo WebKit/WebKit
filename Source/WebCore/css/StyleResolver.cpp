@@ -1555,13 +1555,13 @@ static inline bool isValidCueStyleProperty(CSSPropertyID id)
 // width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
 // if we'd pass a 1.0 zoom factor everyhwere. So we only pass a zoom factor of 1.0 for specific
 // properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).
-bool StyleResolver::useSVGZoomRules()
+bool StyleResolver::useSVGZoomRules() const
 {
     return m_state.element() && m_state.element()->isSVGElement();
 }
 
 // Scale with/height properties on inline SVG root.
-bool StyleResolver::useSVGZoomRulesForLength()
+bool StyleResolver::useSVGZoomRulesForLength() const
 {
     return is<SVGElement>(m_state.element()) && !(is<SVGSVGElement>(*m_state.element()) && m_state.element()->parentNode());
 }
@@ -1636,9 +1636,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
     CSSCustomPropertyValue* customPropertyValue = nullptr;
     CSSValueID customPropertyValueID = CSSValueInvalid;
 
+    CSSRegisteredCustomProperty* customPropertyRegistered = nullptr;
+
     if (id == CSSPropertyCustom) {
         customPropertyValue = &downcast<CSSCustomPropertyValue>(*valueToApply);
         customPropertyValueID = customPropertyValue->valueID();
+        auto& name = customPropertyValue->name();
+        customPropertyRegistered = document().getCSSRegisteredCustomPropertySet().get(name);
     }
 
     bool isInherit = state.parentStyle() ? valueToCheckForInheritInitial->isInheritedValue() || customPropertyValueID == CSSValueInherit : false;
@@ -1660,7 +1664,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
             // not present, then we behave like "unset." Otherwise we apply the property instead of
             // our own.
             if (customPropertyValue) {
-                if (rollback->hasCustomProperty(customPropertyValue->name())) {
+                if (customPropertyRegistered && customPropertyRegistered->inherits && rollback->hasCustomProperty(customPropertyValue->name())) {
                     auto property = rollback->customProperty(customPropertyValue->name());
                     if (property.cssValue[linkMatchMask])
                         applyProperty(property.id, property.cssValue[linkMatchMask], linkMatchMask, matchResult);
@@ -1694,21 +1698,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
     if (isInherit && !CSSProperty::isInheritedProperty(id))
         state.style()->setHasExplicitlyInheritedProperties();
 
-    if (customPropertyValue) {
-        auto& name = customPropertyValue->name();
-        auto* value = isInitial ? nullptr : isInherit ? state.parentStyle()->customProperties().get(name) : customPropertyValue;
-        state.style()->setCustomPropertyValue(name, value ? makeRef(*value) : CSSCustomPropertyValue::createInvalid());
-        return;
-    }
-
     // Use the generated StyleBuilder.
-    StyleBuilder::applyProperty(id, *this, *valueToApply, isInitial, isInherit);
+    StyleBuilder::applyProperty(id, *this, *valueToApply, isInitial, isInherit, customPropertyRegistered);
 }
 
-RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, const CSSValue& value)
+RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, const CSSValue& value) const
 {
     CSSParser parser(document());
-    return parser.parseValueWithVariableReferences(propID, value, m_state.style()->customProperties(), document().getCSSRegisteredCustomPropertySet(), m_state.style()->direction(), m_state.style()->writingMode());
+    return parser.parseValueWithVariableReferences(propID, value, document().getCSSRegisteredCustomPropertySet(), *m_state.style());
 }
 
 RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
@@ -2274,18 +2271,24 @@ void StyleResolver::applyCascadedProperties(CascadedProperties& cascade, int fir
         if (!cascade.hasProperty(propertyID))
             continue;
         if (propertyID == CSSPropertyCustom) {
+            // Apply font size first, since custom properties may rely on it for relative unit calculations
+            // Once it is applied and the custom property values are set, it will be applied again, which should
+            // handle any font-size properties that rely on registered custom properties.
+            // FIXME cycles should be detected.
+            if (cascade.hasProperty(CSSPropertyFontSize))
+                cascade.property(CSSPropertyFontSize).apply(*this, matchResult);
+            updateFont();
+
             HashMap<AtomicString, CascadedProperties::Property>::iterator end = cascade.customProperties().end();
             for (HashMap<AtomicString, CascadedProperties::Property>::iterator it = cascade.customProperties().begin(); it != end; ++it)
                 it->value.apply(*this, matchResult);
+            m_state.style()->checkVariablesInCustomProperties(document().getCSSRegisteredCustomPropertySet(), m_state.parentStyle(), *this);
             continue;
         }
         auto& property = cascade.property(propertyID);
         ASSERT(!shouldApplyPropertyInParseOrder(propertyID));
         property.apply(*this, matchResult);
     }
-
-    if (firstProperty == CSSPropertyCustom)
-        m_state.style()->checkVariablesInCustomProperties(document().getCSSRegisteredCustomPropertySet());
 }
 
 } // namespace WebCore

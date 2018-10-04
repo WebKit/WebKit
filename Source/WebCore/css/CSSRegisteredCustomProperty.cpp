@@ -23,28 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CSSRegisteredCustomProperty.h"
 
-#include <wtf/text/WTFString.h>
+#include "CSSCustomPropertyValue.h"
 
 namespace WebCore {
 
-class CSSCustomPropertyValue;
-
-struct CSSRegisteredCustomProperty {
-    const String name;
-    /* TODO syntax */
-    const bool inherits;
-
-    CSSRegisteredCustomProperty(const String& name, bool inherits, RefPtr<CSSCustomPropertyValue>&& initialValue);
-
-    const CSSCustomPropertyValue* initialValue() const { return m_initialValue.get(); }
-    RefPtr<CSSCustomPropertyValue> initialValueCopy() const;
-
-private:
-    const RefPtr<CSSCustomPropertyValue> m_initialValue;
-};
-
-using CSSRegisteredCustomPropertySet = HashMap<String, std::unique_ptr<CSSRegisteredCustomProperty>>;
-
+CSSRegisteredCustomProperty::CSSRegisteredCustomProperty(const String& name, bool inherits, RefPtr<CSSCustomPropertyValue>&& initialValue)
+    : name(name)
+    , inherits(inherits)
+    , m_initialValue(WTFMove(initialValue))
+{
 }
+
+RefPtr<CSSCustomPropertyValue> CSSRegisteredCustomProperty::initialValueCopy() const
+{
+    if (m_initialValue)
+        return CSSCustomPropertyValue::create(*m_initialValue);
+    return nullptr;
+}
+
+} // namespace WebCore

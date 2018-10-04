@@ -29,22 +29,22 @@
 
 namespace WebCore {
 
-bool CSSCustomPropertyValue::checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap& customProperties, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
+bool CSSCustomPropertyValue::checkVariablesForCycles(const AtomicString& name, const RenderStyle& style, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
 {
     ASSERT(containsVariables());
     if (m_value)
-        return m_value->checkVariablesForCycles(name, customProperties, seenProperties, invalidProperties);
+        return m_value->checkVariablesForCycles(name, style, seenProperties, invalidProperties);
     return true;
 }
 
-void CSSCustomPropertyValue::resolveVariableReferences(const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet& registeredProperties, Vector<Ref<CSSCustomPropertyValue>>& resolvedValues) const
+void CSSCustomPropertyValue::resolveVariableReferences(const CSSRegisteredCustomPropertySet& registeredProperties, Vector<Ref<CSSCustomPropertyValue>>& resolvedValues, const RenderStyle& style) const
 {
     ASSERT(containsVariables());
     if (!m_value)
         return;
     
     ASSERT(m_value->needsVariableResolution());
-    RefPtr<CSSVariableData> resolvedData = m_value->resolveVariableReferences(customProperties, registeredProperties);
+    RefPtr<CSSVariableData> resolvedData = m_value->resolveVariableReferences(registeredProperties, style);
     if (resolvedData)
         resolvedValues.append(CSSCustomPropertyValue::createWithVariableData(m_name, resolvedData.releaseNonNull()));
     else

@@ -1,75 +1,75 @@
 
-PASS syntax:'*', initialValue:'a' is valid 
-PASS syntax:' * ', initialValue:'b' is valid 
+FAIL syntax:'*', initialValue:'a' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:' * ', initialValue:'b' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'<length>', initialValue:'2px' is valid 
-PASS syntax:' <number>', initialValue:'5' is valid 
+FAIL syntax:' <number>', initialValue:'5' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'<percentage> ', initialValue:'10%' is valid 
-PASS syntax:'<color>+', initialValue:'red' is valid 
-PASS syntax:' <length>+ | <percentage>', initialValue:'2px 8px' is valid 
+FAIL syntax:'<color>+', initialValue:'red' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:' <length>+ | <percentage>', initialValue:'2px 8px' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'<length>|<percentage>|<length-percentage>', initialValue:'2px' is valid 
-PASS syntax:'<color> | <image> | <url> | <integer> | <angle>', initialValue:'red' is valid 
-PASS syntax:'<time> | <resolution> | <transform-list> | <custom-ident>', initialValue:'red' is valid 
-PASS syntax:'*', initialValue:':> hello' is valid 
-PASS syntax:'*', initialValue:'([ brackets ]) { yay (??)}' is valid 
-PASS syntax:'*', initialValue:'yep 'this is valid too'' is valid 
-PASS syntax:'*', initialValue:'unmatched opening bracket is valid :(' is valid 
-PASS syntax:'*', initialValue:'"' is valid 
+FAIL syntax:'<color> | <image> | <url> | <integer> | <angle>', initialValue:'red' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<time> | <resolution> | <transform-list> | <custom-ident>', initialValue:'red' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'*', initialValue:':> hello' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'*', initialValue:'([ brackets ]) { yay (??)}' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'*', initialValue:'yep 'this is valid too'' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'*', initialValue:'unmatched opening bracket is valid :(' is valid The given initial value must be computationally independent.
+FAIL syntax:'*', initialValue:'"' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'<length>', initialValue:'0' is valid 
 PASS syntax:'<length>', initialValue:'10px /*:)*/' is valid 
 PASS syntax:'<length>', initialValue:' calc(-2px)' is valid 
 PASS syntax:'<length>', initialValue:'calc(2px*4 + 10px)' is valid 
 PASS syntax:'<length>', initialValue:'7.1e-4cm' is valid 
 PASS syntax:'<length>', initialValue:'calc(7in - 12px)' is valid 
-PASS syntax:'<length>+', initialValue:'2px 7px calc(8px)' is valid 
-PASS syntax:'<percentage>', initialValue:'-9.3e3%' is valid 
-PASS syntax:'<length-percentage>', initialValue:'-54%' is valid 
+FAIL syntax:'<length>+', initialValue:'2px 7px calc(8px)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<percentage>', initialValue:'-9.3e3%' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<length-percentage>', initialValue:'-54%' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'<length-percentage>', initialValue:'0' is valid 
 PASS syntax:'<length-percentage>', initialValue:'calc(-11px + 10.4%)' is valid 
-PASS syntax:'<number>', initialValue:'-109' is valid 
-PASS syntax:'<number>', initialValue:'2.3e4' is valid 
-PASS syntax:'<integer>', initialValue:'-109' is valid 
-PASS syntax:'<integer>', initialValue:'19' is valid 
-PASS syntax:'<angle>', initialValue:'10deg' is valid 
-PASS syntax:'<angle>', initialValue:'20.5rad' is valid 
-PASS syntax:'<angle>', initialValue:'calc(50grad + 3.14159rad)' is valid 
-PASS syntax:'<time>', initialValue:'2s' is valid 
-PASS syntax:'<time>', initialValue:'calc(2s - 9ms)' is valid 
-PASS syntax:'<resolution>', initialValue:'10dpi' is valid 
-PASS syntax:'<resolution>', initialValue:'3dPpX' is valid 
-PASS syntax:'<resolution>', initialValue:'-5.3dpcm' is valid 
-PASS syntax:'<transform-function>', initialValue:'translateX(2px)' is valid 
-PASS syntax:'<transform-function>|<integer>', initialValue:'5' is valid 
-PASS syntax:'<transform-function>|<integer>', initialValue:'scale(2)' is valid 
-PASS syntax:'<transform-function>+', initialValue:'translateX(2px) rotate(42deg)' is valid 
-PASS syntax:'<transform-list>', initialValue:'scale(2)' is valid 
-PASS syntax:'<transform-list>', initialValue:'translateX(2px) rotate(20deg)' is valid 
-PASS syntax:'<color>', initialValue:'rgb(12, 34, 56)' is valid 
-PASS syntax:'<color>', initialValue:'lightgoldenrodyellow' is valid 
-PASS syntax:'<image>', initialValue:'url(a)' is valid 
-PASS syntax:'<image>', initialValue:'linear-gradient(yellow, blue)' is valid 
-PASS syntax:'<url>', initialValue:'url(a)' is valid 
-PASS syntax:'banana', initialValue:'banana' is valid 
-PASS syntax:'bAnAnA', initialValue:'bAnAnA' is valid 
-PASS syntax:'ba-na-nya', initialValue:'ba-na-nya' is valid 
-PASS syntax:'banana', initialValue:'banan\61' is valid 
-PASS syntax:'<custom-ident>', initialValue:'banan\61' is valid 
-PASS syntax:'big | bigger | BIGGER', initialValue:'bigger' is valid 
-PASS syntax:'foo+|bar', initialValue:'foo foo foo' is valid 
-PASS syntax:'default', initialValue:'default' is valid 
-PASS syntax:'banana	', initialValue:'banana' is valid 
-PASS syntax:'
+FAIL syntax:'<number>', initialValue:'-109' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<number>', initialValue:'2.3e4' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<integer>', initialValue:'-109' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<integer>', initialValue:'19' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<angle>', initialValue:'10deg' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<angle>', initialValue:'20.5rad' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<angle>', initialValue:'calc(50grad + 3.14159rad)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<time>', initialValue:'2s' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<time>', initialValue:'calc(2s - 9ms)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<resolution>', initialValue:'10dpi' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<resolution>', initialValue:'3dPpX' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<resolution>', initialValue:'-5.3dpcm' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<transform-function>', initialValue:'translateX(2px)' is valid The given initial value must be computationally independent.
+FAIL syntax:'<transform-function>|<integer>', initialValue:'5' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<transform-function>|<integer>', initialValue:'scale(2)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<transform-function>+', initialValue:'translateX(2px) rotate(42deg)' is valid The given initial value must be computationally independent.
+FAIL syntax:'<transform-list>', initialValue:'scale(2)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<transform-list>', initialValue:'translateX(2px) rotate(20deg)' is valid The given initial value must be computationally independent.
+FAIL syntax:'<color>', initialValue:'rgb(12, 34, 56)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<color>', initialValue:'lightgoldenrodyellow' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<image>', initialValue:'url(a)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<image>', initialValue:'linear-gradient(yellow, blue)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<url>', initialValue:'url(a)' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'banana', initialValue:'banana' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'bAnAnA', initialValue:'bAnAnA' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'ba-na-nya', initialValue:'ba-na-nya' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'banana', initialValue:'banan\61' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'<custom-ident>', initialValue:'banan\61' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'big | bigger | BIGGER', initialValue:'bigger' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'foo+|bar', initialValue:'foo foo foo' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'default', initialValue:'default' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'banana	', initialValue:'banana' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'
 banana\r
-', initialValue:'banana' is valid 
-PASS syntax:'ba
-|	na\r|nya', initialValue:'nya' is valid 
-PASS syntax:'null', initialValue:'null' is valid 
-PASS syntax:'undefined', initialValue:'undefined' is valid 
-PASS syntax:'array', initialValue:'array' is valid 
-FAIL syntax:'banana,nya', initialValue:'banana' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'banan\61', initialValue:'banana' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+', initialValue:'banana' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'ba
+|	na\r|nya', initialValue:'nya' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'null', initialValue:'null' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'undefined', initialValue:'undefined' is valid The given initial value does not parse for the given syntax.
+FAIL syntax:'array', initialValue:'array' is valid The given initial value does not parse for the given syntax.
+PASS syntax:'banana,nya', initialValue:'banana' is invalid 
+PASS syntax:'banan\61', initialValue:'banana' is invalid 
 FAIL syntax:'<\6c ength>', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<banana>', initialValue:'banana' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<Number>', initialValue:'10' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'<banana>', initialValue:'banana' is invalid 
+PASS syntax:'<Number>', initialValue:'10' is invalid 
 FAIL syntax:'<length', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<LENGTH>', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'< length>', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
@@ -77,56 +77,56 @@ FAIL syntax:'<length >', initialValue:'10px' is invalid assert_throws: function 
 FAIL syntax:'<length> +', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<length>++', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<length> | *', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*|banana', initialValue:'banana' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*+', initialValue:'banana' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'initial', initialValue:'initial' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'inherit', initialValue:'inherit' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'unset', initialValue:'unset' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'*|banana', initialValue:'banana' is invalid 
+PASS syntax:'*+', initialValue:'banana' is invalid 
+PASS syntax:'initial', initialValue:'initial' is invalid 
+PASS syntax:'inherit', initialValue:'inherit' is invalid 
+PASS syntax:'unset', initialValue:'unset' is invalid 
 FAIL syntax:'<length>|initial', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<length>|INHERIT', initialValue:'10px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<percentage>|unsEt', initialValue:'2%' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'initial' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'inherit' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'unset' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'revert' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<custom-ident>', initialValue:'initial' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<custom-ident>+', initialValue:'foo inherit bar' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:')' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'([)]' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'whee!' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'"
-' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'url(moo '')' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'semi;colon' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'var(invalid var ref)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'var(--foo)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'banana', initialValue:'bAnAnA' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>', initialValue:'var(--moo)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>', initialValue:'10' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'*', initialValue:'initial' is invalid 
+PASS syntax:'*', initialValue:'inherit' is invalid 
+PASS syntax:'*', initialValue:'unset' is invalid 
+PASS syntax:'*', initialValue:'revert' is invalid 
+PASS syntax:'<custom-ident>', initialValue:'initial' is invalid 
+PASS syntax:'<custom-ident>+', initialValue:'foo inherit bar' is invalid 
+PASS syntax:'*', initialValue:')' is invalid 
+PASS syntax:'*', initialValue:'([)]' is invalid 
+PASS syntax:'*', initialValue:'whee!' is invalid 
+PASS syntax:'*', initialValue:'"
+' is invalid 
+PASS syntax:'*', initialValue:'url(moo '')' is invalid 
+PASS syntax:'*', initialValue:'semi;colon' is invalid 
+PASS syntax:'*', initialValue:'var(invalid var ref)' is invalid 
+PASS syntax:'*', initialValue:'var(--foo)' is invalid 
+PASS syntax:'banana', initialValue:'bAnAnA' is invalid 
+PASS syntax:'<length>', initialValue:'var(--moo)' is invalid 
+PASS syntax:'<length>', initialValue:'10' is invalid 
 FAIL syntax:'<length>', initialValue:'10%' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<length>', initialValue:'calc(5px + 10%)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>', initialValue:'calc(5px * 3px / 6px)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>', initialValue:'10em' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'<length>', initialValue:'calc(5px * 3px / 6px)' is invalid 
+PASS syntax:'<length>', initialValue:'10em' is invalid 
 FAIL syntax:'<length>', initialValue:'10vmin' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>', initialValue:'calc(4px + 3em)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>', initialValue:'calc(4px + calc(8 * 2em))' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>+', initialValue:'calc(2ex + 16px)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>+', initialValue:'10px calc(20px + 4rem)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<percentage> | <length>+', initialValue:'calc(100vh - 10px) 30px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length>', initialValue:'10px;' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<length-percentage>', initialValue:'calc(2px + 10% + 7ex)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'<length>', initialValue:'calc(4px + 3em)' is invalid 
+PASS syntax:'<length>', initialValue:'calc(4px + calc(8 * 2em))' is invalid 
+PASS syntax:'<length>+', initialValue:'calc(2ex + 16px)' is invalid 
+PASS syntax:'<length>+', initialValue:'10px calc(20px + 4rem)' is invalid 
+PASS syntax:'<percentage> | <length>+', initialValue:'calc(100vh - 10px) 30px' is invalid 
+PASS syntax:'<length>', initialValue:'10px;' is invalid 
+PASS syntax:'<length-percentage>', initialValue:'calc(2px + 10% + 7ex)' is invalid 
 FAIL syntax:'<percentage>', initialValue:'0' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<integer>', initialValue:'1.0' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<integer>', initialValue:'1e0' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<number>|foo', initialValue:'foo var(--foo, bla)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'<integer>', initialValue:'1.0' is invalid 
+PASS syntax:'<integer>', initialValue:'1e0' is invalid 
+PASS syntax:'<number>|foo', initialValue:'foo var(--foo, bla)' is invalid 
 FAIL syntax:'<angle>', initialValue:'0' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<angle>', initialValue:'10%' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<time>', initialValue:'2px' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<resolution>', initialValue:'10' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<transform-function>', initialValue:'scale()' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<transform-list>', initialValue:'scale()' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<transform-list>+', initialValue:'translateX(2px) rotate(20deg)' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<color>', initialValue:'fancy-looking' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<image>', initialValue:'banana.png' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'<url>', initialValue:'banana.png' is invalid assert_throws: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'<resolution>', initialValue:'10' is invalid 
+PASS syntax:'<transform-function>', initialValue:'scale()' is invalid 
+PASS syntax:'<transform-list>', initialValue:'scale()' is invalid 
+PASS syntax:'<transform-list>+', initialValue:'translateX(2px) rotate(20deg)' is invalid 
+PASS syntax:'<color>', initialValue:'fancy-looking' is invalid 
+PASS syntax:'<image>', initialValue:'banana.png' is invalid 
+PASS syntax:'<url>', initialValue:'banana.png' is invalid 
 

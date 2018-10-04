@@ -3909,6 +3909,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyMinHeight:
     case CSSPropertyWidth:
     case CSSPropertyHeight:
+    case CSSPropertyCustom: // FIXME: parsing a registered custom property should be based on its syntax.
         return consumeWidthOrHeight(m_range, m_context, UnitlessQuirk::Allow);
     case CSSPropertyMinInlineSize:
     case CSSPropertyMinBlockSize:

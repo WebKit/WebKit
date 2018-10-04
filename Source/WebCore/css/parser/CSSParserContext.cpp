@@ -51,7 +51,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
 #endif
 }
 
-CSSParserContext::CSSParserContext(Document& document, const URL& sheetBaseURL, const String& charset)
+CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, const String& charset)
     : baseURL(sheetBaseURL.isNull() ? document.baseURL() : sheetBaseURL)
     , charset(charset)
     , mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)

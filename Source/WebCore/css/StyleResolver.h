@@ -187,8 +187,8 @@ public:
     void setFontSize(FontCascadeDescription&, float size);
 
 public:
-    bool useSVGZoomRules();
-    bool useSVGZoomRulesForLength();
+    bool useSVGZoomRules() const;
+    bool useSVGZoomRulesForLength() const;
 
     static bool colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue&);
     Color colorFromPrimitiveValue(const CSSPrimitiveValue&, bool forVisitedLink = false) const;
@@ -455,11 +455,12 @@ public:
     void setWritingMode(WritingMode writingMode) { m_state.setWritingMode(writingMode); }
     void setTextOrientation(TextOrientation textOrientation) { m_state.setTextOrientation(textOrientation); }
 
+    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&) const;
+
 private:
     void cacheBorderAndBackground();
 
     void applyProperty(CSSPropertyID, CSSValue*, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault, const MatchResult* = nullptr);
-    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&);
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 

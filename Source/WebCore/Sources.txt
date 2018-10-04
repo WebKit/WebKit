@@ -597,6 +597,7 @@ css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
 css/CSSPropertySourceData.cpp
 css/CSSReflectValue.cpp
+css/CSSRegisteredCustomProperty.cpp
 css/CSSRevertValue.cpp
 css/CSSRule.cpp
 css/CSSRuleList.cpp

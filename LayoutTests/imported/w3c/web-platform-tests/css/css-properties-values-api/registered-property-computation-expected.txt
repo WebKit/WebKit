@@ -1,17 +1,17 @@
 
-PASS CSS.registerProperty 
-FAIL <length> values are computed correctly for divWithFontSizeSet assert_equals: expected "12px" but got " 12px"
-FAIL <length-percentage> values are computed correctly for divWithFontSizeSet assert_equals: expected "170px" but got " 17em"
-FAIL <length># values are computed correctly for divWithFontSizeSet assert_equals: expected "10px, 30px" but got " 10px, 3em"
-FAIL <length-percentage># values are computed correctly for divWithFontSizeSet assert_equals: expected "3%, 80px, 22px" but got " 3% , 10vmax , 22px"
-FAIL <length>+ values are computed correctly for divWithFontSizeSet assert_equals: expected "10px 30px" but got " 10px 3em"
-FAIL <length-percentage>+ values are computed correctly for divWithFontSizeSet assert_equals: expected "3% 80px 22px" but got " 3% 10vmax 22px"
+FAIL CSS.registerProperty The given initial value must be computationally independent.
+PASS <length> values are computed correctly for divWithFontSizeSet 
+FAIL <length-percentage> values are computed correctly for divWithFontSizeSet assert_equals: expected "calc(190px + -2%)" but got "calc(190px - 2%)"
+FAIL <length># values are computed correctly for divWithFontSizeSet assert_equals: expected "10px, 30px" but got "0px"
+FAIL <length-percentage># values are computed correctly for divWithFontSizeSet assert_equals: expected "3%, 80px, 22px" but got "0px"
+FAIL <length>+ values are computed correctly for divWithFontSizeSet assert_equals: expected "10px 30px" but got "0px"
+FAIL <length-percentage>+ values are computed correctly for divWithFontSizeSet assert_equals: expected "3% 80px 22px" but got "0px"
 FAIL <transform-function> values are computed correctly for divWithFontSizeSet assert_equals: expected "translateX(2px)" but got " translateX(2px)"
-FAIL <length> values are computed correctly for divWithFontSizeInherited assert_equals: expected "12px" but got " 12px"
-FAIL <length-percentage> values are computed correctly for divWithFontSizeInherited assert_equals: expected "170px" but got " 17em"
-FAIL <length># values are computed correctly for divWithFontSizeInherited assert_equals: expected "10px, 30px" but got " 10px, 3em"
-FAIL <length-percentage># values are computed correctly for divWithFontSizeInherited assert_equals: expected "3%, 80px, 22px" but got " 3% , 10vmax , 22px"
-FAIL <length>+ values are computed correctly for divWithFontSizeInherited assert_equals: expected "10px 30px" but got " 10px 3em"
-FAIL <length-percentage>+ values are computed correctly for divWithFontSizeInherited assert_equals: expected "3% 80px 22px" but got " 3% 10vmax 22px"
+PASS <length> values are computed correctly for divWithFontSizeInherited 
+FAIL <length-percentage> values are computed correctly for divWithFontSizeInherited assert_equals: expected "calc(190px + -2%)" but got "calc(190px - 2%)"
+FAIL <length># values are computed correctly for divWithFontSizeInherited assert_equals: expected "10px, 30px" but got "0px"
+FAIL <length-percentage># values are computed correctly for divWithFontSizeInherited assert_equals: expected "3%, 80px, 22px" but got "0px"
+FAIL <length>+ values are computed correctly for divWithFontSizeInherited assert_equals: expected "10px 30px" but got "0px"
+FAIL <length-percentage>+ values are computed correctly for divWithFontSizeInherited assert_equals: expected "3% 80px 22px" but got "0px"
 FAIL <transform-function> values are computed correctly for divWithFontSizeInherited assert_equals: expected "translateX(2px)" but got " translateX(2px)"
 

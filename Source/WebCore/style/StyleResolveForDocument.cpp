@@ -128,7 +128,7 @@ RenderStyle resolveForDocument(const Document& document)
     documentStyle.fontCascade().update(&const_cast<Document&>(document).fontSelector());
 
     for (auto& it : document.constantProperties().values())
-        documentStyle.setCustomPropertyValue(it.key, makeRef(it.value.get()));
+        documentStyle.setInheritedCustomPropertyValue(it.key, makeRef(it.value.get()));
 
     return documentStyle;
 }

@@ -39,6 +39,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"
+#include "StyleBuilderConverter.h"
 #include "StyleImage.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
@@ -2298,46 +2299,87 @@ bool RenderStyle::hasReferenceFilterOnly() const
     return filterOperations.size() == 1 && filterOperations.at(0)->type() == FilterOperation::REFERENCE;
 }
 
-void RenderStyle::checkVariablesInCustomProperties(const CSSRegisteredCustomPropertySet& registeredProperties)
+void RenderStyle::checkVariablesInCustomProperties(const CSSRegisteredCustomPropertySet& registeredProperties, const RenderStyle* parentStyle, const StyleResolver& styleResolver)
 {
-    if (!m_rareInheritedData->customProperties->containsVariables)
-        return;
+    bool shouldUpdateInherited = m_rareInheritedData->customProperties->containsVariables || m_rareInheritedData->customProperties->containsUnresolvedRegisteredProperties;
+    bool shouldUpdateNonInherited = m_rareNonInheritedData->customProperties->containsVariables || m_rareNonInheritedData->customProperties->containsUnresolvedRegisteredProperties;
+    auto* inheritedPropertyData = shouldUpdateInherited ? &m_rareInheritedData.access().customProperties.access() : nullptr;
+    auto* nonInheritedPropertyData = shouldUpdateNonInherited ? &m_rareNonInheritedData.access().customProperties.access() : nullptr;
 
-    auto& customPropertyData = m_rareInheritedData.access().customProperties.access();
-
-    // Our first pass checks the variables for validity and replaces any properties that became
-    // invalid with empty values.
-    auto& customProperties = customPropertyData.values;
     HashSet<AtomicString> invalidProperties;
-    for (auto entry : customProperties) {
-        if (!entry.value->containsVariables())
+
+    for (auto* customPropertyData : { inheritedPropertyData, nonInheritedPropertyData }) {
+        if (!customPropertyData)
             continue;
-        HashSet<AtomicString> seenProperties;
-        entry.value->checkVariablesForCycles(entry.key, customProperties, seenProperties, invalidProperties);
-    }
-    
-    // Now insert invalid values.
-    if (!invalidProperties.isEmpty()) {
+
+        // Our first pass checks the variables for validity and replaces any properties that became
+        // invalid with empty values.
+        auto& customProperties = customPropertyData->values;
+        for (auto& entry : customProperties) {
+            if (!entry.value->containsVariables())
+                continue;
+            HashSet<AtomicString> seenProperties;
+            entry.value->checkVariablesForCycles(entry.key, *this, seenProperties, invalidProperties);
+        }
+
         auto invalidValue = CSSCustomPropertyValue::createInvalid();
-        for (auto& property : invalidProperties)
-            customProperties.set(property, invalidValue.copyRef());
-    }
 
-    // Now that all of the properties have been tested for validity and replaced with
-    // invalid values if they failed, we can perform variable substitution on the valid values.
-    Vector<Ref<CSSCustomPropertyValue>> resolvedValues;
-    for (auto entry : customProperties) {
-        if (!entry.value->containsVariables())
-            continue;
-        entry.value->resolveVariableReferences(customProperties, registeredProperties, resolvedValues);
-    }
-    
-    // With all results computed, we can now mutate our table to eliminate the variables and
-    // hold the final values. This way when we inherit, we don't end up resubstituting variables, etc.
-    for (auto& resolvedValue : resolvedValues)
-        customProperties.set(resolvedValue->name(), resolvedValue.copyRef());
+        // Now insert invalid values, or defaults if the property is registered.
+        if (!invalidProperties.isEmpty()) {
+            for (auto& property : invalidProperties) {
+                if (!customProperties.contains(property))
+                    continue;
+                
+                const RefPtr<CSSCustomPropertyValue>* parentProperty = nullptr;
+                if (parentStyle) {
+                    auto iterator = parentStyle->inheritedCustomProperties().find(property);
+                    if (iterator != parentStyle->inheritedCustomProperties().end() && iterator.get() && iterator.get()->value)
+                        parentProperty = &iterator.get()->value;
+                }
 
-    customPropertyData.containsVariables = false;
+                auto* registered = registeredProperties.get(property);
+
+                if (registered && registered->inherits && parentProperty)
+                    customProperties.set(property, parentProperty->copyRef());
+                else if (registered && registered->initialValue())
+                    customProperties.set(property, registered->initialValueCopy());
+                else
+                    customProperties.set(property, invalidValue.copyRef());
+            }
+        }
+
+        // Now that all of the properties have been tested for validity and replaced with
+        // invalid values if they failed, we can perform variable substitution on the valid values.
+        Vector<Ref<CSSCustomPropertyValue>> resolvedValues;
+        for (auto entry : customProperties) {
+            if (!entry.value->containsVariables())
+                continue;
+            entry.value->resolveVariableReferences(registeredProperties, resolvedValues, *this);
+        }
+
+        // With all results computed, we can now mutate our table to eliminate the variables and
+        // hold the final values. This way when we inherit, we don't end up resubstituting variables, etc.
+        for (auto& resolvedValue : resolvedValues)
+            customProperties.set(resolvedValue->name(), resolvedValue.copyRef());
+
+        // Finally we can resolve registered custom properties to their typed values.
+        for (auto& entry : customProperties) {
+            auto& name = entry.value->name();
+            auto* registered = registeredProperties.get(name);
+
+            if (!registered)
+                continue;
+
+            auto primitiveVal = styleResolver.resolvedVariableValue(CSSPropertyCustom, *entry.value);
+            if (!primitiveVal || !primitiveVal->isPrimitiveValue())
+                entry.value = invalidValue.copyRef();
+            else
+                entry.value->setResolvedTypedValue(StyleBuilderConverter::convertLength(styleResolver, *primitiveVal));
+        }
+
+        customPropertyData->containsVariables = false;
+        customPropertyData->containsUnresolvedRegisteredProperties = false;
+    }
 }
 
 float RenderStyle::outlineWidth() const

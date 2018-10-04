@@ -1,0 +1,103 @@
+Specified in parent, inherits=true
+
+100px green
+
+Specified in parent, inherits=false
+
+200px green
+
+Specified in parent, not registered
+
+100px green
+
+Initial
+
+200px green
+
+Unset, inherits=true
+
+100px green
+
+Unset, inherits=false
+
+200px green
+
+A cycle between an inherits=true and inherits=false property
+
+200px green
+
+A cycle between an inherits=true and inherits=false property
+
+200px green
+
+A cycle between an inherits=true and inherits=false property with fallback
+
+200px green
+
+Inheritance should not create a cycle
+
+110px green
+
+A cycle between two unregistered properties
+
+300px green
+
+Revert, inherits=true
+
+190px purple
+
+Revert, inherits=false
+
+200px purple
+
+Revert, unregistered
+
+purple
+
+Inherit, unregistered
+
+purple
+
+Test that inherited properties do variable substitution before being inherited - registered
+
+test
+
+Test that inherited properties do variable substitution before being inherited - unregistered
+
+test
+
+No initial value in registered property should act like unregistered
+
+200px green
+
+(unregistered)
+
+500px green
+
+Inherit should be substituted for unregistered property
+
+500px green
+
+
+PASS Registration is successful 
+PASS JS Attributes are valid for element 1 
+PASS JS Attributes are valid for element 2 
+PASS JS Attributes are valid for element 3 
+PASS JS Attributes are valid for element 4 
+PASS JS Attributes are valid for element 5 
+PASS JS Attributes are valid for element 6 
+PASS JS Attributes are valid for element 7 
+PASS JS Attributes are valid for element 8 
+PASS JS Attributes are valid for element 9 
+PASS JS Attributes are valid for element 10 
+PASS JS Attributes are valid for element 11 
+PASS JS Attributes are valid for element 12 
+PASS JS Attributes are valid for element 13 
+PASS JS Attributes are valid for element 14 
+PASS JS Attributes are valid for element 14-1 
+PASS JS Attributes are valid for element 15 
+PASS JS Attributes are valid for element 16 
+PASS JS Attributes are valid for element 17 
+PASS JS Attributes are valid for element 18 
+PASS JS Attributes are valid for element 19 
+

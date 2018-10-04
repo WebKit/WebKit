@@ -60,10 +60,10 @@ namespace WebCore {
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class StyleBuilderConverter {
 public:
-    static Length convertLength(StyleResolver&, const CSSValue&);
-    static Length convertLengthOrAuto(StyleResolver&, const CSSValue&);
-    static Length convertLengthSizing(StyleResolver&, const CSSValue&);
-    static Length convertLengthMaxSizing(StyleResolver&, const CSSValue&);
+    static Length convertLength(const StyleResolver&, const CSSValue&);
+    static Length convertLengthOrAuto(const StyleResolver&, const CSSValue&);
+    static Length convertLengthSizing(const StyleResolver&, const CSSValue&);
+    static Length convertLengthMaxSizing(const StyleResolver&, const CSSValue&);
     template<typename T> static T convertComputedLength(StyleResolver&, const CSSValue&);
     template<typename T> static T convertLineWidth(StyleResolver&, const CSSValue&);
     static float convertSpacing(StyleResolver&, const CSSValue&);
@@ -175,7 +175,7 @@ private:
     static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver&);
 };
 
-inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, const CSSValue& value)
+inline Length StyleBuilderConverter::convertLength(const StyleResolver& styleResolver, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     CSSToLengthConversionData conversionData = styleResolver.useSVGZoomRulesForLength() ?
@@ -198,14 +198,14 @@ inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver,
     return Length(0, Fixed);
 }
 
-inline Length StyleBuilderConverter::convertLengthOrAuto(StyleResolver& styleResolver, const CSSValue& value)
+inline Length StyleBuilderConverter::convertLengthOrAuto(const StyleResolver& styleResolver, const CSSValue& value)
 {
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto)
         return Length(Auto);
     return convertLength(styleResolver, value);
 }
 
-inline Length StyleBuilderConverter::convertLengthSizing(StyleResolver& styleResolver, const CSSValue& value)
+inline Length StyleBuilderConverter::convertLengthSizing(const StyleResolver& styleResolver, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     switch (primitiveValue.valueID()) {
@@ -234,7 +234,7 @@ inline Length StyleBuilderConverter::convertLengthSizing(StyleResolver& styleRes
     }
 }
 
-inline Length StyleBuilderConverter::convertLengthMaxSizing(StyleResolver& styleResolver, const CSSValue& value)
+inline Length StyleBuilderConverter::convertLengthMaxSizing(const StyleResolver& styleResolver, const CSSValue& value)
 {
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return Length(Undefined);

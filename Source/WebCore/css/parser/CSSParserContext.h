@@ -40,7 +40,7 @@ struct CSSParserContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
-    WEBCORE_EXPORT CSSParserContext(Document&, const URL& baseURL = URL(), const String& charset = emptyString());
+    WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());
 
     URL baseURL;
     String charset;

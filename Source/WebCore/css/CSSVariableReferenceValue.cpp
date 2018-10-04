@@ -41,10 +41,10 @@ String CSSVariableReferenceValue::customCSSText() const
     return m_stringValue;
 }
     
-bool CSSVariableReferenceValue::checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap& customProperties, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
+bool CSSVariableReferenceValue::checkVariablesForCycles(const AtomicString& name, const RenderStyle& style, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
 {
     ASSERT(m_data);
-    return m_data->checkVariablesForCycles(name, customProperties, seenProperties, invalidProperties);
+    return m_data->checkVariablesForCycles(name, style, seenProperties, invalidProperties);
 }
 
 } // namespace WebCore

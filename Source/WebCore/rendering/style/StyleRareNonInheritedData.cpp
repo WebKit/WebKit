@@ -75,6 +75,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , justifyContent(RenderStyle::initialContentAlignment())
     , justifyItems(RenderStyle::initialJustifyItems())
     , justifySelf(RenderStyle::initialSelfAlignment())
+    , customProperties(StyleCustomPropertyData::create())
 #if ENABLE(TOUCH_EVENTS)
     , touchAction(static_cast<unsigned>(RenderStyle::initialTouchAction()))
 #endif
@@ -167,6 +168,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , justifyContent(o.justifyContent)
     , justifyItems(o.justifyItems)
     , justifySelf(o.justifySelf)
+    , customProperties(o.customProperties)
 #if ENABLE(TOUCH_EVENTS)
     , touchAction(o.touchAction)
 #endif
@@ -268,6 +270,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && justifyContent == o.justifyContent
         && justifyItems == o.justifyItems
         && justifySelf == o.justifySelf
+        && customProperties == o.customProperties
         && pageSizeType == o.pageSizeType
         && transformStyle3D == o.transformStyle3D
         && backfaceVisibility == o.backfaceVisibility

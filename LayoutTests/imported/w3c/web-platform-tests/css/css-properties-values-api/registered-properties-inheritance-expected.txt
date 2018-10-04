@@ -1,7 +1,7 @@
 
-FAIL Registered properties are correctly inherited (or not) depending on the inherits flag. assert_equals: expected "10px" but got " 10px"
-FAIL Explicitly inheriting from a parent with an invalid value results in initial value. assert_equals: expected "0px" but got " notalength"
-FAIL Explicitly inheriting from a parent with no value results in initial value. assert_equals: expected "0px" but got ""
-FAIL Reference to undefined variable results in inherited value assert_equals: expected "42px" but got ""
-FAIL Reference to syntax-incompatible variable results in inherited value assert_equals: expected "42px" but got "  nolength"
+PASS Registered properties are correctly inherited (or not) depending on the inherits flag. 
+PASS Explicitly inheriting from a parent with an invalid value results in initial value. 
+PASS Explicitly inheriting from a parent with no value results in initial value. 
+FAIL Reference to undefined variable results in inherited value assert_equals: expected "42px" but got "0px"
+FAIL Reference to syntax-incompatible variable results in inherited value assert_equals: expected "42px" but got "0px"
 

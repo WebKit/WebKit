@@ -1027,12 +1027,21 @@ foreach my $name (@names) {
 print STYLEBUILDER << "EOF";
 };
 
-void StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue& value, bool isInitial, bool isInherit)
+void StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue& value, bool isInitial, bool isInherit, const CSSRegisteredCustomProperty* registered)
 {
     switch (property) {
     case CSSPropertyInvalid:
-    case CSSPropertyCustom:
         break;
+    case CSSPropertyCustom: {
+        auto& customProperty = downcast<CSSCustomPropertyValue>(value);
+        if (isInitial)
+            StyleBuilderCustom::applyInitialCustomProperty(styleResolver, registered, customProperty.name());
+        else if (isInherit)
+            StyleBuilderCustom::applyInheritCustomProperty(styleResolver, registered, customProperty.name());
+        else
+            StyleBuilderCustom::applyValueCustomProperty(styleResolver, registered, customProperty);
+        break;
+    }
 EOF
 
 foreach my $name (@names) {

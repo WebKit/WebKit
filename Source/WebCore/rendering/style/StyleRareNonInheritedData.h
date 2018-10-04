@@ -171,6 +171,8 @@ public:
     StyleSelfAlignmentData justifyItems;
     StyleSelfAlignmentData justifySelf;
 
+    DataRef<StyleCustomPropertyData> customProperties;
+
 #if ENABLE(TOUCH_EVENTS)
     unsigned touchAction : 1; // TouchAction
 #endif

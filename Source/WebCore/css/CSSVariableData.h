@@ -61,10 +61,10 @@ public:
 
     bool needsVariableResolution() const { return m_needsVariableResolution; }
 
-    bool checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
+    bool checkVariablesForCycles(const AtomicString& name, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
 
-    RefPtr<CSSVariableData> resolveVariableReferences(const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet&) const;
-    bool resolveTokenRange(const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
+    RefPtr<CSSVariableData> resolveVariableReferences(const CSSRegisteredCustomPropertySet&, const RenderStyle&) const;
+    bool resolveTokenRange(const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&, const RenderStyle&) const;
 
 private:
     CSSVariableData(const CSSParserTokenRange&, bool needsVariableResolution);
@@ -82,9 +82,9 @@ private:
     void consumeAndUpdateTokens(const CSSParserTokenRange&);
     template<typename CharacterType> void updateTokens(const CSSParserTokenRange&);
     
-    bool checkVariablesForCyclesWithRange(CSSParserTokenRange, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
-    bool resolveVariableReference(const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
-    bool resolveVariableFallback(const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&) const;
+    bool checkVariablesForCyclesWithRange(CSSParserTokenRange, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
+    bool resolveVariableReference(const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&, const RenderStyle&) const;
+    bool resolveVariableFallback(const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&, const RenderStyle&) const;
 
     String m_backingString;
     Vector<CSSParserToken> m_tokens;

@@ -1,3 +1,114 @@
+2018-10-03  Justin Michaud  <justin_michaud@apple.com>
+
+        Registered custom properties should allow inheritance to be controlled
+        https://bugs.webkit.org/show_bug.cgi?id=190038
+
+        Reviewed by Antti Koivisto.
+
+        Tests: css-custom-properties-api/inherits.html
+               css-custom-properties-api/length.html
+               css-custom-properties-api/length2.html
+
+        Add support for inherits property on registered css custom properties, as well
+        as a starting point for evaluating registered custom properties with types. Registered
+        custom properties are evaluated as length values before being substituted. Currently,
+        relative unit cycles are not detected.
+
+        A proper solution is still needed to resolve relative unit cycles, and to apply properties like font
+        and line-height before they are needed by custom properties. In this patch, the font-size property is
+        applied twice, once before and once after resolving custom property values.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::customPropertyValue):
+        (WebCore::CSSComputedStyleDeclaration::length const):
+        (WebCore::CSSComputedStyleDeclaration::item const):
+
+        Allow JS to get custom properties that have been resolved to a length. Also add properties from
+        m_rareNonInheritedData.
+
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::checkVariablesForCycles const):
+        (WebCore::CSSCustomPropertyValue::resolveVariableReferences const):
+        * css/CSSCustomPropertyValue.h:
+        * css/CSSRegisteredCustomProperty.cpp: Copied from Source/WebCore/css/CSSRegisteredCustomProperty.h.
+        (WebCore::CSSRegisteredCustomProperty::CSSRegisteredCustomProperty):
+        (WebCore::CSSRegisteredCustomProperty::initialValueCopy const):
+        * css/CSSRegisteredCustomProperty.h:
+        (WebCore::CSSRegisteredCustomProperty::initialValue const):
+        * css/CSSVariableData.cpp:
+        (WebCore::CSSVariableData::checkVariablesForCycles const):
+        (WebCore::CSSVariableData::checkVariablesForCyclesWithRange const):
+        (WebCore::CSSVariableData::resolveVariableFallback const):
+        (WebCore::CSSVariableData::resolveVariableReference const):
+        (WebCore::CSSVariableData::resolveVariableReferences const):
+        (WebCore::CSSVariableData::resolveTokenRange const):
+        * css/CSSVariableData.h:
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::CSSVariableReferenceValue::checkVariablesForCycles const):
+        * css/CSSVariableReferenceValue.h:
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+
+        Use RenderStyle over passing in a customProperties map.
+
+        * css/StyleBuilder.h:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertLength):
+        (WebCore::StyleBuilderConverter::convertLengthOrAuto):
+        (WebCore::StyleBuilderConverter::convertLengthSizing):
+        (WebCore::StyleBuilderConverter::convertLengthMaxSizing):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialCustomProperty):
+        (WebCore::StyleBuilderCustom::applyInheritCustomProperty):
+        (WebCore::StyleBuilderCustom::applyValueCustomProperty):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::useSVGZoomRules const):
+        (WebCore::StyleResolver::useSVGZoomRulesForLength const):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::resolvedVariableValue const):
+        (WebCore::StyleResolver::applyCascadedProperties):
+        (WebCore::StyleResolver::useSVGZoomRules): Deleted.
+        (WebCore::StyleResolver::useSVGZoomRulesForLength): Deleted.
+        (WebCore::StyleResolver::resolvedVariableValue): Deleted.
+        * css/StyleResolver.h:
+        * css/makeprop.pl:
+
+        Move custom property initial values to StyleBuilerCustom. Hook them up to correctly deal with
+        inheritance, unset and revert values.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        * css/parser/CSSParserContext.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
+        Allow parsing custom property values as lengths.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::checkVariablesInCustomProperties):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::inheritedCustomProperties const):
+        (WebCore::RenderStyle::nonInheritedCustomProperties const):
+        (WebCore::RenderStyle::setInheritedCustomPropertyValue):
+        (WebCore::RenderStyle::setNonInheritedCustomPropertyValue):
+        (WebCore::RenderStyle::getCustomProperty const):
+        (WebCore::RenderStyle::customProperties const): Deleted.
+        (WebCore::RenderStyle::setCustomPropertyValue): Deleted.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
+        Add support for RenderStyle to deal with both inherited and non-inherited properties, and to find
+        cycles between them.
+
 2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Clear m_pendingTargets in MutationObserver::takeRecords

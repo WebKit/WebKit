@@ -1,3 +1,20 @@
+2018-10-03  Justin Michaud  <justin_michaud@apple.com>
+
+        Registered custom properties should allow inheritance to be controlled
+        https://bugs.webkit.org/show_bug.cgi?id=190038
+
+        Reviewed by Antti Koivisto.
+
+        Add tests to check css registered custom properties with inherits. Also test
+        calc expression evaluation for inherited registered custom properties.
+
+        * css-custom-properties-api/inherits-expected.txt: Added.
+        * css-custom-properties-api/inherits.html: Added.
+        * css-custom-properties-api/length-expected.txt: Added.
+        * css-custom-properties-api/length.html: Added.
+        * css-custom-properties-api/length2-expected.txt: Added.
+        * css-custom-properties-api/length2.html: Added.
+
 2018-10-03  Youenn Fablet  <youenn@apple.com>
 
         Add VP8 support to WebRTC

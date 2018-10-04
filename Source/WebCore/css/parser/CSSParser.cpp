@@ -28,6 +28,7 @@
 #include "config.h"
 #include "CSSParser.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
@@ -41,6 +42,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "Page.h"
+#include "RenderStyle.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -175,8 +177,11 @@ void CSSParser::parseDeclarationForInspector(const CSSParserContext& context, co
     CSSParserImpl::parseDeclarationListForInspector(string, context, observer);
 }
 
-RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, const CustomPropertyValueMap& customProperties, const CSSRegisteredCustomPropertySet& registeredProperties, TextDirection direction, WritingMode writingMode)
+RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, const CSSRegisteredCustomPropertySet& registeredProperties, const RenderStyle& style)
 {
+    auto direction = style.direction();
+    auto writingMode = style.writingMode();
+
     if (value.isPendingSubstitutionValue()) {
         // FIXME: Should have a resolvedShorthands cache to stop this from being done
         // over and over for each longhand value.
@@ -189,7 +194,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
         ASSERT(variableData);
         
         Vector<CSSParserToken> resolvedTokens;
-        if (!variableData->resolveTokenRange(customProperties, registeredProperties, variableData->tokens(), resolvedTokens))
+        if (!variableData->resolveTokenRange(registeredProperties, variableData->tokens(), resolvedTokens, style))
             return nullptr;
         
         ParsedPropertyVector parsedProperties;
@@ -204,19 +209,31 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
         return nullptr;
     }
 
+    const CSSVariableData* variableData = nullptr;
+
     if (value.isVariableReferenceValue()) {
         const CSSVariableReferenceValue& valueWithReferences = downcast<CSSVariableReferenceValue>(value);
-        const CSSVariableData* variableData = valueWithReferences.variableDataValue();
+        variableData = valueWithReferences.variableDataValue();
         ASSERT(variableData);
-        
-        Vector<CSSParserToken> resolvedTokens;
-        if (!variableData->resolveTokenRange(customProperties, registeredProperties, variableData->tokens(), resolvedTokens))
-            return nullptr;
-        
-        return CSSPropertyParser::parseSingleValue(propID, resolvedTokens, m_context);
     }
-    
-    return nullptr;
+
+    if (value.isCustomPropertyValue()) {
+        const CSSCustomPropertyValue& customPropValue = downcast<CSSCustomPropertyValue>(value);
+
+        if (customPropValue.resolvedTypedValue())
+            return CSSPrimitiveValue::create(*customPropValue.resolvedTypedValue(), style);
+
+        variableData = customPropValue.value();
+    }
+
+    if (!variableData)
+        return nullptr;
+
+    Vector<CSSParserToken> resolvedTokens;
+    if (!variableData->resolveTokenRange(registeredProperties, variableData->tokens(), resolvedTokens, style))
+        return nullptr;
+
+    return CSSPropertyParser::parseSingleValue(propID, resolvedTokens, m_context);
 }
 
 std::unique_ptr<Vector<double>> CSSParser::parseKeyframeKeyList(const String& selector)

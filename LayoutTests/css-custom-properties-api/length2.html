@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSCustomPropertiesAndValuesEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+  #test1 {
+    font-size: 10px;
+    --my-custom-prop: 10em;
+    width: var(--my-custom-prop);
+  }
+  #test2 {
+    font-size: 10px;
+    --my-custom-prop: 10ex;
+    width: var(--my-custom-prop);
+  }
+  #test3 {
+    --my-custom-prop: 10px;
+    font-size: calc(var(--my-custom-prop) + 10px);
+    width: calc(var(--my-custom-prop) + 10em);
+  }
+</style>
+<div>
+  <div id="test1"><p>test</p></div>
+  <div id="test2"><p>test</p></div>
+  <div id="test3"><p>test</p></div>
+</div>
+<script>
+
+function test_prop(id, prop, expected) {
+  assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(prop).trim(), expected);
+}
+
+test(function() {
+  CSS.registerProperty({
+    name: '--my-custom-prop',
+    syntax: '<length>',
+    inherits: true,
+    initialValue: '0px'
+  })
+}, "Registration is successful");
+test(function() {
+  test_prop('test1', '--my-custom-prop', '100px');
+  test_prop('test1', 'width', '100px');
+}, "Test 1");
+test(function() {
+  const floatA = parseFloat(window.getComputedStyle(document.getElementById('test2')).getPropertyValue('--my-custom-prop').trim().replace(/px/gi, ''));
+  const floatB = parseFloat(window.getComputedStyle(document.getElementById('test2')).getPropertyValue('width').trim().replace(/px/gi, ''));
+  assert_true(Math.abs(floatA - 44.8) < 0.1);
+  assert_true(Math.abs(floatB - 44.8) < 0.1);
+}, "Test 2");
+test(function() {
+  test_prop('test3', '--my-custom-prop', '10px');
+  test_prop('test3', 'font-size', '20px');
+  test_prop('test3', 'width', '210px');
+}, "Test 3");
+</script>

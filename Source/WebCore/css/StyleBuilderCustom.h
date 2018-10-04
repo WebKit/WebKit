@@ -32,6 +32,7 @@
 #include "CSSFontValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateAreasValue.h"
+#include "CSSRegisteredCustomProperty.h"
 #include "CSSShadowValue.h"
 #include "Counter.h"
 #include "CounterContent.h"
@@ -144,6 +145,10 @@ public:
 
     static void applyValueStrokeWidth(StyleResolver&, CSSValue&);
     static void applyValueStrokeColor(StyleResolver&, CSSValue&);
+
+    static void applyInitialCustomProperty(StyleResolver&, const CSSRegisteredCustomProperty*, const AtomicString& name);
+    static void applyInheritCustomProperty(StyleResolver&, const CSSRegisteredCustomProperty*, const AtomicString& name);
+    static void applyValueCustomProperty(StyleResolver&, const CSSRegisteredCustomProperty*, CSSCustomPropertyValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -1870,6 +1875,37 @@ inline void StyleBuilderCustom::applyValueStrokeColor(StyleResolver& styleResolv
     if (styleResolver.applyPropertyToVisitedLinkStyle())
         styleResolver.style()->setVisitedLinkStrokeColor(styleResolver.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
     styleResolver.style()->setHasExplicitlySetStrokeColor(true);
+}
+
+inline void StyleBuilderCustom::applyInitialCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, const AtomicString& name)
+{
+    if (registered) {
+        auto initialValue = registered->initialValueCopy();
+        applyValueCustomProperty(styleResolver, registered, *initialValue);
+        return;
+    }
+
+    auto invalid = CSSCustomPropertyValue::createWithID(name, CSSValueInvalid);
+    applyValueCustomProperty(styleResolver, registered, invalid.get());
+}
+
+inline void StyleBuilderCustom::applyInheritCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, const AtomicString& name)
+{
+    auto* parentValue = styleResolver.parentStyle() ? styleResolver.parentStyle()->inheritedCustomProperties().get(name) : nullptr;
+    if (parentValue && !(registered && !registered->inherits))
+        applyValueCustomProperty(styleResolver, registered, *parentValue);
+    else
+        applyInitialCustomProperty(styleResolver, registered, name);
+}
+
+inline void StyleBuilderCustom::applyValueCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, CSSCustomPropertyValue& value)
+{
+    const auto& name = value.name();
+
+    if (!registered || registered->inherits)
+        styleResolver.style()->setInheritedCustomPropertyValue(name, makeRef(value), registered);
+    else
+        styleResolver.style()->setNonInheritedCustomPropertyValue(name, makeRef(value), registered);
 }
 
 } // namespace WebCore

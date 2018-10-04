@@ -50,7 +50,7 @@ public:
     bool equals(const CSSVariableReferenceValue& other) const { return m_data == other.m_data; }
     String customCSSText() const;
 
-    bool checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
+    bool checkVariablesForCycles(const AtomicString& name, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
 
 private:
     CSSVariableReferenceValue(Ref<CSSVariableData>&& data)

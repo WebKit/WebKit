@@ -28,6 +28,7 @@
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSValue.h"
 #include "CSSVariableData.h"
+#include "Length.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,6 +50,11 @@ public:
     {
         return adoptRef(*new CSSCustomPropertyValue(emptyString(), emptyString()));
     }
+
+    static Ref<CSSCustomPropertyValue> create(const CSSCustomPropertyValue& other)
+    {
+        return adoptRef(*new CSSCustomPropertyValue(other));
+    }
     
     String customCSSText() const
     {
@@ -69,12 +75,15 @@ public:
     bool equals(const CSSCustomPropertyValue& other) const { return m_name == other.m_name && m_value == other.m_value && m_valueId == other.m_valueId; }
 
     bool containsVariables() const { return m_containsVariables; }
-    bool checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
+    bool checkVariablesForCycles(const AtomicString& name, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
 
-    void resolveVariableReferences(const CustomPropertyValueMap&, const CSSRegisteredCustomPropertySet&, Vector<Ref<CSSCustomPropertyValue>>&) const;
+    void resolveVariableReferences(const CSSRegisteredCustomPropertySet&, Vector<Ref<CSSCustomPropertyValue>>&, const RenderStyle&) const;
 
     CSSValueID valueID() const { return m_valueId; }
     CSSVariableData* value() const { return m_value.get(); }
+
+    const std::optional<Length>& resolvedTypedValue() const { return m_resolvedTypedValue; }
+    void setResolvedTypedValue(Length length) { m_resolvedTypedValue = WTFMove(length); }
 
 private:
     CSSCustomPropertyValue(const AtomicString& name, const String& serializedValue)
@@ -101,6 +110,18 @@ private:
         , m_containsVariables(m_value->needsVariableResolution())
     {
     }
+
+    CSSCustomPropertyValue(const CSSCustomPropertyValue& other)
+        : CSSValue(CustomPropertyClass)
+        , m_name(other.m_name)
+        , m_value(other.m_value.copyRef())
+        , m_valueId(other.m_valueId)
+        , m_stringValue(other.m_stringValue)
+        , m_containsVariables(other.m_containsVariables)
+        , m_serialized(other.m_serialized)
+        , m_resolvedTypedValue(other.m_resolvedTypedValue)
+    {
+    }
     
     const AtomicString m_name;
     
@@ -110,6 +131,9 @@ private:
     mutable String m_stringValue;
     bool m_containsVariables { false };
     mutable bool m_serialized { false };
+
+    // FIXME: It should not be possible to express an invalid state, such as containsVariables() && resolvedTypedValue().
+    std::optional<Length> m_resolvedTypedValue;
 };
 
 } // namespace WebCore

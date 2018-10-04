@@ -1,0 +1,117 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSCustomPropertiesAndValuesEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+  #parent1 {
+    width: 500px;
+    background: blue;
+    font-size: 16px;
+    --my-custom-prop: calc(10em + 10px);
+  }
+  #child1 {
+    background: green;
+    font-size: 32px;
+    width: var(--my-custom-prop);
+  }
+
+  #parent2 {
+    width: 500px;
+    background: blue;
+    font-size: 16px;
+    --my-custom-prop2: calc(10em + 10px);
+  }
+  #child2 {
+    background: green;
+    font-size: 32px;
+    width: var(--my-custom-prop2);
+  }
+
+  #parent3 {
+    width: 500px;
+    background: blue;
+    font-size: 16px;
+    --my-custom-prop-unreg: calc(10em + 10px);
+  }
+  #child3 {
+    background: green;
+    font-size: 32px;
+    width: var(--my-custom-prop-unreg);
+  }
+
+  #calcTest {
+    --my-custom-prop-unreg: calc(var(--my-custom-prop) + 10px);
+  }
+  #calcTest2 {
+    --my-custom-prop2: calc(var(--my-custom-prop) + 10px);
+  }
+  #calcTest3 {
+    --my-custom-prop2: calc(100px + 10px);
+  }
+
+  #subTest {
+    --my-custom-prop-unreg: var(--my-custom-prop);
+  }
+</style>
+<div>
+  <p> Test calc + inherits, registered, inherits=true</p>
+  <div id="parent1"><div id="child1"><p>170px green</p></div> </div>
+  <p> Test calc + inherits, registered, inherits=false </p>
+  <div id="parent2"><div id="child2"><p>200px green</p></div> </div>
+  <p> Test calc + inherits, not registered </p>
+  <div id="parent3"><div id="child3"><p>330px green</p></div> </div>
+  <div id="calcTest"><p>Calc test with unregistered property</p></div>
+  <div id="calcTest2"><p>Calc test with registered property</p></div>
+  <div id="calcTest3"><p>Calc test with registered property</p></div>
+  <div id="subTest"><p>Substitution test</p></div>
+</div>
+<script>
+
+function test_prop(id, prop, expected) {
+  assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(prop).trim(), expected);
+}
+
+test(function() {
+  CSS.registerProperty({
+    name: '--my-custom-prop',
+    syntax: '<length>',
+    inherits: true,
+    initialValue: '200px'
+  })
+
+  CSS.registerProperty({
+    name: '--my-custom-prop2',
+    syntax: '<length>',
+    inherits: false,
+    initialValue: '200px'
+  })
+}, "Registration is successful");
+test(function() {
+  test_prop('parent1', '--my-custom-prop', '170px');
+  test_prop('child1', '--my-custom-prop', '170px');
+  test_prop('child1', 'width', '170px');
+  test_prop('child1', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 1");
+test(function() {
+  test_prop('parent2', '--my-custom-prop2', '170px');
+  test_prop('child2', '--my-custom-prop2', '200px');
+  test_prop('child2', 'width', '200px');
+}, "JS Attributes are valid for element 2");
+test(function() {
+  test_prop('parent3', '--my-custom-prop-unreg', 'calc(10em + 10px)');
+  test_prop('child3', '--my-custom-prop-unreg', 'calc(10em + 10px)');
+  test_prop('child3', 'width', '330px');
+}, "JS Attributes are valid for element 3");
+test(function() {
+  test_prop('calcTest', '--my-custom-prop-unreg', 'calc(200px + 10px)');
+}, "Test that calc is not substituted for unregistered property");
+test(function() {
+  test_prop('calcTest2', '--my-custom-prop2', '210px');
+}, "Test that calc is substituted for custom property with length syntax");
+test(function() {
+  test_prop('calcTest3', '--my-custom-prop2', '110px');
+}, "Test that calc is substituted for custom property with length syntax");
+test(function() {
+  test_prop('subTest', '--my-custom-prop-unreg', '200px');
+}, "Test that variables are substituted from JS");
+</script>

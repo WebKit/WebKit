@@ -2,26 +2,26 @@ CONSOLE MESSAGE: line 340: ReferenceError: Can't find variable: CSSUnparsedValue
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSUnparsedValue
 
-FAIL Computed * is reified as CSSUnparsedValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
-FAIL Computed <angle> is reified as CSSUnitValue Can't find variable: CSSUnitValue
-FAIL Computed <color> is reified as CSSStyleValue Can't find variable: CSSStyleValue
-FAIL Computed <custom-ident> is reified as CSSKeywordValue Can't find variable: CSSKeywordValue
-FAIL Computed <image> [url] is reified as CSSImageValue Can't find variable: CSSImageValue
-FAIL Computed <integer> is reified as CSSUnitValue Can't find variable: CSSUnitValue
+FAIL Computed * is reified as CSSUnparsedValue The given initial value does not parse for the given syntax.
+FAIL Computed <angle> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
+FAIL Computed <color> is reified as CSSStyleValue The given initial value does not parse for the given syntax.
+FAIL Computed <custom-ident> is reified as CSSKeywordValue The given initial value does not parse for the given syntax.
+FAIL Computed <image> [url] is reified as CSSImageValue The given initial value does not parse for the given syntax.
+FAIL Computed <integer> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
 FAIL Computed <length-percentage> [%] is reified as CSSUnitValue Can't find variable: CSSUnitValue
 FAIL Computed <length-percentage> [px] is reified as CSSUnitValue Can't find variable: CSSUnitValue
 FAIL Computed <length-percentage> [px + %] is reified as CSSMathSum Can't find variable: CSSMathSum
 FAIL Computed <length> is reified as CSSUnitValue Can't find variable: CSSUnitValue
-FAIL Computed <number> is reified as CSSUnitValue Can't find variable: CSSUnitValue
+FAIL Computed <number> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
 FAIL Computed <percentage> is reified as CSSUnitValue Can't find variable: CSSUnitValue
-FAIL Computed <resolution> is reified as CSSUnitValue Can't find variable: CSSUnitValue
-FAIL Computed <time> is reified as CSSUnitValue Can't find variable: CSSUnitValue
-FAIL Computed <url> is reified as CSSStyleValue Can't find variable: CSSStyleValue
-FAIL Computed ident is reified as CSSKeywordValue Can't find variable: CSSKeywordValue
-FAIL First computed value correctly reified in space-separated list Can't find variable: CSSUnitValue
-FAIL First computed value correctly reified in comma-separated list Can't find variable: CSSUnitValue
-FAIL All computed values correctly reified in space-separated list target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
-FAIL All computed values correctly reified in comma-separated list target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
+FAIL Computed <resolution> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
+FAIL Computed <time> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
+FAIL Computed <url> is reified as CSSStyleValue The given initial value does not parse for the given syntax.
+FAIL Computed ident is reified as CSSKeywordValue The given initial value does not parse for the given syntax.
+FAIL First computed value correctly reified in space-separated list The given initial value does not parse for the given syntax.
+FAIL First computed value correctly reified in comma-separated list The given initial value does not parse for the given syntax.
+FAIL All computed values correctly reified in space-separated list The given initial value does not parse for the given syntax.
+FAIL All computed values correctly reified in comma-separated list The given initial value does not parse for the given syntax.
 FAIL attributeStyleMap.get returns CSSUnparsedValue for value with var references undefined is not an object (evaluating 'target.attributeStyleMap.clear')
 FAIL styleMap.get returns CSSUnparsedValue for value with var references undefined is not an object (evaluating 'rule.styleMap.clear')
 FAIL attributeStyleMap.get returns CSSUnparsedValue for value with var references in list undefined is not an object (evaluating 'target.attributeStyleMap.clear')
