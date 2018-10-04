@@ -86,6 +86,8 @@ class Executive(AbstractExecutive):
 
     def __init__(self):
         self.pid_to_system_pid = {}
+        self._is_native_win = sys.platform.startswith('win')
+        self._is_cygwin = sys.platform == 'cygwin'
 
     def _should_close_fds(self):
         # We need to pass close_fds=True to work around Python bug #2320
@@ -94,7 +96,7 @@ class Executive(AbstractExecutive):
         # In Python 2.7.10, close_fds is also supported on Windows.
         # However, "you cannot set close_fds to true and also redirect the standard
         # handles by setting stdin, stdout or stderr.".
-        if sys.platform.startswith('win'):
+        if self._is_native_win:
             return False
         else:
             return True
@@ -167,7 +169,7 @@ class Executive(AbstractExecutive):
 
         """Attempts to kill the given pid.
         Will fail silently if pid does not exist or insufficient permisssions."""
-        if sys.platform.startswith('win32'):
+        if self._is_native_win:
             # We only use taskkill.exe on windows (not cygwin) because subprocess.pid
             # is a CYGWIN pid and taskkill.exe expects a windows pid.
             # Thankfully os.kill on CYGWIN handles either pid type.
@@ -180,7 +182,7 @@ class Executive(AbstractExecutive):
         # According to http://docs.python.org/library/os.html
         # os.kill isn't available on Windows. python 2.5.5 os.kill appears
         # to work in cygwin, however it occasionally raises EAGAIN.
-        retries_left = 10 if sys.platform == "cygwin" else 2
+        retries_left = 10 if self._is_cygwin else 2
         current_signal = signal.SIGTERM
         while retries_left > 0 and self.check_running_pid(pid):
             try:
@@ -199,7 +201,7 @@ class Executive(AbstractExecutive):
                 elif e.errno == errno.ECHILD:
                     # Can't wait on a non-child process, but the kill worked.
                     return
-                elif e.errno == errno.EACCES and sys.platform == 'cygwin':
+                elif e.errno == errno.EACCES and self._is_cygwin:
                     # Cygwin python sometimes can't kill native processes.
                     return
                 else:
@@ -254,7 +256,7 @@ class Executive(AbstractExecutive):
             return False
 
         """Return True if pid is alive, otherwise return False."""
-        if sys.platform.startswith('win'):
+        if self._is_native_win:
             return self._win32_check_running_pid(pid)
 
         try:
@@ -264,7 +266,7 @@ class Executive(AbstractExecutive):
             return False
 
     def running_pids(self, process_name_filter=None):
-        if sys.platform.startswith('win'):
+        if self._is_native_win:
             # FIXME: running_pids isn't implemented on native Windows yet...
             return []
 
@@ -272,7 +274,7 @@ class Executive(AbstractExecutive):
             process_name_filter = lambda process_name: True
 
         running_pids = []
-        if sys.platform in ("cygwin"):
+        if self._is_cygwin:
             ps_process = self.run_command(['ps', '-e'], ignore_errors=True)
             for line in ps_process.splitlines():
                 tokens = line.strip().split()
@@ -307,9 +309,7 @@ class Executive(AbstractExecutive):
         return process_name
 
     def interrupt(self, pid):
-        interrupt_signal = signal.SIGINT
-        # FIXME: The python docs seem to imply that platform == 'win32' may need to use signal.CTRL_C_EVENT
-        # http://docs.python.org/2/library/signal.html
+        interrupt_signal = signal.CTRL_C_EVENT if self._is_native_win else signal.SIGINT
         try:
             os.kill(pid, interrupt_signal)
         except OSError:
@@ -320,10 +320,10 @@ class Executive(AbstractExecutive):
     def kill_all(self, process_name):
         """Attempts to kill processes matching process_name.
         Will fail silently if no process are found."""
-        if sys.platform == 'cygwin' or sys.platform.startswith('win'):
+        if self._is_cygwin or self._is_native_win:
             image_name = self._windows_image_name(process_name)
             killCommmand = 'taskkill.exe'
-            if sys.platform.startswith('win'):
+            if self._is_native_win:
                 killCommand = os.path.join('C:', os.sep, 'WINDOWS', 'system32', 'taskkill.exe')
             command = [killCommmand, "/f", "/im", image_name]
             # taskkill will exit 128 if the process is not found.  We should log.
@@ -416,7 +416,7 @@ class Executive(AbstractExecutive):
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
         # to launch subprocesses, so we have to encode arguments using the
         # current code page.
-        if sys.platform.startswith('win') and sys.version < '3':
+        if self._is_native_win and sys.version < '3':
             return 'mbcs'
         # All other platforms use UTF-8.
         # FIXME: Using UTF-8 on Cygwin will confuse Windows-native commands
@@ -427,13 +427,13 @@ class Executive(AbstractExecutive):
     def _should_encode_child_process_arguments(self):
         # Cygwin's Python's os.execv doesn't support unicode command
         # arguments, and neither does Cygwin's execv itself.
-        if sys.platform == 'cygwin':
+        if self._is_cygwin:
             return True
 
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
         # to launch subprocesses, so we have to encode arguments using the
         # current code page.
-        if sys.platform.startswith('win') and sys.version < '3':
+        if self._is_native_win and sys.version < '3':
             return True
 
         return False
@@ -454,7 +454,7 @@ class Executive(AbstractExecutive):
 
     # The only required argument to popen is named "args", the rest are optional keyword arguments.
     def popen(self, args, **kwargs):
-        if sys.platform.startswith('win'):
+        if self._is_native_win:
             _log.debug("Looking at {0}".format(args))
             # Must include proper interpreter
             if self._needs_interpreter_check(args[0]):
@@ -484,7 +484,7 @@ class Executive(AbstractExecutive):
         """Runs a list of (cmd_line list, cwd string) tuples in parallel and returns a list of (retcode, stdout, stderr) tuples."""
         assert len(command_lines_and_cwds)
 
-        if sys.platform == 'cygwin' or sys.platform.startswith('win'):
+        if self._is_cygwin or self._is_native_win:
             return map(_run_command_thunk, command_lines_and_cwds)
         pool = multiprocessing.Pool(processes=processes)
         results = pool.map(_run_command_thunk, command_lines_and_cwds)
