@@ -43,6 +43,7 @@ namespace WebCore {
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \
     macro(AuthenticatorResponse) \
+    macro(BlobEvent) \
     macro(Cache) \
     macro(CacheStorage) \
     macro(Client) \
@@ -97,6 +98,7 @@ namespace WebCore {
     macro(MediaKeyStatusMap) \
     macro(MediaKeySystemAccess) \
     macro(MediaKeys) \
+    macro(MediaRecorder) \
     macro(MediaSource) \
     macro(MediaStream) \
     macro(MediaStreamTrack) \

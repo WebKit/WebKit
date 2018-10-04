@@ -1,3 +1,39 @@
+2018-10-04  Yuhan Wu  <yuhan_wu@apple.com>
+
+        runtime flag and IDL for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=190018
+
+        Reviewed by Youenn Fablet and Chris Dumez.
+
+        Covered by tests:
+        imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-constructor.html
+        imported/w3c/web-platform-tests/mediacapture-record/BlobEvent-constructor.html
+
+        Add an architecture of the IDL and the class for MediaRecorder and BlobEvent.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediarecorder/BlobEvent.h:
+        (WebCore::BlobEvent::create):
+        (WebCore::BlobEvent:::Event):
+        * Modules/mediarecorder/BlobEvent.idl:
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        (WebCore::MediaRecorder::MediaRecorder):
+        (WebCore::MediaRecorder::activeDOMObjectName const):
+        (WebCore::MediaRecorder::canSuspendForDocumentSuspension const):
+        * Modules/mediarecorder/MediaRecorder.h: Added.
+        (WebCore::MediaRecorder::state const):
+        (WebCore::MediaRecorder::~MediaRecorder):
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::mediaRecorderEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setMediaRecorderEnabled):
+
 2018-10-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r236803.

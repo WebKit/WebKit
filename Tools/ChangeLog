@@ -1,3 +1,13 @@
+2018-10-04  YUHAN WU  <yuhan_wu@apple.com>
+
+        Runtime flag and IDL for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=190018
+
+        Reviewed by Youenn Fablet and Chris Dumez.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+
 2018-10-04  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [LayoutTests][Win] Stop wpt server correctly.

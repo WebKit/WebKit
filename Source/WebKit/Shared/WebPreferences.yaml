@@ -459,6 +459,15 @@ UseGiantTiles:
   type: bool
   defaultValue: false
 
+MediaRecorderEnabled:
+    type: bool
+    defaultValue: false
+    webcoreBinding: RuntimeEnabledFeatures
+    condition: ENABLE(MEDIA_STREAM)
+    humanReadableName: "MediaRecorder"
+    humanReadableDescription: "MediaRecorder"
+    category: experimental
+
 MediaDevicesEnabled:
   type: bool
   defaultValue: false

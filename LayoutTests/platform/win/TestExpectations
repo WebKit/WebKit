@@ -4212,3 +4212,9 @@ webkit.org/b/190032 legacy-animation-engine/transitions/transition-hit-test.html
 webkit.org/b/190032 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 webkit.org/b/190032 transitions/clip-path-transitions.html [ Pass Failure ]
 webkit.org/b/190032 legacy-animation-engine/animations/stacking-context-unchanged-while-running.html [ Pass ImageOnlyFailure ]
+
+# MediaRecorder is not enabled on Windows
+imported/w3c/web-platform-tests/mediacapture-record/BlobEvent-constructor.html [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-constructor.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
+

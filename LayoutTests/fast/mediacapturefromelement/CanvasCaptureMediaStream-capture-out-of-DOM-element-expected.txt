@@ -1,4 +1,4 @@
 
-FAIL Verify that drawing to a 2D canvas that is not attached to the DOM dispatches frames to an attached MediaRecorder. Can't find variable: MediaRecorder
-FAIL Verify that drawing to a webgl canvas that is not attached to the DOM dispatches frames to an attached MediaRecorder. Can't find variable: MediaRecorder
+FAIL Verify that drawing to a 2D canvas that is not attached to the DOM dispatches frames to an attached MediaRecorder. recorder.start is not a function. (In 'recorder.start(0)', 'recorder.start' is undefined)
+FAIL Verify that drawing to a webgl canvas that is not attached to the DOM dispatches frames to an attached MediaRecorder. recorder.start is not a function. (In 'recorder.start(0)', 'recorder.start' is undefined)
 

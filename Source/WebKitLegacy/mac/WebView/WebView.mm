@@ -3048,6 +3048,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     DeprecatedGlobalSettings::setMediaCaptureRequiresSecureConnection(true);
     RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled(false);
     RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled(false);
+    RuntimeEnabledFeatures::sharedFeatures().setMediaRecorderEnabled(preferences.mediaRecorderEnabled);
 #endif
 
 #if ENABLE(WEB_RTC)

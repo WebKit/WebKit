@@ -869,6 +869,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setIntersectionObserverEnabled:YES];
     preferences.sourceBufferChangeTypeEnabled = YES;
     [preferences setCSSOMViewScrollingAPIEnabled:YES];
+    [preferences setMediaRecorderEnabled:YES];
 }
 
 // Called before each test.

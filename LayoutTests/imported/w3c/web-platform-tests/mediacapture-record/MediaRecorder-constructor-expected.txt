@@ -1,0 +1,4 @@
+
+PASS The MediaStream argument is required 
+PASS The MediaStream instance's state attribute is set. 
+

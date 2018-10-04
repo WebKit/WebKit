@@ -181,6 +181,8 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    bool mediaRecorderEnabled() const { return m_isMediaRecorderEnabled; }
+    void setMediaRecorderEnabled(bool isEnabled) { m_isMediaRecorderEnabled = isEnabled; }
     bool mediaDevicesEnabled() const { return m_isMediaDevicesEnabled; }
     void setMediaDevicesEnabled(bool isEnabled) { m_isMediaDevicesEnabled = isEnabled; }
     bool mediaStreamEnabled() const { return m_isMediaStreamEnabled; }
@@ -344,6 +346,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    bool m_isMediaRecorderEnabled { false };
     bool m_isMediaDevicesEnabled { false };
     bool m_isMediaStreamEnabled { true };
     bool m_isScreenCaptureEnabled { false };

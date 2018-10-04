@@ -1,3 +1,15 @@
+2018-10-04  YUHAN WU  <yuhan_wu@apple.com>
+
+        runtime flag and IDL for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=190018
+
+        Reviewed by Youenn Fablet and Chris Dumez.
+
+        * platform/win/TestExpectations:
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element-expected.txt:
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0-expected.txt:
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext-expected.txt:
+
 2018-10-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r236803.

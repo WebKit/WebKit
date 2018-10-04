@@ -140,6 +140,8 @@ Modules/mediacapabilities/NavigatorMediaCapabilities.cpp
 
 Modules/mediacontrols/MediaControlsHost.cpp
 
+Modules/mediarecorder/MediaRecorder.cpp
+
 Modules/mediasession/HTMLMediaElementMediaSession.cpp
 Modules/mediasession/MediaRemoteControls.cpp
 Modules/mediasession/MediaSession.cpp
@@ -2438,6 +2440,7 @@ JSBeforeUnloadEvent.cpp
 JSBiquadFilterNode.cpp
 JSBlob.cpp
 JSBlobCallback.cpp
+JSBlobEvent.cpp
 JSBlobLineEndings.cpp
 JSBlobPropertyBag.cpp
 JSByteLengthQueuingStrategy.cpp
@@ -2762,6 +2765,7 @@ JSMediaError.cpp
 JSMediaList.cpp
 JSMediaQueryList.cpp
 JSMediaQueryListListener.cpp
+JSMediaRecorder.cpp
 JSMediaRemoteControls.cpp
 JSMediaSession.cpp
 JSMediaSource.cpp

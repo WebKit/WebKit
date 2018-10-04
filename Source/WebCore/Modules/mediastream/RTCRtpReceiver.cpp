@@ -32,6 +32,7 @@
 #include "RTCRtpReceiver.h"
 
 #if ENABLE(WEB_RTC)
+#include "PeerConnectionBackend.h"
 
 namespace WebCore {
 

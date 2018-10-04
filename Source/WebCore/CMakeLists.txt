@@ -38,6 +38,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/mediasession"
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
+    "${WEBCORE_DIR}/Modules/mediarecorder"
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
     "${WEBCORE_DIR}/Modules/notifications"
     "${WEBCORE_DIR}/Modules/paymentrequest"
@@ -175,6 +176,7 @@ set(WebCore_IDL_INCLUDES
     Modules/geolocation
     Modules/indexeddb
     Modules/mediacapabilities
+    Modules/mediarecorder
     Modules/mediasession
     Modules/mediastream
     Modules/notifications
@@ -276,6 +278,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediacapabilities/VideoConfiguration.idl
 
     Modules/mediacontrols/MediaControlsHost.idl
+
+    Modules/mediarecorder/BlobEvent.idl
+    Modules/mediarecorder/MediaRecorder.idl
 
     Modules/mediasession/HTMLMediaElementMediaSession.idl
     Modules/mediasession/MediaRemoteControls.idl

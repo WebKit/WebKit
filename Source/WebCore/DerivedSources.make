@@ -47,6 +47,7 @@ VPATH = \
     $(WebCore)/Modules/mediasession \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/mediastream \
+	$(WebCore)/Modules/mediarecorder \
     $(WebCore)/Modules/notifications \
     $(WebCore)/Modules/paymentrequest \
     $(WebCore)/Modules/plugins \
@@ -202,6 +203,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediacapabilities/ScreenLuminance.idl \
     $(WebCore)/Modules/mediacapabilities/VideoConfiguration.idl \
     $(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
+	$(WebCore)/Modules/mediarecorder/BlobEvent.idl \
+	$(WebCore)/Modules/mediarecorder/MediaRecorder.idl \
     $(WebCore)/Modules/mediasession/HTMLMediaElementMediaSession.idl \
     $(WebCore)/Modules/mediasession/MediaRemoteControls.idl \
     $(WebCore)/Modules/mediasession/MediaSession.idl \

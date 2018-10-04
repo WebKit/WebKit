@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 45: ReferenceError: Can't find variable: MediaRecorder
+CONSOLE MESSAGE: line 48: TypeError: recorder.start is not a function. (In 'recorder.start(0)', 'recorder.start' is undefined)
 Exercises that at least one frame passes on captureStream(0).
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -8,7 +8,7 @@ PASS Drawing to canvas.
 PASS Got a stream from canvas.
 PASS stream.getVideoTracks().length is 1
 PASS track.readyState is "live"
-FAIL Unexpected error: ReferenceError: Can't find variable: MediaRecorder
+FAIL Unexpected error: TypeError: recorder.start is not a function. (In 'recorder.start(0)', 'recorder.start' is undefined)
 FAIL successfullyParsed should be true. Was false.
 Some tests failed.
 

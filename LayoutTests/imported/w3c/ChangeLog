@@ -1,3 +1,14 @@
+2018-10-04  YUHAN WU  <yuhan_wu@apple.com>
+
+        runtime flag and IDL for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=190018
+
+        Reviewed by Youenn Fablet and Chris Dumez.
+
+        * web-platform-tests/mediacapture-record/BlobEvent-constructor-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-constructor-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-constructor.html: Added.
+
 2018-10-03  Justin Michaud  <justin_michaud@apple.com>
 
         Registered custom properties should allow inheritance to be controlled
