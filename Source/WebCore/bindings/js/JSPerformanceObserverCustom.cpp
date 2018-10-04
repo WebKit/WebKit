@@ -35,12 +35,12 @@ void JSPerformanceObserver::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     wrapped().callback().visitJSFunction(visitor);
 }
 
-bool JSPerformanceObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor&, const char** reason)
+bool JSPerformanceObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor&, const char** reason)
 {
     if (UNLIKELY(reason))
         *reason = "Registered PerformanceObserver callback";
 
-    return jsCast<JSPerformanceObserver*>(handle.slot()->asCell())->wrapped().isRegistered();
+    return JSC::jsCast<JSPerformanceObserver*>(handle.slot()->asCell())->wrapped().isRegistered();
 }
 
 }

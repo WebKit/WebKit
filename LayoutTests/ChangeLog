@@ -1,3 +1,18 @@
+2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        MutationRecord doesn't keep JS wrappers of target, addedNodes, and removedNodes alive
+        https://bugs.webkit.org/show_bug.cgi?id=190277
+
+        Reviewed by Antti Koivisto.
+
+        Added two regression tests for making sure mutation observers and mutation records keep JS wrappers
+        of the enqueued nodes alive. Also see r236799 for a previous failed attempt to add a similar test.
+
+        * fast/dom/MutationObserver/mutation-observer-keeps-js-wrappers-of-nodes-alive-expected.txt: Added.
+        * fast/dom/MutationObserver/mutation-observer-keeps-js-wrappers-of-nodes-alive.html: Added.
+        * fast/dom/MutationObserver/mutation-record-keeps-js-wrappers-of-nodes-alive-expected.txt: Added.
+        * fast/dom/MutationObserver/mutation-record-keeps-js-wrappers-of-nodes-alive.html: Added.
+
 2018-10-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: merge ProbeManager into DebuggerManager

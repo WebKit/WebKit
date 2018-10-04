@@ -29,7 +29,8 @@
  */
 
 [    
-    SkipVTableValidation
+    SkipVTableValidation,
+    JSCustomMarkFunction
 ] interface MutationRecord {
     readonly attribute DOMString type;
 

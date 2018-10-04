@@ -32,6 +32,7 @@
 #include "MutationRecord.h"
 
 #include "CharacterData.h"
+#include "JSNode.h"
 #include "StaticNodeList.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -40,7 +41,15 @@ namespace WebCore {
 
 namespace {
 
-class ChildListRecord : public MutationRecord {
+static void visitNodeList(JSC::SlotVisitor& visitor, NodeList& nodeList)
+{
+    ASSERT(!nodeList.isLiveNodeList());
+    unsigned length = nodeList.length();
+    for (unsigned i = 0; i < length; ++i)
+        visitor.addOpaqueRoot(root(nodeList.item(i)));
+}
+
+class ChildListRecord final : public MutationRecord {
 public:
     ChildListRecord(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling)
         : m_target(target)
@@ -59,6 +68,15 @@ private:
     Node* previousSibling() override { return m_previousSibling.get(); }
     Node* nextSibling() override { return m_nextSibling.get(); }
 
+    void visitNodesConcurrently(JSC::SlotVisitor& visitor) const final
+    {
+        visitor.addOpaqueRoot(root(m_target.ptr()));
+        if (m_addedNodes)
+            visitNodeList(visitor, *m_addedNodes);
+        if (m_removedNodes)
+            visitNodeList(visitor, *m_removedNodes);
+    }
+    
     Ref<ContainerNode> m_target;
     RefPtr<NodeList> m_addedNodes;
     RefPtr<NodeList> m_removedNodes;
@@ -87,13 +105,18 @@ private:
         return nodeList.get();
     }
 
+    void visitNodesConcurrently(JSC::SlotVisitor& visitor) const final
+    {
+        visitor.addOpaqueRoot(root(m_target.ptr()));
+    }
+
     Ref<Node> m_target;
     String m_oldValue;
     RefPtr<NodeList> m_addedNodes;
     RefPtr<NodeList> m_removedNodes;
 };
 
-class AttributesRecord : public RecordWithEmptyNodeLists {
+class AttributesRecord final : public RecordWithEmptyNodeLists {
 public:
     AttributesRecord(Element& target, const QualifiedName& name, const AtomicString& oldValue)
         : RecordWithEmptyNodeLists(target, oldValue)
@@ -122,7 +145,7 @@ private:
     const AtomicString& type() override;
 };
 
-class MutationRecordWithNullOldValue : public MutationRecord {
+class MutationRecordWithNullOldValue final : public MutationRecord {
 public:
     MutationRecordWithNullOldValue(MutationRecord& record)
         : m_record(record)
@@ -140,6 +163,11 @@ private:
     const AtomicString& attributeNamespace() override { return m_record->attributeNamespace(); }
 
     String oldValue() override { return String(); }
+
+    void visitNodesConcurrently(JSC::SlotVisitor& visitor) const final
+    {
+        m_record->visitNodesConcurrently(visitor);
+    }
 
     Ref<MutationRecord> m_record;
 };

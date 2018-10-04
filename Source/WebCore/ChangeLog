@@ -1,3 +1,31 @@
+2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        MutationRecord doesn't keep JS wrappers of target, addedNodes, and removedNodes alive
+        https://bugs.webkit.org/show_bug.cgi?id=190277
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by JSMutationRecord not visiting any of the nodes referenced by mutation records.
+
+        Fixed the bug by adding JSMutationRecord::visitAdditionalChildren, which adds the root nodes of
+        the root nodes of the target, addedNodes, and removedNodes in each mutation record.
+
+        Test: fast/dom/MutationObserver/mutation-record-keeps-js-wrappers-of-nodes-alive.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSMutationRecordCustom.cpp: Added.
+        (WebCore::JSMutationRecord::visitAdditionalChildren): Added.
+        * bindings/js/JSPerformanceObserverCustom.cpp: This file got dumped out of a unified build file
+        where using namespace JSC was defined. Use the fully qualified names to refer to JSC types.
+        (WebCore::JSPerformanceObserverOwner::isReachableFromOpaqueRoots):
+        * dom/MutationRecord.cpp:
+        (WebCore::ChildListRecord::visitNodesConcurrently): Added.
+        (WebCore::RecordWithEmptyNodeLists::visitNodesConcurrently): Added.
+        (WebCore::MutationRecordWithNullOldValue::visitNodesConcurrently): Added.
+        * dom/MutationRecord.h:
+        * dom/MutationRecord.idl:
+
 2018-10-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Move time out control from WebProcess to UIProcess

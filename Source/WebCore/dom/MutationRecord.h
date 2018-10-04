@@ -34,6 +34,12 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+
+class SlotVisitor;
+
+}
+
 namespace WebCore {
 
 class CharacterData;
@@ -65,6 +71,8 @@ public:
     virtual const AtomicString& attributeNamespace() { return nullAtom(); }
 
     virtual String oldValue() { return String(); }
+
+    virtual void visitNodesConcurrently(JSC::SlotVisitor&) const = 0;
 };
 
 } // namespace WebCore
