@@ -1465,9 +1465,7 @@ css3/filters/blur-various-radii.html [ Pass ImageOnlyFailure ]
 
 fast/css/sticky/sticky-top.html [ Pass ImageOnlyFailure ]
 
-css-custom-properties-api/initialValue.html [ ImageOnlyFailure ]
-css-custom-properties-api/initialValueJS.html [ Failure ]
-css-custom-properties-api/registerProperty.html [ Failure ]
+css-custom-properties-api/ [ Failure ImageOnlyFailure ]
 
 ################################################################################
 #################            End CSS Issues              #######################
@@ -1523,6 +1521,8 @@ webkit.org/b/151759 fast/dom/Window/property-access-on-cached-window-after-frame
 
 webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
 
+fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
+
 ################################################################################
 #################            End DOM Issues              #######################
 ################################################################################
@@ -1534,6 +1534,7 @@ webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
 
 ###### Pasteboard
 editing/pasteboard/ [ Pass Failure ImageOnlyFailure ]
+editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 editing/pasteboard/paste-image-as-blob-url.html [ Skip ]
 # TODO eventSender.contextClick() needs to return a JS array of the context menu items.
@@ -1578,9 +1579,9 @@ editing/selection/extend-selection-word.html [ Failure ]
 editing/selection/home-end.html [ Failure ]
 editing/selection/move-by-word-visually-mac.html [ Failure ]
 editing/selection/move-left-right.html [ Failure ]
-editing/selection/selection-across-shadow-boundaries-readonly-1.html [ ImageOnlyFailure ]
-editing/selection/selection-across-shadow-boundaries-readonly-2.html [ ImageOnlyFailure ]
-editing/selection/selection-across-shadow-boundaries-readonly-3.html [ ImageOnlyFailure ]
+editing/selection/selection-across-shadow-boundaries-readonly-1.html [ Pass ImageOnlyFailure ]
+editing/selection/selection-across-shadow-boundaries-readonly-2.html [ Pass ImageOnlyFailure ]
+editing/selection/selection-across-shadow-boundaries-readonly-3.html [ Pass ImageOnlyFailure ]
 editing/selection/update-selection-by-style-change.html [ ImageOnlyFailure ]
 editing/selection/user-select-all-image-with-single-click.html [ Failure ]
 editing/selection/user-select-all-selection.html [ Failure ]
@@ -1706,6 +1707,7 @@ fast/loader [ Skip ]
 fast/masking/clip-path-selection.html [ Skip ]
 fast/media [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Failure ]
 fast/multicol [ Skip ]
 fast/overflow [ Skip ]
 fast/parser [ Skip ]

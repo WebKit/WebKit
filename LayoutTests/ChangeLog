@@ -1,3 +1,13 @@
+2018-10-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed test gardening for WinCairo (and one cross-platform test). 
+
+        * TestExpectations:
+        Remove a cross-platform failure that seems to be passing on all platforms now.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt: Added.
+
 2018-10-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Table should support multiple selection and Cmd-click behavior
