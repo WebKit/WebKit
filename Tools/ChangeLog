@@ -1,3 +1,9 @@
+2018-10-04  Alan Coon  <alancoon@apple.com>
+
+        Unreviewed, add self as contributor.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Fix some font attribute conversion bugs in preparation for "Font > Styles…" support in WebKit2

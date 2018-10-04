@@ -206,6 +206,14 @@
       ],
       "status" : "committer"
    },
+   "Alan Coon" : {
+      "emails" : [
+         "alancoon@apple.com"
+      ],
+      "nicks" : [
+         "alancoon"
+      ]
+   },
    "Alan Cutter" : {
       "emails" : [
          "alancutter@chromium.org"
