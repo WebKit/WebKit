@@ -492,6 +492,15 @@ WebRTCUnifiedPlanEnabled:
   humanReadableDescription: "Use WebRTC Unified Plan"
   category: experimental
 
+WebRTCVP8CodecEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC VP8 codec"
+  humanReadableDescription: "Enable WebRTC VP8 codec"
+  category: experimental
+
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool
   defaultValue: false

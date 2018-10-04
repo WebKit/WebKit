@@ -190,6 +190,8 @@ public:
 #endif
 
 #if ENABLE(WEB_RTC)
+    bool webRTCVP8CodecEnabled() const { return m_isWebRTCVP8CodecEnabled; }
+    void setWebRTCVP8CodecEnabled(bool isEnabled) { m_isWebRTCVP8CodecEnabled = isEnabled; }
     bool webRTCUnifiedPlanEnabled() const { return m_isWebRTCUnifiedPlanEnabled; }
     void setWebRTCUnifiedPlanEnabled(bool isEnabled) { m_isWebRTCUnifiedPlanEnabled = isEnabled; }
     bool peerConnectionEnabled() const { return m_isPeerConnectionEnabled; }
@@ -348,6 +350,7 @@ private:
 #endif
 
 #if ENABLE(WEB_RTC)
+    bool m_isWebRTCVP8CodecEnabled { false };
     bool m_isWebRTCUnifiedPlanEnabled { true };
     bool m_isPeerConnectionEnabled { true };
     bool m_mdnsICECandidatesEnabled { false };

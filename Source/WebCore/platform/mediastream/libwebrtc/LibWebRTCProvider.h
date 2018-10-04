@@ -109,6 +109,7 @@ public:
     void disableEnumeratingAllNetworkInterfaces();
     void enableEnumeratingAllNetworkInterfaces();
 
+    void supportsVP8(bool value) { m_supportsVP8 = value; }
     virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
 protected:
@@ -126,6 +127,7 @@ protected:
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
     bool m_disableNonLocalhostConnections { false };
+    bool m_supportsVP8 { false };
 #endif
 };
 

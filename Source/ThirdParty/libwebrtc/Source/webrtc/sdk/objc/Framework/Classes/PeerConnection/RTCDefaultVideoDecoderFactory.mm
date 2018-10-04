@@ -21,10 +21,8 @@
 - (id<RTCVideoDecoder>)createDecoder:(RTCVideoCodecInfo *)info {
   if ([info.name isEqualToString:kRTCVideoCodecH264Name]) {
     return [[RTCVideoDecoderH264 alloc] init];
-#if !defined(RTC_DISABLE_VP8)
   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
     return [RTCVideoDecoderVP8 vp8Decoder];
-#endif
 #if !defined(RTC_DISABLE_VP9)
   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
     return [RTCVideoDecoderVP9 vp9Decoder];

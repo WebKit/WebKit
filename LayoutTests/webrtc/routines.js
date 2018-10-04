@@ -204,3 +204,10 @@ async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
     await waitFor(50);
     return checkVideoBlack(expected, canvas, video, errorMessage, ++counter);
 }
+
+function setCodec(sdp, codec)
+{
+    return sdp.split('\r\n').filter(line => {
+        return line.indexOf('a=fmtp') === -1 && line.indexOf('a=rtcp-fb') === -1 && (line.indexOf('a=rtpmap') === -1 || line.indexOf(codec) !== -1);
+    }).join('\r\n');
+}

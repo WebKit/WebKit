@@ -57,12 +57,14 @@ void LibWebRTCProviderCocoa::setH264HardwareEncoderAllowed(bool allowed)
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderCocoa::createDecoderFactory()
 {
-    return webrtc::createWebKitDecoderFactory();
+    auto codecSupport = m_supportsVP8 ? webrtc::WebKitCodecSupport::H264AndVP8 : webrtc::WebKitCodecSupport::H264;
+    return webrtc::createWebKitDecoderFactory(codecSupport);
 }
 
 std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderCocoa::createEncoderFactory()
 {
-    return webrtc::createWebKitEncoderFactory();
+    auto codecSupport = m_supportsVP8 ? webrtc::WebKitCodecSupport::H264AndVP8 : webrtc::WebKitCodecSupport::H264;
+    return webrtc::createWebKitEncoderFactory(codecSupport);
 }
 
 void LibWebRTCProviderCocoa::setActive(bool value)

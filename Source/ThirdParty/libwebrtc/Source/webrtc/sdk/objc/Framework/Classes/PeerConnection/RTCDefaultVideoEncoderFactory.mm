@@ -40,9 +40,7 @@
       [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecH264Name
                                    parameters:constrainedBaselineParams];
 
-#if !defined(RTC_DISABLE_VP8)
   RTCVideoCodecInfo *vp8Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp8Name];
-#endif
 
 #if !defined(RTC_DISABLE_VP9)
   RTCVideoCodecInfo *vp9Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name];
@@ -51,9 +49,7 @@
   return @[
     constrainedHighInfo,
     constrainedBaselineInfo,
-#if !defined(RTC_DISABLE_VP8)
     vp8Info,
-#endif
 #if !defined(RTC_DISABLE_VP9)
     vp9Info,
 #endif
@@ -63,10 +59,8 @@
 - (id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info {
   if ([info.name isEqualToString:kRTCVideoCodecH264Name]) {
     return [[RTCVideoEncoderH264 alloc] initWithCodecInfo:info];
-#if !defined(RTC_DISABLE_VP8)
   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
     return [RTCVideoEncoderVP8 vp8Encoder];
-#endif
 #if !defined(RTC_DISABLE_VP9)
   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
     return [RTCVideoEncoderVP9 vp9Encoder];

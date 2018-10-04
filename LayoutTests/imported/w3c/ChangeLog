@@ -1,3 +1,12 @@
+2018-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Add VP8 support to WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=189976
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-expected.txt:
+
 2018-10-03  Chris Dumez  <cdumez@apple.com>
 
         Passing noopener=NOOPENER to window.open() should cause the new window to not have an opener

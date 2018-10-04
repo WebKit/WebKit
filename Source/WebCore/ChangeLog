@@ -1,3 +1,27 @@
+2018-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Add VP8 support to WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=189976
+
+        Reviewed by Eric Carlson.
+
+        Add a runtime flag to control activation of VP8 codec.
+        Bind this runtime flag to the video codec factories.
+        Test: webrtc/video-mute-vp8.html
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::createLibWebRTCPeerConnectionBackend):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webRTCVP8CodecEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebRTCVP8CodecEnabled):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProviderCocoa::createDecoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::createEncoderFactory):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        Enable VP8 codec for tests.
+
 2018-09-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] ECDSA could not deal with invalid signature inputs

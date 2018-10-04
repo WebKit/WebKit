@@ -1,3 +1,34 @@
+2018-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Add VP8 support to WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=189976
+
+        Reviewed by Eric Carlson.
+
+        Add support for conditional VP8 support for both encoding and decoding.
+        This boolean is used by WebCore based on the new VP8 runtime flag.
+
+        Enable yasm compilation as a dependency of libvpx.
+
+        Compilation is done without using SSE4/AVX2 optimizations.
+
+        * Configurations/libvpx.xcconfig: Added.
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+        * Source/third_party/libvpx/run_yasm_webkit.py: Added.
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_config.asm:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_config.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_dsp_rtcd.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::createWebKitEncoderFactory):
+        (webrtc::createWebKitDecoderFactory):
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecFactory.h:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-10-03  Dan Bernstein  <mitz@apple.com>
 
         libwebrtc part of [Xcode] Update some build settings as recommended by Xcode 10

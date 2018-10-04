@@ -1,3 +1,15 @@
+2018-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Add VP8 support to WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=189976
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-peer-connection-g722.html:
+        * webrtc/routines.js:
+        * webrtc/video-mute-vp8-expected.txt: Added.
+        * webrtc/video-mute-vp8.html: Added.
+
 2018-09-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] ECDSA could not deal with invalid signature inputs

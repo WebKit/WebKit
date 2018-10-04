@@ -1,3 +1,12 @@
+2018-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Add VP8 support to WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=189976
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+
 2018-10-03  Zamiul Haque  <zhaque@apple.com>
 
         Search does not cancel after number of matching terms exceed set max limit
