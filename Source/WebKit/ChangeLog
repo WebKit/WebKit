@@ -1,5 +1,11 @@
 2018-10-03  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix non-Cocoa, ENABLE(ATTACHMENT_ELEMENT) builds after r236822.
+
+        * UIProcess/PageClient.h:
+
+2018-10-03  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Let clients specify an NSFileWrapper subclassed to be used for _WKAttachment
         https://bugs.webkit.org/show_bug.cgi?id=190270
 

@@ -444,7 +444,9 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual void didInsertAttachment(API::Attachment&, const String& source) { }
     virtual void didRemoveAttachment(API::Attachment&) { }
+#if PLATFORM(COCOA)
     virtual NSFileWrapper *allocFileWrapperInstance() { return nullptr; }
+#endif
 #endif
 };
 
