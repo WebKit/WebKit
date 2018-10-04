@@ -38,10 +38,9 @@ namespace TestWebKitAPI {
 
 static bool committedLoad;
 
-static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void*)
+static void didCommitNavigationCallback(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void*)
 {
-    if (!WKFrameIsMainFrame(frame))
-        return;
+    WKFrameRef frame = WKPageGetMainFrame(page);
 
     // The provisional URL should be null.
     EXPECT_NULL(WKFrameCopyProvisionalURL(frame));
@@ -72,12 +71,12 @@ TEST(WebKit2, ProvisionalURLAfterWillSendRequestCallback)
 
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+    WKPageNavigationClientV0 navigationClient;
+    memset(&navigationClient, 0, sizeof(navigationClient));
 
-    loaderClient.base.version = 0;
-    loaderClient.didCommitLoadForFrame = didCommitLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    navigationClient.base.version = 0;
+    navigationClient.didCommitNavigation = didCommitNavigationCallback;
+    WKPageSetPageNavigationClient(webView.page(), &navigationClient.base);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());

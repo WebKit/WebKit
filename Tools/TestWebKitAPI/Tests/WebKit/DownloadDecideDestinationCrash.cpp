@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 static bool didDecideDestination;
 
-static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
+static void decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
 {
     WKFramePolicyListenerDownload(listener);
 }
@@ -60,13 +60,13 @@ static void setContextDownloadClient(WKContextRef context)
 
 static void setPagePolicyClient(WKPageRef page)
 {
-    WKPagePolicyClientV1 policyClient;
-    memset(&policyClient, 0, sizeof(policyClient));
+    WKPageNavigationClientV0 navigationClient;
+    memset(&navigationClient, 0, sizeof(navigationClient));
 
-    policyClient.base.version = 1;
-    policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
+    navigationClient.base.version = 0;
+    navigationClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
 
-    WKPageSetPagePolicyClient(page, &policyClient.base);
+    WKPageSetPageNavigationClient(page, &navigationClient.base);
 }
 
 TEST(WebKit, DownloadDecideDestinationCrash)
