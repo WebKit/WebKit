@@ -1416,7 +1416,7 @@ private:
             setJSValue(phi);
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_CRASH(m_graph, m_node, "Bad result type");
             break;
         }
     }
@@ -14627,6 +14627,11 @@ private:
     {
         m_state.setIsValid(false);
     }
+
+    void simulatedTypeCheck(Edge highValue, SpeculatedType typesPassedThrough)
+    {
+        m_interpreter.filter(highValue, typesPassedThrough);
+    }
     
     void typeCheck(
         FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
@@ -14652,6 +14657,7 @@ private:
         
         if (edge->hasConstant()) {
             JSValue value = edge->asJSValue();
+            simulatedTypeCheck(edge, SpecInt32Only);
             if (!value.isInt32()) {
                 if (mayHaveTypeCheck(edge.useKind()))
                     terminate(Uncountable);
@@ -14663,8 +14669,10 @@ private:
         }
         
         LoweredNodeValue value = m_int32Values.get(edge.node());
-        if (isValid(value))
+        if (isValid(value)) {
+            simulatedTypeCheck(edge, SpecInt32Only);
             return value.value();
+        }
         
         value = m_strictInt52Values.get(edge.node());
         if (isValid(value))
@@ -14772,6 +14780,7 @@ private:
         
         if (edge->op() == JSConstant) {
             FrozenValue* value = edge->constant();
+            simulatedTypeCheck(edge, SpecCellCheck);
             if (!value->value().isCell()) {
                 if (mayHaveTypeCheck(edge.useKind()))
                     terminate(Uncountable);
@@ -14899,6 +14908,7 @@ private:
         
         if (edge->hasConstant()) {
             JSValue value = edge->asJSValue();
+            simulatedTypeCheck(edge, SpecBoolean);
             if (!value.isBoolean()) {
                 if (mayHaveTypeCheck(edge.useKind()))
                     terminate(Uncountable);
@@ -14910,8 +14920,10 @@ private:
         }
         
         LoweredNodeValue value = m_booleanValues.get(edge.node());
-        if (isValid(value))
+        if (isValid(value)) {
+            simulatedTypeCheck(edge, SpecBoolean);
             return value.value();
+        }
         
         value = m_jsValueValues.get(edge.node());
         if (isValid(value)) {

@@ -1,3 +1,15 @@
+2018-10-03  Saam barati  <sbarati@apple.com>
+
+        lowXYZ in FTLLower should always filter the type of the incoming edge
+        https://bugs.webkit.org/show_bug.cgi?id=189939
+        <rdar://problem/44407030>
+
+        Reviewed by Michael Saboff.
+
+        * stress/ftl-should-always-filter-for-low-type-check-functions.js: Added.
+        (foo):
+        (test):
+
 2018-10-03  Mark Lam  <mark.lam@apple.com>
 
         Make string MaxLength for all WTF and JS strings consistently equal to INT_MAX.

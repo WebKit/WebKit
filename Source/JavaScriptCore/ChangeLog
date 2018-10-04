@@ -1,3 +1,45 @@
+2018-10-03  Saam barati  <sbarati@apple.com>
+
+        lowXYZ in FTLLower should always filter the type of the incoming edge
+        https://bugs.webkit.org/show_bug.cgi?id=189939
+        <rdar://problem/44407030>
+
+        Reviewed by Michael Saboff.
+
+        For example, the FTL may know more about data flow than AI in certain programs,
+        and it needs to inform AI of these data flow properties to appease the assertion
+        we have in AI that a node must perform type checks on its child nodes.
+        
+        For example, consider this program:
+        
+        ```
+        bb#1
+        a: Phi // Let's say it has an Int32 result, so it goes into the int32 hash table in FTLLower
+        Branch(...,  #2, #3)
+        
+        bb#2
+        ArrayifyToStructure(Cell:@a) // This modifies @a to have the its previous type union the type of some structure set.
+        Jump(#3)
+        
+        bb#3
+        c: Add(Int32:@something, Int32:@a)
+        ```
+        
+        When the Add node does lowInt32() for @a, FTL lower used to just grab it
+        from the int32 hash table without filtering the AbstractValue. However,
+        the parent node is asking for a type check to happen, so we must inform
+        AI of this "type check" if we want to appease the assertion that all nodes
+        perform type checks for their edges that semantically perform type checks.
+        This patch makes it so we filter the AbstractValue in the lowXYZ even
+        if FTLLower proved the value must be XYZ.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePhi):
+        (JSC::FTL::DFG::LowerDFGToB3::simulatedTypeCheck):
+        (JSC::FTL::DFG::LowerDFGToB3::lowInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::lowCell):
+        (JSC::FTL::DFG::LowerDFGToB3::lowBoolean):
+
 2018-10-03  Michael Saboff  <msaboff@apple.com>
 
         Command line jsc should report memory footprint in bytes
