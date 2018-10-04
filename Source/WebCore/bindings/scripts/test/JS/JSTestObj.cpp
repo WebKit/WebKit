@@ -1601,6 +1601,7 @@ JSC::EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(JSC::ExecState*, 
 JSC::EncodedJSValue jsTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjConstructorTestSubObj(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestObjConstructorTestStaticReadonlyObj(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjEnumAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjEnumAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjByteAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -1886,6 +1887,7 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
     { "staticReadOnlyLongAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorStaticReadOnlyLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "staticStringAttr", static_cast<unsigned>(0), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorStaticStringAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConstructorStaticStringAttr) } },
     { "TestSubObj", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorTestSubObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "testStaticReadonlyObj", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorTestStaticReadonlyObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(TEST_FEATURE)
     { "enabledAtRuntimeAttributeStatic", static_cast<unsigned>(0), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorEnabledAtRuntimeAttributeStatic), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConstructorEnabledAtRuntimeAttributeStatic) } },
 #else
@@ -2647,6 +2649,24 @@ static inline JSValue jsTestObjConstructorTestSubObjGetter(ExecState& state, Thr
 EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorTestSubObjGetter>(*state, thisValue, "TestSubObj");
+}
+
+static inline JSValue jsTestObjConstructorTestStaticReadonlyObjGetter(ExecState& state, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
+    if (UNLIKELY(!context))
+        return jsUndefined();
+    ASSERT(context->isDocument());
+    auto& document = downcast<Document>(*context);
+    JSValue result = toJS<IDLInterface<TestObj>>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), throwScope, TestObj::testStaticReadonlyObj(document));
+    return result;
+}
+
+EncodedJSValue jsTestObjConstructorTestStaticReadonlyObj(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorTestStaticReadonlyObjGetter>(*state, thisValue, "testStaticReadonlyObj");
 }
 
 static inline JSValue jsTestObjEnumAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)

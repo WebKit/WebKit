@@ -4818,8 +4818,9 @@ sub GenerateAttributeGetterBodyDefinition
         AddAdditionalArgumentsForImplementationCall(\@arguments, $interface, $attribute, "impl", "state", "thisObject");
         
         unshift(@arguments, @callWithArgs);
-        
-        my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", "*thisObject.globalObject()");
+
+        my $globalObjectReference = $attribute->isStatic ? "*jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())" : "*thisObject.globalObject()";
+        my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", $globalObjectReference);
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->isMapLike;
 
         if (!IsReadonly($attribute)) {

@@ -1,3 +1,20 @@
+2018-10-04  Justin Michaud  <justin_michaud@apple.com>
+
+        Bindings generator should support static attributes that are interfaces with CallWith
+        https://bugs.webkit.org/show_bug.cgi?id=190292
+
+        Reviewed by Chris Dumez.
+
+        Add support for static attributes that support callWith to the bindings generator. This
+        is needed for CSS.paintWorklet.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjConstructorTestStaticReadonlyObjGetter):
+        (WebCore::jsTestObjConstructorTestStaticReadonlyObj):
+        * bindings/scripts/test/TestObj.idl:
+
 2018-10-04  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r236730.

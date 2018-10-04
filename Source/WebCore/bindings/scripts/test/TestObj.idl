@@ -58,6 +58,7 @@ enum TestConfidence { "high", "kinda-low" };
     static readonly attribute long     staticReadOnlyLongAttr;
     static attribute DOMString         staticStringAttr;
     static readonly attribute TestSubObjConstructor TestSubObj;
+    [CallWith=Document] static readonly attribute TestObj testStaticReadonlyObj;
     attribute TestEnumType enumAttr;
     attribute byte byteAttr;
     attribute octet octetAttr;
