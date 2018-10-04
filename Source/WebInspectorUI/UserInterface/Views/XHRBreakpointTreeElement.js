@@ -43,9 +43,9 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
 
         super(["breakpoint", "xhr", className], title, subtitle, breakpoint);
 
-        this._statusImageElement = document.createElement("img");
-        this._statusImageElement.classList.add("status-image", "resolved");
-        this.status = this._statusImageElement;
+        this.status = document.createElement("img");
+        this.status.classList.add("status-image", "resolved");
+
         this.tooltipHandledSeparately = true;
 
         breakpoint.addEventListener(WI.XHRBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
@@ -63,18 +63,18 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
         this._boundStatusImageElementFocused = this._statusImageElementFocused.bind(this);
         this._boundStatusImageElementMouseDown = this._statusImageElementMouseDown.bind(this);
 
-        this._statusImageElement.addEventListener("click", this._boundStatusImageElementClicked);
-        this._statusImageElement.addEventListener("focus", this._boundStatusImageElementFocused);
-        this._statusImageElement.addEventListener("mousedown", this._boundStatusImageElementMouseDown);
+        this.status.addEventListener("click", this._boundStatusImageElementClicked);
+        this.status.addEventListener("focus", this._boundStatusImageElementFocused);
+        this.status.addEventListener("mousedown", this._boundStatusImageElementMouseDown);
     }
 
     ondetach()
     {
         super.ondetach();
 
-        this._statusImageElement.removeEventListener("click", this._boundStatusImageElementClicked);
-        this._statusImageElement.removeEventListener("focus", this._boundStatusImageElementFocused);
-        this._statusImageElement.removeEventListener("mousedown", this._boundStatusImageElementMouseDown);
+        this.status.removeEventListener("click", this._boundStatusImageElementClicked);
+        this.status.removeEventListener("focus", this._boundStatusImageElementFocused);
+        this.status.removeEventListener("mousedown", this._boundStatusImageElementMouseDown);
 
         this._boundStatusImageElementClicked = null;
         this._boundStatusImageElementFocused = null;
@@ -143,6 +143,6 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
 
     _updateStatus()
     {
-        this._statusImageElement.classList.toggle("disabled", this.representedObject.disabled);
+        this.status.classList.toggle("disabled", this.representedObject.disabled);
     }
 };

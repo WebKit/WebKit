@@ -48,16 +48,14 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetAdded);
         this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved);
 
-        this._statusImageElement = document.createElement("img");
-        this._statusImageElement.className = WI.BreakpointTreeElement.StatusImageElementStyleClassName;
-        this._listenerSet.register(this._statusImageElement, "mousedown", this._statusImageElementMouseDown);
-        this._listenerSet.register(this._statusImageElement, "click", this._statusImageElementClicked);
+        this.status = document.createElement("img");
+        this.status.className = WI.BreakpointTreeElement.StatusImageElementStyleClassName;
+        this._listenerSet.register(this.status, "mousedown", this._statusImageElementMouseDown);
+        this._listenerSet.register(this.status, "click", this._statusImageElementClicked);
 
         if (!title)
             this._updateTitles();
         this._updateStatus();
-
-        this.status = this._statusImageElement;
 
         this._iconAnimationLayerElement = document.createElement("span");
         this.iconElement.appendChild(this._iconAnimationLayerElement);
@@ -125,15 +123,9 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     populateContextMenu(contextMenu, event)
     {
-        WI.breakpointPopoverController.appendContextMenuItems(contextMenu, this._breakpoint, this._statusImageElement);
+        WI.breakpointPopoverController.appendContextMenuItems(contextMenu, this._breakpoint, this.status);
 
         super.populateContextMenu(contextMenu, event);
-    }
-
-    removeStatusImage()
-    {
-        this._statusImageElement.remove();
-        this._statusImageElement = null;
     }
 
     // Private
@@ -163,23 +155,23 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     _updateStatus()
     {
-        if (!this._statusImageElement)
+        if (!this.status)
             return;
 
         if (this._breakpoint.disabled)
-            this._statusImageElement.classList.add(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName);
+            this.status.classList.add(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName);
         else
-            this._statusImageElement.classList.remove(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName);
+            this.status.classList.remove(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName);
 
         if (this._breakpoint.autoContinue)
-            this._statusImageElement.classList.add(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName);
+            this.status.classList.add(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName);
         else
-            this._statusImageElement.classList.remove(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName);
+            this.status.classList.remove(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName);
 
         if (this._breakpoint.resolved && WI.debuggerManager.breakpointsEnabled)
-            this._statusImageElement.classList.add(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName);
+            this.status.classList.add(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName);
         else
-            this._statusImageElement.classList.remove(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName);
+            this.status.classList.remove(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName);
     }
 
     _addProbeSet(probeSet)

@@ -521,7 +521,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (this._pauseReasonTreeOutline) {
             let pauseReasonBreakpointTreeElement = this._pauseReasonTreeOutline.getCachedTreeElement(breakpoint);
             if (pauseReasonBreakpointTreeElement)
-                pauseReasonBreakpointTreeElement.removeStatusImage();
+                pauseReasonBreakpointTreeElement.status = null;
         }
 
         let breakpointTreeElement = this._breakpointsContentTreeOutline.getCachedTreeElement(breakpoint);
