@@ -51,21 +51,21 @@ InspectorTest.startTracingBreakpoints = function()
 
 InspectorTest.startTracingProbes = function()
 {
-    if (!WI.probeManager)
+    if (!WI.debuggerManager)
         return;
 
-    WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetAdded, function(event) {
         var probeSet = event.data.probeSet;
         console.assert(probeSet instanceof WI.ProbeSet, "Unexpected object type!");
 
-        InspectorTest.log("Probe set was added. New count: " + WI.probeManager.probeSets.length);
+        InspectorTest.log("Probe set was added. New count: " + WI.debuggerManager.probeSets.length);
     });
 
-    WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetRemoved, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, function(event) {
         var probeSet = event.data.probeSet;
         console.assert(probeSet instanceof WI.ProbeSet, "Unexpected object type!");
 
-        InspectorTest.log("Probe set was removed. New count: " + WI.probeManager.probeSets.length);
+        InspectorTest.log("Probe set was removed. New count: " + WI.debuggerManager.probeSets.length);
     });
 
     WI.Probe.addEventListener(WI.Probe.Event.ExpressionChanged, function(event) {

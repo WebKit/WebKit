@@ -80,6 +80,6 @@ WI.DebuggerObserver = class DebuggerObserver
 
     didSampleProbe(sample)
     {
-        WI.probeManager.didSampleProbe(this.target, sample);
+        WI.debuggerManager.didSampleProbe(this.target, sample);
     }
 };

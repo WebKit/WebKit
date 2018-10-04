@@ -49,7 +49,7 @@ ProtocolTest.Probe.stringifyProbeSample = function(ProbeSample)
 
 ProtocolTest.Probe.installTracingListeners = function()
 {
-    if (!WI.debuggerManager || !WI.probeManager)
+    if (!WI.debuggerManager)
         return;
 
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointAdded, function(event) {
@@ -95,18 +95,18 @@ ProtocolTest.Probe.installTracingListeners = function()
         InspectorTest.log("Breakpoint actions changed. New count: " + breakpoint.actions.length);
     });
 
-    WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetAdded, function(event) {
         var probeSet = event.data.probeSet;
         console.assert(probeSet instanceof WI.ProbeSet, "Unexpected object type!");
 
-        InspectorTest.log("Probe set was added. New count: " + WI.probeManager.probeSets.length);
+        InspectorTest.log("Probe set was added. New count: " + WI.debuggerManager.probeSets.length);
     });
 
-    WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetRemoved, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, function(event) {
         var probeSet = event.data.probeSet;
         console.assert(probeSet instanceof WI.ProbeSet, "Unexpected object type!");
 
-        InspectorTest.log("Probe set was removed. New count: " + WI.probeManager.probeSets.length);
+        InspectorTest.log("Probe set was removed. New count: " + WI.debuggerManager.probeSets.length);
     });
 
     WI.Probe.addEventListener(WI.Probe.Event.ExpressionChanged, function(event) {

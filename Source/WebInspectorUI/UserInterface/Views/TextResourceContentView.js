@@ -40,8 +40,8 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._textEditor.addEventListener(WI.SourceCodeTextEditor.Event.ContentDidPopulate, this._contentDidPopulate, this);
         this._textEditor.readOnly = !this._shouldBeEditable();
 
-        WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetAdded, this._probeSetsChanged, this);
-        WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetRemoved, this._probeSetsChanged, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetsChanged, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetsChanged, this);
 
         var toolTip = WI.UIString("Pretty print");
         var activatedToolTip = WI.UIString("Original formatting");
@@ -87,7 +87,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
     get supplementalRepresentedObjects()
     {
-        var objects = WI.probeManager.probeSets.filter(function(probeSet) {
+        let objects = WI.debuggerManager.probeSets.filter(function(probeSet) {
             return this._resource.contentIdentifier === probeSet.breakpoint.contentIdentifier;
         }, this);
 
@@ -123,7 +123,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         super.closed();
 
         this.resource.removeEventListener(null, null, this);
-        WI.probeManager.removeEventListener(null, null, this);
+        WI.debuggerManager.removeEventListener(null, null, this);
         WI.showJavaScriptTypeInformationSetting.removeEventListener(null, null, this);
         WI.enableControlFlowProfilerSetting.removeEventListener(null, null, this);
 

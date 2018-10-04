@@ -596,7 +596,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         case TimelineAgent.EventType.ProbeSample:
             // Pass the startTime as the endTime since this record type has no duration.
-            sourceCodeLocation = WI.probeManager.probeForIdentifier(recordPayload.data.probeId).breakpoint.sourceCodeLocation;
+            sourceCodeLocation = WI.debuggerManager.probeForIdentifier(recordPayload.data.probeId).breakpoint.sourceCodeLocation;
             return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.probeId);
 
         case TimelineAgent.EventType.TimerInstall:

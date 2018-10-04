@@ -1,5 +1,50 @@
 2018-10-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: merge ProbeManager into DebuggerManager
+        https://bugs.webkit.org/show_bug.cgi?id=190225
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.get probeSets): Added.
+        (WI.DebuggerManager.prototype.probeForIdentifier): Added.
+        (WI.DebuggerManager.prototype.addBreakpoint):
+        (WI.DebuggerManager.prototype.removeBreakpoint):
+        (WI.DebuggerManager.prototype.didSampleProbe): Added.
+        (WI.DebuggerManager.prototype._handleBreakpointActionsDidChange): Added.
+        (WI.DebuggerManager.prototype._addProbesForBreakpoint): Added.
+        (WI.DebuggerManager.prototype._removeProbesForBreakpoint): Added.
+        (WI.DebuggerManager.prototype._updateProbesForBreakpoint): Added.
+        (WI.DebuggerManager.prototype._probeSetForBreakpoint): Added.
+        * UserInterface/Controllers/ProbeManager.js: Removed.
+
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WI.DebuggerObserver.prototype.didSampleProbe):
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype._processRecord):
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.onattach):
+
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WI.ProbeDetailsSidebarPanel.prototype.closed):
+        (WI.ProbeDetailsSidebarPanel.prototype.initialLayout):
+
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView):
+        (WI.TextResourceContentView.prototype.get supplementalRepresentedObjects):
+        (WI.TextResourceContentView.prototype.closed):
+
+2018-10-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: some files not listed in OpenResourceDialog
         https://bugs.webkit.org/show_bug.cgi?id=190272
 

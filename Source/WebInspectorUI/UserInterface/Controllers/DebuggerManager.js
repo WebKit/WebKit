@@ -38,7 +38,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ConditionDidChange, this._breakpointEditablePropertyDidChange, this);
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.IgnoreCountDidChange, this._breakpointEditablePropertyDidChange, this);
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._breakpointEditablePropertyDidChange, this);
-        WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, this._breakpointEditablePropertyDidChange, this);
+        WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, this._handleBreakpointActionsDidChange, this);
 
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingWillStart, this._timelineCapturingWillStart, this);
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
@@ -79,6 +79,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._internalWebKitScripts = [];
         this._targetDebuggerDataMap = new Map;
         this._targetDebuggerDataMap.set(WI.mainTarget, new WI.DebuggerData(WI.mainTarget));
+
+        // Used to detect deleted probe actions.
+        this._knownProbeIdentifiersForBreakpoint = new Map;
+
+        // Main lookup tables for probes and probe sets.
+        this._probesByIdentifier = new Map;
+        this._probeSetsByBreakpoint = new Map;
 
         // Restore the correct breakpoints enabled setting if Web Inspector had
         // previously been left in a state where breakpoints were temporarily disabled.
@@ -310,6 +317,16 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             target.DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
     }
 
+    get probeSets()
+    {
+        return [...this._probeSetsByBreakpoint.values()];
+    }
+
+    probeForIdentifier(identifier)
+    {
+        return this._probesByIdentifier.get(identifier);
+    }
+
     pause()
     {
         if (this.paused)
@@ -462,6 +479,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._saveBreakpoints();
 
+        this._addProbesForBreakpoint(breakpoint);
+
         this.dispatchEventToListeners(WI.DebuggerManager.Event.BreakpointAdded, {breakpoint});
     }
 
@@ -509,6 +528,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         breakpoint.clearActions();
 
         this._saveBreakpoints();
+
+        this._removeProbesForBreakpoint(breakpoint);
 
         this.dispatchEventToListeners(WI.DebuggerManager.Event.BreakpointRemoved, {breakpoint});
     }
@@ -752,6 +773,15 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if ((target !== WI.mainTarget || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker) && !script.isMainResource() && !script.resource)
             target.addScript(script);
+    }
+
+    didSampleProbe(target, sample)
+    {
+        console.assert(this._probesByIdentifier.has(sample.probeId), "Unknown probe identifier specified for sample: ", sample);
+        let probe = this._probesByIdentifier.get(sample.probeId);
+        let elapsedTime = WI.timelineManager.computeElapsedTime(sample.timestamp);
+        let object = WI.RemoteObject.fromPayload(sample.payload, target);
+        probe.addSample(new WI.ProbeSample(sample.sampleId, sample.batchId, elapsedTime, object));
     }
 
     // Private
@@ -1082,6 +1112,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
     }
 
+    _handleBreakpointActionsDidChange(event)
+    {
+        this._breakpointEditablePropertyDidChange(event);
+
+        this._updateProbesForBreakpoint(event.target);
+    }
+
     _startDisablingBreakpointsTemporarily()
     {
         console.assert(!this.breakpointsDisabledTemporarily, "Already temporarily disabling breakpoints.");
@@ -1214,6 +1251,88 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
     }
 
+    _addProbesForBreakpoint(breakpoint)
+    {
+        if (this._knownProbeIdentifiersForBreakpoint.has(breakpoint))
+            return;
+
+        this._knownProbeIdentifiersForBreakpoint.set(breakpoint, new Set);
+
+        this._updateProbesForBreakpoint(breakpoint);
+    }
+
+    _removeProbesForBreakpoint(breakpoint)
+    {
+        console.assert(this._knownProbeIdentifiersForBreakpoint.has(breakpoint));
+
+        this._updateProbesForBreakpoint(breakpoint);
+        this._knownProbeIdentifiersForBreakpoint.delete(breakpoint);
+    }
+
+    _updateProbesForBreakpoint(breakpoint)
+    {
+        let knownProbeIdentifiers = this._knownProbeIdentifiersForBreakpoint.get(breakpoint);
+        if (!knownProbeIdentifiers) {
+            // Sometimes actions change before the added breakpoint is fully dispatched.
+            this._addProbesForBreakpoint(breakpoint);
+            return;
+        }
+
+        let seenProbeIdentifiers = new Set;
+
+        for (let probeAction of breakpoint.probeActions) {
+            let probeIdentifier = probeAction.id;
+            console.assert(probeIdentifier, "Probe added without breakpoint action identifier: ", breakpoint);
+
+            seenProbeIdentifiers.add(probeIdentifier);
+            if (!knownProbeIdentifiers.has(probeIdentifier)) {
+                // New probe; find or create relevant probe set.
+                knownProbeIdentifiers.add(probeIdentifier);
+                let probeSet = this._probeSetForBreakpoint(breakpoint);
+                let newProbe = new WI.Probe(probeIdentifier, breakpoint, probeAction.data);
+                this._probesByIdentifier.set(probeIdentifier, newProbe);
+                probeSet.addProbe(newProbe);
+                break;
+            }
+
+            let probe = this._probesByIdentifier.get(probeIdentifier);
+            console.assert(probe, "Probe known but couldn't be found by identifier: ", probeIdentifier);
+            // Update probe expression; if it differed, change events will fire.
+            probe.expression = probeAction.data;
+        }
+
+        // Look for missing probes based on what we saw last.
+        for (let probeIdentifier of knownProbeIdentifiers) {
+            if (seenProbeIdentifiers.has(probeIdentifier))
+                break;
+
+            // The probe has gone missing, remove it.
+            let probeSet = this._probeSetForBreakpoint(breakpoint);
+            let probe = this._probesByIdentifier.get(probeIdentifier);
+            this._probesByIdentifier.delete(probeIdentifier);
+            knownProbeIdentifiers.delete(probeIdentifier);
+            probeSet.removeProbe(probe);
+
+            // Remove the probe set if it has become empty.
+            if (!probeSet.probes.length) {
+                this._probeSetsByBreakpoint.delete(probeSet.breakpoint);
+                probeSet.willRemove();
+                this.dispatchEventToListeners(WI.DebuggerManager.Event.ProbeSetRemoved, {probeSet});
+            }
+        }
+    }
+
+    _probeSetForBreakpoint(breakpoint)
+    {
+        let probeSet = this._probeSetsByBreakpoint.get(breakpoint);
+        if (!probeSet) {
+            probeSet = new WI.ProbeSet(breakpoint);
+            this._probeSetsByBreakpoint.set(breakpoint, probeSet);
+            this.dispatchEventToListeners(WI.DebuggerManager.Event.ProbeSetAdded, {probeSet});
+        }
+        return probeSet;
+    }
+
     _debugUIEnabledDidChange()
     {
         let eventType = WI.isDebugUIEnabled() ? WI.DebuggerManager.Event.ScriptAdded : WI.DebuggerManager.Event.ScriptRemoved;
@@ -1234,7 +1353,9 @@ WI.DebuggerManager.Event = {
     ScriptAdded: "debugger-manager-script-added",
     ScriptRemoved: "debugger-manager-script-removed",
     ScriptsCleared: "debugger-manager-scripts-cleared",
-    BreakpointsEnabledDidChange: "debugger-manager-breakpoints-enabled-did-change"
+    BreakpointsEnabledDidChange: "debugger-manager-breakpoints-enabled-did-change",
+    ProbeSetAdded: "debugger-manager-probe-set-added",
+    ProbeSetRemoved: "debugger-manager-probe-set-removed",
 };
 
 WI.DebuggerManager.PauseReason = {

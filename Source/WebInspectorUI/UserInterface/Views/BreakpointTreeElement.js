@@ -45,9 +45,8 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this._listenerSet.register(breakpoint, WI.Breakpoint.Event.AutoContinueDidChange, this._updateStatus);
         this._listenerSet.register(breakpoint, WI.Breakpoint.Event.ResolvedStateDidChange, this._updateStatus);
         this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._updateStatus);
-
-        this._listenerSet.register(WI.probeManager, WI.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded);
-        this._listenerSet.register(WI.probeManager, WI.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved);
+        this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetAdded);
+        this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved);
 
         this._statusImageElement = document.createElement("img");
         this._statusImageElement.className = WI.BreakpointTreeElement.StatusImageElementStyleClassName;
@@ -109,7 +108,7 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
         this._listenerSet.install();
 
-        for (var probeSet of WI.probeManager.probeSets)
+        for (var probeSet of WI.debuggerManager.probeSets)
             if (probeSet.breakpoint === this._breakpoint)
                 this._addProbeSet(probeSet);
     }

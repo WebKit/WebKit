@@ -88,7 +88,7 @@ WI.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends WI.DetailsS
 
     closed()
     {
-        WI.probeManager.removeEventListener(null, null, this);
+        WI.debuggerManager.removeEventListener(null, null, this);
 
         super.closed();
     }
@@ -99,10 +99,10 @@ WI.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends WI.DetailsS
     {
         super.initialLayout();
 
-        WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded, this);
-        WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetAdded, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
 
-        for (let probeSet of new Set([...this._inspectedProbeSets, ...WI.probeManager.probeSets]))
+        for (let probeSet of new Set([...this._inspectedProbeSets, ...WI.debuggerManager.probeSets]))
             this._probeSetAdded(probeSet);
 
         this.inspectedProbeSets = this._inspectedProbeSets;
