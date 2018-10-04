@@ -566,6 +566,12 @@ PlatformImage *platformImageWithData(NSData *data)
 #endif
 }
 
+@interface FileWrapper : NSFileWrapper
+@end
+
+@implementation FileWrapper
+@end
+
 namespace TestWebKitAPI {
 
 #pragma mark - Platform-agnostic tests
@@ -1429,6 +1435,31 @@ TEST(WKAttachmentTests, ConnectImageWithAttachmentToDocument)
     [newImage setPreferredFilename:@"test.gif"];
     [attachment synchronouslySetFileWrapper:newImage.get() newContentType:nil error:nil];
     [webView waitForImageElementSizeToBecome:CGSizeMake(52, 64)];
+}
+
+TEST(WKAttachmentTests, CustomFileWrapperSubclass)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+    RetainPtr<NSException> exception;
+    @try {
+        [configuration _setAttachmentFileWrapperClass:[NSArray self]];
+    } @catch(NSException *caught) {
+        exception = caught;
+    }
+    EXPECT_TRUE(exception);
+
+    [configuration _setAttachmentFileWrapperClass:[FileWrapper self]];
+
+    auto webView = webViewForTestingAttachments(CGSizeZero, configuration.get());
+
+    ObserveAttachmentUpdatesForScope observer(webView.get());
+    platformCopyPNG();
+    [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    NSArray<_WKAttachment *> * insertedAttachments = observer.observer().inserted;
+
+    EXPECT_EQ(1U, insertedAttachments.count);
+    EXPECT_EQ([FileWrapper self], [insertedAttachments.firstObject.info.fileWrapper class]);
 }
 
 #pragma mark - Platform-specific tests

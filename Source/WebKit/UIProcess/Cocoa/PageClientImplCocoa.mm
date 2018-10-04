@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
+#import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
 
 namespace WebKit {
@@ -62,6 +63,16 @@ void PageClientImplCocoa::didRemoveAttachment(API::Attachment& attachment)
     [m_webView _didRemoveAttachment:attachment];
 #else
     UNUSED_PARAM(attachment);
+#endif
+}
+
+NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstance()
+{
+#if WK_API_ENABLED
+    Class cls = m_webView.configuration._attachmentFileWrapperClass ?: [NSFileWrapper self];
+    return [cls alloc];
+#else
+    return nil;
 #endif
 }
 

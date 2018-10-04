@@ -1,3 +1,31 @@
+2018-10-03  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Let clients specify an NSFileWrapper subclassed to be used for _WKAttachment
+        https://bugs.webkit.org/show_bug.cgi?id=190270
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]): Copy new _attachmentFileWrapperClass ivar.
+        (-[WKWebViewConfiguration _attachmentFileWrapperClass]): Added this getter.
+        (-[WKWebViewConfiguration _setAttachmentFileWrapperClass:]): Added this setter, which raises
+          an exception if the argument is not an NSFileWrapper subclass.
+
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Declared new property.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::allocFileWrapperInstance): Added. Allocates an instance of
+          the class specified in the configuration, or NSFileWrapper if no custom class is specified.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::platformRegisterAttachment): Use PageClient::allocFileWrapperInstance
+          instead of allocating an NSFileWrapper instance.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::allocFileWrapperInstance): Defined new function. The default
+          implementation returns nil.
+
 2018-10-03  Youenn Fablet  <youenn@apple.com>
 
         Add VP8 support to WebRTC

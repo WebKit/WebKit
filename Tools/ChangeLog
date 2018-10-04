@@ -1,3 +1,13 @@
+2018-10-03  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Let clients specify an NSFileWrapper subclassed to be used for _WKAttachment
+        https://bugs.webkit.org/show_bug.cgi?id=190270
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable selectionAcrossShadowBoundariesEnabled by default in WebKitLegacy

@@ -136,6 +136,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _invisibleAutoplayNotPermitted;
     BOOL _mediaDataLoadsAutomatically;
     BOOL _attachmentElementEnabled;
+    Class _attachmentFileWrapperClass;
     BOOL _mainContentUserGestureOverrideEnabled;
 
 #if PLATFORM(MAC)
@@ -355,6 +356,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
     configuration->_attachmentElementEnabled = self->_attachmentElementEnabled;
+    configuration->_attachmentFileWrapperClass = self->_attachmentFileWrapperClass;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
     configuration->_waitsForPaintAfterViewDidMoveToWindow = self->_waitsForPaintAfterViewDidMoveToWindow;
@@ -744,6 +746,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setAttachmentElementEnabled:(BOOL)attachmentElementEnabled
 {
     _attachmentElementEnabled = attachmentElementEnabled;
+}
+
+- (Class)_attachmentFileWrapperClass
+{
+    return _attachmentFileWrapperClass;
+}
+
+- (void)_setAttachmentFileWrapperClass:(Class)attachmentFileWrapperClass
+{
+    if (attachmentFileWrapperClass && ![attachmentFileWrapperClass isSubclassOfClass:[NSFileWrapper self]])
+        [NSException raise:NSInvalidArgumentException format:@"Class %@ does not inherit from NSFileWrapper", attachmentFileWrapperClass];
+
+    _attachmentFileWrapperClass = attachmentFileWrapperClass;
 }
 
 - (BOOL)_colorFilterEnabled

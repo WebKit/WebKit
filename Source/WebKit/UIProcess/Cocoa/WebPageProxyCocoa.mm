@@ -168,7 +168,7 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
         return;
 
     auto buffer = SharedBuffer::create(dataReference.data(), dataReference.size());
-    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:buffer->createNSData().autorelease()]);
+    auto fileWrapper = adoptNS([pageClient().allocFileWrapperInstance() initRegularFileWithContents:buffer->createNSData().autorelease()]);
     [fileWrapper setPreferredFilename:preferredFileName];
     attachment->setFileWrapper(fileWrapper.get());
 }
@@ -178,7 +178,7 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
     if (!filePath)
         return;
 
-    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:[NSURL fileURLWithPath:filePath] options:0 error:nil]);
+    auto fileWrapper = adoptNS([pageClient().allocFileWrapperInstance() initWithURL:[NSURL fileURLWithPath:filePath] options:0 error:nil]);
     attachment->setFileWrapper(fileWrapper.get());
 }
 

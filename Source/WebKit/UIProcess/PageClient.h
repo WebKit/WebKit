@@ -44,6 +44,7 @@
 #include "WKFoundation.h"
 
 OBJC_CLASS CALayer;
+OBJC_CLASS NSFileWrapper;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
@@ -443,6 +444,7 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual void didInsertAttachment(API::Attachment&, const String& source) { }
     virtual void didRemoveAttachment(API::Attachment&) { }
+    virtual NSFileWrapper *allocFileWrapperInstance() { return nullptr; }
 #endif
 };
 

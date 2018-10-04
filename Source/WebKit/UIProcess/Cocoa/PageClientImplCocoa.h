@@ -45,6 +45,7 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     void didInsertAttachment(API::Attachment&, const String& source) final;
     void didRemoveAttachment(API::Attachment&) final;
+    NSFileWrapper *allocFileWrapperInstance() final;
 #endif
 
 protected:
