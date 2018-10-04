@@ -146,7 +146,7 @@ WI.ResourceQueryController = class ResourceQueryController extends WI.Object
             return false;
         }
 
-        while (queryIndex < query.length && searchIndex < searchString.length) {
+        while (queryIndex < query.length && searchIndex <= searchString.length) {
             if (type === WI.ResourceQueryMatch.Type.Special && !matchNextSpecialCharacter())
                 type = WI.ResourceQueryMatch.Type.Normal;
 

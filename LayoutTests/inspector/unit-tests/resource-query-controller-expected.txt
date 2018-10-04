@@ -216,3 +216,6 @@ PASS: Result TextRanges should match the expected ranges.
 PASS: Result TextRanges should match the expected ranges.
 PASS: Result TextRanges should match the expected ranges.
 
+-- Running test case: QueryMatchesExtension
+PASS: All resources should be matched.
+

@@ -61,7 +61,7 @@ function test()
 
             for (let {filename, expected} of tests) {
                 let actual = createSpecialMask(filename, matcher._findSpecialCharacterIndices(filename));
-                InspectorTest.expectThat(actual === expected, "Result should match expected special indices.");
+                InspectorTest.expectEqual(actual, expected, "Result should match expected special indices.");
             }
         }
     });
@@ -103,7 +103,7 @@ function test()
 
             for (let query of [" abcde", "abcde ", " abcde ", "a b c d e", "a  b  c  d  e"]) {
                 let results = matcher.executeQuery(query);
-                InspectorTest.expectThat(results.length === 1, "Should match one result.");
+                InspectorTest.expectEqual(results.length, 1, "Should match one result.");
             }
         }
     });
@@ -193,7 +193,7 @@ function test()
                 let results = matcher.executeQuery(query);
                 InspectorTest.assert(results.length === 1, "Should return exactly one match.");
                 let actual = results.length ? results[0].__test_createMatchesMask() : null;
-                InspectorTest.expectThat(actual === expected, `Query "${query}" should match "${expected}" in "${filename}".`);
+                InspectorTest.expectEqual(actual, expected, `Query "${query}" should match "${expected}" in "${filename}".`);
             }
         }
     });
@@ -261,7 +261,7 @@ function test()
                 for (let queryPermutation of casePermutations(query)) {
                     let results = matcher.executeQuery(queryPermutation);
                     let actual = results.length === 1 ? results[0].__test_createMatchesMask() : "";
-                    InspectorTest.expectThat(expected === actual, `Permutation "${queryPermutation}".`);
+                    InspectorTest.expectEqual(expected, actual, `Permutation "${queryPermutation}".`);
                 }
             }
         }
@@ -278,7 +278,7 @@ function test()
             let query = "abcde";
             let results = matcher.executeQuery(query);
             let resultFilenames = results.map((filename) => filename.resource.displayName);
-            InspectorTest.expectThat(Object.shallowEqual(resultFilenames, filenames), "Results should be ranked by descending relevancy.");
+            InspectorTest.expectShallowEqual(resultFilenames, filenames, "Results should be ranked by descending relevancy.");
         }
     });
 
@@ -293,7 +293,7 @@ function test()
             let query = "bcd";
             let results = matcher.executeQuery(query);
             let resultFilenames = results.map((result) => result.resource.displayName);
-            InspectorTest.expectThat(Object.shallowEqual(resultFilenames, filenames), "Results should be ranked by descending relevancy.");
+            InspectorTest.expectShallowEqual(resultFilenames, filenames, "Results should be ranked by descending relevancy.");
         }
     });
 
@@ -353,8 +353,25 @@ function test()
 
                 let results = matcher.executeQuery("abcde");
                 let resultTextRanges = results.length ? results[0].matchingTextRanges : [];
-                InspectorTest.expectThat(JSON.stringify(resultTextRanges) === JSON.stringify(ranges), "Result TextRanges should match the expected ranges.");
+                InspectorTest.expectEqual(JSON.stringify(resultTextRanges), JSON.stringify(ranges), "Result TextRanges should match the expected ranges.");
             }
+        }
+    });
+
+    suite.addTestCase({
+        name: "QueryMatchesExtension",
+        description: "Test case for when a character from the query is found in the extension of the resource.",
+        test() {
+            const query = "TestCase";
+            const filenames = ["TestCase.123", "TestCase.a", "TestCase.b"];
+
+            let matcher = new WI.ResourceQueryController;
+            for (let filename of filenames)
+                matcher.addResource(new WI.Resource(filename));
+
+            let results = matcher.executeQuery(query);
+            let resultFilenames = results.map((result) => result.resource.displayName);
+            InspectorTest.expectShallowEqual(resultFilenames, filenames, "All resources should be matched.");
         }
     });
 

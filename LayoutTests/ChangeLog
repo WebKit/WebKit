@@ -1,3 +1,13 @@
+2018-10-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: some files not listed in OpenResourceDialog
+        https://bugs.webkit.org/show_bug.cgi?id=190272
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/resource-query-controller-expected.txt:
+        * inspector/unit-tests/resource-query-controller.html:
+
 2018-10-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Move time out control from WebProcess to UIProcess
