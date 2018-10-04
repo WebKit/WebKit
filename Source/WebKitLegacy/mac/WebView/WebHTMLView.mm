@@ -888,6 +888,7 @@ static NSString * const WebMarkedTextUpdatedNotification = @"WebMarkedTextUpdate
 - (void)_updateSelectionForInputManager;
 #endif
 #if PLATFORM(IOS)
+- (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange;
 - (void)doCommandBySelector:(SEL)selector;
 #endif
 @end
@@ -5690,64 +5691,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
 }
 #endif
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
-- (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
-IGNORE_WARNINGS_END
-{
-    [self _executeSavedKeypressCommands];
-
-#if PLATFORM(MAC)
-    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
-    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
-
-    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
-#endif
-
-    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
-    auto* parameters = _private->interpretKeyEventsParameters;
-
-    if (parameters) {
-        parameters->eventInterpretationHadSideEffects = true;
-        parameters->consumedByIM = false;
-    }
-    
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
-
-    if (![self _isEditable])
-        return;
-
-    Vector<CompositionUnderline> underlines;
-    NSString *text;
-    NSRange replacementRange = { NSNotFound, 0 };
-
-#if PLATFORM(MAC)
-    if (isAttributedString) {
-        // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
-        text = [string string];
-        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
-        LOG(TextInput, "    ReplacementRange: %@", rangeString);
-        // The AppKit adds a 'secret' property to the string that contains the replacement range.
-        // The replacement range is the range of the text that should be replaced with the new string.
-        if (rangeString)
-            replacementRange = NSRangeFromString(rangeString);
-
-        extractUnderlines(string, underlines);
-    } else {
-        text = string;
-        underlines.append(CompositionUnderline(0, [text length], CompositionUnderlineColor::TextColor, Color::black, false));
-    }
-#else
-    text = string;
-#endif
-
-    if (replacementRange.location != NSNotFound)
-        [[self _frame] _selectNSRange:replacementRange];
-
-    coreFrame->editor().setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange));
-}
-
 @end
 
 @implementation WebHTMLView (WebInternal)
@@ -6561,6 +6504,64 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 }
 
 #endif
+
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+- (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
+IGNORE_WARNINGS_END
+{
+    [self _executeSavedKeypressCommands];
+
+#if PLATFORM(MAC)
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
+
+    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
+#endif
+
+    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    auto* parameters = _private->interpretKeyEventsParameters;
+
+    if (parameters) {
+        parameters->eventInterpretationHadSideEffects = true;
+        parameters->consumedByIM = false;
+    }
+    
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
+    if (![self _isEditable])
+        return;
+
+    Vector<CompositionUnderline> underlines;
+    NSString *text;
+    NSRange replacementRange = { NSNotFound, 0 };
+
+#if PLATFORM(MAC)
+    if (isAttributedString) {
+        // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
+        text = [string string];
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
+        LOG(TextInput, "    ReplacementRange: %@", rangeString);
+        // The AppKit adds a 'secret' property to the string that contains the replacement range.
+        // The replacement range is the range of the text that should be replaced with the new string.
+        if (rangeString)
+            replacementRange = NSRangeFromString(rangeString);
+
+        extractUnderlines(string, underlines);
+    } else {
+        text = string;
+        underlines.append(CompositionUnderline(0, [text length], CompositionUnderlineColor::TextColor, Color::black, false));
+    }
+#else
+    text = string;
+#endif
+
+    if (replacementRange.location != NSNotFound)
+        [[self _frame] _selectNSRange:replacementRange];
+
+    coreFrame->editor().setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange));
+}
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)doCommandBySelector:(SEL)selector
