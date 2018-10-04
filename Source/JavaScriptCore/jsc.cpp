@@ -90,6 +90,8 @@
 
 #if OS(WINDOWS)
 #include <direct.h>
+#include <fcntl.h>
+#include <io.h>
 #include <wtf/text/win/WCharStringExtras.h>
 #else
 #include <unistd.h>
@@ -2230,6 +2232,9 @@ int main(int argc, char** argv)
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
+
+    _setmode(_fileno(stdout), _O_BINARY);
+    _setmode(_fileno(stderr), _O_BINARY);
 
 #if defined(_DEBUG)
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);

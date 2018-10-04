@@ -1,3 +1,16 @@
+2018-10-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] print() changes CRLF to CRCRLF on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=190228
+
+        Reviewed by Mark Lam.
+
+        * jsc.cpp:
+        (main):
+        Ultimately, this is just the normal behavior of printf in text mode on Windows.
+        Since we're reading in files as binary, we need to be printing out as binary too
+        (just as we do in DumpRenderTree and ImageDiff.)
+
 2018-10-03  Saam barati  <sbarati@apple.com>
 
         lowXYZ in FTLLower should always filter the type of the incoming edge
