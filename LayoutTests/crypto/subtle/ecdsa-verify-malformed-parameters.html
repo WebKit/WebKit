@@ -27,6 +27,8 @@ var ecdsaParams = {
 var data = asciiToUint8Array("Hello, World!");
 var corruptedSignature = hexStringToUint8Array("d60737267c707deb1f3547c85d3f49b167fb3b4fd7ed7d974c2adc4f89171f9884a2637d5d5a7c5d475dc13d37522b958d5bf333a06e9ad445e831f220900a1b");
 var shortenSignature = hexStringToUint8Array("d60737267c707deb1f3547c85d3f49b167fb3b4fd7ed7d974c2adc4f89171f9884a2637d5d5a7c5d475dc13d37522b958d5bf333a06e9ad445e831f220900a");
+var invalidSignature1 = hexStringToUint8Array("000000000000000000000000000000000000000000000000000000000000000084a2637d5d5a7c5d475dc13d37522b958d5bf333a06e9ad445e831f220900a1b");
+var invalidSignature2 = hexStringToUint8Array("84a2637d5d5a7c5d475dc13d37522b958d5bf333a06e9ad445e831f220900a1b0000000000000000000000000000000000000000000000000000000000000000");
 
 crypto.subtle.importKey("jwk", jwkPublicKey, { name: "ECDSA", namedCurve: "P-256" }, extractable, ["verify"]).then(function(result) {
     key = result;
@@ -37,7 +39,19 @@ crypto.subtle.importKey("jwk", jwkPublicKey, { name: "ECDSA", namedCurve: "P-256
 
     shouldBeFalse("verified");
 
-    return crypto.subtle.verify(ecdsaParams, key, corruptedSignature, data);
+    return crypto.subtle.verify(ecdsaParams, key, shortenSignature, data);
+}).then(function(result) {
+    verified = result;
+
+    shouldBeFalse("verified");
+
+    return crypto.subtle.verify(ecdsaParams, key, invalidSignature1, data);
+}).then(function(result) {
+    verified = result;
+
+    shouldBeFalse("verified");
+
+    return crypto.subtle.verify(ecdsaParams, key, invalidSignature2, data);
 }).then(function(result) {
     verified = result;
 

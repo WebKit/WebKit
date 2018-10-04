@@ -5,6 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS verified is false
 PASS verified is false
+PASS verified is false
+PASS verified is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

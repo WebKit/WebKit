@@ -1,3 +1,14 @@
+2018-09-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] ECDSA could not deal with invalid signature inputs
+        https://bugs.webkit.org/show_bug.cgi?id=189879
+        <rdar://problem/44701276>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/ecdsa-verify-malformed-parameters-expected.txt:
+        * crypto/subtle/ecdsa-verify-malformed-parameters.html:
+
 2018-10-03  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] REGRESSION: setting 'animation-name: none' after a 'fill: forwards' animation has completed does not revert to the unanimated style
