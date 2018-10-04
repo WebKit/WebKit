@@ -606,7 +606,7 @@ void RenderGrid::placeItemsOnGrid(Grid& grid, std::optional<LayoutUnit> availabl
     }
     grid.setHasAnyOrthogonalGridItem(hasAnyOrthogonalGridItem);
 
-#if ENABLE(ASSERT)
+#if !ASSERT_DISABLED
     if (grid.hasGridItems()) {
         ASSERT(grid.numTracks(ForRows) >= GridPositionsResolver::explicitGridRowCount(style(), grid.autoRepeatTracks(ForRows)));
         ASSERT(grid.numTracks(ForColumns) >= GridPositionsResolver::explicitGridColumnCount(style(), grid.autoRepeatTracks(ForColumns)));
@@ -622,7 +622,7 @@ void RenderGrid::placeItemsOnGrid(Grid& grid, std::optional<LayoutUnit> availabl
 
     grid.setNeedsItemsPlacement(false);
 
-#if ENABLE(ASSERT)
+#if !ASSERT_DISABLED
     for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {
         if (grid.orderIterator().shouldSkipChild(*child))
             continue;
@@ -1144,7 +1144,7 @@ bool RenderGrid::isInlineBaselineAlignedChild(const RenderBox& child) const
 // FIXME: This logic is shared by RenderFlexibleBox, so it might be refactored somehow.
 int RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode mode) const
 {
-#if ENABLE(ASSERT)
+#if !ASSERT_DISABLED
     ASSERT(mode == PositionOnContainingLine);
 #else
     UNUSED_PARAM(mode);
