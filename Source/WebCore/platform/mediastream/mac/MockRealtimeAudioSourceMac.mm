@@ -86,16 +86,9 @@ static void addHum(float amplitude, float frequency, float sampleRate, uint64_t 
     }
 }
 
-CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
 {
-#ifndef NDEBUG
-    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
-    ASSERT(device);
-    if (!device)
-        return { };
-#endif
-
-    auto source = adoptRef(*new MockRealtimeAudioSourceMac(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
+    auto source = adoptRef(*new MockRealtimeAudioSourceMac(deviceID, name));
     // FIXME: We should report error messages
     if (constraints && source->applyConstraints(*constraints))
         return { };
@@ -103,8 +96,8 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
     return CaptureSourceOrError(WTFMove(source));
 }
 
-MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac(String&& deviceID, String&& name, String&& hashSalt)
-    : MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac(const String& deviceID, const String& name)
+    : MockRealtimeAudioSource(deviceID, name)
 {
 }
 

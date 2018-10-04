@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-RealtimeVideoSource::RealtimeVideoSource(String&& name, String&& id, String&& hashSalt)
-    : RealtimeMediaSource(Type::Video, WTFMove(name), WTFMove(id), WTFMove(hashSalt))
+RealtimeVideoSource::RealtimeVideoSource(const String& id, const String& name)
+    : RealtimeMediaSource(id, Type::Video, name)
 {
 }
 

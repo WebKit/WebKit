@@ -34,7 +34,7 @@ class WrappedMockRealtimeVideoSource;
 // to the MockRealtimeMediaSource class by wrapping our own subclass of it.
 class MockGStreamerVideoCaptureSource final : public GStreamerVideoCaptureSource, RealtimeMediaSource::Observer {
 public:
-    MockGStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt);
+    MockGStreamerVideoCaptureSource(const String& deviceID, const String& name);
     ~MockGStreamerVideoCaptureSource();
     std::optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
     void applyConstraints(const MediaConstraints&, SuccessHandler&&, FailureHandler&&) final;

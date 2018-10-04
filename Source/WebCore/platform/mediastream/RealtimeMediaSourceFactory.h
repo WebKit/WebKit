@@ -27,15 +27,14 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
 class CaptureDevice;
 class RealtimeMediaSource;
 
-struct CaptureSourceOrError;
 struct MediaConstraints;
+
+struct CaptureSourceOrError;
 
 class SingleSourceFactory {
 public:
@@ -54,7 +53,7 @@ class AudioCaptureFactory
 {
 public:
     virtual ~AudioCaptureFactory() = default;
-    virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
+    virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
 
 protected:
     AudioCaptureFactory() = default;
@@ -67,7 +66,7 @@ class VideoCaptureFactory
 {
 public:
     virtual ~VideoCaptureFactory() = default;
-    virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
+    virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
     virtual void setVideoCapturePageState(bool, bool) { }
 
 protected:

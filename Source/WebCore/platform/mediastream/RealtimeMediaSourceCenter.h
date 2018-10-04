@@ -65,7 +65,7 @@ public:
     virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, String&&);
 
     using NewMediaStreamHandler = WTF::Function<void(RefPtr<MediaStreamPrivate>&&)>;
-    virtual void createMediaStream(NewMediaStreamHandler&&, String&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
+    virtual void createMediaStream(NewMediaStreamHandler&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
 
     WEBCORE_EXPORT virtual Vector<CaptureDevice> getMediaStreamDevices();
     WEBCORE_EXPORT std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
@@ -110,7 +110,7 @@ private:
     };
 
     void getDisplayMediaDevices(const MediaStreamRequest&, Vector<DeviceInfo>&, String&);
-    void getUserMediaDevices(const MediaStreamRequest&, String&&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, String&);
+    void getUserMediaDevices(const MediaStreamRequest&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, String&);
 
     WTF::Function<void()> m_deviceChangedObserver;
 };

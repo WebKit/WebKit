@@ -41,13 +41,13 @@ namespace WebCore {
 
 class ScreenDisplayCaptureSourceMac : public DisplayCaptureSourceCocoa {
 public:
-    static CaptureSourceOrError create(String&&, const MediaConstraints*);
+    static CaptureSourceOrError create(const String&, const MediaConstraints*);
 
     static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     static void screenCaptureDevices(Vector<CaptureDevice>&);
 
 private:
-    ScreenDisplayCaptureSourceMac(uint32_t, String&&);
+    ScreenDisplayCaptureSourceMac(uint32_t);
     virtual ~ScreenDisplayCaptureSourceMac();
 
     static void displayReconfigurationCallBack(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void*);

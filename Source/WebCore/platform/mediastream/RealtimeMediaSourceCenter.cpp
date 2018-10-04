@@ -79,14 +79,14 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
 
 RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;
 
-void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& completionHandler, String&& hashSalt, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest& request)
+void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& completionHandler, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest& request)
 {
     Vector<Ref<RealtimeMediaSource>> audioSources;
     Vector<Ref<RealtimeMediaSource>> videoSources;
     String invalidConstraint;
 
     if (audioDevice) {
-        auto audioSource = audioFactory().createAudioCaptureSource(WTFMove(audioDevice), String { hashSalt }, &request.audioConstraints);
+        auto audioSource = audioFactory().createAudioCaptureSource(WTFMove(audioDevice), &request.audioConstraints);
         if (audioSource)
             audioSources.append(audioSource.source());
         else {
@@ -102,7 +102,7 @@ void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& comple
     if (videoDevice) {
         CaptureSourceOrError videoSource;
         if (videoDevice.type() == CaptureDevice::DeviceType::Camera)
-            videoSource = videoFactory().createVideoCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints);
+            videoSource = videoFactory().createVideoCaptureSource(WTFMove(videoDevice), &request.videoConstraints);
         else
             videoSource = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), &request.videoConstraints);
 
@@ -231,7 +231,7 @@ void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest&
     }
 }
 
-void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& request, String&& hashSalt, Vector<DeviceInfo>& audioDeviceInfo, Vector<DeviceInfo>& videoDeviceInfo, String& firstInvalidConstraint)
+void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& request, Vector<DeviceInfo>& audioDeviceInfo, Vector<DeviceInfo>& videoDeviceInfo, String& firstInvalidConstraint)
 {
     String invalidConstraint;
     if (request.audioConstraints.isValid) {
@@ -239,7 +239,7 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
             if (!device.enabled())
                 continue;
 
-            auto sourceOrError = audioFactory().createAudioCaptureSource(device, String { hashSalt }, { });
+            auto sourceOrError = audioFactory().createAudioCaptureSource(device, { });
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.audioConstraints, invalidConstraint))
                 audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
 
@@ -253,7 +253,7 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
             if (!device.enabled())
                 continue;
 
-            auto sourceOrError = videoFactory().createVideoCaptureSource(device, String { hashSalt }, { });
+            auto sourceOrError = videoFactory().createVideoCaptureSource(device, { });
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
                 videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
 
@@ -279,7 +279,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
     if (request.type == MediaStreamRequest::Type::DisplayMedia)
         getDisplayMediaDevices(request, videoDeviceInfo, firstInvalidConstraint);
     else
-        getUserMediaDevices(request, String { deviceIdentifierHashSalt }, audioDeviceInfo, videoDeviceInfo, firstInvalidConstraint);
+        getUserMediaDevices(request, audioDeviceInfo, videoDeviceInfo, firstInvalidConstraint);
 
     if ((request.audioConstraints.isValid && audioDeviceInfo.isEmpty()) || (request.videoConstraints.isValid && videoDeviceInfo.isEmpty())) {
         invalidHandler(firstInvalidConstraint);

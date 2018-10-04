@@ -88,10 +88,10 @@ public:
 
     virtual ~RealtimeMediaSource() = default;
 
-    const String& hashedId() const;
-    String deviceIDHashSalt() const;
+    const String& id() const { return m_id; }
 
     const String& persistentID() const { return m_persistentID; }
+    virtual void setPersistentID(String&& persistentID) { m_persistentID = WTFMove(persistentID); }
 
     enum class Type { None, Audio, Video };
     Type type() const { return m_type; }
@@ -166,7 +166,7 @@ public:
     virtual void delaySamples(Seconds) { };
 
 protected:
-    RealtimeMediaSource(Type, String&& name, String&& deviceID = { }, String&& hashSalt = { });
+    RealtimeMediaSource(const String& id, Type, const String& name);
 
     void scheduleDeferredTask(WTF::Function<void()>&&);
 
@@ -204,8 +204,7 @@ private:
 
     bool m_muted { false };
 
-    String m_idHashSalt;
-    String m_hashedID;
+    String m_id;
     String m_persistentID;
     Type m_type;
     String m_name;

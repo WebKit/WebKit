@@ -300,15 +300,16 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
         m_pendingActivationMediaStream = PendingActivationMediaStream::create(WTFMove(protector), *this, WTFMove(stream));
     };
 
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
+    m_request.audioConstraints.deviceIDHashSalt = deviceIdentifierHashSalt;
+    m_request.videoConstraints.deviceIDHashSalt = WTFMove(deviceIdentifierHashSalt);
 
-    RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
+    RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
 
     if (!m_scriptExecutionContext)
         return;
 
 #if ENABLE(WEB_RTC)
+    auto& document = downcast<Document>(*m_scriptExecutionContext);
     if (auto* page = document.page())
         page->rtcController().disableICECandidateFilteringForDocument(document);
 #endif

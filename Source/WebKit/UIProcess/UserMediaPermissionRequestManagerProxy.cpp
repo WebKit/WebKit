@@ -336,6 +336,9 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         if (!m_page.isValid())
             return;
         
+        localUserRequest.audioConstraints.deviceIDHashSalt = deviceIdentifierHashSalt;
+        localUserRequest.videoConstraints.deviceIDHashSalt = deviceIdentifierHashSalt;
+
         syncWithWebCorePrefs();
         
         RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), WTFMove(localUserRequest), WTFMove(deviceIdentifierHashSalt));

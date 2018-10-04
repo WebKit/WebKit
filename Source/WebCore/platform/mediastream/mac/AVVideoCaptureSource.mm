@@ -150,13 +150,13 @@ public:
     RetainPtr<AVCaptureDeviceFormatType> format;
 };
 
-CaptureSourceOrError AVVideoCaptureSource::create(String&& id, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError AVVideoCaptureSource::create(const AtomicString& id, const MediaConstraints* constraints)
 {
     AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:id];
     if (!device)
         return { };
 
-    auto source = adoptRef(*new AVVideoCaptureSource(device, WTFMove(id), WTFMove(hashSalt)));
+    auto source = adoptRef(*new AVVideoCaptureSource(device, id));
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
         if (result)
@@ -166,8 +166,8 @@ CaptureSourceOrError AVVideoCaptureSource::create(String&& id, String&& hashSalt
     return CaptureSourceOrError(WTFMove(source));
 }
 
-AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, String&& id, String&& hashSalt)
-    : RealtimeVideoSource(device.localizedName, WTFMove(id), WTFMove(hashSalt))
+AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id)
+    : RealtimeVideoSource(id, device.localizedName)
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
 {
@@ -177,6 +177,8 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, Strin
     static_assert(static_cast<int>(InterruptionReason::VideoInUse) == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient, "InterruptionReason::VideoInUse is not AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient as expected");
     static_assert(static_cast<int>(InterruptionReason::AudioInUse) == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient, "InterruptionReason::AudioInUse is not AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient as expected");
 #endif
+
+    setPersistentID(String(device.uniqueID));
 }
 
 AVVideoCaptureSource::~AVVideoCaptureSource()
@@ -258,7 +260,7 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     auto& size = this->size();
     settings.setWidth(size.width());
     settings.setHeight(size.height());
-    settings.setDeviceId(hashedId());
+    settings.setDeviceId(id());
 
     RealtimeMediaSourceSupportedConstraints supportedConstraints;
     supportedConstraints.setSupportsDeviceId(true);
@@ -281,7 +283,7 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
         return *m_capabilities;
 
     RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
-    capabilities.setDeviceId(hashedId());
+    capabilities.setDeviceId(id());
 
     AVCaptureDeviceTypedef *videoDevice = device();
     if ([videoDevice position] == AVCaptureDevicePositionFront)

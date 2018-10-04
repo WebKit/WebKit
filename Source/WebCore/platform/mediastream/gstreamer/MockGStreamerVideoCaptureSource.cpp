@@ -33,8 +33,8 @@ namespace WebCore {
 
 class WrappedMockRealtimeVideoSource : public MockRealtimeVideoSource {
 public:
-    WrappedMockRealtimeVideoSource(String&& deviceID, String&& name, String&& hashSalt)
-        : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+    WrappedMockRealtimeVideoSource(const String& deviceID, const String& name)
+        : MockRealtimeVideoSource(deviceID, name)
     {
     }
 
@@ -61,10 +61,10 @@ public:
     }
 };
 
-CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID,
-    String&& name, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeVideoSource::create(const String& deviceID,
+    const String& name, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(*new MockGStreamerVideoCaptureSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
+    auto source = adoptRef(*new MockGStreamerVideoCaptureSource(deviceID, name));
 
     if (constraints && source->applyConstraints(*constraints))
         return { };
@@ -95,9 +95,9 @@ void MockGStreamerVideoCaptureSource::videoSampleAvailable(MediaSample& sample)
     }
 }
 
-MockGStreamerVideoCaptureSource::MockGStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt)
-    : GStreamerVideoCaptureSource(String { deviceID }, String { name }, String { hashSalt }, "appsrc")
-    , m_wrappedSource(std::make_unique<WrappedMockRealtimeVideoSource>(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)))
+MockGStreamerVideoCaptureSource::MockGStreamerVideoCaptureSource(const String& deviceID, const String& name)
+    : GStreamerVideoCaptureSource(deviceID, name, "appsrc")
+    , m_wrappedSource(std::make_unique<WrappedMockRealtimeVideoSource>(deviceID, name))
 {
     m_wrappedSource->addObserver(*this);
 }

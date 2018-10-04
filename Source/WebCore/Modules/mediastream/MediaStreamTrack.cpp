@@ -197,7 +197,7 @@ void MediaStreamTrack::stopTrack(StopMode mode)
     configureTrackRendering();
 }
 
-MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
+MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings(Document& document) const
 {
     auto& settings = m_private->settings();
     TrackSettings result;
@@ -220,9 +220,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
     if (settings.supportsEchoCancellation())
         result.echoCancellation = settings.echoCancellation();
     if (settings.supportsDeviceId())
-        result.deviceId = settings.deviceId();
+        result.deviceId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(settings.deviceId(), document.deviceIDHashSalt());
     if (settings.supportsGroupId())
-        result.groupId = settings.groupId();
+        result.groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(settings.groupId(), document.deviceIDHashSalt());
 
     // FIXME: shouldn't this include displaySurface and logicalSurface?
 
@@ -287,7 +287,7 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Ech
     return result;
 }
 
-MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
+MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities(Document& document) const
 {
     auto capabilities = m_private->capabilities();
     TrackCapabilities result;
@@ -310,9 +310,9 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
     if (capabilities.supportsEchoCancellation())
         result.echoCancellation = capabilityBooleanVector(capabilities.echoCancellation());
     if (capabilities.supportsDeviceId())
-        result.deviceId = capabilities.deviceId();
+        result.deviceId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(capabilities.deviceId(), document.deviceIDHashSalt());
     if (capabilities.supportsGroupId())
-        result.groupId = capabilities.groupId();
+        result.groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(capabilities.groupId(), document.deviceIDHashSalt());
     return result;
 }
 

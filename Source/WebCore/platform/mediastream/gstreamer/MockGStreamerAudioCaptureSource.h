@@ -29,7 +29,7 @@ namespace WebCore {
 
 class MockGStreamerAudioCaptureSource final : public GStreamerAudioCaptureSource, RealtimeMediaSource::Observer {
 public:
-    MockGStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt);
+    MockGStreamerAudioCaptureSource(const String& deviceID, const String& name);
     ~MockGStreamerAudioCaptureSource();
     std::optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
     void applyConstraints(const MediaConstraints&, SuccessHandler&&, FailureHandler&&) final;

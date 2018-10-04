@@ -49,16 +49,14 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
-CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeVideoSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
 {
-#ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
         return { };
-#endif
 
-    auto source = adoptRef(*new MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
+    auto source = adoptRef(*new MockRealtimeVideoSource(WTFMove(device), deviceID, name));
     if (constraints && source->applyConstraints(*constraints))
         return { };
 
@@ -66,11 +64,11 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
 }
 #endif
 
-MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& name, String&& hashSalt)
-    : RealtimeVideoSource(WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
+MockRealtimeVideoSource::MockRealtimeVideoSource(const String& deviceID, const String& name)
+    : RealtimeVideoSource(deviceID, name)
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
-    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
+    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     m_device = *device;
 
@@ -122,7 +120,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
     if (!m_capabilities) {
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
-        capabilities.setDeviceId(hashedId());
+        capabilities.setDeviceId(id());
         if (mockCamera()) {
             capabilities.addFacingMode(WTF::get<MockCameraProperties>(m_device.properties).facingMode);
             updateCapabilities(capabilities);
@@ -156,7 +154,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     settings.setHeight(size.height());
     if (aspectRatio())
         settings.setAspectRatio(aspectRatio());
-    settings.setDeviceId(hashedId());
+    settings.setDeviceId(id());
 
     RealtimeMediaSourceSupportedConstraints supportedConstraints;
     supportedConstraints.setSupportsDeviceId(true);

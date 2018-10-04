@@ -117,7 +117,7 @@ void MediaDevicesRequest::start()
         if (!scriptExecutionContext())
             return;
 
-        auto& document = downcast<Document>(*scriptExecutionContext());
+        Document& document = downcast<Document>(*scriptExecutionContext());
         document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
 
         Vector<Ref<MediaDeviceInfo>> devices;

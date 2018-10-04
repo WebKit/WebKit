@@ -105,7 +105,7 @@ public:
         String deviceId;
         String groupId;
     };
-    TrackSettings getSettings() const;
+    TrackSettings getSettings(Document&) const;
 
     struct TrackCapabilities {
         std::optional<LongRange> width;
@@ -120,7 +120,7 @@ public:
         String deviceId;
         String groupId;
     };
-    TrackCapabilities getCapabilities() const;
+    TrackCapabilities getCapabilities(Document&) const;
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
     void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromiseDeferred<void>&&);

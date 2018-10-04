@@ -40,13 +40,13 @@ class PixelBufferConformerCV;
 
 class WindowDisplayCaptureSourceMac : public DisplayCaptureSourceCocoa {
 public:
-    static CaptureSourceOrError create(String&&, const MediaConstraints*);
+    static CaptureSourceOrError create(const String&, const MediaConstraints*);
 
     static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
     static void windowCaptureDevices(Vector<CaptureDevice>&);
 
 private:
-    WindowDisplayCaptureSourceMac(uint32_t, String&&);
+    WindowDisplayCaptureSourceMac(uint32_t windowID, String&&);
     virtual ~WindowDisplayCaptureSourceMac() = default;
 
     RetainPtr<CVPixelBufferRef> generateFrame() final;

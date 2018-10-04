@@ -42,7 +42,7 @@ public:
     virtual ~RealtimeVideoSource();
 
 protected:
-    RealtimeVideoSource(String&& name, String&& id, String&& hashSalt);
+    RealtimeVideoSource(const String& id, const String& name);
 
     void prepareToProduceData();
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;

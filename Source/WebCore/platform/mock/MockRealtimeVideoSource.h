@@ -48,10 +48,10 @@ class GraphicsContext;
 class MockRealtimeVideoSource : public RealtimeVideoSource {
 public:
 
-    static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);
+    static CaptureSourceOrError create(const String& deviceID, const String& name, const MediaConstraints*);
 
 protected:
-    MockRealtimeVideoSource(String&& deviceID, String&& name, String&& hashSalt);
+    MockRealtimeVideoSource(const String& deviceID, const String& name);
 
     virtual void updateSampleBuffer() = 0;
 

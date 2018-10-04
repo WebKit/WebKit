@@ -34,7 +34,7 @@
 namespace WebCore {
 
 MediaStreamAudioSource::MediaStreamAudioSource(float sampleRate)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, "MediaStreamAudioDestinationNode"_s)
+    : RealtimeMediaSource(makeString("WebAudio-"_s, createCanonicalUUIDString()), RealtimeMediaSource::Type::Audio, "MediaStreamAudioDestinationNode")
 {
     m_currentSettings.setSampleRate(sampleRate);
 }
