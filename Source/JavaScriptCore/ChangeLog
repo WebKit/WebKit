@@ -1,3 +1,16 @@
+2018-10-04  Mark Lam  <mark.lam@apple.com>
+
+        Disable Options::useWebAssemblyFastMemory() on linux if ASAN signal handling is not disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=190283
+        <rdar://problem/45015752>
+
+        Reviewed by Keith Miller.
+
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::enableFastMemory):
+
 2018-10-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] print() changes CRLF to CRCRLF on Windows

@@ -123,20 +123,20 @@ bool fastMemoryEnabled()
 
 void enableFastMemory()
 {
+#if ENABLE(WEBASSEMBLY_FAST_MEMORY)
     static std::once_flag once;
     std::call_once(once, [] {
         if (!Options::useWebAssemblyFastMemory())
             return;
 
-#if ENABLE(WEBASSEMBLY_FAST_MEMORY)
         installSignalHandler(Signal::BadAccess, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
             return trapHandler(signal, sigInfo, ucontext);
         });
 
         codeLocations.construct();
         fastHandlerInstalled = true;
-#endif // ENABLE(WEBASSEMBLY_FAST_MEMORY)
     });
+#endif // ENABLE(WEBASSEMBLY_FAST_MEMORY)
 }
     
 } } // namespace JSC::Wasm
