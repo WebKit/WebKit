@@ -1,3 +1,16 @@
+2018-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r236803.
+
+        Caused crashes on some bots
+
+        Reverted changeset:
+
+        "Regression(r236779): Crash when changing the input element
+        type from inside an 'input' event listener"
+        https://bugs.webkit.org/show_bug.cgi?id=190252
+        https://trac.webkit.org/changeset/236803
+
 2018-10-04  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the Mojave build after r236832.
