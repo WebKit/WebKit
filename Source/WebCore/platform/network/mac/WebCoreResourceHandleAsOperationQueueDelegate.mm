@@ -161,7 +161,9 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
     return requestResult.autorelease();
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+IGNORE_WARNINGS_END
 {
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
@@ -179,7 +181,9 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
     [self callFunctionOnMainThread:WTFMove(work)];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+IGNORE_WARNINGS_END
 {
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);

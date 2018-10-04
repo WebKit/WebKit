@@ -10106,7 +10106,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exec ${SRCROOT}/mac/postprocess-framework-headers.sh\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exec ${SRCROOT}/mac/postprocess-framework-headers.sh\nfi\n";
 		};
 		1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;

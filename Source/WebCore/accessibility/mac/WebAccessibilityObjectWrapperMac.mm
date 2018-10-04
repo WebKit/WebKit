@@ -1117,7 +1117,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
     return textMarkerRangeFromVisiblePositions(m_object->axObjectCache(), startPosition, endPosition);
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray*)accessibilityActionNames
+IGNORE_WARNINGS_END
 {
     if (![self updateObjectBackingStore])
         return nil;
@@ -1251,7 +1253,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
     return additional;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray*)accessibilityAttributeNames
+IGNORE_WARNINGS_END
 {
     if (![self updateObjectBackingStore])
         return nil;
@@ -2426,7 +2430,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 // FIXME: split up this function in a better way.
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)accessibilityAttributeValue:(NSString*)attributeName
+IGNORE_WARNINGS_END
 {
     if (![self updateObjectBackingStore])
         return nil;
@@ -3301,7 +3307,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return NSAccessibilityUnignoredAncestor(self);
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
+IGNORE_WARNINGS_END
 {
     if (![self updateObjectBackingStore])
         return NO;
@@ -3354,7 +3362,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 // AppKit's id mapping tables. We do this in detach by calling unregisterUniqueIdForUIElement.
 //
 // Registering an object is also required for observing notifications. Only registered objects can be observed.
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)accessibilityIsIgnored
+IGNORE_WARNINGS_END
 {
     if (![self updateObjectBackingStore])
         return YES;
@@ -3364,7 +3374,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return m_object->accessibilityIsIgnored();
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray* )accessibilityParameterizedAttributeNames
+IGNORE_WARNINGS_END
 {
     if (![self updateObjectBackingStore])
         return nil;
@@ -3584,7 +3596,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     m_object->scrollToGlobalPoint(IntPoint(point));
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)accessibilityPerformAction:(NSString*)action
+IGNORE_WARNINGS_END
 {
     if (![self updateObjectBackingStore])
         return;
@@ -3615,7 +3629,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self accessibilityScrollToVisible];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
+IGNORE_WARNINGS_END
 {
 #if PLATFORM(MAC)
     // In case anything we do by changing values causes an alert or other modal
@@ -3758,7 +3774,9 @@ static RenderObject* rendererForView(NSView* view)
     return nil;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSString*)accessibilityActionDescription:(NSString*)action
+IGNORE_WARNINGS_END
 {
     // we have no custom actions
     return NSAccessibilityActionDescription(action);
@@ -3887,7 +3905,9 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
 }
 #endif
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
+IGNORE_WARNINGS_END
 {
     id textMarker = nil;
     id textMarkerRange = nil;

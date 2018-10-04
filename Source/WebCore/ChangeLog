@@ -1,3 +1,27 @@
+2018-10-04  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of [Xcode] Update some build settings as recommended by Xcode 10
+        https://bugs.webkit.org/show_bug.cgi?id=190250
+
+        Reviewed by Andy Estes.
+
+        * Configurations/Base.xcconfig: Enabled CLANG_WARN_COMMA, CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF,
+          CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED, and CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS.
+
+        * WebCore.xcodeproj/project.pbxproj: Let Xcode update LastUpgradeCheck and remove a
+          duplicate reference in a Compile Sources build phase.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm: Suppress -Wdeprecated-implementations
+          around implementations of deprecated accessibility methods.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForBOM): Addressed CLANG_WARN_COMMA.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveAuthenticationChallenge:]):
+          Suppress -Wdeprecated-implementations around implementations of this deprecated delegate method.
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:canAuthenticateAgainstProtectionSpace:]): Ditto.
+
 2018-10-02  Darin Adler  <darin@apple.com>
 
         AudioNode.connect should use [ReturnValue]

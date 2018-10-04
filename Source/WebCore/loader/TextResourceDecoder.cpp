@@ -415,9 +415,9 @@ size_t TextResourceDecoder::checkForBOM(const char* data, size_t len)
     size_t buf2Len = len;
     const unsigned char* buf1 = reinterpret_cast<const unsigned char*>(m_buffer.data());
     const unsigned char* buf2 = reinterpret_cast<const unsigned char*>(data);
-    unsigned char c1 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
-    unsigned char c2 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
-    unsigned char c3 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
+    unsigned char c1 = buf1Len ? (static_cast<void>(--buf1Len), *buf1++) : buf2Len ? (static_cast<void>(--buf2Len), *buf2++) : 0;
+    unsigned char c2 = buf1Len ? (static_cast<void>(--buf1Len), *buf1++) : buf2Len ? (static_cast<void>(--buf2Len), *buf2++) : 0;
+    unsigned char c3 = buf1Len ? (static_cast<void>(--buf1Len), *buf1++) : buf2Len ? (static_cast<void>(--buf2Len), *buf2++) : 0;
 
     // Check for the BOM.
     if (c1 == 0xFF && c2 == 0xFE) {
