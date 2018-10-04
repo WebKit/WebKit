@@ -1,3 +1,22 @@
+2018-10-02  Darin Adler  <darin@apple.com>
+
+        AudioNode.connect should use [ReturnValue]
+        https://bugs.webkit.org/show_bug.cgi?id=190231
+
+        Reviewed by Eric Carlson.
+
+        This is a slightly more efficient way to return a value that is always
+        identical to one of the arguments, so use it here.
+
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::connect): Return ExceptionOr<void>.
+        * Modules/webaudio/AudioBasicInspectorNode.h: Ditto.
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect): Ditto.
+        * Modules/webaudio/AudioNode.h: Ditto.
+
+        * Modules/webaudio/AudioNode.idl: Use [ReturnValue].
+
 2018-10-03  Justin Michaud  <justin_michaud@apple.com>
 
         Registered custom properties should allow inheritance to be controlled

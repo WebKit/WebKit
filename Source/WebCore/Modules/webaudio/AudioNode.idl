@@ -34,7 +34,7 @@
     attribute DOMString channelCountMode;
     attribute DOMString channelInterpretation;
 
-    [MayThrowException] AudioNode connect(AudioNode destination, optional unsigned long output = 0, optional unsigned long input = 0);
+    [MayThrowException] AudioNode connect([ReturnValue] AudioNode destination, optional unsigned long output = 0, optional unsigned long input = 0);
     [MayThrowException] void connect(AudioParam destination, optional unsigned long output = 0);
     [MayThrowException] void disconnect(optional unsigned long output = 0);
 };

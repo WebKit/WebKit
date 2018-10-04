@@ -37,7 +37,7 @@ public:
 
 private:
     void pullInputs(size_t framesToProcess) override;
-    ExceptionOr<AudioNode&> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex) override;
+    ExceptionOr<void> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex) override;
     ExceptionOr<void> disconnect(unsigned outputIndex) override;
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;
 
