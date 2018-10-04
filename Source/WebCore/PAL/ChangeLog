@@ -1,5 +1,14 @@
 2018-10-04  Dan Bernstein  <mitz@apple.com>
 
+        PAL change for the WebKitLegacy part of [Xcode] Update some build settings as recommended by Xcode 10
+        https://bugs.webkit.org/show_bug.cgi?id=190250
+
+        Reviewed by Andy Estes.
+
+        * pal/spi/mac/NSWindowSPI.h: Added a private API declaration.
+
+2018-10-04  Dan Bernstein  <mitz@apple.com>
+
         PAL part of [Xcode] Update some build settings as recommended by Xcode 10
         https://bugs.webkit.org/show_bug.cgi?id=190250
 

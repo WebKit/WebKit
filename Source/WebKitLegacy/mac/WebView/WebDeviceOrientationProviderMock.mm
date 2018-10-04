@@ -67,15 +67,6 @@ using namespace WebCore;
 
 @end
 
-@implementation WebDeviceOrientationProviderMock (Internal)
-
-- (void)setController:(WebCore::DeviceOrientationController*)controller
-{
-   [m_internal setController:controller];
-}
-
-@end
-
 @implementation WebDeviceOrientationProviderMock
 
 + (WebDeviceOrientationProviderMock *)shared
@@ -117,6 +108,11 @@ using namespace WebCore;
 - (WebDeviceOrientation*)lastOrientation
 {
     return [m_internal lastOrientation];
+}
+
+- (void)setController:(WebCore::DeviceOrientationController*)controller
+{
+   [m_internal setController:controller];
 }
 
 @end

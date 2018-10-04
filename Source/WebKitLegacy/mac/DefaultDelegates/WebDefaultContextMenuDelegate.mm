@@ -35,7 +35,7 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
-#import "WebHTMLViewPrivate.h"
+#import "WebHTMLViewInternal.h"
 #import "WebLocalizableStringsInternal.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSURLRequestExtras.h"

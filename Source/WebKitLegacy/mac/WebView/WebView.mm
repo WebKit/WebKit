@@ -64,6 +64,7 @@
 #import "WebEditorClient.h"
 #import "WebFormDelegatePrivate.h"
 #import "WebFrameInternal.h"
+#import "WebFrameLoadDelegatePrivate.h"
 #import "WebFrameLoaderClient.h"
 #import "WebFrameNetworkingContext.h"
 #import "WebFrameViewInternal.h"
@@ -71,6 +72,7 @@
 #import "WebGeolocationPositionInternal.h"
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLViewInternal.h"
+#import "WebHistoryDelegate.h"
 #import "WebHistoryItemInternal.h"
 #import "WebIconDatabase.h"
 #import "WebInspector.h"
@@ -99,6 +101,8 @@
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
 #import "WebProgressTrackerClient.h"
+#import "WebResourceLoadDelegate.h"
+#import "WebResourceLoadDelegatePrivate.h"
 #import "WebResourceLoadScheduler.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptWorldInternal.h"
@@ -392,9 +396,12 @@ macro(alignRight) \
 macro(capitalizeWord) \
 macro(centerSelectionInVisibleArea) \
 macro(changeAttributes) \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Wundeclared-selector\"") \
 macro(changeBaseWritingDirection) \
 macro(changeBaseWritingDirectionToLTR) \
 macro(changeBaseWritingDirectionToRTL) \
+_Pragma("clang diagnostic pop") \
 macro(changeColor) \
 macro(changeDocumentBackgroundColor) \
 macro(changeFont) \
@@ -503,14 +510,20 @@ macro(stopSpeaking) \
 macro(subscript) \
 macro(superscript) \
 macro(swapWithMark) \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Wundeclared-selector\"") \
 macro(takeFindStringFromSelection) \
+_Pragma("clang diagnostic pop") \
 macro(toggleBaseWritingDirection) \
 macro(transpose) \
 macro(underline) \
 macro(unscript) \
 macro(uppercaseWord) \
 macro(yank) \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Wundeclared-selector\"") \
 macro(yankAndSelect) \
+_Pragma("clang diagnostic pop") \
 
 #define WebKitOriginalTopPrintingMarginKey @"WebKitOriginalTopMargin"
 #define WebKitOriginalBottomPrintingMarginKey @"WebKitOriginalBottomMargin"
@@ -726,18 +739,6 @@ private:
 @implementation WebUITextIndicatorData
 @end
 #endif // ENABLE(DATA_INTERACTION)
-
-@interface WebView (WebFileInternal)
-#if !PLATFORM(IOS)
-- (float)_deviceScaleFactor;
-#endif
-- (BOOL)_isLoading;
-- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
-- (WebFrame *)_focusedFrame;
-+ (void)_preflightSpellChecker;
-- (BOOL)_continuousCheckingAllowed;
-- (NSResponder *)_responderForResponderOperations;
-@end
 
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebElementFrameKey =              @"WebElementFrame";
@@ -1096,6 +1097,15 @@ static const NSUInteger orderedListSegment = 2;
 @end
 
 #endif // HAVE(TOUCH_BAR)
+
+@interface WebView ()
+#if PLATFORM(IOS)
+- (void)_wakWindowScreenScaleChanged:(NSNotification *)notification;
+- (void)_wakWindowVisibilityChanged:(NSNotification *)notification;
+#else
+- (float)_deviceScaleFactor;
+#endif
+@end
 
 @implementation WebView (AllWebViews)
 
@@ -3339,7 +3349,9 @@ static inline IMP getMethod(id o, SEL s)
     cache->navigatedFunc = getMethod(delegate, @selector(webView:didNavigateWithNavigationData:inFrame:));
     cache->clientRedirectFunc = getMethod(delegate, @selector(webView:didPerformClientRedirectFromURL:toURL:inFrame:));
     cache->serverRedirectFunc = getMethod(delegate, @selector(webView:didPerformServerRedirectFromURL:toURL:inFrame:));
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
     cache->deprecatedSetTitleFunc = getMethod(delegate, @selector(webView:updateHistoryTitle:forURL:));
+IGNORE_WARNINGS_END
     cache->setTitleFunc = getMethod(delegate, @selector(webView:updateHistoryTitle:forURL:inFrame:));
     cache->populateVisitedLinksFunc = getMethod(delegate, @selector(populateVisitedLinksForWebView:));
 }
@@ -3395,11 +3407,6 @@ static inline IMP getMethod(id o, SEL s)
     if (!_private->editingDelegateForwarder)
         _private->editingDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->editingDelegate defaultTarget:[WebDefaultEditingDelegate sharedEditingDelegate]];
     return _private->editingDelegateForwarder;
-}
-
-- (void)_closeWindow
-{
-    [[self _UIDelegateForwarder] webViewClose:self];
 }
 
 + (void)_unregisterViewClassAndRepresentationClassForMIMEType:(NSString *)MIMEType
@@ -7344,6 +7351,155 @@ static TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheck
 
 #endif // HAVE(TOUCH_BAR)
 
+static WebFrameView *containingFrameView(NSView *view)
+{
+    while (view && ![view isKindOfClass:[WebFrameView class]])
+        view = [view superview];
+    return (WebFrameView *)view;
+}
+
+#if !PLATFORM(IOS)
+- (float)_deviceScaleFactor
+{
+    if (_private->customDeviceScaleFactor != 0)
+        return _private->customDeviceScaleFactor;
+
+    NSWindow *window = [self window];
+    NSWindow *hostWindow = [self hostWindow];
+    if (window)
+        return [window backingScaleFactor];
+    if (hostWindow)
+        return [hostWindow backingScaleFactor];
+    return [[NSScreen mainScreen] backingScaleFactor];
+}
+#endif
+
++ (BOOL)_didSetCacheModel
+{
+    return s_didSetCacheModel;
+}
+
++ (WebCacheModel)_maxCacheModelInAnyInstance
+{
+    WebCacheModel cacheModel = WebCacheModelDocumentViewer;
+    NSEnumerator *enumerator = [(NSMutableSet *)allWebViewsSet objectEnumerator];
+    while (WebPreferences *preferences = [[enumerator nextObject] preferences])
+        cacheModel = std::max(cacheModel, [preferences cacheModel]);
+    return cacheModel;
+}
+
++ (void)_cacheModelChangedNotification:(NSNotification *)notification
+{
+#if PLATFORM(IOS)
+    // This needs to happen on the Web Thread
+    WebThreadRun(^{
+#endif
+    WebPreferences *preferences = (WebPreferences *)[notification object];
+    ASSERT([preferences isKindOfClass:[WebPreferences class]]);
+
+    WebCacheModel cacheModel = [preferences cacheModel];
+    if (![self _didSetCacheModel] || cacheModel > [self _cacheModel])
+        [self _setCacheModel:cacheModel];
+    else if (cacheModel < [self _cacheModel])
+        [self _setCacheModel:std::max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
+#if PLATFORM(IOS)
+    });
+#endif
+}
+
++ (void)_preferencesRemovedNotification:(NSNotification *)notification
+{
+    WebPreferences *preferences = (WebPreferences *)[notification object];
+    ASSERT([preferences isKindOfClass:[WebPreferences class]]);
+
+    if ([preferences cacheModel] == [self _cacheModel])
+        [self _setCacheModel:std::max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
+}
+
+- (WebFrame *)_focusedFrame
+{
+    NSResponder *resp = [[self window] firstResponder];
+    if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:[[self mainFrame] frameView]]) {
+        WebFrameView *frameView = containingFrameView((NSView *)resp);
+        ASSERT(frameView != nil);
+        return [frameView webFrame];
+    }
+
+    return nil;
+}
+
+- (BOOL)_isLoading
+{
+    WebFrame *mainFrame = [self mainFrame];
+    return [[mainFrame _dataSource] isLoading]
+        || [[mainFrame provisionalDataSource] isLoading];
+}
+
+- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
+{
+    if (_private->closed)
+        return nil;
+#if !PLATFORM(IOS)
+    NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
+#else
+    //[WebView superview] on iOS is nil, don't do a convertPoint
+    NSView *view = [self hitTest:point];
+#endif
+    if (![view isDescendantOf:[[self mainFrame] frameView]])
+        return nil;
+    WebFrameView *frameView = containingFrameView(view);
+    ASSERT(frameView);
+    return frameView;
+}
+
++ (void)_preflightSpellCheckerNow:(id)sender
+{
+#if !PLATFORM(IOS)
+    [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
+#endif
+}
+
++ (void)_preflightSpellChecker
+{
+#if !PLATFORM(IOS)
+    // As AppKit does, we wish to delay tickling the shared spellchecker into existence on application launch.
+    if ([NSSpellChecker sharedSpellCheckerExists]) {
+        [self _preflightSpellCheckerNow:self];
+    } else {
+        [self performSelector:@selector(_preflightSpellCheckerNow:) withObject:self afterDelay:2.0];
+    }
+#endif
+}
+
+- (BOOL)_continuousCheckingAllowed
+{
+    static BOOL allowContinuousSpellChecking = YES;
+    static BOOL readAllowContinuousSpellCheckingDefault = NO;
+    if (!readAllowContinuousSpellCheckingDefault) {
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"NSAllowContinuousSpellChecking"]) {
+            allowContinuousSpellChecking = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSAllowContinuousSpellChecking"];
+        }
+        readAllowContinuousSpellCheckingDefault = YES;
+    }
+    return allowContinuousSpellChecking;
+}
+
+- (NSResponder *)_responderForResponderOperations
+{
+    NSResponder *responder = [[self window] firstResponder];
+    WebFrameView *mainFrameView = [[self mainFrame] frameView];
+
+    // If the current responder is outside of the webview, use our main frameView or its
+    // document view. We also do this for subviews of self that are siblings of the main
+    // frameView since clients might insert non-webview-related views there (see 4552713).
+    if (responder != self && ![mainFrameView _web_firstResponderIsSelfOrDescendantView]) {
+        responder = [mainFrameView documentView];
+        if (!responder)
+            responder = mainFrameView;
+    }
+    return responder;
+}
+
 @end
 
 @implementation WebView (WebIBActions)
@@ -8676,33 +8832,6 @@ FORWARD(toggleUnderline)
     return coreFrame->editor().simplifyMarkup(coreStartNode, core(endNode));
 }
 
-@end
-
-static WebFrameView *containingFrameView(NSView *view)
-{
-    while (view && ![view isKindOfClass:[WebFrameView class]])
-        view = [view superview];
-    return (WebFrameView *)view;    
-}
-
-@implementation WebView (WebFileInternal)
-
-#if !PLATFORM(IOS)
-- (float)_deviceScaleFactor
-{
-    if (_private->customDeviceScaleFactor != 0)
-        return _private->customDeviceScaleFactor;
-
-    NSWindow *window = [self window];
-    NSWindow *hostWindow = [self hostWindow];
-    if (window)
-        return [window backingScaleFactor];
-    if (hostWindow)
-        return [hostWindow backingScaleFactor];
-    return [[NSScreen mainScreen] backingScaleFactor];
-}
-#endif
-
 + (void)_setCacheModel:(WebCacheModel)cacheModel
 {
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
@@ -8929,132 +9058,6 @@ static WebFrameView *containingFrameView(NSView *view)
 + (WebCacheModel)_cacheModel
 {
     return s_cacheModel;
-}
-
-+ (BOOL)_didSetCacheModel
-{
-    return s_didSetCacheModel;
-}
-
-+ (WebCacheModel)_maxCacheModelInAnyInstance
-{
-    WebCacheModel cacheModel = WebCacheModelDocumentViewer;
-    NSEnumerator *enumerator = [(NSMutableSet *)allWebViewsSet objectEnumerator];
-    while (WebPreferences *preferences = [[enumerator nextObject] preferences])
-        cacheModel = std::max(cacheModel, [preferences cacheModel]);
-    return cacheModel;
-}
-
-+ (void)_cacheModelChangedNotification:(NSNotification *)notification
-{
-#if PLATFORM(IOS)
-    // This needs to happen on the Web Thread
-    WebThreadRun(^{
-#endif    
-    WebPreferences *preferences = (WebPreferences *)[notification object];
-    ASSERT([preferences isKindOfClass:[WebPreferences class]]);
-
-    WebCacheModel cacheModel = [preferences cacheModel];
-    if (![self _didSetCacheModel] || cacheModel > [self _cacheModel])
-        [self _setCacheModel:cacheModel];
-    else if (cacheModel < [self _cacheModel])
-        [self _setCacheModel:std::max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
-#if PLATFORM(IOS)
-    });
-#endif
-}
-
-+ (void)_preferencesRemovedNotification:(NSNotification *)notification
-{
-    WebPreferences *preferences = (WebPreferences *)[notification object];
-    ASSERT([preferences isKindOfClass:[WebPreferences class]]);
-
-    if ([preferences cacheModel] == [self _cacheModel])
-        [self _setCacheModel:std::max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
-}
-
-- (WebFrame *)_focusedFrame
-{
-    NSResponder *resp = [[self window] firstResponder];
-    if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:[[self mainFrame] frameView]]) {
-        WebFrameView *frameView = containingFrameView((NSView *)resp);
-        ASSERT(frameView != nil);
-        return [frameView webFrame];
-    }
-    
-    return nil;
-}
-
-- (BOOL)_isLoading
-{
-    WebFrame *mainFrame = [self mainFrame];
-    return [[mainFrame _dataSource] isLoading]
-        || [[mainFrame provisionalDataSource] isLoading];
-}
-
-- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
-{
-    if (_private->closed)
-        return nil;
-#if !PLATFORM(IOS)
-    NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
-#else
-    //[WebView superview] on iOS is nil, don't do a convertPoint
-    NSView *view = [self hitTest:point];    
-#endif
-    if (![view isDescendantOf:[[self mainFrame] frameView]])
-        return nil;
-    WebFrameView *frameView = containingFrameView(view);
-    ASSERT(frameView);
-    return frameView;
-}
-
-+ (void)_preflightSpellCheckerNow:(id)sender
-{
-#if !PLATFORM(IOS)
-    [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
-#endif
-}
-
-+ (void)_preflightSpellChecker
-{
-#if !PLATFORM(IOS)
-    // As AppKit does, we wish to delay tickling the shared spellchecker into existence on application launch.
-    if ([NSSpellChecker sharedSpellCheckerExists]) {
-        [self _preflightSpellCheckerNow:self];
-    } else {
-        [self performSelector:@selector(_preflightSpellCheckerNow:) withObject:self afterDelay:2.0];
-    }
-#endif
-}
-
-- (BOOL)_continuousCheckingAllowed
-{
-    static BOOL allowContinuousSpellChecking = YES;
-    static BOOL readAllowContinuousSpellCheckingDefault = NO;
-    if (!readAllowContinuousSpellCheckingDefault) {
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"NSAllowContinuousSpellChecking"]) {
-            allowContinuousSpellChecking = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSAllowContinuousSpellChecking"];
-        }
-        readAllowContinuousSpellCheckingDefault = YES;
-    }
-    return allowContinuousSpellChecking;
-}
-
-- (NSResponder *)_responderForResponderOperations
-{
-    NSResponder *responder = [[self window] firstResponder];
-    WebFrameView *mainFrameView = [[self mainFrame] frameView];
-    
-    // If the current responder is outside of the webview, use our main frameView or its
-    // document view. We also do this for subviews of self that are siblings of the main
-    // frameView since clients might insert non-webview-related views there (see 4552713).
-    if (responder != self && ![mainFrameView _web_firstResponderIsSelfOrDescendantView]) {
-        responder = [mainFrameView documentView];
-        if (!responder)
-            responder = mainFrameView;
-    }
-    return responder;
 }
 
 #if !PLATFORM(IOS)
@@ -10061,6 +10064,11 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
 - (void)_windowVisibilityChanged:(NSNotification *)notification
 {
     [self _updateVisibilityState];
+}
+
+- (void)_closeWindow
+{
+    [[self _UIDelegateForwarder] webViewClose:self];
 }
 
 @end

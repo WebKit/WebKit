@@ -30,6 +30,7 @@
 #import "WebDelegateImplementationCaching.h"
 #import "WebGeolocationCoreLocationProvider.h"
 #import <WebGeolocationPosition.h>
+#import <WebUIDelegatePrivate.h>
 #import <WebCore/GeolocationPosition.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebCore/WebCoreThreadRun.h>

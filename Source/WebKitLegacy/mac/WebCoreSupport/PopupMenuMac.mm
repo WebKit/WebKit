@@ -22,6 +22,7 @@
 
 #import "WebDelegateImplementationCaching.h"
 #import "WebFrameInternal.h"
+#import "WebUIDelegatePrivate.h"
 #import <WebCore/IntRect.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/Chrome.h>

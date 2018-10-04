@@ -679,7 +679,9 @@ static void installFlip4MacPlugInWorkaroundIfNecessary()
         if (!TSUpdateCheck)
             return;
 
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
         Method methodToPatch = class_getInstanceMethod(TSUpdateCheck, @selector(alertDidEnd:returnCode:contextInfo:));
+IGNORE_WARNINGS_END
         if (!methodToPatch)
             return;
 

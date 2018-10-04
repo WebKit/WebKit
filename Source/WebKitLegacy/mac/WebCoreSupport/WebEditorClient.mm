@@ -843,6 +843,7 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
         return @selector(moveUp:);
     if (key == "Down")
         return @selector(moveDown:);
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
     if (key == "U+001B")
         return @selector(cancel:);
     if (key == "U+0009") {
@@ -852,6 +853,7 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
     }
     if (key == "Enter")
         return @selector(insertNewline:);
+IGNORE_WARNINGS_END
     return 0;
 }
 

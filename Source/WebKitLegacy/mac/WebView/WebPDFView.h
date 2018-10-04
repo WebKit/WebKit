@@ -40,7 +40,6 @@
 
 @interface WebPDFView : NSView <PDFViewDelegate, WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, WebDocumentPDF, _WebDocumentViewState, _WebDocumentZooming>
 {
-    NSView *previewView;
     PDFView *PDFSubview;
     NSString *path;
     BOOL firstResponderIsPDFDocumentView;

@@ -84,27 +84,6 @@ using namespace WebCore;
 
 extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 
-@interface WebPDFView (FileInternal)
-+ (Class)_PDFPreviewViewClass;
-+ (Class)_PDFViewClass;
-- (void)_applyPDFDefaults;
-- (BOOL)_canLookUpInDictionary;
-- (NSClipView *)_clipViewForPDFDocumentView;
-- (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey;
-- (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent;
-- (PDFSelection *)_nextMatchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag fromSelection:(PDFSelection *)initialSelection startInSelection:(BOOL)startInSelection;
-- (void)_openWithFinder:(id)sender;
-- (NSString *)_path;
-- (void)_PDFDocumentViewMightHaveScrolled:(NSNotification *)notification;
-- (BOOL)_pointIsInSelection:(NSPoint)point;
-- (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString;
-- (void)_setTextMatches:(NSArray *)array;
-- (NSString *)_temporaryPDFDirectoryPath;
-- (void)_trackFirstResponder;
-- (void)_updatePreferencesSoon;
-- (NSSet *)_visiblePDFPages;
-@end;
-
 @interface NSView ()
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
@@ -211,7 +190,6 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (void)dealloc
 {
     [dataSource release];
-    [previewView release];
     [PDFSubview setDelegate:nil];
     [PDFSubview release];
     [path release];
@@ -327,31 +305,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (self) {
         [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         
-        Class previewViewClass = [[self class] _PDFPreviewViewClass];
-        
-        // We might not have found a previewViewClass, but if we did find it
-        // then we should be able to create an instance.
-        if (previewViewClass) {
-            previewView = [[previewViewClass alloc] initWithFrame:frame];
-            ASSERT(previewView);
-        }
-        
-        NSView *topLevelPDFKitView = nil;
-        if (previewView) {
-            // We'll retain the PDFSubview here so that it is equally retained in all
-            // code paths. That way we don't need to worry about conditionally releasing
-            // it later.
-            PDFSubview = [[previewView performSelector:@selector(pdfView)] retain];
-            topLevelPDFKitView = previewView;
-        } else {
-            PDFSubview = [[[[self class] _PDFViewClass] alloc] initWithFrame:frame];
-            topLevelPDFKitView = PDFSubview;
-        }
-        
+        PDFSubview = [[[[self class] _PDFViewClass] alloc] initWithFrame:frame];
+
         ASSERT(PDFSubview);
         
-        [topLevelPDFKitView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-        [self addSubview:topLevelPDFKitView];
+        [PDFSubview setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [self addSubview:PDFSubview];
         
         [PDFSubview setDelegate:self];
         written = NO;
@@ -1060,24 +1019,6 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     CallUIDelegate([self _webView], @selector(webView:saveFrameView:showingPanel:), [[dataSource webFrame] frameView], NO);
 }
 
-@end
-
-@implementation WebPDFView (FileInternal)
-
-+ (Class)_PDFPreviewViewClass
-{
-    static Class PDFPreviewViewClass = nil;
-    static BOOL checkedForPDFPreviewViewClass = NO;
-    
-    if (!checkedForPDFPreviewViewClass) {
-        checkedForPDFPreviewViewClass = YES;
-        PDFPreviewViewClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFPreviewView"];
-    }
-    
-    // This class might not be available; callers need to deal with a nil return here.
-    return PDFPreviewViewClass;
-}
-
 + (Class)_PDFViewClass
 {
     static Class PDFViewClass = nil;
@@ -1116,7 +1057,9 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
 - (BOOL)_canLookUpInDictionary
 {
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
     return [PDFSubview respondsToSelector:@selector(_searchInDictionary:)];
+IGNORE_WARNINGS_END
 }
 
 - (NSClipView *)_clipViewForPDFDocumentView
@@ -1152,8 +1095,10 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     // This method is used by WebKit's context menu item. Here we map to the method that
     // PDFView uses. Since the PDFView method isn't API, and isn't available on all versions
     // of PDFKit, we use performSelector after a respondsToSelector check, rather than calling it directly.
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
     if ([self _canLookUpInDictionary])
         [PDFSubview performSelector:@selector(_searchInDictionary:) withObject:sender];
+IGNORE_WARNINGS_END
 }
 
 static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
@@ -1185,6 +1130,7 @@ static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
 {
     NSMutableArray *copiedItems = [NSMutableArray array];
     NSDictionary *actionsToTags = [[NSDictionary alloc] initWithObjectsAndKeys:
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
         [NSNumber numberWithInt:WebMenuItemPDFActualSize], NSStringFromSelector(@selector(_setActualSize:)),
         [NSNumber numberWithInt:WebMenuItemPDFZoomIn], NSStringFromSelector(@selector(zoomIn:)),
         [NSNumber numberWithInt:WebMenuItemPDFZoomOut], NSStringFromSelector(@selector(zoomOut:)),
@@ -1196,15 +1142,18 @@ static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
         [NSNumber numberWithInt:WebMenuItemPDFContinuous], NSStringFromSelector(@selector(_toggleContinuous:)),
         [NSNumber numberWithInt:WebMenuItemPDFNextPage], NSStringFromSelector(@selector(goToNextPage:)),
         [NSNumber numberWithInt:WebMenuItemPDFPreviousPage], NSStringFromSelector(@selector(goToPreviousPage:)),
+IGNORE_WARNINGS_END
         nil];
     
     // Leave these menu items out, since WebKit inserts equivalent ones. Note that we leave out PDFKit's "Look Up in Dictionary"
     // item here because WebKit already includes an item with the same title and purpose. We map WebKit's to PDFKit's 
     // "Look Up in Dictionary" via the implementation of -[WebPDFView _lookUpInDictionaryFromMenu:].
     NSSet *unwantedActions = [[NSSet alloc] initWithObjects:
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
                               NSStringFromSelector(@selector(_searchInSpotlight:)),
                               NSStringFromSelector(@selector(_searchInGoogle:)),
                               NSStringFromSelector(@selector(_searchInDictionary:)),
+IGNORE_WARNINGS_END
                               NSStringFromSelector(@selector(copy:)),
                               nil];
     

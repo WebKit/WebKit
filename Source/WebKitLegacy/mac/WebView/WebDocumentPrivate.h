@@ -27,6 +27,7 @@
  */
 
 #import <WebKitLegacy/WebDocument.h>
+#import <WebKitLegacy/WebFrame.h>
 #import <WebKitLegacy/WebHTMLView.h>
 
 @class DOMDocument;
@@ -102,6 +103,7 @@
     @result Array of strings representing the supported MIME types.
 */
 + (NSArray *)supportedMIMETypes;
++ (Class)_representationClassForWebFrame:(WebFrame *)webFrame;
 @end
 
 @protocol WebPDFDocumentView <WebDocumentView>

@@ -1085,6 +1085,10 @@ typedef struct WebEdgeInsets {
 
 - (void)webView:(WebView *)sender didLayout:(WebLayoutMilestones)milestones;
 
+#if TARGET_OS_IPHONE
+- (void)webThreadWebView:(WebView *)sender didLayout:(WebLayoutMilestones)milestones;
+#endif
+
 // For implementing the WebInspector's test harness
 - (void)webView:(WebView *)webView didClearInspectorWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame;
 

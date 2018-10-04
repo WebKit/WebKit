@@ -44,11 +44,12 @@
 #import "WebElementDictionary.h"
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
-#import "WebFrameLoadDelegate.h"
+#import "WebFrameLoadDelegatePrivate.h"
 #import "WebFrameNetworkingContext.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
+#import "WebHistoryDelegate.h"
 #import "WebHistoryInternal.h"
 #import "WebHistoryItemInternal.h"
 #import "WebKitErrorsPrivate.h"
@@ -67,6 +68,7 @@
 #import "WebPolicyDelegatePrivate.h"
 #import "WebPreferences.h"
 #import "WebResourceLoadDelegate.h"
+#import "WebResourceLoadDelegatePrivate.h"
 #import "WebScriptWorldInternal.h"
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegate.h"
@@ -1365,8 +1367,11 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
         // FIXME: Use direction of title.
         if (implementations->setTitleFunc)
             CallHistoryDelegate(implementations->setTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:inFrame:), (NSString *)title.string, (NSString *)url, m_webFrame.get());
-        else if (implementations->deprecatedSetTitleFunc)
+        else if (implementations->deprecatedSetTitleFunc) {
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
             CallHistoryDelegate(implementations->deprecatedSetTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:), (NSString *)title.string, (NSString *)url);
+IGNORE_WARNINGS_END
+        }
         return;
     }
 
@@ -1749,7 +1754,9 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
             element, WebPlugInContainingElementKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
+IGNORE_WARNINGS_END
         arguments = [NSDictionary dictionaryWithObjectsAndKeys:
             baseURL, WebPluginBaseURLKey,
             attributes, WebPluginAttributesKey,

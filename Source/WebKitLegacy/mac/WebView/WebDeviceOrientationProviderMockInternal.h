@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WebDeviceOrientationInternal.h"
 #import "WebDeviceOrientationProviderMock.h"
 #import <WebCore/DeviceOrientationClientMock.h>
 
@@ -41,6 +42,5 @@
 - (WebDeviceOrientation*)lastOrientation;
 @end
 
-@interface WebDeviceOrientationProviderMock (Internal)
-- (void)setController:(WebCore::DeviceOrientationController*)controller;
+@interface WebDeviceOrientationProviderMock () <WebDeviceOrientationProviderMock>
 @end

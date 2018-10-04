@@ -613,7 +613,9 @@ using namespace WebCore;
     }
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)renewGState
+IGNORE_WARNINGS_END
 {
     [super renewGState];
     

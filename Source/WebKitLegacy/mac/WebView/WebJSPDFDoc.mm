@@ -28,6 +28,7 @@
 #import "WebDataSource.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebFrame.h"
+#import "WebUIDelegate.h"
 #import "WebView.h"
 #import <JavaScriptCore/JSObjectRef.h>
 

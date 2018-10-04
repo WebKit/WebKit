@@ -37,6 +37,10 @@
 }
 @end
 
+@interface NSInvocation (WebMainThreadInvoker)
+- (void)_webkit_invokeAndHandleException:(WebMainThreadInvoker *)exceptionHandler;
+@end
+
 static bool returnTypeIsObject(NSInvocation *invocation)
 {
     // Could use either _C_ID or NSObjCObjectType, but it seems that neither is

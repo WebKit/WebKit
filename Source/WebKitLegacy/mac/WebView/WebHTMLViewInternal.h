@@ -57,6 +57,7 @@ namespace WebCore {
 - (BOOL)_canSmartCopyOrDelete;
 
 - (WebFrame *)_frame;
+- (void)closeIfNotCurrentView;
 
 #if PLATFORM(MAC)
 - (void)_lookUpInDictionaryFromMenu:(id)sender;
@@ -97,6 +98,8 @@ namespace WebCore {
 - (void)_stopAutoscrollTimer;
 
 - (WebPluginController *)_pluginController;
+
+- (void)_executeSavedKeypressCommands;
 
 @end
 

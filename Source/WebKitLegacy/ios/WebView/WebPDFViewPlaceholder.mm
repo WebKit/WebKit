@@ -52,10 +52,6 @@
 
 using namespace WebCore;
 
-@interface WebPDFView (Secrets)
-+ (Class)_representationClassForWebFrame:(WebFrame *)webFrame;
-@end
-
 #pragma mark Constants
 
 static const float PAGE_WIDTH_INSET = 4.0f * 2.0f;

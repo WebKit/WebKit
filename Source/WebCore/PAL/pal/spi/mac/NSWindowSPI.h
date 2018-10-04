@@ -38,6 +38,7 @@
 @interface NSWindow ()
 
 - (id)_newFirstResponderAfterResigning;
+- (void)_setCursorForMouseLocation:(NSPoint)point;
 
 @end
 

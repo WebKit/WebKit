@@ -25,6 +25,8 @@
 
 #import "WebDeviceOrientation.h"
 
+#import "WebDeviceOrientationProvider.h"
+#import <WebCore/DeviceOrientationClientMock.h>
 #import <WebCore/DeviceOrientationData.h>
 #import <wtf/RefPtr.h>
 
@@ -43,3 +45,7 @@
 @end
 
 WebCore::DeviceOrientationData* core(WebDeviceOrientation*);
+
+@protocol WebDeviceOrientationProviderMock <WebDeviceOrientationProvider>
+- (void)setController:(WebCore::DeviceOrientationController*)controller;
+@end

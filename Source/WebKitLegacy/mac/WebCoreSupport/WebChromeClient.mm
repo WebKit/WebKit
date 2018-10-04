@@ -38,6 +38,7 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
+#import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
@@ -876,6 +877,7 @@ String WebChromeClient::generateReplacementFile(const String& path)
     return [[m_webView _UIDelegateForwarder] webView:m_webView generateReplacementFile:path];
 }
 
+#if !PLATFORM(IOS)
 void WebChromeClient::elementDidFocus(WebCore::Element& element)
 {
     CallUIDelegate(m_webView, @selector(webView:formDidFocusNode:), kit(&element));
@@ -885,6 +887,7 @@ void WebChromeClient::elementDidBlur(WebCore::Element& element)
 {
     CallUIDelegate(m_webView, @selector(webView:formDidBlurNode:), kit(&element));
 }
+#endif
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {

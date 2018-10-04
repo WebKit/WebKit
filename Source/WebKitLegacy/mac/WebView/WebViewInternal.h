@@ -148,6 +148,8 @@ OBJC_CLASS NSTextAlternatives;
 
 - (void)_windowVisibilityChanged:(NSNotification *)notification;
 
+- (void)_closeWindow;
+
 @end
 
 #endif

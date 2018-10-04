@@ -265,8 +265,13 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webView:(WebView *)webView decidePolicyForUserMediaRequestFromOrigin:(WebSecurityOrigin *)origin listener:(id<WebAllowDenyPolicyListener>)listener;
 - (void)webView:(WebView *)webView checkPolicyForUserMediaRequestFromOrigin:(WebSecurityOrigin *)origin listener:(id<WebAllowDenyPolicyListener>)listener;
 
+#if !TARGET_OS_IPHONE
+- (void)webView:(WebView *)sender formDidFocusNode:(DOMNode *)node;
+- (void)webView:(WebView *)sender formDidBlurNode:(DOMNode *)node;
+#else
 - (void)webView:(WebView *)sender elementDidFocusNode:(DOMNode *)node;
 - (void)webView:(WebView *)sender elementDidBlurNode:(DOMNode *)node;
+#endif
 
 /*!
     @method webView:printFrame:
@@ -278,9 +283,10 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webView:(WebView *)sender printFrame:(WebFrame *)frame;
 
 #if ENABLE_FULLSCREEN_API
-- (BOOL)webView:(WebView *)sender supportsFullScreenForElement:(DOMElement *)element;
-- (void)webView:(WebView *)sender enterFullScreenForElement:(DOMElement *)element;
-- (void)webView:(WebView *)sender exitFullScreenForElement:(DOMElement *)element;
+- (BOOL)webView:(WebView *)sender supportsFullScreenForElement:(DOMElement *)element withKeyboard:(BOOL)withKeyboard;
+- (void)webView:(WebView *)sender enterFullScreenForElement:(DOMElement *)element listener:(id <WebKitFullScreenListener>)listener;
+- (void)webView:(WebView *)sender exitFullScreenForElement:(DOMElement *)element listener:(id <WebKitFullScreenListener>)listener;
+- (void)webView:(WebView *)sender closeFullScreenWithListener:(id <WebKitFullScreenListener>)listener;
 #endif
 
 - (void)webView:(WebView *)sender didDrawFrame:(WebFrame *)frame;

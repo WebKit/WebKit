@@ -715,7 +715,9 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
 
 // Do the right thing for a Carbon window.
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)initWithCoder:(NSCoder *)coder
+IGNORE_WARNINGS_END
 {
 
     // Actually, this will probably never be implemented.  M.P. Notice - 8/2/00
@@ -817,6 +819,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     // Initialize with the default return value.
     UInt32 hiCommandID = 0;
 
+IGNORE_WARNINGS_BEGIN("undeclared-selector")
     // Pretty simple, if tedious.
     if (inActionSelector == @selector(clear:))
         hiCommandID = kHICommandClear;
@@ -832,6 +835,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
         hiCommandID = kHICommandSelectAll;
     else if (inActionSelector == @selector(undo:))
         hiCommandID = kHICommandUndo;
+IGNORE_WARNINGS_END
 
     // Done.
     return hiCommandID;

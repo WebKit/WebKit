@@ -160,8 +160,10 @@ private:
     bool shouldReplaceWithGeneratedFileForUpload(const String& path, String &generatedFilename) final;
     String generateReplacementFile(const String& path) final;
 
+#if !PLATFORM(IOS)
     void elementDidFocus(WebCore::Element&) override;
     void elementDidBlur(WebCore::Element&) override;
+#endif
 
     bool shouldPaintEntireContents() const final;
 

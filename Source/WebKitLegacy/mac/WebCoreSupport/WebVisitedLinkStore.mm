@@ -27,6 +27,7 @@
 
 #import "WebDelegateImplementationCaching.h"
 #import "WebFrameInternal.h"
+#import "WebHistoryDelegate.h"
 #import "WebHistoryInternal.h"
 #import "WebViewInternal.h"
 #import <WebCore/PageCache.h>
