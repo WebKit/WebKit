@@ -864,7 +864,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded);
     }
 
-    _sourceMapLoadAndParseFailed(ssourceMapLurceMapURL)
+    _sourceMapLoadAndParseFailed(sourceMapURL)
     {
         this._downloadingSourceMaps.delete(sourceMapURL);
     }
