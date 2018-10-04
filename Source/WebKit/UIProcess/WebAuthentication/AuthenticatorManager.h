@@ -32,6 +32,7 @@
 #include "WebAuthenticationRequestData.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/PublicKeyCredentialData.h>
+#include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -57,6 +58,7 @@ public:
 
 protected:
     Callback& pendingCompletionHandler() { return m_pendingCompletionHandler; }
+    WebCore::Timer* requestTimeOutTimer() { return m_requestTimeOutTimer.get(); }
     void clearState();
 
 private:
@@ -72,10 +74,12 @@ private:
     virtual void respondReceivedInternal(Respond&&);
 
     void startDiscovery(const TransportSet&);
+    void initTimeOutTimer(const std::optional<unsigned>& timeOutInMs);
 
     // Request: We only allow one request per time.
     WebAuthenticationRequestData m_pendingRequestData;
     Callback m_pendingCompletionHandler;
+    std::unique_ptr<WebCore::Timer> m_requestTimeOutTimer;
 
     Vector<UniqueRef<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;

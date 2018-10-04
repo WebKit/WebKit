@@ -2355,9 +2355,19 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
     Vector<WKRetainPtr<WKStringRef>> configurationKeys;
     Vector<WKRetainPtr<WKTypeRef>> configurationValues;
 
+    JSRetainPtr<JSStringRef> silentFailurePropertyName(Adopt, JSStringCreateWithUTF8CString("silentFailure"));
+    JSValueRef silentFailureValue = JSObjectGetProperty(context, configuration, silentFailurePropertyName.get(), 0);
+    if (!JSValueIsUndefined(context, silentFailureValue)) {
+        if (!JSValueIsBoolean(context, silentFailureValue))
+            return;
+        bool silentFailure = JSValueToBoolean(context, silentFailureValue);
+        configurationKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("SilentFailure") });
+        configurationValues.append(adoptWK(WKBooleanCreate(silentFailure)).get());
+    }
+
     JSRetainPtr<JSStringRef> localPropertyName(Adopt, JSStringCreateWithUTF8CString("local"));
     JSValueRef localValue = JSObjectGetProperty(context, configuration, localPropertyName.get(), 0);
-    if (!JSValueIsNull(context, localValue)) {
+    if (!JSValueIsUndefined(context, localValue) && !JSValueIsNull(context, localValue)) {
         if (!JSValueIsObject(context, localValue))
             return;
         JSObjectRef local = JSValueToObject(context, localValue, 0);

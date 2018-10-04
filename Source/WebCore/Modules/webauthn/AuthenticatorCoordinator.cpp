@@ -38,7 +38,6 @@
 #include "PublicKeyCredentialData.h"
 #include "PublicKeyCredentialRequestOptions.h"
 #include "SecurityOrigin.h"
-#include "Timer.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
@@ -82,29 +81,6 @@ static Vector<uint8_t> produceClientDataJsonHash(const ArrayBuffer& clientDataJs
     return crypto->computeHash();
 }
 
-// FIXME(181947): We should probably trim timeOutInMs to some max allowable number.
-static std::unique_ptr<Timer> initTimeoutTimer(std::optional<unsigned long> timeOutInMs, const CredentialPromise& promise)
-{
-    if (!timeOutInMs)
-        return nullptr;
-
-    auto timer = std::make_unique<Timer>([promise = promise] () mutable {
-        promise.reject(Exception { NotAllowedError, "Operation timed out."_s });
-    });
-    timer->startOneShot(Seconds::fromMilliseconds(*timeOutInMs));
-    return timer;
-}
-
-static bool didTimeoutTimerFire(Timer* timer)
-{
-    if (!timer)
-        return false;
-    if (!timer->isActive())
-        return true;
-    timer->stop();
-    return false;
-}
-
 } // namespace AuthenticatorCoordinatorInternal
 
 AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
@@ -130,9 +106,6 @@ void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const 
         return;
     }
 
-    // Step 4 & 17.
-    std::unique_ptr<Timer> timeoutTimer = initTimeoutTimer(options.timeout, promise);
-
     // Step 5-7.
     // FIXME(181950): We lack fundamental support from SecurityOrigin to determine if a host is a valid domain or not.
     // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
@@ -156,7 +129,7 @@ void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const 
     auto clientDataJson = produceClientDataJson(ClientDataType::Create, options.challenge, callerOrigin);
     auto clientDataJsonHash = produceClientDataJsonHash(clientDataJson);
 
-    // Step 18-21.
+    // Step 4, 17-21.
     // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
     // For better performance, transports of options.excludeCredentials are checked in LocalAuthenticator.
@@ -165,9 +138,7 @@ void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const 
         return;
     }
 
-    auto completionHandler = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), timeoutTimer = WTFMove(timeoutTimer), abortSignal = WTFMove(abortSignal)] (const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception) mutable {
-        if (didTimeoutTimerFire(timeoutTimer.get()))
-            return;
+    auto completionHandler = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
@@ -198,9 +169,6 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const SecurityOrigin& 
         return;
     }
 
-    // Step 4 & 16.
-    std::unique_ptr<Timer> timeoutTimer = initTimeoutTimer(options.timeout, promise);
-
     // Step 5-7.
     // FIXME(181950): We lack fundamental support from SecurityOrigin to determine if a host is a valid domain or not.
     // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
@@ -216,7 +184,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const SecurityOrigin& 
     auto clientDataJson = produceClientDataJson(ClientDataType::Get, options.challenge, callerOrigin);
     auto clientDataJsonHash = produceClientDataJsonHash(clientDataJson);
 
-    // Step 14-15, 17-19.
+    // Step 4, 14-19.
     // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
     // For better performance, filtering of options.allowCredentials is done in LocalAuthenticator.
@@ -225,9 +193,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const SecurityOrigin& 
         return;
     }
 
-    auto completionHandler = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), timeoutTimer = WTFMove(timeoutTimer), abortSignal = WTFMove(abortSignal)] (const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception) mutable {
-        if (didTimeoutTimerFire(timeoutTimer.get()))
-            return;
+    auto completionHandler = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;

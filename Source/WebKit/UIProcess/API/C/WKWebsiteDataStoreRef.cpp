@@ -577,6 +577,10 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
 #if ENABLE(WEB_AUTHN)
     MockWebAuthenticationConfiguration configuration;
 
+    auto silentFailureRef = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("SilentFailure")).get()));
+    if (silentFailureRef)
+        configuration.silentFailure = WKBooleanGetValue(silentFailureRef);
+
     auto localRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Local")).get()));
     if (localRef) {
         MockWebAuthenticationConfiguration::Local local;

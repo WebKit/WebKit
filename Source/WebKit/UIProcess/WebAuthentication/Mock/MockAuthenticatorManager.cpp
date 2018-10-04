@@ -42,8 +42,12 @@ UniqueRef<AuthenticatorTransportService> MockAuthenticatorManager::createService
 
 void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
 {
+    if (m_testConfiguration.silentFailure)
+        return;
+
     pendingCompletionHandler()(WTFMove(respond));
     clearState();
+    requestTimeOutTimer()->stop();
 }
 
 } // namespace WebKit

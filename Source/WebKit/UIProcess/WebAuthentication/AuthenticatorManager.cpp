@@ -38,6 +38,8 @@ using namespace WebCore;
 namespace AuthenticatorManagerInternal {
 
 const size_t maxTransportNumber = 1;
+// Suggested by WebAuthN spec as of 7 August 2018.
+const unsigned maxTimeOutValue = 120000;
 
 // FIXME(188623, 188624, 188625): Support USB, NFC and BLE authenticators.
 static AuthenticatorManager::TransportSet collectTransports(const std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
@@ -49,12 +51,12 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         return result;
     }
 
-    if (authenticatorSelection.value().authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform) {
+    if (authenticatorSelection->authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
-    if (authenticatorSelection.value().authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform)
+    if (authenticatorSelection->authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform)
         return result;
 
     ASSERT_NOT_REACHED();
@@ -104,6 +106,7 @@ void AuthenticatorManager::makeCredential(const Vector<uint8_t>& hash, const Pub
     // 1. Save request for async operations.
     m_pendingRequestData = { hash, true, options, { } };
     m_pendingCompletionHandler = WTFMove(callback);
+    initTimeOutTimer(options.timeout);
 
     // 2. Get available transports and start discovering authenticators on them.
     startDiscovery(collectTransports(options.authenticatorSelection));
@@ -121,6 +124,7 @@ void AuthenticatorManager::getAssertion(const Vector<uint8_t>& hash, const Publi
     // 1. Save request for async operations.
     m_pendingRequestData = { hash, false, { }, options };
     m_pendingCompletionHandler = WTFMove(callback);
+    initTimeOutTimer(options.timeout);
 
     // 2. Get available transports and start discovering authenticators on them.
     ASSERT(m_services.isEmpty());
@@ -147,11 +151,15 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
 void AuthenticatorManager::respondReceived(Respond&& respond)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(m_requestTimeOutTimer);
+    if (!m_requestTimeOutTimer->isActive())
+        return;
+
     ASSERT(m_pendingCompletionHandler);
-    // FIXME(189642)
     if (WTF::holds_alternative<PublicKeyCredentialData>(respond)) {
         m_pendingCompletionHandler(WTFMove(respond));
         clearState();
+        m_requestTimeOutTimer->stop();
         return;
     }
     respondReceivedInternal(WTFMove(respond));
@@ -176,6 +184,19 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
         service->startDiscovery();
         m_services.append(WTFMove(service));
     }
+}
+
+void AuthenticatorManager::initTimeOutTimer(const std::optional<unsigned>& timeOutInMs)
+{
+    using namespace AuthenticatorManagerInternal;
+
+    unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.value_or(maxTimeOutValue));
+
+    m_requestTimeOutTimer = std::make_unique<Timer>([context = this]() mutable {
+        context->m_pendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
+        context->clearState();
+    });
+    m_requestTimeOutTimer->startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
 }
 
 } // namespace WebKit

@@ -38,6 +38,7 @@ struct MockWebAuthenticationConfiguration {
         String intermediateCACertificateBase64;
     };
 
+    bool silentFailure { false };
     std::optional<Local> local;
 };
 

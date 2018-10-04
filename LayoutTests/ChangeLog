@@ -1,3 +1,27 @@
+2018-10-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Move time out control from WebProcess to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=189642
+        <rdar://problem/44476765>
+
+        Reviewed by Chris Dumez.
+
+        This patch also fixes some flaky behaviours regarding to the dirty ASN.1 decoder.
+
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html: Copied from LayoutTests/http/wpt/webauthn/public-key-credential-create-failure-local.https.html.
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html: Copied from LayoutTests/http/wpt/webauthn/public-key-credential-get-failure-local.https.html.
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure.https.html:
+        * http/wpt/webauthn/resources/util.js:
+
 2018-10-04  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236779): Crash when changing the input element type from inside an 'input' event listener

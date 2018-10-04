@@ -172,10 +172,19 @@ function extractRawSignature(asn1signature)
 {
     const signature = new Uint8Array(asn1signature);
     let tmp = new Uint8Array(64);
+
     const rStart =  signature[3] - 32;
-    tmp.set(new Uint8Array(signature.slice(4 + rStart, 36 + rStart)), 0);
+    if (rStart >= 0)
+        tmp.set(new Uint8Array(signature.slice(4 + rStart, 36 + rStart)), 0);
+    else
+        tmp.set(new Uint8Array(signature.slice(4, 36 + rStart)), -rStart);
+
     const sStart =  signature[37 + rStart] - 32;
-    tmp.set(new Uint8Array(signature.slice(38 + rStart + sStart)), 32);
+    if (sStart >= 0)
+        tmp.set(new Uint8Array(signature.slice(38 + rStart + sStart)), 32);
+    else
+        tmp.set(new Uint8Array(signature.slice(38 + rStart)), 32 - sStart);
+
     return tmp.buffer;
 }
 

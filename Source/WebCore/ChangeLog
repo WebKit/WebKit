@@ -1,3 +1,29 @@
+2018-10-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Move time out control from WebProcess to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=189642
+        <rdar://problem/44476765>
+
+        Reviewed by Chris Dumez.
+
+        Since now the control unit of WebAuthN has been moved to UI Process, i.e. AuthenticatorManager,
+        the time out timer should move to UI Process as well.
+
+        Tests: http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html
+               http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html
+
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinator::create const):
+        (WebCore::AuthenticatorCoordinator::discoverFromExternalSource const):
+        (WebCore::AuthenticatorCoordinatorInternal::initTimeoutTimer): Deleted.
+        (WebCore::AuthenticatorCoordinatorInternal::didTimeoutTimerFire): Deleted.
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        (WebCore::PublicKeyCredentialCreationOptions::encode const):
+        (WebCore::PublicKeyCredentialCreationOptions::decode):
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.h:
+        (WebCore::PublicKeyCredentialRequestOptions::encode const):
+        (WebCore::PublicKeyCredentialRequestOptions::decode):
+
 2018-10-04  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236779): Crash when changing the input element type from inside an 'input' event listener

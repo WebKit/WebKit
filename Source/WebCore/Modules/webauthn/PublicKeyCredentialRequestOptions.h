@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct PublicKeyCredentialRequestOptions {
     BufferSource challenge;
-    std::optional<unsigned long> timeout;
+    std::optional<unsigned> timeout;
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
 
@@ -47,13 +47,20 @@ struct PublicKeyCredentialRequestOptions {
 template<class Encoder>
 void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
 {
-    encoder << rpId << allowCredentials;
+    encoder << timeout << rpId << allowCredentials;
 }
 
 template<class Decoder>
 std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::decode(Decoder& decoder)
 {
     PublicKeyCredentialRequestOptions result;
+
+    std::optional<std::optional<unsigned>> timeout;
+    decoder >> timeout;
+    if (!timeout)
+        return std::nullopt;
+    result.timeout = WTFMove(*timeout);
+
     if (!decoder.decode(result.rpId))
         return std::nullopt;
     if (!decoder.decode(result.allowCredentials))

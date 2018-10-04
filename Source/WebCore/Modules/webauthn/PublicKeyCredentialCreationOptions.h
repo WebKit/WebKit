@@ -78,7 +78,7 @@ struct PublicKeyCredentialCreationOptions {
     BufferSource challenge;
     Vector<Parameters> pubKeyCredParams;
 
-    std::optional<unsigned long> timeout;
+    std::optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
     std::optional<AuthenticatorSelectionCriteria> authenticatorSelection;
 
@@ -125,7 +125,7 @@ void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
     encoder << rp.id << rp.name << rp.icon;
     encoder << static_cast<uint64_t>(user.id.length());
     encoder.encodeFixedLengthData(user.id.data(), user.id.length(), 1);
-    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << excludeCredentials << authenticatorSelection;
+    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection;
 }
 
 template<class Decoder>
@@ -148,6 +148,13 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
         return std::nullopt;
     if (!decoder.decode(result.pubKeyCredParams))
         return std::nullopt;
+
+    std::optional<std::optional<unsigned>> timeout;
+    decoder >> timeout;
+    if (!timeout)
+        return std::nullopt;
+    result.timeout = WTFMove(*timeout);
+
     if (!decoder.decode(result.excludeCredentials))
         return std::nullopt;
 
@@ -155,7 +162,7 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
     decoder >> authenticatorSelection;
     if (!authenticatorSelection)
         return std::nullopt;
-    result.authenticatorSelection = WTFMove(authenticatorSelection.value());
+    result.authenticatorSelection = WTFMove(*authenticatorSelection);
 
     return result;
 }

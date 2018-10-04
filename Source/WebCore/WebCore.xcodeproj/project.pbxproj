@@ -18819,13 +18819,6 @@
 			path = cbor;
 			sourceTree = "<group>";
 		};
-		574F55DD204F3744002948C6 /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = cocoa;
-			sourceTree = "<group>";
-		};
 		57C7A6881E56946D00C67D71 /* credentialmanagement */ = {
 			isa = PBXGroup;
 			children = (
@@ -18867,7 +18860,6 @@
 			isa = PBXGroup;
 			children = (
 				57303BB32006C6ED00355965 /* cbor */,
-				574F55DD204F3744002948C6 /* cocoa */,
 				57303C272009B2FC00355965 /* AuthenticatorAssertionResponse.h */,
 				57303C292009B2FC00355965 /* AuthenticatorAssertionResponse.idl */,
 				57303C1B2009A98600355965 /* AuthenticatorAttestationResponse.h */,
