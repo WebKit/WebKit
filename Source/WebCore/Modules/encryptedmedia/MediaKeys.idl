@@ -29,6 +29,7 @@
 [
     Conditional=ENCRYPTED_MEDIA,
     EnabledAtRuntime=EncryptedMediaAPI,
+    DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     ImplementationLacksVTable,
 ] interface MediaKeys {
     [CallWith=ScriptExecutionContext, MayThrowException] MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");

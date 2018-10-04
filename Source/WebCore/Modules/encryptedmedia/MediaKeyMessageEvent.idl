@@ -41,7 +41,8 @@ dictionary MediaKeyMessageEventInit : EventInit {
 [
     Conditional=ENCRYPTED_MEDIA,
     Constructor(DOMString type, MediaKeyMessageEventInit eventInitDict),
-    EnabledAtRuntime=EncryptedMediaAPI
+    EnabledAtRuntime=EncryptedMediaAPI,
+    DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
 ] interface MediaKeyMessageEvent : Event {
     readonly attribute MediaKeyMessageType messageType;
     readonly attribute ArrayBuffer message;

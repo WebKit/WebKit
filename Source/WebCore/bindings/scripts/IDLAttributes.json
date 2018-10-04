@@ -181,6 +181,10 @@
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
             "values": ["*"]
         },
+        "DisabledByQuirk": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
+            "values": ["*"]
+        },
         "EnabledForWorld": {
             "contextsAllowed": ["attribute", "operation"],
             "values": ["*"]

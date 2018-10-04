@@ -258,7 +258,7 @@ sub GenerateConstructorAttributes
     foreach my $attributeName (sort keys %{$extendedAttributes}) {
       next unless ($attributeName eq "Conditional" || $attributeName eq "EnabledAtRuntime" || $attributeName eq "EnabledForWorld"
         || $attributeName eq "EnabledBySetting" || $attributeName eq "SecureContext" || $attributeName eq "PrivateIdentifier"
-        || $attributeName eq "PublicIdentifier");
+        || $attributeName eq "PublicIdentifier" || $attributeName eq "DisabledByQuirk");
       my $extendedAttribute = $attributeName;
       $extendedAttribute .= "=" . $extendedAttributes->{$attributeName} unless $extendedAttributes->{$attributeName} eq "VALUE_IS_MISSING";
       push(@extendedAttributesList, $extendedAttribute);

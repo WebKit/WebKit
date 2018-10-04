@@ -104,10 +104,10 @@ typedef (
 
     [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] readonly attribute WebKitMediaKeys webkitKeys;
     [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] void webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] readonly attribute MediaKeys mediaKeys;
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] attribute EventHandler onencrypted;
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] attribute EventHandler onwaitingforkey;
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] Promise<void> setMediaKeys(MediaKeys? mediaKeys);
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] readonly attribute MediaKeys mediaKeys;
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onencrypted;
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onwaitingforkey;
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<void> setMediaKeys(MediaKeys? mediaKeys);
 
     [Conditional=VIDEO_TRACK, MayThrowException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
     [Conditional=VIDEO_TRACK, ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;

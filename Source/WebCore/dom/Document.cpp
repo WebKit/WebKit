@@ -150,6 +150,7 @@
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
 #include "PublicSuffix.h"
+#include "Quirks.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderChildIterator.h"
 #include "RenderInline.h"
@@ -489,6 +490,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_touchEventsChangedTimer(*this, &Document::touchEventsChangedTimerFired)
 #endif
     , m_settings(frame ? Ref<Settings>(frame->settings()) : Settings::create(nullptr))
+    , m_quirks(makeUniqueRef<Quirks>(*this))
     , m_cachedResourceLoader(m_frame ? Ref<CachedResourceLoader>(m_frame->loader().activeDocumentLoader()->cachedResourceLoader()) : CachedResourceLoader::create(nullptr))
     , m_domTreeVersion(++s_globalTreeVersion)
     , m_styleScope(std::make_unique<Style::Scope>(*this))

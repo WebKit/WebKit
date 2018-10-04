@@ -73,6 +73,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "ProgressTracker.h"
 #include "PublicSuffix.h"
+#include "Quirks.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
@@ -2627,7 +2628,7 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
 #if ENABLE(ENCRYPTED_MEDIA)
         // Only fire an error if ENCRYPTED_MEDIA is not enabled, to give clients of the 
         // "encrypted" event a chance to handle it without resulting in a synthetic error.
-        && !RuntimeEnabledFeatures::sharedFeatures().encryptedMediaAPIEnabled()
+        && (!RuntimeEnabledFeatures::sharedFeatures().encryptedMediaAPIEnabled() || document().quirks().hasBrokenEncryptedMediaAPISupportQuirk())
 #endif
         ) {
         m_error = MediaError::create(MediaError::MEDIA_ERR_ENCRYPTED);
@@ -2763,7 +2764,7 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
 
 void HTMLMediaElement::mediaPlayerInitializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().encryptedMediaAPIEnabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().encryptedMediaAPIEnabled() || document().quirks().hasBrokenEncryptedMediaAPISupportQuirk())
         return;
 
     // https://w3c.github.io/encrypted-media/#initdata-encountered

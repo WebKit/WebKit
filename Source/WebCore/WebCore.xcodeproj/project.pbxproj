@@ -13343,6 +13343,8 @@
 		CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMMessageType.h; sourceTree = "<group>"; };
 		CD94A5DA1F71CBB000F525C5 /* CDMClearKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMClearKey.h; sourceTree = "<group>"; };
 		CD94A5DB1F71CBB000F525C5 /* CDMClearKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMClearKey.cpp; sourceTree = "<group>"; };
+		CD9A87F9215D6CF3006F17B5 /* Quirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Quirks.cpp; sourceTree = "<group>"; };
+		CD9A87FB215D6CF3006F17B5 /* Quirks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Quirks.h; sourceTree = "<group>"; };
 		CD9D375A215163E40049657B /* CDMInstanceSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDMInstanceSession.h; sourceTree = "<group>"; };
 		CD9D82731C7AE535006FF066 /* TextureCacheCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextureCacheCV.mm; sourceTree = "<group>"; };
 		CD9D82741C7AE535006FF066 /* TextureCacheCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureCacheCV.h; sourceTree = "<group>"; };
@@ -19534,6 +19536,8 @@
 				B776D43A1104525D00BEB0EC /* PrintContext.h */,
 				E42050162141901B0066EF3B /* ProcessWarming.cpp */,
 				E42050142141901A0066EF3B /* ProcessWarming.h */,
+				CD9A87F9215D6CF3006F17B5 /* Quirks.cpp */,
+				CD9A87FB215D6CF3006F17B5 /* Quirks.h */,
 				46B9518D207D632A00A7D2DD /* RemoteDOMWindow.cpp */,
 				46B9518E207D632A00A7D2DD /* RemoteDOMWindow.h */,
 				46BCBBC3208500A700710638 /* RemoteDOMWindow.idl */,

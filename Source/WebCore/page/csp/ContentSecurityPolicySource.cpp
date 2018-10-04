@@ -29,6 +29,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "SecurityOriginData.h"
+#include "TextEncoding.h"
 #include "URL.h"
 
 namespace WebCore {

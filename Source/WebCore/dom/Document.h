@@ -63,6 +63,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -155,6 +156,7 @@ class Page;
 class PlatformMouseEvent;
 class ProcessingInstruction;
 class QualifiedName;
+class Quirks;
 class Range;
 class RenderFullScreen;
 class RenderTreeBuilder;
@@ -564,6 +566,8 @@ public:
     WEBCORE_EXPORT Page* page() const; // can be NULL
     const Settings& settings() const { return m_settings.get(); }
     Settings& mutableSettings() { return m_settings.get(); }
+
+    const Quirks& quirks() const { return m_quirks; }
 
     float deviceScaleFactor() const;
 
@@ -1627,6 +1631,8 @@ private:
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 
     const Ref<Settings> m_settings;
+
+    UniqueRef<Quirks> m_quirks;
 
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
 

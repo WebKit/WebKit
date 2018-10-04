@@ -28,7 +28,8 @@
 
 [
     Conditional=ENCRYPTED_MEDIA,
-    EnabledAtRuntime=EncryptedMediaAPI
+    EnabledAtRuntime=EncryptedMediaAPI,
+    DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
 ] interface MediaKeySession : EventTarget {
     readonly attribute DOMString sessionId;
     readonly attribute unrestricted double expiration;

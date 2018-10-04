@@ -1,3 +1,44 @@
+2018-10-03  Jer Noble  <jer.noble@apple.com>
+
+        Add a quirk to disable Modern EME for sites which are broken with it enabled
+        https://bugs.webkit.org/show_bug.cgi?id=190051
+
+        Reviewed by Daniel Bates.
+
+        Add a new class, parallel to Settings, to track quirk behavior. Extend the bindings
+        generator to support a DisabledByQuirk attribute, and set this attribute for all
+        the Modern EME types. Check whether the quirk is set inside HTMLMediaElement in
+        addition to the existing Setting.
+
+        * Modules/encryptedmedia/MediaKeyMessageEvent.idl:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/MediaKeyStatusMap.idl:
+        * Modules/encryptedmedia/MediaKeySystemAccess.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/encryptedmedia/NavigatorEME.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGenerator.pm:
+        (WK_ucfirst):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsRuntimeCheck):
+        (GenerateRuntimeEnableConditionalString):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/preprocess-idls.pl:
+        (GenerateConstructorAttributes):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::quirks const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::mediaPlayerInitializationDataEncountered):
+        * html/HTMLMediaElement.idl:
+        * page/Quirks.cpp: Added.
+        (Quirks::Quirks):
+        (Quirks::disableEncryptedMediaAPIQuirk const):
+        * page/Quirks.h: Added.
+
 2018-10-03  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] REGRESSION: setting 'animation-name: none' after a 'fill: forwards' animation has completed does not revert to the unanimated style
