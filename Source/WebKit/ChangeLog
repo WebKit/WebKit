@@ -1,3 +1,25 @@
+2018-10-04  Brian Burg  <bburg@apple.com>
+
+        Web Automation: clear pending callbacks when the session terminates
+        https://bugs.webkit.org/show_bug.cgi?id=190259
+        <rdar://problem/44958352>
+
+        Reviewed by Joseph Pecoraro.
+
+        WebAutomationSession::terminate() can be called at any time to nuke the session.
+        However, it's possible that the session is in the midst of simulating keyboard/mouse
+        events. While in that state, there are some CompletionHandler objects waiting
+        for key/mouse events to be flushed. We need to empty out callback maps with
+        CompletionHandler instances so that they do not assert because they were never called.
+
+        I was able to test this manually by running a test that erroneously hangs
+        while waiting for keyboard input. While the test was hung, I killed the NetworkProcess
+        manually to trigger WebAutomationSession::terminate(). From there, I saw that the
+        Perform Actions REST API call gets cancelled with the appropriate error code.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::terminate):
+
 2018-10-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Move time out control from WebProcess to UIProcess
