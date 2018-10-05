@@ -1,5 +1,5 @@
-//@ runDefault
 //@ skip if $memoryLimited or $buildType == "debug"
+//@ runDefault
 //@ slow!
 
 try {
