@@ -133,6 +133,11 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
     // Protected
 
+    get mainTitleText()
+    {
+        return WI.displayNameForURL(this._resource.url, this._resource.urlComponents);
+    }
+
     _updateTitles()
     {
         var frame = this._resource.parentFrame;
@@ -151,7 +156,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         var urlComponents = this._resource.urlComponents;
 
         var oldMainTitle = this.mainTitle;
-        this.mainTitle = WI.displayNameForURL(this._resource.url, urlComponents);
+        this.mainTitle = this.mainTitleText;
 
         // Show the host as the subtitle if it is different from the main resource or if this is the main frame's main resource.
         var subtitle = parentResourceHost !== urlComponents.host || frame && frame.isMainFrame() && isMainResource ? WI.displayNameForHost(urlComponents.host) : null;

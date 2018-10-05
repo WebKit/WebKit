@@ -209,7 +209,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     _createExecutionContextPathComponentFromFrame(frame)
     {
-        let preferredName = frame.name ? frame.name + " \u2014 " + frame.mainResource.displayName : frame.mainResource.displayName;
+        let preferredName = frame.name ? WI.UIString("%s (%s)").format(frame.name, frame.mainResource.displayName) : frame.mainResource.displayName;
         return this._createExecutionContextPathComponent(frame.pageExecutionContext, preferredName);
     }
 

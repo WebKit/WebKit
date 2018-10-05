@@ -1,3 +1,22 @@
+2018-10-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: use iframe's name attribute for FrameTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=190275
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WI.FrameTreeElement.prototype.get mainTitleText): Added.
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement.prototype.get mainTitleText): Added.
+        (WI.ResourceTreeElement.prototype._updateTitles):
+        Provide a way for subclasses to override what is used for the `mainTitle`.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype._createExecutionContextPathComponentFromFrame):
+        Update the execution context picker to match what `WI.FrameTreeElement`s show.
+
 2018-10-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r236766): Storage tab no longer updates after main frame navigation

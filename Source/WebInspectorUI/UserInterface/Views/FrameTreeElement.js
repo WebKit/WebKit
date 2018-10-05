@@ -195,6 +195,16 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
             this._expandedSetting.value = false;
     }
 
+    // Protected
+
+    get mainTitleText()
+    {
+        // We can't assume that `this._frame` exists since this may be called before that is set.
+        if (this.resource.parentFrame.name)
+            return WI.UIString("%s (%s)").format(this.resource.parentFrame.name, super.mainTitleText);
+        return super.mainTitleText;
+    }
+
     // Private
 
     _updateExpandedSetting()
