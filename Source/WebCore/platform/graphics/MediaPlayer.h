@@ -87,11 +87,10 @@ struct MediaEngineSupportParameters {
 };
 
 struct VideoPlaybackQualityMetrics {
-    uint32_t totalVideoFrames { 0 };
-    uint32_t droppedVideoFrames { 0 };
-    uint32_t corruptedVideoFrames { 0 };
-    double totalFrameDelay { 0 };
-    uint32_t displayCompositedVideoFrames { 0 };
+    unsigned totalVideoFrames;
+    unsigned droppedVideoFrames;
+    unsigned corruptedVideoFrames;
+    double totalFrameDelay;
 };
 
 class MediaPlayerClient {
@@ -541,7 +540,9 @@ public:
 
     unsigned long long fileSize() const;
 
+#if ENABLE(MEDIA_SOURCE)
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
+#endif
 
     void handlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType);
     String sourceApplicationIdentifier() const;

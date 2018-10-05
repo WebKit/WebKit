@@ -89,7 +89,6 @@
 #include "TimeRanges.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
-#include "VideoPlaybackQuality.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <limits>
 #include <pal/SessionID.h>
@@ -135,6 +134,7 @@
 #if ENABLE(MEDIA_SOURCE)
 #include "DOMWindow.h"
 #include "MediaSource.h"
+#include "VideoPlaybackQuality.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -7149,6 +7149,7 @@ void HTMLMediaElement::updateRateChangeRestrictions()
         m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
 }
 
+#if ENABLE(MEDIA_SOURCE)
 RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
 {
     RefPtr<DOMWindow> domWindow = document().domWindow();
@@ -7156,15 +7157,15 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
 
     auto metrics = m_player ? m_player->videoPlaybackQualityMetrics() : std::nullopt;
     if (!metrics)
-        return VideoPlaybackQuality::create(timestamp, { });
+        return VideoPlaybackQuality::create(timestamp, 0, 0, 0, 0);
 
-#if ENABLE(MEDIA_SOURCE)
-    metrics.value().totalVideoFrames += m_droppedVideoFrames;
-    metrics.value().droppedVideoFrames += m_droppedVideoFrames;
-#endif
-
-    return VideoPlaybackQuality::create(timestamp, metrics.value());
+    return VideoPlaybackQuality::create(timestamp,
+        metrics.value().totalVideoFrames + m_droppedVideoFrames,
+        metrics.value().droppedVideoFrames + m_droppedVideoFrames,
+        metrics.value().corruptedVideoFrames,
+        metrics.value().totalFrameDelay);
 }
+#endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
 DOMWrapperWorld& HTMLMediaElement::ensureIsolatedWorld()

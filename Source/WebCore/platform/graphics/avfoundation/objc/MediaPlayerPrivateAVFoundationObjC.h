@@ -322,8 +322,6 @@ private:
 
     void setShouldDisableSleep(bool) override;
 
-    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
-
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaPlayerPrivateAVFoundationObjC"; }
 #endif

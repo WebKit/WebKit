@@ -26,22 +26,19 @@
 #include "config.h"
 #include "VideoPlaybackQuality.h"
 
-#include "MediaPlayer.h"
-
 namespace WebCore {
 
-Ref<VideoPlaybackQuality> VideoPlaybackQuality::create(double creationTime, const VideoPlaybackQualityMetrics& metrics)
+Ref<VideoPlaybackQuality> VideoPlaybackQuality::create(double creationTime, unsigned totalVideoFrames, unsigned droppedVideoFrames, unsigned corruptedVideoFrames, double totalFrameDelay)
 {
-    return adoptRef(*new VideoPlaybackQuality(creationTime, metrics));
+    return adoptRef(*new VideoPlaybackQuality(creationTime, totalVideoFrames, droppedVideoFrames, corruptedVideoFrames, totalFrameDelay));
 }
 
-VideoPlaybackQuality::VideoPlaybackQuality(double creationTime, const VideoPlaybackQualityMetrics& metrics)
+VideoPlaybackQuality::VideoPlaybackQuality(double creationTime, unsigned totalVideoFrames, unsigned droppedVideoFrames, unsigned corruptedVideoFrames, double totalFrameDelay)
     : m_creationTime(creationTime)
-    , m_totalVideoFrames(metrics.totalVideoFrames)
-    , m_droppedVideoFrames(metrics.droppedVideoFrames)
-    , m_corruptedVideoFrames(metrics.corruptedVideoFrames)
-    , m_displayCompositedVideoFrames(metrics.displayCompositedVideoFrames)
-    , m_totalFrameDelay(metrics.totalFrameDelay)
+    , m_totalVideoFrames(totalVideoFrames)
+    , m_droppedVideoFrames(droppedVideoFrames)
+    , m_corruptedVideoFrames(corruptedVideoFrames)
+    , m_totalFrameDelay(totalFrameDelay)
 {
 }
 

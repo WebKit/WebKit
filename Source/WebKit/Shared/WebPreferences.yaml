@@ -1146,11 +1146,6 @@ EncryptedMediaAPIEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(ENCRYPTED_MEDIA)
 
-VideoQualityIncludesDisplayCompositingEnabled:
-  type: bool
-  defaultValue: false
-  condition: ENABLE(VIDEO)
-
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all experimental features. They

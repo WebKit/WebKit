@@ -1326,16 +1326,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 #endif
 }
 
-- (void)_setVideoQualityIncludesDisplayCompositingEnabled:(BOOL)videoQualityIncludesDisplayCompositingEnabled
-{
-    _preferences->setVideoQualityIncludesDisplayCompositingEnabled(videoQualityIncludesDisplayCompositingEnabled);
-}
-
-- (BOOL)_videoQualityIncludesDisplayCompositingEnabled
-{
-    return _preferences->videoQualityIncludesDisplayCompositingEnabled();
-}
-
 @end
 
 #endif // WK_API_ENABLED

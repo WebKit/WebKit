@@ -30,28 +30,24 @@
 
 namespace WebCore {
 
-struct VideoPlaybackQualityMetrics;
-
 class VideoPlaybackQuality : public RefCounted<VideoPlaybackQuality> {
     WTF_MAKE_NONCOPYABLE(VideoPlaybackQuality)
 public:
-    static Ref<VideoPlaybackQuality> create(double creationTime, const VideoPlaybackQualityMetrics&);
+    static Ref<VideoPlaybackQuality> create(double creationTime, unsigned totalVideoFrames, unsigned droppedVideoFrames, unsigned corruptedVideoFrames, double totalFrameDelay);
 
     double creationTime() const { return m_creationTime; }
     unsigned totalVideoFrames() const { return m_totalVideoFrames; }
     unsigned droppedVideoFrames() const { return m_droppedVideoFrames; }
     unsigned corruptedVideoFrames() const { return m_corruptedVideoFrames; }
-    unsigned displayCompositedVideoFrames() const { return m_displayCompositedVideoFrames; }
     double totalFrameDelay() const { return m_totalFrameDelay; }
 
 private:
-    VideoPlaybackQuality(double creationTime, const VideoPlaybackQualityMetrics&);
+    VideoPlaybackQuality(double creationTime, unsigned totalVideoFrames, unsigned droppedVideoFrames, unsigned corruptedVideoFrames, double totalFrameDelay);
 
     double m_creationTime;
-    uint32_t m_totalVideoFrames;
-    uint32_t m_droppedVideoFrames;
-    uint32_t m_corruptedVideoFrames;
-    uint32_t m_displayCompositedVideoFrames;
+    unsigned m_totalVideoFrames;
+    unsigned m_droppedVideoFrames;
+    unsigned m_corruptedVideoFrames;
     double m_totalFrameDelay;
 };
 
