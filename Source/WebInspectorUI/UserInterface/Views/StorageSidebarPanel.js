@@ -76,15 +76,15 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
         WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.CookieStorageObjectWasAdded, this._cookieStorageObjectWasAdded, this);
         WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasAdded, this._domStorageObjectWasAdded, this);
         WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, this._domStorageObjectWasInspected, this);
-        WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.Cleared, this._storageCleared, this);
+        WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.Cleared, this._domStorageCleared, this);
         WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasAdded, this._databaseWasAdded, this);
         WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, this._databaseWasInspected, this);
-        WI.databaseManager.addEventListener(WI.DatabaseManager.Event.Cleared, this._storageCleared, this);
+        WI.databaseManager.addEventListener(WI.DatabaseManager.Event.Cleared, this._databaseCleared, this);
         WI.indexedDBManager.addEventListener(WI.IndexedDBManager.Event.IndexedDatabaseWasAdded, this._indexedDatabaseWasAdded, this);
-        WI.indexedDBManager.addEventListener(WI.IndexedDBManager.Event.Cleared, this._storageCleared, this);
+        WI.indexedDBManager.addEventListener(WI.IndexedDBManager.Event.Cleared, this._indexedDatabaseCleared, this);
         WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.FrameManifestAdded, this._frameManifestAdded, this);
         WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.FrameManifestRemoved, this._frameManifestRemoved, this);
-        WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.Cleared, this._storageCleared, this);
+        WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.Cleared, this._applicationCacheCleared, this);
 
         this.contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
@@ -340,37 +340,67 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
         return parentElement;
     }
 
-    _storageCleared(event)
+    _closeContentViewForTreeElement(treeElement)
     {
-        this.contentBrowser.contentViewContainer.closeAllContentViews();
+        const onlyExisting = true;
+        let contentView = this.contentBrowser.contentViewForRepresentedObject(treeElement.representedObject, onlyExisting);
+        if (contentView)
+            this.contentBrowser.contentViewContainer.closeContentView(contentView);
+    }
 
-        if (this._localStorageRootTreeElement && this._localStorageRootTreeElement.parent)
+    _domStorageCleared(event)
+    {
+        if (this._localStorageRootTreeElement && this._localStorageRootTreeElement.parent) {
+            this._closeContentViewForTreeElement(this._localStorageRootTreeElement);
             this._localStorageRootTreeElement.parent.removeChild(this._localStorageRootTreeElement);
+        }
 
-        if (this._sessionStorageRootTreeElement && this._sessionStorageRootTreeElement.parent)
+        if (this._sessionStorageRootTreeElement && this._sessionStorageRootTreeElement.parent) {
+            this._closeContentViewForTreeElement(this._sessionStorageRootTreeElement);
             this._sessionStorageRootTreeElement.parent.removeChild(this._sessionStorageRootTreeElement);
+        }
 
-        if (this._databaseRootTreeElement && this._databaseRootTreeElement.parent)
-            this._databaseRootTreeElement.parent.removeChild(this._databaseRootTreeElement);
-
-        if (this._indexedDatabaseRootTreeElement && this._indexedDatabaseRootTreeElement.parent)
-            this._indexedDatabaseRootTreeElement.parent.removeChild(this._indexedDatabaseRootTreeElement);
-
-        if (this._cookieStorageRootTreeElement && this._cookieStorageRootTreeElement.parent)
+        if (this._cookieStorageRootTreeElement && this._cookieStorageRootTreeElement.parent) {
+            this._closeContentViewForTreeElement(this._cookieStorageRootTreeElement);
             this._cookieStorageRootTreeElement.parent.removeChild(this._cookieStorageRootTreeElement);
-
-        if (this._applicationCacheRootTreeElement && this._applicationCacheRootTreeElement.parent)
-            this._applicationCacheRootTreeElement.parent.removeChild(this._applicationCacheRootTreeElement);
+        }
 
         this._localStorageRootTreeElement = null;
         this._sessionStorageRootTreeElement = null;
-        this._databaseRootTreeElement = null;
-        this._databaseHostTreeElementMap.clear();
-        this._indexedDatabaseRootTreeElement = null;
-        this._indexedDatabaseHostTreeElementMap.clear();
         this._cookieStorageRootTreeElement = null;
+    }
+
+    _applicationCacheCleared(event)
+    {
+        if (this._applicationCacheRootTreeElement && this._applicationCacheRootTreeElement.parent) {
+            this._closeContentViewForTreeElement(this._applicationCacheRootTreeElement);
+            this._applicationCacheRootTreeElement.parent.removeChild(this._applicationCacheRootTreeElement);
+        }
+
         this._applicationCacheRootTreeElement = null;
         this._applicationCacheURLTreeElementMap.clear();
+    }
+
+    _indexedDatabaseCleared(event)
+    {
+        if (this._indexedDatabaseRootTreeElement && this._indexedDatabaseRootTreeElement.parent) {
+            this._closeContentViewForTreeElement(this._indexedDatabaseRootTreeElement);
+            this._indexedDatabaseRootTreeElement.parent.removeChild(this._indexedDatabaseRootTreeElement);
+        }
+
+        this._indexedDatabaseRootTreeElement = null;
+        this._indexedDatabaseHostTreeElementMap.clear();
+    }
+
+    _databaseCleared(event)
+    {
+        if (this._databaseRootTreeElement && this._databaseRootTreeElement.parent) {
+            this._closeContentViewForTreeElement(this._databaseRootTreeElement);
+            this._databaseRootTreeElement.parent.removeChild(this._databaseRootTreeElement);
+        }
+
+        this._databaseRootTreeElement = null;
+        this._databaseHostTreeElementMap.clear();
     }
 
     _scopeBarSelectionDidChange(event)

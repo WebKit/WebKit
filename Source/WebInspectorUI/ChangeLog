@@ -1,5 +1,25 @@
 2018-10-04  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION (r236766): Storage tab no longer updates after main frame navigation
+        https://bugs.webkit.org/show_bug.cgi?id=190298
+
+        Reviewed by Joseph Pecoraro.
+
+        Handle Cleared events from storage managers separately, so that successive
+        events during page load does not cause the Storage tab to destroy newly
+        created tree elements.
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WI.StorageSidebarPanel):
+        (WI.StorageSidebarPanel.prototype._closeContentViewForTreeElement):
+        (WI.StorageSidebarPanel.prototype._domStorageCleared):
+        (WI.StorageSidebarPanel.prototype._applicationCacheCleared):
+        (WI.StorageSidebarPanel.prototype._indexedDatabaseCleared):
+        (WI.StorageSidebarPanel.prototype._databaseCleared):
+        (WI.StorageSidebarPanel.prototype._storageCleared): Deleted.
+
+2018-10-04  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Table should support multiple selection and Cmd-click behavior
         https://bugs.webkit.org/show_bug.cgi?id=189705
         <rdar://problem/44571170>
