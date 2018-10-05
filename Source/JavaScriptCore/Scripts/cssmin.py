@@ -43,7 +43,10 @@ def cssminify(css):
 
 if __name__ == "__main__":
     import sys
-    if sys.version_info[0] == 3 and sys.stdin.encoding != 'UTF-8':
+    if sys.version_info[0] >= 3:
         import io
-        sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='UTF-8')
+        if sys.stdin.encoding != 'UTF-8':
+            sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='UTF-8')
+        if sys.stdout.encoding != 'UTF-8':
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='UTF-8')
     sys.stdout.write(cssminify(sys.stdin.read()))

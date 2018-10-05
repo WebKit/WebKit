@@ -90,7 +90,10 @@ aliases = None
 
 def openOrExit(path, mode):
     try:
-        return open(path, mode)
+        if sys.version_info.major >= 3:
+            return open(path, mode, encoding="UTF-8")
+        else:
+            return open(path, mode)
     except IOError as e:
         print("I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror))
         exit(1)

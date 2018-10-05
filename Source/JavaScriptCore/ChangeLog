@@ -1,3 +1,16 @@
+2018-10-05  Mike Gorse  <mgorse@alum.wpi.edu>
+
+        [GTK] build fails with python 3 if LANG and LC_TYPE are unset
+        https://bugs.webkit.org/show_bug.cgi?id=190258
+
+        Reviewed by Konstantin Tokarev.
+
+        * Scripts/cssmin.py: Set stdout to UTF-8 on python 3.
+        * Scripts/generateIntlCanonicalizeLanguage.py: Open files with
+          encoding=UTF-8 on Python 3.
+        * yarr/generateYarrCanonicalizeUnicode: Ditto.
+        * yarr/generateYarrUnicodePropertyTables.py: Ditto.
+
 2018-10-04  Mark Lam  <mark.lam@apple.com>
 
         Move start/EndOfFixedExecutableMemoryPool pointers into the FixedVMPoolExecutableAllocator object.

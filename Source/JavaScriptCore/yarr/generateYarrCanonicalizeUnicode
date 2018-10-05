@@ -77,7 +77,10 @@ def openOrExit(path, mode):
         dirname = os.path.dirname(path)
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
-        return open(path, mode)
+        if sys.version_info.major >= 3:
+            return open(path, mode, encoding="UTF-8")
+        else:
+            return open(path, mode)
     except IOError as e:
         print("I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror))
         exit(1)
