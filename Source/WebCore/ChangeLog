@@ -1,5 +1,12 @@
 2018-10-05  Jer Noble  <jer.noble@apple.com>
 
+        Further unreviewed watchOS build fix: videoPerformanceMetrics unavailable on watchOS.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics):
+
+2018-10-05  Jer Noble  <jer.noble@apple.com>
+
        Unreviewed watchOS build fix: videoPerformanceMetrics unavailable on watchOS.
 
         * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
