@@ -76,7 +76,7 @@ T endOfFixedExecutableMemoryPool()
     return bitwise_cast<T>(endOfFixedExecutableMemoryPoolImpl());
 }
 
-bool isJITPC(void* pc);
+JS_EXPORT_PRIVATE bool isJITPC(void* pc);
 
 #if !ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)
 

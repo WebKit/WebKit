@@ -1,5 +1,14 @@
 2018-10-05  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: Build fix after r236880.
+        https://bugs.webkit.org/show_bug.cgi?id=190317
+
+        Unreviewed.
+
+        * jit/ExecutableAllocator.h:
+
+2018-10-05  Mark Lam  <mark.lam@apple.com>
+
         performJITMemcpy() should handle the case when the executable allocator is not initialized yet.
         https://bugs.webkit.org/show_bug.cgi?id=190317
         <rdar://problem/45039398>
