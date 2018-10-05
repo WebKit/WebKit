@@ -44,11 +44,7 @@
 @property (nonatomic, readonly) NSString *selectedText;
 
 - (NSDictionary<NSString *, id> *)typingAttributes;
-- (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;
-- (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName;
 - (void)selectNextWord;
-- (void)collapseToStart;
-- (void)collapseToEnd;
 
 @end
 
@@ -88,28 +84,6 @@
     [self moveRight:nil];
     [self moveRight:nil];
     [self selectWord:nil];
-}
-
-- (void)collapseToStart
-{
-    [self evaluateJavaScript:@"getSelection().collapseToStart()" completionHandler:nil];
-}
-
-- (void)collapseToEnd
-{
-    [self evaluateJavaScript:@"getSelection().collapseToEnd()" completionHandler:nil];
-}
-
-- (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName
-{
-    NSString *script = [NSString stringWithFormat:@"getComputedStyle(getSelection().getRangeAt(0).startContainer.parentElement)['%@']", propertyName];
-    return [self stringByEvaluatingJavaScript:script];
-}
-
-- (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName
-{
-    NSString *script = [NSString stringWithFormat:@"getComputedStyle(getSelection().getRangeAt(0).endContainer.parentElement)['%@']", propertyName];
-    return [self stringByEvaluatingJavaScript:script];
 }
 
 @end

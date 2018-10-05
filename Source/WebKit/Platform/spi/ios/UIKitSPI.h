@@ -195,11 +195,14 @@ typedef enum {
 @end
 
 typedef enum {
-    UIFontTraitPlain = 0x00000000,
+    UIFontTraitPlain = 0,
+    UIFontTraitItalic = 1 << 0,
+    UIFontTraitBold = 1 << 1,
 } UIFontTrait;
 
 @interface UIFont ()
 + (UIFont *)fontWithFamilyName:(NSString *)familyName traits:(UIFontTrait)traits size:(CGFloat)fontSize;
+- (UIFontTrait)traits;
 @end
 
 typedef enum {

@@ -1398,6 +1398,9 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
     #undef FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW
 
+    if (action == @selector(setTextColor:sender:) || action == @selector(setFontSize:sender:) || action == @selector(setFont:sender:))
+        return self.usesStandardContentView && [_contentView canPerformActionForWebView:action withSender:sender];
+
     return [super canPerformAction:action withSender:sender];
 }
 
@@ -1414,6 +1417,21 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     #undef FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW
 
     return [super targetForAction:action withSender:sender];
+}
+
+- (void)setFont:(UIFont *)font sender:(id)sender
+{
+    [_contentView setFontForWebView:font sender:sender];
+}
+
+- (void)setTextColor:(UIColor *)color sender:(id)sender
+{
+    [_contentView setTextColorForWebView:color sender:sender];
+}
+
+- (void)setFontSize:(CGFloat)fontSize sender:(id)sender
+{
+    [_contentView setFontSizeForWebView:fontSize sender:sender];
 }
 
 static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)

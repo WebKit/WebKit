@@ -133,6 +133,7 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
+#include <WebCore/FontAttributeChanges.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/GlobalWindowIdentifier.h>
@@ -7069,6 +7070,22 @@ void WebPageProxy::signedPublicKeyAndChallengeString(unsigned keySizeIndex, cons
 void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
 {
     m_process->send(Messages::WebPage::AddMIMETypeWithCustomContentProvider(mimeType), m_pageID);
+}
+
+void WebPageProxy::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
+{
+    if (!isValid())
+        return;
+
+    process().send(Messages::WebPage::ChangeFontAttributes(WTFMove(changes)), m_pageID);
+}
+
+void WebPageProxy::changeFont(WebCore::FontChanges&& changes)
+{
+    if (!isValid())
+        return;
+
+    process().send(Messages::WebPage::ChangeFont(WTFMove(changes)), m_pageID);
 }
 
 #if PLATFORM(COCOA)

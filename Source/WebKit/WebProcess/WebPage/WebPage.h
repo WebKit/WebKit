@@ -1362,14 +1362,15 @@ private:
 
     void updateWebsitePolicies(WebsitePoliciesData&&);
 
+    void changeFont(WebCore::FontChanges&&);
+    void changeFontAttributes(WebCore::FontAttributeChanges&&);
+
 #if PLATFORM(MAC)
     void performImmediateActionHitTestAtLocation(WebCore::FloatPoint);
     std::tuple<RefPtr<WebCore::Range>, NSDictionary *> lookupTextAtLocation(WebCore::FloatPoint);
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
     void immediateActionDidComplete();
-    void changeFont(WebCore::FontChanges&&);
-    void changeFontAttributes(WebCore::FontAttributeChanges&&);
 
     void dataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);

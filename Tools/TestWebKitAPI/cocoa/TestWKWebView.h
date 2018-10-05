@@ -64,6 +64,10 @@
 - (void)waitForMessage:(NSString *)message;
 - (void)performAfterLoading:(dispatch_block_t)actions;
 - (void)waitForNextPresentationUpdate;
+- (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;
+- (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName;
+- (void)collapseToStart;
+- (void)collapseToEnd;
 @end
 
 #if PLATFORM(IOS)

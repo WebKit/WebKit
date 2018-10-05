@@ -1,3 +1,32 @@
+2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK2] Expose some more editing SPI on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=190232
+        <rdar://problem/44963368>
+
+        Reviewed by Tim Horton.
+
+        Adds new API tests to exercise the new SPIs.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/WKWebViewEditActions.mm: Added.
+        (-[TestWKWebView querySelectorExists:]):
+        (TestWebKitAPI::webViewForEditActionTesting):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (-[TestWKWebView collapseToStart]): Deleted.
+        (-[TestWKWebView collapseToEnd]): Deleted.
+        (-[TestWKWebView stylePropertyAtSelectionStart:]): Deleted.
+        (-[TestWKWebView stylePropertyAtSelectionEnd:]): Deleted.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView stylePropertyAtSelectionStart:]):
+        (-[TestWKWebView stylePropertyAtSelectionEnd:]):
+        (-[TestWKWebView collapseToStart]):
+        (-[TestWKWebView collapseToEnd]):
+
+        Pull some common testing helpers out of NSFontManager and into TestWKWebView.
+
 2018-10-04  Jer Noble  <jer.noble@apple.com>
 
         Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.

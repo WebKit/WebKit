@@ -1,3 +1,109 @@
+2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK2] Expose some more editing SPI on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=190232
+        <rdar://problem/44963368>
+
+        Reviewed by Tim Horton.
+
+        Exposes a few additional editing commands as SPI on WKWebView, by defining a new extension on WKWebView that
+        also conforms to <UIResponderStandardEditActions>. This patch implements nearly all of the remaining
+        unimplemented methods on UIResponderStandardEditActions, and the new extension augments this set of editing
+        methods by adding additional editing helpers that don't currently exist on iOS (e.g. toggleStrikeThrough and
+        insertUnorderedList). The names of these new methods have been largely been borrowed from their counterparts on
+        macOS (see: `NSResponder.h`).
+
+        The new edit actions are added in this patch on iOS are:
+
+        ```
+        - (void)alignCenter:(id)sender;
+        - (void)alignJustified:(id)sender;
+        - (void)alignLeft:(id)sender;
+        - (void)alignRight:(id)sender;
+        - (void)indent:(id)sender;
+        - (void)insertOrderedList:(id)sender;
+        - (void)insertUnorderedList:(id)sender;
+        - (void)outdent:(id)sender;
+        - (void)toggleStrikeThrough:(id)sender;
+        - (void)setFont:(UIFont *)font sender:(id)sender;
+        - (void)setFontSize:(CGFloat)fontSize sender:(id)sender;
+        - (void)setTextColor:(UIColor *)color sender:(id)sender;
+        ```
+
+        Tests:  WKWebViewEditActions.ListInsertion
+                WKWebViewEditActions.ChangeIndentation
+                WKWebViewEditActions.SetAlignment
+                WKWebViewEditActions.ToggleStrikeThrough
+                WKWebViewEditActions.ChangeFontSize
+                WKWebViewEditActions.SetTextColor
+                WKWebViewEditActions.SetFontFamily
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView canPerformAction:withSender:]):
+
+        Update this to handle the new editing actions. For now, we simply treat all of the new edit actions in the same
+        way as we currently treat bold, italic and underline: that is, they are enabled only when the user is in a
+        richly contenteditable element.
+
+        (-[WKWebView setFont:sender:]):
+        (-[WKWebView setFontSize:sender:]):
+
+        Construct and send a set of FontChanges.
+
+        (-[WKWebView setTextColor:sender:]):
+
+        Invoke "ForeColor" with the serialized color representation. This allows us to handle `rgba()` color values,
+        which hex format would not permit.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Add the new SPI.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::changeFontAttributes):
+        (WebKit::WebPageProxy::changeFont):
+
+        Pull logic for applying font and font attribute style changes out of macOS-specific code, and into
+        platform-agnostic code in WebPage and WebPageProxy.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Add the new supported editing commands as supported actions in WKWebView. The only new editing commands that
+        aren't present in this list are -setFont:sender:, -setColor:sender:, and -setFontSize:sender: which are manually
+        handled in places where the `FOR_EACH_WKCONTENTVIEW_ACTION` macro is otherwise used. In a followup, we could
+        consider augmenting `FOR_EACH_WKCONTENTVIEW_ACTION` to handle actions with multiple arguments.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+        Define a new helper macro here to define boilerplate implementations of the -…ForWebView edit command
+        implementations that turn around and invoke `_page->executeEditCommand` with no additional arguments, and an
+        edit command name matching that of the WebCore edit command.
+
+        (-[WKContentView toggleStrikeThroughForWebView:]):
+        (-[WKContentView increaseSizeForWebView:]):
+        (-[WKContentView decreaseSizeForWebView:]):
+        (-[WKContentView setFontForWebView:sender:]):
+        (-[WKContentView setFontSizeForWebView:sender:]):
+        (-[WKContentView setTextColorForWebView:sender:]):
+        (-[WKContentView canPerformActionForWebView:sender:]):
+
+        Add …ForWebView plumbing for the new editing actions, so they turn around and call into WKContentView by
+        default, but behavior may be overridden in WKWebView.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::changeFontAttributes): Deleted.
+        (WebKit::WebPageProxy::changeFont): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::changeFontAttributes):
+        (WebKit::WebPage::changeFont):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::changeFontAttributes): Deleted.
+        (WebKit::WebPage::changeFont): Deleted.
+
 2018-10-04  Jer Noble  <jer.noble@apple.com>
 
         Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.

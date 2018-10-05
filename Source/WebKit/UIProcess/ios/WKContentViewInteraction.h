@@ -121,7 +121,18 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(selectAll) \
     M(toggleBoldface) \
     M(toggleItalics) \
-    M(toggleUnderline)
+    M(toggleUnderline) \
+    M(increaseSize) \
+    M(decreaseSize) \
+    M(toggleStrikeThrough) \
+    M(insertUnorderedList) \
+    M(insertOrderedList) \
+    M(indent) \
+    M(outdent) \
+    M(alignLeft) \
+    M(alignRight) \
+    M(alignCenter) \
+    M(alignJustified)
 
 namespace WebKit {
 
@@ -318,6 +329,10 @@ struct WKAutoCorrectionData {
 FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_pasteAsQuotation)
 #undef DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW
+
+- (void)setFontForWebView:(UIFont *)fontFamily sender:(id)sender;
+- (void)setFontSizeForWebView:(CGFloat)fontSize sender:(id)sender;
+- (void)setTextColorForWebView:(UIColor *)color sender:(id)sender;
 
 #if ENABLE(TOUCH_EVENTS)
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;

@@ -190,9 +190,10 @@ messages -> WebPage LegacyReceiver {
 
 #if PLATFORM(MAC)
     PerformDictionaryLookupOfCurrentSelection()
+#endif
+
     ChangeFont(WebCore::FontChanges changes)
     ChangeFontAttributes(WebCore::FontAttributeChanges changes)
-#endif
 
     PreferencesDidChange(struct WebKit::WebPreferencesStore store)
 

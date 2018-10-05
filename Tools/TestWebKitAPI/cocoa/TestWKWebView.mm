@@ -315,6 +315,28 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     TestWebKitAPI::Util::run(&done);
 }
 
+- (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName
+{
+    NSString *script = [NSString stringWithFormat:@"getComputedStyle(getSelection().getRangeAt(0).startContainer.parentElement)['%@']", propertyName];
+    return [self stringByEvaluatingJavaScript:script];
+}
+
+- (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName
+{
+    NSString *script = [NSString stringWithFormat:@"getComputedStyle(getSelection().getRangeAt(0).endContainer.parentElement)['%@']", propertyName];
+    return [self stringByEvaluatingJavaScript:script];
+}
+
+- (void)collapseToStart
+{
+    [self evaluateJavaScript:@"getSelection().collapseToStart()" completionHandler:nil];
+}
+
+- (void)collapseToEnd
+{
+    [self evaluateJavaScript:@"getSelection().collapseToEnd()" completionHandler:nil];
+}
+
 @end
 
 #if PLATFORM(IOS)
