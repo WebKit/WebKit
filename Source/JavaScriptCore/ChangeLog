@@ -1,5 +1,27 @@
 2018-10-04  Mark Lam  <mark.lam@apple.com>
 
+        Move start/EndOfFixedExecutableMemoryPool pointers into the FixedVMPoolExecutableAllocator object.
+        https://bugs.webkit.org/show_bug.cgi?id=190295
+        <rdar://problem/19197193>
+
+        Reviewed by Saam Barati.
+
+        This allows us to use the tagging logic already baked into MacroAssemblerCodePtr
+        instead of needing to use our own custom version here.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::memoryStart):
+        (JSC::FixedVMPoolExecutableAllocator::memoryEnd):
+        (JSC::FixedVMPoolExecutableAllocator::isJITPC):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::startOfFixedExecutableMemoryPoolImpl):
+        (JSC::endOfFixedExecutableMemoryPoolImpl):
+        (JSC::isJITPC):
+        * jit/ExecutableAllocator.h:
+
+2018-10-04  Mark Lam  <mark.lam@apple.com>
+
         Disable Options::useWebAssemblyFastMemory() on linux if ASAN signal handling is not disabled.
         https://bugs.webkit.org/show_bug.cgi?id=190283
         <rdar://problem/45015752>

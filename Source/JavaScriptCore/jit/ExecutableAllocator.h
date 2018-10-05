@@ -61,25 +61,22 @@ typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 
 #if ENABLE(JIT)
 
-extern JS_EXPORT_PRIVATE void* taggedStartOfFixedExecutableMemoryPool;
-extern JS_EXPORT_PRIVATE void* taggedEndOfFixedExecutableMemoryPool;
+JS_EXPORT_PRIVATE void* startOfFixedExecutableMemoryPoolImpl();
+JS_EXPORT_PRIVATE void* endOfFixedExecutableMemoryPoolImpl();
 
 template<typename T = void*>
 T startOfFixedExecutableMemoryPool()
 {
-    return untagCodePtr<T, ExecutableMemoryPtrTag>(taggedStartOfFixedExecutableMemoryPool);
+    return bitwise_cast<T>(startOfFixedExecutableMemoryPoolImpl());
 }
 
 template<typename T = void*>
 T endOfFixedExecutableMemoryPool()
 {
-    return untagCodePtr<T, ExecutableMemoryPtrTag>(taggedEndOfFixedExecutableMemoryPool);
+    return bitwise_cast<T>(endOfFixedExecutableMemoryPoolImpl());
 }
 
-inline bool isJITPC(void* pc)
-{
-    return startOfFixedExecutableMemoryPool() <= pc && pc < endOfFixedExecutableMemoryPool();
-}
+bool isJITPC(void* pc);
 
 #if !ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)
 

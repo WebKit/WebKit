@@ -104,9 +104,6 @@ static const double executablePoolReservationFraction = 0.15;
 static const double executablePoolReservationFraction = 0.25;
 #endif
 
-JS_EXPORT_PRIVATE void* taggedStartOfFixedExecutableMemoryPool;
-JS_EXPORT_PRIVATE void* taggedEndOfFixedExecutableMemoryPool;
-
 #if !ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)
 JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy { false };
 JS_EXPORT_PRIVATE JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
@@ -168,12 +165,17 @@ public:
             addFreshFreeSpace(reservationBase, reservationSize);
 
             void* reservationEnd = reinterpret_cast<uint8_t*>(reservationBase) + reservationSize;
-            taggedStartOfFixedExecutableMemoryPool = tagCodePtr<ExecutableMemoryPtrTag>(reservationBase);
-            taggedEndOfFixedExecutableMemoryPool = tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd);
+
+            m_memoryStart = MacroAssemblerCodePtr<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(reservationBase));
+            m_memoryEnd = MacroAssemblerCodePtr<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd));
         }
     }
 
     virtual ~FixedVMPoolExecutableAllocator();
+
+    void* memoryStart() { return m_memoryStart.untaggedExecutableAddress(); }
+    void* memoryEnd() { return m_memoryEnd.untaggedExecutableAddress(); }
+    bool isJITPC(void* pc) { return memoryStart() <= pc && pc < memoryEnd(); }
 
 protected:
     FreeSpacePtr allocateNewSpace(size_t&) override
@@ -358,6 +360,8 @@ private:
 
 private:
     PageReservation m_reservation;
+    MacroAssemblerCodePtr<ExecutableMemoryPtrTag> m_memoryStart;
+    MacroAssemblerCodePtr<ExecutableMemoryPtrTag> m_memoryEnd;
 };
 
 static FixedVMPoolExecutableAllocator* allocator;
@@ -461,12 +465,10 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
     }
 
 #if USE(POINTER_PROFILING)
-    void* start = startOfFixedExecutableMemoryPool();
-    void* end = endOfFixedExecutableMemoryPool();
+    void* start = allocator->memoryStart();
+    void* end = allocator->memoryEnd();
     void* resultStart = result->start().untaggedPtr();
     void* resultEnd = result->end().untaggedPtr();
-    RELEASE_ASSERT(start == removeCodePtrTag(taggedStartOfFixedExecutableMemoryPool));
-    RELEASE_ASSERT(end == removeCodePtrTag(taggedEndOfFixedExecutableMemoryPool));
     RELEASE_ASSERT(start <= resultStart && resultStart < end);
     RELEASE_ASSERT(start < resultEnd && resultEnd <= end);
 #endif
@@ -495,7 +497,22 @@ void ExecutableAllocator::dumpProfile()
 }
 #endif
 
+void* startOfFixedExecutableMemoryPoolImpl()
+{
+    return allocator->memoryStart();
 }
+
+void* endOfFixedExecutableMemoryPoolImpl()
+{
+    return allocator->memoryEnd();
+}
+
+bool isJITPC(void* pc)
+{
+    return allocator->isJITPC(pc);
+}
+
+} // namespace JSC
 
 #else // !ENABLE(JIT)
 
