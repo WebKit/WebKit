@@ -1,3 +1,18 @@
+2018-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r236154) Page loads are not drawn when loaded in shipped Safari11/12
+        https://bugs.webkit.org/show_bug.cgi?id=190202
+
+        Reviewed by Youenn Fablet.
+
+        Safari11/12 had a WKPageLoaderClient and a WKPageNavigationClient.
+        It did not actually draw the page until its WKPageNavigationClient.renderingProgressDidChange was called.
+        r236154 made it so we only call WKPageLoaderClient.didLayout if an application has both clients.
+        This fixes open source WebKit running with shipped Safari.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReachLayoutMilestone):
+
 2018-10-05  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Drop snapshotting workaround introduced in r235898
