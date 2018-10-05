@@ -762,3 +762,7 @@ shouldDeferAsynchronousScriptsUntilAfterDocumentLoad:
 
 shouldIgnoreMetaViewport:
   initial: false
+
+videoQualityIncludesDisplayCompositingEnabled:
+  initial: false
+  conditional: VIDEO

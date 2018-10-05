@@ -177,7 +177,8 @@ std::optional<VideoPlaybackQualityMetrics> MockMediaSourcePrivate::videoPlayback
         m_totalVideoFrames,
         m_droppedVideoFrames,
         m_corruptedVideoFrames,
-        m_totalFrameDelay.toDouble()
+        m_totalFrameDelay.toDouble(),
+        0,
     };
 }
 

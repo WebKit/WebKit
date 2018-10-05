@@ -1,3 +1,14 @@
+2018-10-03  Jer Noble  <jer.noble@apple.com>
+
+        Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.
+        https://bugs.webkit.org/show_bug.cgi?id=190266
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/VideoQualityDisplayCompositing.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2018-10-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236866.

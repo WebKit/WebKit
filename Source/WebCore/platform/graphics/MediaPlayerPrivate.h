@@ -265,9 +265,7 @@ public:
 
     virtual bool ended() const { return false; }
 
-#if ENABLE(MEDIA_SOURCE)
     virtual std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() { return std::nullopt; }
-#endif
 
 #if ENABLE(AVF_CAPTIONS)
     virtual void notifyTrackModeChanged() { }

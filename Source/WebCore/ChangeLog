@@ -1,3 +1,37 @@
+2018-10-03  Jer Noble  <jer.noble@apple.com>
+
+        Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.
+        https://bugs.webkit.org/show_bug.cgi?id=190266
+
+        Reviewed by Eric Carlson.
+
+        Test: TestWebKitAPI.VideoQualityDisplayCompositing
+
+        Modify VideoPlaybackQuality to take a VideoPlaybackQualityMetrics object in its
+        constructor (rather than individual fields). Add a new setting to control visibility
+        of the displayCompositedVideoFrames attribute on VideoPlaybackQuality. Add support
+        for VideoPlaybackQualityMetrics to MediaPlayerPrivateAVFoundationObjC.
+
+        * Modules/mediasource/VideoPlaybackQuality.cpp:
+        (WebCore::VideoPlaybackQuality::create):
+        (WebCore::VideoPlaybackQuality::VideoPlaybackQuality):
+        * Modules/mediasource/VideoPlaybackQuality.h:
+        (WebCore::VideoPlaybackQuality::displayCompositedVideoFrames const):
+        * Modules/mediasource/VideoPlaybackQuality.idl:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::getVideoPlaybackQuality):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * page/Settings.yaml:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics):
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::videoPlaybackQualityMetrics):
+
 2018-10-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236866.

@@ -1,3 +1,18 @@
+2018-10-03  Jer Noble  <jer.noble@apple.com>
+
+        Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.
+        https://bugs.webkit.org/show_bug.cgi?id=190266
+
+        Reviewed by Eric Carlson.
+
+        Add a new preference to control the visibility of displayCompositedVideoFrames in the VideoPlaybackQualityObject.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setVideoQualityIncludesDisplayCompositingEnabled:]):
+        (-[WKPreferences _videoQualityIncludesDisplayCompositingEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2018-10-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r236866.
