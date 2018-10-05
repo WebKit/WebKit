@@ -276,10 +276,6 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         if (auto animation = cssAnimationsByName.take(nameOfAnimationToRemove))
             cancelOrRemoveDeclarativeAnimation(animation);
     }
-
-    // Remove the map of CSSAnimations by animation name for this element if it's now empty.
-    if (cssAnimationsByName.isEmpty())
-        m_elementToCSSAnimationByName.remove(&element);
 }
 
 RefPtr<WebAnimation> AnimationTimeline::cssAnimationForElementAndProperty(Element& element, CSSPropertyID property)

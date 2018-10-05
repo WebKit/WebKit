@@ -1,3 +1,16 @@
+2018-10-05  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] REGRESSION (r236809): crash under AnimationTimeline::updateCSSAnimationsForElement()
+        https://bugs.webkit.org/show_bug.cgi?id=190307
+        <rdar://problem/45009901>
+
+        Reviewed by Dean Jackson.
+
+        This test was also crashing even though it should not have been using the new animation engine. Adding the
+        flag to opt into the legacy animation engine.
+
+        * legacy-animation-engine/animations/animation-shorthand-removed.html:
+
 2018-10-04  Chris Dumez  <cdumez@apple.com>
 
         A Document / Window should lose its browsing context as soon as its iframe is removed from the document

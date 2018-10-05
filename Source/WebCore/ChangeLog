@@ -1,3 +1,20 @@
+2018-10-05  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] REGRESSION (r236809): crash under AnimationTimeline::updateCSSAnimationsForElement()
+        https://bugs.webkit.org/show_bug.cgi?id=190307
+        <rdar://problem/45009901>
+
+        Reviewed by Dean Jackson.
+
+        We could crash with an invalid access to cssAnimationsByName since cancelOrRemoveDeclarativeAnimation() already
+        does the job of clearing the m_elementToCSSAnimationByName entry for this particular element if there are no
+        animations targeting it anymore. This started happening in r236809 when we switched from a simple call to to cancel()
+        to a call to cancelOrRemoveDeclarativeAnimation(). We can safely remove the removal here since cancelOrRemoveDeclarativeAnimation()
+        will already have performed this task safely if needed.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement):
+
 2018-10-04  Jer Noble  <jer.noble@apple.com>
 
         Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.
