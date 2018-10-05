@@ -505,6 +505,9 @@ void DOMWindow::willDestroyDocumentInFrame()
 
 void DOMWindow::willDetachDocumentFromFrame()
 {
+    if (!frame())
+        return;
+
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
     for (auto& property : copyToVector(m_properties))

@@ -1505,7 +1505,7 @@ public:
     void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
     bool isRunningUserScripts() const { return m_isRunningUserScripts; }
 
-    void detachFromFrame();
+    void frameWasDisconnectedFromOwner();
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
@@ -1571,6 +1571,8 @@ private:
 
     void pendingTasksTimerFired();
     bool isCookieAverse() const;
+
+    void detachFromFrame();
 
     template<CollectionType> Ref<HTMLCollection> ensureCachedCollection();
 

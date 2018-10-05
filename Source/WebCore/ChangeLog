@@ -1,3 +1,39 @@
+2018-10-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236862): Crash under DOMWindowExtension::willDetachGlobalObjectFromFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=190320
+        <rdar://problem/45044814>
+
+        Reviewed by Geoffrey Garen.
+
+        r236862 caused DOMWindowProperty::willDetachGlobalObjectFromFrame() to get called several
+        times. There was no effect for most DOMWindowProperty objects. However, it would cause
+        crashes for DOMWindowExtension objects, which subclass DOMWindowProperty and override
+        DOMWindowProperty::willDetachGlobalObjectFromFrame() because they dereference the frame
+        without null checking it.
+
+        To address the issue, we now make sure DOMWindowProperty::willDetachGlobalObjectFromFrame()
+        is not called several times.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detachFromFrame):
+        Stop calling DOMWindow::willDetachDocumentFromFrame() here as most call sites already
+        take care of calling DOMWindow::willDetachDocumentFromFrame() beforehand (e.g.
+        Document::prepareForDestruction()).
+        Also, return early if the Document is already detached from its frame.
+
+        (WebCore::Document::frameWasDisconnectedFromOwner):
+        Add new utility function called when a Frame is disconnected from its owner which
+        calls both Document::detachFromFrame() and DOMWindow::willDetachDocumentFromFrame().
+
+        * dom/Document.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::willDetachDocumentFromFrame):
+        Return early if the Window is already detached from its frame.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::disconnectOwnerElement):
+
 2018-10-05  Jer Noble  <jer.noble@apple.com>
 
         Further unreviewed watchOS build fix: videoPerformanceMetrics unavailable on watchOS.

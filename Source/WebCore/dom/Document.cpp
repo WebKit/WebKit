@@ -8256,10 +8256,18 @@ bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
 
 void Document::detachFromFrame()
 {
+    observeFrame(nullptr);
+}
+
+void Document::frameWasDisconnectedFromOwner()
+{
+    if (!frame())
+        return;
+
     if (auto* window = domWindow())
         window->willDetachDocumentFromFrame();
 
-    observeFrame(nullptr);
+    detachFromFrame();
 }
 
 } // namespace WebCore

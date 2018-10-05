@@ -833,7 +833,7 @@ void Frame::disconnectOwnerElement()
     m_ownerElement = nullptr;
 
     if (auto* document = this->document())
-        document->detachFromFrame();
+        document->frameWasDisconnectedFromOwner();
 }
 
 String Frame::displayStringModifiedByEncoding(const String& str) const

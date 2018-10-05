@@ -135,6 +135,39 @@ TEST(WebKit, DISABLED_DOMWindowExtensionBasic)
         EXPECT_WK_STREQ(expectedMessages[i], messages[i].get());
 }
 
+TEST(WebKit, DOMWindowExtensionCrashOnReload)
+{
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DOMWindowExtensionBasicPageGroup")));
+
+    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("DOMWindowExtensionBasic", pageGroup.get()));
+
+    WKContextInjectedBundleClientV0 injectedBundleClient;
+    memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+
+    injectedBundleClient.base.version = 0;
+    injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
+
+    WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient.base);
+
+    // The default cache model has a capacity of 0, so it is necessary to switch to a cache
+    // model that actually allows for a page cache.
+    WKContextSetCacheModel(context.get(), kWKCacheModelDocumentBrowser);
+
+    PlatformWebView webView(context.get(), pageGroup.get());
+
+    finished = false;
+
+    // Make sure the extensions for each frame are installed in each world.
+    WKRetainPtr<WKURLRef> url1(AdoptWK, Util::createURLForResource("simple-iframe", "html"));
+    WKPageLoadURL(webView.page(), url1.get());
+
+    Util::run(&finished);
+    finished = false;
+
+    WKPageReload(webView.page());
+    Util::run(&finished);
+}
+
 } // namespace TestWebKitAPI
 
 #endif

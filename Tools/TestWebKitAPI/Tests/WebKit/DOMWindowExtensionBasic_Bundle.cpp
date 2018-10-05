@@ -229,9 +229,6 @@ void DOMWindowExtensionBasic::didReconnectDOMWindowExtensionToGlobalObject(WKBun
 
 void DOMWindowExtensionBasic::willDestroyGlobalObjectForDOMWindowExtension(WKBundleDOMWindowExtensionRef)
 {
-    // All of the items are candidates for the page cache and should not be evicted from the page
-    // cache before the test completes.
-    ASSERT_NOT_REACHED();
 }
 
 static void didFinishLoadForFrameCallback(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)

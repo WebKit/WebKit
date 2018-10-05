@@ -1,3 +1,18 @@
+2018-10-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236862): Crash under DOMWindowExtension::willDetachGlobalObjectFromFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=190320
+        <rdar://problem/45044814>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionBasic_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionBasic::willDestroyGlobalObjectForDOMWindowExtension):
+
 2018-10-03  Jer Noble  <jer.noble@apple.com>
 
         Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.
