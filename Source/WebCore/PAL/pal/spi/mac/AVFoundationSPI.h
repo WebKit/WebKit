@@ -160,16 +160,6 @@ NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)
-@interface AVVideoPerformanceMetrics : NSObject
-@property (nonatomic, readonly) unsigned long totalNumberOfVideoFrames;
-@property (nonatomic, readonly) unsigned long numberOfDroppedVideoFrames;
-@property (nonatomic, readonly) unsigned long numberOfCorruptedVideoFrames;
-@property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
-@property (nonatomic, readonly) double totalFrameDelay;
-@end
-#endif
-
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVStreamDataParser (AVStreamDataParserPrivate)
@@ -307,6 +297,20 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
+
+#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)
+@interface AVVideoPerformanceMetrics : NSObject
+@property (nonatomic, readonly) unsigned long totalNumberOfVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfDroppedVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfCorruptedVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
+@property (nonatomic, readonly) double totalFrameDelay;
+@end
+#else
+@interface AVVideoPerformanceMetrics (AVVideoPerformanceMetricsDisplayCompositedVideoFrames)
+@property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
+@end
+#endif
 
 #if !USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR) && !PLATFORM(IOSMAC)
 #import <AVFoundation/AVAudioSession.h>
