@@ -15,7 +15,9 @@
         var frame = document.getElementById("frame");
         var childWindow = frame.contentWindow;
         frame.parentNode.removeChild(frame);
-        childWindow.toolbar.visible;
+        try {
+            childWindow.toolbar.visible;
+        } catch (e) { }
         
         document.getElementById("console").firstChild.data = "TEST RAN";
     }

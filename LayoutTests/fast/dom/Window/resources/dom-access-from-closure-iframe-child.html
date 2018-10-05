@@ -1,4 +1,6 @@
 <script>
+    const parent = window.parent; // Save parent as the window will be detached when accessFrame() is called.
+
     parent.accessFrame = function()
     {
         function normalizeURL(url)

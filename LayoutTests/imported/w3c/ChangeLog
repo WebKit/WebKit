@@ -1,3 +1,16 @@
+2018-10-04  Chris Dumez  <cdumez@apple.com>
+
+        A Document / Window should lose its browsing context as soon as its iframe is removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=190282
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several WPT tests that are now passing. I have verified that those tests are also passing in
+        Firefox and Chrome.
+
+        * web-platform-tests/html/browsers/windows/nested-browsing-contexts/window-parent-null-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-synchronously-discard-expected.txt:
+
 2018-10-04  YUHAN WU  <yuhan_wu@apple.com>
 
         runtime flag and IDL for MediaRecorder

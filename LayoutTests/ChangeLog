@@ -1,3 +1,29 @@
+2018-10-04  Chris Dumez  <cdumez@apple.com>
+
+        A Document / Window should lose its browsing context as soon as its iframe is removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=190282
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing layout test to reflect behavior change.
+
+        * fast/dom/Window/BarInfo-after-frame-removed.html:
+        * fast/dom/Window/dom-access-from-closure-iframe-expected.txt:
+        * fast/dom/Window/dom-access-from-closure-window-expected.txt:
+        * fast/dom/Window/dom-access-from-closure-window-with-gc-expected.txt:
+        * fast/dom/Window/resources/dom-access-from-closure-iframe-child.html:
+        * fast/dom/Window/resources/dom-access-from-closure-window-child.html:
+        * fast/events/resources/before-unload-return-string-conversion-frame.html:
+        * fast/parser/resources/set-parent-to-javascript-url.html:
+        * http/tests/media/media-stream/disconnected-frame.html:
+        * http/tests/security/contentSecurityPolicy/resources/checkDidSameOriginChildWindowLoad.js:
+        (checkDidLoad):
+        * http/tests/security/named-window-property-from-same-origin-inactive-document-expected.txt:
+        * http/tests/security/named-window-property-from-same-origin-inactive-document.html:
+        * http/tests/security/xss-DENIED-contentWindow-eval-expected.txt:
+        * http/tests/security/xss-DENIED-named-window-property-from-cross-origin-inactive-document-expected.txt:
+        * http/tests/security/xss-DENIED-named-window-property-from-cross-origin-inactive-document.html:
+
 2018-10-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed test gardening for WinCairo (and one cross-platform test). 

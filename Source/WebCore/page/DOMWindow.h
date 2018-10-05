@@ -333,6 +333,9 @@ public:
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();
 
+    void attachToFrame(Frame&);
+    void detachFromFrame();
+
     void enableSuddenTermination();
     void disableSuddenTermination();
 

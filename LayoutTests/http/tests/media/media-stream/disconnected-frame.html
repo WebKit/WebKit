@@ -12,27 +12,29 @@ if (window.testRunner)
     testRunner.setUserMediaPermission(true);
 
 function onIframeLoaded() {
-    iframeNavigator = iframe.contentWindow.navigator;
+    iframeMediaDevices = iframe.contentWindow.navigator.mediaDevices;
     iframe.remove();
     onIframeUnloaded();
 }
 
 function onIframeUnloaded() {
+    handle = setTimeout(function() {
+        testFailed('Timeout: promise resolve and reject functions not called.');
+        finishJSTest();
+    }, 100);
+
     var options = {audio: true, video: true};
-    iframeNavigator.mediaDevices.getUserMedia(options)
+    iframeMediaDevices.getUserMedia(options)
         .then(stream => {
             testFailed('Promise resolved unexpectedly.');
+            clearTimeout(handle);
             finishJSTest();
         })
         .catch(err => {
             testPassed('Promise rejected as expected.');
+            clearTimeout(handle);
             finishJSTest();
         });
-
-    setTimeout(function() {
-        testFailed('Timeout: promise resolve and reject functions not called.');
-        finishJSTest();
-    }, 100);
 }
 
 var iframe = document.createElement('iframe');

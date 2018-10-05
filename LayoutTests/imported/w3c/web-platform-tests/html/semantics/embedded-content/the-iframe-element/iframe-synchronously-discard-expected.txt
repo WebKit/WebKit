@@ -1,3 +1,3 @@
 
-FAIL IFrame discards are processed synchronously assert_equals: child window should be discarded expected null but got object "[object Window]"
+PASS IFrame discards are processed synchronously 
 

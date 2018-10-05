@@ -96,11 +96,13 @@ static MediaConstraints createMediaConstraints(const Variant<bool, MediaTrackCon
     );
 }
 
-ExceptionOr<void> MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& promise) const
+void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& promise) const
 {
     auto* document = this->document();
-    if (!document)
-        return Exception { InvalidStateError };
+    if (!document) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
 
     auto audioConstraints = createMediaConstraints(constraints.audio);
     auto videoConstraints = createMediaConstraints(constraints.video);
@@ -111,7 +113,7 @@ ExceptionOr<void> MediaDevices::getUserMedia(const StreamConstraints& constraint
     if (request)
         request->start();
 
-    return { };
+    return;
 }
 
 ExceptionOr<void> MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise&& promise) const

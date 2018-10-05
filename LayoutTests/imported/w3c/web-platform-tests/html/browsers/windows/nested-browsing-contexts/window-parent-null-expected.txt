@@ -1,4 +1,4 @@
 
-FAIL `window.parent` is null when browsing context container element removed assert_equals: expected null but got object "[object Window]"
-FAIL `window.parent` null when parent browsing context container removed assert_equals: expected null but got object "[object Window]"
-
+PASS `window.parent` is null when browsing context container element removed 
+PASS `window.parent` null when parent browsing context container removed 
+ 

@@ -831,6 +831,9 @@ void Frame::disconnectOwnerElement()
             m_page->decrementSubframeCount();
     }
     m_ownerElement = nullptr;
+
+    if (auto* document = this->document())
+        document->detachFromFrame();
 }
 
 String Frame::displayStringModifiedByEncoding(const String& str) const

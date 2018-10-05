@@ -5,10 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Lookup named element whose name corresponds to an element in the initial about:blank document:
 PASS frame.contentDocument.getElementById('A') is not elementAInInactiveDocument
-PASS elementAInActiveDocumentFunction() is frame.contentDocument.getElementById('A')
+PASS elementAInDetachedWindowFunction() threw exception ReferenceError: Can't find variable: A.
 
 Lookup named element whose name does not correspond to an element in the initial about:blank document:
-PASS elementBInActiveDocumentFunction() is frame.contentDocument.getElementById('B')
+PASS elementBInDetachedWindowFunction() threw exception ReferenceError: Can't find variable: B.
 PASS successfullyParsed is true
 
 TEST COMPLETE

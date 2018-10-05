@@ -372,7 +372,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
         string = String::format("Camera: %s", camera);
         statsLocation.move(0, m_statsFontSize);
         context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
-    } else {
+    } else if (!name().isNull()) {
         statsLocation.move(0, m_statsFontSize);
         context.drawText(statsFont, TextRun { name() }, statsLocation);
     }

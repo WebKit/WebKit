@@ -17,16 +17,16 @@ var elementAInInactiveDocument = frameDocument.createElement("div");
 elementAInInactiveDocument.id = "A";
 frameDocument.body.appendChild(elementAInInactiveDocument);
 
-var elementAInActiveDocumentFunction = frame.contentWindow.Function("return A;");
-var elementBInActiveDocumentFunction = frame.contentWindow.Function("return B;");
+var elementAInDetachedWindowFunction = frame.contentWindow.Function("return A;");
+var elementBInDetachedWindowFunction = frame.contentWindow.Function("return B;");
 
 frame.onload = function ()
 {
     debug("Lookup named element whose name corresponds to an element in the initial about:blank document:")
-    shouldThrowErrorName("elementAInActiveDocumentFunction()", 'SecurityError');
+    shouldThrowErrorName("elementAInDetachedWindowFunction()", 'ReferenceError');
 
     debug("<br>Lookup named element whose name does not correspond to an element in the initial about:blank document:");
-    shouldThrowErrorName("elementBInActiveDocumentFunction()", 'SecurityError');
+    shouldThrowErrorName("elementBInDetachedWindowFunction()", 'ReferenceError');
 
     finishJSTest();
 }

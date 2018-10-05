@@ -1,4 +1,6 @@
 <script>
+    const opener = window.opener; // Save opener as the window will be detached when accessFrame() is called.
+
     opener.accessFrame = function()
     {
         function normalizeURL(url)

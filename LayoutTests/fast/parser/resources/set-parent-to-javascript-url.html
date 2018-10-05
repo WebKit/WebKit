@@ -1,4 +1,5 @@
 <script>
+const parent = window.parent;
 alert(1);
 parent.document.getElementsByTagName('iframe')[0].src = "javascript:alert(2),'PASS<script>alert(3)<\/script>'";
 alert(4);

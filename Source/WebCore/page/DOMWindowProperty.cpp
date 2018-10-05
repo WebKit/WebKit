@@ -57,9 +57,6 @@ DOMWindowProperty::~DOMWindowProperty()
 
 void DOMWindowProperty::disconnectFrameForDocumentSuspension()
 {
-    // If this property is being disconnected from its Frame to enter the PageCache, it must have
-    // been created with a Frame in the first place.
-    ASSERT(m_frame);
     ASSERT(m_associatedDOMWindow);
 
     m_frame = nullptr;
@@ -93,8 +90,6 @@ void DOMWindowProperty::willDestroyGlobalObjectInCachedFrame()
 
 void DOMWindowProperty::willDestroyGlobalObjectInFrame()
 {
-    // If the property is getting this callback it must have been created with a Frame/DOMWindow and it should still have them.
-    ASSERT(m_frame);
     ASSERT(m_associatedDOMWindow);
 
     // DOMWindowProperty lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister
@@ -107,9 +102,7 @@ void DOMWindowProperty::willDestroyGlobalObjectInFrame()
 
 void DOMWindowProperty::willDetachGlobalObjectFromFrame()
 {
-    // If the property is getting this callback it must have been created with a Frame/DOMWindow and it should still have them.
-    ASSERT(m_frame);
-    ASSERT(m_associatedDOMWindow);
+    m_frame = nullptr;
 }
 
 }

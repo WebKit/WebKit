@@ -1505,6 +1505,8 @@ public:
     void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
     bool isRunningUserScripts() const { return m_isRunningUserScripts; }
 
+    void detachFromFrame();
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1521,8 +1523,6 @@ private:
     friend class IgnoreDestructiveWriteCountIncrementer;
 
     bool shouldInheritContentSecurityPolicyFromOwner() const;
-
-    void detachFromFrame() { observeFrame(nullptr); }
 
     void updateTitleElement(Element& changingTitleElement);
     void frameDestroyed() final;

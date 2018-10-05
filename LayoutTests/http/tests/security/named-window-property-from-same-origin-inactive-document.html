@@ -17,17 +17,17 @@ var elementAInInactiveDocument = frameDocument.createElement("div");
 elementAInInactiveDocument.id = "A";
 frameDocument.body.appendChild(elementAInInactiveDocument);
 
-var elementAInActiveDocumentFunction = frame.contentWindow.Function("return A;");
-var elementBInActiveDocumentFunction = frame.contentWindow.Function("return B;");
+var elementAInDetachedWindowFunction = frame.contentWindow.Function("return A;");
+var elementBInDetachedWindowFunction = frame.contentWindow.Function("return B;");
 
 frame.onload = function ()
 {
     debug("Lookup named element whose name corresponds to an element in the initial about:blank document:");
     shouldNotBe("frame.contentDocument.getElementById('A')", "elementAInInactiveDocument");
-    shouldBe("elementAInActiveDocumentFunction()", "frame.contentDocument.getElementById('A')");
+    shouldThrowErrorName("elementAInDetachedWindowFunction()", "ReferenceError");
 
     debug("<br>Lookup named element whose name does not correspond to an element in the initial about:blank document:");
-    shouldBe("elementBInActiveDocumentFunction()", "frame.contentDocument.getElementById('B')");
+    shouldThrowErrorName("elementBInDetachedWindowFunction()", "ReferenceError");
 
     finishJSTest();
 }

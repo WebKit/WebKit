@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: line 1: TypeError: Type error
 This test passes if alert() is not called. 

@@ -1,3 +1,61 @@
+2018-10-04  Chris Dumez  <cdumez@apple.com>
+
+        A Document / Window should lose its browsing context as soon as its iframe is removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=190282
+
+        Reviewed by Ryosuke Niwa.
+
+        A Document / Window should lose its browsing context (aka Frame) as soon as its iframe is removed from
+        the document. In WebKit, a Document / Window's Frame was only getting nulled out when the frame gets
+        destroyed, which happens later usually after a GC happens.
+
+        Specification:
+        - https://html.spec.whatwg.org/#the-iframe-element
+        """
+        When an iframe element is removed from a document, the user agent must discard the element's nested browsing
+        context, if it is not null, and then set the element's nested browsing context to null.
+        """
+
+        This was not consistent with the specification or other browsers (tested Chrome and Firefox) so this
+        patch is aligning our behavior.
+
+        In a follow-up, I am planning to look into making the Window not be a FrameDestructionObserver, and instead
+        get its frame from the Document. This should make the code simpler.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::getUserMedia const):
+        * Modules/mediastream/MediaDevices.h:
+        Update getUserMedia() to reject a the Promise with an InvalidStateError when calling after the
+        document has been detached, instead of throwing an InvalidStateError. This behavior is as per
+        specification:
+        - https://w3c.github.io/mediacapture-main/#dom-mediadevices-getusermedia (Step 4)
+        I needed to make this change to keep one of our layout tests passing.
+
+        * dom/Document.cpp:
+        (WebCore::Document::attachToCachedFrame):
+        (WebCore::Document::detachFromFrame):
+        * dom/Document.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::didSecureTransitionTo):
+        (WebCore::DOMWindow::willDetachDocumentFromFrame):
+        (WebCore::DOMWindow::setStatus):
+        (WebCore::DOMWindow::detachFromFrame):
+        (WebCore::DOMWindow::attachToFrame):
+        * page/DOMWindow.h:
+        * page/DOMWindowProperty.cpp:
+        (WebCore::DOMWindowProperty::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMWindowProperty::willDestroyGlobalObjectInCachedFrame):
+        (WebCore::DOMWindowProperty::willDestroyGlobalObjectInFrame):
+        * page/Frame.cpp:
+        (WebCore::Frame::disconnectOwnerElement):
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText):
+        Calling drawText() with a null String hits an assertion in debug. This was triggered by one of
+        our layout tests so I made sure we only call drawText when the String is not null.
+
 2018-10-04  Jeremy Jones  <jeremyj@apple.com>
 
         Unify implementation in VideoFullscreenInterfaceAVKit

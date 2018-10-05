@@ -414,6 +414,7 @@ DOMWindow::DOMWindow(Document& document)
 void DOMWindow::didSecureTransitionTo(Document& document)
 {
     observeContext(&document);
+    observeFrame(document.frame());
 }
 
 DOMWindow::~DOMWindow()
@@ -511,6 +512,8 @@ void DOMWindow::willDetachDocumentFromFrame()
 
     if (m_performance)
         m_performance->clearResourceTimings();
+
+    detachFromFrame();
 }
 
 #if ENABLE(GAMEPAD)
@@ -1402,7 +1405,17 @@ void DOMWindow::setStatus(const String& string)
 
     ASSERT(m_frame->document()); // Client calls shouldn't be made when the frame is in inconsistent state.
     page->chrome().setStatusbarText(*m_frame, m_status);
-} 
+}
+
+void DOMWindow::detachFromFrame()
+{
+    observeFrame(nullptr);
+}
+
+void DOMWindow::attachToFrame(Frame& frame)
+{
+    observeFrame(&frame);
+}
     
 void DOMWindow::setDefaultStatus(const String& string) 
 {

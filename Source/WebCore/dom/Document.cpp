@@ -2341,6 +2341,8 @@ void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
     ASSERT(cachedFrame.view());
     ASSERT(m_pageCacheState == Document::InPageCache);
     observeFrame(&cachedFrame.view()->frame());
+    if (auto* window = domWindow())
+        window->attachToFrame(cachedFrame.view()->frame());
 }
 
 void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
@@ -8243,6 +8245,14 @@ String Document::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const 
 bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
 {
     return m_CSSRegisteredPropertySet.add(prop.name, std::make_unique<CSSRegisteredCustomProperty>(WTFMove(prop))).isNewEntry;
+}
+
+void Document::detachFromFrame()
+{
+    if (auto* window = domWindow())
+        window->willDetachDocumentFromFrame();
+
+    observeFrame(nullptr);
 }
 
 } // namespace WebCore

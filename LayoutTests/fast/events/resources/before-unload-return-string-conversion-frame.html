@@ -14,9 +14,7 @@ window.runTest = function() {
         parent.shouldBeTrue("event.defaultPrevented");
         parent.shouldBeEqualToString("event.returnValue", "PASS");
         parent.shouldBeTrue("toStringCalled");
-        parent.setTimeout(function() {
-            parent.finishJSTest();
-        }, 0);
+        parent.finishJSTest();
     }
 
     window.addEventListener("beforeunload", listener);
