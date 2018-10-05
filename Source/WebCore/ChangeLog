@@ -1,3 +1,10 @@
+2018-10-05  Jer Noble  <jer.noble@apple.com>
+
+       Unreviewed watchOS build fix: videoPerformanceMetrics unavailable on watchOS.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics):
+
 2018-10-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] RealtimeMediaSource should be able to vend hashed IDs

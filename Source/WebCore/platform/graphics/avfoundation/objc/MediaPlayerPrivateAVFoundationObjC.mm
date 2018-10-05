@@ -3266,6 +3266,7 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::v
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
+#if !PLATFORM(WATCHOS)
     auto metrics = [m_videoLayer videoPerformanceMetrics];
     if (!metrics)
         return std::nullopt;
@@ -3273,6 +3274,7 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::v
     uint32_t displayCompositedFrames = 0;
     if ([metrics respondsToSelector:@selector(numberOfDisplayCompositedVideoFrames)])
         displayCompositedFrames = [metrics numberOfDisplayCompositedVideoFrames];
+#endif
 #pragma clang diagnostic pop
 
     return VideoPlaybackQualityMetrics {
