@@ -10,6 +10,9 @@ function addCompositedLayer()
     element.className = "composited";
     element.id = "last-element";
     document.body.appendChild(element);
+    
+    // Force layout to trigger a layer update.
+    document.body.offsetWidth;
 
     requestAnimationFrame(() => {
         TestPage.dispatchEventToFrontend("TestPageDidAppendChild");

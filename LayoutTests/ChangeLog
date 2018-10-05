@@ -1,3 +1,13 @@
+2018-10-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Try to unflake inspector/layers/layerTreeDidChange.html
+
+        Unreviewed. Test gardening.
+
+        * inspector/layers/layerTreeDidChange.html:
+        Force a layout early in the test to try to force layout tree
+        update events in the expected sequence.
+
 2018-10-05  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] REGRESSION (r236809): crash under AnimationTimeline::updateCSSAnimationsForElement()
