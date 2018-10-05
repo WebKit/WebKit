@@ -35,6 +35,10 @@
 #include "Options.h"
 #include <wtf/CompilationThread.h>
 
+#if OS(LINUX)
+#include "PerfLog.h"
+#endif
+
 namespace JSC {
 
 bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
@@ -55,11 +59,23 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassembly
     return CodeRef<LinkBufferPtrTag>::createSelfManagedCodeRef(m_code);
 }
 
-LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(const char* format, ...)
+LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...)
 {
     CodeRef<LinkBufferPtrTag> result = finalizeCodeWithoutDisassemblyImpl();
 
-    if (m_alreadyDisassembled)
+#if OS(LINUX)
+    if (Options::logJITCodeForPerf()) {
+        StringPrintStream out;
+        va_list argList;
+        va_start(argList, format);
+        va_start(argList, format);
+        out.vprintf(format, argList);
+        va_end(argList);
+        PerfLog::log(out.toCString(), result.code().untaggedExecutableAddress<const uint8_t*>(), result.size());
+    }
+#endif
+
+    if (!dumpDisassembly || m_alreadyDisassembled)
         return result;
     
     StringPrintStream out;

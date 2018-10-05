@@ -1,3 +1,41 @@
+2018-10-05  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC][Linux] Support Perf JITDump logging
+        https://bugs.webkit.org/show_bug.cgi?id=189893
+
+        Reviewed by Mark Lam.
+
+        This patch adds Linux `perf` command's JIT Dump support. It allows JSC to tell perf about JIT code information.
+        We add a command line option, `--logJITCodeForPerf`, which dumps `jit-%pid.dump` in the current directory.
+        By using this dump and perf.data output, we can annotate JIT code with profiling information.
+
+            $ echo "(function f() { var s = 0; for (var i = 0; i < 1000000000; i++) { s += i; } return s; })();" > test.js
+            $ perf record -k mono ../../WebKitBuild/perf/Release/bin/jsc test.js --logJITCodeForPerf=true
+            [ perf record: Woken up 1 times to write data ]
+            [ perf record: Captured and wrote 0.182 MB perf.data (4346 samples) ]
+            $ perf inject --jit -i perf.data -o perf.jit.data
+            $ perf report -i perf.jit.data
+
+        * Sources.txt:
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassemblyImpl):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * assembler/PerfLog.cpp: Added.
+        (JSC::PerfLog::singleton):
+        (JSC::generateTimestamp):
+        (JSC::getCurrentThreadID):
+        (JSC::PerfLog::PerfLog):
+        (JSC::PerfLog::write):
+        (JSC::PerfLog::flush):
+        (JSC::PerfLog::log):
+        * assembler/PerfLog.h: Added.
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        * runtime/Options.cpp:
+        (JSC::Options::isAvailable):
+        * runtime/Options.h:
+
 2018-10-05  Mark Lam  <mark.lam@apple.com>
 
         Gardening: Build fix after r236880.

@@ -261,11 +261,11 @@ public:
     }
 
     template<PtrTag tag, typename... Args>
-    CodeRef<tag> finalizeCodeWithDisassembly(const char* format, Args... args)
+    CodeRef<tag> finalizeCodeWithDisassembly(bool dumpDisassembly, const char* format, Args... args)
     {
         ALLOW_NONLITERAL_FORMAT_BEGIN
         IGNORE_WARNINGS_BEGIN("format-security")
-        return finalizeCodeWithDisassemblyImpl(format, args...).template retagged<tag>();
+        return finalizeCodeWithDisassemblyImpl(dumpDisassembly, format, args...).template retagged<tag>();
         IGNORE_WARNINGS_END
         ALLOW_NONLITERAL_FORMAT_END
     }
@@ -288,7 +288,7 @@ public:
 
 private:
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithoutDisassemblyImpl();
-    JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithDisassemblyImpl(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+    JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...) WTF_ATTRIBUTE_PRINTF(3, 4);
 
 #if ENABLE(BRANCH_COMPACTION)
     int executableOffsetFor(int location)
@@ -350,10 +350,19 @@ private:
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
 };
 
+#if OS(LINUX)
 #define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...)  \
     (UNLIKELY((condition))                                              \
-        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(__VA_ARGS__) \
+        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(true, __VA_ARGS__) \
+        : (UNLIKELY(JSC::Options::logJITCodeForPerf()) \
+            ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(false, __VA_ARGS__) \
+            : (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>()))
+#else
+#define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...)  \
+    (UNLIKELY((condition))                                              \
+        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(true, __VA_ARGS__) \
         : (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>())
+#endif
 
 bool shouldDumpDisassemblyFor(CodeBlock*);
 

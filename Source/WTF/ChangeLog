@@ -1,3 +1,13 @@
+2018-10-05  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC][Linux] Support Perf JITDump logging
+        https://bugs.webkit.org/show_bug.cgi?id=189893
+
+        Reviewed by Mark Lam.
+
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::reserveAndCommitWithGuardPages):
+
 2018-10-03  Dan Bernstein  <mitz@apple.com>
 
         WTF part of [Xcode] Update some build settings as recommended by Xcode 10

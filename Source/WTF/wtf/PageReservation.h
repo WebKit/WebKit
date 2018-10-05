@@ -106,6 +106,12 @@ public:
         return PageReservation(OSAllocator::reserveUncommitted(size + pageSize() * 2, usage, writable, executable, true), size, writable, executable, true);
     }
 
+    static PageReservation reserveAndCommitWithGuardPages(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
+    {
+        ASSERT(isPageAligned(size));
+        return PageReservation(OSAllocator::reserveAndCommit(size + pageSize() * 2, usage, writable, executable, true), size, writable, executable, true);
+    }
+
     void deallocate()
     {
         ASSERT(!m_committed);

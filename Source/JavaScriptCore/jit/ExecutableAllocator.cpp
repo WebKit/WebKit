@@ -137,7 +137,19 @@ public:
         else
             reservationSize = fixedExecutableMemoryPoolSize;
         reservationSize = std::max(roundUpToMultipleOf(pageSize(), reservationSize), pageSize() * 2);
-        m_reservation = PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+
+        auto tryCreatePageReservation = [] (size_t reservationSize) {
+#if OS(LINUX)
+            // If we use uncommitted reservation, mmap operation is recorded with small page size in perf command's output.
+            // This makes the following JIT code logging broken and some of JIT code is not recorded correctly.
+            // To avoid this problem, we use committed reservation if we need perf JITDump logging.
+            if (Options::logJITCodeForPerf())
+                return PageReservation::reserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+#endif
+            return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        };
+
+        m_reservation = tryCreatePageReservation(reservationSize);
         if (m_reservation) {
             ASSERT(m_reservation.size() == reservationSize);
             void* reservationBase = m_reservation.base();

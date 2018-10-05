@@ -52,6 +52,7 @@ assembler/MacroAssemblerCodeRef.cpp
 assembler/MacroAssemblerMIPS.cpp
 assembler/MacroAssemblerPrinter.cpp
 assembler/MacroAssemblerX86Common.cpp
+assembler/PerfLog.cpp
 assembler/Printer.cpp
 assembler/ProbeContext.cpp
 assembler/ProbeStack.cpp
