@@ -174,6 +174,11 @@ static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType 
     return _nodeHandle->htmlTextAreaElementLastChangeWasUserEdit();
 }
 
+- (BOOL)isSelectElement
+{
+    return _nodeHandle->isSelectElement();
+}
+
 - (BOOL)isTextField
 {
     return _nodeHandle->isTextField();

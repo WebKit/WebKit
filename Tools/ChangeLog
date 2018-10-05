@@ -1,3 +1,19 @@
+2018-10-05  Zach Li  <zachli@apple.com>
+
+        Expose whether WKWebProcessPlugInNodeHandle is a select element to clients
+        https://bugs.webkit.org/show_bug.cgi?id=190302
+        <rdar://problem/45031469>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/InjectedBundleNodeHandleIsSelectElement.mm: Added.
+        (-[InjectedBundleNodeHandleIsSelectElement verifySelectElementForHTMLElementTag:document:jsContext:expectedResult:failedElementTags:]):
+        (-[InjectedBundleNodeHandleIsSelectElement webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[InjectedBundleNodeHandleIsSelectElementDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WK2] Expose some more editing SPI on WKWebView
