@@ -331,7 +331,7 @@ private:
         // asyncDisassembly option as our caller will set our pages execute only.
         return linkBuffer.finalizeCodeWithoutDisassembly<JITThunkPtrTag>();
     }
-#else // CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
+#else // not CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
     static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
     {
         memcpy((void*)(startOfFixedWritableMemoryPool + offset), data, dataSize);
@@ -350,7 +350,7 @@ private:
         auto codePtr = MacroAssemblerCodePtr<JITThunkPtrTag>(tagCFunctionPtr<JITThunkPtrTag>(function));
         return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(codePtr);
     }
-#endif
+#endif // CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
 
 #else // OS(DARWIN) && HAVE(REMAP_JIT)
     void initializeSeparatedWXHeaps(void*, size_t, void*, size_t)
@@ -509,7 +509,7 @@ void* endOfFixedExecutableMemoryPoolImpl()
 
 bool isJITPC(void* pc)
 {
-    return allocator->isJITPC(pc);
+    return allocator && allocator->isJITPC(pc);
 }
 
 } // namespace JSC

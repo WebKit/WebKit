@@ -1,3 +1,21 @@
+2018-10-05  Mark Lam  <mark.lam@apple.com>
+
+        performJITMemcpy() should handle the case when the executable allocator is not initialized yet.
+        https://bugs.webkit.org/show_bug.cgi?id=190317
+        <rdar://problem/45039398>
+
+        Reviewed by Saam Barati.
+
+        When SeparatedWXHeaps is in use, jitWriteThunkGenerator() will call performJITMemcpy()
+        to copy memory before the JIT fixed memory pool is initialize.  Before r236864,
+        performJITMemcpy() would just do a memcpy in that case.  We need to restore the
+        equivalent behavior.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::isJITPC):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+
 2018-10-05  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [WPE][JSC] Use Unified Sources for Platform-specific sources

@@ -93,7 +93,7 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
     RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(dst) == dst);
     RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(src) == src);
 #endif
-    if (dst >= startOfFixedExecutableMemoryPool() && dst < endOfFixedExecutableMemoryPool()) {
+    if (isJITPC(dst)) {
         RELEASE_ASSERT(reinterpret_cast<uint8_t*>(dst) + n <= endOfFixedExecutableMemoryPool());
 #if ENABLE(FAST_JIT_PERMISSIONS)
 #if !CPU(ARM64E)
