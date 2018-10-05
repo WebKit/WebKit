@@ -15,8 +15,13 @@ function main() {
     if (array_key_exists('name', $data))
         $values['name'] = $data['name'];
 
-    if (array_key_exists('hidden', $data))
+    if (array_key_exists('hidden', $data)) {
         $values['hidden'] = Database::to_database_boolean($data['hidden']);
+        $values['may_need_more_requests'] = FALSE;
+    }
+
+    if (array_key_exists('mayNeedMoreRequests', $data))
+         $values['may_need_more_requests'] = $data['mayNeedMoreRequests'];
 
     $has_needs_notification_field = array_key_exists('needsNotification', $data);
     $has_notification_sent_at_field = array_key_exists('notificationSentAt', $data);

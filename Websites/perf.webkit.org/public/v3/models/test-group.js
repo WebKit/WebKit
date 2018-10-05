@@ -10,6 +10,8 @@ class TestGroup extends LabeledObject {
         this._createdAt = new Date(object.createdAt);
         this._isHidden = object.hidden;
         this._needsNotification = object.needsNotification;
+        this._mayNeedMoreRequests = object.mayNeedMoreRequests;
+        this._initialRepetitionCount = object.initialRepetitionCount;
         this._buildRequests = [];
         this._orderBuildRequestsLazily = new LazilyEvaluatedFunction((...buildRequests) => {
             return buildRequests.sort((a, b) => a.order() - b.order());
@@ -33,6 +35,8 @@ class TestGroup extends LabeledObject {
         this._isHidden = object.hidden;
         this._needsNotification = object.needsNotification;
         this._notificationSentAt = object.notificationSentAt ? new Date(object.notificationSentAt) : null;
+        this._mayNeedMoreRequests = object.mayNeedMoreRequests;
+        this._initialRepetitionCount = object.initialRepetitionCount;
     }
 
     task() { return AnalysisTask.findById(this._taskId); }
@@ -40,6 +44,8 @@ class TestGroup extends LabeledObject {
     isHidden() { return this._isHidden; }
     buildRequests() { return this._buildRequests; }
     needsNotification() { return this._needsNotification; }
+    mayNeedMoreRequests() { return this._mayNeedMoreRequests; }
+    initialRepetitionCount() { return this._initialRepetitionCount; }
     notificationSentAt() { return this._notificationSentAt; }
     author() { return this._authorName; }
     addBuildRequest(request)
@@ -190,42 +196,52 @@ class TestGroup extends LabeledObject {
         return result;
     }
 
+    async _updateBuildRequest(content, endPoint='update-test-group')
+    {
+        await PrivilegedAPI.sendRequest(endPoint, content);
+        const data = await TestGroup.cachedFetch(`/api/test-groups/${this.id()}`, {}, true);
+        return TestGroup._createModelsFromFetchedTestGroups(data);
+    }
+
     updateName(newName)
     {
-        var self = this;
-        var id = this.id();
-        return PrivilegedAPI.sendRequest('update-test-group', {
-            group: id,
+        return this._updateBuildRequest({
+            group: this.id(),
             name: newName,
-        }).then(function (data) {
-            return TestGroup.cachedFetch(`/api/test-groups/${id}`, {}, true)
-                .then(TestGroup._createModelsFromFetchedTestGroups.bind(TestGroup));
         });
     }
 
     updateHiddenFlag(hidden)
     {
-        var self = this;
-        var id = this.id();
-        return PrivilegedAPI.sendRequest('update-test-group', {
-            group: id,
+        return this._updateBuildRequest({
+            group: this.id(),
             hidden: !!hidden,
-        }).then(function (data) {
-            return TestGroup.cachedFetch(`/api/test-groups/${id}`, {}, true)
-                .then(TestGroup._createModelsFromFetchedTestGroups.bind(TestGroup));
         });
     }
 
     async didSendNotification()
     {
-        const id = this.id();
-        await PrivilegedAPI.sendRequest('update-test-group', {
-            group: id,
+        return await this._updateBuildRequest({
+            group: this.id(),
             needsNotification: false,
             notificationSentAt: (new Date).toISOString()
         });
-        const data = await TestGroup.cachedFetch(`/api/test-groups/${id}`, {}, true);
-        return TestGroup._createModelsFromFetchedTestGroups(data);
+    }
+
+    async addMoreBuildRequests(addCount)
+    {
+        return await this._updateBuildRequest({
+            group: this.id(),
+            addCount,
+        }, 'add-build-requests');
+    }
+
+    async clearMayNeedMoreBuildRequests()
+    {
+        return await this._updateBuildRequest({
+            group: this.id(),
+            mayNeedMoreRequests: false
+        });
     }
 
     static createWithTask(taskName, platform, test, groupName, repetitionCount, commitSets, notifyOnCompletion)
@@ -276,6 +292,11 @@ class TestGroup extends LabeledObject {
     static fetchAllWithNotificationReady()
     {
         return this.cachedFetch('/api/test-groups/ready-for-notification', null, true).then(this._createModelsFromFetchedTestGroups.bind(this));
+    }
+
+    static fetchAllThatMayNeedMoreRequests()
+    {
+        return this.cachedFetch('/api/test-groups/need-more-requests', null, true).then(this._createModelsFromFetchedTestGroups.bind(this));
     }
 
     static _createModelsFromFetchedTestGroups(data)

@@ -7,7 +7,7 @@ const NodePrivilegedAPI = require('../tools/js/privileged-api.js').PrivilegedAPI
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
 const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 
-function sampleTestGroup(needsNotification=true) {
+function sampleTestGroup(needsNotification=true, initialRepetitionCount=2, mayNeedMoreRequests=true) {
     return {
         "testGroups": [{
             "id": "2128",
@@ -20,6 +20,9 @@ function sampleTestGroup(needsNotification=true) {
             "needsNotification": needsNotification,
             "buildRequests": ["16985", "16986", "16987", "16988", "16989", "16990", "16991", "16992"],
             "commitSets": ["4255", "4256"],
+            "notificationSentAt": null,
+            initialRepetitionCount,
+            mayNeedMoreRequests
         }],
         "buildRequests": [{
             "id": "16985",
@@ -171,6 +174,66 @@ describe('TestGroup', function () {
             testGroups = await updatePromise;
             testGroup = testGroups[0];
             assert.equal(testGroup.needsNotification(), false);
+        });
+    });
+
+    describe('initialRepetitionCount', () => {
+        const requests = MockRemoteAPI.inject('https://perf.webkit.org', NodePrivilegedAPI);
+        beforeEach(() => {
+            PrivilegedAPI.configure('test', 'password');
+        });
+
+        it('should construct initialRepetitionCount from data', async () => {
+            const fetchPromise = TestGroup.fetchForTask(1376);
+            requests[0].resolve(sampleTestGroup());
+            let testGroups = await fetchPromise;
+            assert(testGroups.length, 1);
+            let testGroup = testGroups[0];
+            assert.equal(testGroup.initialRepetitionCount(), 2);
+        });
+    });
+
+    describe('mayNeedMoreRequests', () => {
+        const requests = MockRemoteAPI.inject('https://perf.webkit.org', NodePrivilegedAPI);
+        beforeEach(() => {
+            PrivilegedAPI.configure('test', 'password');
+        });
+
+        it('should construct mayNeedMoreRequests from data', async () => {
+            const fetchPromise = TestGroup.fetchForTask(1376);
+            requests[0].resolve(sampleTestGroup());
+            let testGroups = await fetchPromise;
+            assert(testGroups.length, 1);
+            let testGroup = testGroups[0];
+            assert.ok(testGroup.mayNeedMoreRequests());
+        });
+
+        it('should be able to clear mayNeedMoreRequests flag', async () => {
+            const fetchPromise = TestGroup.fetchForTask(1376);
+            requests[0].resolve(sampleTestGroup());
+            let testGroups = await fetchPromise;
+            assert(testGroups.length, 1);
+            let testGroup = testGroups[0];
+            assert.ok(testGroup.mayNeedMoreRequests());
+
+            const updatePromise = testGroup.clearMayNeedMoreBuildRequests();
+            assert.equal(requests.length, 2);
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].method, 'POST');
+            assert.equal(requests[1].url, '/privileged-api/update-test-group');
+            assert.deepEqual(requests[1].data, {group: '2128', mayNeedMoreRequests: false, slaveName: 'test', slavePassword: 'password'});
+            requests[1].resolve();
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 3);
+            assert.equal(requests[2].method, 'GET');
+            assert.equal(requests[2].url, '/api/test-groups/2128');
+            const updatedTestGroup = sampleTestGroup(true, 4, false);
+            requests[2].resolve(updatedTestGroup);
+
+            testGroups = await updatePromise;
+            testGroup = testGroups[0];
+            assert.equal(testGroup.mayNeedMoreRequests(), false);
         });
     });
 

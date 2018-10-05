@@ -64,7 +64,7 @@ MockData = {
             db.insert('test_runs', {id: 801, config: 301, build: 901, mean_cache: 100}),
         ]);
     },
-    addMockData: function (db, statusList)
+    addMockData: function (db, statusList, needsNotification=true)
     {
         if (!statusList)
             statusList = ['pending', 'pending', 'pending', 'pending'];
@@ -79,7 +79,7 @@ MockData = {
             db.insert('analysis_tasks', {id: 500, platform: 65, metric: 300, name: 'some task',
                 start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
                 end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
-            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group', needs_notification: true}),
+            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group', initial_repetition_count: 4, needs_notification: needsNotification}),
             db.insert('build_requests', {id: 700, status: statusList[0], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 0, commit_set: 401}),
             db.insert('build_requests', {id: 701, status: statusList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: 402}),
             db.insert('build_requests', {id: 702, status: statusList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: 401}),
@@ -123,7 +123,7 @@ MockData = {
             db.insert('commit_sets', {id: 1402}),
             db.insert('commit_set_items', {set: 1402, commit: 87832}),
             db.insert('commit_set_items', {set: 1402, commit: 196336}),
-            db.insert('analysis_test_groups', {id: 1600, task: 500, name: 'test group with git'}),
+            db.insert('analysis_test_groups', {id: 1600, task: 500, name: 'test group with git', initial_repetition_count: 4}),
             db.insert('build_requests', {id: 1700, status: 'pending', triggerable: 1000, repository_group: 2002, platform: 65, test: 200, group: 1600, order: 0, commit_set: 1401}),
             db.insert('build_requests', {id: 1701, status: 'pending', triggerable: 1000, repository_group: 2002, platform: 65, test: 200, group: 1600, order: 1, commit_set: 1402}),
             db.insert('build_requests', {id: 1702, status: 'pending', triggerable: 1000, repository_group: 2002, platform: 65, test: 200, group: 1600, order: 2, commit_set: 1401}),
@@ -139,7 +139,7 @@ MockData = {
         const platform = 65;
         const repository_group = 2001;
         return Promise.all([
-            db.insert('analysis_test_groups', {id: 601, task: 500, name: 'another test group', author}),
+            db.insert('analysis_test_groups', {id: 601, task: 500, name: 'another test group', author, initial_repetition_count: 4}),
             db.insert('build_requests', {id: 713, status: statusList[3], triggerable, repository_group, platform, test, group: 601, order: 3, commit_set: 402}),
             db.insert('build_requests', {id: 710, status: statusList[0], triggerable, repository_group, platform, test, group: 601, order: 0, commit_set: 401}),
             db.insert('build_requests', {id: 712, status: statusList[2], triggerable, repository_group, platform, test, group: 601, order: 2, commit_set: 401}),
@@ -157,7 +157,7 @@ MockData = {
             db.insert('analysis_tasks', {id: 1080, platform: 65, metric: 300, name: 'some task with component test',
                 start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
                 end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
-            db.insert('analysis_test_groups', {id: 900, task: 1080, name: 'some test group with component test'}),
+            db.insert('analysis_test_groups', {id: 900, task: 1080, name: 'some test group with component test', initial_repetition_count: 4}),
             db.insert('commit_sets', {id: 403}),
             db.insert('commit_set_items', {set: 403, commit: 87832}),
             db.insert('commit_set_items', {set: 403, commit: 93116}),
@@ -180,7 +180,7 @@ MockData = {
             db.insert('analysis_tasks', {id: 1080, platform: 65, metric: 300, name: 'some task with component test',
                 start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
                 end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
-            db.insert('analysis_test_groups', {id: 900, task: 1080, name: 'some test group with component test'}),
+            db.insert('analysis_test_groups', {id: 900, task: 1080, name: 'some test group with component test', initial_repetition_count: 4}),
             db.insert('commit_sets', {id: 404}),
             db.insert('commit_set_items', {set: 404, commit: 87832}),
             db.insert('commit_set_items', {set: 404, commit: 96336}),

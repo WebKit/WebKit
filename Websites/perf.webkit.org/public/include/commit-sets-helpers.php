@@ -9,7 +9,7 @@ function create_test_group_and_build_requests($db, $commit_sets, $task_id, $name
     list ($build_configuration_list, $test_configuration_list) = insert_commit_sets_and_construct_configuration_list($db, $commit_sets);
 
     $group_id = $db->insert_row('analysis_test_groups', 'testgroup',
-        array('task' => $task_id, 'name' => $name, 'author' => $author, 'needs_notification' => $needs_notification));
+        array('task' => $task_id, 'name' => $name, 'author' => $author, 'needs_notification' => $needs_notification, 'initial_repetition_count' => $repetition_count));
 
     $build_count = count($build_configuration_list);
     $order = -$build_count;

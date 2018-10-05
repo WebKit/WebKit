@@ -156,7 +156,7 @@ class TestServer {
     _determinePgsqlDirectory()
     {
         try {
-            let initdbLocation = childProcess.execFileSync('which', ['initdb']);
+            let initdbLocation = childProcess.execFileSync('which', ['initdb']).toString();
             return path.dirname(initdbLocation);
         } catch (error) {
             let serverPgsqlLocation = '/Applications/Server.app/Contents/ServerRoot/usr/bin/';

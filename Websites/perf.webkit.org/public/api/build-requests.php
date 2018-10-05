@@ -41,12 +41,13 @@ function main($id, $path, $post_data) {
 
 function update_builds($db, $updates) {
     $db->begin_transaction();
+    $test_groups_may_need_more_requests = array();
     foreach ($updates as $id => $info) {
         $id = intval($id);
         $status = $info['status'];
         $url = array_get($info, 'url');
+        $request_row = $db->select_first_row('build_requests', 'request', array('id' => $id));
         if ($status == 'failedIfNotCompleted') {
-            $request_row = $db->select_first_row('build_requests', 'request', array('id' => $id));
             if (!$request_row) {
                 $db->rollback_transaction();
                 exit_with_error('FailedToFindBuildRequest', array('buildRequest' => $id));
@@ -66,7 +67,17 @@ function update_builds($db, $updates) {
                 exit_with_error('UnknownBuildRequestStatus', array('buildRequest' => $id, 'status' => $status));
             }
             $db->update_row('build_requests', 'request', array('id' => $id), array('status' => $status, 'url' => $url));
+            $test_group_id = $request_row['request_group'];
+            if ($status != 'failed')
+                continue;
         }
+
+        $test_group_id = $request_row['request_group'];
+        if (array_key_exists($test_group_id, $test_groups_may_need_more_requests))
+            continue;
+
+        $db->update_row('analysis_test_groups', 'testgroup', array('id' => $test_group_id), array('may_need_more_requests' => TRUE));
+        $test_groups_may_need_more_requests[$test_group_id] = TRUE;
     }
     $db->commit_transaction();
 }

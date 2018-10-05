@@ -204,4 +204,76 @@ describe('/privileged-api/update-test-group', function(){
         assert.equal(updatedGroups[0].needsNotification(), true);
         assert.ok(!group.notificationSentAt());
     });
+
+    it('should create a test group with "may_need_more_requests" field defaults to false', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), needsNotification: false, revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.equal(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.equal(group.id(), insertedGroupId);
+        assert.equal(group.mayNeedMoreRequests(), false);
+        assert.ok(!group.notificationSentAt());
+
+    });
+
+    it('should be able to update "may_need_more_requests" field to true and false', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), needsNotification: false, revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.equal(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.equal(group.id(), insertedGroupId);
+        assert.equal(group.mayNeedMoreRequests(), false);
+
+        await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, mayNeedMoreRequests: true});
+
+        let updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.equal(updatedGroups.length, 1);
+        assert.equal(updatedGroups[0].mayNeedMoreRequests(), true);
+
+        await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, mayNeedMoreRequests: false});
+
+        updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.equal(updatedGroups.length, 1);
+        assert.equal(updatedGroups[0].mayNeedMoreRequests(), false);
+    });
+
+    it('should clear "may_need_more_requests" when hiding a test group', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), needsNotification: false, revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.equal(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.equal(group.id(), insertedGroupId);
+        assert.equal(group.mayNeedMoreRequests(), false);
+
+        await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, mayNeedMoreRequests: true});
+
+        let updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.equal(updatedGroups.length, 1);
+        assert.equal(updatedGroups[0].mayNeedMoreRequests(), true);
+
+        await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, hidden: true});
+
+        updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.equal(updatedGroups.length, 1);
+        assert.equal(updatedGroups[0].mayNeedMoreRequests(), false);
+        assert.equal(updatedGroups[0].isHidden(), true);
+    });
 });

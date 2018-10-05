@@ -37,6 +37,16 @@ function main($path) {
                 'uploadedFiles' => array()));
         }
         $build_requests_fetcher->fetch_requests_for_groups($test_groups);
+    } elseif ($path[0] == 'need-more-requests') {
+        $test_groups = $db->select_rows('analysis_test_groups', 'testgroup', array("hidden" => FALSE, "may_need_more_requests" => TRUE));
+        if (!count($test_groups)) {
+            exit_with_success(array('testGroups' => array(),
+                'buildRequests' => array(),
+                'commitSets' => array(),
+                'commits' => array(),
+                'uploadedFiles' => array()));
+        }
+        $build_requests_fetcher->fetch_requests_for_groups($test_groups);
     } else {
         $group_id = intval($path[0]);
         $group = $db->select_first_row('analysis_test_groups', 'testgroup', array('id' => $group_id));
@@ -82,6 +92,8 @@ function format_test_group($group_row) {
         'notificationSentAt' => Database::to_js_time($group_row['testgroup_notification_sent_at']),
         'hidden' => Database::is_true($group_row['testgroup_hidden']),
         'needsNotification' => Database::is_true($group_row['testgroup_needs_notification']),
+        'mayNeedMoreRequests' => Database::is_true($group_row['testgroup_may_need_more_requests']),
+        'initialRepetitionCount' => $group_row['testgroup_initial_repetition_count'],
         'buildRequests' => array(),
         'commitSets' => array(),
     );
