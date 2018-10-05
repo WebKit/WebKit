@@ -1,3 +1,79 @@
+2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Add SPI to expose typing attributes at the current selection on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=190119
+        <rdar://problem/44767062>
+
+        Reviewed by Tim Horton.
+
+        Add support for new WebKit2 SPI to notify the UI delegate about font attributes when the editor state changes
+        (e.g. due to selection changes, or executing an edit command). See below for more detail.
+
+        Test: FontAttributes.FontAttributesAfterChangingSelection
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+
+        Add a new optional `FontAttributes` member to EditorState's post-layout data. FontAttributes are computed and
+        sent over IPC only if the UI delegate implements the new delegate hook which requires information about font
+        attributes.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        Add a new flag for the UI process to let a new web page know whether it should additionally compute font
+        attributes when computing editor state.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::needsFontAttributes const):
+        (API::UIClient::didChangeFontAttributes):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didChangeEditorState]):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::didChangeFontAttributes):
+
+        Call out to the UI delegate with a font attribute dictionary, created via FontAttributes on EditorState's
+        post-layout data.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setUIClient):
+
+        Update whether or not the UI process needs to know about font attributes. The UI process only requires font
+        attribute information if the UI delegate implements `-_webView:didChangeFontAttributes:`.
+
+        (WebKit::WebPageProxy::setNeedsFontAttributes):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+
+        Update the cached font attributes in the UI process when receiving a new editor state update.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        (WebKit::WebPage::editorState const):
+        (WebKit::WebPage::setNeedsFontAttributes):
+
+        Add a new IPC hook to update whether or not the page should additionally compute font attributes. In the case
+        where the UI delegate changes from something that does not require font attributes to one that does, we
+        additionally schedule an editor state update.
+
+        (WebKit::WebPage::updateFontAttributesAfterEditorStateChange):
+
+        Private helper function to plumb FontAttributes to the UI client after an editor state change.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-10-04  Jeremy Jones  <jeremyj@apple.com>
 
         Unify implementation in VideoFullscreenInterfaceAVKit

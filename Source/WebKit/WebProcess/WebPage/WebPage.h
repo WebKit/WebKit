@@ -1179,6 +1179,8 @@ private:
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
 
+    void setNeedsFontAttributes(bool);
+
     void mouseEvent(const WebMouseEvent&);
     void keyEvent(const WebKeyboardEvent&);
 
@@ -1740,6 +1742,7 @@ private:
 #endif
 
     bool m_isSuspended { false };
+    bool m_needsFontAttributes { false };
 };
 
 } // namespace WebKit

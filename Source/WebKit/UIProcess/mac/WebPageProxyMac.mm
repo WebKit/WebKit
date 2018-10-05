@@ -650,7 +650,6 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
     
     m_editorState = editorState;
-    m_cachedFontAttributesAtSelectionStart.reset();
     
     // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
     if (couldChangeSecureInputState && !editorState.selectionIsNone)
@@ -660,6 +659,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
         return;
     
     pageClient().selectionDidChange();
+    updateFontAttributesAfterEditorStateChange();
 }
 
 void WebPageProxy::startWindowDrag()

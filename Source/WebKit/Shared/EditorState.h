@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/Color.h>
+#include <WebCore/FontAttributes.h>
 #include <WebCore/IntRect.h>
 #include <wtf/text/WTFString.h>
 
@@ -113,6 +114,8 @@ struct EditorState {
         String paragraphContextForCandidateRequest;
         String stringForCandidateRequest;
 #endif
+
+        std::optional<WebCore::FontAttributes> fontAttributes;
 
         bool canCut { false };
         bool canCopy { false };

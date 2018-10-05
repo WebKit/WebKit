@@ -138,6 +138,7 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << paragraphContextForCandidateRequest;
     encoder << stringForCandidateRequest;
 #endif
+    encoder << fontAttributes;
     encoder << canCut;
     encoder << canCopy;
     encoder << canPaste;
@@ -199,6 +200,13 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.stringForCandidateRequest))
         return false;
 #endif
+
+    std::optional<std::optional<FontAttributes>> optionalFontAttributes;
+    decoder >> optionalFontAttributes;
+    if (!optionalFontAttributes)
+        return false;
+
+    result.fontAttributes = optionalFontAttributes.value();
 
     if (!decoder.decode(result.canCut))
         return false;

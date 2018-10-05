@@ -108,6 +108,8 @@
 		2E691AF31D79E75E00129407 /* large-video-playing-scroll-away.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AF21D79E75400129407 /* large-video-playing-scroll-away.html */; };
 		2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
+		2E92B8F7216490D4005B64F0 /* rich-text-attributes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E92B8F6216490C3005B64F0 /* rich-text-attributes.html */; };
+		2E92B8FA2164A0C1005B64F0 /* FontAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E92B8F8216490EA005B64F0 /* FontAttributes.mm */; };
 		2E9896151D8F093800739892 /* text-and-password-inputs.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E9896141D8F092B00739892 /* text-and-password-inputs.html */; };
 		2EB29D5E1F762DB90023A5F1 /* dump-datatransfer-types.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */; };
 		2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07CD32F72065B72A0064A4BE /* video.html */; };
@@ -1154,6 +1156,7 @@
 				F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */,
 				A12DDC001E8373E700CF6CAE /* rendered-image-excluding-overflow.html in Copy Resources */,
 				F46849C01EEF5EF300B937FE /* rich-and-plain-text.html in Copy Resources */,
+				2E92B8F7216490D4005B64F0 /* rich-text-attributes.html in Copy Resources */,
 				0F5651F91FCE513500310FBC /* scroll-to-anchor.html in Copy Resources */,
 				F4E0A296211FC5FB00AF7C7F /* selected-text-and-textarea.html in Copy Resources */,
 				F4D65DA81F5E4704009D8C27 /* selected-text-image-link-and-editable.html in Copy Resources */,
@@ -1356,6 +1359,8 @@
 		2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainIOS.mm; sourceTree = "<group>"; };
 		2E7765CE16C4D81100BA2BB1 /* mainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainMac.mm; sourceTree = "<group>"; };
 		2E7EF7AC1F266A8100DFB67C /* AppKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitSPI.h; sourceTree = "<group>"; };
+		2E92B8F6216490C3005B64F0 /* rich-text-attributes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "rich-text-attributes.html"; sourceTree = "<group>"; };
+		2E92B8F8216490EA005B64F0 /* FontAttributes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontAttributes.mm; sourceTree = "<group>"; };
 		2E9896141D8F092B00739892 /* text-and-password-inputs.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "text-and-password-inputs.html"; sourceTree = "<group>"; };
 		2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dump-datatransfer-types.html"; sourceTree = "<group>"; };
 		2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NowPlayingControlsTests.mm; sourceTree = "<group>"; };
@@ -2340,6 +2345,7 @@
 				CDA29B2820FD2A9900F15CED /* ExitFullscreenOnEnterPiP.mm */,
 				2D8104CB1BEC13E70020DA46 /* FindInPage.mm */,
 				2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */,
+				2E92B8F8216490EA005B64F0 /* FontAttributes.mm */,
 				5CB5B3BD1FFC517E00C27BB0 /* FrameHandleSerialization.mm */,
 				CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */,
 				3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */,
@@ -2760,6 +2766,7 @@
 				F41AB99A1EF4692C0083FA08 /* prevent-start.html */,
 				A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */,
 				F46849BF1EEF5EDC00B937FE /* rich-and-plain-text.html */,
+				2E92B8F6216490C3005B64F0 /* rich-text-attributes.html */,
 				F4E0A295211FC5A300AF7C7F /* selected-text-and-textarea.html */,
 				F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */,
 				F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */,
@@ -3800,6 +3807,7 @@
 				7A909A7F1D877480007E10F8 /* FloatRect.cpp in Sources */,
 				7A909A801D877480007E10F8 /* FloatSize.cpp in Sources */,
 				F4BC0B142146C849002A0478 /* FocusPreservationTests.mm in Sources */,
+				2E92B8FA2164A0C1005B64F0 /* FontAttributes.mm in Sources */,
 				1CAD1F861E5CE7DA00AF2C2C /* FontCache.cpp in Sources */,
 				F456AB1C213EDBA300CB2CEF /* FontManagerTests.mm in Sources */,
 				7CCE7EF51A411AE600447C4C /* ForceRepaint.cpp in Sources */,

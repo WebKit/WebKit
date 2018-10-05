@@ -40,6 +40,7 @@ OBJC_CLASS UIViewController;
 
 namespace WebCore {
 class ResourceRequest;
+struct FontAttributes;
 struct SecurityOriginData;
 struct WindowFeatures;
 }
@@ -122,6 +123,9 @@ public:
     {
         completionHandler(currentQuota);
     }
+
+    virtual bool needsFontAttributes() const { return false; }
+    virtual void didChangeFontAttributes(const WebCore::FontAttributes&) { }
 
     virtual bool runOpenPanel(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, OpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*) { return false; }
     virtual void decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, Function<void(bool)>&) { }

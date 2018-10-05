@@ -121,6 +121,8 @@ private:
         void didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy&, WKResourceLimit) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const WebCore::URL&, API::Data&) final;
 #endif
+        bool needsFontAttributes() const final { return m_uiDelegate.m_delegateMethods.webViewDidChangeFontAttributes; }
+        void didChangeFontAttributes(const WebCore::FontAttributes&) final;
         bool decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&) final;
         bool checkUserMediaPermissionForOrigin(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionCheckProxy&) final;
         void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) final;
@@ -198,6 +200,7 @@ private:
         bool webViewRequestUserMediaAuthorizationForDevicesURLMainFrameURLDecisionHandler : 1;
         bool webViewCheckUserMediaPermissionForURLMainFrameURLFrameIdentifierDecisionHandler : 1;
         bool webViewMediaCaptureStateDidChange : 1;
+        bool webViewDidChangeFontAttributes : 1;
 #if PLATFORM(IOS)
 #if HAVE(APP_LINKS)
         bool webViewShouldIncludeAppLinkActionsForElement : 1;

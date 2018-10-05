@@ -1,3 +1,28 @@
+2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Add SPI to expose typing attributes at the current selection on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=190119
+        <rdar://problem/44767062>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test that loads a document containing various rich text styles. This test moves the selection
+        around the document and checks the last set of font attributes received via the new UI delegate hook.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/FontAttributes.mm: Added.
+        (-[FontAttributesListener _webView:didChangeFontAttributes:]):
+        (-[FontAttributesListener lastFontAttributes]):
+        (-[TestWKWebView selectElementWithIdentifier:]):
+        (-[TestWKWebView fontAttributesAfterNextPresentationUpdate]):
+        (ColorExpectation::ColorExpectation):
+        (ShadowExpectation::ShadowExpectation):
+        (checkColor):
+        (checkShadow):
+        (checkFont):
+        (webViewForTestingFontAttributes):
+        * TestWebKitAPI/Tests/WebKitCocoa/rich-text-attributes.html: Added.
+
 2018-10-04  Alan Coon  <alancoon@apple.com>
 
         Unreviewed, add self as contributor.

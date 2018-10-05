@@ -606,6 +606,7 @@ void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient>&& uiClient)
 
     m_process->send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient->canRunBeforeUnloadConfirmPanel()), m_pageID);
     setCanRunModal(m_uiClient->canRunModal());
+    setNeedsFontAttributes(m_uiClient->needsFontAttributes());
 }
 
 void WebPageProxy::setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>&& iconLoadingClient)
@@ -1731,6 +1732,30 @@ void WebPageProxy::validateCommand(const String& commandName, WTF::Function<void
 
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::ValidateCommand(commandName, callbackID), m_pageID);
+}
+
+void WebPageProxy::updateFontAttributesAfterEditorStateChange()
+{
+    m_cachedFontAttributesAtSelectionStart.reset();
+
+    if (m_editorState.isMissingPostLayoutData)
+        return;
+
+    if (auto fontAttributes = m_editorState.postLayoutData().fontAttributes) {
+        m_uiClient->didChangeFontAttributes(*fontAttributes);
+        m_cachedFontAttributesAtSelectionStart = WTFMove(fontAttributes);
+    }
+}
+
+void WebPageProxy::setNeedsFontAttributes(bool needsFontAttributes)
+{
+    if (m_needsFontAttributes == needsFontAttributes)
+        return;
+
+    m_needsFontAttributes = needsFontAttributes;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetNeedsFontAttributes(needsFontAttributes), m_pageID);
 }
 
 bool WebPageProxy::maintainsInactiveSelection() const
@@ -6353,6 +6378,8 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 #if ENABLE(APPLICATION_MANIFEST)
     parameters.applicationManifest = m_configuration->applicationManifest() ? std::optional<WebCore::ApplicationManifest>(m_configuration->applicationManifest()->applicationManifest()) : std::nullopt;
 #endif
+
+    parameters.needsFontAttributes = m_needsFontAttributes;
 
     m_process->addWebUserContentControllerProxy(m_userContentController, parameters);
 

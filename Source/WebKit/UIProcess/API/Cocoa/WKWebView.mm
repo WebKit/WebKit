@@ -1250,6 +1250,10 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 - (void)_didChangeEditorState
 {
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
+
+    // FIXME: We should either rename -_webView:editorStateDidChange: to clarify that it's only intended for use when testing,
+    // or remove it entirely and use -_webView:didChangeFontAttributes: instead once text alignment is supported in the set of
+    // font attributes.
     if ([uiDelegate respondsToSelector:@selector(_webView:editorStateDidChange:)])
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
 }

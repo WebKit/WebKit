@@ -110,6 +110,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(SERVICE_WORKER)
     encoder << hasRegisteredServiceWorkers;
 #endif
+    encoder << needsFontAttributes;
     encoder << iceCandidateFilteringEnabled;
     encoder << enumeratingAllNetworkInterfacesEnabled;
     encoder << userContentWorlds;
@@ -304,6 +305,9 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.hasRegisteredServiceWorkers))
         return std::nullopt;
 #endif
+
+    if (!decoder.decode(parameters.needsFontAttributes))
+        return std::nullopt;
 
     if (!decoder.decode(parameters.iceCandidateFilteringEnabled))
         return std::nullopt;

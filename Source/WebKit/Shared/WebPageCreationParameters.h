@@ -173,6 +173,8 @@ struct WebPageCreationParameters {
     bool hasRegisteredServiceWorkers { true };
 #endif
 
+    bool needsFontAttributes { false };
+
     // WebRTC members.
     bool iceCandidateFilteringEnabled { true };
     bool enumeratingAllNetworkInterfacesEnabled { false };

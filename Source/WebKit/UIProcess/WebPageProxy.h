@@ -1847,6 +1847,9 @@ private:
 
     void continueNavigationInNewProcess(API::Navigation&, Ref<WebProcessProxy>&&);
 
+    void setNeedsFontAttributes(bool);
+    void updateFontAttributesAfterEditorStateChange();
+
     WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 
@@ -2259,6 +2262,8 @@ private:
 
     RunLoop::Timer<WebPageProxy> m_resetRecentCrashCountTimer;
     unsigned m_recentCrashCount { 0 };
+
+    bool m_needsFontAttributes { false };
 };
 
 } // namespace WebKit

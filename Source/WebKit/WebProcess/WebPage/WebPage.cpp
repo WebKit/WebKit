@@ -599,6 +599,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
         ServiceWorkerProvider::singleton().setMayHaveRegisteredServiceWorkers();
 #endif
 
+    m_needsFontAttributes = parameters.needsFontAttributes;
+
 #if ENABLE(WEB_RTC)
     if (!parameters.iceCandidateFilteringEnabled)
         disableICECandidateFiltering();
@@ -934,6 +936,9 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
         postLayoutData.canCut = editor.canCut();
         postLayoutData.canCopy = editor.canCopy();
         postLayoutData.canPaste = editor.canPaste();
+
+        if (m_needsFontAttributes)
+            postLayoutData.fontAttributes = editor.fontAttributesAtSelectionStart();
 
 #if PLATFORM(COCOA)
         if (result.isContentEditable && !selection.isNone()) {
@@ -2489,6 +2494,17 @@ void WebPage::validateCommand(const String& commandName, CallbackID callbackID)
 void WebPage::executeEditCommand(const String& commandName, const String& argument)
 {
     executeEditingCommand(commandName, argument);
+}
+
+void WebPage::setNeedsFontAttributes(bool needsFontAttributes)
+{
+    if (m_needsFontAttributes == needsFontAttributes)
+        return;
+
+    m_needsFontAttributes = needsFontAttributes;
+
+    if (m_needsFontAttributes)
+        sendPartialEditorStateAndSchedulePostLayoutUpdate();
 }
 
 void WebPage::restoreSessionInternal(const Vector<BackForwardListItemState>& itemStates, WasRestoredByAPIRequest restoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem overwrite)
