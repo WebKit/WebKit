@@ -1,3 +1,16 @@
+2018-10-05  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Drop snapshotting workaround introduced in r235898
+        https://bugs.webkit.org/show_bug.cgi?id=190314
+
+        Reviewed by Geoffrey Garen.
+
+        Drop snapshotting workaround introduced in r235898 as it is no longer needed now
+        that the flashing bug has been fixed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+
 2018-10-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] RealtimeMediaSource should be able to vend hashed IDs

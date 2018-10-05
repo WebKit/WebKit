@@ -2536,12 +2536,6 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 {
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString());
 
-    // Because we're about to tear down the drawing area and swap to a new process, this is our last opportunity to snapshot what's currently displayed before
-    // we navigate. Do the navigation snapshot now and suppress the next one since the view will be blank then.
-    // FIXME: We should be able to drop this logic if we kept displaying the previous content a while longer when we swap process on navigation.
-    recordAutomaticNavigationSnapshot();
-    suppressNextAutomaticNavigationSnapshot();
-
     Ref<WebProcessProxy> previousProcess = m_process.copyRef();
     std::optional<uint64_t> navigatedFrameIdentifierInPreviousProcess;
     if (m_mainFrame)
