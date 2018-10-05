@@ -8,18 +8,8 @@ list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
 )
 
-list(APPEND JavaScriptCore_SOURCES
-    API/JSRemoteInspector.cpp
-
-    inspector/remote/RemoteAutomationTarget.cpp
-    inspector/remote/RemoteControllableTarget.cpp
-    inspector/remote/RemoteInspectionTarget.cpp
-    inspector/remote/RemoteInspector.cpp
-
-    inspector/remote/glib/RemoteConnectionToTargetGlib.cpp
-    inspector/remote/glib/RemoteInspectorGlib.cpp
-    inspector/remote/glib/RemoteInspectorServer.cpp
-    inspector/remote/glib/RemoteInspectorUtils.cpp
+list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
+    "SourcesWPE.txt"
 )
 
 list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS

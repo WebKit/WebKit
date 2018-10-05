@@ -1,3 +1,16 @@
+2018-10-05  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [WPE][JSC] Use Unified Sources for Platform-specific sources
+        https://bugs.webkit.org/show_bug.cgi?id=190300
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently the GTK port already used Unified Sources with the same source files.
+        As WPE has conditional code using gmodule, we need to add GLIB_GMODULE_LIBRARIES
+        to the list of libraries to link with.
+
+        * TestWebKitAPI/PlatformWPE.cmake:
+
 2018-10-05  Zach Li  <zachli@apple.com>
 
         Expose whether WKWebProcessPlugInNodeHandle is a select element to clients

@@ -95,6 +95,7 @@ add_definitions(-DWEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}")
 add_executable(TestJSC ${TESTWEBKITAPI_DIR}/Tests/JavaScriptCore/glib/TestJSC.cpp)
 target_link_libraries(TestJSC
     ${GLIB_LIBRARIES}
+    ${GLIB_GMODULE_LIBRARIES}
     JavaScriptCore
 )
 add_test(TestJSC ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore/TestJSC)
