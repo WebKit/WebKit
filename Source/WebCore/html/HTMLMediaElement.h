@@ -503,9 +503,7 @@ public:
     uint64_t elementID() const { return m_elementID; }
 #endif
 
-#if ENABLE(MEDIA_SOURCE)
     RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
-#endif
 
     MediaPlayerEnums::Preload preloadValue() const { return m_preload; }
     MediaElementSession& mediaSession() const { return *m_mediaSession; }

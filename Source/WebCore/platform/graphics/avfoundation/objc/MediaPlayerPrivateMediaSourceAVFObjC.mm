@@ -650,7 +650,8 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC:
             m_decompressionSession->totalVideoFrames(),
             m_decompressionSession->droppedVideoFrames(),
             m_decompressionSession->corruptedVideoFrames(),
-            m_decompressionSession->totalFrameDelay().toDouble()
+            m_decompressionSession->totalFrameDelay().toDouble(),
+            0,
         };
     }
 
@@ -658,11 +659,20 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC:
     if (!metrics)
         return std::nullopt;
 
+    uint32_t displayCompositedFrames = 0;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+    if ([metrics respondsToSelector:@selector(numberOfDisplayCompositedVideoFrames)])
+        displayCompositedFrames = [metrics numberOfDisplayCompositedVideoFrames];
+#pragma clang diagnostic pop
+
     return VideoPlaybackQualityMetrics {
-        static_cast<unsigned>([metrics totalNumberOfVideoFrames]),
-        static_cast<unsigned>([metrics numberOfDroppedVideoFrames]),
-        static_cast<unsigned>([metrics numberOfCorruptedVideoFrames]),
-        [metrics totalFrameDelay]
+        static_cast<uint32_t>([metrics totalNumberOfVideoFrames]),
+        static_cast<uint32_t>([metrics numberOfDroppedVideoFrames]),
+        static_cast<uint32_t>([metrics numberOfCorruptedVideoFrames]),
+        [metrics totalFrameDelay],
+        displayCompositedFrames,
     };
 }
 

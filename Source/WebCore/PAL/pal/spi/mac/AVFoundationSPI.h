@@ -52,6 +52,7 @@
 
 #import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerItem.h>
+#import <AVFoundation/AVPlayerLayer.h>
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000)
 NS_ASSUME_NONNULL_BEGIN
@@ -164,7 +165,7 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, readonly) unsigned long totalNumberOfVideoFrames;
 @property (nonatomic, readonly) unsigned long numberOfDroppedVideoFrames;
 @property (nonatomic, readonly) unsigned long numberOfCorruptedVideoFrames;
-@property (nonatomic, readonly) unsigned long numberOfNonDisplayCompositedVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
 @property (nonatomic, readonly) double totalFrameDelay;
 @end
 #endif
@@ -184,6 +185,13 @@ NS_ASSUME_NONNULL_END
 @end
 #endif // !HAVE(AVKIT)
 
+#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101404) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 110000)
+NS_ASSUME_NONNULL_BEGIN
+@interface AVPlayerLayer (AVPlayerLayerVideoPerformanceMetrics)
+- (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+@end
+NS_ASSUME_NONNULL_END
+#endif
 
 // FIXME: Wrap in a #if USE(APPLE_INTERNAL_SDK) once these SPI land
 #import <AVFoundation/AVAsset.h>

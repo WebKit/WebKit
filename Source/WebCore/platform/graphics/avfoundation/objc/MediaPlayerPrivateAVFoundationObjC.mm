@@ -3258,6 +3258,32 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep(bool flag)
 #endif
 }
 
+std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics()
+{
+    if (![m_videoLayer respondsToSelector:@selector(videoPerformanceMetrics)])
+        return std::nullopt;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+    auto metrics = [m_videoLayer videoPerformanceMetrics];
+    if (!metrics)
+        return std::nullopt;
+
+    uint32_t displayCompositedFrames = 0;
+    if ([metrics respondsToSelector:@selector(numberOfDisplayCompositedVideoFrames)])
+        displayCompositedFrames = [metrics numberOfDisplayCompositedVideoFrames];
+#pragma clang diagnostic pop
+
+    return VideoPlaybackQualityMetrics {
+        static_cast<uint32_t>([metrics totalNumberOfVideoFrames]),
+        static_cast<uint32_t>([metrics numberOfDroppedVideoFrames]),
+        static_cast<uint32_t>([metrics numberOfCorruptedVideoFrames]),
+        [metrics totalFrameDelay],
+        displayCompositedFrames,
+    };
+}
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys = [[NSArray alloc] initWithObjects:

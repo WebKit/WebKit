@@ -1,3 +1,14 @@
+2018-10-04  Jer Noble  <jer.noble@apple.com>
+
+        Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.
+        https://bugs.webkit.org/show_bug.cgi?id=190266
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/VideoQualityDisplayCompositing.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2018-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Add SPI to expose typing attributes at the current selection on WKWebView
