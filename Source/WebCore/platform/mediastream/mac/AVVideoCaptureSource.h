@@ -53,7 +53,7 @@ class PixelBufferResizer;
 
 class AVVideoCaptureSource : public RealtimeVideoSource, private OrientationNotifier::Observer {
 public:
-    static CaptureSourceOrError create(const AtomicString&, const MediaConstraints*);
+    static CaptureSourceOrError create(String&& id, String&& hashSalt, const MediaConstraints*);
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
@@ -71,7 +71,7 @@ public:
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*);
 
 private:
-    AVVideoCaptureSource(AVCaptureDevice*, const AtomicString&);
+    AVVideoCaptureSource(AVCaptureDevice*, String&& id, String&& hashSalt);
     virtual ~AVVideoCaptureSource();
 
     bool setupSession();

@@ -52,7 +52,7 @@ namespace WebCore {
 using namespace PAL;
 
 DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(String&& name)
-    : RealtimeMediaSource("", Type::Video, WTFMove(name))
+    : RealtimeMediaSource(Type::Video, WTFMove(name))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
 {
 }

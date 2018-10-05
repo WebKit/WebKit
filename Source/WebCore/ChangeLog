@@ -1,3 +1,142 @@
+2018-10-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] RealtimeMediaSource should be able to vend hashed IDs
+        https://bugs.webkit.org/show_bug.cgi?id=190142
+        <rdar://problem/44911109>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, covered by existing tests.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::Source): Update order of parameters passed
+        to base class.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::start): ASSERT if document.deviceIDHashSalt is not the same
+        as passed salt.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::getSettings const): Don't need to hash ID.
+        (WebCore::MediaStreamTrack::getCapabilities const): Ditto.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow): Pass hash salt to createMediaStream.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::createReceiverForSource): Update order of parameters passed
+        to base class.
+
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        (WebCore::MediaStreamAudioSource::MediaStreamAudioSource): Ditto.
+        * platform/mediastream/MediaConstraints.h:
+
+        * platform/mediastream/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::RealtimeIncomingAudioSource): Ditto.
+
+        * platform/mediastream/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource): Ditto.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::RealtimeMediaSource): Calculate hashed ID.
+        (WebCore::RealtimeMediaSource::selectSettings): Use m_hashedID.
+        (WebCore::RealtimeMediaSource::hashedId const): New.
+        (WebCore::RealtimeMediaSource::deviceIDHashSalt const): New.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::createMediaStream): Take hash salt, pass it when creating
+        a source.
+        (WebCore::RealtimeMediaSourceCenter::getUserMediaDevices): Ditto.
+        (WebCore::RealtimeMediaSourceCenter::validateRequestConstraints): Ditto.
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::RealtimeVideoSource): Update parameters.
+        * platform/mediastream/RealtimeVideoSource.h:
+
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        (WebCore::GStreamerAudioCaptureSource::create): Ditto.
+        (WebCore::GStreamerAudioCaptureSource::GStreamerAudioCaptureSource): Ditto.
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.h:
+
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::create): Ditto.
+        (WebCore::GStreamerVideoCaptureSource::GStreamerVideoCaptureSource): Ditto.
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp:
+        (WebCore::WrappedMockRealtimeAudioSource::WrappedMockRealtimeAudioSource): Ditto.
+        (WebCore::MockRealtimeAudioSource::create): Ditto.
+        (WebCore::MockGStreamerAudioCaptureSource::MockGStreamerAudioCaptureSource): Ditto.
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.h:
+
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.cpp:
+        (WebCore::MockRealtimeVideoSource::create): Ditto.
+        (WebCore::MockGStreamerVideoCaptureSource::MockGStreamerVideoCaptureSource): Ditto.
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.h:
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::create): Ditto.
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource): Ditto.
+        (WebCore::AVVideoCaptureSource::settings): Use hashedId to set device ID.
+        (WebCore::AVVideoCaptureSource::capabilities): Ditto.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::create): Update parameters.
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource): Ditto.
+        (WebCore::CoreAudioCaptureSource::capabilities): Use hashedId to set device ID.
+        (WebCore::CoreAudioCaptureSource::settings): Ditto.
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa): Update parameters.
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.h:
+
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSource::create): Ditto.
+        (WebCore::MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac): Ditto.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSource::create): Ditto.
+        (WebCore::MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac): Ditto.
+
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::create): Ditto.
+        (WebCore::ScreenDisplayCaptureSourceMac::ScreenDisplayCaptureSourceMac): Ditto.
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream): Update logging.
+        (WebCore::ScreenDisplayCaptureSourceMac::startDisplayStream): Ditto.
+        (WebCore::ScreenDisplayCaptureSourceMac::frameAvailable): Ditto.
+
+        * platform/mediastream/mac/WindowDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/WindowDisplayCaptureSourceMac.mm:
+        (WebCore::WindowDisplayCaptureSourceMac::create): Update parameters.
+
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::create): Ditto.
+        (WebCore::MockRealtimeAudioSource::MockRealtimeAudioSource): Ditto.
+        (WebCore::MockRealtimeAudioSource::settings): Use hashedId to set device ID.
+        (WebCore::MockRealtimeAudioSource::capabilities): Ditto.
+        * platform/mock/MockRealtimeAudioSource.h:
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::create): Update parameters.
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource): Ditto.
+        (WebCore::MockRealtimeVideoSource::capabilities): Use hashedId to set device ID.
+        (WebCore::MockRealtimeVideoSource::settings): Ditto.
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2018-10-03  Jer Noble  <jer.noble@apple.com>
 
         Add support for reporting "display composited video frames" through the VideoPlaybackQuality object.

@@ -30,16 +30,16 @@ namespace WebCore {
 
 class WrappedMockRealtimeAudioSource : public MockRealtimeAudioSource {
 public:
-    WrappedMockRealtimeAudioSource(const String& deviceID, const String& name)
-        : MockRealtimeAudioSource(deviceID, name)
+    WrappedMockRealtimeAudioSource(String&& deviceID, String&& name, String&& hashSalt)
+        : MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
     {
     }
 };
 
-CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID,
-    const String& name, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID,
+    String&& name, String&& hashSalt, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(*new MockGStreamerAudioCaptureSource(deviceID, name));
+    auto source = adoptRef(*new MockGStreamerAudioCaptureSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
 
     if (constraints && source->applyConstraints(*constraints))
         return { };
@@ -58,9 +58,9 @@ void MockGStreamerAudioCaptureSource::applyConstraints(const MediaConstraints& c
     m_wrappedSource->applyConstraints(constraints, WTFMove(successHandler), WTFMove(failureHandler));
 }
 
-MockGStreamerAudioCaptureSource::MockGStreamerAudioCaptureSource(const String& deviceID, const String& name)
-    : GStreamerAudioCaptureSource(deviceID, name)
-    , m_wrappedSource(std::make_unique<WrappedMockRealtimeAudioSource>(deviceID, name))
+MockGStreamerAudioCaptureSource::MockGStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt)
+    : GStreamerAudioCaptureSource(String { deviceID }, String { name }, String { hashSalt })
+    , m_wrappedSource(std::make_unique<WrappedMockRealtimeAudioSource>(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)))
 {
     m_wrappedSource->addObserver(*this);
 }

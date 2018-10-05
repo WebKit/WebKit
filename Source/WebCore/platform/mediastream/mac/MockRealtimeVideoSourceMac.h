@@ -51,7 +51,7 @@ public:
 
 private:
     friend class MockRealtimeVideoSource;
-    MockRealtimeVideoSourceMac(const String& deviceID, const String& name);
+    MockRealtimeVideoSourceMac(String&& deviceID, String&& name, String&& hashSalt);
 
     RetainPtr<CMSampleBufferRef> CMSampleBufferFromPixelBuffer(CVPixelBufferRef);
     RetainPtr<CVPixelBufferRef> pixelBufferFromCGImage(CGImageRef) const;

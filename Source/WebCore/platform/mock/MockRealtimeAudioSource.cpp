@@ -43,14 +43,16 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
-CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
 {
+#ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
         return { };
+#endif
 
-    auto source = adoptRef(*new MockRealtimeAudioSource(WTFMove(device), deviceID, name));
+    auto source = adoptRef(*new MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
     if (constraints && source->applyConstraints(*constraints))
         return { };
 
@@ -58,11 +60,11 @@ CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID, con
 }
 #endif
 
-MockRealtimeAudioSource::MockRealtimeAudioSource(const String& deviceID, const String& name)
-    : RealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Audio, name)
+MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, String&& name, String&& hashSalt)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
 {
-    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
+    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
     ASSERT(device);
     m_device = *device;
 }
@@ -78,7 +80,7 @@ const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings()
 {
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;
-        settings.setDeviceId(id());
+        settings.setDeviceId(hashedId());
         settings.setVolume(volume());
         settings.setEchoCancellation(echoCancellation());
         settings.setSampleRate(sampleRate());
@@ -100,7 +102,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeAudioSource::capabilities()
     if (!m_capabilities) {
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
-        capabilities.setDeviceId(id());
+        capabilities.setDeviceId(hashedId());
         capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
         capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
         capabilities.setSampleRate(CapabilityValueOrRange(44100, 48000));
