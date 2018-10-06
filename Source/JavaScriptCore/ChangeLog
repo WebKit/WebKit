@@ -1,5 +1,19 @@
 2018-10-05  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [JSC] Use new extra memory reporting in SparseArrayMap
+        https://bugs.webkit.org/show_bug.cgi?id=190278
+
+        Reviewed by Keith Miller.
+
+        This patch switches the extra memory reporting mechanism from deprecatedReportExtraMemory
+        to reportExtraMemoryAllocated & reportExtraMemoryVisited in SparseArrayMap.
+
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::add):
+        (JSC::SparseArrayValueMap::visitChildren):
+
+2018-10-05  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         [JSC][Linux] Support Perf JITDump logging
         https://bugs.webkit.org/show_bug.cgi?id=189893
 
