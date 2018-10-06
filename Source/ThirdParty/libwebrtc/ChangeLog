@@ -1,5 +1,14 @@
 2018-10-06  Dan Bernstein  <mitz@apple.com>
 
+        [Xcode] Never build yasm with ASAN
+        https://bugs.webkit.org/show_bug.cgi?id=190327
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/yasm.xcconfig: Set WK_ASAN_DISALLOWED to YES.
+
+2018-10-06  Dan Bernstein  <mitz@apple.com>
+
         Fixed iOS device production builds after r236896.
 
         * Configurations/yasm.xcconfig: Excluding all sources when building for an iOS device meant
