@@ -1,5 +1,35 @@
 2018-10-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: refactor constructor of WI.Resource
+        https://bugs.webkit.org/show_bug.cgi?id=190318
+
+        Reviewed by Joseph Pecoraro.
+
+        Reworked constructor of `WI.Resource` to use an optional object for any non-essential arguments.
+
+        Drive-by: moved some simple getters to the top of the class to save space.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource):
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource):
+
+        * UserInterface/Models/WebSocketResource.js:
+        (WI.WebSocketResource):
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.frameDidNavigate):
+        (WI.NetworkManager.prototype.resourceRequestWillBeSent):
+        (WI.NetworkManager.prototype.webSocketWillSendHandshakeRequest):
+        (WI.NetworkManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WI.NetworkManager.prototype.resourceRequestDidReceiveResponse):
+        (WI.NetworkManager.prototype._addNewResourceToFrameOrTarget):
+        (WI.NetworkManager.prototype._createFrame):
+        (WI.NetworkManager.prototype._createResource):
+
+2018-10-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: use iframe's name attribute for FrameTreeElement
         https://bugs.webkit.org/show_bug.cgi?id=190275
 

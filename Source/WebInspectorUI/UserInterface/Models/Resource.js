@@ -26,7 +26,7 @@
 
 WI.Resource = class Resource extends WI.SourceCode
 {
-    constructor(url, mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp)
+    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp} = {})
     {
         super();
 
@@ -280,12 +280,17 @@ WI.Resource = class Resource extends WI.SourceCode
 
     // Public
 
+    get url() { return this._url; }
+    get mimeType() { return this._mimeType; }
     get target() { return this._target; }
     get type() { return this._type; }
     get loaderIdentifier() { return this._loaderIdentifier; }
     get requestIdentifier() { return this._requestIdentifier; }
     get requestMethod() { return this._requestMethod; }
     get requestData() { return this._requestData; }
+    get initiatorSourceCodeLocation() { return this._initiatorSourceCodeLocation; }
+    get initiatedResources() { return this._initiatedResources; }
+    get originalRequestWillBeSentTimestamp() { return this._originalRequestWillBeSentTimestamp; }
     get statusCode() { return this._statusCode; }
     get statusText() { return this._statusText; }
     get responseSource() { return this._responseSource; }
@@ -294,11 +299,25 @@ WI.Resource = class Resource extends WI.SourceCode
     get priority() { return this._priority; }
     get remoteAddress() { return this._remoteAddress; }
     get connectionIdentifier() { return this._connectionIdentifier; }
-
-    get url()
-    {
-        return this._url;
-    }
+    get parentFrame() { return this._parentFrame; }
+    get finished() { return this._finished; }
+    get failed() { return this._failed; }
+    get canceled() { return this._canceled; }
+    get failureReasonText() { return this._failureReasonText; }
+    get requestHeaders() { return this._requestHeaders; }
+    get responseHeaders() { return this._responseHeaders; }
+    get requestSentTimestamp() { return this._requestSentTimestamp; }
+    get requestSentWalltime() { return this._requestSentWalltime; }
+    get lastRedirectReceivedTimestamp() { return this._lastRedirectReceivedTimestamp; }
+    get responseReceivedTimestamp() { return this._responseReceivedTimestamp; }
+    get lastDataReceivedTimestamp() { return this._lastDataReceivedTimestamp; }
+    get finishedOrFailedTimestamp() { return this._finishedOrFailedTimestamp; }
+    get cached() { return this._cached; }
+    get requestHeadersTransferSize() { return this._requestHeadersTransferSize; }
+    get requestBodyTransferSize() { return this._requestBodyTransferSize; }
+    get responseHeadersTransferSize() { return this._responseHeadersTransferSize; }
+    get responseBodyTransferSize() { return this._responseBodyTransferSize; }
+    get cachedResponseBodySize() { return this._cachedResponseBodySize; }
 
     get urlComponents()
     {
@@ -317,26 +336,6 @@ WI.Resource = class Resource extends WI.SourceCode
         const isMultiLine = true;
         const dataURIMaxSize = 64;
         return WI.truncateURL(this._url, isMultiLine, dataURIMaxSize);
-    }
-
-    get initiatorSourceCodeLocation()
-    {
-        return this._initiatorSourceCodeLocation;
-    }
-
-    get initiatedResources()
-    {
-        return this._initiatedResources;
-    }
-
-    get originalRequestWillBeSentTimestamp()
-    {
-        return this._originalRequestWillBeSentTimestamp;
-    }
-
-    get mimeType()
-    {
-        return this._mimeType;
     }
 
     get mimeTypeComponents()
@@ -403,31 +402,6 @@ WI.Resource = class Resource extends WI.SourceCode
         this.dispatchEventToListeners(WI.Resource.Event.InitiatedResourcesDidChange);
     }
 
-    get parentFrame()
-    {
-        return this._parentFrame;
-    }
-
-    get finished()
-    {
-        return this._finished;
-    }
-
-    get failed()
-    {
-        return this._failed;
-    }
-
-    get canceled()
-    {
-        return this._canceled;
-    }
-
-    get failureReasonText()
-    {
-        return this._failureReasonText;
-    }
-
     get queryStringParameters()
     {
         if (this._queryStringParameters === undefined)
@@ -445,16 +419,6 @@ WI.Resource = class Resource extends WI.SourceCode
     get requestDataContentType()
     {
         return this._requestHeaders.valueForCaseInsensitiveKey("Content-Type") || null;
-    }
-
-    get requestHeaders()
-    {
-        return this._requestHeaders;
-    }
-
-    get responseHeaders()
-    {
-        return this._responseHeaders;
     }
 
     get requestCookies()
@@ -487,39 +451,9 @@ WI.Resource = class Resource extends WI.SourceCode
         return this._responseCookies;
     }
 
-    get requestSentTimestamp()
-    {
-        return this._requestSentTimestamp;
-    }
-
-    get requestSentWalltime()
-    {
-        return this._requestSentWalltime;
-    }
-
     get requestSentDate()
     {
         return isNaN(this._requestSentWalltime) ? null : new Date(this._requestSentWalltime * 1000);
-    }
-
-    get lastRedirectReceivedTimestamp()
-    {
-        return this._lastRedirectReceivedTimestamp;
-    }
-
-    get responseReceivedTimestamp()
-    {
-        return this._responseReceivedTimestamp;
-    }
-
-    get lastDataReceivedTimestamp()
-    {
-        return this._lastDataReceivedTimestamp;
-    }
-
-    get finishedOrFailedTimestamp()
-    {
-        return this._finishedOrFailedTimestamp;
     }
 
     get firstTimestamp()
@@ -546,17 +480,6 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         return this.timingData.responseEnd - this.timingData.startTime;
     }
-
-    get cached()
-    {
-        return this._cached;
-    }
-
-    get requestHeadersTransferSize() { return this._requestHeadersTransferSize; }
-    get requestBodyTransferSize() { return this._requestBodyTransferSize; }
-    get responseHeadersTransferSize() { return this._responseHeadersTransferSize; }
-    get responseBodyTransferSize() { return this._responseBodyTransferSize; }
-    get cachedResponseBodySize() { return this._cachedResponseBodySize; }
 
     get size()
     {

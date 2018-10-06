@@ -34,18 +34,13 @@ function test()
             const url = "https://example.com/fake.js";
             const mimeType = "text/javascript";
             const type = WI.Resource.Type.Script;
-            const loaderIdentifier = undefined;
-            const targetId = undefined;
-            const requestIdentifier = undefined;
             const requestMethod = "GET";
             const requestHeaders = {"Test-Request-Header": "Test Request Header Value"};
             const responseHeaders = {"Test-Response-Header": "Test Response Header Value"};
             const statusCode = 200;
             const statusText = "OK";
             const source = "network";
-            const requestData = null;
             const requestSentWalltime = 1508723752694 / 1000; // Sun Oct 22 2017 18:55:52 GMT-0700, when this test was written.
-            const initiatorSourceCodeLocation = null;
             const timestamp = undefined;
             const size = 1234;
             const timingData = {
@@ -72,10 +67,10 @@ function test()
                 requestHeaders,
             };
 
-            let bareResource = new WI.Resource(url, mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, timestamp, requestSentWalltime, initiatorSourceCodeLocation, timestamp);
+            let bareResource = new WI.Resource(url, {mimeType, type, requestMethod, requestHeaders, requestSentWalltime});
             bareResource.markAsFinished(undefined);
 
-            let fullResource = new WI.Resource(url, mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, timestamp, requestSentWalltime, initiatorSourceCodeLocation, timestamp);
+            let fullResource = new WI.Resource(url, {mimeType, type, requestMethod, requestHeaders, requestSentWalltime});
             fullResource.updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, timestamp, timingData, source);
             fullResource.increaseSize(size);
             fullResource.updateWithMetrics(metrics);

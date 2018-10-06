@@ -27,7 +27,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
 {
     constructor(url, sourceMap)
     {
-        super(url, null);
+        super(url);
 
         console.assert(url);
         console.assert(sourceMap);
@@ -51,10 +51,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
 
     // Public
 
-    get sourceMap()
-    {
-        return this._sourceMap;
-    }
+    get sourceMap() { return this._sourceMap; }
 
     get sourceMapDisplaySubpath()
     {

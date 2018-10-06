@@ -25,12 +25,16 @@
 
 WI.WebSocketResource = class WebSocketResource extends WI.Resource
 {
-    constructor(url, loaderIdentifier, targetId, requestIdentifier, requestHeaders, requestData, timestamp, walltime, requestSentTimestamp, initiatorSourceCodeLocation)
+    constructor(url, {loaderIdentifier, requestIdentifier, requestHeaders, timestamp, walltime, requestSentTimestamp} = {})
     {
-        const type = WI.Resource.Type.WebSocket;
-        const mimeType = null;
-        const requestMethod = "GET";
-        super(url, mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, initiatorSourceCodeLocation);
+        super(url, {
+            type: WI.Resource.Type.WebSocket,
+            loaderIdentifier,
+            requestIdentifier,
+            requestMethod: "GET",
+            requestHeaders,
+            requestSentTimestamp,
+        });
 
         this._timestamp = timestamp;
         this._walltime = walltime;

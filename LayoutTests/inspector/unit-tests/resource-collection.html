@@ -8,7 +8,7 @@ function test()
     let suite = InspectorTest.createAsyncSuite("ResourceCollection");
 
     function createResource(url, type) {
-        return new WI.Resource(url, null, type);
+        return new WI.Resource(url, {type});
     }
 
     function logResourceNames(collection) {
