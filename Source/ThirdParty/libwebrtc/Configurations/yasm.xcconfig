@@ -18,4 +18,4 @@ CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*] = *_neon.c arm_cpudetect.c *_arm.c sad.c;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = *_neon.c arm_cpudetect.c *_arm.c sad.c;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *_sse2.c *_ssse3.c *_sse4.c *_avx2.c *_avx.c *_sse2.asm.o *_sse3.asm.o;

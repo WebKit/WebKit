@@ -1,5 +1,13 @@
 2018-10-06  Dan Bernstein  <mitz@apple.com>
 
+        Fixed iOS device production builds after r236896.
+
+        * Configurations/yasm.xcconfig: Excluding all sources when building for an iOS device meant
+          that nothing got built, which caused the install action to fail when it tried to copy
+          the built product. Just put things back the way they were for now.
+
+2018-10-06  Dan Bernstein  <mitz@apple.com>
+
         [Xcode] Don’t install yasm and don’t compile it in iOS device builds
         https://bugs.webkit.org/show_bug.cgi?id=190326
 
