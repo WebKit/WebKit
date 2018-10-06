@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "CSSPropertyNames.h"
 #include "URLHash.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -121,6 +122,11 @@ public:
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
     bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
+
+    // What properties does this value rely on (eg, font-size for em units)
+    void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const;
+    // What properties in the root element does this value rely on (eg. font-size for rem units)
+    void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const;
 
     bool equals(const CSSValue&) const;
     bool operator==(const CSSValue& other) const { return equals(other); }

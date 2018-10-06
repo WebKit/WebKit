@@ -1220,4 +1220,32 @@ Ref<DeprecatedCSSOMPrimitiveValue> CSSPrimitiveValue::createDeprecatedCSSOMPrimi
     return DeprecatedCSSOMPrimitiveValue::create(*this, styleDeclaration);
 }
 
+// https://drafts.css-houdini.org/css-properties-values-api/#dependency-cycles-via-relative-units
+void CSSPrimitiveValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+{
+    switch (m_primitiveUnitType) {
+    case CSS_EMS:
+    case CSS_QUIRKY_EMS:
+    case CSS_EXS:
+    case CSS_CHS:
+        values.add(CSSPropertyFontSize);
+        break;
+    case CSS_CALC:
+        m_value.calc->collectDirectComputationalDependencies(values);
+        break;
+    }
+}
+
+void CSSPrimitiveValue::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
+{
+    switch (m_primitiveUnitType) {
+    case CSS_REMS:
+        values.add(CSSPropertyFontSize);
+        break;
+    case CSS_CALC:
+        m_value.calc->collectDirectRootComputationalDependencies(values);
+        break;
+    }
+}
+
 } // namespace WebCore

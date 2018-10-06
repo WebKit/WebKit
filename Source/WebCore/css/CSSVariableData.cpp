@@ -32,7 +32,6 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserTokenRange.h"
-#include "CSSTokenizer.h"
 #include "CSSValuePool.h"
 #include "RenderStyle.h"
 #include <wtf/text/AtomicStringHash.h>
@@ -81,7 +80,6 @@ void CSSVariableData::consumeAndUpdateTokens(const CSSParserTokenRange& range)
 CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, bool needsVariableResolution)
     : m_needsVariableResolution(needsVariableResolution)
 {
-    ASSERT(!range.atEnd());
     consumeAndUpdateTokens(range);
 }
 
@@ -146,12 +144,7 @@ bool CSSVariableData::resolveVariableReference(const CSSRegisteredCustomProperty
     
     auto* property = style.getCustomProperty(variableName);
     if (property && property->resolvedTypedValue()) {
-        // FIXME: we should not have to serialize a value that was already resolved.
-        auto textValue = CSSValuePool::singleton().createValue(*property->resolvedTypedValue(), style)->cssText();
-        CSSTokenizer tokenizer(textValue);
-        auto tokenizerRange = tokenizer.tokenRange();
-        while (!tokenizerRange.atEnd())
-            result.append(tokenizerRange.consume());
+        result.appendVector(property->tokens(registeredProperties, style));
         return true;
     }
 
@@ -163,15 +156,7 @@ bool CSSVariableData::resolveVariableReference(const CSSRegisteredCustomProperty
             return resolveVariableFallback(registeredProperties, range, result, style);
     }
     ASSERT(property);
-    
-    if (property->containsVariables()) {
-        // FIXME: Avoid doing this work more than once.
-        RefPtr<CSSVariableData> resolvedData = property->value()->resolveVariableReferences(registeredProperties, style);
-        if (!resolvedData)
-            return false;
-        result.appendVector(resolvedData->tokens());
-    } else
-        result.appendVector(property->value()->tokens());
+    result.appendVector(property->tokens(registeredProperties, style));
     
     return true;
 }

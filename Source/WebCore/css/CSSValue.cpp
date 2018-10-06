@@ -117,6 +117,18 @@ bool CSSValue::traverseSubresources(const WTF::Function<bool (const CachedResour
     return false;
 }
 
+void CSSValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+{
+    if (is<CSSPrimitiveValue>(*this))
+        downcast<CSSPrimitiveValue>(*this).collectDirectComputationalDependencies(values);
+}
+
+void CSSValue::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
+{
+    if (is<CSSPrimitiveValue>(*this))
+        downcast<CSSPrimitiveValue>(*this).collectDirectRootComputationalDependencies(values);
+}
+
 template<class ChildClassType>
 inline static bool compareCSSValues(const CSSValue& first, const CSSValue& second)
 {

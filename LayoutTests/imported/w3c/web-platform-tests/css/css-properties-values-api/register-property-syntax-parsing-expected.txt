@@ -12,7 +12,7 @@ FAIL syntax:'<time> | <resolution> | <transform-list> | <custom-ident>', initial
 FAIL syntax:'*', initialValue:':> hello' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'*', initialValue:'([ brackets ]) { yay (??)}' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'*', initialValue:'yep 'this is valid too'' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'*', initialValue:'unmatched opening bracket is valid :(' is valid The given initial value must be computationally independent.
+FAIL syntax:'*', initialValue:'unmatched opening bracket is valid :(' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'*', initialValue:'"' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'<length>', initialValue:'0' is valid 
 PASS syntax:'<length>', initialValue:'10px /*:)*/' is valid 
@@ -37,12 +37,12 @@ FAIL syntax:'<time>', initialValue:'calc(2s - 9ms)' is valid The given initial v
 FAIL syntax:'<resolution>', initialValue:'10dpi' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'<resolution>', initialValue:'3dPpX' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'<resolution>', initialValue:'-5.3dpcm' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<transform-function>', initialValue:'translateX(2px)' is valid The given initial value must be computationally independent.
+FAIL syntax:'<transform-function>', initialValue:'translateX(2px)' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'<transform-function>|<integer>', initialValue:'5' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'<transform-function>|<integer>', initialValue:'scale(2)' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<transform-function>+', initialValue:'translateX(2px) rotate(42deg)' is valid The given initial value must be computationally independent.
+FAIL syntax:'<transform-function>+', initialValue:'translateX(2px) rotate(42deg)' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'<transform-list>', initialValue:'scale(2)' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<transform-list>', initialValue:'translateX(2px) rotate(20deg)' is valid The given initial value must be computationally independent.
+FAIL syntax:'<transform-list>', initialValue:'translateX(2px) rotate(20deg)' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'<color>', initialValue:'rgb(12, 34, 56)' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'<color>', initialValue:'lightgoldenrodyellow' is valid The given initial value does not parse for the given syntax.
 FAIL syntax:'<image>', initialValue:'url(a)' is valid The given initial value does not parse for the given syntax.

@@ -269,6 +269,16 @@ private:
         return 0;
     }
 
+    void collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const final
+    {
+        m_value->collectDirectComputationalDependencies(values);
+    }
+
+    void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const final
+    {
+        m_value->collectDirectRootComputationalDependencies(values);
+    }
+
     bool equals(const CSSCalcExpressionNode& other) const final
     {
         if (type() != other.type())
@@ -530,6 +540,18 @@ private:
         for (auto& child : m_children)
             doubleValues.append(child->computeLengthPx(conversionData));
         return evaluate(doubleValues);
+    }
+
+    void collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const final
+    {
+        for (auto& child : m_children)
+            child->collectDirectComputationalDependencies(values);
+    }
+
+    void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const final
+    {
+        for (auto& child : m_children)
+            child->collectDirectRootComputationalDependencies(values);
     }
 
     static String buildCssText(Vector<String> childExpressions, CalcOperator op)

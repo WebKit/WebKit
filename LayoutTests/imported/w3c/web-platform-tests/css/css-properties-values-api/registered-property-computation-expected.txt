@@ -1,5 +1,5 @@
 
-FAIL CSS.registerProperty The given initial value must be computationally independent.
+FAIL CSS.registerProperty The given initial value does not parse for the given syntax.
 PASS <length> values are computed correctly for divWithFontSizeSet 
 FAIL <length-percentage> values are computed correctly for divWithFontSizeSet assert_equals: expected "calc(190px + -2%)" but got "calc(190px - 2%)"
 FAIL <length># values are computed correctly for divWithFontSizeSet assert_equals: expected "10px, 30px" but got "0px"

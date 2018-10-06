@@ -288,6 +288,9 @@ public:
 
     Ref<DeprecatedCSSOMPrimitiveValue> createDeprecatedCSSOMPrimitiveWrapper(CSSStyleDeclaration&) const;
 
+    void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const;
+    void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const;
+
 private:
     friend class CSSValuePool;
     friend LazyNeverDestroyed<CSSPrimitiveValue>;

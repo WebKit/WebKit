@@ -34,6 +34,9 @@
 
 namespace WebCore {
 
+class CSSParserToken;
+class RenderStyle;
+
 class CSSCustomPropertyValue final : public CSSValue {
 public:
     static Ref<CSSCustomPropertyValue> createWithVariableData(const AtomicString& name, Ref<CSSVariableData>&& value)
@@ -56,34 +59,23 @@ public:
         return adoptRef(*new CSSCustomPropertyValue(other));
     }
     
-    String customCSSText() const
-    {
-        if (!m_serialized) {
-            m_serialized = true;
-            if (m_value)
-                m_stringValue = m_value->tokenRange().serialize();
-            else if (m_valueId != CSSValueInvalid)
-                m_stringValue = getValueName(m_valueId);
-            else
-                m_stringValue = emptyString();
-        }
-        return m_stringValue;
-    }
+    String customCSSText() const;
 
     const AtomicString& name() const { return m_name; }
     
     bool equals(const CSSCustomPropertyValue& other) const { return m_name == other.m_name && m_value == other.m_value && m_valueId == other.m_valueId; }
 
-    bool containsVariables() const { return m_containsVariables; }
+    bool containsVariables() const { ASSERT(!m_containsVariables || !m_resolvedTypedValue); return m_containsVariables; }
     bool checkVariablesForCycles(const AtomicString& name, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
 
     void resolveVariableReferences(const CSSRegisteredCustomPropertySet&, Vector<Ref<CSSCustomPropertyValue>>&, const RenderStyle&) const;
 
     CSSValueID valueID() const { return m_valueId; }
     CSSVariableData* value() const { return m_value.get(); }
+    Vector<CSSParserToken> tokens(const CSSRegisteredCustomPropertySet&, const RenderStyle&) const;
 
     const std::optional<Length>& resolvedTypedValue() const { return m_resolvedTypedValue; }
-    void setResolvedTypedValue(Length length) { m_resolvedTypedValue = WTFMove(length); }
+    void setResolvedTypedValue(Length);
 
 private:
     CSSCustomPropertyValue(const AtomicString& name, const String& serializedValue)

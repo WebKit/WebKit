@@ -27,6 +27,7 @@
 #include "DOMCSSRegisterCustomProperty.h"
 
 #include "CSSCustomPropertyValue.h"
+#include "CSSPropertyNames.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSTokenizer.h"
 #include "DOMCSSNamespace.h"
@@ -39,28 +40,22 @@ namespace WebCore {
 
 ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& document, const DOMCSSCustomPropertyDescriptor& descriptor)
 {
-    auto initialValueLower = descriptor.initialValue.convertToASCIILowercase();
-    for (auto& substring : { "em", "ex", "lh", "cap", "ch", "ic", "var", "env" }) {
-        // FIXME: we should be able to check the dependencies of the parsed value
-        // Right now, we can't because values that fail to parse here will crash
-        if (initialValueLower.contains(substring))
-            return Exception { SyntaxError, "The given initial value must be computationally independent." };
-    }
-
-    CSSTokenizer tokenizer(descriptor.initialValue);
     RefPtr<CSSCustomPropertyValue> initialValue;
-    if (!tokenizer.tokenRange().atEnd()) {
-        initialValue = CSSCustomPropertyValue::createWithVariableData(descriptor.name, CSSVariableData::create(tokenizer.tokenRange(), false));
-        if (initialValue->hasVariableReferences())
-            return Exception { SyntaxError, "The given initial value must not contain variable references." };
-
+    if (!descriptor.initialValue.isEmpty()) {
+        initialValue = CSSCustomPropertyValue::createWithVariableData(descriptor.name, CSSVariableData::create(CSSParserTokenRange(Vector<CSSParserToken>()), false));
         CSSParser parser(document);
-        RenderStyle renderStyle = RenderStyle::create();
         StyleResolver styleResolver(document);
 
-        auto primitiveVal = parser.parseValueWithVariableReferences(CSSPropertyCustom, *initialValue, document.getCSSRegisteredCustomPropertySet(), renderStyle);
+        auto primitiveVal = parser.parseSingleValue(CSSPropertyCustom, descriptor.initialValue);
         if (!primitiveVal || !primitiveVal->isPrimitiveValue())
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax." };
+
+        HashSet<CSSPropertyID> dependencies;
+        primitiveVal->collectDirectComputationalDependencies(dependencies);
+        primitiveVal->collectDirectRootComputationalDependencies(dependencies);
+
+        if (!dependencies.isEmpty())
+            return Exception { SyntaxError, "The given initial value must be computationally independent." };
 
         initialValue->setResolvedTypedValue(StyleBuilderConverter::convertLength(styleResolver, *primitiveVal));
     }

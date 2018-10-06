@@ -1,3 +1,13 @@
+2018-10-06  Justin Michaud  <justin_michaud@apple.com>
+
+        Properly determine if css custom property values are computationally independent
+        https://bugs.webkit.org/show_bug.cgi?id=190303
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-properties-values-api/register-property-syntax-parsing-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/registered-property-computation-expected.txt:
+
 2018-10-04  Chris Dumez  <cdumez@apple.com>
 
         A Document / Window should lose its browsing context as soon as its iframe is removed from the document
