@@ -1,3 +1,13 @@
+2018-10-06  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Don’t install yasm and don’t compile it in iOS device builds
+        https://bugs.webkit.org/show_bug.cgi?id=190326
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/yasm.xcconfig: Set SKIP_INSTALL to YES, and excluded all source files when
+          targeting iOS devices.
+
 2018-10-04  Dan Bernstein  <mitz@apple.com>
 
         Fixed engineering builds using the Apple internal SDK as well as building with older
