@@ -147,6 +147,26 @@ private:
     {
 #if !ASSERT_DISABLED
         void* currentPosition = &currentPosition;
+
+        // The following set of assertions are only needed for debugging a
+        // mysterious crash on an ASAN bot that is not reproducible otherwise.
+        // Will remove after the needed data has been collected.
+#if OS(LINUX)
+        ASSERT(currentPosition);
+        ASSERT(m_origin);
+        ASSERT(m_bound);
+        ASSERT(currentPosition != m_origin);
+        ASSERT(currentPosition != m_bound);
+        if (isGrowingDownward()) {
+            ASSERT(currentPosition < m_origin);
+            ASSERT(currentPosition > m_bound);
+        } else {
+            ASSERT(currentPosition > m_origin);
+            ASSERT(currentPosition < m_bound);
+        }
+#endif // OS(LINUX)
+        // End of ASAN bot debugging assertions.
+
         ASSERT(m_origin != m_bound);
         ASSERT(isGrowingDownward()
             ? (currentPosition < m_origin && currentPosition > m_bound)

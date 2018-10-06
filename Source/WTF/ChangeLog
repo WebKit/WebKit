@@ -1,3 +1,16 @@
+2018-10-06  Mark Lam  <mark.lam@apple.com>
+
+        Adding some temporary asserts to debug a mysterious ASAN bot crash.
+        https://bugs.webkit.org/show_bug.cgi?id=190331
+
+        Reviewed by Filip Pizlo.
+
+        These assertions are needed because we can't reproduce the issue locally.
+        We'll remove these asserts after the needed data has been collected from the bot.
+
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::checkConsistency const):
+
 2018-10-05  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC][Linux] Support Perf JITDump logging
