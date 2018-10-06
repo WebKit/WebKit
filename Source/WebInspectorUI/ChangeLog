@@ -1,5 +1,20 @@
 2018-10-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: add WebVTT MIME/file type mappings to the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=190288
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.mimeTypeForFileExtension):
+        (WI.fileExtensionForMIMEType):
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.displayNameForResource):
+        Also attempt to use the mime-type-to-extension when the `WI.Resource` is of type `Other`.
+
+2018-10-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: refactor constructor of WI.Resource
         https://bugs.webkit.org/show_bug.cgi?id=190318
 

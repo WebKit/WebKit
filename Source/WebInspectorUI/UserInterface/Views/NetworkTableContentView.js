@@ -140,7 +140,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     static displayNameForResource(resource)
     {
-        if (resource.type === WI.Resource.Type.Image || resource.type === WI.Resource.Type.Font) {
+        if (resource.type === WI.Resource.Type.Image || resource.type === WI.Resource.Type.Font || resource.type === WI.Resource.Type.Other) {
             let fileExtension;
             if (resource.mimeType)
                 fileExtension = WI.fileExtensionForMIMEType(resource.mimeType);
