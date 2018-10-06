@@ -1,3 +1,18 @@
+2018-10-05  Jer Noble  <jer.noble@apple.com>
+
+        Radar links should be clickable on bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=190293
+        <rdar://problem/45020184>
+
+        Reviewed by Lucas Forschler.
+
+        Add a new Extension which formats bug comments and makes radar:// links clickable.
+
+        * extensions/Radar/Config.pm: Added.
+        * extensions/Radar/Extension.pm: Added.
+        (bug_format_comment):
+        (_replace_radar):
+
 2018-08-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         EWS bubbles are being hidden due to lack of space.
