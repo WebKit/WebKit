@@ -1,3 +1,16 @@
+2018-10-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Name Heap threads
+        https://bugs.webkit.org/show_bug.cgi?id=190337
+
+        Reviewed by Mark Lam.
+
+        Add a functionality naming threads of ParallelHelperPool.
+
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperPool::ParallelHelperPool):
+        * wtf/ParallelHelperPool.h:
+
 2018-10-06  Mark Lam  <mark.lam@apple.com>
 
         Adding some temporary asserts to debug a mysterious ASAN bot crash.

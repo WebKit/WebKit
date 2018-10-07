@@ -123,9 +123,10 @@ void ParallelHelperClient::runTask(RefPtr<SharedTask<void ()>> task)
     }
 }
 
-ParallelHelperPool::ParallelHelperPool()
+ParallelHelperPool::ParallelHelperPool(CString&& threadName)
     : m_lock(Box<Lock>::create())
     , m_workAvailableCondition(AutomaticThreadCondition::create())
+    , m_threadName(WTFMove(threadName))
 {
 }
 
@@ -176,6 +177,11 @@ public:
     {
     }
     
+    const char* name() const override
+    {
+        return m_pool.m_threadName.data();
+    }
+
 protected:
     PollResult poll(const AbstractLocker& locker) override
     {
