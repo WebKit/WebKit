@@ -47,7 +47,7 @@ public:
 
     ~Worklist();
     
-    static Ref<Worklist> create(CString worklistName, unsigned numberOfThreads, int relativePriority = 0);
+    static Ref<Worklist> create(CString&& tierName, unsigned numberOfThreads, int relativePriority = 0);
     
     void enqueue(Ref<Plan>&&);
     
@@ -82,7 +82,7 @@ public:
     unsigned setNumberOfThreads(unsigned, int);
     
 private:
-    Worklist(CString worklistName);
+    Worklist(CString&& tierName);
     void finishCreation(unsigned numberOfThreads, int);
     void createNewThread(const AbstractLocker&, int);
     

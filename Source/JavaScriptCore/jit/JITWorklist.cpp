@@ -108,7 +108,11 @@ public:
 
     const char* name() const override
     {
+#if OS(LINUX)
+        return "JITWorker";
+#else
         return "JIT Worklist Helper Thread";
+#endif
     }
     
 protected:

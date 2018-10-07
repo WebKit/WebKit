@@ -1,5 +1,27 @@
 2018-10-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [JSC][Linux] Use non-truncated name for JIT workers in Linux
+        https://bugs.webkit.org/show_bug.cgi?id=190339
+
+        Reviewed by Mark Lam.
+
+        The current thread names are meaningless in Linux environment. We do not want to
+        have truncated name in Linux: we want to have clear name in Linux. Instead, we
+        should have the name for Linux separately from the name used in the non-Linux
+        environments. This patch adds FTLWorker, DFGWorker, and JITWorker names for
+        Linux environment.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::createWorklistName):
+        (JSC::DFG::Worklist::Worklist):
+        (JSC::DFG::Worklist::create):
+        (JSC::DFG::ensureGlobalDFGWorklist):
+        (JSC::DFG::ensureGlobalFTLWorklist):
+        * dfg/DFGWorklist.h:
+        * jit/JITWorklist.cpp:
+
+2018-10-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         Name Heap threads
         https://bugs.webkit.org/show_bug.cgi?id=190337
 
