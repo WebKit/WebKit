@@ -59,8 +59,6 @@ public:
         return bitwise_cast<ProgramCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_programCodeBlock.get()));
     }
 
-    JSObject* checkSyntax(ExecState*);
-
     Ref<JITCode> generatedJITCode()
     {
         return generatedJITCodeForCall();

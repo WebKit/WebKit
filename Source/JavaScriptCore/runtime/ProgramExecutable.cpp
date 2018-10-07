@@ -58,20 +58,6 @@ void ProgramExecutable::destroy(JSCell* cell)
     static_cast<ProgramExecutable*>(cell)->ProgramExecutable::~ProgramExecutable();
 }
 
-JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
-{
-    ParserError error;
-    VM* vm = &exec->vm();
-    JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    std::unique_ptr<ProgramNode> programNode = parse<ProgramNode>(
-        vm, m_source, Identifier(), JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error);
-    if (programNode)
-        return 0;
-    ASSERT(error.isValid());
-    return error.toErrorObject(lexicalGlobalObject, m_source);
-}
-
 // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasrestrictedglobalproperty
 static bool hasRestrictedGlobalProperty(ExecState* exec, JSGlobalObject* globalObject, PropertyName propertyName)
 {

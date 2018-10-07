@@ -1,3 +1,28 @@
+2018-10-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Avoid creating ProgramExecutable in checkSyntax
+        https://bugs.webkit.org/show_bug.cgi?id=190332
+
+        Reviewed by Mark Lam.
+
+        uglify-js in web-tooling-benchmark executes massive number of Function constructor calls.
+        In Function constructor code, we perform checkSyntax for body and parameters. So fast checkSyntax
+        is important when the performance of Function constructor matters. Current checkSyntax code
+        unnecessarily allocates ProgramExecutable. This patch removes this allocation and improves
+        the benchmark score slightly.
+
+        Before:
+            uglify-js:  2.87 runs/s
+        After:
+            uglify-js:  2.94 runs/s
+
+        * runtime/Completion.cpp:
+        (JSC::checkSyntaxInternal):
+        (JSC::checkSyntax):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::checkSyntax): Deleted.
+        * runtime/ProgramExecutable.h:
+
 2018-10-06  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "|"
