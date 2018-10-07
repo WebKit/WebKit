@@ -1,3 +1,10 @@
+2018-10-07  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix HAVE(LINK_PREVIEW) iOS builds.
+
+        * UIProcess/WKImagePreviewViewController.mm:
+        (-[WKImagePreviewViewController previewActions]):
+
 2018-10-06  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the macOS Mojave build.
