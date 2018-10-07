@@ -1,3 +1,11 @@
+2018-10-07  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building with the latest macOS SDK
+
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage closeResourceFile:]):
+
 2018-10-04  Dan Bernstein  <mitz@apple.com>
 
         More Carbon build-fixing.

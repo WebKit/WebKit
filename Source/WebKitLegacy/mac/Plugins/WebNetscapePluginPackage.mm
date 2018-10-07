@@ -53,12 +53,16 @@ using namespace WebCore;
 
 - (ResFileRefNum)openResourceFile
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return CFBundleOpenBundleResourceMap(cfBundle.get());
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)closeResourceFile:(ResFileRefNum)resRef
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CFBundleCloseBundleResourceMap(cfBundle.get(), resRef);
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (BOOL)_initWithPath:(NSString *)pluginPath
