@@ -375,13 +375,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
             
+    case ValueBitOr:
     case ValueBitAnd:
         clobberWorld();
-        setTypeForNode(node, SpecBoolInt32 | SpecBigInt);
+        if (node->binaryUseKind() == BigIntUse)
+            setTypeForNode(node, SpecBigInt);
+        else
+            setTypeForNode(node, SpecBoolInt32 | SpecBigInt);
         break;
             
     case ArithBitAnd:
-    case BitOr:
+    case ArithBitOr:
     case BitXor:
     case BitRShift:
     case BitLShift:
@@ -401,7 +405,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case ArithBitAnd:
                 setConstant(node, JSValue(a & b));
                 break;
-            case BitOr:
+            case ArithBitOr:
                 setConstant(node, JSValue(a | b));
                 break;
             case BitXor:

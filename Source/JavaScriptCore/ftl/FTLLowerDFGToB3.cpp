@@ -655,8 +655,11 @@ private:
         case ArithBitAnd:
             compileArithBitAnd();
             break;
-        case DFG::BitOr:
-            compileBitOr();
+        case ValueBitOr:
+            compileValueBitOr();
+            break;
+        case ArithBitOr:
+            compileArithBitOr();
             break;
         case DFG::BitXor:
             compileBitXor();
@@ -2828,12 +2831,22 @@ private:
         setInt32(m_out.bitAnd(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
-    void compileBitOr()
+    void compileValueBitOr()
     {
-        if (m_node->isBinaryUseKind(UntypedUse)) {
-            emitBinaryBitOpSnippet<JITBitOrGenerator>(operationValueBitOr);
+        if (m_node->isBinaryUseKind(BigIntUse)) {
+            LValue left = lowBigInt(m_node->child1());
+            LValue right = lowBigInt(m_node->child2());
+
+            LValue result = vmCall(pointerType(), m_out.operation(operationBitOrBigInt), m_callFrame, left, right);
+            setJSValue(result);
             return;
         }
+
+        emitBinaryBitOpSnippet<JITBitOrGenerator>(operationValueBitOr);
+    }
+
+    void compileArithBitOr()
+    {
         setInt32(m_out.bitOr(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     

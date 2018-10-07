@@ -582,6 +582,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
 
         case op_bitand:
+        case op_bitor:
         case op_to_this: {
             linkValueProfile(i, opLength);
             break;
@@ -2935,8 +2936,6 @@ ArithProfile* CodeBlock::arithProfileForPC(Instruction* pc)
     switch (opcodeID) {
     case op_negate:
         return bitwise_cast<ArithProfile*>(&pc[3].u.operand);
-    case op_bitor:
-    case op_bitand:
     case op_bitxor:
     case op_add:
     case op_mul:

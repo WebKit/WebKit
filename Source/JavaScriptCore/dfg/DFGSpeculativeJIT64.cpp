@@ -2075,11 +2075,12 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case ValueBitAnd:
+    case ValueBitOr:
         compileValueBitwiseOp(node);
         break;
 
     case ArithBitAnd:
-    case BitOr:
+    case ArithBitOr:
     case BitXor:
         compileBitwiseOp(node);
         break;

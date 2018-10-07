@@ -113,7 +113,8 @@ namespace JSC { namespace DFG {
     /* Nodes for bitwise operations. */\
     macro(ValueBitAnd, NodeResultJS | NodeMustGenerate) \
     macro(ArithBitAnd, NodeResultInt32) \
-    macro(BitOr, NodeResultInt32) \
+    macro(ValueBitOr, NodeResultJS | NodeMustGenerate) \
+    macro(ArithBitOr, NodeResultInt32) \
     macro(BitXor, NodeResultInt32) \
     macro(BitLShift, NodeResultInt32) \
     macro(BitRShift, NodeResultInt32) \

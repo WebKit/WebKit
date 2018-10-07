@@ -118,7 +118,7 @@ private:
                 || isWithinPowerOfTwoNonRecursive<power>(node->child2().node());
         }
             
-        case BitOr:
+        case ArithBitOr:
         case BitXor:
         case BitLShift: {
             return power > 31;
@@ -208,7 +208,7 @@ private:
             break;
             
         case ArithBitAnd:
-        case BitOr:
+        case ArithBitOr:
         case BitXor:
         case BitRShift:
         case BitLShift:

@@ -114,6 +114,7 @@ public:
     static JSBigInt* unaryMinus(VM&, JSBigInt* x);
 
     static JSBigInt* bitwiseAnd(VM&, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* bitwiseOr(VM&, JSBigInt* x, JSBigInt* y);
 
 private:
 
@@ -160,12 +161,19 @@ private:
         NotSymmetric
     };
 
-    static JSBigInt* absoluteBitwiseOp(VM&, JSBigInt* x, JSBigInt* y, ExtraDigitsHandling, SymmetricOp, std::function<Digit(Digit, Digit)> op);
+    template<typename BitwiseOp>
+    static JSBigInt* absoluteBitwiseOp(VM&, JSBigInt* x, JSBigInt* y, ExtraDigitsHandling, SymmetricOp, BitwiseOp&&);
+
     static JSBigInt* absoluteAnd(VM&, JSBigInt* x, JSBigInt* y);
     static JSBigInt* absoluteOr(VM&, JSBigInt* x, JSBigInt* y);
     static JSBigInt* absoluteAndNot(VM&, JSBigInt* x, JSBigInt* y);
 
-    static JSBigInt* absoluteAddOne(VM&, JSBigInt* x, bool sign);
+    enum class SignOption {
+        Signed,
+        Unsigned
+    };
+
+    static JSBigInt* absoluteAddOne(VM&, JSBigInt* x, SignOption);
     static JSBigInt* absoluteSubOne(VM&, JSBigInt* x, unsigned resultLength);
 
     // Digit arithmetic helpers.

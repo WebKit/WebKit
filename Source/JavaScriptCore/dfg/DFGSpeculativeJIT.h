@@ -636,7 +636,7 @@ public:
         case ArithBitAnd:
             m_jit.and32(Imm32(imm), op1, result);
             break;
-        case BitOr:
+        case ArithBitOr:
             m_jit.or32(Imm32(imm), op1, result);
             break;
         case BitXor:
@@ -652,7 +652,7 @@ public:
         case ArithBitAnd:
             m_jit.and32(op1, op2, result);
             break;
-        case BitOr:
+        case ArithBitOr:
             m_jit.or32(op1, op2, result);
             break;
         case BitXor:

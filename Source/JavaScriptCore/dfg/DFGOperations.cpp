@@ -354,7 +354,7 @@ EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValu
             return JSValue::encode(result);
         }
 
-        return throwVMTypeError(exec, scope, "Invalid mix of BigInt and other type in bitwise and operation.");
+        return throwVMTypeError(exec, scope, "Invalid mix of BigInt and other type in bitwise 'and' operation.");
     }
 
     return JSValue::encode(jsNumber(WTF::get<int32_t>(leftNumeric) & WTF::get<int32_t>(rightNumeric)));
@@ -369,11 +369,22 @@ EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState* exec, EncodedJSValue
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
 
-    int32_t a = op1.toInt32(exec);
+    auto leftNumeric = op1.toBigIntOrInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    int32_t b = op2.toInt32(exec);
-    return JSValue::encode(jsNumber(a | b));
+    auto rightNumeric = op2.toBigIntOrInt32(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+            JSBigInt* result = JSBigInt::bitwiseOr(*vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            return JSValue::encode(result);
+        }
+
+        return throwVMTypeError(exec, scope, "Invalid mix of BigInt and other type in bitwise 'or' operation.");
+    }
+
+    return JSValue::encode(jsNumber(WTF::get<int32_t>(leftNumeric) | WTF::get<int32_t>(rightNumeric)));
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitXor(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -1284,6 +1295,17 @@ JSCell* JIT_OPERATION operationBitAndBigInt(ExecState* exec, JSCell* op1, JSCell
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
     return JSBigInt::bitwiseAnd(*vm, leftOperand, rightOperand);
+}
+
+JSCell* JIT_OPERATION operationBitOrBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
+    JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
+    
+    return JSBigInt::bitwiseOr(*vm, leftOperand, rightOperand);
 }
 
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState* exec, JSCell* op1, JSCell* op2)

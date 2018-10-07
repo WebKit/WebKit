@@ -3599,6 +3599,9 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
         case ValueBitAnd:
             emitUntypedBitOp<JITBitAndGenerator, operationValueBitAnd>(node);
             return;
+        case ValueBitOr:
+            emitUntypedBitOp<JITBitOrGenerator, operationValueBitOr>(node);
+            return;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -3617,7 +3620,18 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
     flushRegisters();
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
-    callOperation(operationBitAndBigInt, resultGPR, leftGPR, rightGPR);
+
+    switch (op) {
+    case ValueBitAnd:
+        callOperation(operationBitAndBigInt, resultGPR, leftGPR, rightGPR);
+        break;
+    case ValueBitOr:
+        callOperation(operationBitOrBigInt, resultGPR, leftGPR, rightGPR);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     m_jit.exceptionCheck();
     cellResult(resultGPR, node);
 }
@@ -3630,9 +3644,6 @@ void SpeculativeJIT::compileBitwiseOp(Node* node)
 
     if (leftChild.useKind() == UntypedUse || rightChild.useKind() == UntypedUse) {
         switch (op) {
-        case BitOr:
-            emitUntypedBitOp<JITBitOrGenerator, operationValueBitOr>(node);
-            return;
         case BitXor:
             emitUntypedBitOp<JITBitXorGenerator, operationValueBitXor>(node);
             return;

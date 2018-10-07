@@ -78,7 +78,7 @@ private:
     void handleNode()
     {
         switch (m_node->op()) {
-        case BitOr:
+        case ArithBitOr:
             handleCommutativity();
 
             if (m_node->child1().useKind() != UntypedUse && m_node->child2()->isInt32Constant() && !m_node->child2()->asInt32()) {

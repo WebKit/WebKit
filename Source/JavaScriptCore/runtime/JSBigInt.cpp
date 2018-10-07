@@ -391,7 +391,7 @@ JSBigInt* JSBigInt::bitwiseAnd(VM& vm, JSBigInt* x, JSBigInt* y)
         JSBigInt* y1 = absoluteSubOne(vm, y, y->length());
         result = absoluteOr(vm, result, y1);
 
-        return absoluteAddOne(vm, result, true);
+        return absoluteAddOne(vm, result, SignOption::Signed);
     }
 
     ASSERT(x->sign() != y->sign());
@@ -401,6 +401,34 @@ JSBigInt* JSBigInt::bitwiseAnd(VM& vm, JSBigInt* x, JSBigInt* y)
     
     // x & (-y) == x & ~(y-1) == x & ~(y-1)
     return absoluteAndNot(vm, x, absoluteSubOne(vm, y, y->length()));
+}
+
+JSBigInt* JSBigInt::bitwiseOr(VM& vm, JSBigInt* x, JSBigInt* y)
+{
+    unsigned resultLength = std::max(x->length(), y->length());
+
+    if (!x->sign() && !y->sign())
+        return absoluteOr(vm, x, y);
+    
+    if (x->sign() && y->sign()) {
+        // (-x) | (-y) == ~(x-1) | ~(y-1) == ~((x-1) & (y-1))
+        // == -(((x-1) & (y-1)) + 1)
+        JSBigInt* result = absoluteSubOne(vm, x, resultLength);
+        JSBigInt* y1 = absoluteSubOne(vm, y, y->length());
+        result = absoluteAnd(vm, result, y1);
+        return absoluteAddOne(vm, result, SignOption::Signed);
+    }
+    
+    ASSERT(x->sign() != y->sign());
+
+    // Assume that x is the positive BigInt.
+    if (x->sign())
+        std::swap(x, y);
+    
+    // x | (-y) == x | ~(y-1) == ~((y-1) &~ x) == -(((y-1) &~ x) + 1)
+    JSBigInt* result = absoluteSubOne(vm, y, resultLength);
+    result = absoluteAndNot(vm, result, x);
+    return absoluteAddOne(vm, result, SignOption::Signed);
 }
 
 #if USE(JSVALUE32_64)
@@ -1028,7 +1056,8 @@ JSBigInt* JSBigInt::absoluteLeftShiftAlwaysCopy(VM& vm, JSBigInt* x, unsigned sh
 //                   |     |     |     |
 //                   v     v     v     v
 // result: [  0 ][ x3 ][ r2 ][ r1 ][ r0 ]
-inline JSBigInt* JSBigInt::absoluteBitwiseOp(VM& vm, JSBigInt* x, JSBigInt* y, ExtraDigitsHandling extraDigits, SymmetricOp symmetric, std::function<Digit(Digit, Digit)> op)
+template<typename BitwiseOp>
+inline JSBigInt* JSBigInt::absoluteBitwiseOp(VM& vm, JSBigInt* x, JSBigInt* y, ExtraDigitsHandling extraDigits, SymmetricOp symmetric, BitwiseOp&& op)
 {
     unsigned xLength = x->length();
     unsigned yLength = y->length();
@@ -1084,7 +1113,7 @@ JSBigInt* JSBigInt::absoluteAndNot(VM& vm, JSBigInt* x, JSBigInt* y)
     return absoluteBitwiseOp(vm, x, y, ExtraDigitsHandling::Copy, SymmetricOp::NotSymmetric, digitOperation);
 }
 
-JSBigInt* JSBigInt::absoluteAddOne(VM& vm, JSBigInt* x, bool sign)
+JSBigInt* JSBigInt::absoluteAddOne(VM& vm, JSBigInt* x, SignOption signOption)
 {
     unsigned inputLength = x->length();
     // The addition will overflow into a new digit if all existing digits are
@@ -1111,7 +1140,7 @@ JSBigInt* JSBigInt::absoluteAddOne(VM& vm, JSBigInt* x, bool sign)
     else
         ASSERT(!carry);
 
-    result->setSign(sign);
+    result->setSign(signOption == SignOption::Signed);
     return result->rightTrim(vm);
 }
 

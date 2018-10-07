@@ -1733,7 +1733,7 @@ RegisterID* BytecodeGenerator::emitDec(RegisterID* srcDst)
 RegisterID* BytecodeGenerator::emitBinaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types)
 {
 
-    if (opcodeID == op_bitand) {
+    if (opcodeID == op_bitand || opcodeID == op_bitor) {
         UnlinkedValueProfile profile = emitProfiledOpcode(opcodeID);
         instructions().append(dst->index());
         instructions().append(src1->index());
@@ -1747,8 +1747,8 @@ RegisterID* BytecodeGenerator::emitBinaryOp(OpcodeID opcodeID, RegisterID* dst, 
     instructions().append(src1->index());
     instructions().append(src2->index());
 
-    if (opcodeID == op_bitor || opcodeID == op_bitxor ||
-        opcodeID == op_add || opcodeID == op_mul || opcodeID == op_sub || opcodeID == op_div)
+    if (opcodeID == op_bitxor || opcodeID == op_add ||
+        opcodeID == op_mul || opcodeID == op_sub || opcodeID == op_div)
         instructions().append(ArithProfile(types.first(), types.second()).bits());
 
     return dst;

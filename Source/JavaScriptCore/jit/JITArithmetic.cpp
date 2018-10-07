@@ -581,7 +581,7 @@ void JIT::emit_op_bitand(Instruction* currentInstruction)
 
 void JIT::emit_op_bitor(Instruction* currentInstruction)
 {
-    emitBitBinaryOpFastPath<JITBitOrGenerator>(currentInstruction);
+    emitBitBinaryOpFastPath<JITBitOrGenerator>(currentInstruction, ProfilingPolicy::ShouldEmitProfiling);
 }
 
 void JIT::emit_op_bitxor(Instruction* currentInstruction)

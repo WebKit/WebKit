@@ -1184,7 +1184,7 @@ _llint_op_bitxor:
 
 _llint_op_bitor:
     traceExecution()
-    bitOp(
+    bitOpProfiled(
         macro (left, right) ori left, right end,
         _slow_path_bitor,
         constexpr op_bitor_length)

@@ -246,6 +246,7 @@ private:
             break;
         }
 
+        case ValueBitOr:
         case ValueBitAnd: {
             if (node->child1()->shouldSpeculateBigInt() && node->child2()->shouldSpeculateBigInt())
                 changed |= mergePrediction(SpecBigInt);
@@ -708,7 +709,7 @@ private:
         }
 
         case ArithBitAnd:
-        case BitOr:
+        case ArithBitOr:
         case BitXor:
         case BitRShift:
         case BitLShift:
@@ -1063,6 +1064,7 @@ private:
         case GetLocal:
         case SetLocal:
         case UInt32ToNumber:
+        case ValueBitOr:
         case ValueBitAnd:
         case ValueNegate:
         case ValueAdd:

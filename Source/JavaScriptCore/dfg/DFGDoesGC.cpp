@@ -68,7 +68,7 @@ bool doesGC(Graph& graph, Node* node)
     case PhantomLocal:
     case SetArgument:
     case ArithBitAnd:
-    case BitOr:
+    case ArithBitOr:
     case BitXor:
     case BitLShift:
     case BitRShift:
@@ -97,6 +97,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithFRound:
     case ArithUnary:
     case ValueBitAnd:
+    case ValueBitOr:
     case ValueAdd:
     case ValueNegate:
     case TryGetById:

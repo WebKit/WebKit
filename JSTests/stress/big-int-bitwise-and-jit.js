@@ -9,7 +9,6 @@ let assert = {
 
 function bigIntBitAnd(a, b) {
     return (a & b) & (a & 0b11n);
-
 }
 noInline(bigIntBitAnd);
 

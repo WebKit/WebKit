@@ -263,7 +263,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case ArithBitAnd:
-    case BitOr:
+    case ArithBitOr:
     case BitXor:
     case BitLShift:
     case BitRShift:
@@ -636,6 +636,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case InById:
     case HasOwnProperty:
     case ValueBitAnd:
+    case ValueBitOr:
     case ValueNegate:
     case ValueAdd:
     case SetFunctionName:

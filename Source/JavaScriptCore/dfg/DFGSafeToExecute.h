@@ -198,7 +198,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case PhantomLocal:
     case SetArgument:
     case ArithBitAnd:
-    case BitOr:
+    case ArithBitOr:
     case BitXor:
     case BitLShift:
     case BitRShift:
@@ -227,6 +227,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ArithTrunc:
     case ArithUnary:
     case ValueBitAnd:
+    case ValueBitOr:
     case ValueNegate:
     case ValueAdd:
     case TryGetById:
