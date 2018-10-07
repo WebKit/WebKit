@@ -1,3 +1,11 @@
+2018-10-07  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building with the latest macOS SDK
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::ensurePlatformContext): Suppressed deprecation warnings around use of
+          CGIOSurfaceContextSetDisplayMask.
+
 2018-10-06  Justin Michaud  <justin_michaud@apple.com>
 
         Properly determine if css custom property values are computationally independent

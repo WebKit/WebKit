@@ -306,7 +306,9 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
         if (hostWindow && hostWindow->displayID())
             displayMask = displayMaskForDisplay(hostWindow->displayID());
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CGIOSurfaceContextSetDisplayMask(m_cgContext.get(), displayMask);
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 #else
     UNUSED_PARAM(hostWindow);
