@@ -144,6 +144,19 @@ StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
     // If stack grows up, origin and bound in this code should be swapped.
     if (stackDirection() == StackDirection::Upward)
         std::swap(origin, bound);
+
+    // The following set of assertions are only needed for debugging a
+    // mysterious crash on an ASAN bot that is not reproducible otherwise.
+    // Will remove after the needed data has been collected.
+#if OS(LINUX)
+    else {
+        ASSERT(stackDirection() == StackDirection::Downward);
+        void* currentPosition = &currentPosition;
+        ASSERT_WITH_MESSAGE_UNUSED(currentPosition, (currentPosition < origin && currentPosition > bound), "newThreadStackBounds: currentPosition %p origin %p bound %p stackSize %zu", currentPosition, origin, bound, stackSize);
+    }
+#endif
+    // End of ASAN bot debugging assertions.
+
     return StackBounds { origin, bound };
 }
 

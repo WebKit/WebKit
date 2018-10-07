@@ -1,3 +1,19 @@
+2018-10-06  Mark Lam  <mark.lam@apple.com>
+
+        Adding some temporary asserts with data logging to debug a mysterious ASAN bot crash.
+        https://bugs.webkit.org/show_bug.cgi?id=190334
+        <rdar://problem/45071303>
+
+        Reviewed by Yusuke Suzuki.
+
+        These assertions are needed because we can't reproduce the issue locally.
+        We'll remove these asserts after the needed data has been collected from the bot.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::newThreadStackBounds):
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::checkConsistency const):
+
 2018-10-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Name Heap threads
