@@ -70,7 +70,9 @@
 
 #endif
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKView
+IGNORE_WARNINGS_END
 
 #if WK_API_ENABLED
 
@@ -180,7 +182,9 @@
     _data->_impl->setFrameSize(NSSizeToCGSize(size));
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)renewGState
+IGNORE_WARNINGS_END
 {
     _data->_impl->renewGState();
     [super renewGState];
@@ -693,7 +697,9 @@ Some other editing-related methods still unimplemented:
 }
 
 #if ENABLE(DRAG_SUPPORT)
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)draggedImage:(NSImage *)image endedAt:(NSPoint)endPoint operation:(NSDragOperation)operation
+IGNORE_WARNINGS_END
 {
     _data->_impl->draggedImage(image, NSPointToCGPoint(endPoint), operation);
 }
@@ -784,7 +790,9 @@ Some other editing-related methods still unimplemented:
     return _data->_impl->accessibilityFocusedUIElement();
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)accessibilityIsIgnored
+IGNORE_WARNINGS_END
 {
     return _data->_impl->accessibilityIsIgnored();
 }
@@ -794,7 +802,9 @@ Some other editing-related methods still unimplemented:
     return _data->_impl->accessibilityHitTest(NSPointToCGPoint(point));
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)accessibilityAttributeValue:(NSString *)attribute
+IGNORE_WARNINGS_END
 {
     return _data->_impl->accessibilityAttributeValue(attribute);
 }
@@ -864,7 +874,9 @@ Some other editing-related methods still unimplemented:
     _data->_impl->provideDataForPasteboard(pasteboard, type);
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
+IGNORE_WARNINGS_END
 {
     return _data->_impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }
@@ -1121,7 +1133,9 @@ Some other editing-related methods still unimplemented:
 @end
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKView (Private)
+IGNORE_WARNINGS_END
 
 - (void)saveBackForwardSnapshotForCurrentItem
 {

@@ -73,7 +73,9 @@ using namespace WebKit;
     [super dealloc];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+IGNORE_WARNINGS_END
 {
     if (popoverController != _popoverController)
         return;

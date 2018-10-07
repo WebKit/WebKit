@@ -161,7 +161,9 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 #endif
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)accessibilityIsIgnored
+IGNORE_WARNINGS_END
 {
     return NO;
 }
@@ -172,7 +174,9 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     return _pdfPlugin->convertFromPDFViewToScreen(rect);
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)accessibilityAttributeValue:(NSString *)attribute
+IGNORE_WARNINGS_END
 {
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
         return _parent;
@@ -214,7 +218,9 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     return 0;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
+IGNORE_WARNINGS_END
 {
     if ([attribute isEqualToString:NSAccessibilityBoundsForRangeParameterizedAttribute]) {
         NSRect boundsInPDFViewCoordinates = [[_pdfLayerController accessibilityBoundsForRangeAttributeForParameter:parameter] rectValue];
@@ -237,7 +243,9 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     return [_pdfLayerController readingModel];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray *)accessibilityAttributeNames
+IGNORE_WARNINGS_END
 {
     static NSArray *attributeNames = 0;
 
@@ -269,7 +277,9 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     return attributeNames;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray *)accessibilityActionNames
+IGNORE_WARNINGS_END
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     return nil;
@@ -283,23 +293,31 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 #endif
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)accessibilityPerformAction:(NSString *)action
+IGNORE_WARNINGS_END
 {
     if ([action isEqualToString:NSAccessibilityShowMenuAction])
         _pdfPlugin->showContextMenuAtPoint(WebCore::IntRect(WebCore::IntPoint(), _pdfPlugin->size()).center());
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)accessibilityIsAttributeSettable:(NSString *)attribute
+IGNORE_WARNINGS_END
 {
     return [_pdfLayerController accessibilityIsAttributeSettable:attribute];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attribute
+IGNORE_WARNINGS_END
 {
     return [_pdfLayerController accessibilitySetValue:value forAttribute:attribute];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray *)accessibilityParameterizedAttributeNames
+IGNORE_WARNINGS_END
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     return nil;

@@ -502,12 +502,16 @@ static NSString *defaultApplicationNameForUserAgent()
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (_WKWebsiteDataStore *)_websiteDataStore
+IGNORE_WARNINGS_END
 {
     return self.websiteDataStore ? adoptNS([[_WKWebsiteDataStore alloc] initWithDataStore:self.websiteDataStore]).autorelease() : nullptr;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)_setWebsiteDataStore:(_WKWebsiteDataStore *)websiteDataStore
+IGNORE_WARNINGS_END
 {
     self.websiteDataStore = websiteDataStore ? websiteDataStore->_dataStore.get() : nullptr;
 }

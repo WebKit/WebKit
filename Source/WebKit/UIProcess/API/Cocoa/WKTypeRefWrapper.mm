@@ -36,7 +36,9 @@
 }
 @end
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKTypeRefWrapper
+IGNORE_WARNINGS_END
 
 - (id)initWithObject:(WKTypeRef)object
 {

@@ -465,7 +465,9 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
 #pragma mark - UIPopoverControllerDelegate
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+IGNORE_WARNINGS_END
 {
     [self _cancel];
 }
@@ -486,7 +488,9 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
 #pragma mark - UIDocumentPickerControllerDelegate implementation
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)documentPicker:(UIDocumentPickerViewController *)documentPicker didPickDocumentAtURL:(NSURL *)url
+IGNORE_WARNINGS_END
 {
     [self _dismissDisplayAnimated:YES];
     [self _chooseFiles:@[url] displayString:url.lastPathComponent iconImage:iconForFile(url)];

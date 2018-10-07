@@ -3295,7 +3295,9 @@ static void accessibilityEventsEnabledChangedCallback(CFNotificationCenterRef, v
     _impl->setFrameSize(NSSizeToCGSize(size));
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)renewGState
+IGNORE_WARNINGS_END
 {
     _impl->renewGState();
     [super renewGState];
@@ -3789,7 +3791,9 @@ WEBCORE_COMMAND(yankAndSelect)
 }
 
 #if ENABLE(DRAG_SUPPORT)
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)draggedImage:(NSImage *)image endedAt:(NSPoint)endPoint operation:(NSDragOperation)operation
+IGNORE_WARNINGS_END
 {
     _impl->draggedImage(image, NSPointToCGPoint(endPoint), operation);
 }
@@ -3880,7 +3884,9 @@ WEBCORE_COMMAND(yankAndSelect)
     return _impl->accessibilityFocusedUIElement();
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)accessibilityIsIgnored
+IGNORE_WARNINGS_END
 {
     return _impl->accessibilityIsIgnored();
 }
@@ -3890,7 +3896,9 @@ WEBCORE_COMMAND(yankAndSelect)
     return _impl->accessibilityHitTest(NSPointToCGPoint(point));
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)accessibilityAttributeValue:(NSString *)attribute
+IGNORE_WARNINGS_END
 {
     return _impl->accessibilityAttributeValue(attribute);
 }
@@ -3960,7 +3968,9 @@ WEBCORE_COMMAND(yankAndSelect)
     _impl->provideDataForPasteboard(pasteboard, type);
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
+IGNORE_WARNINGS_END
 {
     return _impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }

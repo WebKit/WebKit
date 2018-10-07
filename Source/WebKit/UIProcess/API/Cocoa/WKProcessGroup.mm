@@ -52,7 +52,9 @@
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #endif
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKProcessGroup {
+IGNORE_WARNINGS_END
     RefPtr<WebKit::WebProcessPool> _processPool;
 
     WeakObjCPtr<id <WKProcessGroupDelegate>> _delegate;
@@ -220,7 +222,9 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 @end
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKProcessGroup (Private)
+IGNORE_WARNINGS_END
 
 - (WKContextRef)_contextRef
 {

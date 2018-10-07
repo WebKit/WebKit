@@ -72,7 +72,9 @@ NSString * const WKActionFrameNameKey = @"WKActionFrameNameKey";
 NSString * const WKActionOriginatingFrameURLKey = @"WKActionOriginatingFrameURLKey";
 NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKBrowsingContextController {
+IGNORE_WARNINGS_END
     RefPtr<WebKit::WebPageProxy> _page;
     std::unique_ptr<WebKit::PageLoadStateObserver> _pageLoadStateObserver;
 
@@ -618,7 +620,9 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 @end
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKBrowsingContextController (Private)
+IGNORE_WARNINGS_END
 
 - (WKPageRef)_pageRef
 {

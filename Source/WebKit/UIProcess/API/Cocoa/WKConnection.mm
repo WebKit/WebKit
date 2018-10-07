@@ -36,7 +36,9 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKConnection {
+IGNORE_WARNINGS_END
     WeakObjCPtr<id <WKConnectionDelegate>> _delegate;
 }
 

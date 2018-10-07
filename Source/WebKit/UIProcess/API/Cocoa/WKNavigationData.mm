@@ -32,7 +32,9 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKNavigationData {
+IGNORE_WARNINGS_END
     API::ObjectStorage<API::NavigationData> _data;
 }
 

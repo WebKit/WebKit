@@ -60,12 +60,16 @@ using namespace WebKit;
     [super dealloc];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)accessibilityIsIgnored
+IGNORE_WARNINGS_END
 {
     return NO;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray *)accessibilityAttributeNames
+IGNORE_WARNINGS_END
 {
     if (!m_attributeNames)
         m_attributeNames = adoptNS([[NSArray alloc] initWithObjects:
@@ -76,7 +80,9 @@ using namespace WebKit;
     return m_attributeNames.get();
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray *)accessibilityParameterizedAttributeNames
+IGNORE_WARNINGS_END
 {
     Vector<String> result = m_page->corePage()->pageOverlayController().copyAccessibilityAttributesNames(true);
     if (result.isEmpty())
@@ -89,12 +95,16 @@ using namespace WebKit;
     return names;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)accessibilityIsAttributeSettable:(NSString *)attribute
+IGNORE_WARNINGS_END
 {
     return NO;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attribute
+IGNORE_WARNINGS_END
 {
 }
 
@@ -103,7 +113,9 @@ using namespace WebKit;
     return m_page->screenToRootView(IntPoint(point.x, point.y));
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray *)accessibilityActionNames
+IGNORE_WARNINGS_END
 {
     return [NSArray array];
 }
@@ -117,7 +129,9 @@ using namespace WebKit;
     return [NSArray arrayWithObject:wrapper];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)accessibilityAttributeValue:(NSString *)attribute
+IGNORE_WARNINGS_END
 {
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
@@ -162,7 +176,9 @@ using namespace WebKit;
     return nil;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
+IGNORE_WARNINGS_END
 {
     WebCore::FloatPoint pageOverlayPoint;
     if ([parameter isKindOfClass:[NSValue class]] && !strcmp([(NSValue *)parameter objCType], @encode(NSPoint)))
