@@ -38,5 +38,7 @@
 } \
 @end
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 DEFINE_BUNDLE_FOR_CLASS(WebArchive)
 DEFINE_BUNDLE_FOR_CLASS(WebResource)
+IGNORE_WARNINGS_END

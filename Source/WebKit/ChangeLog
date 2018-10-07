@@ -1,5 +1,11 @@
 2018-10-06  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix the macOS Mojave build.
+
+        * UIProcess/API/Cocoa/LegacyBundleForClass.mm:
+
+2018-10-06  Dan Bernstein  <mitz@apple.com>
+
         WebKit part of [Xcode] Update some build settings as recommended by Xcode 10
         https://bugs.webkit.org/show_bug.cgi?id=190250
 
