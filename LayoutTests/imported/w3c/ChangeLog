@@ -1,5 +1,14 @@
 2018-10-08  Truitt Savell  <tsavell@apple.com>
 
+        Attempt to fix test failure after 236915
+        https://bugs.webkit.org/show_bug.cgi?id=190352
+
+        Unreviewed Test Gardening
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt:
+
+2018-10-08  Truitt Savell  <tsavell@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html for Mojave
         https://bugs.webkit.org/show_bug.cgi?id=190352
 

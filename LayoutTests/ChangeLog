@@ -1,5 +1,16 @@
 2018-10-08  Truitt Savell  <tsavell@apple.com>
 
+        Attempt to fix test failure after 236915
+        https://bugs.webkit.org/show_bug.cgi?id=190352
+
+        Unreviewed Test Gardening
+
+        * platform/mac-highsierra/hkdf.https.worker-expected.txt: Removed.
+        * platform/mac/imported/w3c/canvas/2d.shadow.gradient.basic-expected.png: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt:
+
+2018-10-08  Truitt Savell  <tsavell@apple.com>
+
         Moving files to fix failures introduced in r236915
         https://bugs.webkit.org/show_bug.cgi?id=190352
 
