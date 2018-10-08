@@ -104,7 +104,7 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
         { nullptr, &InputTypeNames::button, &createInputType<ButtonInputType> },
         { nullptr, &InputTypeNames::checkbox, &createInputType<CheckboxInputType> },
 #if ENABLE(INPUT_TYPE_COLOR)
-        { nullptr, &InputTypeNames::color, &createInputType<ColorInputType> },
+        { &RuntimeEnabledFeatures::inputTypeColorEnabled, &InputTypeNames::color, &createInputType<ColorInputType> },
 #endif
 #if ENABLE(INPUT_TYPE_DATE)
         { &RuntimeEnabledFeatures::inputTypeDateEnabled, &InputTypeNames::date, &createInputType<DateInputType> },

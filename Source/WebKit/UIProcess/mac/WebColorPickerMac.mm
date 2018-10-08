@@ -41,6 +41,7 @@
 #import <pal/spi/mac/NSColorWellSPI.h>
 #import <pal/spi/mac/NSPopoverColorWellSPI.h>
 #import <pal/spi/mac/NSPopoverSPI.h>
+#import <wtf/WeakObjCPtr.h>
 
 static const size_t maxColorSuggestions = 12;
 static const CGFloat colorPickerMatrixNumColumns = 12.0;
@@ -59,6 +60,7 @@ static const CGFloat colorPickerMatrixSwatchWidth = 12.0;
 
 @interface WKPopoverColorWell : NSPopoverColorWell {
     RetainPtr<NSColorList> _suggestedColors;
+    WeakObjCPtr<id <WKPopoverColorWellDelegate>> _webDelegate;
 }
 
 @property (nonatomic, weak) id<WKPopoverColorWellDelegate> webDelegate;
@@ -149,6 +151,16 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     }
 
     return colorPopover;
+}
+
+- (id <WKPopoverColorWellDelegate>)webDelegate
+{
+    return _webDelegate.getAutoreleased();
+}
+
+- (void)setWebDelegate:(id <WKPopoverColorWellDelegate>)webDelegate
+{
+    _webDelegate = webDelegate;
 }
 
 - (void)_showPopover

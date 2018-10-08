@@ -466,7 +466,7 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 
 #if !defined(ENABLE_INPUT_TYPE_COLOR)
-#define ENABLE_INPUT_TYPE_COLOR 0
+#define ENABLE_INPUT_TYPE_COLOR 1
 #endif
 
 #if !defined(ENABLE_INPUT_TYPE_DATE)

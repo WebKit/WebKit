@@ -207,6 +207,11 @@ public:
     bool legacyCSSVendorPrefixesEnabled() const { return m_isLegacyCSSVendorPrefixesEnabled; }
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    bool inputTypeColorEnabled() const { return m_isInputTypeColorEnabled; }
+    void setInputTypeColorEnabled(bool isEnabled) { m_isInputTypeColorEnabled = isEnabled; }
+#endif
+
 #if ENABLE(INPUT_TYPE_DATE)
     bool inputTypeDateEnabled() const { return m_isInputTypeDateEnabled; }
     void setInputTypeDateEnabled(bool isEnabled) { m_isInputTypeDateEnabled = isEnabled; }
@@ -361,6 +366,10 @@ private:
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     bool m_isLegacyCSSVendorPrefixesEnabled { false };
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    bool m_isInputTypeColorEnabled { true };
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)

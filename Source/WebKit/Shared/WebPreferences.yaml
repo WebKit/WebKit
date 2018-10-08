@@ -1386,3 +1386,12 @@ SelectionAcrossShadowBoundariesEnabled:
   humanReadableDescription: "Allow user-initiated selection across shadow DOM boundaries"
   category: internal
   webcoreName: selectionAcrossShadowBoundariesEnabled
+
+InputTypeColorEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Color Inputs"
+  humanReadableDescription: "Enable input elements of type color"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(INPUT_TYPE_COLOR)

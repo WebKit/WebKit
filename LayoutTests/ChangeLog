@@ -1,3 +1,32 @@
+2018-10-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        Make <input type=color> a runtime enabled (on-by-default) feature
+        https://bugs.webkit.org/show_bug.cgi?id=189162
+
+        Reviewed by Wenson Hsieh and Tim Horton.
+
+        Rebaseline layout tests after enabling input type=color by default.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt:
+        * platform/ios/fast/forms/color/input-appearance-color-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+        * platform/mac/fast/selectors/read-only-read-write-input-basics-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt:
+
 2018-10-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move test expectations from ios-12 to ios directory

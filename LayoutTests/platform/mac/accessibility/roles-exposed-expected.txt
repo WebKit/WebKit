@@ -225,9 +225,9 @@ input[type='button']
       AXRoleDescription: button
       
 input[type='color']
-      AXRole: AXTextField
+      AXRole: AXColorWell
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: color well
       
 input[type='checkbox']
       AXRole: AXCheckBox

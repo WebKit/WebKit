@@ -1,6 +1,6 @@
 
-FAIL The :read-write pseudo-class must not match input elements to which the readonly attribute does not apply assert_array_equals: lengths differ, expected 0 got 1
-FAIL The :read-only pseudo-class must match input elements to which the readonly attribute does not apply assert_array_equals: lengths differ, expected 10 got 9
+PASS The :read-write pseudo-class must not match input elements to which the readonly attribute does not apply 
+PASS The :read-only pseudo-class must match input elements to which the readonly attribute does not apply 
 PASS The :read-write pseudo-class must match input elements to which the readonly attribute applies, and that are mutable 
 FAIL The :read-only pseudo-class must not match input elements to which the readonly attribute applies, and that are mutable assert_array_equals: lengths differ, expected 1 got 4
 PASS The :read-write pseudo-class must not match input elements after the readonly attribute has been added 

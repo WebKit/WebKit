@@ -1,3 +1,22 @@
+2018-10-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        Make <input type=color> a runtime enabled (on-by-default) feature
+        https://bugs.webkit.org/show_bug.cgi?id=189162
+
+        Reviewed by Wenson Hsieh and Tim Horton.
+
+        Enable the build-time flag INPUT_TYPE_COLOR by default and introduce a runtime-enabled feature for input type
+        color, also on by default.
+
+        Covered by rebaselining existing layout tests.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * html/InputType.cpp:
+        (WebCore::createInputTypeFactoryMap):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::inputTypeColorEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setInputTypeColorEnabled):
+
 2018-10-08  Jer Noble  <jer.noble@apple.com>
 
         ISOTrackEncryptionBox returns incorrect defaultKeyID

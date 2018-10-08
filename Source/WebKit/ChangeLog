@@ -1,3 +1,19 @@
+2018-10-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        Make <input type=color> a runtime enabled (on-by-default) feature
+        https://bugs.webkit.org/show_bug.cgi?id=189162
+
+        Reviewed by Wenson Hsieh and Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferences.yaml:
+
+        Add an experimental feature flag for input type=color.
+
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (-[WKPopoverColorWell webDelegate]):
+        (-[WKPopoverColorWell setWebDelegate:]):
+
 2018-10-08  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build
