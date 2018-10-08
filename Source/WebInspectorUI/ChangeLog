@@ -1,5 +1,17 @@
 2018-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: be more specific as to what types of WI.Collection are allowed for the Resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=190304
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WI.tabContentViewClassForRepresentedObject):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WI.ResourcesTabContentView.prototype.canShowRepresentedObject):
+
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Open Resource Dialog should show path to resource (to disambiguate resources with same name)
         https://bugs.webkit.org/show_bug.cgi?id=178153
         <rdar://problem/34925686>

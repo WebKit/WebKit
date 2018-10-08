@@ -55,10 +55,13 @@ WI.ResourcesTabContentView = class ResourcesTabContentView extends WI.ContentBro
     canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WI.Frame
+            || representedObject instanceof WI.FrameCollection
             || representedObject instanceof WI.Resource
+            || representedObject instanceof WI.ResourceCollection
             || representedObject instanceof WI.Script
+            || representedObject instanceof WI.ScriptCollection
             || representedObject instanceof WI.CSSStyleSheet
-            || (representedObject instanceof WI.Collection && !(representedObject instanceof WI.CanvasCollection));
+            || representedObject instanceof WI.CSSStyleSheetCollection;
     }
 };
 
