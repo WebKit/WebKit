@@ -1,3 +1,142 @@
+2018-10-08  Antti Koivisto  <antti@apple.com>
+
+        Move FontCascadeDescription to a file of its own
+        https://bugs.webkit.org/show_bug.cgi?id=190348
+
+        Reviewed by Chris Dumez.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/FontCascadeDescription.cpp: Copied from Source/WebCore/platform/graphics/FontDescription.cpp.
+        (WebCore::FontDescription::FontDescription): Deleted.
+        (WebCore::m_shouldAllowUserInstalledFonts): Deleted.
+        (WebCore::FontDescription::setLocale): Deleted.
+        (WebCore::FontDescription::invalidateCaches): Deleted.
+        * platform/graphics/FontCascadeDescription.h: Copied from Source/WebCore/platform/graphics/FontDescription.h.
+        (WebCore::FontDescription::operator!= const): Deleted.
+        (WebCore::FontDescription::computedSize const): Deleted.
+        (WebCore::FontDescription::computedPixelSize const): Deleted.
+        (WebCore::FontDescription::italic const): Deleted.
+        (WebCore::FontDescription::stretch const): Deleted.
+        (WebCore::FontDescription::weight const): Deleted.
+        (WebCore::FontDescription::fontSelectionRequest const): Deleted.
+        (WebCore::FontDescription::renderingMode const): Deleted.
+        (WebCore::FontDescription::textRenderingMode const): Deleted.
+        (WebCore::FontDescription::script const): Deleted.
+        (WebCore::FontDescription::locale const): Deleted.
+        (WebCore::FontDescription::orientation const): Deleted.
+        (WebCore::FontDescription::nonCJKGlyphOrientation const): Deleted.
+        (WebCore::FontDescription::widthVariant const): Deleted.
+        (WebCore::FontDescription::featureSettings const): Deleted.
+        (WebCore::FontDescription::variationSettings const): Deleted.
+        (WebCore::FontDescription::fontSynthesis const): Deleted.
+        (WebCore::FontDescription::variantCommonLigatures const): Deleted.
+        (WebCore::FontDescription::variantDiscretionaryLigatures const): Deleted.
+        (WebCore::FontDescription::variantHistoricalLigatures const): Deleted.
+        (WebCore::FontDescription::variantContextualAlternates const): Deleted.
+        (WebCore::FontDescription::variantPosition const): Deleted.
+        (WebCore::FontDescription::variantCaps const): Deleted.
+        (WebCore::FontDescription::variantNumericFigure const): Deleted.
+        (WebCore::FontDescription::variantNumericSpacing const): Deleted.
+        (WebCore::FontDescription::variantNumericFraction const): Deleted.
+        (WebCore::FontDescription::variantNumericOrdinal const): Deleted.
+        (WebCore::FontDescription::variantNumericSlashedZero const): Deleted.
+        (WebCore::FontDescription::variantAlternates const): Deleted.
+        (WebCore::FontDescription::variantEastAsianVariant const): Deleted.
+        (WebCore::FontDescription::variantEastAsianWidth const): Deleted.
+        (WebCore::FontDescription::variantEastAsianRuby const): Deleted.
+        (WebCore::FontDescription::variantSettings const): Deleted.
+        (WebCore::FontDescription::opticalSizing const): Deleted.
+        (WebCore::FontDescription::fontStyleAxis const): Deleted.
+        (WebCore::FontDescription::shouldAllowUserInstalledFonts const): Deleted.
+        (WebCore::FontDescription::setComputedSize): Deleted.
+        (WebCore::FontDescription::setItalic): Deleted.
+        (WebCore::FontDescription::setStretch): Deleted.
+        (WebCore::FontDescription::setIsItalic): Deleted.
+        (WebCore::FontDescription::setWeight): Deleted.
+        (WebCore::FontDescription::setRenderingMode): Deleted.
+        (WebCore::FontDescription::setTextRenderingMode): Deleted.
+        (WebCore::FontDescription::setOrientation): Deleted.
+        (WebCore::FontDescription::setNonCJKGlyphOrientation): Deleted.
+        (WebCore::FontDescription::setWidthVariant): Deleted.
+        (WebCore::FontDescription::setFeatureSettings): Deleted.
+        (WebCore::FontDescription::setVariationSettings): Deleted.
+        (WebCore::FontDescription::setFontSynthesis): Deleted.
+        (WebCore::FontDescription::setVariantCommonLigatures): Deleted.
+        (WebCore::FontDescription::setVariantDiscretionaryLigatures): Deleted.
+        (WebCore::FontDescription::setVariantHistoricalLigatures): Deleted.
+        (WebCore::FontDescription::setVariantContextualAlternates): Deleted.
+        (WebCore::FontDescription::setVariantPosition): Deleted.
+        (WebCore::FontDescription::setVariantCaps): Deleted.
+        (WebCore::FontDescription::setVariantNumericFigure): Deleted.
+        (WebCore::FontDescription::setVariantNumericSpacing): Deleted.
+        (WebCore::FontDescription::setVariantNumericFraction): Deleted.
+        (WebCore::FontDescription::setVariantNumericOrdinal): Deleted.
+        (WebCore::FontDescription::setVariantNumericSlashedZero): Deleted.
+        (WebCore::FontDescription::setVariantAlternates): Deleted.
+        (WebCore::FontDescription::setVariantEastAsianVariant): Deleted.
+        (WebCore::FontDescription::setVariantEastAsianWidth): Deleted.
+        (WebCore::FontDescription::setVariantEastAsianRuby): Deleted.
+        (WebCore::FontDescription::setOpticalSizing): Deleted.
+        (WebCore::FontDescription::setFontStyleAxis): Deleted.
+        (WebCore::FontDescription::setShouldAllowUserInstalledFonts): Deleted.
+        (WebCore::FontDescription::operator== const): Deleted.
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::invalidateCaches):
+        (WebCore::FontCascadeDescription::FontCascadeDescription): Deleted.
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const): Deleted.
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const): Deleted.
+        (WebCore::FontCascadeDescription::lighterWeight): Deleted.
+        (WebCore::FontCascadeDescription::bolderWeight): Deleted.
+        (WebCore::FontCascadeDescription::familiesEqualForTextAutoSizing const): Deleted.
+        (WebCore::FontCascadeDescription::familyNamesAreEqual): Deleted.
+        (WebCore::FontCascadeDescription::familyNameHash): Deleted.
+        (WebCore::FontCascadeDescription::foldedFamilyName): Deleted.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontCascadeDescription::operator!= const): Deleted.
+        (WebCore::FontCascadeDescription::familyCount const): Deleted.
+        (WebCore::FontCascadeDescription::firstFamily const): Deleted.
+        (WebCore::FontCascadeDescription::familyAt const): Deleted.
+        (WebCore::FontCascadeDescription::families const): Deleted.
+        (WebCore::FontCascadeDescription::specifiedSize const): Deleted.
+        (WebCore::FontCascadeDescription::isAbsoluteSize const): Deleted.
+        (WebCore::FontCascadeDescription::lighterWeight const): Deleted.
+        (WebCore::FontCascadeDescription::bolderWeight const): Deleted.
+        (WebCore::FontCascadeDescription::useFixedDefaultSize const): Deleted.
+        (WebCore::FontCascadeDescription::kerning const): Deleted.
+        (WebCore::FontCascadeDescription::keywordSize const): Deleted.
+        (WebCore::FontCascadeDescription::keywordSizeAsIdentifier const): Deleted.
+        (WebCore::FontCascadeDescription::fontSmoothing const): Deleted.
+        (WebCore::FontCascadeDescription::isSpecifiedFont const): Deleted.
+        (WebCore::FontCascadeDescription::setOneFamily): Deleted.
+        (WebCore::FontCascadeDescription::setFamilies): Deleted.
+        (WebCore::FontCascadeDescription::setSpecifiedSize): Deleted.
+        (WebCore::FontCascadeDescription::setIsAbsoluteSize): Deleted.
+        (WebCore::FontCascadeDescription::setKerning): Deleted.
+        (WebCore::FontCascadeDescription::setKeywordSize): Deleted.
+        (WebCore::FontCascadeDescription::setKeywordSizeFromIdentifier): Deleted.
+        (WebCore::FontCascadeDescription::setFontSmoothing): Deleted.
+        (WebCore::FontCascadeDescription::setIsSpecifiedFont): Deleted.
+        (WebCore::FontCascadeDescription::equalForTextAutoSizing const): Deleted.
+        (WebCore::FontCascadeDescription::initialItalic): Deleted.
+        (WebCore::FontCascadeDescription::initialFontStyleAxis): Deleted.
+        (WebCore::FontCascadeDescription::initialWeight): Deleted.
+        (WebCore::FontCascadeDescription::initialStretch): Deleted.
+        (WebCore::FontCascadeDescription::initialSmallCaps): Deleted.
+        (WebCore::FontCascadeDescription::initialKerning): Deleted.
+        (WebCore::FontCascadeDescription::initialFontSmoothing): Deleted.
+        (WebCore::FontCascadeDescription::initialTextRenderingMode): Deleted.
+        (WebCore::FontCascadeDescription::initialFontSynthesis): Deleted.
+        (WebCore::FontCascadeDescription::initialVariantPosition): Deleted.
+        (WebCore::FontCascadeDescription::initialVariantCaps): Deleted.
+        (WebCore::FontCascadeDescription::initialVariantAlternates): Deleted.
+        (WebCore::FontCascadeDescription::initialOpticalSizing): Deleted.
+        (WebCore::FontCascadeDescription::initialLocale): Deleted.
+        (WebCore::FontCascadeDescription::operator== const): Deleted.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        * rendering/style/RenderStyle.h:
+
 2018-10-08  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME][GStreamer] Add support for WebM encrypted caps "application/x-webm-enc"

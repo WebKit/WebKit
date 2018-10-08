@@ -28,6 +28,7 @@
 #include <CoreText/CoreText.h>
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/FontCache.h>
+#include <WebCore/FontCascadeDescription.h>
 #include <WebCore/FontPlatformData.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>

@@ -33,7 +33,7 @@
 #include "CounterDirectives.h"
 #include "DataRef.h"
 #include "FilterOperations.h"
-#include "FontDescription.h"
+#include "FontCascadeDescription.h"
 #include "GapLength.h"
 #include "GraphicsTypes.h"
 #include "Length.h"

@@ -30,29 +30,10 @@
 #include "config.h"
 #include "FontDescription.h"
 
+#include "FontCascadeDescription.h"
 #include "LocaleToScriptMapping.h"
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
-
-struct SameSizeAsFontCascadeDescription {
-    Vector<void*> vector;
-#if ENABLE(VARIATION_FONTS)
-    Vector<void*> vector2;
-#else
-    char c;
-#endif
-    AtomicString string;
-    int16_t fontSelectionRequest[3];
-    float size;
-    unsigned bitfields1;
-    unsigned bitfields2 : 22;
-    void* array;
-    float size2;
-    unsigned bitfields3 : 10;
-};
-
-COMPILE_ASSERT(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), FontCascadeDescription_should_stay_small);
 
 FontDescription::FontDescription()
     : m_fontSelectionRequest { FontCascadeDescription::initialWeight(), FontCascadeDescription::initialStretch(), FontCascadeDescription::initialItalic() }
@@ -90,98 +71,10 @@ void FontDescription::setLocale(const AtomicString& locale)
     m_script = localeToScriptCodeForFontSelection(m_locale);
 }
 
-FontCascadeDescription::FontCascadeDescription()
-    : m_isAbsoluteSize(false)
-    , m_kerning(static_cast<unsigned>(Kerning::Auto))
-    , m_keywordSize(0)
-    , m_fontSmoothing(static_cast<unsigned>(FontSmoothingMode::AutoSmoothing))
-    , m_isSpecifiedFont(false)
-{
-}
-
 #if !USE_PLATFORM_SYSTEM_FALLBACK_LIST
 void FontDescription::invalidateCaches()
 {
 }
-
-unsigned FontCascadeDescription::effectiveFamilyCount() const
-{
-    return familyCount();
-}
-
-FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned i) const
-{
-    return familyAt(i);
-}
 #endif
-
-FontSelectionValue FontCascadeDescription::lighterWeight(FontSelectionValue weight)
-{
-    if (weight < FontSelectionValue(100))
-        return weight;
-    if (weight < FontSelectionValue(550))
-        return FontSelectionValue(100);
-    if (weight < FontSelectionValue(750))
-        return FontSelectionValue(400);
-    return FontSelectionValue(700);
-}
-
-FontSelectionValue FontCascadeDescription::bolderWeight(FontSelectionValue weight)
-{
-    if (weight < FontSelectionValue(350))
-        return FontSelectionValue(400);
-    if (weight < FontSelectionValue(550))
-        return FontSelectionValue(700);
-    if (weight < FontSelectionValue(900))
-        return FontSelectionValue(900);
-    return weight;
-}
-
-#if ENABLE(TEXT_AUTOSIZING)
-
-bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const
-{
-    unsigned thisFamilyCount = familyCount();
-    unsigned otherFamilyCount = other.familyCount();
-
-    if (thisFamilyCount != otherFamilyCount)
-        return false;
-
-    for (unsigned i = 0; i < thisFamilyCount; ++i) {
-        if (!equalIgnoringASCIICase(familyAt(i), other.familyAt(i)))
-            return false;
-    }
-
-    return true;
-}
-
-#endif // ENABLE(TEXT_AUTOSIZING)
-
-bool FontCascadeDescription::familyNamesAreEqual(const AtomicString& family1, const AtomicString& family2)
-{
-    // FIXME: <rdar://problem/33594253> CoreText matches dot-prefixed font names case sensitively. We should
-    // always take the case insensitive patch once this radar is fixed.
-    if (family1.startsWith('.'))
-        return StringHash::equal(family1.string(), family2.string());
-    return ASCIICaseInsensitiveHash::equal(family1, family2);
-}
-
-unsigned FontCascadeDescription::familyNameHash(const AtomicString& family)
-{
-    // FIXME: <rdar://problem/33594253> CoreText matches dot-prefixed font names case sensitively. We should
-    // always take the case insensitive patch once this radar is fixed.
-    if (family.startsWith('.'))
-        return StringHash::hash(family.string());
-    return ASCIICaseInsensitiveHash::hash(family);
-}
-
-String FontCascadeDescription::foldedFamilyName(const AtomicString& family)
-{
-    // FIXME: <rdar://problem/33594253> CoreText matches dot-prefixed font names case sensitively. We should
-    // always take the case insensitive patch once this radar is fixed.
-    if (family.startsWith('.'))
-        return family.string();
-    return family.string().foldCase();
-}
 
 } // namespace WebCore

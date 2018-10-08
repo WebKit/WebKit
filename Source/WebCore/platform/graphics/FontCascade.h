@@ -26,8 +26,8 @@
 
 #include "DashArray.h"
 #include "Font.h"
+#include "FontCascadeDescription.h"
 #include "FontCascadeFonts.h"
-#include "FontDescription.h"
 #include "Path.h"
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>

@@ -42,6 +42,7 @@
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
 #include "ScreenDisplayCaptureSourceMac.h"
+#include "WindowDisplayCaptureSourceMac.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {

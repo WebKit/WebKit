@@ -1610,6 +1610,7 @@ platform/graphics/FloatSize.cpp
 platform/graphics/Font.cpp
 platform/graphics/FontCache.cpp
 platform/graphics/FontCascade.cpp
+platform/graphics/FontCascadeDescription.cpp
 platform/graphics/FontCascadeFonts.cpp
 platform/graphics/FontDescription.cpp
 platform/graphics/FontFamilySpecificationNull.cpp
