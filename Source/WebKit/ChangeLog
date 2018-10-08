@@ -1,5 +1,19 @@
 2018-10-08  Jeremy Jones  <jeremyj@apple.com>
 
+        Remove dead code: VideoFullscreenModel::isVisible()
+        https://bugs.webkit.org/show_bug.cgi?id=190356
+
+        Reviewed by Jon Lee.
+
+        Remove isVisible since it is no longer used.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::isVisible const): Deleted.
+        (WebKit::VideoFullscreenManagerProxy::isVisible const): Deleted.
+
+2018-10-08  Jeremy Jones  <jeremyj@apple.com>
+
         Remove dead code: resetMediaState.
         https://bugs.webkit.org/show_bug.cgi?id=190355
 

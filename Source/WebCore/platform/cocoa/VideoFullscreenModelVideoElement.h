@@ -69,7 +69,6 @@ public:
     WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) override;
     WEBCORE_EXPORT void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) override;
     WEBCORE_EXPORT void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
-    WEBCORE_EXPORT bool isVisible() const override;
     FloatSize videoDimensions() const override { return m_videoDimensions; }
     bool hasVideo() const override { return m_hasVideo; }
 

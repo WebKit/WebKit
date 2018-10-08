@@ -205,11 +205,6 @@ void VideoFullscreenModelContext::fullscreenModeChanged(WebCore::HTMLMediaElemen
         m_manager->fullscreenModeChanged(m_contextId, mode);
 }
 
-bool VideoFullscreenModelContext::isVisible() const
-{
-    return m_manager ? m_manager->isVisible() : false;
-}
-
 #if PLATFORM(IOS)
 UIViewController *VideoFullscreenModelContext::presentingViewController()
 {
@@ -672,11 +667,6 @@ void VideoFullscreenManagerProxy::fullscreenModeChanged(uint64_t contextId, WebC
 {
     m_page->uiClient().hasVideoInPictureInPictureDidChange(m_page, mode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
     m_page->send(Messages::VideoFullscreenManager::FullscreenModeChanged(contextId, mode), m_page->pageID());
-}
-
-bool VideoFullscreenManagerProxy::isVisible() const
-{
-    return m_page->isViewVisible() && m_page->isInWindow();
 }
 
 void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(uint64_t contextId)

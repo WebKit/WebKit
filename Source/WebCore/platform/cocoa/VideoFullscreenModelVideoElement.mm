@@ -201,17 +201,6 @@ void VideoFullscreenModelVideoElement::removeClient(VideoFullscreenModelClient& 
     m_clients.remove(&client);
 }
 
-bool VideoFullscreenModelVideoElement::isVisible() const
-{
-    if (!m_videoElement)
-        return false;
-
-    if (Page* page = m_videoElement->document().page())
-        return page->isVisible();
-
-    return false;
-}
-
 void VideoFullscreenModelVideoElement::setHasVideo(bool hasVideo)
 {
     if (hasVideo == m_hasVideo)

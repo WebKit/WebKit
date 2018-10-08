@@ -53,7 +53,6 @@ public:
     virtual void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) = 0;
     virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) = 0;
 
-    virtual bool isVisible() const = 0;
     virtual FloatSize videoDimensions() const = 0;
     virtual bool hasVideo() const = 0;
 

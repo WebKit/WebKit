@@ -82,7 +82,6 @@ private:
     void setVideoLayerFrame(WebCore::FloatRect) override;
     void setVideoLayerGravity(WebCore::MediaPlayerEnums::VideoGravity) override;
     void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
-    bool isVisible() const override;
     bool hasVideo() const override { return m_hasVideo; }
     WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
 #if PLATFORM(IOS)

@@ -197,7 +197,6 @@ private:
     void setVideoLayerFrame(FloatRect) override;
     void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) override;
     void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
-    bool isVisible() const override;
     bool hasVideo() const override;
     FloatSize videoDimensions() const override;
     bool isMuted() const override;
@@ -603,12 +602,6 @@ void VideoFullscreenControllerContext::fullscreenModeChanged(HTMLMediaElementEnu
         if (m_fullscreenModel)
             m_fullscreenModel->fullscreenModeChanged(mode);
     });
-}
-
-bool VideoFullscreenControllerContext::isVisible() const
-{
-    ASSERT(isUIThread());
-    return m_fullscreenModel ? m_fullscreenModel->isVisible() : false;
 }
 
 bool VideoFullscreenControllerContext::hasVideo() const
