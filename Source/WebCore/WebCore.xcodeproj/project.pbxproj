@@ -4011,6 +4011,13 @@
 		CD5896E21CD2B15100B3BCC8 /* WebPlaybackControlsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5D27761E8318E000D80A3D /* WebCoreDecompressionSession.h */; };
 		CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5E5B5E1A15CE54000C609E /* PageConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD5FF4972162E2B7004BD86F /* ISOTrackEncryptionBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C661FB52B6800F0B965 /* ISOTrackEncryptionBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD5FF4992162E2BE004BD86F /* ISOBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C621FB52B6500F0B965 /* ISOBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD5FF49A2162E4A6004BD86F /* ISOSchemeInformationBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C641FB52B6700F0B965 /* ISOSchemeInformationBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD5FF49B2162E4B7004BD86F /* ISOSchemeTypeBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C5C1FB52B6300F0B965 /* ISOSchemeTypeBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD5FF49C2162E4CF004BD86F /* ISOProtectionSystemSpecificHeaderBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 12F75A9A86EA03DAF24B7971 /* ISOProtectionSystemSpecificHeaderBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD5FF49D2162E4DB004BD86F /* ISOProtectionSchemeInfoBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C601FB52B6500F0B965 /* ISOProtectionSchemeInfoBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD5FF49E2162E4E8004BD86F /* ISOOriginalFormatBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C671FB52B6800F0B965 /* ISOOriginalFormatBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD61FE681794AADB004101EB /* MediaSourceRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A942E215B5CE2200D525D1 /* MediaSourceRegistry.h */; };
 		CD62FB961AF018E70012ED7D /* GenericTaskQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD62FB941AF018E70012ED7D /* GenericTaskQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD641EB31818F5ED00EE4C41 /* MediaSourcePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */; };
@@ -28580,6 +28587,13 @@
 				11310CF120BA4A1B0065A8D0 /* Invalidation.h in Headers */,
 				2D0B4AAB18DA1CCD00434DE1 /* IOSurface.h in Headers */,
 				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
+				CD5FF4992162E2BE004BD86F /* ISOBox.h in Headers */,
+				CD5FF49E2162E4E8004BD86F /* ISOOriginalFormatBox.h in Headers */,
+				CD5FF49D2162E4DB004BD86F /* ISOProtectionSchemeInfoBox.h in Headers */,
+				CD5FF49C2162E4CF004BD86F /* ISOProtectionSystemSpecificHeaderBox.h in Headers */,
+				CD5FF49A2162E4A6004BD86F /* ISOSchemeInformationBox.h in Headers */,
+				CD5FF49B2162E4B7004BD86F /* ISOSchemeTypeBox.h in Headers */,
+				CD5FF4972162E2B7004BD86F /* ISOTrackEncryptionBox.h in Headers */,
 				71247E381FEA5F86008C08CE /* IterationCompositeOperation.h in Headers */,
 				7C30D9841F815AEC00268356 /* JSAbortController.h in Headers */,
 				7C30D9861F815AEC00268356 /* JSAbortSignal.h in Headers */,

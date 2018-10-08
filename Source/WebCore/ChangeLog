@@ -1,3 +1,27 @@
+2018-10-08  Jer Noble  <jer.noble@apple.com>
+
+        ISOTrackEncryptionBox returns incorrect defaultKeyID
+        https://bugs.webkit.org/show_bug.cgi?id=190368
+
+        Reviewed by Eric Carlson.
+
+        Test: TestWebKitAPI.ISOBox.ISOProtectionSchemeInfoBox
+
+        ISOTrackEncryptionBox::parse() increments the data offset by an incorrect amount.
+
+        Drive-by fix: add EXPORT macros to all the ISO box classes so that tests can be written in TestWebKitAPI.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/iso/ISOBox.h:
+        * platform/graphics/iso/ISOOriginalFormatBox.h:
+        * platform/graphics/iso/ISOProtectionSchemeInfoBox.h:
+        * platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.h:
+        * platform/graphics/iso/ISOSchemeInformationBox.h:
+        * platform/graphics/iso/ISOSchemeTypeBox.h:
+        * platform/graphics/iso/ISOTrackEncryptionBox.cpp:
+        (WebCore::ISOTrackEncryptionBox::parse):
+        * platform/graphics/iso/ISOTrackEncryptionBox.h:
+
 2018-10-08  Antti Koivisto  <antti@apple.com>
 
         Move SystemFontDatabase to a file of its own
