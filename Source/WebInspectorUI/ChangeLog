@@ -1,5 +1,16 @@
 2018-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: clicking initiator link in Network Tab table doesn't automatically switch to Preview section
+        https://bugs.webkit.org/show_bug.cgi?id=190286
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkResourceDetailView.js:
+        (WI.NetworkResourceDetailView.prototype.shown):
+        (WI.NetworkResourceDetailView.prototype._showContentViewForNavigationItem):
+
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: be more specific as to what types of WI.Collection are allowed for the Resources tab
         https://bugs.webkit.org/show_bug.cgi?id=190304
 

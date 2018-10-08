@@ -58,6 +58,9 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this._showPreferredContentView();
 
         if (this._contentViewCookie) {
+            if ("lineNumber" in this._contentViewCookie && "columnNumber" in this._contentViewCookie)
+                this._contentBrowser.navigationBar.selectedNavigationItem = this._previewNavigationItem;
+
             this._contentBrowser.showContentView(this._contentBrowser.currentContentView, this._contentViewCookie);
             this._contentViewCookie = null;
         }
@@ -183,7 +186,11 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
 
     _showContentViewForNavigationItem(navigationItem)
     {
-        switch (navigationItem.identifier) {
+        let identifier = navigationItem.identifier;
+        if (this._contentViewCookie && "lineNumber" in this._contentViewCookie && "columnNumber" in this._contentViewCookie)
+            identifier = this._previewNavigationItem.identifier;
+
+        switch (identifier) {
         case "preview":
             if (!this._resourceContentView)
                 this._resourceContentView = this._contentBrowser.showContentViewForRepresentedObject(this._resource);
@@ -210,6 +217,8 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
             this._contentBrowser.showContentView(this._timingContentView, this._contentViewCookie);
             break;
         }
+
+        this._contentViewCookie = null;
     }
 
     _navigationItemSelected(event)
