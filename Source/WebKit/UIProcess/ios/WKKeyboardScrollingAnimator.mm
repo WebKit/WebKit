@@ -29,6 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "UIKitSPI.h"
+#import <QuartzCore/CADisplayLink.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/RectEdges.h>
 #import <WebCore/WebEvent.h>
