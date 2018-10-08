@@ -26,14 +26,13 @@
 
 namespace WebCore {
 
-class Frame;
 class Geolocation;
 class Navigator;
 
 class NavigatorGeolocation : public Supplement<Navigator>, public DOMWindowProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit NavigatorGeolocation(Frame*);
+    explicit NavigatorGeolocation(DOMWindow*);
     virtual ~NavigatorGeolocation();
     static NavigatorGeolocation* from(Navigator*);
 

@@ -683,21 +683,21 @@ int DOMWindow::orientation() const
 
 #endif
 
-Screen* DOMWindow::screen() const
+Screen* DOMWindow::screen()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_screen)
-        m_screen = Screen::create(m_frame);
+        m_screen = Screen::create(*this);
     return m_screen.get();
 }
 
-History* DOMWindow::history() const
+History* DOMWindow::history()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_history)
-        m_history = History::create(*m_frame);
+        m_history = History::create(*this);
     return m_history.get();
 }
 
@@ -711,57 +711,57 @@ Crypto* DOMWindow::crypto() const
     return m_crypto.get();
 }
 
-BarProp* DOMWindow::locationbar() const
+BarProp* DOMWindow::locationbar()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_locationbar)
-        m_locationbar = BarProp::create(m_frame, BarProp::Locationbar);
+        m_locationbar = BarProp::create(*this, BarProp::Locationbar);
     return m_locationbar.get();
 }
 
-BarProp* DOMWindow::menubar() const
+BarProp* DOMWindow::menubar()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_menubar)
-        m_menubar = BarProp::create(m_frame, BarProp::Menubar);
+        m_menubar = BarProp::create(*this, BarProp::Menubar);
     return m_menubar.get();
 }
 
-BarProp* DOMWindow::personalbar() const
+BarProp* DOMWindow::personalbar()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_personalbar)
-        m_personalbar = BarProp::create(m_frame, BarProp::Personalbar);
+        m_personalbar = BarProp::create(*this, BarProp::Personalbar);
     return m_personalbar.get();
 }
 
-BarProp* DOMWindow::scrollbars() const
+BarProp* DOMWindow::scrollbars()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_scrollbars)
-        m_scrollbars = BarProp::create(m_frame, BarProp::Scrollbars);
+        m_scrollbars = BarProp::create(*this, BarProp::Scrollbars);
     return m_scrollbars.get();
 }
 
-BarProp* DOMWindow::statusbar() const
+BarProp* DOMWindow::statusbar()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_statusbar)
-        m_statusbar = BarProp::create(m_frame, BarProp::Statusbar);
+        m_statusbar = BarProp::create(*this, BarProp::Statusbar);
     return m_statusbar.get();
 }
 
-BarProp* DOMWindow::toolbar() const
+BarProp* DOMWindow::toolbar()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_toolbar)
-        m_toolbar = BarProp::create(m_frame, BarProp::Toolbar);
+        m_toolbar = BarProp::create(*this, BarProp::Toolbar);
     return m_toolbar.get();
 }
 
@@ -772,23 +772,23 @@ PageConsoleClient* DOMWindow::console() const
     return m_frame->page() ? &m_frame->page()->console() : nullptr;
 }
 
-DOMApplicationCache* DOMWindow::applicationCache() const
+DOMApplicationCache* DOMWindow::applicationCache()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_applicationCache)
-        m_applicationCache = DOMApplicationCache::create(*m_frame);
+        m_applicationCache = DOMApplicationCache::create(*this);
     return m_applicationCache.get();
 }
 
-Navigator* DOMWindow::navigator() const
+Navigator* DOMWindow::navigator()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
 
     if (!m_navigator) {
         ASSERT(scriptExecutionContext());
-        m_navigator = Navigator::create(*scriptExecutionContext(), *m_frame);
+        m_navigator = Navigator::create(*scriptExecutionContext(), *this);
     }
 
     return m_navigator.get();
@@ -810,21 +810,21 @@ double DOMWindow::nowTimestamp() const
     return performance() ? performance()->now() / 1000 : 0;
 }
 
-Location* DOMWindow::location() const
+Location* DOMWindow::location()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_location)
-        m_location = Location::create(m_frame);
+        m_location = Location::create(*this);
     return m_location.get();
 }
 
-VisualViewport* DOMWindow::visualViewport() const
+VisualViewport* DOMWindow::visualViewport()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_visualViewport && !m_suspendedForDocumentSuspension)
-        m_visualViewport = VisualViewport::create(m_frame);
+        m_visualViewport = VisualViewport::create(*this);
     return m_visualViewport.get();
 }
 
@@ -850,7 +850,7 @@ bool DOMWindow::shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld& world)
     return hasUserMessageHandler;
 }
 
-WebKitNamespace* DOMWindow::webkitNamespace() const
+WebKitNamespace* DOMWindow::webkitNamespace()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
@@ -858,13 +858,13 @@ WebKitNamespace* DOMWindow::webkitNamespace() const
     if (!page)
         return nullptr;
     if (!m_webkitNamespace)
-        m_webkitNamespace = WebKitNamespace::create(*m_frame, page->userContentProvider());
+        m_webkitNamespace = WebKitNamespace::create(*this, page->userContentProvider());
     return m_webkitNamespace.get();
 }
 
 #endif
 
-ExceptionOr<Storage*> DOMWindow::sessionStorage() const
+ExceptionOr<Storage*> DOMWindow::sessionStorage()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
@@ -884,11 +884,11 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage() const
         return nullptr;
 
     auto storageArea = page->sessionStorage()->storageArea(document->securityOrigin().data());
-    m_sessionStorage = Storage::create(m_frame, WTFMove(storageArea));
+    m_sessionStorage = Storage::create(*this, WTFMove(storageArea));
     return m_sessionStorage.get();
 }
 
-ExceptionOr<Storage*> DOMWindow::localStorage() const
+ExceptionOr<Storage*> DOMWindow::localStorage()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
@@ -918,7 +918,7 @@ ExceptionOr<Storage*> DOMWindow::localStorage() const
         return nullptr;
 
     auto storageArea = page->storageNamespaceProvider().localStorageArea(*document);
-    m_localStorage = Storage::create(m_frame, WTFMove(storageArea));
+    m_localStorage = Storage::create(*this, WTFMove(storageArea));
     return m_localStorage.get();
 }
 
@@ -1009,7 +1009,7 @@ DOMSelection* DOMWindow::getSelection()
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_selection)
-        m_selection = DOMSelection::create(*m_frame);
+        m_selection = DOMSelection::create(*this);
     return m_selection.get();
 }
 
@@ -1495,12 +1495,12 @@ Document* DOMWindow::document() const
     return downcast<Document>(ContextDestructionObserver::scriptExecutionContext());
 }
 
-RefPtr<StyleMedia> DOMWindow::styleMedia() const
+RefPtr<StyleMedia> DOMWindow::styleMedia()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_media)
-        m_media = StyleMedia::create(m_frame);
+        m_media = StyleMedia::create(*this);
     return m_media;
 }
 

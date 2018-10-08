@@ -31,12 +31,11 @@
 
 namespace WebCore {
 
-class Frame;
 class StorageArea;
 
 class Storage : public ScriptWrappable, public RefCounted<Storage>, public DOMWindowProperty {
 public:
-    static Ref<Storage> create(Frame*, RefPtr<StorageArea>&&);
+    static Ref<Storage> create(DOMWindow&, RefPtr<StorageArea>&&);
     ~Storage();
 
     unsigned length() const;
@@ -54,7 +53,7 @@ public:
     StorageArea& area() const { return *m_storageArea; }
 
 private:
-    Storage(Frame*, RefPtr<StorageArea>&&);
+    Storage(DOMWindow&, RefPtr<StorageArea>&&);
 
     const RefPtr<StorageArea> m_storageArea;
 };

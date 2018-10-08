@@ -1,3 +1,229 @@
+2018-10-08  Chris Dumez  <cdumez@apple.com>
+
+        Have DOMWindowProperty get is frame from its associated DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=190341
+
+        Reviewed by Alex Christensen.
+
+        Have DOMWindowProperty get is frame from its associated DOMWindow, instead of having its own
+        m_frame that can potentially get out-of-sync.
+
+        * Modules/cache/DOMWindowCaches.cpp:
+        (WebCore::DOMWindowCaches::DOMWindowCaches):
+        * Modules/geolocation/NavigatorGeolocation.cpp:
+        (WebCore::NavigatorGeolocation::NavigatorGeolocation):
+        (WebCore::NavigatorGeolocation::from):
+        * Modules/geolocation/NavigatorGeolocation.h:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::DOMWindowIndexedDatabase):
+        * Modules/mediastream/NavigatorMediaDevices.cpp:
+        (WebCore::NavigatorMediaDevices::NavigatorMediaDevices):
+        (WebCore::NavigatorMediaDevices::from):
+        * Modules/mediastream/NavigatorMediaDevices.h:
+        * Modules/quota/DOMWindowQuota.cpp:
+        (WebCore::DOMWindowQuota::DOMWindowQuota):
+        * Modules/quota/NavigatorStorageQuota.cpp:
+        (WebCore::NavigatorStorageQuota::NavigatorStorageQuota):
+        * Modules/quota/NavigatorStorageQuota.h:
+        * Modules/speech/DOMWindowSpeechSynthesis.cpp:
+        (WebCore::DOMWindowSpeechSynthesis::DOMWindowSpeechSynthesis):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::StyleMedia):
+        (WebCore::StyleMedia::type const):
+        (WebCore::StyleMedia::matchMedium const):
+        * css/StyleMedia.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::DOMApplicationCache):
+        (WebCore::DOMApplicationCache::applicationCacheHost const):
+        (WebCore::DOMApplicationCache::scriptExecutionContext const):
+        * loader/appcache/DOMApplicationCache.h:
+        * page/BarProp.cpp:
+        (WebCore::BarProp::BarProp):
+        (WebCore::BarProp::visible const):
+        * page/BarProp.h:
+        (WebCore::BarProp::create):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::DOMSelection):
+        (WebCore::DOMSelection::visibleSelection const):
+        (WebCore::DOMSelection::anchorNode const):
+        (WebCore::DOMSelection::anchorOffset const):
+        (WebCore::DOMSelection::focusNode const):
+        (WebCore::DOMSelection::focusOffset const):
+        (WebCore::DOMSelection::baseNode const):
+        (WebCore::DOMSelection::baseOffset const):
+        (WebCore::DOMSelection::extentNode const):
+        (WebCore::DOMSelection::extentOffset const):
+        (WebCore::DOMSelection::isCollapsed const):
+        (WebCore::DOMSelection::type const):
+        (WebCore::DOMSelection::rangeCount const):
+        (WebCore::DOMSelection::collapse):
+        (WebCore::DOMSelection::collapseToEnd):
+        (WebCore::DOMSelection::collapseToStart):
+        (WebCore::DOMSelection::empty):
+        (WebCore::DOMSelection::setBaseAndExtent):
+        (WebCore::DOMSelection::setPosition):
+        (WebCore::DOMSelection::modify):
+        (WebCore::DOMSelection::extend):
+        (WebCore::DOMSelection::getRangeAt):
+        (WebCore::DOMSelection::removeAllRanges):
+        (WebCore::DOMSelection::addRange):
+        (WebCore::DOMSelection::deleteFromDocument):
+        (WebCore::DOMSelection::containsNode const):
+        (WebCore::DOMSelection::toString):
+        (WebCore::DOMSelection::shadowAdjustedNode const):
+        (WebCore::DOMSelection::shadowAdjustedOffset const):
+        (WebCore::DOMSelection::isValidForPosition const):
+        * page/DOMSelection.h:
+        (WebCore::DOMSelection::create):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::screen):
+        (WebCore::DOMWindow::history):
+        (WebCore::DOMWindow::locationbar):
+        (WebCore::DOMWindow::menubar):
+        (WebCore::DOMWindow::personalbar):
+        (WebCore::DOMWindow::scrollbars):
+        (WebCore::DOMWindow::statusbar):
+        (WebCore::DOMWindow::toolbar):
+        (WebCore::DOMWindow::applicationCache):
+        (WebCore::DOMWindow::navigator):
+        (WebCore::DOMWindow::location):
+        (WebCore::DOMWindow::visualViewport):
+        (WebCore::DOMWindow::webkitNamespace):
+        (WebCore::DOMWindow::getSelection):
+        (WebCore::DOMWindow::styleMedia):
+        * page/DOMWindow.h:
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::DOMWindowExtension):
+        * page/DOMWindowExtension.h:
+        (WebCore::DOMWindowExtension::create):
+        * page/DOMWindowProperty.cpp:
+        (WebCore::DOMWindowProperty::DOMWindowProperty):
+        (WebCore::DOMWindowProperty::~DOMWindowProperty):
+        (WebCore::DOMWindowProperty::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMWindowProperty::reconnectFrameFromDocumentSuspension):
+        (WebCore::DOMWindowProperty::willDestroyGlobalObjectInCachedFrame):
+        (WebCore::DOMWindowProperty::willDestroyGlobalObjectInFrame):
+        (WebCore::DOMWindowProperty::willDetachGlobalObjectFromFrame):
+        (WebCore::DOMWindowProperty::frame const):
+        * page/DOMWindowProperty.h:
+        (WebCore::DOMWindowProperty::window const):
+        * page/History.cpp:
+        (WebCore::History::History):
+        (WebCore::History::length const):
+        (WebCore::History::scrollRestoration const):
+        (WebCore::History::setScrollRestoration):
+        (WebCore::History::stateInternal const):
+        (WebCore::History::go):
+        (WebCore::History::urlForState):
+        (WebCore::History::stateObjectAdded):
+        * page/History.h:
+        * page/Location.cpp:
+        (WebCore::Location::Location):
+        (WebCore::Location::url const):
+        (WebCore::Location::href const):
+        (WebCore::Location::protocol const):
+        (WebCore::Location::host const):
+        (WebCore::Location::hostname const):
+        (WebCore::Location::port const):
+        (WebCore::Location::pathname const):
+        (WebCore::Location::search const):
+        (WebCore::Location::origin const):
+        (WebCore::Location::ancestorOrigins const):
+        (WebCore::Location::hash const):
+        (WebCore::Location::setHref):
+        (WebCore::Location::setProtocol):
+        (WebCore::Location::setHost):
+        (WebCore::Location::setHostname):
+        (WebCore::Location::setPort):
+        (WebCore::Location::setPathname):
+        (WebCore::Location::setSearch):
+        (WebCore::Location::setHash):
+        (WebCore::Location::assign):
+        (WebCore::Location::replace):
+        (WebCore::Location::reload):
+        (WebCore::Location::setLocation):
+        * page/Location.h:
+        (WebCore::Location::create):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::Navigator):
+        (WebCore::Navigator::appVersion const):
+        (WebCore::Navigator::userAgent const):
+        (WebCore::Navigator::share):
+        (WebCore::Navigator::plugins):
+        (WebCore::Navigator::mimeTypes):
+        (WebCore::Navigator::cookieEnabled const):
+        (WebCore::Navigator::javaEnabled const):
+        (WebCore::Navigator::standalone const):
+        * page/Navigator.h:
+        * page/Performance.cpp:
+        (WebCore::Performance::navigation):
+        (WebCore::Performance::timing):
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::PerformanceNavigation):
+        (WebCore::PerformanceNavigation::type const):
+        (WebCore::PerformanceNavigation::redirectCount const):
+        * page/PerformanceNavigation.h:
+        (WebCore::PerformanceNavigation::create):
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::PerformanceTiming):
+        (WebCore::PerformanceTiming::documentLoader const):
+        (WebCore::PerformanceTiming::documentTiming const):
+        * page/PerformanceTiming.h:
+        (WebCore::PerformanceTiming::create):
+        * page/Screen.cpp:
+        (WebCore::Screen::Screen):
+        (WebCore::Screen::height const):
+        (WebCore::Screen::width const):
+        (WebCore::Screen::colorDepth const):
+        (WebCore::Screen::pixelDepth const):
+        (WebCore::Screen::availLeft const):
+        (WebCore::Screen::availTop const):
+        (WebCore::Screen::availHeight const):
+        (WebCore::Screen::availWidth const):
+        * page/Screen.h:
+        * page/VisualViewport.cpp:
+        (WebCore::VisualViewport::VisualViewport):
+        (WebCore::VisualViewport::scriptExecutionContext const):
+        (WebCore::VisualViewport::addEventListener):
+        (WebCore::VisualViewport::updateFrameLayout const):
+        (WebCore::VisualViewport::offsetLeft const):
+        (WebCore::VisualViewport::offsetTop const):
+        (WebCore::VisualViewport::pageLeft const):
+        (WebCore::VisualViewport::pageTop const):
+        (WebCore::VisualViewport::width const):
+        (WebCore::VisualViewport::height const):
+        (WebCore::VisualViewport::scale const):
+        (WebCore::VisualViewport::update):
+        (WebCore::VisualViewport::enqueueResizeEvent):
+        (WebCore::VisualViewport::enqueueScrollEvent):
+        * page/VisualViewport.h:
+        * page/WebKitNamespace.cpp:
+        (WebCore::WebKitNamespace::WebKitNamespace):
+        * page/WebKitNamespace.h:
+        (WebCore::WebKitNamespace::create):
+        * plugins/DOMMimeTypeArray.cpp:
+        (WebCore::DOMMimeTypeArray::DOMMimeTypeArray):
+        (WebCore::DOMMimeTypeArray::item):
+        (WebCore::DOMMimeTypeArray::namedItem):
+        (WebCore::DOMMimeTypeArray::getPluginData const):
+        * plugins/DOMMimeTypeArray.h:
+        (WebCore::DOMMimeTypeArray::create):
+        * plugins/DOMPluginArray.cpp:
+        (WebCore::DOMPluginArray::DOMPluginArray):
+        (WebCore::DOMPluginArray::item):
+        (WebCore::DOMPluginArray::namedItem):
+        (WebCore::DOMPluginArray::refresh):
+        (WebCore::DOMPluginArray::pluginData const):
+        * plugins/DOMPluginArray.h:
+        (WebCore::DOMPluginArray::create):
+        * storage/Storage.cpp:
+        (WebCore::Storage::create):
+        (WebCore::Storage::Storage):
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        (WebCore::Storage::clear):
+        * storage/Storage.h:
+
 2018-10-08  Antti Koivisto  <antti@apple.com>
 
         Move FontCascadeDescription to a file of its own

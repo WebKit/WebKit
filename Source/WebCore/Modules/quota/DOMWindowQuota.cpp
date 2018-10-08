@@ -41,7 +41,7 @@
 namespace WebCore {
 
 DOMWindowQuota::DOMWindowQuota(DOMWindow* window)
-    : DOMWindowProperty(window->frame())
+    : DOMWindowProperty(window)
 {
 }
 

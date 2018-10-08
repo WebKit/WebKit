@@ -43,16 +43,17 @@
 
 namespace WebCore {
 
-History::History(Frame& frame)
-    : DOMWindowProperty(&frame)
+History::History(DOMWindow& window)
+    : DOMWindowProperty(&window)
 {
 }
 
 unsigned History::length() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
-    auto* page = m_frame->page();
+    auto* page = frame->page();
     if (!page)
         return 0;
     return page->backForward().count();
@@ -60,10 +61,11 @@ unsigned History::length() const
 
 ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return Exception { SecurityError };
 
-    auto* historyItem = m_frame->loader().history().currentItem();
+    auto* historyItem = frame->loader().history().currentItem();
     if (!historyItem)
         return ScrollRestoration::Auto;
     
@@ -72,10 +74,11 @@ ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const
 
 ExceptionOr<void> History::setScrollRestoration(ScrollRestoration scrollRestoration)
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return Exception { SecurityError };
 
-    auto* historyItem = m_frame->loader().history().currentItem();
+    auto* historyItem = frame->loader().history().currentItem();
     if (historyItem)
         historyItem->setShouldRestoreScrollPosition(scrollRestoration == ScrollRestoration::Auto);
 
@@ -90,9 +93,10 @@ SerializedScriptValue* History::state()
 
 SerializedScriptValue* History::stateInternal() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return nullptr;
-    auto* historyItem = m_frame->loader().history().currentItem();
+    auto* historyItem = frame->loader().history().currentItem();
     if (!historyItem)
         return nullptr;
     return historyItem->stateObject();
@@ -137,34 +141,37 @@ void History::forward(Document& document)
 
 void History::go(int distance)
 {
-    LOG(History, "History %p go(%d) frame %p (main frame %d)", this, distance, m_frame, m_frame ? m_frame->isMainFrame() : false);
+    auto* frame = this->frame();
+    LOG(History, "History %p go(%d) frame %p (main frame %d)", this, distance, frame, frame ? frame->isMainFrame() : false);
 
-    if (!m_frame)
+    if (!frame)
         return;
 
-    m_frame->navigationScheduler().scheduleHistoryNavigation(distance);
+    frame->navigationScheduler().scheduleHistoryNavigation(distance);
 }
 
 void History::go(Document& document, int distance)
 {
-    LOG(History, "History %p go(%d) in document %p frame %p (main frame %d)", this, distance, &document, m_frame, m_frame ? m_frame->isMainFrame() : false);
+    auto* frame = this->frame();
+    LOG(History, "History %p go(%d) in document %p frame %p (main frame %d)", this, distance, &document, frame, frame ? frame->isMainFrame() : false);
 
-    if (!m_frame)
+    if (!frame)
         return;
 
     ASSERT(isMainThread());
 
-    if (!document.canNavigate(m_frame))
+    if (!document.canNavigate(frame))
         return;
 
-    m_frame->navigationScheduler().scheduleHistoryNavigation(distance);
+    frame->navigationScheduler().scheduleHistoryNavigation(distance);
 }
 
 URL History::urlForState(const String& urlString)
 {
+    auto* frame = this->frame();
     if (urlString.isNull())
-        return m_frame->document()->url();
-    return m_frame->document()->completeURL(urlString);
+        return frame->document()->url();
+    return frame->document()->completeURL(urlString);
 }
 
 ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString, StateObjectType stateObjectType)
@@ -176,14 +183,15 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     static Seconds stateObjectTimeSpan { 30_s };
     static unsigned perStateObjectTimeSpanLimit = 100;
 
-    if (!m_frame || !m_frame->page())
+    auto* frame = this->frame();
+    if (!frame || !frame->page())
         return { };
 
     URL fullURL = urlForState(urlString);
     if (!fullURL.isValid())
         return Exception { SecurityError };
 
-    const URL& documentURL = m_frame->document()->url();
+    const URL& documentURL = frame->document()->url();
 
     auto createBlockedURLSecurityErrorWithMessageSuffix = [&] (const char* suffix) {
         const char* functionName = stateObjectType == StateObjectType::Replace ? "history.replaceState()" : "history.pushState()";
@@ -192,7 +200,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     if (!protocolHostAndPortAreEqual(fullURL, documentURL) || fullURL.user() != documentURL.user() || fullURL.pass() != documentURL.pass())
         return createBlockedURLSecurityErrorWithMessageSuffix("Protocols, domains, ports, usernames, and passwords must match.");
 
-    const auto& documentSecurityOrigin = m_frame->document()->securityOrigin();
+    const auto& documentSecurityOrigin = frame->document()->securityOrigin();
     // We allow sandboxed documents, 'data:'/'file:' URLs, etc. to use 'pushState'/'replaceState' to modify the URL query and fragments.
     // See https://bugs.webkit.org/show_bug.cgi?id=183028 for the compatibility concerns.
     bool allowSandboxException = (documentSecurityOrigin.isLocal() || documentSecurityOrigin.isUnique()) && equalIgnoringQueryAndFragment(documentURL, fullURL);
@@ -200,7 +208,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     if (!allowSandboxException && !documentSecurityOrigin.canRequest(fullURL) && (fullURL.path() != documentURL.path() || fullURL.query() != documentURL.query()))
         return createBlockedURLSecurityErrorWithMessageSuffix("Paths and fragments must match for a sandboxed document.");
 
-    Document* mainDocument = m_frame->page()->mainFrame().document();
+    Document* mainDocument = frame->page()->mainFrame().document();
     History* mainHistory = nullptr;
     if (mainDocument) {
         if (auto* mainDOMWindow = mainDocument->domWindow())
@@ -250,14 +258,14 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     ++mainHistory->m_currentStateObjectTimeSpanObjectsAdded;
 
     if (!urlString.isEmpty())
-        m_frame->document()->updateURLForPushOrReplaceState(fullURL);
+        frame->document()->updateURLForPushOrReplaceState(fullURL);
 
     if (stateObjectType == StateObjectType::Push) {
-        m_frame->loader().history().pushState(WTFMove(data), title, fullURL.string());
-        m_frame->loader().client().dispatchDidPushStateWithinPage();
+        frame->loader().history().pushState(WTFMove(data), title, fullURL.string());
+        frame->loader().client().dispatchDidPushStateWithinPage();
     } else if (stateObjectType == StateObjectType::Replace) {
-        m_frame->loader().history().replaceState(WTFMove(data), title, fullURL.string());
-        m_frame->loader().client().dispatchDidReplaceStateWithinPage();
+        frame->loader().history().replaceState(WTFMove(data), title, fullURL.string());
+        frame->loader().client().dispatchDidReplaceStateWithinPage();
     }
 
     return { };

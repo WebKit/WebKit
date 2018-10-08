@@ -35,19 +35,17 @@
 
 namespace WebCore {
 
-class Frame;
-
 class BarProp : public ScriptWrappable, public RefCounted<BarProp>, public DOMWindowProperty {
 public:
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
 
-    static Ref<BarProp> create(Frame* frame, Type type) { return adoptRef(*new BarProp(frame, type)); }
+    static Ref<BarProp> create(DOMWindow& window, Type type) { return adoptRef(*new BarProp(window, type)); }
 
     Type type() const;
     bool visible() const;
 
 private:
-    BarProp(Frame*, Type);
+    BarProp(DOMWindow&, Type);
     Type m_type;
 };
 

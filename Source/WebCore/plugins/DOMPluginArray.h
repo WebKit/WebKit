@@ -27,12 +27,11 @@
 
 namespace WebCore {
 
-class Frame;
 class PluginData;
 
 class DOMPluginArray : public ScriptWrappable, public RefCounted<DOMPluginArray>, public DOMWindowProperty {
 public:
-    static Ref<DOMPluginArray> create(Frame* frame) { return adoptRef(*new DOMPluginArray(frame)); }
+    static Ref<DOMPluginArray> create(DOMWindow* window) { return adoptRef(*new DOMPluginArray(window)); }
     ~DOMPluginArray();
 
     unsigned length() const;
@@ -43,7 +42,7 @@ public:
     void refresh(bool reloadPages);
 
 private:
-    explicit DOMPluginArray(Frame*);
+    explicit DOMPluginArray(DOMWindow*);
     PluginData* pluginData() const;
 };
 

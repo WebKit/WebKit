@@ -43,8 +43,8 @@
 
 namespace WebCore {
 
-PerformanceTiming::PerformanceTiming(Frame* frame)
-    : DOMWindowProperty(frame)
+PerformanceTiming::PerformanceTiming(DOMWindow* window)
+    : DOMWindowProperty(window)
 {
 }
 
@@ -296,18 +296,20 @@ unsigned long long PerformanceTiming::loadEventEnd() const
 
 DocumentLoader* PerformanceTiming::documentLoader() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return nullptr;
 
-    return m_frame->loader().documentLoader();
+    return frame->loader().documentLoader();
 }
 
 const DocumentTiming* PerformanceTiming::documentTiming() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return nullptr;
 
-    Document* document = m_frame->document();
+    Document* document = frame->document();
     if (!document)
         return nullptr;
 

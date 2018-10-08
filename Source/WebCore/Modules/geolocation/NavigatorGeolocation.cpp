@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-NavigatorGeolocation::NavigatorGeolocation(Frame* frame)
-    : DOMWindowProperty(frame)
+NavigatorGeolocation::NavigatorGeolocation(DOMWindow* window)
+    : DOMWindowProperty(window)
 {
 }
 
@@ -49,7 +49,7 @@ NavigatorGeolocation* NavigatorGeolocation::from(Navigator* navigator)
 {
     NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorGeolocation>(navigator->frame());
+        auto newSupplement = std::make_unique<NavigatorGeolocation>(navigator->window());
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
     }

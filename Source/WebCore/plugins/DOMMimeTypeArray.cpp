@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-DOMMimeTypeArray::DOMMimeTypeArray(Frame* frame)
-    : DOMWindowProperty(frame)
+DOMMimeTypeArray::DOMMimeTypeArray(DOMWindow* window)
+    : DOMWindowProperty(window)
 {
 }
 
@@ -59,7 +59,7 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::item(unsigned index)
 
     if (index >= mimes.size())
         return nullptr;
-    return DOMMimeType::create(data, m_frame, index);
+    return DOMMimeType::create(data, frame(), index);
 }
 
 RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomicString& propertyName)
@@ -73,7 +73,7 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomicString& propertyName
     data->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
     for (unsigned i = 0; i < mimes.size(); ++i) {
         if (mimes[i].type == propertyName)
-            return DOMMimeType::create(data, m_frame, i);
+            return DOMMimeType::create(data, frame(), i);
     }
     return nullptr;
 }
@@ -98,16 +98,15 @@ Vector<AtomicString> DOMMimeTypeArray::supportedPropertyNames()
 
 PluginData* DOMMimeTypeArray::getPluginData() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return nullptr;
 
-    Page* page = m_frame->page();
+    auto* page = frame->page();
     if (!page)
         return nullptr;
 
-    PluginData* pluginData = &page->pluginData();
-
-    return pluginData;
+    return &page->pluginData();
 }
 
 } // namespace WebCore

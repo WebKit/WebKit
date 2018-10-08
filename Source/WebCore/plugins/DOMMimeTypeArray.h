@@ -27,12 +27,11 @@
 
 namespace WebCore {
 
-class Frame;
 class PluginData;
 
 class DOMMimeTypeArray : public ScriptWrappable, public RefCounted<DOMMimeTypeArray>, public DOMWindowProperty {
 public:
-    static Ref<DOMMimeTypeArray> create(Frame* frame) { return adoptRef(*new DOMMimeTypeArray(frame)); }
+    static Ref<DOMMimeTypeArray> create(DOMWindow* window) { return adoptRef(*new DOMMimeTypeArray(window)); }
     ~DOMMimeTypeArray();
 
     unsigned length() const;
@@ -41,7 +40,7 @@ public:
     Vector<AtomicString> supportedPropertyNames();
 
 private:
-    explicit DOMMimeTypeArray(Frame*);
+    explicit DOMMimeTypeArray(DOMWindow*);
     PluginData* getPluginData() const;
 };
 

@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-BarProp::BarProp(Frame* frame, Type type)
-    : DOMWindowProperty(frame)
+BarProp::BarProp(DOMWindow& window, Type type)
+    : DOMWindowProperty(&window)
     , m_type(type)
 {
 }
@@ -48,9 +48,10 @@ BarProp::Type BarProp::type() const
 
 bool BarProp::visible() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return false;
-    Page* page = m_frame->page();
+    auto* page = frame->page();
     if (!page)
         return false;
 

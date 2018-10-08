@@ -37,7 +37,7 @@
 namespace WebCore {
 
 DOMWindowIndexedDatabase::DOMWindowIndexedDatabase(DOMWindow* window)
-    : DOMWindowProperty(window->frame())
+    : DOMWindowProperty(window)
     , m_window(window)
 {
 }

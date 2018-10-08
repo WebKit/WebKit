@@ -35,12 +35,11 @@
 namespace WebCore {
 
 class Document;
-class Frame;
 class URL;
 
 class History final : public ScriptWrappable, public RefCounted<History>, public DOMWindowProperty {
 public:
-    static Ref<History> create(Frame& frame) { return adoptRef(*new History(frame)); }
+    static Ref<History> create(DOMWindow& window) { return adoptRef(*new History(window)); }
 
     unsigned length() const;
     
@@ -69,7 +68,7 @@ public:
     ExceptionOr<void> replaceState(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString);
 
 private:
-    explicit History(Frame&);
+    explicit History(DOMWindow&);
 
     enum class StateObjectType { Push, Replace };
     ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& title, const String& url, StateObjectType);

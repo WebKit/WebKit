@@ -1,3 +1,13 @@
+2018-10-08  Chris Dumez  <cdumez@apple.com>
+
+        Have DOMWindowProperty get is frame from its associated DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=190341
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp:
+        (WebKit::InjectedBundleDOMWindowExtension::InjectedBundleDOMWindowExtension):
+
 2018-10-07  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix HAVE(LINK_PREVIEW) iOS builds.

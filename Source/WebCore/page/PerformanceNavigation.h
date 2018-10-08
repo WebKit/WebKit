@@ -36,11 +36,9 @@
 
 namespace WebCore {
 
-class Frame;
-
 class PerformanceNavigation : public RefCounted<PerformanceNavigation>, public DOMWindowProperty {
 public:
-    static Ref<PerformanceNavigation> create(Frame* frame) { return adoptRef(*new PerformanceNavigation(frame)); }
+    static Ref<PerformanceNavigation> create(DOMWindow* window) { return adoptRef(*new PerformanceNavigation(window)); }
 
     enum PerformanceNavigationType {
         TYPE_NAVIGATE,
@@ -53,7 +51,7 @@ public:
     unsigned short redirectCount() const;
 
 private:
-    explicit PerformanceNavigation(Frame*);
+    explicit PerformanceNavigation(DOMWindow*);
 };
 
 } // namespace WebCore

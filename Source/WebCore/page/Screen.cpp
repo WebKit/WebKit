@@ -38,83 +38,91 @@
 
 namespace WebCore {
 
-Screen::Screen(Frame* frame)
-    : DOMWindowProperty(frame)
+Screen::Screen(DOMWindow& window)
+    : DOMWindowProperty(&window)
 {
 }
 
 unsigned Screen::height() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logScreenAPIAccessed(*m_frame->document(), ResourceLoadStatistics::ScreenAPI::Height);
-    long height = static_cast<long>(screenRect(m_frame->view()).height());
+        ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::Height);
+    long height = static_cast<long>(screenRect(frame->view()).height());
     return static_cast<unsigned>(height);
 }
 
 unsigned Screen::width() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logScreenAPIAccessed(*m_frame->document(), ResourceLoadStatistics::ScreenAPI::Width);
-    long width = static_cast<long>(screenRect(m_frame->view()).width());
+        ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::Width);
+    long width = static_cast<long>(screenRect(frame->view()).width());
     return static_cast<unsigned>(width);
 }
 
 unsigned Screen::colorDepth() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logScreenAPIAccessed(*m_frame->document(), ResourceLoadStatistics::ScreenAPI::ColorDepth);
-    return static_cast<unsigned>(screenDepth(m_frame->view()));
+        ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::ColorDepth);
+    return static_cast<unsigned>(screenDepth(frame->view()));
 }
 
 unsigned Screen::pixelDepth() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logScreenAPIAccessed(*m_frame->document(), ResourceLoadStatistics::ScreenAPI::PixelDepth);
-    return static_cast<unsigned>(screenDepth(m_frame->view()));
+        ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::PixelDepth);
+    return static_cast<unsigned>(screenDepth(frame->view()));
 }
 
 int Screen::availLeft() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logScreenAPIAccessed(*m_frame->document(), ResourceLoadStatistics::ScreenAPI::AvailLeft);
-    return static_cast<int>(screenAvailableRect(m_frame->view()).x());
+        ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::AvailLeft);
+    return static_cast<int>(screenAvailableRect(frame->view()).x());
 }
 
 int Screen::availTop() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logScreenAPIAccessed(*m_frame->document(), ResourceLoadStatistics::ScreenAPI::AvailTop);
-    return static_cast<int>(screenAvailableRect(m_frame->view()).y());
+        ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::AvailTop);
+    return static_cast<int>(screenAvailableRect(frame->view()).y());
 }
 
 unsigned Screen::availHeight() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logScreenAPIAccessed(*m_frame->document(), ResourceLoadStatistics::ScreenAPI::AvailHeight);
-    return static_cast<unsigned>(screenAvailableRect(m_frame->view()).height());
+        ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::AvailHeight);
+    return static_cast<unsigned>(screenAvailableRect(frame->view()).height());
 }
 
 unsigned Screen::availWidth() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return 0;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logScreenAPIAccessed(*m_frame->document(), ResourceLoadStatistics::ScreenAPI::AvailWidth);
-    return static_cast<unsigned>(screenAvailableRect(m_frame->view()).width());
+        ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::AvailWidth);
+    return static_cast<unsigned>(screenAvailableRect(frame->view()).width());
 }
 
 } // namespace WebCore

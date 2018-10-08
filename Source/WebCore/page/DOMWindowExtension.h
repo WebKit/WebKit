@@ -37,9 +37,9 @@ class Frame;
 
 class DOMWindowExtension : public RefCounted<DOMWindowExtension>, public DOMWindowProperty {
 public:
-    static Ref<DOMWindowExtension> create(Frame* frame, DOMWrapperWorld& world)
+    static Ref<DOMWindowExtension> create(DOMWindow* window, DOMWrapperWorld& world)
     {
-        return adoptRef(*new DOMWindowExtension(frame, world));
+        return adoptRef(*new DOMWindowExtension(window, world));
     }
 
     void disconnectFrameForDocumentSuspension() override;
@@ -51,7 +51,7 @@ public:
     DOMWrapperWorld& world() const { return m_world; }
 
 private:
-    WEBCORE_EXPORT DOMWindowExtension(Frame*, DOMWrapperWorld&);
+    WEBCORE_EXPORT DOMWindowExtension(DOMWindow*, DOMWrapperWorld&);
 
     Ref<DOMWrapperWorld> m_world;
     RefPtr<Frame> m_disconnectedFrame;

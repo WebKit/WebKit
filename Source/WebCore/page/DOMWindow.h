@@ -131,20 +131,20 @@ public:
     static bool canShowModalDialog(const Frame&);
     WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
 
-    Screen* screen() const;
-    History* history() const;
+    Screen* screen();
+    History* history();
     Crypto* crypto() const;
-    BarProp* locationbar() const;
-    BarProp* menubar() const;
-    BarProp* personalbar() const;
-    BarProp* scrollbars() const;
-    BarProp* statusbar() const;
-    BarProp* toolbar() const;
-    Navigator* navigator() const;
+    BarProp* locationbar();
+    BarProp* menubar();
+    BarProp* personalbar();
+    BarProp* scrollbars();
+    BarProp* statusbar();
+    BarProp* toolbar();
+    Navigator* navigator();
     Navigator* optionalNavigator() const { return m_navigator.get(); }
-    Navigator* clientInformation() const { return navigator(); }
+    Navigator* clientInformation() { return navigator(); }
 
-    Location* location() const;
+    Location* location();
     void setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& location, SetLocationLocking = LockHistoryBasedOnGestureState);
 
     DOMSelection* getSelection();
@@ -211,7 +211,7 @@ public:
 
     // CSSOM View Module
 
-    RefPtr<StyleMedia> styleMedia() const;
+    RefPtr<StyleMedia> styleMedia();
 
     // DOM Level 2 Style Interface
 
@@ -247,7 +247,7 @@ public:
     void resizeBy(float x, float y) const;
     void resizeTo(float width, float height) const;
 
-    VisualViewport* visualViewport() const;
+    VisualViewport* visualViewport();
 
     // Timers
     ExceptionOr<int> setTimeout(JSC::ExecState&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
@@ -283,12 +283,12 @@ public:
     void finishedLoading();
 
     // HTML 5 key/value storage
-    ExceptionOr<Storage*> sessionStorage() const;
-    ExceptionOr<Storage*> localStorage() const;
+    ExceptionOr<Storage*> sessionStorage();
+    ExceptionOr<Storage*> localStorage();
     Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
     Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 
-    DOMApplicationCache* applicationCache() const;
+    DOMApplicationCache* applicationCache();
     DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 
     CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
@@ -321,7 +321,7 @@ public:
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
     bool shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld&);
-    WebKitNamespace* webkitNamespace() const;
+    WebKitNamespace* webkitNamespace();
 #endif
 
     // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,

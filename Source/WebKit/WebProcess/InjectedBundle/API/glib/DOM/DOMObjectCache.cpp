@@ -102,10 +102,10 @@ public:
         ASSERT(!m_objects.contains(&data));
 
         WebCore::DOMWindow* domWindow = m_frame->document()->domWindow();
-        if (domWindow && (!m_domWindowObserver || m_domWindowObserver->domWindow() != domWindow)) {
+        if (domWindow && (!m_domWindowObserver || m_domWindowObserver->window() != domWindow)) {
             // New DOMWindow, clear the cache and create a new DOMWindowObserver.
             clear();
-            m_domWindowObserver = std::make_unique<DOMWindowObserver>(*m_frame, *this, domWindow);
+            m_domWindowObserver = std::make_unique<DOMWindowObserver>(*domWindow, *this);
         }
 
         m_objects.append(&data);
@@ -116,19 +116,15 @@ private:
     class DOMWindowObserver final: public WebCore::DOMWindowProperty {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        DOMWindowObserver(WebCore::Frame& frame, DOMObjectCacheFrameObserver& frameObserver, WebCore::DOMWindow* window)
-            : DOMWindowProperty(&frame)
+        DOMWindowObserver(WebCore::DOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)
+            : DOMWindowProperty(&window)
             , m_frameObserver(frameObserver)
-            , m_domWindow(window)
         {
-            ASSERT(m_domWindow);
         }
 
         virtual ~DOMWindowObserver()
         {
         }
-
-        WebCore::DOMWindow* domWindow() const { return m_domWindow; }
 
     private:
         void willDetachGlobalObjectFromFrame() override
@@ -139,7 +135,6 @@ private:
         }
 
         DOMObjectCacheFrameObserver& m_frameObserver;
-        WebCore::DOMWindow* m_domWindow;
     };
 
     static void objectFinalizedCallback(gpointer userData, GObject* finalizedObject)

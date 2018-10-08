@@ -33,15 +33,14 @@
 
 namespace WebCore {
 
-class Frame;
 class UserContentProvider;
 class UserMessageHandlersNamespace;
 
 class WebKitNamespace : public DOMWindowProperty, public RefCounted<WebKitNamespace> {
 public:
-    static Ref<WebKitNamespace> create(Frame& frame, UserContentProvider& userContentProvider)
+    static Ref<WebKitNamespace> create(DOMWindow& window, UserContentProvider& userContentProvider)
     {
-        return adoptRef(*new WebKitNamespace(frame, userContentProvider));
+        return adoptRef(*new WebKitNamespace(window, userContentProvider));
     }
 
     virtual ~WebKitNamespace();
@@ -49,7 +48,7 @@ public:
     UserMessageHandlersNamespace* messageHandlers();
 
 private:
-    explicit WebKitNamespace(Frame&, UserContentProvider&);
+    explicit WebKitNamespace(DOMWindow&, UserContentProvider&);
 
     Ref<UserMessageHandlersNamespace> m_messageHandlerNamespace;
 };

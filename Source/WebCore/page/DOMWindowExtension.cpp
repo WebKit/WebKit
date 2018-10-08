@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-DOMWindowExtension::DOMWindowExtension(Frame* frame, DOMWrapperWorld& world)
-    : DOMWindowProperty(frame)
+DOMWindowExtension::DOMWindowExtension(DOMWindow* window, DOMWrapperWorld& world)
+    : DOMWindowProperty(window)
     , m_world(world)
     , m_wasDetached(false)
 {

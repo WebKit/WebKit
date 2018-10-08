@@ -37,16 +37,16 @@
 
 namespace WebCore {
 
-Ref<Storage> Storage::create(Frame* frame, RefPtr<StorageArea>&& storageArea)
+Ref<Storage> Storage::create(DOMWindow& window, RefPtr<StorageArea>&& storageArea)
 {
-    return adoptRef(*new Storage(frame, WTFMove(storageArea)));
+    return adoptRef(*new Storage(window, WTFMove(storageArea)));
 }
 
-Storage::Storage(Frame* frame, RefPtr<StorageArea>&& storageArea)
-    : DOMWindowProperty(frame)
+Storage::Storage(DOMWindow& window, RefPtr<StorageArea>&& storageArea)
+    : DOMWindowProperty(&window)
     , m_storageArea(WTFMove(storageArea))
 {
-    ASSERT(m_frame);
+    ASSERT(frame());
     ASSERT(m_storageArea);
 
     m_storageArea->incrementAccessCount();
@@ -74,11 +74,12 @@ String Storage::getItem(const String& key) const
 
 ExceptionOr<void> Storage::setItem(const String& key, const String& value)
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return Exception { InvalidAccessError };
 
     bool quotaException = false;
-    m_storageArea->setItem(m_frame, key, value, quotaException);
+    m_storageArea->setItem(frame, key, value, quotaException);
     if (quotaException)
         return Exception { QuotaExceededError };
     return { };
@@ -86,19 +87,21 @@ ExceptionOr<void> Storage::setItem(const String& key, const String& value)
 
 ExceptionOr<void> Storage::removeItem(const String& key)
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return Exception { InvalidAccessError };
 
-    m_storageArea->removeItem(m_frame, key);
+    m_storageArea->removeItem(frame, key);
     return { };
 }
 
 ExceptionOr<void> Storage::clear()
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return Exception { InvalidAccessError };
 
-    m_storageArea->clear(m_frame);
+    m_storageArea->clear(frame);
     return { };
 }
 

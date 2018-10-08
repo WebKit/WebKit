@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-DOMPluginArray::DOMPluginArray(Frame* frame)
-    : DOMWindowProperty(frame)
+DOMPluginArray::DOMPluginArray(DOMWindow* window)
+    : DOMWindowProperty(window)
 {
 }
 
@@ -53,7 +53,7 @@ RefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
     const Vector<PluginInfo>& plugins = data->publiclyVisiblePlugins();
     if (index >= plugins.size())
         return nullptr;
-    return DOMPlugin::create(data, m_frame, plugins[index]);
+    return DOMPlugin::create(data, frame(), plugins[index]);
 }
 
 RefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomicString& propertyName)
@@ -64,7 +64,7 @@ RefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomicString& propertyName)
 
     for (auto& plugin : data->webVisiblePlugins()) {
         if (plugin.name == propertyName)
-            return DOMPlugin::create(data, m_frame, plugin);
+            return DOMPlugin::create(data, frame(), plugin);
     }
     return nullptr;
 }
@@ -87,10 +87,11 @@ Vector<AtomicString> DOMPluginArray::supportedPropertyNames()
 
 void DOMPluginArray::refresh(bool reloadPages)
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return;
 
-    if (!m_frame->page())
+    if (!frame->page())
         return;
 
     Page::refreshPlugins(reloadPages);
@@ -98,10 +99,11 @@ void DOMPluginArray::refresh(bool reloadPages)
 
 PluginData* DOMPluginArray::pluginData() const
 {
-    if (!m_frame)
+    auto* frame = this->frame();
+    if (!frame)
         return nullptr;
 
-    Page* page = m_frame->page();
+    Page* page = frame->page();
     if (!page)
         return nullptr;
 

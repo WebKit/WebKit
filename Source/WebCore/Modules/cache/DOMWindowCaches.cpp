@@ -36,7 +36,7 @@
 namespace WebCore {
 
 DOMWindowCaches::DOMWindowCaches(DOMWindow* window)
-    : DOMWindowProperty(window->frame())
+    : DOMWindowProperty(window)
 {
 }
 

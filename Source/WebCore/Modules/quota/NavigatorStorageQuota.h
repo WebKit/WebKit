@@ -37,13 +37,12 @@
 
 namespace WebCore {
 
-class Frame;
 class StorageQuota;
 class Navigator;
 
 class NavigatorStorageQuota : public Supplement<Navigator>, public DOMWindowProperty {
 public:
-    explicit NavigatorStorageQuota(Frame*);
+    explicit NavigatorStorageQuota(DOMWindow*);
     virtual ~NavigatorStorageQuota();
     static NavigatorStorageQuota* from(Navigator*);
 

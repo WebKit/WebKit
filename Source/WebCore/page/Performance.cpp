@@ -93,7 +93,7 @@ PerformanceNavigation* Performance::navigation()
 
     ASSERT(isMainThread());
     if (!m_navigation)
-        m_navigation = PerformanceNavigation::create(downcast<Document>(*scriptExecutionContext()).frame());
+        m_navigation = PerformanceNavigation::create(downcast<Document>(*scriptExecutionContext()).domWindow());
     return m_navigation.get();
 }
 
@@ -104,7 +104,7 @@ PerformanceTiming* Performance::timing()
 
     ASSERT(isMainThread());
     if (!m_timing)
-        m_timing = PerformanceTiming::create(downcast<Document>(*scriptExecutionContext()).frame());
+        m_timing = PerformanceTiming::create(downcast<Document>(*scriptExecutionContext()).domWindow());
     return m_timing.get();
 }
 

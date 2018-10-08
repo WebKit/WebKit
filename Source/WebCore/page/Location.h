@@ -36,12 +36,11 @@
 namespace WebCore {
 
 class DOMWindow;
-class Frame;
 class URL;
 
 class Location : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
 public:
-    static Ref<Location> create(Frame* frame) { return adoptRef(*new Location(frame)); }
+    static Ref<Location> create(DOMWindow& window) { return adoptRef(*new Location(window)); }
 
     ExceptionOr<void> setHref(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
     String href() const;
@@ -71,7 +70,7 @@ public:
     Ref<DOMStringList> ancestorOrigins() const;
 
 private:
-    explicit Location(Frame*);
+    explicit Location(DOMWindow&);
 
     ExceptionOr<void> setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
 
