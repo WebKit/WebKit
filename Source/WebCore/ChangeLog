@@ -1,3 +1,18 @@
+2018-10-08  Dean Jackson  <dino@apple.com>
+
+        CrashTracer: backboardd at Recursion :: QuartzCore: CA::Render::Updater::prepare_sublayer0
+        https://bugs.webkit.org/show_bug.cgi?id=190376
+        <rdar://problem/44986520>
+
+        Reviewed by Tim Horton.
+
+        Very deep CoreAnimation layer trees can cause problems. Reduce our maximum
+        depth from 256 to 128.
+
+        Modified existing test: compositing/layer-creation/deep-tree.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp: Cap the depth at 128.
+
 2018-10-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r236941.

@@ -89,7 +89,7 @@ static const int cMaxPixelDimension = 2048;
 #endif
 
 // Derived empirically: <rdar://problem/13401861>
-static const unsigned cMaxLayerTreeDepth = 250;
+static const unsigned cMaxLayerTreeDepth = 128;
 
 // About 10 screens of an iPhone 6 Plus. <rdar://problem/44532782>
 static const unsigned cMaxTotalBackdropFilterArea = 1242 * 2208 * 10;

@@ -1,3 +1,13 @@
+2018-10-08  Dean Jackson  <dino@apple.com>
+
+        CrashTracer: backboardd at Recursion :: QuartzCore: CA::Render::Updater::prepare_sublayer0
+        https://bugs.webkit.org/show_bug.cgi?id=190376
+        <rdar://problem/44986520>
+
+        Reviewed by Tim Horton.
+
+        * compositing/layer-creation/deep-tree.html:
+
 2018-10-08  Aditya Keerthi  <akeerthi@apple.com>
 
         Make <input type=color> a runtime enabled (on-by-default) feature
