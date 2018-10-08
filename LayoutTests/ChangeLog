@@ -1,3 +1,12 @@
+2018-10-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r235630?): [Mojave WK1] Layout test compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=189756
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-10-08  David Fenton  <david_fenton@apple.com>
 
         Layout Tests editing/deleting/delete-emoji.html editing/deleting/delete-emoji-1.html editing/deleting/delete-emoji-9.html are passing.
