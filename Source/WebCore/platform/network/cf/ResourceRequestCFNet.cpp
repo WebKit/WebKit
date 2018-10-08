@@ -371,6 +371,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     bool isHiddenFromInspector = hiddenFromInspector();
     auto oldRequester = requester();
     auto oldInitiatorIdentifier = initiatorIdentifier();
+    auto oldInspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier();
 
     *this = delegateProvidedRequest;
 
@@ -379,6 +380,8 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);
     setInitiatorIdentifier(oldInitiatorIdentifier);
+    if (oldInspectorInitiatorNodeIdentifier)
+        setInspectorInitiatorNodeIdentifier(*oldInspectorInitiatorNodeIdentifier);
 }
 
 bool ResourceRequest::httpPipeliningEnabled()

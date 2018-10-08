@@ -67,6 +67,9 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setInitiatorIdentifier(other.initiatorIdentifier().isolatedCopy());
     setCachePartition(other.cachePartition().isolatedCopy());
 
+    if (auto inspectorInitiatorNodeIdentifier = other.inspectorInitiatorNodeIdentifier())
+        setInspectorInitiatorNodeIdentifier(*inspectorInitiatorNodeIdentifier);
+
     if (!other.isSameSiteUnspecified()) {
         setIsSameSite(other.isSameSite());
         setIsTopSite(other.isTopSite());

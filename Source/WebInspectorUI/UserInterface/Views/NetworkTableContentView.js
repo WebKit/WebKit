@@ -44,6 +44,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._resourceDetailView = null;
         this._resourceDetailViewMap = new Map;
 
+        this._domNodeEntries = new Map;
+
         this._waterfallStartTime = NaN;
         this._waterfallEndTime = NaN;
         this._waterfallTimelineRuler = null;
@@ -82,6 +84,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._typeFilterScopeBar = new WI.ScopeBar("network-type-filter-scope-bar", typeFilterScopeBarItems, typeFilterScopeBarItems[0]);
         this._typeFilterScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._typeFilterScopeBarSelectionChanged, this);
+
+        this._groupByDOMNodeNavigationItem = new WI.CheckboxNavigationItem("group-by-node", WI.UIString("Group by Node"), WI.settings.groupByDOMNode.value);
+        this._groupByDOMNodeNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleGroupByDOMNodeCheckedDidChange, this);
 
         this._urlFilterSearchText = null;
         this._urlFilterSearchRegex = null;
@@ -201,7 +206,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     get filterNavigationItems()
     {
-        return [this._urlFilterNavigationItem, this._typeFilterScopeBar];
+        return [this._urlFilterNavigationItem, this._typeFilterScopeBar, this._groupByDOMNodeNavigationItem];
     }
 
     get supportsSave()
@@ -241,6 +246,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             detailView.dispose();
         this._resourceDetailViewMap.clear();
 
+        this._domNodeEntries.clear();
+
         this._hidePopover();
         this._hideResourceDetailView();
 
@@ -263,6 +270,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         for (let detailView of this._resourceDetailViewMap.values())
             detailView.dispose();
         this._resourceDetailViewMap.clear();
+
+        this._domNodeEntries.clear();
 
         this._waterfallStartTime = NaN;
         this._waterfallEndTime = NaN;
@@ -320,7 +329,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._hideResourceDetailView();
 
-        this._entries = this._entries.sort(this._entriesSortComparator);
+        for (let nodeEntry of this._domNodeEntries.values())
+            nodeEntry.initiatedResourceEntries.sort(this._entriesSortComparator);
+
+        this._entries.sort(this._entriesSortComparator);
+
         this._updateFilteredEntries();
         this._table.reloadData();
     }
@@ -361,14 +374,34 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
 
         this._selectedResource = entry.resource;
-        this._showResourceDetailView(this._selectedResource);
+        if (this._selectedResource)
+            this._showResourceDetailView(this._selectedResource);
+        else
+            this._hideResourceDetailView();
     }
 
     tablePopulateCell(table, cell, column, rowIndex)
     {
         let entry = this._filteredEntries[rowIndex];
 
-        cell.classList.toggle("error", entry.resource.hadLoadingError());
+        if (entry.resource)
+            cell.classList.toggle("error", entry.resource.hadLoadingError());
+
+        let setTextContent = (accessor) => {
+            let uniqueValues = this._uniqueValuesForDOMNodeEntry(entry, accessor);
+            if (uniqueValues) {
+                if (uniqueValues.size > 1) {
+                    cell.classList.add("multiple");
+                    cell.textContent = WI.UIString("(multiple)");
+                    return;
+                }
+
+                cell.textContent = uniqueValues.values().next().value || emDash;
+                return;
+            }
+
+            cell.textContent = accessor(entry) || emDash;
+        };
 
         switch (column.identifier) {
         case "name":
@@ -378,45 +411,55 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._populateDomainCell(cell, entry);
             break;
         case "type":
-            cell.textContent = entry.displayType || emDash;
+            setTextContent((resourceEntry) => resourceEntry.displayType);
             break;
         case "mimeType":
-            cell.textContent = entry.mimeType || emDash;
+            setTextContent((resourceEntry) => resourceEntry.mimeType);
             break;
         case "method":
-            cell.textContent = entry.method || emDash;
+            setTextContent((resourceEntry) => resourceEntry.method);
             break;
         case "scheme":
-            cell.textContent = entry.scheme || emDash;
+            setTextContent((resourceEntry) => resourceEntry.scheme);
             break;
         case "status":
-            cell.textContent = entry.status || emDash;
+            setTextContent((resourceEntry) => resourceEntry.status);
             break;
         case "protocol":
-            cell.textContent = entry.protocol || emDash;
+            setTextContent((resourceEntry) => resourceEntry.protocol);
             break;
         case "initiator":
             this._populateInitiatorCell(cell, entry);
             break;
         case "priority":
-            cell.textContent = WI.Resource.displayNameForPriority(entry.priority) || emDash;
+            setTextContent((resourceEntry) => WI.Resource.displayNameForPriority(resourceEntry.priority));
             break;
         case "remoteAddress":
-            cell.textContent = entry.remoteAddress || emDash;
+            setTextContent((resourceEntry) => resourceEntry.remoteAddress);
             break;
         case "connectionIdentifier":
-            cell.textContent = entry.connectionIdentifier || emDash;
+            setTextContent((resourceEntry) => resourceEntry.connectionIdentifier);
             break;
-        case "resourceSize":
-            cell.textContent = isNaN(entry.resourceSize) ? emDash : Number.bytesToString(entry.resourceSize);
+        case "resourceSize": {
+            let resourceSize = entry.resourceSize;
+            let resourceEntries = entry.initiatedResourceEntries;
+            if (resourceEntries)
+                resourceSize = resourceEntries.reduce((accumulator, current) => accumulator + (current.resourceSize || 0), 0);
+            cell.textContent = isNaN(resourceSize) ? emDash : Number.bytesToString(resourceSize);
             break;
+        }
         case "transferSize":
             this._populateTransferSizeCell(cell, entry);
             break;
-        case "time":
+        case "time": {
             // FIXME: <https://webkit.org/b/176748> Web Inspector: Frontend sometimes receives resources with negative duration (responseEnd - requestStart)
-            cell.textContent = isNaN(entry.time) ? emDash : Number.secondsToString(Math.max(entry.time, 0));
+            let time = entry.time;
+            let resourceEntries = entry.initiatedResourceEntries;
+            if (resourceEntries)
+                time = resourceEntries.reduce((accumulator, current) => accumulator + (current.time || 0), 0);
+            cell.textContent = isNaN(time) ? emDash : Number.secondsToString(Math.max(time, 0));
             break;
+        }
         case "waterfall":
             this._populateWaterfallGraph(cell, entry);
             break;
@@ -431,6 +474,30 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         console.assert(!cell.firstChild, "We expect the cell to be empty.", cell, cell.firstChild);
 
+        function createIconElement() {
+            let iconElement = cell.appendChild(document.createElement("img"));
+            iconElement.className = "icon";
+        }
+
+        let domNode = entry.domNode;
+        if (domNode) {
+            let disclosureElement = cell.appendChild(document.createElement("img"));
+            disclosureElement.classList.add("disclosure");
+            disclosureElement.classList.toggle("expanded", !!entry.expanded);
+            disclosureElement.addEventListener("click", (event) => {
+                entry.expanded = !entry.expanded;
+
+                this._updateFilteredEntries();
+                this._table.reloadData();
+            });
+
+            createIconElement();
+
+            cell.classList.add("dom-node");
+            cell.appendChild(WI.linkifyNodeReference(domNode));
+            return;
+        }
+
         let resource = entry.resource;
         if (resource.isLoading()) {
             let statusElement = cell.appendChild(document.createElement("div"));
@@ -439,36 +506,76 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             statusElement.appendChild(spinner.element);
         }
 
-        let iconElement = cell.appendChild(document.createElement("img"));
-        iconElement.className = "icon";
-        cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName, entry.resource.type);
+        createIconElement();
+
+        cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName);
 
         let nameElement = cell.appendChild(document.createElement("span"));
-        nameElement.textContent = entry.name;
 
-        cell.title = entry.resource.url;
+        if (WI.settings.groupByDOMNode.value && resource.initiatorNode) {
+            let nodeEntry = this._domNodeEntries.get(resource.initiatorNode);
+            if (nodeEntry.initiatedResourceEntries.length > 1) {
+                cell.classList.add("grouped-by-node");
+
+                let range = resource.requestedByteRange;
+                if (range) {
+                    cell.classList.add("resource-type-range");
+                    nameElement.textContent = WI.UIString("Byte Range %s\u2013%s").format(range.start, range.end);
+                }
+            }
+        }
+
+        if (!nameElement.textContent) {
+            cell.classList.add(resource.type);
+            nameElement.textContent = entry.name;
+        }
+
+        cell.title = resource.url;
     }
 
     _populateDomainCell(cell, entry)
     {
         console.assert(!cell.firstChild, "We expect the cell to be empty.", cell, cell.firstChild);
 
+        function createIconAndText(scheme, domain) {
+            let secure = scheme === "https" || scheme === "wss";
+            if (secure) {
+                let lockIconElement = cell.appendChild(document.createElement("img"));
+                lockIconElement.className = "lock";
+            }
+
+            cell.append(domain);
+        }
+
+        let uniqueSchemeValues = this._uniqueValuesForDOMNodeEntry(entry, (resourceEntry) => resourceEntry.scheme);
+        let uniqueDomainValues = this._uniqueValuesForDOMNodeEntry(entry, (resourceEntry) => resourceEntry.domain);
+        if (uniqueSchemeValues && uniqueDomainValues) {
+            if (uniqueSchemeValues.size > 1 || uniqueDomainValues.size > 1) {
+                cell.classList.add("multiple");
+                cell.textContent = WI.UIString("(multiple)");
+                return;
+            }
+
+            createIconAndText(uniqueSchemeValues.values().next().value, uniqueDomainValues.values().next().value);
+            return;
+        }
+
         if (!entry.domain) {
             cell.textContent = emDash;
             return;
         }
 
-        let secure = entry.scheme === "https" || entry.scheme === "wss";
-        if (secure) {
-            let lockIconElement = cell.appendChild(document.createElement("img"));
-            lockIconElement.className = "lock";
-        }
-
-        cell.append(entry.domain);
+        createIconAndText(entry.scheme, entry.domain);
     }
 
     _populateInitiatorCell(cell, entry)
     {
+        let domNode = entry.domNode;
+        if (domNode) {
+            cell.textContent = emDash;
+            return;
+        }
+
         let initiatorLocation = entry.resource.initiatorSourceCodeLocation;
         if (!initiatorLocation) {
             cell.textContent = emDash;
@@ -484,6 +591,31 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _populateTransferSizeCell(cell, entry)
     {
+        let resourceEntries = entry.initiatedResourceEntries;
+        if (resourceEntries) {
+            if (resourceEntries.every((resourceEntry) => resourceEntry.resource.responseSource === WI.Resource.ResponseSource.MemoryCache)) {
+                cell.classList.add("cache-type");
+                cell.textContent = WI.UIString("(memory)");
+                return;
+            }
+            if (resourceEntries.every((resourceEntry) => resourceEntry.resource.responseSource === WI.Resource.ResponseSource.DiskCache)) {
+                cell.classList.add("cache-type");
+                cell.textContent = WI.UIString("(disk)");
+                return;
+            }
+            if (resourceEntries.every((resourceEntry) => resourceEntry.resource.responseSource === WI.Resource.ResponseSource.ServiceWorker)) {
+                cell.classList.add("cache-type");
+                cell.textContent = WI.UIString("(service worker)");
+                return;
+            }
+            let transferSize = resourceEntries.reduce((accumulator, current) => accumulator + (current.transferSize || 0), 0);
+            if (isNaN(transferSize))
+                cell.textContent = emDash;
+            else
+                cell.textContent = Number.bytesToString(transferSize);
+            return;
+        }
+
         let responseSource = entry.resource.responseSource;
         if (responseSource === WI.Resource.ResponseSource.MemoryCache) {
             cell.classList.add("cache-type");
@@ -509,6 +641,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _populateWaterfallGraph(cell, entry)
     {
         cell.removeChildren();
+
+        let domNode = entry.domNode;
+        if (domNode) {
+            // FIXME: <https://webkit.org/b/189773> Web Inspector: create special Network waterfall for media events
+            return;
+        }
 
         let resource = entry.resource;
         if (!resource.hasResponse()) {
@@ -667,7 +805,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         case "waterfall":
             // Sort by startTime number.
-            comparator = comparator = (a, b) => a.startTime - b.startTime;
+            comparator = (a, b) => a.startTime - b.startTime;
             break;
 
         default:
@@ -676,7 +814,21 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         let reverseFactor = this._table.sortOrder === WI.Table.SortOrder.Ascending ? 1 : -1;
-        this._entriesSortComparator = (a, b) => reverseFactor * comparator(a, b);
+
+        // If the entry has an `initiatorNode`, use that node's "first" resource as the value of
+        // `entry`, so long as the entry being compared to doesn't have the same `initiatorNode`.
+        // This will ensure that all resource entries for a given `initiatorNode` will appear right
+        // next to each other, as they will all effectively be sorted by the first resource.
+        let substitute = (entry, other) => {
+            if (WI.settings.groupByDOMNode.value && entry.resource.initiatorNode) {
+                let nodeEntry = this._domNodeEntries.get(entry.resource.initiatorNode);
+                if (!nodeEntry.initiatedResourceEntries.includes(other))
+                    return nodeEntry.initiatedResourceEntries[0];
+            }
+            return entry;
+        };
+
+        this._entriesSortComparator = (a, b) => reverseFactor * comparator(substitute(a, b), substitute(b, a));
     }
 
     // Protected
@@ -884,8 +1036,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
-        for (let resource of this._pendingInsertions)
-            this._entries.push(this._entryForResource(resource));
+        for (let resource of this._pendingInsertions) {
+            let resourceEntry = this._entryForResource(resource);
+            this._tryLinkResourceToDOMNode(resourceEntry);
+            this._entries.push(resourceEntry);
+        }
         this._pendingInsertions = [];
 
         for (let resource of this._pendingUpdates)
@@ -952,14 +1107,20 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (index === -1)
             return;
 
+        // Don't wipe out the previous entry, as it may be used by a node entry.
+        function updateExistingEntry(existingEntry, newEntry) {
+            for (let key in newEntry)
+                existingEntry[key] = newEntry[key];
+        }
+
         let entry = this._entryForResource(resource);
-        this._entries[index] = entry;
+        updateExistingEntry(this._entries[index], entry);
 
         let rowIndex = this._rowIndexForResource(resource);
         if (rowIndex === -1)
             return;
 
-        this._filteredEntries[rowIndex] = entry;
+        updateExistingEntry(this._filteredEntries[rowIndex], entry);
     }
 
     _hidePopover()
@@ -1186,26 +1347,34 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
-        let entry = this._entryForResource(resource);
+        let resourceEntry = this._entryForResource(resource);
 
-        // Default sort has fast path.
-        if (this._isDefaultSort() || !this._entriesSortComparator) {
-            this._entries.push(entry);
-            if (this._passFilter(entry)) {
-                this._filteredEntries.push(entry);
+        this._tryLinkResourceToDOMNode(resourceEntry);
+
+        if (WI.settings.groupByDOMNode.value && resource.initiatorNode) {
+            if (!this._entriesSortComparator)
+                this._generateSortComparator();
+        } else if (this._isDefaultSort() || !this._entriesSortComparator) {
+            // Default sort has fast path.
+            this._entries.push(resourceEntry);
+            if (this._passFilter(resourceEntry)) {
+                this._filteredEntries.push(resourceEntry);
                 this._table.reloadDataAddedToEndOnly();
             }
             return;
         }
 
-        insertObjectIntoSortedArray(entry, this._entries, this._entriesSortComparator);
+        insertObjectIntoSortedArray(resourceEntry, this._entries, this._entriesSortComparator);
 
-        if (this._passFilter(entry)) {
-            insertObjectIntoSortedArray(entry, this._filteredEntries, this._entriesSortComparator);
+        if (this._passFilter(resourceEntry)) {
+            if (WI.settings.groupByDOMNode.value)
+                this._updateFilteredEntries();
+            else
+                insertObjectIntoSortedArray(resourceEntry, this._filteredEntries, this._entriesSortComparator);
 
             // Probably a useless optimization here, but if we only added this row to the end
             // we may avoid recreating all visible rows by saying as such.
-            if (this._filteredEntries.lastValue === entry)
+            if (this._filteredEntries.lastValue === resourceEntry)
                 this._table.reloadDataAddedToEndOnly();
             else
                 this._table.reloadData();
@@ -1238,6 +1407,47 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             connectionIdentifier: resource.connectionIdentifier,
             startTime: resource.firstTimestamp,
         };
+    }
+
+    _entryForDOMNode(domNode)
+    {
+        return {
+            domNode,
+            initiatedResourceEntries: [],
+            expanded: true,
+        };
+    }
+
+    _tryLinkResourceToDOMNode(resourceEntry)
+    {
+        let resource = resourceEntry.resource;
+        if (!resource || !resource.initiatorNode)
+            return;
+
+        let nodeEntry = this._domNodeEntries.get(resource.initiatorNode);
+        if (!nodeEntry) {
+            nodeEntry = this._entryForDOMNode(resource.initiatorNode, Object.keys(resourceEntry));
+            this._domNodeEntries.set(resource.initiatorNode, nodeEntry);
+        }
+
+        if (!this._entriesSortComparator)
+            this._generateSortComparator();
+
+        insertObjectIntoSortedArray(resourceEntry, nodeEntry.initiatedResourceEntries, this._entriesSortComparator);
+    }
+
+    _uniqueValuesForDOMNodeEntry(nodeEntry, accessor)
+    {
+        let resourceEntries = nodeEntry.initiatedResourceEntries;
+        if (!resourceEntries)
+            return null;
+
+        return resourceEntries.reduce((accumulator, current) => {
+            let value = accessor(current);
+            if (value || typeof value === "number")
+                accumulator.add(value);
+            return accumulator;
+        }, new Set);
     }
 
     _hasTypeFilter()
@@ -1290,6 +1500,37 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._filteredEntries = this._entries.filter(this._passFilter, this);
         else
             this._filteredEntries = this._entries.slice();
+
+        if (WI.settings.groupByDOMNode.value) {
+            for (let nodeEntry of this._domNodeEntries.values()) {
+                if (nodeEntry.initiatedResourceEntries.length < 2)
+                    continue;
+
+                let firstIndex = Infinity;
+                for (let resourceEntry of nodeEntry.initiatedResourceEntries) {
+                    if (this._hasActiveFilter() && !this._passFilter(resourceEntry))
+                        continue;
+
+                    let index = this._filteredEntries.indexOf(resourceEntry);
+                    if (index >= 0 && index < firstIndex)
+                        firstIndex = index;
+                }
+
+                if (!isFinite(firstIndex))
+                    continue;
+
+                this._filteredEntries.insertAtIndex(nodeEntry, firstIndex);
+            }
+
+            this._filteredEntries = this._filteredEntries.filter((entry) => {
+                if (entry.resource && entry.resource.initiatorNode) {
+                    let nodeEntry = this._domNodeEntries.get(entry.resource.initiatorNode);
+                    if (!nodeEntry.expanded)
+                        return false;
+                }
+                return true;
+            });
+        }
 
         this._restoreSelectedRow();
 
@@ -1359,6 +1600,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._activeTypeFilters = newFilter;
         this._updateFilteredEntries();
+        this._table.reloadData();
+    }
+
+    _handleGroupByDOMNodeCheckedDidChange(event)
+    {
+        WI.settings.groupByDOMNode.value = this._groupByDOMNodeNavigationItem.checked;
+
+        this._updateSortAndFilteredEntries();
         this._table.reloadData();
     }
 

@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+
+function replay() {
+    let videoElement = document.getElementById("video");
+    videoElement.pause();
+    videoElement.currentTime = 0;
+    videoElement.load();
+}
+
+function loadPoster(url) {
+    document.getElementById("video").poster = url;
+
+    replay();
+}
+
+function loadSource(url, type) {
+    let sourceElement = document.createElement("source");
+    sourceElement.type = type;
+    sourceElement.src = url;
+
+    document.getElementById("video").appendChild(sourceElement);
+
+    replay();
+}
+
+function loadTrack(url, kind) {
+    let trackElement = document.createElement("track");
+    trackElement.kind = kind;
+    trackElement.default = true;
+    trackElement.src = url;
+
+    trackElement.track.mode = "hidden";
+
+    document.getElementById("video").appendChild(trackElement);
+
+    replay();
+}
+
+function handleVideoEnded(event) {
+    TestPage.dispatchEventToFrontend("TestPage-video-ended");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WI.Resource.initiatorNode");
+
+    let videoNode = null;
+
+    suite.addTestCase({
+        name: "WI.Resource.initiatorNode.posterPNG",
+        test(resolve, reject) {
+            let file = "white.png";
+
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
+            .then((event) => {
+                let resource = event.data.resource;
+
+                InspectorTest.assert(resource.url.endsWith(file), `Resource should be "${file}"`);
+
+                InspectorTest.expectNotNull(resource.initiatorNode, "Resource should have an initiatorNode");
+                if (resource.initiatorNode)
+                    InspectorTest.expectEqual(resource.initiatorNode.id, videoNode.id, "Resource initiatorNode should match video node id");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`loadPoster("resources/${file}")`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Resource.initiatorNode.sourceMP4",
+        test(resolve, reject) {
+            let file = "white.mp4";
+
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
+            .then((event) => {
+                let resource = event.data.resource;
+
+                InspectorTest.assert(resource.url.endsWith(file), `Resource should be "${file}"`);
+
+                InspectorTest.expectNotNull(resource.initiatorNode, "Resource should have an initiatorNode");
+                if (resource.initiatorNode)
+                    InspectorTest.expectEqual(resource.initiatorNode.id, videoNode.id, "Resource initiatorNode should match video node id");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`loadSource("resources/${file}", "video/mp4")`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Resource.initiatorNode.trackVTT",
+        test(resolve, reject) {
+            let file = "white.vtt";
+
+            // Loading a track causes a bunch of media controls to be loaded.
+            let listener = WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                if (!resource.url.endsWith(file))
+                    return;
+
+                InspectorTest.expectNotNull(resource.initiatorNode, "Resource should have an initiatorNode");
+                if (resource.initiatorNode)
+                    InspectorTest.expectEqual(resource.initiatorNode.id, videoNode.id, "Resource initiatorNode should match video node id");
+
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, listener);
+
+                resolve();
+            });
+
+            InspectorTest.evaluateInPage(`loadTrack("resources/${file}", "captions")`);
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "video#video", (videoNodeId) => {
+            videoNode = WI.domManager.nodeForId(videoNodeId);
+            if (videoNode)
+                suite.runTestCasesAndFinish();
+            else {
+                InspectorTest.fail(`DOM node for "video#video" not found.`);
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that Request initiatorNode is set correctly.</p>
+    <video id="video" muted autoplay></video>
+</body>
+</html>

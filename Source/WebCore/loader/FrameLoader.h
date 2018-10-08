@@ -72,6 +72,7 @@ class HistoryController;
 class HistoryItem;
 class NavigationAction;
 class NetworkingContext;
+class Node;
 class Page;
 class PolicyChecker;
 class ResourceError;
@@ -177,7 +178,7 @@ public:
     const ResourceRequest& initialRequest() const;
     void receivedMainResourceError(const ResourceError&);
 
-    bool willLoadMediaElementURL(URL&);
+    bool willLoadMediaElementURL(URL&, Node&);
 
     void handleFallbackContent();
 

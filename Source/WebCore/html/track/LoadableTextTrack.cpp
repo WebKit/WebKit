@@ -82,7 +82,7 @@ void LoadableTextTrack::loadTimerFired()
     // mode being the state of the media element's crossorigin content attribute, the origin being the
     // origin of the media element's Document, and the default origin behaviour set to fail.
     m_loader = std::make_unique<TextTrackLoader>(static_cast<TextTrackLoaderClient&>(*this), static_cast<ScriptExecutionContext*>(&m_trackElement->document()));
-    if (!m_loader->load(m_url, m_trackElement->mediaElementCrossOriginAttribute(), m_trackElement->isInUserAgentShadowTree()))
+    if (!m_loader->load(m_url, *m_trackElement))
         m_trackElement->didCompleteLoad(HTMLTrackElement::Failure);
 }
 

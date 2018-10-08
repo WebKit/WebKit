@@ -40,7 +40,48 @@
     cursor: pointer;
 }
 
-.network-table .cache-type {
+.network-table .cell.dom-node.name .icon {
+    content: url(../Images/DOMElement.svg);
+}
+
+.network-table .cell.dom-node.name .disclosure {
+    width: 13px;
+    height: 13px;
+    vertical-align: -2px;
+    content: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+}
+
+body[dir=rtl] .network-table .cell.dom-node.name .disclosure {
+    transform: scaleX(-1);
+}
+
+.network-table:focus li.selected .cell.dom-node.name .disclosure {
+    content: url(../Images/DisclosureTriangles.svg#closed-selected);
+}
+
+.network-table .cell.dom-node.name .disclosure.expanded {
+    content: url(../Images/DisclosureTriangles.svg#open-normal);
+}
+
+.network-table:focus li.selected .cell.dom-node.name .disclosure.expanded {
+    content: url(../Images/DisclosureTriangles.svg#open-selected);
+}
+
+.network-table .cell.grouped-by-node.name {
+    --item-padding-start: 19px;
+}
+
+body[dir=ltr] .network-table .cell.grouped-by-node.name {
+    padding-left: var(--item-padding-start);
+}
+
+body[dir=rtl] .network-table .cell.grouped-by-node.name {
+    padding-right: var(--item-padding-start);
+}
+
+.network-table li:not(.selected) .cell:matches(.cache-type, .multiple) {
     color: var(--text-color-gray-medium);
 }
 
@@ -53,6 +94,11 @@
     height: 10px;
     content: url(../Images/Locked.svg);
     -webkit-margin-end: 5px;
+}
+
+.network-table li.selected .cell.domain > .lock {
+    /* FIXME: <https://webkit.org/b/189773> Web Inspector: create special Network waterfall for media events */
+    filter: invert();
 }
 
 body[dir=ltr] .network-table .cell.name > .status {

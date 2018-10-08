@@ -157,6 +157,7 @@ public:
 
 
     // InspectorInstrumentation
+    int identifierForNode(Node&);
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willModifyDOMAttr(Element&, const AtomicString& oldValue, const AtomicString& newValue);

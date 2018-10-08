@@ -88,6 +88,7 @@
 #include "MemoryRelease.h"
 #include "NavigationDisabler.h"
 #include "NavigationScheduler.h"
+#include "Node.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"
@@ -1644,7 +1645,7 @@ const ResourceRequest& FrameLoader::initialRequest() const
     return activeDocumentLoader()->originalRequest();
 }
 
-bool FrameLoader::willLoadMediaElementURL(URL& url)
+bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
 {
 #if PLATFORM(IOS)
     // MobileStore depends on the iOS 4.0 era client delegate method because webView:resource:willSendRequest:redirectResponse:fromDataSource
@@ -1654,6 +1655,7 @@ bool FrameLoader::willLoadMediaElementURL(URL& url)
 #endif
 
     ResourceRequest request(url);
+    request.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(initiatorNode));
 
     unsigned long identifier;
     ResourceError error;

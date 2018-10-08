@@ -37,6 +37,7 @@ namespace WebCore {
 
 class CachedTextTrack;
 class Document;
+class HTMLTrackElement;
 class TextTrackLoader;
 class ScriptExecutionContext;
 
@@ -55,8 +56,8 @@ class TextTrackLoader : public CachedResourceClient, private WebVTTParserClient 
 public:
     TextTrackLoader(TextTrackLoaderClient&, ScriptExecutionContext*);
     virtual ~TextTrackLoader();
-    
-    bool load(const URL&, const String& crossOriginMode, bool isInitiatingElementInUserAgentShadowTree);
+
+    bool load(const URL&, HTMLTrackElement&);
     void cancelLoad();
     void getNewCues(Vector<RefPtr<TextTrackCue>>& outputCues);
     void getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions);

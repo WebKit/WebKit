@@ -257,6 +257,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             requestSentTimestamp: elapsedTime,
             requestSentWalltime: walltime,
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
+            initiatorNode: this._initiatorNodeFromPayload(initiator),
             originalRequestWillBeSentTimestamp,
         });
 
@@ -400,6 +401,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             requestMethod: "GET",
             requestSentTimestamp: elapsedTime,
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
+            initiatorNode: this._initiatorNodeFromPayload(initiator),
         });
         resource.updateForResponse(cachedResourcePayload.url, response.mimeType, cachedResourcePayload.type, response.headers, response.status, response.statusText, elapsedTime, response.timing, responseSource);
         resource.increaseSize(cachedResourcePayload.bodySize, elapsedTime);
@@ -703,6 +705,11 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return null;
 
         return sourceCode.createSourceCodeLocation(lineNumber, columnNumber);
+    }
+
+    _initiatorNodeFromPayload(initiatorPayload)
+    {
+        return WI.domManager.nodeForId(initiatorPayload.nodeId);
     }
 
     _processServiceWorkerConfiguration(error, initializationPayload)

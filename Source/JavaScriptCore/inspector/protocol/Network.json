@@ -142,7 +142,8 @@
                 { "name": "type", "type": "string", "enum": ["parser", "script", "other"], "description": "Type of this initiator." },
                 { "name": "stackTrace", "type": "array", "items": { "$ref": "Console.CallFrame" }, "optional": true, "description": "Initiator JavaScript stack trace, set for Script only." },
                 { "name": "url", "type": "string", "optional": true, "description": "Initiator URL, set for Parser type only." },
-                { "name": "lineNumber", "type": "number", "optional": true, "description": "Initiator line number, set for Parser type only." }
+                { "name": "lineNumber", "type": "number", "optional": true, "description": "Initiator line number, set for Parser type only." },
+                { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "Set if the load was triggered by a DOM node, in addition to the other initiator information." }
             ]
         }
     ],

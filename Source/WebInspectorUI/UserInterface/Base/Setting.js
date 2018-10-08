@@ -119,6 +119,7 @@ WI.settings = {
     showRulers: new WI.Setting("show-rulers", false),
     showAssertionFailuresBreakpoint: new WI.Setting("show-assertion-failures-breakpoint", true),
     showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", true),
+    groupByDOMNode: new WI.Setting("group-by-dom-node", false),
 
     // Experimental
     experimentalEnableMultiplePropertiesSelection: new WI.Setting("experimental-enable-multiple-properties-selection", false),

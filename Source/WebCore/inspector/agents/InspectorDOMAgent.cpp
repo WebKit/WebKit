@@ -2085,6 +2085,11 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     m_frontendDispatcher->childNodeInserted(parentId, prevId, WTFMove(value));
 }
 
+int InspectorDOMAgent::identifierForNode(Node& node)
+{
+    return pushNodePathToFrontend(&node);
+}
+
 void InspectorDOMAgent::didInsertDOMNode(Node& node)
 {
     if (containsOnlyHTMLWhitespace(&node))

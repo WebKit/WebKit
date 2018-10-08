@@ -46,6 +46,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._breakpointsForEventListeners = new Map;
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+
+        this.ensureDocument();
     }
 
     // Public
@@ -628,8 +630,12 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     _mainResourceDidChange(event)
     {
-        if (event.target.isMainFrame())
-            this._restoreSelectedNodeIsAllowed = true;
+        if (!event.target.isMainFrame())
+            return;
+
+        this._restoreSelectedNodeIsAllowed = true;
+
+        this.ensureDocument();
     }
 };
 

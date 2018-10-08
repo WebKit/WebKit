@@ -106,6 +106,7 @@ public:
     static void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
     static bool isDebuggerPaused(Frame*);
 
+    static int identifierForNode(Node&);
     static void willInsertDOMNode(Document&, Node& parent);
     static void didInsertDOMNode(Document&, Node&);
     static void willRemoveDOMNode(Document&, Node&);
@@ -290,6 +291,7 @@ private:
     static void didClearWindowObjectInWorldImpl(InstrumentingAgents&, Frame&, DOMWrapperWorld&);
     static bool isDebuggerPausedImpl(InstrumentingAgents&);
 
+    static int identifierForNodeImpl(InstrumentingAgents&, Node&);
     static void willInsertDOMNodeImpl(InstrumentingAgents&, Node& parent);
     static void didInsertDOMNodeImpl(InstrumentingAgents&, Node&);
     static void willRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
@@ -468,6 +470,14 @@ inline bool InspectorInstrumentation::isDebuggerPaused(Frame* frame)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         return isDebuggerPausedImpl(*instrumentingAgents);
     return false;
+}
+
+inline int InspectorInstrumentation::identifierForNode(Node& node)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(0);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(node.document()))
+        return identifierForNodeImpl(*instrumentingAgents, node);
+    return 0;
 }
 
 inline void InspectorInstrumentation::willInsertDOMNode(Document& document, Node& parent)

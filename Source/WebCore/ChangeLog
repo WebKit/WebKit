@@ -1,3 +1,75 @@
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: group media network entries by the node that triggered the request
+        https://bugs.webkit.org/show_bug.cgi?id=189606
+        <rdar://problem/44438527>
+
+        Reviewed by Brian Burg.
+
+        Test: http/tests/inspector/network/resource-initiatorNode.html
+
+        Add extra arguments to functions that create `ResourceRequest` objects for media resources so
+        that `initiatorNodeIdentifier` can be set for WebInspector frontend to use for grouping.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::setDisplayMode):
+        * loader/FrameLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willLoadMediaElementURL):
+        Handles initial (e.g. DNT) resource requests.
+
+        * loader/ImageLoader.cpp:
+        (ImageLoader::updateFromElement):
+        Handles "poster" requests.
+
+        * loader/MediaResourceLoader.cpp:
+        (MediaResourceLoader::requestResource):
+        Handles byte-range requests.
+
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::loadTimerFired):
+        * loader/TextTrackLoader.h:
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::load):
+        * html/HTMLTrackElement.h:
+        Handles <track> (e.g. subtitle) requests.
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::identifierForNode):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::identifierForNode):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::identifierForNodeImpl):
+        Allows callers to get a `DOM.nodeId` for the given `Node`, which is (in this patch) attached
+        to the `ResourceRequest` and later used by `InspectorNetworkAgent`.
+
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::willSendRequest):
+        (WebCore::InspectorNetworkAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorNetworkAgent::buildInitiatorObject):
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::initiatorNodeIdentifier const):
+        (WebCore::ResourceRequestBase::setInitiatorNodeIdentifier):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setAsIsolatedCopy):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache):
+
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::didCreateCanvasRenderingContext):
+        Don't try to push the canvas' node to the frontend, as this will create a dangling node in
+        `InspectorDOMAgent` if the canvas' node is detached from the DOM.
+
 2018-10-08  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Requests should be aborted after details settle when the user cancels

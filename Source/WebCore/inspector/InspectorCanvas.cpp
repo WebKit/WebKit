@@ -44,7 +44,6 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorDOMAgent.h"
-#include "InstrumentingAgents.h"
 #include "JSCanvasDirection.h"
 #include "JSCanvasFillRule.h"
 #include "JSCanvasLineCap.h"
@@ -217,7 +216,7 @@ bool InspectorCanvas::hasBufferSpace() const
     return m_bufferUsed < m_bufferLimit;
 }
 
-Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(InstrumentingAgents& instrumentingAgents, bool captureBacktrace)
+Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool captureBacktrace)
 {
     Inspector::Protocol::Canvas::ContextType contextType;
     if (is<CanvasRenderingContext2D>(m_context))
@@ -250,19 +249,8 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
         String cssCanvasName = node->document().nameForCSSCanvasElement(*node);
         if (!cssCanvasName.isEmpty())
             canvas->setCssCanvasName(cssCanvasName);
-        else {
-            InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent();
-            int nodeId = domAgent->boundNodeId(node);
-            if (!nodeId) {
-                if (int documentNodeId = domAgent->boundNodeId(&node->document())) {
-                    ErrorString ignored;
-                    nodeId = domAgent->pushNodeToFrontend(ignored, documentNodeId, node);
-                }
-            }
 
-            if (nodeId)
-                canvas->setNodeId(nodeId);
-        }
+        // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
     }
 
     if (is<ImageBitmapRenderingContext>(m_context)) {

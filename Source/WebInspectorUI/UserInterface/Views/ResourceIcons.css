@@ -76,6 +76,10 @@
     content: url(../Images/Beacon.svg);
 }
 
+.resource-icon.resource-type-range .icon {
+    content: url(../Images/Range.svg);
+}
+
 .large .resource-icon .icon {
     content: image-set(url(../Images/DocumentGenericLarge.png) 1x, url(../Images/DocumentGenericLarge@2x.png) 2x);
 }

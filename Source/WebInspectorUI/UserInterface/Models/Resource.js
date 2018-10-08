@@ -26,7 +26,7 @@
 
 WI.Resource = class Resource extends WI.SourceCode
 {
-    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp} = {})
+    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, initiatorSourceCodeLocation, initiatorNode, originalRequestWillBeSentTimestamp} = {})
     {
         super();
 
@@ -52,6 +52,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._responseCookies = null;
         this._parentFrame = null;
         this._initiatorSourceCodeLocation = initiatorSourceCodeLocation || null;
+        this._initiatorNode = initiatorNode || null;
         this._initiatedResources = [];
         this._originalRequestWillBeSentTimestamp = originalRequestWillBeSentTimestamp || null;
         this._requestSentTimestamp = requestSentTimestamp || NaN;
@@ -289,6 +290,7 @@ WI.Resource = class Resource extends WI.SourceCode
     get requestMethod() { return this._requestMethod; }
     get requestData() { return this._requestData; }
     get initiatorSourceCodeLocation() { return this._initiatorSourceCodeLocation; }
+    get initiatorNode() { return this._initiatorNode; }
     get initiatedResources() { return this._initiatedResources; }
     get originalRequestWillBeSentTimestamp() { return this._originalRequestWillBeSentTimestamp; }
     get statusCode() { return this._statusCode; }
@@ -562,6 +564,27 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         let contentEncoding = this._responseHeaders.valueForCaseInsensitiveKey("Content-Encoding");
         return !!(contentEncoding && /\b(?:gzip|deflate)\b/.test(contentEncoding));
+    }
+
+    get requestedByteRange()
+    {
+        let range = this._requestHeaders.valueForCaseInsensitiveKey("Range");
+        if (!range)
+            return null;
+
+        let rangeValues = range.match(/bytes=(\d+)-(\d+)/);
+        if (!rangeValues)
+            return null;
+
+        let start = parseInt(rangeValues[1]);
+        if (isNaN(start))
+            return null;
+
+        let end = parseInt(rangeValues[2]);
+        if (isNaN(end))
+            return null;
+
+        return {start, end};
     }
 
     get scripts()

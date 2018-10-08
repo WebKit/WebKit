@@ -1,3 +1,16 @@
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: group media network entries by the node that triggered the request
+        https://bugs.webkit.org/show_bug.cgi?id=189606
+        <rdar://problem/44438527>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Network.json:
+        Add an optional `nodeId` field to the `Initiator` object that is set it is possible to
+        determine which ancestor node triggered the load. It may not correspond directly to the node
+        with the href/src, as that url may only be used by an ancestor for loading.
+
 2018-10-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC][Linux] Use non-truncated name for JIT workers in Linux

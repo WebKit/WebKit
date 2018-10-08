@@ -15,25 +15,6 @@ function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.requestNode");
 
     suite.addTestCase({
-        name: "Canvas.requestNode.missingDocument",
-        description: "Getting the canvas node requires that WebInspector knows about the document.",
-        test(resolve, reject) {
-            let canvases = WI.canvasManager.canvases;
-            InspectorTest.expectEqual(canvases.length, 3, "The page should have three canvases.");
-            if (!canvases.length) {
-                reject("Missing canvas.");
-                return;
-            }
-
-            CanvasAgent.requestNode(canvases[0].identifier, (error) => {
-                InspectorTest.expectThat(error, "Should produce an error.");
-                InspectorTest.log("Error: " + error);
-                resolve();
-            });
-        }
-    });
-
-    suite.addTestCase({
         name: "Canvas.requestNode.validCanvasId",
         description: "Get the node id for each canvas on the page.",
         test(resolve, reject) {

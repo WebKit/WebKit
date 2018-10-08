@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
@@ -179,7 +180,11 @@ void ImageLoader::updateFromElement()
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
         auto crossOriginAttribute = element().attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
-        auto request = createPotentialAccessControlRequest(document.completeURL(sourceURI(attr)), document, crossOriginAttribute, WTFMove(options));
+
+        ResourceRequest resourceRequest(document.completeURL(sourceURI(attr)));
+        resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(m_element));
+
+        auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), document, crossOriginAttribute, WTFMove(options));
         request.setInitiator(element());
 
         if (m_loadManually) {

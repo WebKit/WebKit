@@ -132,7 +132,7 @@ private:
 
     WebSocket* webSocketForRequestId(const String& requestId);
 
-    RefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
+    RefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*, std::optional<const ResourceRequest&> = std::nullopt);
     Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadMetrics&, ResourceLoader&);
     Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics&);
     RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse&, ResourceLoader*);

@@ -1,5 +1,83 @@
 2018-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: group media network entries by the node that triggered the request
+        https://bugs.webkit.org/show_bug.cgi?id=189606
+        <rdar://problem/44438527>
+
+        Reviewed by Brian Burg.
+
+        Introduces a `WI.NavigationItem` for changing whether network entries are grouped by the
+        node that initiated the load (if applicable). When grouped by node, a tree-like layout of
+        the table cells (including expand/collapse) is used for resources that share the same
+        initiator node. The values for the node's cell are based on it's initated resources.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager):
+        (WI.DOMManager.prototype._mainResourceDidChange): Added.
+        Whenever the frame navigates, re-request the document so that `NetworkAgent` is able to send
+        valid `nodeId` for each request's `initiatorNode`. This means that the document should
+        always be available.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.get filterNavigationItems):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.tableSortChanged):
+        (WI.NetworkTableContentView.prototype.tableSelectedRowChanged):
+        (WI.NetworkTableContentView.prototype.tablePopulateCell):
+        (WI.NetworkTableContentView.prototype._populateNameCell.createIconElement): Added.
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        (WI.NetworkTableContentView.prototype._populateDomainCell.createIconAndText): Added.
+        (WI.NetworkTableContentView.prototype._populateDomainCell):
+        (WI.NetworkTableContentView.prototype._populateInitiatorCell):
+        (WI.NetworkTableContentView.prototype._populateTransferSizeCell):
+        (WI.NetworkTableContentView.prototype._generateSortComparator):
+        (WI.NetworkTableContentView.prototype._processPendingEntries):
+        (WI.NetworkTableContentView.prototype._updateEntryForResource.updateExistingEntry): Added.
+        (WI.NetworkTableContentView.prototype._updateEntryForResource):
+        (WI.NetworkTableContentView.prototype._insertResourceAndReloadTable):
+        (WI.NetworkTableContentView.prototype._entryForDOMNode): Added.
+        (WI.NetworkTableContentView.prototype._tryLinkResourceToDOMNode): Added.
+        (WI.NetworkTableContentView.prototype._uniqueValuesForDOMNodeEntry): Added.
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._handleGroupByDOMNodeCheckedDidChange): Added.
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table .cell.dom-node.name .icon): Added.
+        (.network-table .cell.dom-node.name .disclosure): Added.
+        (body[dir=rtl] .network-table .cell.dom-node.name .disclosure): Added.
+        (.network-table:focus li.selected .cell.dom-node.name .disclosure): Added.
+        (.network-table .cell.dom-node.name .disclosure.expanded): Added.
+        (.network-table:focus li.selected .cell.node.name .disclosure.expanded): Added.
+        (.network-table .cell.grouped-by-node.name): Added.
+        (body[dir=ltr] .network-table .cell.grouped-by-node.name): Added.
+        (body[dir=rtl] .network-table .cell.grouped-by-node.name): Added.
+        (.network-table li:not(.selected) .cell:matches(.cache-type, .multiple)): Added.
+        (.network-table li.selected .cell.domain > .lock): Added.
+        (.network-table .cache-type): Deleted.
+        When two resources are added that share the same `initiatorNode`, insert a node entry into
+        the `WI.Table` before the first resource entry for that node (based on the current sort).
+        This node entry is added after the resource entries are filtered, so they won't appear in
+        the default entries list.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource):
+        (WI.Resource.prototype.initiatorNode): Added.
+        (WI.Resource.prototype.requestedByteRange): Added.
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.resourceRequestWillBeSent):
+        (WI.NetworkManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WI.NetworkManager.prototype._initiatorNodeFromPayload): Added.
+
+        * UserInterface/Images/Range.svg: Added.
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon.resource-type-range .icon): Added.
+
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: clicking initiator link in Network Tab table doesn't automatically switch to Preview section
         https://bugs.webkit.org/show_bug.cgi?id=190286
 

@@ -2,11 +2,6 @@ Test that CanvasAgent.requestNode can properly resolve the owner canvas node.
 
 
 == Running test suite: Canvas.requestNode
--- Running test case: Canvas.requestNode.missingDocument
-PASS: The page should have three canvases.
-PASS: Should produce an error.
-Error: Document has not been requested
-
 -- Running test case: Canvas.requestNode.validCanvasId
 PASS: Canvas "CSS canvas “css”" has node with valid id.
 PASS: Canvas "CSS canvas “css”" has node with type "CANVAS".
