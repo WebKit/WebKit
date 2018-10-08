@@ -30,6 +30,7 @@
 
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
+#include "MediaPlayerEnums.h"
 #include "PlaybackSessionModel.h"
 
 #if PLATFORM(IOS)
@@ -49,8 +50,7 @@ public:
 
     virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) = 0;
     virtual void setVideoLayerFrame(FloatRect) = 0;
-    enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
-    virtual void setVideoLayerGravity(VideoGravity) = 0;
+    virtual void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) = 0;
     virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) = 0;
 
     virtual bool isVisible() const = 0;

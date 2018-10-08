@@ -193,7 +193,7 @@ void VideoFullscreenModelContext::setVideoLayerFrame(WebCore::FloatRect frame)
         m_manager->setVideoLayerFrame(m_contextId, frame);
 }
 
-void VideoFullscreenModelContext::setVideoLayerGravity(WebCore::VideoFullscreenModel::VideoGravity gravity)
+void VideoFullscreenModelContext::setVideoLayerGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
 {
     if (m_manager)
         m_manager->setVideoLayerGravity(m_contextId, gravity);
@@ -663,7 +663,7 @@ void VideoFullscreenManagerProxy::setVideoLayerFrame(uint64_t contextId, WebCore
     }
 }
 
-void VideoFullscreenManagerProxy::setVideoLayerGravity(uint64_t contextId, WebCore::VideoFullscreenModel::VideoGravity gravity)
+void VideoFullscreenManagerProxy::setVideoLayerGravity(uint64_t contextId, WebCore::MediaPlayerEnums::VideoGravity gravity)
 {
     m_page->send(Messages::VideoFullscreenManager::SetVideoLayerGravityEnum(contextId, (unsigned)gravity), m_page->pageID());
 }

@@ -1,3 +1,19 @@
+2018-10-08  Jeremy Jones  <jeremyj@apple.com>
+
+        Use MediaPlayerEnums::VideoGravity in VideoFullscreenModel.
+        https://bugs.webkit.org/show_bug.cgi?id=190357
+
+        Reviewed by Jon Lee.
+
+        Use MediaPlayerEnums::VideoGravity instead of creating another identical enum in VideoFullscreenModel.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::setVideoLayerGravity):
+        (WebKit::VideoFullscreenManagerProxy::setVideoLayerGravity):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::setVideoLayerGravityEnum):
+
 2018-10-08  Alex Christensen  <achristensen@webkit.org>
 
         Remove WKBundleFileHandleRef

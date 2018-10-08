@@ -31,6 +31,7 @@
 #include "EventListener.h"
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
+#include "MediaPlayerEnums.h"
 #include "PlatformLayer.h"
 #include "VideoFullscreenModel.h"
 #include <wtf/Function.h>
@@ -66,7 +67,7 @@ public:
     WEBCORE_EXPORT void removeClient(VideoFullscreenModelClient&) override;
     WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) override;
-    WEBCORE_EXPORT void setVideoLayerGravity(VideoGravity) override;
+    WEBCORE_EXPORT void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) override;
     WEBCORE_EXPORT void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
     WEBCORE_EXPORT bool isVisible() const override;
     FloatSize videoDimensions() const override { return m_videoDimensions; }

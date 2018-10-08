@@ -59,6 +59,7 @@ SOFT_LINK_CLASS_OPTIONAL(PIP, PIPViewController)
 
 using WebCore::VideoFullscreenModel;
 using WebCore::HTMLMediaElementEnums;
+using WebCore::MediaPlayerEnums;
 using WebCore::VideoFullscreenInterfaceMac;
 using WebCore::VideoFullscreenChangeObserver;
 using WebCore::PlaybackSessionModel;
@@ -193,7 +194,7 @@ enum class PIPState {
     [_pipViewController setPlaying:_playing];
     [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
     if (_videoFullscreenInterfaceMac && _videoFullscreenInterfaceMac->videoFullscreenModel())
-        _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(VideoFullscreenModel::VideoGravityResizeAspectFill);
+        _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravityResizeAspectFill);
 
     _videoViewContainer = adoptNS([[WebVideoViewContainer alloc] initWithFrame:frame]);
     [_videoViewContainer setVideoViewContainerDelegate:self];
@@ -288,7 +289,7 @@ enum class PIPState {
             context.allowsImplicitAnimation = NO;
             [_videoViewContainer setFrame:_returningRect];
             _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerFrame([_videoViewContainer bounds]);
-            _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(VideoFullscreenModel::VideoGravityResizeAspect);
+            _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravityResizeAspect);
 
             [[_returningWindow contentView] addSubview:_videoViewContainer.get() positioned:NSWindowAbove relativeTo:nil];
         } completionHandler:nil];
@@ -298,7 +299,7 @@ enum class PIPState {
         if (!self.isExitingToStandardFullscreen) {
             if (VideoFullscreenModel* videoFullscreenModel = _videoFullscreenInterfaceMac->videoFullscreenModel()) {
                 videoFullscreenModel->didExitPictureInPicture();
-                videoFullscreenModel->setVideoLayerGravity(VideoFullscreenModel::VideoGravityResizeAspect);
+                videoFullscreenModel->setVideoLayerGravity(MediaPlayerEnums::VideoGravityResizeAspect);
             }
         }
 

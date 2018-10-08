@@ -195,7 +195,7 @@ private:
     void removeClient(VideoFullscreenModelClient&) override;
     void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     void setVideoLayerFrame(FloatRect) override;
-    void setVideoLayerGravity(VideoFullscreenModel::VideoGravity) override;
+    void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) override;
     void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool isVisible() const override;
     bool hasVideo() const override;
@@ -587,7 +587,7 @@ void VideoFullscreenControllerContext::setVideoLayerFrame(FloatRect frame)
     });
 }
 
-void VideoFullscreenControllerContext::setVideoLayerGravity(VideoFullscreenModel::VideoGravity videoGravity)
+void VideoFullscreenControllerContext::setVideoLayerGravity(MediaPlayerEnums::VideoGravity videoGravity)
 {
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = makeRefPtr(this), this, videoGravity] {

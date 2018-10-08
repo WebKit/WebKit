@@ -544,7 +544,7 @@ void VideoFullscreenManager::didCleanupFullscreen(uint64_t contextId)
     
 void VideoFullscreenManager::setVideoLayerGravityEnum(uint64_t contextId, unsigned gravity)
 {
-    ensureModel(contextId).setVideoLayerGravity((VideoFullscreenModel::VideoGravity)gravity);
+    ensureModel(contextId).setVideoLayerGravity((MediaPlayerEnums::VideoGravity)gravity);
 }
     
 void VideoFullscreenManager::fullscreenMayReturnToInline(uint64_t contextId, bool isPageVisible)

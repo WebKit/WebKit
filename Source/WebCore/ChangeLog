@@ -1,3 +1,27 @@
+2018-10-08  Jeremy Jones  <jeremyj@apple.com>
+
+        Use MediaPlayerEnums::VideoGravity in VideoFullscreenModel.
+        https://bugs.webkit.org/show_bug.cgi?id=190357
+
+        Reviewed by Jon Lee.
+
+        No new tests because no behavior change.
+
+        Use MediaPlayerEnums::VideoGravity instead of creating another identical enum in VideoFullscreenModel.
+
+        * platform/cocoa/VideoFullscreenModel.h:
+        (): Deleted.
+        * platform/cocoa/VideoFullscreenModelVideoElement.h:
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (WebCore::VideoFullscreenModelVideoElement::setVideoLayerGravity):
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer setVideoGravity:]):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::setVideoLayerGravity):
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC setUpPIPForVideoView:withFrame:inWindow:]):
+        (-[WebVideoFullscreenInterfaceMacObjC pipDidClose:]):
+
 2018-10-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: group media network entries by the node that triggered the request
