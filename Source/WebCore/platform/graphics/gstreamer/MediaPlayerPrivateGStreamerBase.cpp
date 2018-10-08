@@ -1274,7 +1274,7 @@ void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(GstEvent* ev
     // Check if the system key of the protection event is the same of the CDM instance.
     // For example: we can receive a new Widevine protection event but the CDM instance initialized with
     // Playready, so we ignore this event.
-    if (m_cdmInstance && g_strcmp0(GStreamerEMEUtilities::keySystemToUuid(m_cdmInstance->keySystem()), eventKeySystemUUID)) {
+    if (m_cdmInstance && g_strcmp0(eventKeySystemUUID, GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) && g_strcmp0(GStreamerEMEUtilities::keySystemToUuid(m_cdmInstance->keySystem()), eventKeySystemUUID)) {
         GST_DEBUG("The protection event with UUID %s is ignored because it isn't supported by the CDM %s", eventKeySystemUUID, m_cdmInstance->keySystem().utf8().data());
         return;
     }
@@ -1296,7 +1296,8 @@ void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(GstEvent* ev
 
         GST_DEBUG("scheduling initializationDataEncountered event for %s with init data size of %u", eventKeySystemUUID.utf8().data(), initData.sizeInBytes());
         GST_MEMDUMP("init datas", reinterpret_cast<const uint8_t*>(initData.characters8()), initData.sizeInBytes());
-        weakThis->m_player->initializationDataEncountered("cenc"_s, ArrayBuffer::create(reinterpret_cast<const uint8_t*>(initData.characters8()), initData.sizeInBytes()));
+        weakThis->m_player->initializationDataEncountered((eventKeySystemUUID == GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "webm"_s : "cenc"_s,
+            ArrayBuffer::create(reinterpret_cast<const uint8_t*>(initData.characters8()), initData.sizeInBytes()));
     });
 }
 

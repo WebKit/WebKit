@@ -1,3 +1,27 @@
+2018-10-08  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME][GStreamer] Add support for WebM encrypted caps "application/x-webm-enc"
+        https://bugs.webkit.org/show_bug.cgi?id=189239
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the support of GStreamer caps "application/x-webm-enc" in GStreamerCommon.
+
+        The DRM system id field in the encrypted event is set to GST_PROTECTION_UNSPECIFIED_SYSTEM_ID
+        in case of WebM, for details, see https://bugzilla.gnome.org/attachment.cgi?id=365211.
+
+        Tests: media/encrypted-media/clearKey/clearKey-encrypted-webm-eventmse.html
+               media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::capsMediaType):
+        (WebCore::areEncryptedCaps):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptTransformCaps):
+
 2018-10-07  Dan Bernstein  <mitz@apple.com>
 
         Fixed building with the latest macOS SDK

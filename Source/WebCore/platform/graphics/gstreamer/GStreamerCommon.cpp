@@ -151,7 +151,7 @@ const char* capsMediaType(const GstCaps* caps)
         return nullptr;
     }
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (gst_structure_has_name(structure, "application/x-cenc"))
+    if (gst_structure_has_name(structure, "application/x-cenc") || gst_structure_has_name(structure, "application/x-webm-enc"))
         return gst_structure_get_string(structure, "original-media-type");
 #endif
     return gst_structure_get_name(structure);
@@ -176,7 +176,7 @@ bool areEncryptedCaps(const GstCaps* caps)
         GST_WARNING("caps are empty");
         return false;
     }
-    return gst_structure_has_name(structure, "application/x-cenc");
+    return gst_structure_has_name(structure, "application/x-cenc") || gst_structure_has_name(structure, "application/x-webm-enc");
 #else
     UNUSED_PARAM(caps);
     return false;

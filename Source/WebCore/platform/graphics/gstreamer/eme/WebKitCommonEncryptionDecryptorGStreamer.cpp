@@ -127,7 +127,10 @@ static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform
                 const gchar* fieldName = gst_structure_nth_field_name(incomingStructure, j);
 
                 if (g_str_has_prefix(fieldName, "protection-system")
-                    || g_str_has_prefix(fieldName, "original-media-type"))
+                    || g_str_has_prefix(fieldName, "original-media-type")
+                    || g_str_has_prefix(fieldName, "encryption-algorithm")
+                    || g_str_has_prefix(fieldName, "encoding-scope")
+                    || g_str_has_prefix(fieldName, "cipher-mode"))
                     gst_structure_remove_field(outgoingStructure.get(), fieldName);
             }
         } else {
@@ -156,7 +159,8 @@ static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform
             gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId,
                 "original-media-type", G_TYPE_STRING, gst_structure_get_name(incomingStructure), nullptr);
 
-            gst_structure_set_name(outgoingStructure.get(), "application/x-cenc");
+            gst_structure_set_name(outgoingStructure.get(),
+                !g_strcmp0(klass->protectionSystemId, GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" : "application/x-cenc");
         }
 
         bool duplicate = false;
