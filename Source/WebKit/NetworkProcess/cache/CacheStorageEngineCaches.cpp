@@ -348,7 +348,7 @@ void Caches::dispose(Cache& cache)
     auto position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); });
     if (position != notFound) {
         if (m_storage)
-            m_storage->remove(cache.keys(), { });
+            m_storage->remove(cache.keys(), [] { });
 
         m_removedCaches.remove(position);
         return;

@@ -124,8 +124,8 @@ public:
 struct Storage::TraverseOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TraverseOperation(Storage& storage, const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& handler)
-        : storage(storage)
+    TraverseOperation(Ref<Storage>&& storage, const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& handler)
+        : storage(WTFMove(storage))
         , type(type)
         , flags(flags)
         , handler(WTFMove(handler))
@@ -233,6 +233,8 @@ Storage::Storage(const String& baseDirectoryPath, Mode mode, Salt salt)
     , m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.serialBackground", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
     , m_blobStorage(makeBlobDirectoryPath(baseDirectoryPath), m_salt)
 {
+    ASSERT(RunLoop::isMain());
+
     deleteOldVersions();
     synchronize();
 }
@@ -325,7 +327,13 @@ void Storage::synchronize()
         if (!shouldComputeExactRecordsSize)
             recordsSize = estimateRecordsSize(recordCount, blobCount);
 
-        RunLoop::main().dispatch([this, recordFilter = WTFMove(recordFilter), blobFilter = WTFMove(blobFilter), recordsSize]() mutable {
+        m_blobStorage.synchronize();
+
+        deleteEmptyRecordsDirectories(recordsPath());
+
+        LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu recordCount=%u", recordsSize, recordCount);
+
+        RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), recordFilter = WTFMove(recordFilter), blobFilter = WTFMove(blobFilter), recordsSize]() mutable {
             for (auto& recordFilterKey : m_recordFilterHashesAddedDuringSynchronization)
                 recordFilter->add(recordFilterKey);
             m_recordFilterHashesAddedDuringSynchronization.clear();
@@ -340,13 +348,6 @@ void Storage::synchronize()
             m_synchronizationInProgress = false;
         });
 
-        m_blobStorage.synchronize();
-
-        deleteEmptyRecordsDirectories(recordsPath());
-
-        LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu recordCount=%u", recordsSize, recordCount);
-
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -598,11 +599,10 @@ void Storage::remove(const Key& key)
 
     serialBackgroundIOQueue().dispatch([this, protectedThis = WTFMove(protectedThis), key] () mutable {
         deleteFiles(key);
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
-void Storage::remove(const Vector<Key>& keys, Function<void ()>&& completionHandler)
+void Storage::remove(const Vector<Key>& keys, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -620,10 +620,7 @@ void Storage::remove(const Vector<Key>& keys, Function<void ()>&& completionHand
         for (auto& key : keysToRemove)
             deleteFiles(key);
 
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
-            if (completionHandler)
-                completionHandler();
-        });
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -909,7 +906,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
     ASSERT(traverseHandler);
     // Avoid non-thread safe Function copies.
 
-    auto traverseOperationPtr = std::make_unique<TraverseOperation>(*this, type, flags, WTFMove(traverseHandler));
+    auto traverseOperationPtr = std::make_unique<TraverseOperation>(makeRef(*this), type, flags, WTFMove(traverseHandler));
     auto& traverseOperation = *traverseOperationPtr;
     m_activeTraverseOperations.add(WTFMove(traverseOperationPtr));
 
@@ -997,7 +994,7 @@ void Storage::setCapacity(size_t capacity)
     shrinkIfNeeded();
 }
 
-void Storage::clear(const String& type, WallTime modifiedSinceTime, Function<void ()>&& completionHandler)
+void Storage::clear(const String& type, WallTime modifiedSinceTime, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
@@ -1025,10 +1022,7 @@ void Storage::clear(const String& type, WallTime modifiedSinceTime, Function<voi
         // This cleans unreferenced blobs.
         m_blobStorage.synchronize();
 
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
-            if (completionHandler)
-                completionHandler();
-        });
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -1147,8 +1141,6 @@ void Storage::deleteOldVersions()
 
             deleteDirectoryRecursively(oldVersionPath);
         });
-
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 

@@ -45,7 +45,7 @@ namespace NetworkCache {
 
 class IOChannel;
 
-class Storage : public ThreadSafeRefCounted<Storage> {
+class Storage : public ThreadSafeRefCounted<Storage, WTF::DestructionThread::Main> {
 public:
     enum class Mode { Normal, AvoidRandomness };
     static RefPtr<Storage> open(const String& cachePath, Mode);
@@ -85,8 +85,8 @@ public:
     void store(const Record&, MappedBodyHandler&&, CompletionHandler<void()>&& = { });
 
     void remove(const Key&);
-    void remove(const Vector<Key>&, Function<void ()>&&);
-    void clear(const String& type, WallTime modifiedSinceTime, Function<void ()>&& completionHandler);
+    void remove(const Vector<Key>&, CompletionHandler<void()>&&);
+    void clear(const String& type, WallTime modifiedSinceTime, CompletionHandler<void()>&&);
 
     struct RecordInfo {
         size_t bodySize;
