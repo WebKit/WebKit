@@ -78,6 +78,17 @@ user_activation_test(async t => {
 
 user_activation_test(async t => {
   const request = new PaymentRequest(defaultMethods, defaultDetails);
+  const acceptPromise = request.show(new Promise(resolve => {
+    window.setTimeout(() => {
+      internals.mockPaymentCoordinator.cancelPayment();
+      window.setTimeout(() => resolve(defaultDetails));
+    });
+  })); // Sets state to "interactive"
+  await promise_rejects(t, "AbortError", acceptPromise);
+}, `If the user aborts the payment request algorithm while details are updating, then reject the accept promise with an "AbortError" when the details settle.`);
+
+user_activation_test(async t => {
+  const request = new PaymentRequest(defaultMethods, defaultDetails);
   const expectedLabel = "Updated Total";
   const expectedAmount = "2.00";
   const details = {

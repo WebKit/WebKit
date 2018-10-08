@@ -4,6 +4,7 @@ PASS Throws if the promise [[state]] is not "created"
 PASS If the user agent's "payment request is showing" boolean is true, then return a promise rejected with an "AbortError" DOMException. 
 PASS If payment method consultation produces no supported method of payment, then return a promise rejected with a "NotSupportedError" DOMException. 
 PASS If the user aborts the payment request algorithm, then return a promise rejected with an "AbortError" DOMException. 
+PASS If the user aborts the payment request algorithm while details are updating, then reject the accept promise with an "AbortError" when the details settle. 
 PASS A request is updated when show()'s detail promise resolves. 
 PASS Change events do not occur until show()'s detail promise resolves. 
 

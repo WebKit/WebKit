@@ -614,13 +614,14 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 {
     auto scopeExit = makeScopeExit([&] {
         m_isUpdating = false;
+        m_isCancelPending = false;
         m_detailsPromise = nullptr;
     });
 
     if (m_state != State::Interactive)
         return;
 
-    if (m_detailsPromise->status() == DOMPromise::Status::Rejected) {
+    if (m_isCancelPending || m_detailsPromise->status() == DOMPromise::Status::Rejected) {
         stop();
         return;
     }
@@ -666,19 +667,22 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 
 void PaymentRequest::whenDetailsSettled(std::function<void()>&& callback)
 {
-    if (!m_detailsPromise) {
+    auto whenSettledFunction = [this, callback = WTFMove(callback)] {
         ASSERT(m_state == State::Interactive);
         ASSERT(!m_isUpdating);
+        ASSERT(!m_isCancelPending);
+        ASSERT_UNUSED(this, this);
         callback();
+    };
+
+    if (!m_detailsPromise) {
+        whenSettledFunction();
         return;
     }
 
-    m_detailsPromise->whenSettled([this, protectedThis = makeRefPtr(this), callback = WTFMove(callback)] {
-        if (m_state != State::Interactive)
-            return;
-
-        ASSERT(!m_isUpdating);
-        callback();
+    m_detailsPromise->whenSettled([this, protectedThis = makeRefPtr(this), whenSettledFunction = WTFMove(whenSettledFunction)] {
+        if (m_state == State::Interactive)
+            whenSettledFunction();
     });
 }
 
@@ -719,10 +723,13 @@ void PaymentRequest::cancel()
     if (m_state != State::Interactive)
         return;
 
-    if (m_isUpdating)
-        return;
-
     m_activePaymentHandler = nullptr;
+
+    if (m_isUpdating) {
+        m_isCancelPending = true;
+        return;
+    }
+
     stop();
 }
 

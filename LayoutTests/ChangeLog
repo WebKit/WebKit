@@ -1,3 +1,13 @@
+2018-10-08  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Requests should be aborted after details settle when the user cancels
+        https://bugs.webkit.org/show_bug.cgi?id=190333
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/paymentrequest/payment-request-show-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-request-show-method.https.html:
+
 2018-10-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r235630?): [Mojave WK1] Layout test compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html is a flaky image failure

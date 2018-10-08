@@ -136,6 +136,7 @@ private:
     RefPtr<DOMPromise> m_detailsPromise;
     RefPtr<DOMPromise> m_merchantSessionPromise;
     bool m_isUpdating { false };
+    bool m_isCancelPending { false };
 };
 
 std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier);

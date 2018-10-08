@@ -1,3 +1,36 @@
+2018-10-08  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Requests should be aborted after details settle when the user cancels
+        https://bugs.webkit.org/show_bug.cgi?id=190333
+
+        Reviewed by Alex Christensen.
+
+        In Payment Request's "update a PaymentRequest's details" algorithm, user agents are expected
+        to disable the payment UI when PaymentRequest details are being updated by the merchant.
+        This is to prevent the user from accepting a payment before updated details are displayed.
+
+        Further, Payment Request's "user aborts the payment request" algorithm says that the
+        algorithm should be terminated prior to throwing an AbortError if the request is currently
+        being updated, and also that user agents SHOULD ensure this never occurs. This is based on
+        the assumption that payment UIs are disabled during details updates.
+
+        For Apple Pay, while it is true that a payment cannot be accepted by the user while details
+        are being updated by the merchant, the payment UI is not completely disabled. In particular,
+        the user is allowed to abort the payment while details are being updated. We need to honor
+        the user's request to abort without doing so in the middle of a details update.
+
+        This patch defers a user-initiated abort until after details are settled, at which point the
+        promise returned by show() is rejected with an AbortError. This behaves as if the details
+        update promise were rejected by the merchant.
+
+        Added a test case to http/tests/paymentrequest/payment-request-show-method.https.html.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::settleDetailsPromise):
+        (WebCore::PaymentRequest::whenDetailsSettled):
+        (WebCore::PaymentRequest::cancel):
+        * Modules/paymentrequest/PaymentRequest.h:
+
 2018-10-08  Chris Dumez  <cdumez@apple.com>
 
         Have DOMWindowProperty get is frame from its associated DOMWindow
