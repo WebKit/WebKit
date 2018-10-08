@@ -1,3 +1,24 @@
+2018-10-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move test expectations from ios-12 to ios directory
+        https://bugs.webkit.org/show_bug.cgi?id=189839
+
+        Unreviewed test gardening..
+
+        * platform/ios-11/http/tests/quicklook/hide-referer-on-navigation-expected.txt: Removed.
+        * platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Removed.
+        * platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt: Removed.
+        * platform/ios-11/platform/ios/ios/fast/text/opticalFont-expected.txt: Removed.
+        * platform/ios-11/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Removed.
+        * platform/ios-11/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt: Removed.
+        * platform/ios-11/quicklook/powerpoint-expected.txt: Removed.
+        * platform/ios-11/quicklook/powerpoint-legacy-expected.txt: Removed.
+        * platform/ios-11/quicklook/word-expected.txt: Removed.
+        * platform/ios-11/quicklook/word-legacy-expected.txt: Removed.
+        * platform/ios-11/svg/batik/text/longTextOnPath-expected.txt: Removed.
+        * platform/ios-12/TestExpectations: Removed.
+        * platform/ios/TestExpectations:
+
 2018-10-08  Truitt Savell  <tsavell@apple.com>
 
         Attempt to fix test failure after 236915

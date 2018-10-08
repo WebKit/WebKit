@@ -3169,3 +3169,40 @@ webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-a
 
 webkit.org/b/190032 animations/stop-animation-on-suspend.html [ Failure ]
 
+http/tests/cookies/same-site [ Pass ]
+
+system-preview [ Pass ]
+
+editing/selection/character-granularity-rect.html [ Pass ]
+
+# < iOS12 doesn't support the CG needed for Conic Gradients
+fast/gradients/conic-repeating.html [ Pass ]
+fast/gradients/conic.html [ Pass ]
+fast/gradients/conic-off-center.html [ Pass ]
+fast/gradients/conic-center-outside-box.html [ Pass ]
+fast/gradients/conic-extended-stops.html [ Pass ]
+fast/gradients/conic-from-angle.html [ Pass ]
+fast/gradients/conic-repeating-last-stop.html [ Pass ]
+fast/gradients/conic-gradient-alpha.html [ Pass ]
+fast/gradients/conic-gradient-extended-stops.html [ Pass ]
+fast/gradients/conic-gradient.html [ Pass ]
+fast/gradients/conic-two-hints.html [ Pass ]
+
+# <rdar://problem/36455339> LayoutTest compositing/ios/overflow-scroll-touch-tiles.html is a flaky failure
+compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]
+
+# <rdar://problem/36639117> REGRESSION: LayoutTest svg/custom/subpaths-moveto-only-rendering.svg is failing
+svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
+
+# <rdar://problem/37406043> LayoutTest fast/events/focusing-element-with-tabindex-by-tap-or-click.html is a flaky failure
+fast/events/focusing-element-with-tabindex-by-tap-or-click.html [ Pass Failure ]
+
+# <rdar://problem/40952038> quicklook/keynote.html and quicklook/pages.html are failing with a 0.09% image diff
+quicklook/keynote.html [ ImageOnlyFailure ]
+quicklook/pages.html [ ImageOnlyFailure ]
+
+# <rdar://problem/41546587> REGRESSION: LayoutTest compositing/contents-scale/non-decomposable-matrix.html is failing
+compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
+
+# <rdar://problem/41546970> REGRESSION: LayoutTest media/media-fullscreen-loop-inline.html is a flaky timeout
+media/media-fullscreen-loop-inline.html [ Pass Timeout ]

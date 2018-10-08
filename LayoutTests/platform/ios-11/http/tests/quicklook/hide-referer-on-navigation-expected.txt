@@ -1,8 +1,0 @@
-This test verifies that the HTTP referrer is hidden when navigating from a Microsoft Word QuickLook preview. This test PASSED only if nothing is printed below.
-
-
-
---------
-Frame: '<!--frame1-->'
---------
-
