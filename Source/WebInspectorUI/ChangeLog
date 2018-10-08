@@ -1,3 +1,20 @@
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Open Resource Dialog should show path to resource (to disambiguate resources with same name)
+        https://bugs.webkit.org/show_bug.cgi?id=178153
+        <rdar://problem/34925686>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog .tree-outline.large .item .titles[data-path]): Added.
+        (.open-resource-dialog .tree-outline.large .item .titles[data-path]::after): Added.
+        (.open-resource-dialog .tree-outline.large .item .titles .title): Added.
+        (.open-resource-dialog .tree-outline.large .item .titles .subtitle): Added.
+        (.open-resource-dialog .tree-outline.large .item .titles): Deleted.
+
 2018-10-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add WebVTT MIME/file type mappings to the frontend

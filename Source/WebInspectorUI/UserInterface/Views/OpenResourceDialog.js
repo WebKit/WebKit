@@ -110,6 +110,15 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
                 continue;
 
             treeElement.mainTitle = createHighlightedTitleFragment(resource.displayName, result.matchingTextRanges);
+
+            let path = resource.urlComponents.path;
+            let lastPathComponent = resource.urlComponents.lastPathComponent;
+            if (path && lastPathComponent) {
+                let parentPath = path.substring(0, path.length - lastPathComponent.length);
+                if (parentPath.length && parentPath !== "/")
+                    treeElement.titlesElement.dataset.path = parentPath;
+            }
+
             treeElement[WI.OpenResourceDialog.ResourceMatchCookieDataSymbol] = result.cookie;
             this._treeOutline.appendChild(treeElement);
         }

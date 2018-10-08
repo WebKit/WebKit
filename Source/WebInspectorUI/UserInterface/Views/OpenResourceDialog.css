@@ -174,8 +174,22 @@ body[dir=rtl] .open-resource-dialog > .field > img {
     margin-top: 6px;
 }
 
-.open-resource-dialog .tree-outline.large .item .titles {
-    top: 14px;
+.open-resource-dialog .tree-outline.large .item .titles[data-path] {
+    top: 6px;
+}
+
+.open-resource-dialog .tree-outline.large .item .titles[data-path]::after {
+    display: block;
+    font-size: 10px;
+    content: attr(data-path);
+}
+
+.open-resource-dialog .tree-outline.large .item .titles .title {
+    font-size: 15px;
+}
+
+.open-resource-dialog .tree-outline.large .item .titles .subtitle {
+    vertical-align: 2px;
 }
 
 body[dir=ltr] .open-resource-dialog > .tree-outline .item {
