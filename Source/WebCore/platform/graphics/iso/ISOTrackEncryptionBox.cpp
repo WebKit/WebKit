@@ -39,11 +39,11 @@ bool ISOTrackEncryptionBox::parse(DataView& view, unsigned& offset)
         return false;
 
     // unsigned int(8) reserved = 0;
-    offset += 1;
+    offset += 2;
 
     if (!m_version) {
         // unsigned int(8) reserved = 0;
-        offset += 1;
+        offset += 2;
     } else {
         int8_t cryptAndSkip = 0;
         if (!checkedRead<int8_t>(cryptAndSkip, view, offset, BigEndian))

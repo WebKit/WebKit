@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ISOOriginalFormatBox : public ISOBox {
+class ISOOriginalFormatBox : public ISOBox {
 public:
     static FourCC boxTypeName() { return "frma"; }
 

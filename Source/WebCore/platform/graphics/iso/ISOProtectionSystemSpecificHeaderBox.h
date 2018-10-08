@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox : public ISOFullBox {
+class ISOProtectionSystemSpecificHeaderBox : public ISOFullBox {
 public:
     using KeyID = Vector<uint8_t>;
     static FourCC boxTypeName() { return "pssh"; }

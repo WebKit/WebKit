@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ISOSchemeInformationBox : public ISOBox {
+class ISOSchemeInformationBox : public ISOBox {
 public:
     static FourCC boxTypeName() { return "schi"; }
 
