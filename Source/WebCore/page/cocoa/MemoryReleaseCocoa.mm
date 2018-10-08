@@ -29,6 +29,7 @@
 #import "GCController.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
+#import "SystemFontDatabaseCoreText.h"
 #import <notify.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 
@@ -42,6 +43,10 @@ namespace WebCore {
 
 void platformReleaseMemory(Critical)
 {
+#if USE_PLATFORM_SYSTEM_FALLBACK_LIST
+    SystemFontDatabaseCoreText::singleton().clear();
+#endif
+
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR) && !PLATFORM(IOSMAC)
     // FIXME: Remove this call to GSFontInitialize() once <rdar://problem/32886715> is fixed.
     GSFontInitialize();

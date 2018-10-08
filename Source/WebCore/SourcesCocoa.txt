@@ -306,6 +306,7 @@ platform/graphics/cocoa/HEVCUtilitiesCocoa.cpp
 platform/graphics/cocoa/IOSurface.mm
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm
 platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
+platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp
 platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm

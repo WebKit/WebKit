@@ -4811,6 +4811,7 @@
 		E4DEAA1817A93DC3000E0430 /* StyleTreeResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DEAA1617A93DC3000E0430 /* StyleTreeResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4E243831DAB953E00C26E4B /* meterElementShadow.css in Resources */ = {isa = PBXBuildFile; fileRef = E4E243821DAB953E00C26E4B /* meterElementShadow.css */; };
 		E4E39AFB1330EFA8003AB274 /* LegacyTileLayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */; };
+		E4E8B4EC216B79E500B8834D /* SystemFontDatabaseCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8B4EA216B79E500B8834D /* SystemFontDatabaseCoreText.h */; };
 		E4E8B4F5216B956500B8834D /* FontCascadeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8B4F2216B8B6000B8834D /* FontCascadeDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */; };
 		E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */; };
@@ -14548,6 +14549,8 @@
 		E4E243821DAB953E00C26E4B /* meterElementShadow.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = meterElementShadow.css; sourceTree = "<group>"; };
 		E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyTileLayerPool.h; sourceTree = "<group>"; };
 		E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyTileLayerPool.mm; sourceTree = "<group>"; };
+		E4E8B4EA216B79E500B8834D /* SystemFontDatabaseCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFontDatabaseCoreText.h; sourceTree = "<group>"; };
+		E4E8B4ED216B79F400B8834D /* SystemFontDatabaseCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemFontDatabaseCoreText.cpp; sourceTree = "<group>"; };
 		E4E8B4F0216B8B5F00B8834D /* FontCascadeDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCascadeDescription.cpp; sourceTree = "<group>"; };
 		E4E8B4F2216B8B6000B8834D /* FontCascadeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontCascadeDescription.h; sourceTree = "<group>"; };
 		E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutResolver.h; sourceTree = "<group>"; };
@@ -24025,6 +24028,8 @@
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,
 				CDC48AC82149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.cpp */,
 				CDC48AC72149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.h */,
+				E4E8B4ED216B79F400B8834D /* SystemFontDatabaseCoreText.cpp */,
+				E4E8B4EA216B79E500B8834D /* SystemFontDatabaseCoreText.h */,
 				526724F21CB2FDF60075974D /* TextTrackRepresentationCocoa.h */,
 				526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */,
 				2D3EF4441917915C00034184 /* WebActionDisablingCALayerDelegate.h */,
@@ -27493,6 +27498,7 @@
 				57303BBB2006C6EE00355965 /* CBORBinary.h in Headers */,
 				57303BC12006E00C00355965 /* CBORReader.h in Headers */,
 				57303BB92006C6EE00355965 /* CBORValue.h in Headers */,
+				E4E8B4EC216B79E500B8834D /* SystemFontDatabaseCoreText.h in Headers */,
 				57303BBA2006C6EE00355965 /* CBORWriter.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */,

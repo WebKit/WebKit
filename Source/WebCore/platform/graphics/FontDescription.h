@@ -133,8 +133,6 @@ public:
     void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
     void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = static_cast<unsigned>(shouldAllowUserInstalledFonts); }
 
-    static void invalidateCaches();
-
 private:
     // FIXME: Investigate moving these into their own object on the heap (to save memory).
     FontFeatureSettings m_featureSettings;

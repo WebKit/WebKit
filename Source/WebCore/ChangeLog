@@ -1,3 +1,59 @@
+2018-10-08  Antti Koivisto  <antti@apple.com>
+
+        Move SystemFontDatabase to a file of its own
+        https://bugs.webkit.org/show_bug.cgi?id=190347
+
+        Reviewed by Chris Dumez.
+
+        Also rename it to SystemFontDatabaseCoreText as it is CoreText specific.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseNoncriticalMemory):
+        * page/cocoa/MemoryReleaseCocoa.mm:
+
+        Release SystemFontDatabaseCoreText directly from platform specific cleanup code.
+
+        (WebCore::platformReleaseMemory):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontDescription::invalidateCaches):
+        (WebCore::systemFontCascadeList):
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::CoreTextCascadeListParameters): Deleted.
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::isHashTableDeletedValue const): Deleted.
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::operator== const): Deleted.
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::hash const): Deleted.
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::CoreTextCascadeListParametersHash::hash): Deleted.
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::CoreTextCascadeListParametersHash::equal): Deleted.
+        (): Deleted.
+        (WebCore::SystemFontDatabase::singleton): Deleted.
+        (WebCore::SystemFontDatabase::systemFontCascadeList): Deleted.
+        (WebCore::SystemFontDatabase::clear): Deleted.
+        (WebCore::SystemFontDatabase::SystemFontDatabase): Deleted.
+        (WebCore::SystemFontDatabase::applyWeightItalicsAndFallbackBehavior): Deleted.
+        (WebCore::SystemFontDatabase::removeCascadeList): Deleted.
+        (WebCore::SystemFontDatabase::computeCascadeList): Deleted.
+        (WebCore::systemFontParameters): Deleted.
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp: Added.
+        (WebCore::SystemFontDatabaseCoreText::singleton):
+        (WebCore::SystemFontDatabaseCoreText::SystemFontDatabaseCoreText):
+        (WebCore::SystemFontDatabaseCoreText::systemFontCascadeList):
+        (WebCore::SystemFontDatabaseCoreText::clear):
+        (WebCore::SystemFontDatabaseCoreText::applyWeightItalicsAndFallbackBehavior):
+        (WebCore::SystemFontDatabaseCoreText::removeCascadeList):
+        (WebCore::SystemFontDatabaseCoreText::computeCascadeList):
+        (WebCore::SystemFontDatabaseCoreText::systemFontParameters):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.h: Added.
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::CascadeListParameters):
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::isHashTableDeletedValue const):
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::operator== const):
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::hash const):
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::CascadeListParametersHash::hash):
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::CascadeListParametersHash::equal):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+
 2018-10-08  Jeremy Jones  <jeremyj@apple.com>
 
         Remove dead code: VideoFullscreenModel::isVisible()

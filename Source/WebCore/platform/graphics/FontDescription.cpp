@@ -71,10 +71,4 @@ void FontDescription::setLocale(const AtomicString& locale)
     m_script = localeToScriptCodeForFontSelection(m_locale);
 }
 
-#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST
-void FontDescription::invalidateCaches()
-{
-}
-#endif
-
 } // namespace WebCore
