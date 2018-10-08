@@ -1,0 +1,842 @@
+From 69d896a02acef5cda9d727f46818bf0221fb82eb Mon Sep 17 00:00:00 2001
+From: Yacine Bandou <yacine.bandou@softathome.com>
+Date: Sun, 30 Sep 2018 19:28:07 +0200
+Subject: [PATCH] matroska: Add the WebM encrypted content support in
+ matroskademux
+
+This commit:
+
+1. Reads the WebM and Matroska ContentEncryption subelements.
+
+2. Creates a GST_PROTECTION event for each ContentEncryption, which
+   will be sent before pushing the first source buffer.
+   The DRM system id field in this event is set to GST_PROTECTION_UNSPECIFIED_SYSTEM_ID,
+   because it isn't specified neither by Matroska nor by the WebM spec.
+
+3. Reads the protection information of encrypted Block/SimpleBlock and
+   extracts the IV and the partitioning format (subsamples).
+
+4. Creates the metadata protection for each encrypted Block/SimpleBlock,
+   with those informations: KeyID (extracted from ContentEncryption element),
+   IV and partitioning format.
+
+5. Adds a new caps for WebM encrypted content named "application/x-webm-enc",
+   with the following new fields:
+
+   "encryption-algorithm": The encryption algorithm used.
+                           values: "None", "DES", "3DES", "Twofish", "Blowfish", "AES".
+
+   "encoding-scope": The field that describes which Elements have been modified.
+                     Values: "frame", "codec-data", "next-content".
+
+   "cipher-mode": The cipher mode used in the encryption.
+                  Values: "None", "CTR".
+
+https://bugzilla.gnome.org/show_bug.cgi?id=765275
+---
+ gst/matroska/matroska-demux.c       | 122 ++++++++++++-
+ gst/matroska/matroska-ids.c         |  73 ++++++++
+ gst/matroska/matroska-ids.h         |  53 ++++++
+ gst/matroska/matroska-read-common.c | 354 ++++++++++++++++++++++++++++++++++--
+ gst/matroska/matroska-read-common.h |   3 +
+ 5 files changed, 586 insertions(+), 19 deletions(-)
+
+diff --git a/gst/matroska/matroska-demux.c b/gst/matroska/matroska-demux.c
+index 683380bbf..1ef7b42cc 100644
+--- a/gst/matroska/matroska-demux.c
++++ b/gst/matroska/matroska-demux.c
+@@ -173,6 +173,9 @@ static GstCaps *gst_matroska_demux_audio_caps (GstMatroskaTrackAudioContext
+ static GstCaps
+     * gst_matroska_demux_subtitle_caps (GstMatroskaTrackSubtitleContext *
+     subtitlecontext, const gchar * codec_id, gpointer data, guint size);
++static const gchar *gst_matroska_track_encryption_algorithm_name (gint val);
++static const gchar *gst_matroska_track_encryption_cipher_mode_name (gint val);
++static const gchar *gst_matroska_track_encoding_scope_name (gint val);
+ 
+ /* stream methods */
+ static void gst_matroska_demux_reset (GstElement * element);
+@@ -359,12 +362,13 @@ gst_matroska_decode_buffer (GstMatroskaTrackContext * context, GstBuffer * buf)
+   GstMapInfo map;
+   gpointer data;
+   gsize size;
++  GstBuffer *out_buf = buf;
+ 
+   g_return_val_if_fail (GST_IS_BUFFER (buf), NULL);
+ 
+   GST_DEBUG ("decoding buffer %p", buf);
+ 
+-  gst_buffer_map (buf, &map, GST_MAP_READ);
++  gst_buffer_map (out_buf, &map, GST_MAP_READ);
+   data = map.data;
+   size = map.size;
+ 
+@@ -372,15 +376,53 @@ gst_matroska_decode_buffer (GstMatroskaTrackContext * context, GstBuffer * buf)
+ 
+   if (gst_matroska_decode_data (context->encodings, &data, &size,
+           GST_MATROSKA_TRACK_ENCODING_SCOPE_FRAME, FALSE)) {
+-    gst_buffer_unmap (buf, &map);
+-    gst_buffer_unref (buf);
+-    return gst_buffer_new_wrapped (data, size);
++    gst_buffer_unmap (out_buf, &map);
++    if (data != map.data) {
++      gst_buffer_unref (out_buf);
++      out_buf = gst_buffer_new_wrapped (data, size);
++    }
+   } else {
+     GST_DEBUG ("decode data failed");
+-    gst_buffer_unmap (buf, &map);
+-    gst_buffer_unref (buf);
++    gst_buffer_unmap (out_buf, &map);
++    gst_buffer_unref (out_buf);
+     return NULL;
+   }
++  /* Encrypted stream */
++  if (context->protection_info) {
++
++    GstStructure *info_protect = gst_structure_copy (context->protection_info);
++    gboolean encrypted = FALSE;
++
++    gst_buffer_map (out_buf, &map, GST_MAP_READ);
++    data = map.data;
++    size = map.size;
++
++    if (gst_matroska_parse_protection_meta (&data, &size, info_protect,
++            &encrypted)) {
++      gst_buffer_unmap (out_buf, &map);
++      if (data != map.data) {
++        GstBuffer *tmp_buf = out_buf;
++        out_buf =
++            gst_buffer_copy_region (tmp_buf, GST_BUFFER_COPY_ALL,
++            gst_buffer_get_size (tmp_buf) - size, size);
++        gst_buffer_unref (tmp_buf);
++        if (encrypted)
++          gst_buffer_add_protection_meta (out_buf, info_protect);
++        else
++          gst_structure_free (info_protect);
++      } else {
++        gst_structure_free (info_protect);
++      }
++    } else {
++      GST_WARNING ("Adding protection metadata failed");
++      gst_buffer_unmap (out_buf, &map);
++      gst_buffer_unref (out_buf);
++      gst_structure_free (info_protect);
++      return NULL;
++    }
++  }
++
++  return out_buf;
+ }
+ 
+ static void
+@@ -630,6 +672,8 @@ gst_matroska_demux_parse_stream (GstMatroskaDemux * demux, GstEbmlRead * ebml,
+   context->dts_only = FALSE;
+   context->intra_only = FALSE;
+   context->tags = gst_tag_list_new_empty ();
++  g_queue_init (&context->protection_event_queue);
++  context->protection_info = NULL;
+ 
+   GST_DEBUG_OBJECT (demux, "Parsing a TrackEntry (%d tracks parsed so far)",
+       demux->common.num_streams);
+@@ -1467,6 +1511,31 @@ gst_matroska_demux_parse_stream (GstMatroskaDemux * demux, GstEbmlRead * ebml,
+         context->stream_headers, caps);
+   }
+ 
++  if (context->encodings) {
++    GstMatroskaTrackEncoding *enc;
++    guint i;
++
++    for (i = 0; i < context->encodings->len; i++) {
++      enc = &g_array_index (context->encodings, GstMatroskaTrackEncoding, i);
++      if (enc->type == GST_MATROSKA_ENCODING_ENCRYPTION /* encryption */ ) {
++        GstStructure *s = gst_caps_get_structure (caps, 0);
++        if (!gst_structure_has_name (s, "application/x-webm-enc")) {
++          gst_structure_set (s, "original-media-type", G_TYPE_STRING,
++              gst_structure_get_name (s), NULL);
++          gst_structure_set (s, "encryption-algorithm", G_TYPE_STRING,
++              gst_matroska_track_encryption_algorithm_name (enc->enc_algo),
++              NULL);
++          gst_structure_set (s, "encoding-scope", G_TYPE_STRING,
++              gst_matroska_track_encoding_scope_name (enc->scope), NULL);
++          gst_structure_set (s, "cipher-mode", G_TYPE_STRING,
++              gst_matroska_track_encryption_cipher_mode_name
++              (enc->enc_cipher_mode), NULL);
++          gst_structure_set_name (s, "application/x-webm-enc");
++        }
++      }
++    }
++  }
++
+   context->caps = caps;
+ 
+   /* tadaah! */
+@@ -4185,6 +4254,7 @@ gst_matroska_demux_parse_blockgroup_or_simpleblock (GstMatroskaDemux * demux,
+     gboolean delta_unit = FALSE;
+     guint64 duration = 0;
+     gint64 lace_time = 0;
++    GstEvent *protect_event;
+ 
+     stream = g_ptr_array_index (demux->common.src, stream_num);
+ 
+@@ -4204,6 +4274,12 @@ gst_matroska_demux_parse_blockgroup_or_simpleblock (GstMatroskaDemux * demux,
+     } else {
+       lace_time = GST_CLOCK_TIME_NONE;
+     }
++    /* Send the GST_PROTECTION event */
++    while ((protect_event = g_queue_pop_head (&stream->protection_event_queue))) {
++      GST_TRACE_OBJECT (demux, "pushing protection event for stream %d:%s",
++          stream->index, GST_STR_NULL (stream->name));
++      gst_pad_push_event (stream->pad, protect_event);
++    }
+ 
+     /* need to refresh segment info ASAP */
+     if (GST_CLOCK_TIME_IS_VALID (lace_time) && demux->need_segment) {
+@@ -5350,6 +5426,9 @@ gst_matroska_demux_parse_id (GstMatroskaDemux * demux, guint32 id,
+         }
+         case GST_MATROSKA_ID_POSITION:
+         case GST_MATROSKA_ID_ENCRYPTEDBLOCK:
++          /* The WebM doesn't support the EncryptedBlock element.
++           * The Matroska spec doesn't give us more detail, how to parse this element,
++           * for example the field TransformID isn't specified yet.*/
+         case GST_MATROSKA_ID_SILENTTRACKS:
+           GST_DEBUG_OBJECT (demux,
+               "Skipping Cluster subelement 0x%x - ignoring", id);
+@@ -6915,6 +6994,37 @@ gst_matroska_demux_get_property (GObject * object,
+   }
+ }
+ 
++static const gchar *
++gst_matroska_track_encryption_algorithm_name (gint val)
++{
++  GEnumValue *en;
++  GEnumClass *enum_class =
++      g_type_class_ref (MATROSKA_TRACK_ENCRYPTION_ALGORITHM_TYPE);
++  en = g_enum_get_value (G_ENUM_CLASS (enum_class), val);
++  return en ? en->value_nick : NULL;
++}
++
++static const gchar *
++gst_matroska_track_encryption_cipher_mode_name (gint val)
++{
++  GEnumValue *en;
++  GEnumClass *enum_class =
++      g_type_class_ref (MATROSKA_TRACK_ENCRYPTION_CIPHER_MODE_TYPE);
++  en = g_enum_get_value (G_ENUM_CLASS (enum_class), val);
++  return en ? en->value_nick : NULL;
++}
++
++static const gchar *
++gst_matroska_track_encoding_scope_name (gint val)
++{
++  GEnumValue *en;
++  GEnumClass *enum_class =
++      g_type_class_ref (MATROSKA_TRACK_ENCODING_SCOPE_TYPE);
++
++  en = g_enum_get_value (G_ENUM_CLASS (enum_class), val);
++  return en ? en->value_nick : NULL;
++}
++
+ gboolean
+ gst_matroska_demux_plugin_init (GstPlugin * plugin)
+ {
+diff --git a/gst/matroska/matroska-ids.c b/gst/matroska/matroska-ids.c
+index 3be3d276b..b96404386 100644
+--- a/gst/matroska/matroska-ids.c
++++ b/gst/matroska/matroska-ids.c
+@@ -351,5 +351,78 @@ gst_matroska_track_free (GstMatroskaTrackContext * track)
+   if (track->stream_headers)
+     gst_buffer_list_unref (track->stream_headers);
+ 
++  g_queue_foreach (&track->protection_event_queue, (GFunc) gst_event_unref,
++      NULL);
++  g_queue_clear (&track->protection_event_queue);
++
++  if (track->protection_info)
++    gst_structure_free (track->protection_info);
++
+   g_free (track);
+ }
++
++GType
++matroska_track_encryption_algorithm_get_type (void)
++{
++  static GType type = 0;
++
++  static const GEnumValue types[] = {
++    {GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_NONE, "Not encrypted",
++        "None"},
++    {GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_DES, "DES encryption algorithm",
++        "DES"},
++    {GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_3DES, "3DES encryption algorithm",
++        "3DES"},
++    {GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_TWOFISH,
++        "TwoFish encryption algorithm", "TwoFish"},
++    {GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_BLOWFISH,
++        "BlowFish encryption algorithm", "BlowFish"},
++    {GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_AES, "AES encryption algorithm",
++        "AES"},
++    {0, NULL, NULL}
++  };
++
++  if (!type) {
++    type = g_enum_register_static ("MatroskaTrackEncryptionAlgorithm", types);
++  }
++  return type;
++}
++
++GType
++matroska_track_encryption_cipher_mode_get_type (void)
++{
++  static GType type = 0;
++
++  static const GEnumValue types[] = {
++    {GST_MATROSKA_TRACK_ENCRYPTION_CIPHER_MODE_NONE, "Not defined",
++        "None"},
++    {GST_MATROSKA_TRACK_ENCRYPTION_CIPHER_MODE_CTR, "CTR encryption mode",
++        "CTR"},
++    {0, NULL, NULL}
++  };
++
++  if (!type) {
++    type = g_enum_register_static ("MatroskaTrackEncryptionCipherMode", types);
++  }
++  return type;
++}
++
++GType
++matroska_track_encoding_scope_get_type (void)
++{
++  static GType type = 0;
++
++  static const GEnumValue types[] = {
++    {GST_MATROSKA_TRACK_ENCODING_SCOPE_FRAME, "Encoding scope frame", "frame"},
++    {GST_MATROSKA_TRACK_ENCODING_SCOPE_CODEC_DATA, "Encoding scope codec data",
++        "codec-data"},
++    {GST_MATROSKA_TRACK_ENCODING_SCOPE_NEXT_CONTENT_ENCODING,
++        "Encoding scope next content", "next-content"},
++    {0, NULL, NULL}
++  };
++
++  if (!type) {
++    type = g_enum_register_static ("MatroskaTrackEncodingScope", types);
++  }
++  return type;
++}
+diff --git a/gst/matroska/matroska-ids.h b/gst/matroska/matroska-ids.h
+index c2e41e549..9b263d8a1 100644
+--- a/gst/matroska/matroska-ids.h
++++ b/gst/matroska/matroska-ids.h
+@@ -175,6 +175,9 @@
+ #define GST_MATROSKA_ID_CONTENTSIGKEYID            0x47E4
+ #define GST_MATROSKA_ID_CONTENTSIGALGO             0x47E5
+ #define GST_MATROSKA_ID_CONTENTSIGHASHALGO         0x47E6
++/* Added in WebM spec */
++#define GST_MATROSKA_ID_CONTENTENCAESSETTINGS      0x47E7
++#define GST_MATROSKA_ID_AESSETTINGSCIPHERMODE      0x47E8
+ 
+ /* ID in the CUEs master */
+ #define GST_MATROSKA_ID_POINTENTRY                 0xBB
+@@ -516,6 +519,17 @@ typedef enum {
+   GST_MATROSKA_STEREO_MODE_FBF_RL      = 0xE
+ } GstMatroskaStereoMode;
+ 
++typedef enum {
++  GST_MATROSKA_ENCODING_COMPRESSION = 0x00,
++  GST_MATROSKA_ENCODING_ENCRYPTION  = 0x01
++} GstMatroskaEncodingType;
++
++/* WebM spec */
++typedef enum {
++  GST_MATROSKA_BLOCK_ENCRYPTED   = 0x01,
++  GST_MATROSKA_BLOCK_PARTITIONED = 0x02
++} GstMatroskaEncryptedBlockFlags;
++
+ typedef struct _GstMatroskaTrackContext GstMatroskaTrackContext;
+ 
+ /* TODO: check if all fields are used */
+@@ -549,6 +563,11 @@ struct _GstMatroskaTrackContext {
+ 
+   gboolean      set_discont; /* TRUE = set DISCONT flag on next buffer */
+ 
++  /* Queue to save the GST_PROTECTION events which will be sent before the first source buffer */
++  GQueue         protection_event_queue;
++  /* Protection information structure which will be added in protection metadata for each encrypted buffer */
++  GstStructure * protection_info;
++
+   /* Stream header buffer, to put into caps and send before any other buffers */
+   GstBufferList * stream_headers;
+   gboolean        send_stream_headers;
+@@ -654,6 +673,9 @@ typedef enum {
+   GST_MATROSKA_TRACK_ENCODING_SCOPE_NEXT_CONTENT_ENCODING = (1<<2)
+ } GstMatroskaTrackEncodingScope;
+ 
++#define MATROSKA_TRACK_ENCODING_SCOPE_TYPE (matroska_track_encoding_scope_get_type())
++GType matroska_track_encoding_scope_get_type (void);
++
+ typedef enum {
+   GST_MATROSKA_TRACK_COMPRESSION_ALGORITHM_ZLIB = 0,
+   GST_MATROSKA_TRACK_COMPRESSION_ALGORITHM_BZLIB = 1,
+@@ -661,6 +683,35 @@ typedef enum {
+   GST_MATROSKA_TRACK_COMPRESSION_ALGORITHM_HEADERSTRIP = 3
+ } GstMatroskaTrackCompressionAlgorithm;
+ 
++/* The encryption algorithm used. The value '0' means that the contents
++ * have not been encrypted but only signed.
++ * Predefined values: 1 - DES; 2 - 3DES; 3 - Twofish; 4 - Blowfish; 5 - AES.
++ * WebM only supports a value of 5 (AES).
++ */
++typedef enum {
++  GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_NONE     = 0,
++  GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_DES      = 1,
++  GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_3DES     = 2,
++  GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_TWOFISH  = 3,
++  GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_BLOWFISH = 4,
++  GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_AES      = 5
++} GstMatroskaTrackEncryptionAlgorithm;
++
++#define MATROSKA_TRACK_ENCRYPTION_ALGORITHM_TYPE (matroska_track_encryption_algorithm_get_type())
++GType matroska_track_encryption_algorithm_get_type (void);
++
++/* Defined only in WebM spec.
++ * The cipher mode used in the encryption. Predefined values: 1 - CTR
++ */
++typedef enum {
++  GST_MATROSKA_TRACK_ENCRYPTION_CIPHER_MODE_NONE    = 0,
++  GST_MATROSKA_TRACK_ENCRYPTION_CIPHER_MODE_CTR     = 1
++} GstMatroskaTrackEncryptionCipherMode;
++
++#define MATROSKA_TRACK_ENCRYPTION_CIPHER_MODE_TYPE (matroska_track_encryption_cipher_mode_get_type())
++GType matroska_track_encryption_cipher_mode_get_type (void);
++
++
+ typedef struct _GstMatroskaTrackEncoding {
+   guint   order;
+   guint   scope     : 3;
+@@ -668,6 +719,8 @@ typedef struct _GstMatroskaTrackEncoding {
+   guint   comp_algo : 2;
+   guint8 *comp_settings;
+   guint   comp_settings_length;
++  guint   enc_algo  : 3;
++  guint   enc_cipher_mode : 2;
+ } GstMatroskaTrackEncoding;
+ 
+ gboolean gst_matroska_track_init_video_context    (GstMatroskaTrackContext ** p_context);
+diff --git a/gst/matroska/matroska-read-common.c b/gst/matroska/matroska-read-common.c
+index 419ba7f95..ffb393bf9 100644
+--- a/gst/matroska/matroska-read-common.c
++++ b/gst/matroska/matroska-read-common.c
+@@ -39,6 +39,7 @@
+ 
+ #include <gst/tag/tag.h>
+ #include <gst/base/gsttypefindhelper.h>
++#include <gst/base/gstbytewriter.h>
+ 
+ #include "lzo.h"
+ 
+@@ -262,9 +263,9 @@ gst_matroska_decode_content_encodings (GArray * encodings)
+         == 0)
+       continue;
+ 
+-    /* Encryption not supported yet */
+-    if (enc->type != 0)
+-      return GST_FLOW_ERROR;
++    /* Other than ENCODING_COMPRESSION not handled here */
++    if (enc->type != GST_MATROSKA_ENCODING_COMPRESSION)
++      continue;
+ 
+     if (i + 1 >= encodings->len)
+       return GST_FLOW_ERROR;
+@@ -312,9 +313,9 @@ gst_matroska_decode_data (GArray * encodings, gpointer * data_out,
+     if ((enc->scope & scope) == 0)
+       continue;
+ 
+-    /* Encryption not supported yet */
+-    if (enc->type != 0) {
+-      ret = FALSE;
++    /* Encryption not handled here */
++    if (enc->type != GST_MATROSKA_ENCODING_COMPRESSION) {
++      ret = TRUE;
+       break;
+     }
+ 
+@@ -349,6 +350,211 @@ gst_matroska_decode_data (GArray * encodings, gpointer * data_out,
+   return ret;
+ }
+ 
++/* This function parses the protection info of Block/SimpleBlock and extracts the
++ * IV and partitioning format (subsample) information.
++ * Set those parsed information into protection info structure @info_protect which
++ * will be added in protection metadata of the Gstbuffer.
++ * The subsamples format follows the same pssh box format in Common Encryption spec:
++ * subsample number + clear subsample size (16bit bigendian) | encrypted subsample size (32bit bigendian) | ...
++ * @encrypted is an output argument: TRUE if the current Block/SimpleBlock is encrypted else FALSE
++ */
++gboolean
++gst_matroska_parse_protection_meta (gpointer * data_out, gsize * size_out,
++    GstStructure * info_protect, gboolean * encrypted)
++{
++  guint8 *data;
++  GstBuffer *buf_iv;
++  guint8 *data_iv;
++  guint8 *subsamples;
++  guint8 signal_byte;
++  gint i;
++  GstByteReader reader;
++
++  g_return_val_if_fail (data_out != NULL && *data_out != NULL, FALSE);
++  g_return_val_if_fail (size_out != NULL, FALSE);
++  g_return_val_if_fail (info_protect != NULL, FALSE);
++  g_return_val_if_fail (encrypted != NULL, FALSE);
++
++  *encrypted = FALSE;
++  data = *data_out;
++  gst_byte_reader_init (&reader, data, *size_out);
++
++  /* WebM spec:
++   * 4.7 Signal Byte Format
++   *  0 1 2 3 4 5 6 7
++   * +-+-+-+-+-+-+-+-+
++   * |X|   RSV   |P|E|
++   * +-+-+-+-+-+-+-+-+
++   *
++   * Extension bit (X)
++   * If set, another signal byte will follow this byte. Reserved for future expansion (currently MUST be set to 0).
++   * RSV bits (RSV)
++   * Bits reserved for future use. MUST be set to 0 and MUST be ignored.
++   * Encrypted bit (E)
++   * If set, the Block MUST contain an IV immediately followed by an encrypted frame. If not set, the Block MUST NOT include an IV and the frame MUST be unencrypted. The unencrypted frame MUST immediately follow the Signal Byte.
++   * Partitioned bit (P)
++   * Used to indicate that the sample has subsample partitions. If set, the IV will be followed by a num_partitions byte, and num_partitions * 32-bit partition offsets. This bit can only be set if the E bit is also set.
++   */
++  if (!gst_byte_reader_get_uint8 (&reader, &signal_byte)) {
++    GST_ERROR ("Error reading the signal byte");
++    return FALSE;
++  }
++
++  /* Unencrypted buffer */
++  if (!(signal_byte & GST_MATROSKA_BLOCK_ENCRYPTED)) {
++    return TRUE;
++  }
++
++  /* Encrypted buffer */
++  *encrypted = TRUE;
++  /* Create IV buffer */
++  if (!gst_byte_reader_dup_data (&reader, sizeof (guint64), &data_iv)) {
++    GST_ERROR ("Error reading the IV data");
++    return FALSE;
++  }
++  buf_iv = gst_buffer_new_wrapped ((gpointer) data_iv, sizeof (guint64));
++  gst_structure_set (info_protect, "iv", GST_TYPE_BUFFER, buf_iv, NULL);
++  gst_buffer_unref (buf_iv);
++
++  /* Partitioned in subsample */
++  if (signal_byte & GST_MATROSKA_BLOCK_PARTITIONED) {
++    guint nb_subsample;
++    guint32 offset = 0;
++    guint32 offset_prev;
++    guint32 encrypted_bytes = 0;
++    guint16 clear_bytes = 0;
++    GstBuffer *buf_sub_sample;
++    guint8 nb_part;
++    GstByteWriter writer;
++
++    /* Read the number of partitions (1 byte) */
++    if (!gst_byte_reader_get_uint8 (&reader, &nb_part)) {
++      GST_ERROR ("Error reading the partition number");
++      return FALSE;
++    }
++
++    if (nb_part == 0) {
++      GST_ERROR ("Partitioned, but the subsample number equal to zero");
++      return FALSE;
++    }
++
++    nb_subsample = (nb_part + 2) >> 1;
++
++    gst_structure_set (info_protect, "subsample_count", G_TYPE_UINT,
++        nb_subsample, NULL);
++
++    /* WebM Spec:
++     *
++     * 4.6 Subsample Encrypted Block Format
++     *
++     * The Subsample Encrypted Block format extends the Full-sample format by setting a "partitioned" (P) bit in the Signal Byte.
++     * If this bit is set, the EncryptedBlock header shall include an
++     * 8-bit integer indicating the number of sample partitions (dividers between clear/encrypted sections),
++     * and a series of 32-bit integers in big-endian encoding indicating the byte offsets of such partitions.
++     *
++     *  0                   1                   2                   3
++     *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++     * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
++     * |  Signal Byte  |                                               |
++     * +-+-+-+-+-+-+-+-+             IV                                |
++     * |                                                               |
++     * |               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
++     * |               | num_partition |     Partition 0 offset ->     |
++     * |-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-|
++     * |     -> Partition 0 offset     |              ...              |
++     * |-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-|
++     * |             ...               |     Partition n-1 offset ->   |
++     * |-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-|
++     * |     -> Partition n-1 offset   |                               |
++     * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
++     * |                    Clear/encrypted sample data                |
++     * |                                                               |
++     * |                                                               |
++     * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
++     *
++     * 4.6.1 SAMPLE PARTITIONS
++     *
++     * The samples shall be partitioned into alternating clear and encrypted sections,
++     * always starting with a clear section.
++     * Generally for n clear/encrypted sections there shall be n-1 partition offsets.
++     * However, if it is required that the first section be encrypted, then the first partition shall be at byte offset 0
++     * (indicating a zero-size clear section), and there shall be n partition offsets.
++     * Please refer to the "Sample Encryption" description of the "Common Encryption"
++     * section of the VP Codec ISO Media File Format Binding Specification for more
++     * detail on how subsample encryption is implemented.
++     */
++    subsamples =
++        g_malloc (nb_subsample * (sizeof (guint16) + sizeof (guint32)));
++
++    gst_byte_writer_init_with_data (&writer, subsamples,
++        nb_subsample * (sizeof (guint16) + sizeof (guint32)), FALSE);
++
++    for (i = 0; i <= nb_part; i++) {
++      offset_prev = offset;
++      if (i == nb_part) {
++        offset = gst_byte_reader_get_remaining (&reader);
++      } else {
++        if (!gst_byte_reader_get_uint32_be (&reader, &offset)) {
++          GST_ERROR ("Error reading the partition offset");
++          goto release_err;
++        }
++      }
++
++      if (offset < offset_prev) {
++        GST_ERROR ("Partition offsets should not decrease");
++        goto release_err;
++      }
++
++      if (i % 2 == 0) {
++        if ((offset - offset_prev) & 0xFFFF0000) {
++          GST_ERROR
++              ("The Clear Partition exceed 64KB in encrypted subsample format");
++          goto release_err;
++        }
++        /* We set the Clear partition size in 16 bits, in order to
++         * follow the same format of the box PSSH in CENC spec */
++        clear_bytes = offset - offset_prev;
++        if (i == nb_part)
++          encrypted_bytes = 0;
++      } else {
++        encrypted_bytes = offset - offset_prev;
++      }
++
++      if ((i % 2 == 1) || (i == nb_part)) {
++        if (clear_bytes == 0 && encrypted_bytes == 0) {
++          GST_ERROR ("Found 2 partitions with the same offsets.");
++          goto release_err;
++        }
++        if (!gst_byte_writer_put_uint16_be (&writer, clear_bytes)) {
++          GST_ERROR ("Error writing the number of clear bytes");
++          goto release_err;
++        }
++        if (!gst_byte_writer_put_uint32_be (&writer, encrypted_bytes)) {
++          GST_ERROR ("Error writing the number of encrypted bytes");
++          goto release_err;
++        }
++      }
++    }
++
++    buf_sub_sample =
++        gst_buffer_new_wrapped (subsamples,
++        nb_subsample * (sizeof (guint16) + sizeof (guint32)));
++    gst_structure_set (info_protect, "subsamples", GST_TYPE_BUFFER,
++        buf_sub_sample, NULL);
++    gst_buffer_unref (buf_sub_sample);
++  } else {
++    gst_structure_set (info_protect, "subsample_count", G_TYPE_UINT, 0, NULL);
++  }
++
++  gst_byte_reader_get_data (&reader, 0, (const guint8 **) data_out);
++  *size_out = gst_byte_reader_get_remaining (&reader);
++  return TRUE;
++
++release_err:
++  g_free (subsamples);
++  return FALSE;
++}
++
+ static gint
+ gst_matroska_index_compare (GstMatroskaIndex * i1, GstMatroskaIndex * i2)
+ {
+@@ -2744,9 +2950,11 @@ gst_matroska_read_common_read_track_encoding (GstMatroskaReadCommon * common,
+               G_GUINT64_FORMAT, num);
+           ret = GST_FLOW_ERROR;
+           break;
+-        } else if (num != 0) {
++        }
++
++        if ((!common->is_webm) && (num == GST_MATROSKA_ENCODING_ENCRYPTION)) {
+           GST_ERROR_OBJECT (common->sinkpad,
+-              "Encrypted tracks are not supported yet");
++              "Encrypted tracks are supported only in WebM");
+           ret = GST_FLOW_ERROR;
+           break;
+         }
+@@ -2812,12 +3020,132 @@ gst_matroska_read_common_read_track_encoding (GstMatroskaReadCommon * common,
+         break;
+       }
+ 
+-      case GST_MATROSKA_ID_CONTENTENCRYPTION:
+-        GST_ERROR_OBJECT (common->sinkpad,
+-            "Encrypted tracks not yet supported");
+-        gst_ebml_read_skip (ebml);
+-        ret = GST_FLOW_ERROR;
++      case GST_MATROSKA_ID_CONTENTENCRYPTION:{
++
++        DEBUG_ELEMENT_START (common, ebml, "ContentEncryption");
++
++        if (enc.type != GST_MATROSKA_ENCODING_ENCRYPTION) {
++          GST_WARNING_OBJECT (common->sinkpad,
++              "Unexpected to have Content Encryption because it isn't encryption type");
++          ret = GST_FLOW_ERROR;
++          break;
++        }
++
++        if ((ret = gst_ebml_read_master (ebml, &id)) != GST_FLOW_OK)
++          break;
++
++        while (ret == GST_FLOW_OK &&
++            gst_ebml_read_has_remaining (ebml, 1, TRUE)) {
++          if ((ret = gst_ebml_peek_id (ebml, &id)) != GST_FLOW_OK)
++            break;
++
++          switch (id) {
++            case GST_MATROSKA_ID_CONTENTENCALGO:{
++              guint64 num;
++
++              if ((ret = gst_ebml_read_uint (ebml, &id, &num)) != GST_FLOW_OK) {
++                break;
++              }
++
++              if (num > GST_MATROSKA_TRACK_ENCRYPTION_ALGORITHM_AES) {
++                GST_ERROR_OBJECT (common->sinkpad, "Invalid ContentEncAlgo %"
++                    G_GUINT64_FORMAT, num);
++                ret = GST_FLOW_ERROR;
++                break;
++              }
++              GST_DEBUG_OBJECT (common->sinkpad,
++                  "ContentEncAlgo: %" G_GUINT64_FORMAT, num);
++              enc.enc_algo = num;
++
++              break;
++            }
++            case GST_MATROSKA_ID_CONTENTENCAESSETTINGS:{
++
++              DEBUG_ELEMENT_START (common, ebml, "ContentEncAESSettings");
++
++              if ((ret = gst_ebml_read_master (ebml, &id)) != GST_FLOW_OK)
++                break;
++
++              while (ret == GST_FLOW_OK &&
++                  gst_ebml_read_has_remaining (ebml, 1, TRUE)) {
++                if ((ret = gst_ebml_peek_id (ebml, &id)) != GST_FLOW_OK)
++                  break;
++
++                switch (id) {
++                  case GST_MATROSKA_ID_AESSETTINGSCIPHERMODE:{
++                    guint64 num;
++
++                    if ((ret =
++                            gst_ebml_read_uint (ebml, &id,
++                                &num)) != GST_FLOW_OK) {
++                      break;
++                    }
++                    if (num > 3) {
++                      GST_ERROR_OBJECT (common->sinkpad, "Invalid Cipher Mode %"
++                          G_GUINT64_FORMAT, num);
++                      ret = GST_FLOW_ERROR;
++                      break;
++                    }
++                    GST_DEBUG_OBJECT (common->sinkpad,
++                        "ContentEncAESSettings: %" G_GUINT64_FORMAT, num);
++                    enc.enc_cipher_mode = num;
++                    break;
++                  }
++                  default:
++                    GST_WARNING_OBJECT (common->sinkpad,
++                        "Unknown ContentEncAESSettings subelement 0x%x - ignoring",
++                        id);
++                    ret = gst_ebml_read_skip (ebml);
++                    break;
++                }
++              }
++              DEBUG_ELEMENT_STOP (common, ebml, "ContentEncAESSettings", ret);
++              break;
++            }
++
++            case GST_MATROSKA_ID_CONTENTENCKEYID:{
++              guint8 *data;
++              guint64 size;
++              GstBuffer *keyId_buf;
++              GstEvent *event;
++
++              if ((ret =
++                      gst_ebml_read_binary (ebml, &id, &data,
++                          &size)) != GST_FLOW_OK) {
++                break;
++              }
++              GST_DEBUG_OBJECT (common->sinkpad,
++                  "ContentEncrypt KeyID length : %" G_GUINT64_FORMAT, size);
++              keyId_buf = gst_buffer_new_wrapped (data, size);
++
++              /* Push an event containing the Key ID into the queues of all streams. */
++              /* system_id field is set to GST_PROTECTION_UNSPECIFIED_SYSTEM_ID because it isn't specified neither in WebM nor in Matroska spec. */
++              event =
++                  gst_event_new_protection
++                  (GST_PROTECTION_UNSPECIFIED_SYSTEM_ID, keyId_buf,
++                  "matroskademux");
++              GST_TRACE_OBJECT (common->sinkpad,
++                  "adding protection event for stream %d", context->index);
++              g_queue_push_tail (&context->protection_event_queue, event);
++
++              context->protection_info =
++                  gst_structure_new ("application/x-cenc", "iv_size",
++                  G_TYPE_UINT, 8, "encrypted", G_TYPE_BOOLEAN, TRUE, "kid",
++                  GST_TYPE_BUFFER, keyId_buf, NULL);
++
++              gst_buffer_unref (keyId_buf);
++              break;
++            }
++            default:
++              GST_WARNING_OBJECT (common->sinkpad,
++                  "Unknown ContentEncryption subelement 0x%x - ignoring", id);
++              ret = gst_ebml_read_skip (ebml);
++              break;
++          }
++        }
++        DEBUG_ELEMENT_STOP (common, ebml, "ContentEncryption", ret);
+         break;
++      }
+       default:
+         GST_WARNING_OBJECT (common->sinkpad,
+             "Unknown ContentEncoding subelement 0x%x - ignoring", id);
+diff --git a/gst/matroska/matroska-read-common.h b/gst/matroska/matroska-read-common.h
+index a6282d698..e33ef8ef4 100644
+--- a/gst/matroska/matroska-read-common.h
++++ b/gst/matroska/matroska-read-common.h
+@@ -120,6 +120,9 @@ typedef struct _GstMatroskaReadCommon {
+ GstFlowReturn gst_matroska_decode_content_encodings (GArray * encodings);
+ gboolean gst_matroska_decode_data (GArray * encodings, gpointer * data_out,
+     gsize * size_out, GstMatroskaTrackEncodingScope scope, gboolean free);
++gboolean
++gst_matroska_parse_protection_meta (gpointer * data_out, gsize * size_out,
++    GstStructure * info_protect, gboolean * encrypted);
+ gint gst_matroska_index_seek_find (GstMatroskaIndex * i1, GstClockTime * time,
+     gpointer user_data);
+ GstMatroskaIndex * gst_matroska_read_common_do_index_seek (
+-- 
+2.15.0
+

@@ -1,0 +1,27 @@
+From b89b1802df44829a0c034db5807bc893ad3c7774 Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Wed, 3 Oct 2018 18:23:01 +0200
+Subject: [PATCH 2/2] protection: Fix the string to define unspecified system
+ id
+
+Setting it to "unspecified-system-id".
+---
+ gst/gstprotection.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gst/gstprotection.h b/gst/gstprotection.h
+index 0ed87e427..f77a7bf97 100644
+--- a/gst/gstprotection.h
++++ b/gst/gstprotection.h
+@@ -50,7 +50,7 @@ G_BEGIN_DECLS
+  *
+  * Since: 1.16
+  */
+-#define GST_PROTECTION_UNSPECIFIED_SYSTEM_ID "unspecified.gstreamer.org"
++#define GST_PROTECTION_UNSPECIFIED_SYSTEM_ID "unspecified-system-id"
+ 
+ typedef struct _GstProtectionMeta GstProtectionMeta;
+ /**
+-- 
+2.15.0
+

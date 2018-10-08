@@ -1,3 +1,20 @@
+2018-10-07  Yacine Bandou  <yacine.bandou@softathome.com>
+
+        [GStreamer][EME][webm] Add the WebM encrypted content support in matroskademux
+        https://bugs.webkit.org/show_bug.cgi?id=189238
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Modifications on GStreamer, tracked in GStreamer bugzilla:
+        https://bugzilla.gnome.org/show_bug.cgi?id=797231
+        https://bugzilla.gnome.org/show_bug.cgi?id=765275
+
+        * gstreamer/jhbuild.modules: Add new patches.
+        * gstreamer/patches/gstreamer-0001-protection-Add-a-new-definition-for-unspecified-syst.patch: Added.
+        * gstreamer/patches/gstreamer-0002-protection-Fix-the-string-to-define-unspecified-syst.patch: Added.
+        * gstreamer/patches/gst-plugins-good-0011-matroska-Add-the-WebM-encrypted-content-support-in-m.patch: Added.
+        * gstreamer/patches/gst-plugins-good-0012-matroskdemux-do-not-use-MapInfo.data-after-unmapping.patch: Added.
+
 2018-10-06  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Never build yasm with ASAN

@@ -1,0 +1,108 @@
+From defae350358660e557c74e41a4fe8a8bb327e9c8 Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Wed, 3 Oct 2018 17:34:49 +0200
+Subject: [PATCH] matroskdemux: do not use MapInfo.data after unmapping
+
+And minor gst-indenting
+---
+ gst/matroska/matroska-demux.c       | 22 +++++++++++++---------
+ gst/matroska/matroska-read-common.c |  6 ++++++
+ 2 files changed, 19 insertions(+), 9 deletions(-)
+
+diff --git a/gst/matroska/matroska-demux.c b/gst/matroska/matroska-demux.c
+index 1ef7b42cc..b67112cc6 100644
+--- a/gst/matroska/matroska-demux.c
++++ b/gst/matroska/matroska-demux.c
+@@ -376,10 +376,12 @@ gst_matroska_decode_buffer (GstMatroskaTrackContext * context, GstBuffer * buf)
+ 
+   if (gst_matroska_decode_data (context->encodings, &data, &size,
+           GST_MATROSKA_TRACK_ENCODING_SCOPE_FRAME, FALSE)) {
+-    gst_buffer_unmap (out_buf, &map);
+     if (data != map.data) {
++      gst_buffer_unmap (out_buf, &map);
+       gst_buffer_unref (out_buf);
+       out_buf = gst_buffer_new_wrapped (data, size);
++    } else {
++      gst_buffer_unmap (out_buf, &map);
+     }
+   } else {
+     GST_DEBUG ("decode data failed");
+@@ -399,11 +401,12 @@ gst_matroska_decode_buffer (GstMatroskaTrackContext * context, GstBuffer * buf)
+ 
+     if (gst_matroska_parse_protection_meta (&data, &size, info_protect,
+             &encrypted)) {
+-      gst_buffer_unmap (out_buf, &map);
+       if (data != map.data) {
+-        GstBuffer *tmp_buf = out_buf;
+-        out_buf =
+-            gst_buffer_copy_region (tmp_buf, GST_BUFFER_COPY_ALL,
++        GstBuffer *tmp_buf;
++
++        gst_buffer_unmap (out_buf, &map);
++        tmp_buf = out_buf;
++        out_buf = gst_buffer_copy_region (tmp_buf, GST_BUFFER_COPY_ALL,
+             gst_buffer_get_size (tmp_buf) - size, size);
+         gst_buffer_unref (tmp_buf);
+         if (encrypted)
+@@ -411,6 +414,7 @@ gst_matroska_decode_buffer (GstMatroskaTrackContext * context, GstBuffer * buf)
+         else
+           gst_structure_free (info_protect);
+       } else {
++        gst_buffer_unmap (out_buf, &map);
+         gst_structure_free (info_protect);
+       }
+     } else {
+@@ -2705,10 +2709,10 @@ gst_matroska_demux_handle_seek_event (GstMatroskaDemux * demux,
+    * would be determined again when parsing, but anyway ... */
+   seeksegment.duration = demux->common.segment.duration;
+ 
+-  flush = ! !(flags & GST_SEEK_FLAG_FLUSH);
+-  keyunit = ! !(flags & GST_SEEK_FLAG_KEY_UNIT);
+-  after = ! !(flags & GST_SEEK_FLAG_SNAP_AFTER);
+-  before = ! !(flags & GST_SEEK_FLAG_SNAP_BEFORE);
++  flush = !!(flags & GST_SEEK_FLAG_FLUSH);
++  keyunit = !!(flags & GST_SEEK_FLAG_KEY_UNIT);
++  after = !!(flags & GST_SEEK_FLAG_SNAP_AFTER);
++  before = !!(flags & GST_SEEK_FLAG_SNAP_BEFORE);
+ 
+   /* always do full update if flushing,
+    * otherwise problems might arise downstream with missing keyframes etc */
+diff --git a/gst/matroska/matroska-read-common.c b/gst/matroska/matroska-read-common.c
+index ffb393bf9..12085503a 100644
+--- a/gst/matroska/matroska-read-common.c
++++ b/gst/matroska/matroska-read-common.c
+@@ -2043,6 +2043,8 @@ gst_matroska_read_common_parse_metadata_id_simple_tag (GstMatroskaReadCommon *
+     const gchar *matroska_tagname;
+     const gchar *gstreamer_tagname;
+   }
++
++  /* *INDENT-OFF* */
+   tag_conv[] = {
+     {
+       /* The following list has the _same_ order as the one in Matroska spec. Please, don't mess it up. */
+@@ -2177,11 +2179,14 @@ gst_matroska_read_common_parse_metadata_id_simple_tag (GstMatroskaReadCommon *
+     GST_MATROSKA_TAG_ID_LICENSE, GST_TAG_LICENSE}, {    /* The license applied to the content (like Creative Commons variants). */
+     GST_MATROSKA_TAG_ID_TERMS_OF_USE, GST_TAG_LICENSE}
+   };
++  /* *INDENT-ON* */
+   static const struct
+   {
+     const gchar *matroska_tagname;
+     const gchar *gstreamer_tagname;
+   }
++
++  /* *INDENT-OFF* */
+   child_tag_conv[] = {
+     {
+     "TITLE/SORT_WITH=", GST_TAG_TITLE_SORTNAME}, {
+@@ -2198,6 +2203,7 @@ gst_matroska_read_common_parse_metadata_id_simple_tag (GstMatroskaReadCommon *
+     "LICENSE/URL=", GST_TAG_LICENSE_URI}, {
+     "LICENSE/URL=", GST_TAG_LICENSE_URI}
+   };
++  /* *INDENT-ON* */
+   GstFlowReturn ret;
+   guint32 id;
+   gchar *value = NULL;
+-- 
+2.15.0
+

@@ -52,6 +52,8 @@
       <dep package="orc"/>
     </dependencies>
     <branch hash="sha256:13ae530eb1d4566c3aa0cff1bbb8e64c643065bb12e2e7c707f311ab4a390456" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.14.3">
+      <patch file="gstreamer-0001-protection-Add-a-new-definition-for-unspecified-syst.patch" strip="1" /> <!-- Merged as 05a3da347b3b8dbaf470793dc3f9ebb23e6fc67f -->
+      <patch file="gstreamer-0002-protection-Fix-the-string-to-define-unspecified-syst.patch" strip="1" /> <!-- Merged as b89b1802df44829a0c034db5807bc893ad3c7774 -->
     </branch>
   </autotools>
 
@@ -89,6 +91,8 @@
       <patch file="gst-plugins-good-0008-matroskademux-Refactor-track-parsing-out-from-adding.patch" strip="1" /> <!-- Merged as f279bc5336dda19741a5996a108da42dd3201366 (to be shipped in 1.14.4) -->
       <patch file="gst-plugins-good-0009-matroskademux-Parse-successive-Tracks-elements.patch" strip="1" /> <!-- Merged as 0e60076a390fd3ef53d350940b2c695ff7bbe008 (to be shipped in 1.14.4) -->
       <patch file="gst-plugins-good-0010-matroskademux-Emit-no-more-pads-after-parsing-Tracks.patch" strip="1" /> <!-- Merged as 7ceefec7141069b4adf4451a874766f8760c66d6 (to be shipped in 1.14.4) -->
+      <patch file="gst-plugins-good-0011-matroska-Add-the-WebM-encrypted-content-support-in-m.patch" strip="1" /> <!-- Merged as 0432826950d4d80fe2b50ffd3757dc08155de9e3 -->
+      <patch file="gst-plugins-good-0012-matroskdemux-do-not-use-MapInfo.data-after-unmapping.patch" strip="1" /> <!-- Merged as defae350358660e557c74e41a4fe8a8bb327e9c8 -->
     </branch>
   </autotools>
 

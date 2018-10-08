@@ -1,0 +1,66 @@
+From 05a3da347b3b8dbaf470793dc3f9ebb23e6fc67f Mon Sep 17 00:00:00 2001
+From: Yacine Bandou <yacine.bandou@softathome.com>
+Date: Mon, 1 Oct 2018 12:11:47 +0200
+Subject: [PATCH 1/2] protection: Add a new definition for unspecified system
+ protection
+
+In some cases the system protection ID is not present in the contents
+or in their metadata.
+This define is used to set the value of the "system_id" field in GstProtectionEvent,
+with this value, the application will use an external information to choose which
+protection system to use.
+
+Example: The matroskademux uses this value in the case of encrypted WebM,
+the application will choose the appropriate protection system based on the information
+received through EME API.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=797231
+---
+ docs/gst/gstreamer-sections.txt |  1 +
+ gst/gstprotection.h             | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/docs/gst/gstreamer-sections.txt b/docs/gst/gstreamer-sections.txt
+index 492c4d592..ecc6b04e5 100644
+--- a/docs/gst/gstreamer-sections.txt
++++ b/docs/gst/gstreamer-sections.txt
+@@ -2506,6 +2506,7 @@ gst_buffer_get_protection_meta
+ gst_protection_select_system
+ gst_protection_filter_systems_by_available_decryptors
+ GST_PROTECTION_SYSTEM_ID_CAPS_FIELD
++GST_PROTECTION_UNSPECIFIED_SYSTEM_ID
+ <SUBSECTION Standard>
+ GST_PROTECTION_META_API_TYPE
+ GST_PROTECTION_META_INFO
+diff --git a/gst/gstprotection.h b/gst/gstprotection.h
+index a7669eab3..0ed87e427 100644
+--- a/gst/gstprotection.h
++++ b/gst/gstprotection.h
+@@ -34,6 +34,24 @@ G_BEGIN_DECLS
+  */
+ #define GST_PROTECTION_SYSTEM_ID_CAPS_FIELD "protection-system"
+ 
++/**
++ * GST_PROTECTION_UNSPECIFIED_SYSTEM_ID:
++ *
++ * The protection system value of the unspecified UUID.
++ * In some cases the system protection ID is not present in the contents or in their
++ * metadata, as encrypted WebM.
++ * This define is used to set the value of the "system_id" field in GstProtectionEvent,
++ * with this value, the application will use an external information to choose which
++ * protection system to use.
++ *
++ * Example: The matroskademux uses this value in the case of encrypted WebM,
++ * the application will choose the appropriate protection system based on the information
++ * received through EME API.
++ *
++ * Since: 1.16
++ */
++#define GST_PROTECTION_UNSPECIFIED_SYSTEM_ID "unspecified.gstreamer.org"
++
+ typedef struct _GstProtectionMeta GstProtectionMeta;
+ /**
+  * GstProtectionMeta:
+-- 
+2.15.0
+
