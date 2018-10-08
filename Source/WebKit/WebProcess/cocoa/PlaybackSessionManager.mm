@@ -64,12 +64,6 @@ PlaybackSessionInterfaceContext::~PlaybackSessionInterfaceContext()
 {
 }
 
-void PlaybackSessionInterfaceContext::resetMediaState()
-{
-    if (m_manager)
-        m_manager->resetMediaState(m_contextId);
-}
-
 void PlaybackSessionInterfaceContext::durationChanged(double duration)
 {
     if (m_manager)
@@ -321,11 +315,6 @@ WebCore::HTMLMediaElement* PlaybackSessionManager::currentPlaybackControlsElemen
 }
 
 #pragma mark Interface to PlaybackSessionInterfaceContext:
-
-void PlaybackSessionManager::resetMediaState(uint64_t contextId)
-{
-    m_page->send(Messages::PlaybackSessionManagerProxy::ResetMediaState(contextId), m_page->pageID());
-}
 
 void PlaybackSessionManager::durationChanged(uint64_t contextId, double duration)
 {

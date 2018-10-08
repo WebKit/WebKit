@@ -199,7 +199,6 @@ private:
     // Messages from PlaybackSessionManager
     void setUpPlaybackControlsManagerWithID(uint64_t contextId);
     void clearPlaybackControlsManager();
-    void resetMediaState(uint64_t contextId);
     void currentTimeChanged(uint64_t contextId, double currentTime, double hostTime);
     void bufferedTimeChanged(uint64_t contextId, double bufferedTime);
     void seekableRangesVectorChanged(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval);

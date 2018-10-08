@@ -64,9 +64,6 @@ public:
     virtual ~PlaybackSessionInterfaceAVKit();
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionModel; }
 
-    // PlaybackSessionInterface
-    WEBCORE_EXPORT void resetMediaState() override;
-
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void durationChanged(double) override;
     WEBCORE_EXPORT void currentTimeChanged(double currentTime, double anchorTime) override;

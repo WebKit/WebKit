@@ -22,7 +22,6 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 messages -> PlaybackSessionManagerProxy {
-    ResetMediaState(uint64_t contextId)
     CurrentTimeChanged(uint64_t contextId, double currentTime, double hostTime)
     BufferedTimeChanged(uint64_t contextId, double bufferedTime)
     SeekableRangesVectorChanged(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)

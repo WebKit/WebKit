@@ -70,9 +70,6 @@ public:
 private:
     friend class VideoFullscreenInterfaceContext;
 
-    // PlaybackSessionInterface
-    void resetMediaState() final;
-
     // PlaybackSessionModelClient
     void durationChanged(double) final;
     void currentTimeChanged(double currentTime, double anchorTime) final;
@@ -128,7 +125,6 @@ protected:
     void removeClientForContext(uint64_t contextId);
 
     // Interface to PlaybackSessionInterfaceContext
-    void resetMediaState(uint64_t contextId);
     void durationChanged(uint64_t contextId, double);
     void currentTimeChanged(uint64_t contextId, double currentTime, double anchorTime);
     void bufferedTimeChanged(uint64_t contextId, double bufferedTime);

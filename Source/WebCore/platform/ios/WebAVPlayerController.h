@@ -96,8 +96,6 @@ class PlaybackSessionInterfaceAVKit;
 
 @property (NS_NONATOMIC_IOSONLY, retain, readwrite) AVValueTiming *minTiming;
 @property (NS_NONATOMIC_IOSONLY, retain, readwrite) AVValueTiming *maxTiming;
-
-- (void)resetMediaState;
 @end
 
 #endif

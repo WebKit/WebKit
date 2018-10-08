@@ -77,11 +77,6 @@ PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
     invalidate();
 }
 
-void PlaybackSessionInterfaceAVKit::resetMediaState()
-{
-    [m_playerController resetMediaState];
-}
-
 void PlaybackSessionInterfaceAVKit::durationChanged(double duration)
 {
     WebAVPlayerController* playerController = m_playerController.get();

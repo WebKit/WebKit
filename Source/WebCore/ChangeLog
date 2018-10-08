@@ -1,5 +1,28 @@
 2018-10-08  Jeremy Jones  <jeremyj@apple.com>
 
+        Remove dead code: resetMediaState.
+        https://bugs.webkit.org/show_bug.cgi?id=190355
+
+        Reviewed by Jon Lee.
+
+        No new tests because no behavior change.
+
+        Remove resetMediaState since it is no longer used.
+
+        * platform/cocoa/PlaybackSessionInterface.h:
+        (WebCore::PlaybackSessionInterface::~PlaybackSessionInterface):
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::resetMediaState): Deleted.
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController resetMediaState]): Deleted.
+        * platform/mac/PlaybackSessionInterfaceMac.h:
+        * platform/mac/PlaybackSessionInterfaceMac.mm:
+        (WebCore::PlaybackSessionInterfaceMac::resetMediaState): Deleted.
+
+2018-10-08  Jeremy Jones  <jeremyj@apple.com>
+
         Use MediaPlayerEnums::VideoGravity in VideoFullscreenModel.
         https://bugs.webkit.org/show_bug.cgi?id=190357
 

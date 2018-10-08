@@ -394,11 +394,6 @@ void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
     m_page->videoControlsManagerDidChange();
 }
 
-void PlaybackSessionManagerProxy::resetMediaState(uint64_t contextId)
-{
-    ensureInterface(contextId).resetMediaState();
-}
-
 void PlaybackSessionManagerProxy::currentTimeChanged(uint64_t contextId, double currentTime, double hostTime)
 {
     ensureModel(contextId).currentTimeChanged(currentTime);

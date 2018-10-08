@@ -49,9 +49,6 @@ public:
     virtual ~PlaybackSessionInterfaceMac();
     PlaybackSessionModel* playbackSessionModel() const;
 
-    // PlaybackSessionInterface
-    void resetMediaState() final;
-
     // PlaybackSessionModelClient
     void durationChanged(double) final;
     void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;

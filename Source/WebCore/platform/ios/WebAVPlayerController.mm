@@ -625,37 +625,6 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     return [NSSet setWithObjects:@"hasLiveStreamingContent", @"minTiming", @"maxTiming", @"seekableTimeRangesLastModifiedTime", nil];
 }
 
-- (void)resetMediaState
-{
-    self.contentDuration = 0;
-    self.contentDurationWithinEndTimes = 0;
-    self.loadedTimeRanges = @[];
-
-    self.canPlay = NO;
-    self.canPause = NO;
-    self.canTogglePlayback = NO;
-    self.hasEnabledAudio = NO;
-    self.canSeek = NO;
-    self.status = AVPlayerControllerStatusUnknown;
-
-    self.minTiming = nil;
-    self.maxTiming = nil;
-    self.timing = nil;
-    self.rate = 0;
-    self.volume = 0;
-
-    self.seekableTimeRanges = [NSMutableArray array];
-
-    self.canScanBackward = NO;
-
-    self.audioMediaSelectionOptions = nil;
-    self.currentAudioMediaSelectionOption = nil;
-
-    self.legibleMediaSelectionOptions = nil;
-    self.currentLegibleMediaSelectionOption = nil;
-    _liveStreamEventModePossible = YES;
-}
-
 @end
 
 @implementation WebAVMediaSelectionOption

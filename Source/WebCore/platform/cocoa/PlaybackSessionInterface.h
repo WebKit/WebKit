@@ -37,7 +37,6 @@ class TimeRanges;
 class PlaybackSessionInterface {
 public:
     virtual ~PlaybackSessionInterface() { };
-    virtual void resetMediaState() = 0;
 };
 
 }
