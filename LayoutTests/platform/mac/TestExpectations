@@ -1773,6 +1773,4 @@ webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Slow ]
 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Slow ]
 
-webkit.org/b/190353 [ Mojave+ ] editing/deleting/delete-emoji-1.html [ Pass ]
-webkit.org/b/190353 [ Mojave+ ] editing/deleting/delete-emoji-9.html [ Pass ]
-webkit.org/b/190353 [ Mojave+ ] editing/deleting/delete-emoji.html [ Pass ]
+
