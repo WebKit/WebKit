@@ -778,7 +778,9 @@ static void respond(id <WKURLSchemeTask>task, NSString *html = nil)
 
 @implementation CustomHeaderFieldsDelegate
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+IGNORE_WARNINGS_END
 {
     _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
     [websitePolicies setCustomHeaderFields:@{@"X-key1": @"value1", @"X-key2": @"value2"}];
@@ -919,7 +921,9 @@ static bool done;
 
 @implementation WebsitePoliciesWebsiteDataStoreDelegate
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+IGNORE_WARNINGS_END
 {
     NSURL *url = navigationAction.request.URL;
     if ([url.path isEqualToString:@"/invalid"]) {

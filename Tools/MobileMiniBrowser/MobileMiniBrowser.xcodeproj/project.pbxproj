@@ -25,9 +25,6 @@
 		CD498B511D763D7F00681FA7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAF9E1D709E3600017CF0 /* Main.storyboard */; };
 		CD498B521D763D8800681FA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAFA11D709E3600017CF0 /* Assets.xcassets */; };
 		CD498B531D763D9300681FA7 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD498B471D7634C700681FA7 /* Info.plist */; };
-		CD4DEEE51D78C6FF00625986 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CD4DEEE21D78C6FF00625986 /* Base.xcconfig */; };
-		CD4DEEE61D78C6FF00625986 /* DebugRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */; };
-		CD4DEEE71D78C6FF00625986 /* MobileMiniBrowser.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */; };
 		CDA985191D76483400EBC399 /* test.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = CDA985151D76477900EBC399 /* test.mp4 */; };
 		CDA9851A1D76483400EBC399 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = CDA985131D76474100EBC399 /* index.html */; };
 		CDA9851B1D76483400EBC399 /* looping.html in Resources */ = {isa = PBXBuildFile; fileRef = CDA985171D7647CD00EBC399 /* looping.html */; };
@@ -290,7 +287,7 @@
 		CD1DAF8A1D709E3600017CF0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = WebKit;
 				TargetAttributes = {
 					CD1DAF911D709E3600017CF0 = {
@@ -331,10 +328,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD4DEEE51D78C6FF00625986 /* Base.xcconfig in Resources */,
-				CD4DEEE61D78C6FF00625986 /* DebugRelease.xcconfig in Resources */,
 				CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */,
-				CD4DEEE71D78C6FF00625986 /* MobileMiniBrowser.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

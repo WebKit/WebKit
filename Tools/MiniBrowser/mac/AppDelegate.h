@@ -48,5 +48,5 @@
 @end
 
 #if WK_API_ENABLED
-WKPreferences *defaultPreferences();
+WKPreferences *defaultPreferences(void);
 #endif

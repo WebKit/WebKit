@@ -1081,7 +1081,9 @@ static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoade
     return YES;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+IGNORE_WARNINGS_END
 {
     if ([challenge previousFailureCount] == 0) {
         RetainPtr<NSURLCredential> credential = adoptNS([[NSURLCredential alloc]  initWithUser:m_username password:m_password persistence:NSURLCredentialPersistenceForSession]);

@@ -51,7 +51,9 @@
     return _backingScaleFactor;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (CGFloat)userSpaceScaleFactor
+IGNORE_WARNINGS_END
 {
     return _backingScaleFactor;
 }

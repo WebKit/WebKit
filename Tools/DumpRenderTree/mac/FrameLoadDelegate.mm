@@ -85,7 +85,9 @@
 - (NSString *)_drt_descriptionSuitableForTestResult;
 @end
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WebFrame (DRTExtras)
+IGNORE_WARNINGS_END
 - (NSString *)_drt_descriptionSuitableForTestResult
 {
     BOOL isMainFrame = (self == [[self webView] mainFrame]);
@@ -275,7 +277,9 @@
     [self webView:sender locationChangeDone:error forDataSource:[frame dataSource]];    
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject
+IGNORE_WARNINGS_END
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"?? - windowScriptObjectAvailable"];

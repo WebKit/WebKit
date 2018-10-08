@@ -87,7 +87,9 @@ static bool expectedUserInitiatedState = false;
     _receivedContentLength += length;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
+IGNORE_WARNINGS_END
 {
     EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
@@ -388,7 +390,9 @@ TEST(_WKDownload, DownloadRequestOriginalURLDirectDownloadWithLoadedContent)
     _receivedContentLength += length;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
+IGNORE_WARNINGS_END
 {
     EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
@@ -440,7 +444,9 @@ TEST(_WKDownload, DownloadRequestBlobURL)
 
 @implementation UIDownloadAsFileTestDelegate
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element
+IGNORE_WARNINGS_END
 {
     static const long downloadLinkedFileTag = 2;
     auto index = [menu indexOfItemWithTag:downloadLinkedFileTag];
@@ -464,7 +470,9 @@ TEST(_WKDownload, DownloadRequestBlobURL)
     EXPECT_EQ(expectedUserInitiatedState, download.wasUserInitiated);
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
+IGNORE_WARNINGS_END
 {
     WebCore::FileSystem::PlatformFileHandle fileHandle;
     _destinationPath = WebCore::FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);

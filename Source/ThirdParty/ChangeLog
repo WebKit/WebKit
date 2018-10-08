@@ -1,3 +1,20 @@
+2018-10-08  Dan Bernstein  <mitz@apple.com>
+
+        gtest part of [Xcode] Update some build settings as recommended by Xcode 10
+        https://bugs.webkit.org/show_bug.cgi?id=190250
+
+        Reviewed by Anders Carlsson.
+
+        Didn’t turn on any of the warnings Xcode recommended for this third-party test support
+        library.
+
+        * gtest/xcode/Config/DebugProject.xcconfig: Set the deployment target in engineering builds
+          like we do in other projects. This addresses a build-time warning when building clients
+          of the library that its deployment target doesn’t match theirs.
+        * gtest/xcode/Config/ReleaseProject.xcconfig: Ditto.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Let Xcode update LastUpgradeCheck.
+
 2018-09-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Allow port specific options on gtest

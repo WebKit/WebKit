@@ -41,18 +41,24 @@ static RetainPtr<NSString> numberOfSetTimeoutCallbacks;
 
 @implementation SetTimeoutFunctionWebViewDelegate
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)webViewDidFinishLoad:(UIWebView *)webView
+IGNORE_WARNINGS_END
 {
     loadComplete = true;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+IGNORE_WARNINGS_END
 {
     loadComplete = true;
     loadFailed = true;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+IGNORE_WARNINGS_END
 {
     NSString *prefix = @"fired-";
     NSString *queryString = request.URL.query;

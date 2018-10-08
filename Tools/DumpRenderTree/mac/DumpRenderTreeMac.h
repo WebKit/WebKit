@@ -57,10 +57,10 @@ extern NSWindow *mainWindow;
 #endif
 
 void setWaitToDumpWatchdog(CFRunLoopTimerRef);
-bool shouldSetWaitToDumpWatchdog();
+bool shouldSetWaitToDumpWatchdog(void);
 
 #ifdef __OBJC__
-WebView *createWebViewAndOffscreenWindow() NS_RETURNS_RETAINED;
+WebView *createWebViewAndOffscreenWindow(void) NS_RETURNS_RETAINED;
 #endif
 
 void setPersistentUserStyleSheetLocation(CFStringRef);

@@ -37,7 +37,9 @@
 - (NSString *)dumpPath;
 @end
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation DOMNode (dumpPath)
+IGNORE_WARNINGS_END
 - (NSString *)dumpPath
 {
     DOMNode *parent = [self parentNode];
@@ -54,7 +56,9 @@
 - (NSString *)dump;
 @end
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation DOMRange (dump)
+IGNORE_WARNINGS_END
 - (NSString *)dump
 {
     return [NSString stringWithFormat:@"range from %d of %@ to %d of %@", [self startOffset], [[self startContainer] dumpPath], [self endOffset], [[self endContainer] dumpPath]];

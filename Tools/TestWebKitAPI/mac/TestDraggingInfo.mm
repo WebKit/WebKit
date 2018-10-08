@@ -150,7 +150,9 @@
 {
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray<NSString *> *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
+IGNORE_WARNINGS_END
 {
     return @[ ];
 }

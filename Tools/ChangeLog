@@ -1,3 +1,96 @@
+2018-10-08  Dan Bernstein  <mitz@apple.com>
+
+        Tools part of [Xcode] Update some build settings as recommended by Xcode 10
+        https://bugs.webkit.org/show_bug.cgi?id=190250
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Let Xcode update LastUpgradeCheck.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Enabled CLANG_WARN_COMMA,
+          CLANG_WARN_STRICT_PROTOTYPES, CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS,
+          CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF, and CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED.
+
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: Addressed the strict prototype warning.
+
+        * DumpRenderTree/mac/EditingDelegate.mm: Suppressed the deprecated implementations warning
+          around deprecated methods or categories on deprecated classes.
+        * DumpRenderTree/mac/FrameLoadDelegate.mm: Ditto.
+        (-[FrameLoadDelegate webView:windowScriptObjectAvailable:]):
+        * DumpRenderTree/mac/TestRunnerMac.mm: Ditto.
+        (-[SynchronousLoader connection:didReceiveAuthenticationChallenge:]):
+
+        * MiniBrowser/Configurations/Base.xcconfig: Enabled CLANG_WARN_COMMA,
+          CLANG_WARN_STRICT_PROTOTYPES, CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS,
+          CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF, and CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj: Let Xcode update LastUpgradeCheck.
+
+        * MiniBrowser/mac/AppDelegate.h: Addressed the strict prototypes warning.
+        * MiniBrowser/mac/WK2BrowserWindowController.m: Removed an unused #import to avoid having to
+          address the fact that many of the WebKit C SPI headers trigger the strict prototypes warning.
+
+        * MobileMiniBrowser/Configurations/Base.xcconfig: Enabled CLANG_WARN_COMMA,
+          CLANG_WARN_STRICT_PROTOTYPES, CLANG_WARN_SUSPICIOUS_MOVE (by fixing a typo),
+          CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS, and CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF.
+
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj: Let Xcode update
+          LastUpgradeCheck and remove the .xcconfig files from the Copy Bundle Resources build phase.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig: Enabled CLANG_WARN_COMMA,
+          CLANG_WARN_STRICT_PROTOTYPES, CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS,
+          CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF, and CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED.
+          Made the WebKit headers be treated as system headers to avoid dealing with the fact that
+          many C SPI headers trigger the strict prototypes warning.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Let Xcode update LastUpgradeCheck.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[DownloadDelegate _download:decideDestinationWithSuggestedFilename:allowOverwrite:]):
+        (-[BlobDownloadDelegate _download:decideDestinationWithSuggestedFilename:allowOverwrite:]):
+        (-[UIDownloadAsFileTestDelegate _webView:contextMenu:forElement:]):
+        (-[RedirectedDownloadDelegate _download:decideDestinationWithSuggestedFilename:allowOverwrite:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[CustomHeaderFieldsDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+        (-[AudioSessionCategoryUIWebViewDelegate webView:shouldStartLoadWithRequest:navigationType:]):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/SnapshotViaRenderInContext.mm:
+        (-[RenderInContextWebViewDelegate webViewDidFinishLoad:]):
+        (-[RenderInContextWebViewDelegate webView:didFailLoadWithError:]):
+        * TestWebKitAPI/Tests/ios/SetTimeoutFunction.mm:
+        (-[SetTimeoutFunctionWebViewDelegate webViewDidFinishLoad:]):
+        (-[SetTimeoutFunctionWebViewDelegate webView:didFailLoadWithError:]):
+        (-[SetTimeoutFunctionWebViewDelegate webView:shouldStartLoadWithRequest:navigationType:]):
+        * TestWebKitAPI/Tests/mac/LegacyDragAndDropTests.mm:
+        (-[DragInfo namesOfPromisedFilesDroppedAtDestination:]):
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropTestWKWebView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        * TestWebKitAPI/mac/SyntheticBackingScaleFactorWindow.m:
+        (-[SyntheticBackingScaleFactorWindow IGNORE_WARNINGS_END]):
+        (-[SyntheticBackingScaleFactorWindow userSpaceScaleFactor]): Deleted.
+        * TestWebKitAPI/mac/TestDraggingInfo.mm:
+        (-[TestDraggingInfo namesOfPromisedFilesDroppedAtDestination:]):
+
+        In all of the above, suppressed the deprecated implementations warning where needed.
+
+        * WebKitTestRunner/Configurations/Base.xcconfig: Enabled ENABLE_STRICT_OBJC_MSGSEND,
+          CLANG_WARN_BOOL_CONVERSION, CLANG_WARN_COMMA, CLANG_WARN_CONSTANT_CONVERSION,
+          CLANG_WARN_EMPTY_BODY, CLANG_WARN_ENUM_CONVERSION, CLANG_WARN_INT_CONVERSION,
+          CLANG_WARN_STRICT_PROTOTYPES, CLANG_WARN_UNREACHABLE_CODE, CLANG_WARN__DUPLICATE_METHOD_MATCH,
+          GCC_WARN_UNDECLARED_SELECTOR, CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF,
+          CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED, CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS,
+          and GCC_NO_COMMON_BLOCKS.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Let Xcode update LastUpgradeCheck.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dragImage:at:offset:event:pasteboard:source:slideBack:]): Suppressed
+          the deprecated implementations warning.
+
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::replaceTextAtRange): Addressed an int-conversion warning.
+
 2018-10-07  Yacine Bandou  <yacine.bandou@softathome.com>
 
         [GStreamer][EME][webm] Add the WebM encrypted content support in matroskademux

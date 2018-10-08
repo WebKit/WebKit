@@ -56,7 +56,9 @@
     return self;
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)dragImage:(NSImage *)image at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
+IGNORE_WARNINGS_END
 {
     [_dragAndDropSimulator performDragInWebView:self atLocation:viewLocation withImage:image pasteboard:pboard source:sourceObj];
 }
