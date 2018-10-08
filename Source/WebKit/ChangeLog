@@ -1,3 +1,21 @@
+2018-10-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Validation in Connection::readBytesFromSocket() is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=190281
+
+        Reviewed by Michael Catanzaro.
+
+        Since r217206 Connection::readBytesFromSocket() validates size of
+        control message. However, it compares cmsg_len with attachmentMaxAmount,
+        while Connection::sendOutgoingMessage() computes it as
+        CMSG_LEN(sizeof(int) * attachmentFDBufferLength) where
+        attachmentFDBufferLength <= attachmentMaxAmount. This mismatch between
+        sender and receiver leads to possibility of assertion failure with large
+        number of attachments, e.g. here 62 attachments have cmsg_length == 264.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::readBytesFromSocket):
+
 2018-10-08  Chris Dumez  <cdumez@apple.com>
 
         Have DOMWindowProperty get is frame from its associated DOMWindow
