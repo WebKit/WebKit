@@ -29,6 +29,8 @@
 #include "APIDictionary.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
+#include "WKBundleFileHandleRef.h"
+#include "WKBundleFrame.h"
 #include "WKContextPrivate.h"
 #include "WKMutableDictionary.h"
 #include "WKPageGroup.h"
@@ -36,13 +38,7 @@
 #include "WebPageGroup.h"
 #include "WebUserContentControllerProxy.h"
 
-#if PLATFORM(MAC)
-#include "WKContextPrivateMac.h"
-#endif
-
 // Deprecated functions that should be removed from the framework once nobody uses them.
-
-using namespace WebKit;
 
 void WKContextSetUsesNetworkProcess(WKContextRef, bool)
 {
@@ -59,4 +55,14 @@ void WKPreferencesSetQTKitEnabled(WKPreferencesRef, bool)
 bool WKPreferencesGetQTKitEnabled(WKPreferencesRef)
 {
     return false;
+}
+
+JSValueRef WKBundleFrameGetJavaScriptWrapperForFileForWorld(WKBundleFrameRef, WKBundleFileHandleRef, WKBundleScriptWorldRef)
+{
+    return nullptr;
+}
+
+WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef)
+{
+    return nullptr;
 }

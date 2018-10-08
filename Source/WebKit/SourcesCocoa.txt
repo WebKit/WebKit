@@ -480,7 +480,6 @@ WebProcess/cocoa/WebProcessCocoa.mm
 
 WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm
 
-WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.cpp
 WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
 
 WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm

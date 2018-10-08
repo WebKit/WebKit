@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKFrame.h>
 #include <WebKit/WKGeometry.h>
 
@@ -55,7 +56,7 @@ WK_EXPORT WKBundleFrameRef WKBundleFrameForJavaScriptContext(JSContextRef contex
 
 WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForNodeForWorld(WKBundleFrameRef frame, WKBundleNodeHandleRef nodeHandle, WKBundleScriptWorldRef world);
 WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForRangeForWorld(WKBundleFrameRef frame, WKBundleRangeHandleRef rangeHandle, WKBundleScriptWorldRef world);
-WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForFileForWorld(WKBundleFrameRef frame, WKBundleFileHandleRef fileHandle, WKBundleScriptWorldRef world);
+WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForFileForWorld(WKBundleFrameRef frame, WKBundleFileHandleRef fileHandle, WKBundleScriptWorldRef world) WK_C_API_DEPRECATED("No longer supported");
 
 WK_EXPORT WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frame);
 

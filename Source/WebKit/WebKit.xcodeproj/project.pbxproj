@@ -1141,7 +1141,6 @@
 		7CB365AA1D31DB70007158CA /* _WKUserInitiatedAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CB365A81D31DB70007158CA /* _WKUserInitiatedAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CB365AD1D31DC10007158CA /* _WKUserInitiatedActionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CB365AC1D31DC10007158CA /* _WKUserInitiatedActionInternal.h */; };
 		7CB365B11D31DD1E007158CA /* APIUserInitiatedAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CB365AF1D31DD1E007158CA /* APIUserInitiatedAction.h */; };
-		7CBB811D1AA0F8B1006B1942 /* InjectedBundleFileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBB811B1AA0F8B1006B1942 /* InjectedBundleFileHandle.h */; };
 		7CBB81211AA0F970006B1942 /* WKBundleFileHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBB811F1AA0F970006B1942 /* WKBundleFileHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */; };
 		7CCCC8FB1A5F50FD008FB0DA /* WebNavigationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CCCC8F91A5F50FD008FB0DA /* WebNavigationState.h */; };
@@ -3572,9 +3571,6 @@
 		7CB365A91D31DB70007158CA /* _WKUserInitiatedAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKUserInitiatedAction.mm; sourceTree = "<group>"; };
 		7CB365AC1D31DC10007158CA /* _WKUserInitiatedActionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserInitiatedActionInternal.h; sourceTree = "<group>"; };
 		7CB365AF1D31DD1E007158CA /* APIUserInitiatedAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserInitiatedAction.h; sourceTree = "<group>"; };
-		7CBB811A1AA0F8B1006B1942 /* InjectedBundleFileHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFileHandle.cpp; sourceTree = "<group>"; };
-		7CBB811B1AA0F8B1006B1942 /* InjectedBundleFileHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleFileHandle.h; sourceTree = "<group>"; };
-		7CBB811E1AA0F970006B1942 /* WKBundleFileHandleRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleFileHandleRef.cpp; sourceTree = "<group>"; };
 		7CBB811F1AA0F970006B1942 /* WKBundleFileHandleRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleFileHandleRef.h; sourceTree = "<group>"; };
 		7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKScriptMessageInternal.h; sourceTree = "<group>"; };
 		7CCCC8F81A5F50FD008FB0DA /* WebNavigationState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNavigationState.cpp; sourceTree = "<group>"; };
@@ -7752,7 +7748,6 @@
 				935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */,
 				51FA2D7515212E1E00C1BA0B /* WKBundleDOMWindowExtension.cpp */,
 				51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */,
-				7CBB811E1AA0F970006B1942 /* WKBundleFileHandleRef.cpp */,
 				7CBB811F1AA0F970006B1942 /* WKBundleFileHandleRef.h */,
 				BCD25F1611D6BDE100169B0E /* WKBundleFrame.cpp */,
 				BCD25F1511D6BDE100169B0E /* WKBundleFrame.h */,
@@ -7860,8 +7855,6 @@
 			children = (
 				7C4ED3261A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.cpp */,
 				7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */,
-				7CBB811A1AA0F8B1006B1942 /* InjectedBundleFileHandle.cpp */,
-				7CBB811B1AA0F8B1006B1942 /* InjectedBundleFileHandle.h */,
 				BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */,
 				BC4BEEA9120A0A5E00FBA0C7 /* InjectedBundleNodeHandle.h */,
 				BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */,
@@ -8915,7 +8908,6 @@
 				935EEBA2127761D0003322B8 /* InjectedBundleBackForwardList.h in Headers */,
 				935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */,
 				BCEE7DC5128B645D009827DA /* InjectedBundleClient.h in Headers */,
-				7CBB811D1AA0F8B1006B1942 /* InjectedBundleFileHandle.h in Headers */,
 				BC498618124D10E200D834E1 /* InjectedBundleHitTestResult.h in Headers */,
 				84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */,
 				BC8147D512F66D31007B2C32 /* InjectedBundleNavigationAction.h in Headers */,

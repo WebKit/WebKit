@@ -1,3 +1,33 @@
+2018-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WKBundleFileHandleRef
+        https://bugs.webkit.org/show_bug.cgi?id=190360
+
+        Reviewed by Tim Horton.
+
+        WKBundleFrameGetJavaScriptWrapperForFileForWorld and WKBundleFileHandleCreateWithPath were only used in Mail
+        and were removed in rdar://problem/44955158
+        I need to remove them for rdar://problem/24576194
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKDeprecated.h:
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKBundleFrameGetJavaScriptWrapperForFileForWorld):
+        (WKBundleFileHandleCreateWithPath):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.cpp: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetJavaScriptWrapperForFileForWorld): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleFileHandle.cpp: Removed.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleFileHandle.h: Removed.
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebFrame.h:
+
 2018-10-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         Validation in Connection::readBytesFromSocket() is too aggressive

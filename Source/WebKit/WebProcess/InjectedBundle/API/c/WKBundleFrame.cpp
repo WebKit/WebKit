@@ -29,7 +29,6 @@
 
 #include "APIArray.h"
 #include "APISecurityOrigin.h"
-#include "InjectedBundleFileHandle.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
@@ -121,11 +120,6 @@ JSValueRef WKBundleFrameGetJavaScriptWrapperForNodeForWorld(WKBundleFrameRef fra
 JSValueRef WKBundleFrameGetJavaScriptWrapperForRangeForWorld(WKBundleFrameRef frameRef, WKBundleRangeHandleRef rangeHandleRef, WKBundleScriptWorldRef worldRef)
 {
     return toImpl(frameRef)->jsWrapperForWorld(toImpl(rangeHandleRef), toImpl(worldRef));
-}
-
-JSValueRef WKBundleFrameGetJavaScriptWrapperForFileForWorld(WKBundleFrameRef frameRef, WKBundleFileHandleRef fileHandleRef, WKBundleScriptWorldRef worldRef)
-{
-    return toImpl(frameRef)->jsWrapperForWorld(toImpl(fileHandleRef), toImpl(worldRef));
 }
 
 WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frameRef)

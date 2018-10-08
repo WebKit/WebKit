@@ -29,7 +29,6 @@
 #include "APIArray.h"
 #include "DownloadManager.h"
 #include "FrameInfoData.h"
-#include "InjectedBundleFileHandle.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
@@ -733,18 +732,6 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
 
     JSLockHolder lock(exec);
     return toRef(exec, toJS(exec, globalObject, rangeHandle->coreRange()));
-}
-
-JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleFileHandle* fileHandle, InjectedBundleScriptWorld* world)
-{
-    if (!m_coreFrame)
-        return nullptr;
-
-    JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
-    ExecState* exec = globalObject->globalExec();
-
-    JSLockHolder lock(exec);
-    return toRef(exec, toJS(exec, globalObject, fileHandle->coreFile()));
 }
 
 String WebFrame::counterValue(JSObjectRef element)

@@ -58,7 +58,6 @@ class URL;
 
 namespace WebKit {
 
-class InjectedBundleFileHandle;
 class InjectedBundleHitTestResult;
 class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
@@ -133,7 +132,6 @@ public:
 
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleRangeHandle*, InjectedBundleScriptWorld*);
-    JSValueRef jsWrapperForWorld(InjectedBundleFileHandle*, InjectedBundleScriptWorld*);
 
     static String counterValue(JSObjectRef element);
 

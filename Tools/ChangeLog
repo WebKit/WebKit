@@ -1,3 +1,14 @@
+2018-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WKBundleFileHandleRef
+        https://bugs.webkit.org/show_bug.cgi?id=190360
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/WKBundleFileHandle.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit/WKBundleFileHandle_Bundle.cpp: Removed.
+
 2018-10-08  Dan Bernstein  <mitz@apple.com>
 
         Tools part of [Xcode] Update some build settings as recommended by Xcode 10

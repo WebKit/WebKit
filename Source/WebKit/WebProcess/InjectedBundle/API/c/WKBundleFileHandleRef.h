@@ -33,10 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKBundleFileHandleGetTypeID();
-
-WK_EXPORT WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef path) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundleFileHandleCreateWithPathForPage);
-WK_EXPORT WKBundleFileHandleRef WKBundleFileHandleCreateWithPathForPage(WKStringRef path, WKBundlePageRef page);
+WK_EXPORT WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef path) WK_C_API_DEPRECATED("No longer supported");
 
 #ifdef __cplusplus
 }

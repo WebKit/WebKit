@@ -26,7 +26,9 @@
 #pragma once
 
 #ifdef _MSC_VER
+#define WK_C_API_DEPRECATED(...)
 #define WK_C_API_DEPRECATED_WITH_REPLACEMENT(...)
 #else
+#define WK_C_API_DEPRECATED(_message, ...) __attribute__((deprecated(_message)))
 #define WK_C_API_DEPRECATED_WITH_REPLACEMENT(_replacement, ...) __attribute__((deprecated("use " #_replacement)))
 #endif
