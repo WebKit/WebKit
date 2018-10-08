@@ -106,7 +106,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
     M(_addShortcut) \
-    M(_arrowKey) \
     M(_define) \
     M(_lookup) \
     M(_promptForReplace) \
@@ -246,7 +245,7 @@ struct WKAutoCorrectionData {
     
     std::unique_ptr<WebKit::InputViewUpdateDeferrer> _inputViewUpdateDeferrer;
 
-    RetainPtr<WKKeyboardScrollingAnimator> _keyboardScrollingAnimator;
+    RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
 
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
@@ -294,11 +293,10 @@ struct WKAutoCorrectionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKKeyboardScrollViewAnimatorDelegate
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     , WKShareSheetDelegate
 #endif
-    , WKKeyboardScrollable
 #if ENABLE(DATA_INTERACTION)
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif

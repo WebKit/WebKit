@@ -2154,24 +2154,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return true;
 }
 
-- (void)_scrollByContentOffset:(WebCore::FloatPoint)contentOffsetDelta animated:(BOOL)animated
-{
-    WebCore::FloatPoint scaledOffsetDelta = contentOffsetDelta;
-    CGFloat zoomScale = contentZoomScale(self);
-    scaledOffsetDelta.scale(zoomScale);
-
-    CGPoint currentOffset = [_scrollView _isAnimatingScroll] ? [_scrollView _animatedTargetOffset] : [_scrollView contentOffset];
-    CGPoint boundedOffset = contentOffsetBoundedInValidRange(_scrollView.get(), currentOffset + scaledOffsetDelta);
-
-    if (CGPointEqualToPoint(boundedOffset, currentOffset))
-        return;
-    [_contentView willStartZoomOrScroll];
-
-    LOG_WITH_STREAM(VisibleRects, stream << "_scrollByContentOffset: scrolling to " << WebCore::FloatPoint(boundedOffset));
-
-    [_scrollView setContentOffset:boundedOffset animated:animated];
-}
-
 - (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated
 {
     [self _zoomToPoint:origin atScale:[_scrollView minimumZoomScale] animated:animated];

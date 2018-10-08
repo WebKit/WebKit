@@ -122,7 +122,7 @@
 #import <WebKitAdditions/WKPlatformFileUploadPanel.mm>
 #endif
 
-@interface UIEvent(UIEventInternal)
+@interface UIEvent (UIEventInternal)
 @property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;
 @end
 
@@ -654,7 +654,8 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
         [self.superview addSubview:_interactionViewsContainerView.get()];
     }
 
-    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollingAnimator alloc] initWithScrollable:self]);
+    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:_webView.scrollView]);
+    [_keyboardScrollingAnimator setDelegate:self];
 
     [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:nil];
 
@@ -2084,6 +2085,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     _page->hideValidationMessage();
 
+    [_keyboardScrollingAnimator willStartInteractiveScroll];
+
     _canSendTouchEventsAsynchronously = YES;
 }
 
@@ -2381,10 +2384,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
 }
 
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender
-{
-    if (action == @selector(_arrowKey:))
-        return [self isFirstResponder];
-        
+{        
     auto editorState = _page->editorState();
     if (action == @selector(_showTextStyleOptions:))
         return editorState.isContentRichlyEditable && editorState.selectionIsRange && !_showingTextStyleOptions;
@@ -3167,44 +3167,14 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (NSArray *)keyCommands
 {
-    static NSArray* nonEditableKeyCommands = [@[
-       [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:0 action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:0 action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:0 action:@selector(_arrowKey:)],
-       
-       [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierCommand action:@selector(_arrowKey:)],
-       
-       [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
-       
-       [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
-       
-       [UIKeyCommand keyCommandWithInput:@" " modifierFlags:0 action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:@" " modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
-       
-       [UIKeyCommand keyCommandWithInput:UIKeyInputPageDown modifierFlags:0 action:@selector(_arrowKey:)],
-       [UIKeyCommand keyCommandWithInput:UIKeyInputPageDown modifierFlags:0 action:@selector(_arrowKey:)],
-    ] retain];
+    if (!_page->editorState().isContentEditable)
+        return nil;
 
     static NSArray* editableKeyCommands = [@[
        [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
        [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_prevAccessoryTab:)]
     ] retain];
-    
-    return (_page->editorState().isContentEditable) ? editableKeyCommands : nonEditableKeyCommands;
-}
-
-- (void)_arrowKeyForWebView:(id)sender
-{
-    UIKeyCommand* command = sender;
-    [self handleKeyEvent:command._triggeringEvent];
+    return editableKeyCommands;
 }
 
 - (void)_nextAccessoryTab:(id)sender
@@ -3950,7 +3920,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return NO;
 }
 
-- (BOOL)isKeyboardScrollable
+- (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator
 {
     if (_page->editorState().isContentEditable)
         return NO;
@@ -3961,23 +3931,23 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return YES;
 }
 
-- (CGFloat)distanceForScrollingIncrement:(ScrollingIncrement)increment
+- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(ScrollingIncrement)increment
 {
     switch (increment) {
     case ScrollingIncrement::Document:
-        return self.bounds.size.height;
+        return [self convertRect:self.bounds toView:_webView].size.height;
     case ScrollingIncrement::Page:
-        return WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height);
+        return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height)) toView:_webView].height;
     case ScrollingIncrement::Line:
-        return WebCore::Scrollbar::pixelsPerLineStep();
+        return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pixelsPerLineStep()) toView:_webView].height;
     }
     ASSERT_NOT_REACHED();
     return 0;
 }
 
-- (void)scrollByContentOffset:(WebCore::FloatPoint)offset animated:(BOOL)animated
+- (void)keyboardScrollViewAnimatorWillScroll:(WKKeyboardScrollViewAnimator *)animator
 {
-    [_webView _scrollByContentOffset:offset animated:animated];
+    [self willStartZoomOrScroll];
 }
 
 - (void)executeEditCommandWithCallback:(NSString *)commandName

@@ -331,6 +331,8 @@ typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
 - (void)_stopScrollingAndZoomingAnimations;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration;
+- (double)_horizontalVelocity;
+- (double)_verticalVelocity;
 @property (nonatomic, getter=isZoomEnabled) BOOL zoomEnabled;
 @property (nonatomic, readonly, getter=_isAnimatingZoom) BOOL isAnimatingZoom;
 @property (nonatomic, readonly, getter=_isAnimatingScroll) BOOL isAnimatingScroll;
@@ -494,6 +496,7 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 @property (nonatomic, setter=_setContinuousCornerRadius:) CGFloat _continuousCornerRadius;
 - (void)insertSubview:(UIView *)view above:(UIView *)sibling;
 - (void)viewWillMoveToSuperview:(UIView *)newSuperview;
+- (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
 @end
 
 @interface UIWebSelectionView : UIView
@@ -1026,6 +1029,10 @@ typedef NSInteger UICompositingMode;
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary *)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 - (BOOL)_isScrollingToTop;
 - (CGPoint)_animatedTargetOffset;
+- (BOOL)_canScrollX;
+- (BOOL)_canScrollY;
+- (void)_setContentOffsetWithDecelerationAnimation:(CGPoint)contentOffset;
+- (CGPoint)_adjustedContentOffsetForContentOffset:(CGPoint)contentOffset;
 @end
 
 @interface UIPeripheralHost (IPI)

@@ -39,26 +39,32 @@ enum class ScrollingIncrement : uint8_t {
 
 }
 
+@class UIScrollView;
 @class WebEvent;
-@protocol WKKeyboardScrollable;
+@protocol WKKeyboardScrollViewAnimatorDelegate;
 
-@interface WKKeyboardScrollingAnimator : NSObject
+@interface WKKeyboardScrollViewAnimator : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithScrollable:(id <WKKeyboardScrollable>)scrollable;
+- (instancetype)initWithScrollView:(UIScrollView *)scrollView;
 
 - (void)invalidate;
+
+- (void)willStartInteractiveScroll;
 
 - (BOOL)beginWithEvent:(::WebEvent *)event;
 - (BOOL)handleKeyEvent:(::WebEvent *)event;
 
+@property (nonatomic, weak) id <WKKeyboardScrollViewAnimatorDelegate> delegate;
+
 @end
 
-@protocol WKKeyboardScrollable <NSObject>
-@required
-- (BOOL)isKeyboardScrollable;
-- (CGFloat)distanceForScrollingIncrement:(WebKit::ScrollingIncrement)increment;
-- (void)scrollByContentOffset:(WebCore::FloatPoint)offset animated:(BOOL)animated;
+@protocol WKKeyboardScrollViewAnimatorDelegate <NSObject>
+@optional
+- (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator;
+- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebKit::ScrollingIncrement)increment;
+- (void)keyboardScrollViewAnimatorWillScroll:(WKKeyboardScrollViewAnimator *)animator;
+
 @end
 
 #endif // PLATFORM(IOS)

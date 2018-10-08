@@ -1,3 +1,145 @@
+2018-10-08  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust keyboard scrolling animator to springy and semiphysical
+        https://bugs.webkit.org/show_bug.cgi?id=190345
+        <rdar://problem/43494393>
+
+        Reviewed by Simon Fraser.
+
+        Introduce WKKeyboardScrollViewAnimator, which wraps WKKeyboardScrollingAnimator
+        and provides a reasonable set of default behaviors for UIScrollView.
+        This is the first step on the way to WKKeyboardScrollingAnimator
+        being platform- and toolkit-agnostic, and helps avoid adding a whole
+        bunch of code to WKContentView.
+
+        Adopt UIKit's scroll-to-top animation curve for whole-document scrolls.
+
+        Adjust WKKeyboardScrollingAnimator's physics; it now simulates a spring
+        attached to the page when decelerating. When a key is pressed, it applies
+        a constant force to the page (up to some maximum velocity). When released,
+        the spring causes the page to decelerate smoothly.
+
+        Add rubber-banding to keyboard scrolling, based on the same spring that
+        decelerates the page.
+
+        Remove the initial bounce on keydown before starting the smooth scroll.
+
+        Remove arrow key commands from WKContentView; this avoids double-processing
+        incoming arrow key events, makes the event stream make more sense, and was
+        entirely unnecessary.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Add a wide variety of useful SPI.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        Remove _scrollByContentOffset:animated: because it's only used by
+        the keyboard scrolling mechanism.
+
+        Remove _arrowKey because we're removing the arrow key commands.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        Create a WKKeyboardScrollViewAnimator (which knows how to directly
+        manipulate a UIScrollView) instead of a WKKeyboardScrollingAnimator
+        (which requires its clients to implement everything in terms of an
+        abstract interface.
+
+        (-[WKContentView scrollViewWillStartPanOrPinchGesture]):
+        Inform the keyboard scrolling animator that the user is going to start
+        an interactive gesture that needs control of the scroll view, so it
+        can stop its current animated scroll.
+
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView keyCommands]):
+        (-[WKContentView _arrowKeyForWebView:]): Deleted.
+        Remove arrow key commands.
+
+        (-[WKContentView keyboardScrollViewAnimator:distanceForIncrement:]):
+        Scale from content to WKWebView coordinate space; the keyboard scrolling
+        animator operates in WKWebView coordinates. This was broken before.
+
+        (-[WKContentView keyboardScrollViewAnimatorWillScroll:]):
+        (-[WKContentView isScrollableForKeyboardScrollViewAnimator:]):
+        (-[WKContentView isKeyboardScrollable]): Deleted.
+        (-[WKContentView distanceForScrollingIncrement:]): Deleted.
+        (-[WKContentView scrollByContentOffset:animated:]): Deleted.
+        Reimplement these as keyboardScrollViewAnimator delegate methods.
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.h:
+        Add WKKeyboardScrollViewAnimator, hide the interface for
+        WKKeyboardScrollingAnimator itself in the implementation file.
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator initWithScrollable:]):
+        (-[WKKeyboardScrollingAnimator parameters]):
+        (-[WKKeyboardScrollingAnimator invalidate]):
+        (unitVector):
+        Return a unit vector in the given direction.
+
+        (perpendicularAbsoluteUnitVector):
+        Return a positive unit vector perpendicular to the axis of the given direction.
+        Useful for multiplying with another vector to remove the component in the
+        axis of the given direction.
+
+        (boxSide):
+        Convert ScrollingDirection to WebCore::PhysicalBoxSide, for use with RectEdges.
+
+        (-[WKKeyboardScrollingAnimator keyboardScrollForEvent:]):
+        Instead of just returning the desired increment, compute everything we'll need
+        for the lifetime of the scroll (including the force applied, maximum
+        velocity, etc.) and return them together.
+
+        (-[WKKeyboardScrollingAnimator beginWithEvent:]):
+        Use the scrollable's native scroll-to-extent animation (e.g. UIScrollView's
+        scroll-to-top curve) for whole-document scrolls.
+
+        Remove the first discrete scroll; start the smooth scroll immediately.
+
+        (-[WKKeyboardScrollingAnimator handleKeyEvent:]):
+        (farthestPointInDirection):
+        (-[WKKeyboardScrollingAnimator stopAnimatedScroll]):
+        Stop the current scroll. Let the spring coast to its natural stopping
+        point given the system's current energy, unless that stopping point is
+        less than one increment from the starting point. In that case, we attach
+        the spring to /that/ point and let it run.
+
+        (-[WKKeyboardScrollingAnimator startDisplayLinkIfNeeded]):
+        (-[WKKeyboardScrollingAnimator stopDisplayLink]):
+        (-[WKKeyboardScrollingAnimator willStartInteractiveScroll]):
+        Immediately stop all motion if the user touches the screen to scroll
+        or zoom with fingers.
+
+        (-[WKKeyboardScrollingAnimator displayLinkFired:]):
+        Update the position of the scrollable based on the applied force and spring.
+        See the comments in this function for more details.
+
+        (-[WKKeyboardScrollViewAnimator init]):
+        (-[WKKeyboardScrollViewAnimator initWithScrollView:]):
+        (-[WKKeyboardScrollViewAnimator dealloc]):
+        (-[WKKeyboardScrollViewAnimator invalidate]):
+        (-[WKKeyboardScrollViewAnimator setDelegate:]):
+        (-[WKKeyboardScrollViewAnimator willStartInteractiveScroll]):
+        (-[WKKeyboardScrollViewAnimator beginWithEvent:]):
+        (-[WKKeyboardScrollViewAnimator handleKeyEvent:]):
+        (-[WKKeyboardScrollViewAnimator isKeyboardScrollable]):
+        (-[WKKeyboardScrollViewAnimator distanceForIncrement:]):
+        (-[WKKeyboardScrollViewAnimator scrollToContentOffset:animated:]):
+        (-[WKKeyboardScrollViewAnimator scrollWithScrollToExtentAnimationTo:]):
+        (-[WKKeyboardScrollViewAnimator contentOffset]):
+        (-[WKKeyboardScrollViewAnimator boundedContentOffset:]):
+        (-[WKKeyboardScrollViewAnimator interactiveScrollVelocity]):
+        (-[WKKeyboardScrollViewAnimator scrollableDirectionsFromOffset:]):
+        (-[WKKeyboardScrollViewAnimator rubberbandableDirections]):
+        Add WKKeyboardScrollViewAnimator, which wraps WKKeyboardScrollingAnimator
+        and provides animated keyboard scrolling for a UIScrollView without much
+        additional plumbing work. It contains reasonable default behaviors,
+        with a few optional delegate methods for customization.
+
+        (-[WKKeyboardScrollingAnimator _scrollOffsetForEvent:]): Deleted.
+        (-[WKKeyboardScrollingAnimator startAnimatedScroll]): Deleted.
+
 2018-10-08  Jeremy Jones  <jeremyj@apple.com>
 
         Remove dead code: VideoFullscreenModel::isVisible()
