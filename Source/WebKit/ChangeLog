@@ -1,3 +1,50 @@
+2018-10-08  Brian Burg  <bburg@apple.com>
+
+        [Mac] Web Automation: some keyboard interactions don't generate events, causing event simulation to stall
+        https://bugs.webkit.org/show_bug.cgi?id=190316
+        <rdar://problem/42833290>
+
+        Reviewed by Tim Horton.
+
+        Some users have reported that Cmd-A for Select All no longer works in safaridriver.
+        Instead, this hangs the session. This happens because the WebAutomationSession class
+        assumes that each call to simulateKeyboardInteraction causes keyboard events to be processed,
+        but in corner cases like Cmd-A, some events that we simulate are swallowed by AppKit and
+        never make it back to WebKit. Because the session never gets the "keyboard events flushed"
+        callback, it assumes the interaction is still ongoing, and never returns, causing a hang.
+
+        This patch consists of two parts:
+         - Add logging of important state changes and events when simulating user input.
+         - Make code more robust when simulating key actions that generate no events on macOS.
+
+        This change progresses WPT test key_shortcuts.py::test_mod_a_and_backspace_deletes_all_text on Mac.
+
+        * Platform/Logging.h: Add a logging channel.
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::keyFrameTransitionDurationTimerFired):
+        (WebKit::SimulatedInputDispatcher::transitionBetweenKeyFrames):
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        (WebKit::SimulatedInputDispatcher::run):
+        (WebKit::SimulatedInputDispatcher::finishDispatching):
+        Add a bunch of logging so its easier to figure out where things get stuck.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::simulateKeyboardInteraction):
+        In some cases, no keyboard events need to be processed for the simulated interaction.
+        When that happens, early exit rather than waiting for keyboard events to be flushed.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage): Logging.
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        On Mac, if you tap a character key while Command is held down, only a KeyDown event
+        is forwarded to the first responder by AppKit, even if you send a KeyUp event too.
+        In this case don't send an NSEvent since it won't ever be delivered back to WebKit.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isProcessingKeyboardEvents const): Expose this state for keyboard
+        events too.
+
 2018-10-08  Youenn Fablet  <youenn@apple.com>
 
         NetworkCache::Storage should be WTF::DestructionThread::Main

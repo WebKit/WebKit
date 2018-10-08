@@ -1503,7 +1503,14 @@ void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, Keybo
 
     platformSimulateKeyboardInteraction(page, interaction, WTFMove(key));
 
-    // Wait for keyboardEventsFlushedCallback to run when all events are handled.
+    // If the interaction does not generate any events, then do not wait for events to be flushed.
+    // This happens in some corner cases on macOS, such as releasing a key while Command is pressed.
+    if (callbackInMap && !page.isProcessingKeyboardEvents()) {
+        auto callbackToCancel = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.pageID());
+        callbackToCancel(std::nullopt);
+    }
+
+    // Otherwise, wait for keyboardEventsFlushedCallback to run when all events are handled.
 }
 
 #if USE(APPKIT) || PLATFORM(GTK) || PLATFORM(WPE)

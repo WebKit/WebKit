@@ -27,6 +27,7 @@
 #include "SimulatedInputDispatcher.h"
 
 #include "AutomationProtocolObjects.h"
+#include "Logging.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
 
@@ -112,6 +113,8 @@ void SimulatedInputDispatcher::keyFrameTransitionDurationTimerFired()
 
     m_keyFrameTransitionDurationTimer.stop();
 
+    LOG(Automation, "SimulatedInputDispatcher[%p]: timer finished for transition between keyframes: %d --> %d", this, m_keyframeIndex - 1, m_keyframeIndex);
+
     if (isKeyFrameTransitionComplete()) {
         auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr);
         finish(std::nullopt);
@@ -187,6 +190,9 @@ void SimulatedInputDispatcher::transitionBetweenKeyFrames(const SimulatedInputKe
     m_keyFrameTransitionCompletionHandler = WTFMove(completionHandler);
     m_keyFrameTransitionDurationTimer.startOneShot(b.maximumDuration());
 
+    LOG(Automation, "SimulatedInputDispatcher[%p]: started transition between keyframes: %d --> %d", this, m_keyframeIndex - 1, m_keyframeIndex);
+    LOG(Automation, "SimulatedInputDispatcher[%p]: timer started to ensure minimum duration of %.2f seconds for transition %d --> %d", this, b.maximumDuration().value(), m_keyframeIndex - 1, m_keyframeIndex);
+
     transitionToNextInputSourceState();
 }
 
@@ -229,11 +235,19 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
     SimulatedInputSourceState& a = inputSource.state;
     SimulatedInputSourceState& b = newState;
 
-    AutomationCompletionHandler eventDispatchFinished = [&inputSource, &newState, completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) mutable {
+    LOG(Automation, "SimulatedInputDispatcher[%p]: transition started between input source states: [%d.%d] --> %d.%d", this, m_keyframeIndex - 1, m_inputSourceStateIndex, m_keyframeIndex, m_inputSourceStateIndex);
+
+    AutomationCompletionHandler eventDispatchFinished = [this, &inputSource, &newState, completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) mutable {
         if (error) {
             completionHandler(error);
             return;
         }
+
+#if !LOG_DISABLED
+        LOG(Automation, "SimulatedInputDispatcher[%p]: transition finished between input source states: %d.%d --> [%d.%d]", this, m_keyframeIndex - 1, m_inputSourceStateIndex, m_keyframeIndex, m_inputSourceStateIndex);
+#else
+        UNUSED_PARAM(this);
+#endif
 
         inputSource.state = newState;
         completionHandler(std::nullopt);
@@ -253,11 +267,20 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             RELEASE_ASSERT(location);
             b.location = location;
             // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
-            if (!a.pressedMouseButton && b.pressedMouseButton)
+            if (!a.pressedMouseButton && b.pressedMouseButton) {
+#if !LOG_DISABLED
+                String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value());
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseDown[button=%s] for transition to %d.%d", this, mouseButtonName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#endif
                 m_client.simulateMouseInteraction(m_page, MouseInteraction::Down, b.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
-            else if (a.pressedMouseButton && !b.pressedMouseButton)
+            } else if (a.pressedMouseButton && !b.pressedMouseButton) {
+#if !LOG_DISABLED
+                String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(a.pressedMouseButton.value());
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseUp[button=%s] for transition to %d.%d", this, mouseButtonName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#endif
                 m_client.simulateMouseInteraction(m_page, MouseInteraction::Up, a.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
-            else if (a.location != b.location) {
+            } else if (a.location != b.location) {
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseMove for transition to %d.%d", this, m_keyframeIndex, m_inputSourceStateIndex);
                 // FIXME: This does not interpolate mousemoves per the "perform a pointer move" algorithm (§17.4 Dispatching Actions).
                 m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.value_or(MouseButton::NoButton), b.location.value(), WTFMove(eventDispatchFinished));
             } else
@@ -267,19 +290,31 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
     }
     case SimulatedInputSourceType::Keyboard:
         // The "dispatch a key{Down,Up} action" algorithms (§17.4 Dispatching Actions).
-        if (!a.pressedCharKey && b.pressedCharKey)
+        if (!a.pressedCharKey && b.pressedCharKey) {
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%c] for transition to %d.%d", this, b.pressedCharKey.value(), m_keyframeIndex, m_inputSourceStateIndex);
             m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, b.pressedCharKey.value(), WTFMove(eventDispatchFinished));
-        else if (a.pressedCharKey && !b.pressedCharKey)
+        } else if (a.pressedCharKey && !b.pressedCharKey) {
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%c] for transition to %d.%d", this, a.pressedCharKey.value(), m_keyframeIndex, m_inputSourceStateIndex);
             m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, a.pressedCharKey.value(), WTFMove(eventDispatchFinished));
-        else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
+        } else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
             for (VirtualKey key : b.pressedVirtualKeys) {
-                if (!a.pressedVirtualKeys.contains(key))
+                if (!a.pressedVirtualKeys.contains(key)) {
+#if !LOG_DISABLED
+                    String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(key);
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#endif
                     m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, key, WTFMove(eventDispatchFinished));
+                }
             }
 
             for (VirtualKey key : a.pressedVirtualKeys) {
-                if (!b.pressedVirtualKeys.contains(key))
+                if (!b.pressedVirtualKeys.contains(key)) {
+#if !LOG_DISABLED
+                    String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(key);
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#endif
                     m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, key, WTFMove(eventDispatchFinished));
+                }
             }
         } else
             eventDispatchFinished(std::nullopt);
@@ -311,6 +346,8 @@ void SimulatedInputDispatcher::run(uint64_t frameID, Vector<SimulatedInputKeyFra
     m_keyframes.append(SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(m_inputSources));
     m_keyframes.appendVector(WTFMove(keyFrames));
 
+    LOG(Automation, "SimulatedInputDispatcher[%p]: starting input simulation using %d keyframes", this, m_keyframeIndex);
+
     transitionToNextKeyFrame();
 }
 
@@ -327,6 +364,8 @@ void SimulatedInputDispatcher::cancel()
 void SimulatedInputDispatcher::finishDispatching(std::optional<AutomationCommandError> error)
 {
     m_keyFrameTransitionDurationTimer.stop();
+
+    LOG(Automation, "SimulatedInputDispatcher[%p]: finished all input simulation at [%u.%u]", this, m_keyframeIndex, m_inputSourceStateIndex);
 
     auto finish = std::exchange(m_runCompletionHandler, nullptr);
     m_frameID = std::nullopt;

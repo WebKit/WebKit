@@ -737,6 +737,8 @@ public:
     void handleMouseEvent(const NativeWebMouseEvent&);
 
     void handleWheelEvent(const NativeWebWheelEvent&);
+
+    bool isProcessingKeyboardEvents() const;
     void handleKeyboardEvent(const NativeWebKeyboardEvent&);
 
 #if ENABLE(MAC_GESTURE_EVENTS)

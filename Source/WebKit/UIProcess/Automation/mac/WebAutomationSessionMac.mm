@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "Logging.h"
 #import "WebAutomationSessionMacros.h"
 #import "WebInspectorProxy.h"
 #import "WebPageProxy.h"
@@ -74,6 +75,8 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
     NSWindow *window = page.platformWindow();
 
     for (NSEvent *event in eventsToSend) {
+        LOG(Automation, "Sending event[%p] to window[%p]: %@", event, window, event);
+
         // Take focus back in case the Inspector became focused while the prior command or
         // NSEvent was delivered to the window.
         [window becomeKeyWindow];
@@ -612,6 +615,12 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     case KeyboardInteraction::KeyRelease: {
         NSEventType eventType = isStickyModifier ? NSEventTypeFlagsChanged : NSEventTypeKeyUp;
         m_currentModifiers &= ~changedModifiers;
+
+        // When using a physical keyboard, if command is held down, releasing a non-modifier key doesn't send a KeyUp event.
+        bool commandKeyHeldDown = m_currentModifiers & NSEventModifierFlagCommand;
+        if (characters && commandKeyHeldDown)
+            break;
+
         [eventsToBeSent addObject:[NSEvent keyEventWithType:eventType location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
         break;
     }

@@ -5114,6 +5114,11 @@ void WebPageProxy::setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index
     m_process->send(Messages::WebPage::SetTextForActivePopupMenu(index), m_pageID);
 }
 
+bool WebPageProxy::isProcessingKeyboardEvents() const
+{
+    return !m_keyEventQueue.isEmpty();
+}
+
 bool WebPageProxy::isProcessingMouseEvents() const
 {
     return !m_mouseEventQueue.isEmpty();
