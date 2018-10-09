@@ -3495,7 +3495,6 @@ webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 
 webkit.org/b/187770 media/no-fullscreen-when-hidden.html [ Failure ]
 webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
-webkit.org/b/187996 http/tests/security/canvas-remote-read-remote-video-hls.html [ Failure ]
 
 webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure ]
 

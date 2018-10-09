@@ -30,6 +30,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include <cstdint>
 #include <gst/app/gstappsrc.h>
 #include <gst/pbutils/missing-plugins.h>
@@ -42,6 +43,9 @@ class CachedResourceStreamingClient final : public PlatformMediaResourceClient {
 public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&);
     virtual ~CachedResourceStreamingClient();
+
+    const HashSet<RefPtr<WebCore::SecurityOrigin>>& securityOrigins() const { return m_origins; }
+
 private:
     void checkUpdateBlocksize(uint64_t bytesRead);
 
@@ -63,6 +67,7 @@ private:
 
     GRefPtr<GstElement> m_src;
     ResourceRequest m_request;
+    HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
 };
 
 enum MainThreadSourceNotification {
@@ -788,6 +793,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     GST_DEBUG_OBJECT(src, "Received response: %d", response.httpStatusCode());
 
+    auto origin = SecurityOrigin::create(response.url());
+    m_origins.add(WTFMove(origin));
+
     auto responseURI = response.url().string().utf8();
     if (priv->originalURI != responseURI)
         priv->redirectedURI = WTFMove(responseURI);
@@ -992,6 +1000,18 @@ void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&)
 
     if (!priv->isSeeking)
         gst_app_src_end_of_stream(priv->appsrc);
+}
+
+bool webKitSrcWouldTaintOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
+{
+    WebKitWebSrcPrivate* priv = src->priv;
+
+    auto* cachedResourceStreamingClient = reinterpret_cast<CachedResourceStreamingClient*>(priv->resource->client());
+    for (auto& responseOrigin : cachedResourceStreamingClient->securityOrigins()) {
+        if (!origin.canAccess(*responseOrigin))
+            return true;
+    }
+    return false;
 }
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

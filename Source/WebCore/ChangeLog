@@ -1,3 +1,41 @@
+2018-10-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Stealing cross-origin video pixel with HLS
+        https://bugs.webkit.org/show_bug.cgi?id=190003
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Report the SecurityOrigin of downloaded adaptivedemux (HLS, DASH,
+        SmoothStreaming) fragments as tainted if their origin differs from
+        the manifest SecurityOrigin. SecurityOrigins are stored in the
+        CachedResourceStreamingClient implemented in the internal
+        GStreamer HTTP(S) source element.
+
+        The implementation is not ideal yet because the fragments download
+        is performed by the WebProcess, until bug 189967 is fixed. When
+        this bug is fixed, the m_hasTaintedOrigin member variable should
+        be removed and all checks be done unconditionally to the
+        webkithttpsrc element which will manage the download of the
+        manifests and fragments.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull): Reset the m_hasTaintedOrigin value.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Get the
+        fragment URL from the adaptivedemux stats message and check if its
+        origin is tainted.
+        (WebCore::MediaPlayerPrivateGStreamer::wouldTaintOrigin const):
+        Initial implementation by checking the m_hasTaintedOrigin member
+        variable value.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::responseReceived): Store the
+        resource origin internally so it can be checked later on by
+        webKitSrtcWouldTaintOrigin().
+        (webKitSrcWouldTaintOrigin): Check given origin against cached
+        origins. This implementation is similar to Cocoa's
+        WebCoreNSURLSession implementation.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h:
+
 2018-10-09  Antti Koivisto  <antti@apple.com>
 
         Prewarm FontDatabase on process swap

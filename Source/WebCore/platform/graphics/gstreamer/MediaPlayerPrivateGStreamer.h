@@ -109,6 +109,7 @@ public:
     MediaTime maxTimeLoaded() const override;
 
     bool hasSingleSecurityOrigin() const override;
+    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const override;
 
     void loadStateChanged();
     void timeChanged();
@@ -286,6 +287,8 @@ private:
 #endif
 #endif
     virtual bool isMediaSource() const { return false; }
+
+    std::optional<bool> m_hasTaintedOrigin { std::nullopt };
 };
 }
 
