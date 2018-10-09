@@ -1,3 +1,49 @@
+2018-10-09  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r232416): Can not scroll after swiping back on quoteunquoteapps.com
+        https://bugs.webkit.org/show_bug.cgi?id=190377
+        <rdar://problem/45108222>
+
+        Reviewed by Andy Estes.
+
+        Introduce the notion of 'pausing' to SnapshotRemovalTracker.
+        Reimplement r232416 in terms of this: the SnapshotRemovalTracker
+        starts out paused (not accepting events), and un-pauses when
+        we get a provisional load or same-document navigation.
+        This way, we don't lose the watchdog timer in cases where we get
+        no provisional load, same-document navigation, or main frame load
+        (which is the separate root cause for this bug -- this just papers
+        over it with a timeout).
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+        Resume the snapshot removal tracker.
+
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState):
+        If we didn't see a provisional load or same document navigation,
+        but somehow got to the terminal load state, immediately remove the snapshot.
+        
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::resume):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::start):
+        Start the SnapshotRemovalTracker out in the paused state; it will be
+        resumed in the same places we previously would call the
+        provisionalOrSameDocumentLoadCallback.
+
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent):
+        Ignore (but debug log) incoming events while paused.
+
+        * UIProcess/Cocoa/ViewGestureController.h:
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::pause):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::isPaused const):
+        Add the pausing bit.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Remove m_provisionalOrSameDocumentLoadCallback.
+
 2018-10-09  Antti Koivisto  <antti@apple.com>
 
         Prewarm FontDatabase on process swap

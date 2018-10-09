@@ -743,15 +743,13 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
     m_webPageProxy.goToBackForwardItem(*targetItem);
 
-    m_provisionalOrSameDocumentLoadCallback = [this, renderTreeSize] {
-        SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
-            | SnapshotRemovalTracker::MainFrameLoad
-            | SnapshotRemovalTracker::SubresourceLoads
-            | SnapshotRemovalTracker::ScrollPositionRestoration;
-        if (renderTreeSize)
-            desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
-        m_snapshotRemovalTracker.start(desiredEvents, [this] { this->forceRepaintIfNeeded(); });
-    };
+    SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
+        | SnapshotRemovalTracker::MainFrameLoad
+        | SnapshotRemovalTracker::SubresourceLoads
+        | SnapshotRemovalTracker::ScrollPositionRestoration;
+    if (renderTreeSize)
+        desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
+    m_snapshotRemovalTracker.start(desiredEvents, [this] { this->forceRepaintIfNeeded(); });
 
     // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
     // we never show the old page content, instead showing the snapshot background color.

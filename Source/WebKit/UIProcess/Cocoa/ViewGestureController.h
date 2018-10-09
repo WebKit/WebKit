@@ -169,6 +169,10 @@ private:
 
         void start(Events, WTF::Function<void()>&&);
         void reset();
+        
+        void pause() { m_paused = true; }
+        void resume();
+        bool isPaused() const { return m_paused; }
 
         bool eventOccurred(Events);
         bool cancelOutstandingEvent(Events);
@@ -190,6 +194,8 @@ private:
         MonotonicTime m_startTime;
 
         RunLoop::Timer<SnapshotRemovalTracker> m_watchdogTimer;
+        
+        bool m_paused { true };
     };
 
 #if PLATFORM(MAC)
@@ -301,7 +307,6 @@ private:
     uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
 #endif
 
-    WTF::Function<void()> m_provisionalOrSameDocumentLoadCallback;
     SnapshotRemovalTracker m_snapshotRemovalTracker;
 };
 

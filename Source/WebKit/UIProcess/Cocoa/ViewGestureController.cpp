@@ -129,10 +129,8 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 
 void ViewGestureController::didStartProvisionalLoadForMainFrame()
 {
-    if (auto provisionalOrSameDocumentLoadCallback = WTFMove(m_provisionalOrSameDocumentLoadCallback))
-        provisionalOrSameDocumentLoadCallback();
+    m_snapshotRemovalTracker.resume();
 }
-
 
 void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
@@ -161,8 +159,7 @@ void ViewGestureController::didRestoreScrollPosition()
 
 void ViewGestureController::didReachMainFrameLoadTerminalState()
 {
-    if (m_provisionalOrSameDocumentLoadCallback) {
-        m_provisionalOrSameDocumentLoadCallback = nullptr;
+    if (m_snapshotRemovalTracker.isPaused()) {
         removeSwipeSnapshot();
         return;
     }
@@ -191,9 +188,7 @@ void ViewGestureController::didReachMainFrameLoadTerminalState()
 
 void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
 {
-
-    if (auto provisionalOrSameDocumentLoadCallback = WTFMove(m_provisionalOrSameDocumentLoadCallback))
-        provisionalOrSameDocumentLoadCallback();
+    m_snapshotRemovalTracker.resume();
 
     bool cancelledOutstandingEvent = false;
 
@@ -260,6 +255,13 @@ void ViewGestureController::SnapshotRemovalTracker::log(const String& log) const
 #endif
     LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", sinceStart.milliseconds(), log.utf8().data());
 }
+    
+void ViewGestureController::SnapshotRemovalTracker::resume()
+{
+    if (isPaused() && m_outstandingEvents)
+        log("resume");
+    m_paused = false;
+}
 
 void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, WTF::Function<void()>&& removalCallback)
 {
@@ -270,6 +272,10 @@ void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, 
     log("start");
 
     startWatchdog(swipeSnapshotRemovalWatchdogDuration);
+    
+    // Initially start out paused; we'll resume when the load is committed.
+    // This avoids processing callbacks from earlier loads.
+    pause();
 }
 
 void ViewGestureController::SnapshotRemovalTracker::reset()
@@ -287,6 +293,11 @@ bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events e
 
     if (!(m_outstandingEvents & event))
         return false;
+
+    if (isPaused()) {
+        log("is paused; ignoring event: " + eventsDescription(event));
+        return false;
+    }
 
     log(logReason + eventsDescription(event));
 
