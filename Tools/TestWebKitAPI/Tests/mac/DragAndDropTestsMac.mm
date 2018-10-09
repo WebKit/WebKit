@@ -78,7 +78,7 @@ TEST(DragAndDropTests, DropColor)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
     [pasteboard declareTypes:@[NSColorPboardType] owner:nil];
-    [[NSColor redColor] writeToPasteboard:pasteboard];
+    [[NSColor colorWithRed:1 green:0 blue:0 alpha:1] writeToPasteboard:pasteboard];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
     TestWKWebView *webView = [simulator webView];

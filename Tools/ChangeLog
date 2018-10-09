@@ -1,5 +1,19 @@
 2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [macOS] API test DragAndDropTests.DropColor is failing on macOS 10.12
+        https://bugs.webkit.org/show_bug.cgi?id=190386
+
+        Reviewed by Ryosuke Niwa.
+
+        Unlike macOS 10.13 and 10.14, -[NSColor redColor] is not equivalent to a fully red color in sRGB on macOS 10.12.
+        Fix the test by dragging and dropping an NSColor that is equivalent to rgb(255, 0, 0) on all relevant versions
+        of macOS.
+
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+        (TEST):
+
+2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Cocoa] [WK2] Add support for text alignment and text lists in font attributes
         https://bugs.webkit.org/show_bug.cgi?id=190342
         <rdar://problem/44767118>
