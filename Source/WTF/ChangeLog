@@ -1,3 +1,15 @@
+2018-10-09  Mark Lam  <mark.lam@apple.com>
+
+        Revert temporary asserts for debugging a mysterious ASAN bot crash.
+        https://bugs.webkit.org/show_bug.cgi?id=190396
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::newThreadStackBounds):
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::checkConsistency const):
+
 2018-10-08  Aditya Keerthi  <akeerthi@apple.com>
 
         Make <input type=color> a runtime enabled (on-by-default) feature

@@ -145,18 +145,6 @@ StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
     if (stackDirection() == StackDirection::Upward)
         std::swap(origin, bound);
 
-    // The following set of assertions are only needed for debugging a
-    // mysterious crash on an ASAN bot that is not reproducible otherwise.
-    // Will remove after the needed data has been collected.
-#if OS(LINUX)
-    else {
-        ASSERT(stackDirection() == StackDirection::Downward);
-        void* currentPosition = &currentPosition;
-        ASSERT_WITH_MESSAGE_UNUSED(currentPosition, (currentPosition < origin && currentPosition > bound), "newThreadStackBounds: currentPosition %p origin %p bound %p stackSize %zu", currentPosition, origin, bound, stackSize);
-    }
-#endif
-    // End of ASAN bot debugging assertions.
-
     return StackBounds { origin, bound };
 }
 

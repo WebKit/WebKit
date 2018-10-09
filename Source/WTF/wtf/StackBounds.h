@@ -147,18 +147,6 @@ private:
     {
 #if !ASSERT_DISABLED
         void* currentPosition = &currentPosition;
-
-        // The following set of assertions are only needed for debugging a
-        // mysterious crash on an ASAN bot that is not reproducible otherwise.
-        // Will remove after the needed data has been collected.
-#if OS(LINUX)
-        if (isGrowingDownward())
-            ASSERT_WITH_MESSAGE((currentPosition < m_origin && currentPosition > m_bound), "checkConsistency: currentPosition %p m_origin %p m_bound %p stackSize %zu", currentPosition, m_origin, m_bound, (reinterpret_cast<uint8_t*>(m_origin) - reinterpret_cast<uint8_t*>(m_bound)));
-        else
-            ASSERT_WITH_MESSAGE((currentPosition > m_origin && currentPosition < m_bound), "checkConsistency: currentPosition %p m_origin %p m_bound %p stackSize %zu", currentPosition, m_origin, m_bound, (reinterpret_cast<uint8_t*>(m_bound) - reinterpret_cast<uint8_t*>(m_origin)));
-#endif // OS(LINUX)
-        // End of ASAN bot debugging assertions.
-
         ASSERT(m_origin != m_bound);
         ASSERT(isGrowingDownward()
             ? (currentPosition < m_origin && currentPosition > m_bound)
