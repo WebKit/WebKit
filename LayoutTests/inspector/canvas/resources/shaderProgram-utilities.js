@@ -2,7 +2,9 @@ let context;
 let program;
 
 function createProgram(contextType) {
-    context = document.createElement("canvas").getContext(contextType);
+    if (!context)
+        context = document.createElement("canvas").getContext(contextType);
+
     program = context.createProgram();
 }
 
@@ -45,9 +47,10 @@ TestPage.registerInitializer(() => {
     let suite = null;
 
     function awaitProgramAdded() {
-        return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.ShaderProgramAdded)
+        InspectorTest.assert(WI.canvasManager.canvases.length === 1, "There should only be one canvas.");
+        return WI.canvasManager.canvases[0].shaderProgramCollection.awaitEvent(WI.Collection.Event.ItemAdded)
         .then((event) => {
-            let program = event.data.program;
+            let program = event.data.item;
             InspectorTest.expectThat(program instanceof WI.ShaderProgram, "Added ShaderProgram.");
             InspectorTest.expectThat(program.canvas instanceof WI.Canvas, "ShaderProgram should have a parent Canvas.");
             return program;
@@ -55,9 +58,10 @@ TestPage.registerInitializer(() => {
     }
 
     function awaitProgramRemoved() {
-        return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.ShaderProgramRemoved)
+        InspectorTest.assert(WI.canvasManager.canvases.length === 1, "There should only be one canvas.");
+        return WI.canvasManager.canvases[0].shaderProgramCollection.awaitEvent(WI.Collection.Event.ItemRemoved)
         .then((event) => {
-            let program = event.data.program;
+            let program = event.data.item;
             InspectorTest.expectThat(program instanceof WI.ShaderProgram, "Removed ShaderProgram.");
             InspectorTest.expectThat(program.canvas instanceof WI.Canvas, "ShaderProgram should have a parent Canvas.");
             return program;
@@ -71,7 +75,10 @@ TestPage.registerInitializer(() => {
             name: `${suite.name}.reloadPage`,
             description: "Check that ShaderProgramAdded is sent for a program created before CanvasAgent is enabled.",
             test(resolve, reject) {
-                awaitProgramAdded().then(resolve, reject);
+                // This can't use `awaitEvent` since the promise resolution happens on the next tick.
+                WI.canvasManager.singleFireEventListener(WI.CanvasManager.Event.CanvasAdded, (event) => {
+                    awaitProgramAdded().then(resolve, reject);
+                });
 
                 InspectorTest.reloadPage();
             }

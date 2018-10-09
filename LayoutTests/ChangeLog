@@ -1,3 +1,21 @@
+2018-10-09  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION: fix canvas test failures after r236952 and r236954
+        https://bugs.webkit.org/show_bug.cgi?id=190403
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/create-context-webmetal.html:
+        Fix missing parenthesis.
+
+        * inspector/canvas/resources/shaderProgram-utilities.js:
+        (createProgram):
+        (TestPage.registerInitializer.awaitProgramAdded):
+        (TestPage.registerInitializer):
+        (TestPage.registerInitializer.window.initializeTestSuite):
+        Replace the `WI.CanvasManager` events (which were removed) with listeners for events on the
+        specific `WI.Canvas`.
+
 2018-10-09  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (Safari 12): Download of Blob URL fails

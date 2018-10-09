@@ -199,6 +199,8 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         for (let program of canvas.shaderProgramCollection)
             this._shaderProgramIdentifierMap.delete(program.identifier);
 
+        canvas.shaderProgramCollection.clear();
+
         for (let recording of canvas.recordingCollection) {
             recording.source = null;
             recording.createDisplayName(recording.displayName);
