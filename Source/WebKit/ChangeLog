@@ -1,3 +1,44 @@
+2018-10-09  Antti Koivisto  <antti@apple.com>
+
+        Prewarm FontDatabase on process swap
+        https://bugs.webkit.org/show_bug.cgi?id=190312
+
+        Reviewed by Chris Dumez.
+
+        Add mechanism for caching prewarm information per domain on UI process side. This information
+        is then passed to newly initialized web processes that are being used for the same domain.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
+        Pass prewarm information on process swap to the new process.
+
+        (WebKit::WebProcessPool::didCollectPrewarmInformation):
+
+        UI process side cache.
+
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didCollectPrewarmInformation):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::didReceivePolicyDecision):
+
+        Collect and cache prewarm information for the previous process on process swap.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prewarmGlobally):
+
+        Renamed for clarity.
+
+        (WebKit::WebProcess::prewarmWithDomainInformation):
+        (WebKit::WebProcess::sendPrewarmInformation):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] [WK2] Add support for text alignment and text lists in font attributes

@@ -58,7 +58,7 @@ void ProcessWarming::initializeNames()
     WebKitFontFamilyNames::init();
 }
     
-void ProcessWarming::prewarm()
+void ProcessWarming::prewarmGlobally()
 {
     initializeNames();
     
@@ -74,6 +74,18 @@ void ProcessWarming::prewarm()
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     TelephoneNumberDetector::isSupported();
 #endif
+}
+
+WebCore::PrewarmInformation ProcessWarming::collectPrewarmInformation()
+{
+    PrewarmInformation info;
+    info.font = FontCache::singleton().collectPrewarmInformation();
+    return info;
+}
+
+void ProcessWarming::prewarmWithInformation(const PrewarmInformation& prewarmInfo)
+{
+    FontCache::singleton().prewarm(prewarmInfo.font);
 }
 
 }

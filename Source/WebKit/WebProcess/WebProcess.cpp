@@ -420,9 +420,14 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     RELEASE_LOG(Process, "%p - WebProcess::initializeWebProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
 }
 
-void WebProcess::prewarm()
+void WebProcess::prewarmGlobally()
 {
-    WebCore::ProcessWarming::prewarm();
+    WebCore::ProcessWarming::prewarmGlobally();
+}
+
+void WebProcess::prewarmWithDomainInformation(const WebCore::PrewarmInformation& prewarmInformation)
+{
+    WebCore::ProcessWarming::prewarmWithInformation(prewarmInformation);
 }
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
@@ -1457,6 +1462,13 @@ void WebProcess::processDidResume()
 #if PLATFORM(IOS)
     accessibilityProcessSuspendedNotification(false);
 #endif
+}
+
+void WebProcess::sendPrewarmInformation(const String& registrableDomain)
+{
+    if (registrableDomain.isEmpty())
+        return;
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidCollectPrewarmInformation(registrableDomain, WebCore::ProcessWarming::collectPrewarmInformation()), 0);
 }
 
 void WebProcess::pageDidEnterWindow(uint64_t pageID)

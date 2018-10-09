@@ -190,6 +190,7 @@ struct ExceptionDetails;
 struct FileChooserSettings;
 struct GlobalWindowIdentifier;
 struct MediaStreamRequest;
+struct PrewarmInformation;
 struct SecurityOriginData;
 struct ShareData;
 struct TextAlternativeWithRange;

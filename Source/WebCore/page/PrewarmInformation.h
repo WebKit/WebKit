@@ -25,17 +25,33 @@
 
 #pragma once
 
-#include "PrewarmInformation.h"
+#include "FontCache.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ProcessWarming {
-public:
-    static void initializeNames();
-    static void prewarmGlobally();
+struct WEBCORE_EXPORT PrewarmInformation {
+    FontPrewarmInformation font;
 
-    static PrewarmInformation collectPrewarmInformation();
-    static void prewarmWithInformation(const PrewarmInformation&);
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<PrewarmInformation> decode(Decoder&);
 };
+
+template<class Encoder>
+void PrewarmInformation::encode(Encoder& encoder) const
+{
+    encoder << font;
+}
+
+template<class Decoder>
+std::optional<PrewarmInformation> PrewarmInformation::decode(Decoder& decoder)
+{
+    PrewarmInformation prewarmInfo;
+    if (!decoder.decode(prewarmInfo.font))
+        return { };
+
+    return prewarmInfo;
+}
 
 }

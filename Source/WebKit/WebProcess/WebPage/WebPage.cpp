@@ -1173,8 +1173,11 @@ void WebPage::close()
     m_isClosed = true;
 
     // If there is still no URL, then we never loaded anything in this page, so nothing to report.
-    if (!mainWebFrame()->url().isEmpty())
+    if (!mainWebFrame()->url().isEmpty()) {
         reportUsedFeatures();
+
+        WebProcess::singleton().sendPrewarmInformation(toRegistrableDomain(mainWebFrame()->url()));
+    }
 
     if (pageGroup()->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
         WebProcess::singleton().injectedBundle()->willDestroyPage(this);
@@ -2873,6 +2876,8 @@ void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, Po
     if (policyAction == PolicyAction::Suspend) {
         ASSERT(frame == m_mainFrame);
         setIsSuspended(true);
+
+        WebProcess::singleton().sendPrewarmInformation(toRegistrableDomain(mainWebFrame()->url()));
     }
     frame->didReceivePolicyDecision(listenerID, policyAction, navigationID, downloadID, WTFMove(websitePolicies));
 }

@@ -71,6 +71,7 @@ struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 struct MockMediaDevice;
 struct PluginInfo;
+struct PrewarmInformation;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;
 
@@ -200,6 +201,8 @@ public:
     void cancelPrepareToSuspend();
     void processDidResume();
 
+    void sendPrewarmInformation(const String& registrableDomain);
+
 #if PLATFORM(IOS)
     void resetAllGeolocationPermissions();
 #endif
@@ -245,7 +248,8 @@ private:
     void initializeWebProcess(WebProcessCreationParameters&&);
     void platformInitializeWebProcess(WebProcessCreationParameters&&);
 
-    void prewarm();
+    void prewarmGlobally();
+    void prewarmWithDomainInformation(const WebCore::PrewarmInformation&);
 
 #if USE(OS_STATE)
     void registerWithStateDumper();

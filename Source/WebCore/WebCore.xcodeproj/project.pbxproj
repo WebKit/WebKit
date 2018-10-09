@@ -4759,6 +4759,7 @@
 		E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = E44B4BB2141650D7002B1D8B /* SelectorChecker.h */; };
 		E44FA1851BCA6B5A0091B6EF /* ComposedTreeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E44FA1841BCA6B5A0091B6EF /* ComposedTreeIterator.h */; };
 		E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E45322AA140CE267005A0F92 /* SelectorQuery.h */; };
+		E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4605FEA2166480800E53046 /* PrewarmInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E461802D1C8DD2900026C02C /* StyleRelations.h in Headers */ = {isa = PBXBuildFile; fileRef = E461802C1C8DD2900026C02C /* StyleRelations.h */; };
 		E461D65F1BB0C80D00CB5645 /* StyleScope.h in Headers */ = {isa = PBXBuildFile; fileRef = E461D65E1BB0C80D00CB5645 /* StyleScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E462A4A0113E71BE004A4220 /* IntPointHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14511,6 +14512,7 @@
 		E45390340EAFD637003695C8 /* ScrollViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewIOS.mm; sourceTree = "<group>"; };
 		E453903C0EAFD637003695C8 /* WidgetIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetIOS.mm; sourceTree = "<group>"; };
 		E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemMemoryIOS.cpp; sourceTree = "<group>"; };
+		E4605FEA2166480800E53046 /* PrewarmInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrewarmInformation.h; sourceTree = "<group>"; };
 		E461802C1C8DD2900026C02C /* StyleRelations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRelations.h; sourceTree = "<group>"; };
 		E461802E1C8DD4D20026C02C /* StyleRelations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRelations.cpp; sourceTree = "<group>"; };
 		E461D65C1BB0C7F000CB5645 /* StyleScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScope.cpp; sourceTree = "<group>"; };
@@ -19688,6 +19690,7 @@
 				5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */,
 				5CFC434F192406A900A0D3B5 /* PointerLockController.h */,
 				3772B09516535856000A49CA /* PopupOpeningObserver.h */,
+				E4605FEA2166480800E53046 /* PrewarmInformation.h */,
 				B776D43C1104527500BEB0EC /* PrintContext.cpp */,
 				B776D43A1104525D00BEB0EC /* PrintContext.h */,
 				E42050162141901B0066EF3B /* ProcessWarming.cpp */,
@@ -27730,6 +27733,7 @@
 				CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */,
 				CE799FAC1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h in Headers */,
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
+				E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */,
 				97627B8E14FB3CEE002CDCA1 /* ContextDestructionObserver.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
 				065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */,

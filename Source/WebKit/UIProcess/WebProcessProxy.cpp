@@ -53,6 +53,7 @@
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/PrewarmInformation.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/URL.h>
@@ -1431,6 +1432,11 @@ void WebProcessProxy::didCheckProcessLocalPortForActivity(uint64_t callbackIdent
         return;
 
     callback(isLocallyReachable ? MessagePortChannelProvider::HasActivity::Yes : MessagePortChannelProvider::HasActivity::No);
+}
+
+void WebProcessProxy::didCollectPrewarmInformation(const String& domain, const WebCore::PrewarmInformation& prewarmInformation)
+{
+    processPool().didCollectPrewarmInformation(domain, prewarmInformation);
 }
 
 #if PLATFORM(WATCHOS)

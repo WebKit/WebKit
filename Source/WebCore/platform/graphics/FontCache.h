@@ -38,6 +38,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -66,6 +67,8 @@ typedef IMLangFontLink2 IMLangFontLinkType;
 typedef IMLangFontLink IMLangFontLinkType;
 #endif
 #endif
+
+using FontPrewarmInformation = Vector<String>;
 
 // This key contains the FontDescription fields other than family that matter when fetching FontDatas (platform fonts).
 struct FontDescriptionKey {
@@ -235,6 +238,9 @@ public:
     bool shouldMockBoldSystemFontForAccessibility() const { return m_shouldMockBoldSystemFontForAccessibility; }
     void setShouldMockBoldSystemFontForAccessibility(bool shouldMockBoldSystemFontForAccessibility) { m_shouldMockBoldSystemFontForAccessibility = shouldMockBoldSystemFontForAccessibility; }
 
+    FontPrewarmInformation collectPrewarmInformation() const;
+    void prewarm(const FontPrewarmInformation&);
+
 private:
     FontCache();
     ~FontCache() = delete;
@@ -258,6 +264,9 @@ private:
     bool m_shouldMockBoldSystemFontForAccessibility { false };
 
 #if PLATFORM(COCOA)
+    HashSet<String> m_seenFamiliesForPrewarming;
+    RefPtr<WorkQueue> m_prewarmQueue;
+
     friend class ComplexTextController;
 #endif
     friend class Font;

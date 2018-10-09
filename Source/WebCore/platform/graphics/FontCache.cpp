@@ -482,6 +482,16 @@ void FontCache::invalidate()
 }
 
 #if !PLATFORM(COCOA)
+
+FontPrewarmInformation FontCache::collectPrewarmInformation() const
+{
+    return { };
+}
+
+void FontCache::prewarm(const FontPrewarmInformation&)
+{
+}
+
 RefPtr<Font> FontCache::similarFont(const FontDescription&, const AtomicString&)
 {
     return nullptr;

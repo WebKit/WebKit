@@ -85,6 +85,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/Process.h>
+#include <WebCore/ProcessWarming.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/URLParser.h>
 #include <pal/SessionID.h>
@@ -736,7 +737,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
         ASSERT(!m_prewarmedProcess);
         m_prewarmedProcess = &process;
         
-        m_prewarmedProcess->send(Messages::WebProcess::Prewarm(), 0);
+        m_prewarmedProcess->send(Messages::WebProcess::PrewarmGlobally(), 0);
     }
 
     if (m_serviceWorkerProcessesTerminationTimer.isActive())
@@ -2173,8 +2174,14 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
     }
 
     action = PolicyAction::Suspend;
-    if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore()))
+
+    if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore())) {
+        if (auto* prewarmInformation = m_prewarmInformationPerRegistrableDomain.get(toRegistrableDomain(targetURL)))
+            process->send(Messages::WebProcess::PrewarmWithDomainInformation(*prewarmInformation), 0);
+
         return process.releaseNonNull();
+    }
+
     return createNewWebProcess(page.websiteDataStore());
 }
 
@@ -2246,6 +2253,19 @@ void WebProcessPool::sendDisplayConfigurationChangedMessageForTesting()
         processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, kCGDisplaySetModeFlag | kCGDisplayDesktopShapeChangedFlag));
     }
 #endif
+}
+
+void WebProcessPool::didCollectPrewarmInformation(const String& registrableDomain, const WebCore::PrewarmInformation& prewarmInformation)
+{
+    static const size_t maximumSizeToPreventUnlimitedGrowth = 100;
+    if (m_prewarmInformationPerRegistrableDomain.size() == maximumSizeToPreventUnlimitedGrowth)
+        m_prewarmInformationPerRegistrableDomain.remove(m_prewarmInformationPerRegistrableDomain.begin());
+
+    auto& value = m_prewarmInformationPerRegistrableDomain.ensure(registrableDomain, [] {
+        return std::make_unique<WebCore::PrewarmInformation>();
+    }).iterator->value;
+
+    *value = prewarmInformation;
 }
 
 } // namespace WebKit

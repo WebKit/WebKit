@@ -1,3 +1,49 @@
+2018-10-09  Antti Koivisto  <antti@apple.com>
+
+        Prewarm FontDatabase on process swap
+        https://bugs.webkit.org/show_bug.cgi?id=190312
+
+        Reviewed by Chris Dumez.
+
+        Implement basic prewarming of FontDatabase. When the domain of the first page load on
+        a new process is known we pass the list of font families previous used by that domain to the
+        process. This is used to prewarm CoreText font database. Initialization (which involves lots of
+        blocking IPC) happens outside the main thread so the fonts are ready to use when needed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/PrewarmInformation.h: Added.
+        (WebCore::PrewarmInformation::encode const):
+        (WebCore::PrewarmInformation::decode):
+
+        Add data structure for prewarm information with encode/decode support.
+
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::collectPrewarmInformation):
+        (WebCore::ProcessWarming::prewarmWithInformation):
+
+        Prewarming interface to be used from WebKit.
+
+        * page/ProcessWarming.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::collectPrewarmInformation const):
+        (WebCore::FontCache::prewarm):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily):
+        (WebCore::FontDatabase::fontForPostScriptName):
+        (WebCore::FontDatabase::clear):
+
+        Add mutex for thread safe access.
+
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::collectPrewarmInformation const):
+
+        Collect font families seen by this process.
+
+        (WebCore::FontCache::prewarm):
+
+        Prewarm FontDatabase in a dispatch queue.
+
 2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] [WK2] Add support for text alignment and text lists in font attributes

@@ -64,6 +64,8 @@ messages -> WebProcessProxy LegacyReceiver {
     DidDeliverMessagePortMessages(uint64_t messageBatchIdentifier)
     DidCheckProcessLocalPortForActivity(uint64_t callbackIdentifier, bool isLocallyReachable)
 
+    DidCollectPrewarmInformation(String domain, struct WebCore::PrewarmInformation prewarmInformation)
+
 #if PLATFORM(COCOA)
     CacheMediaMIMETypes(Vector<String> types)
 #endif

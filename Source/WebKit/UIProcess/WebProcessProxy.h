@@ -314,6 +314,8 @@ private:
 
     bool canTerminateChildProcess();
 
+    void didCollectPrewarmInformation(const String& domain, const WebCore::PrewarmInformation&);
+
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
 
     enum class IsWeak { No, Yes };
