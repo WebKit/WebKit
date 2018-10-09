@@ -1,3 +1,54 @@
+2018-10-09  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import CTAP HID message and packet structure from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=189289
+        <rdar://problem/44120310>
+
+        Reviewed by Brent Fulgham.
+
+        This patch imports CTAP HID message and packet structure:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#message-and-packet-structure
+        from Chromium. With this library, WebKit can now turn binaries into messages that CTAP devices could understand.
+        This patch contains the following Chromium files and modifies them to fit into WebKit:
+        https://cs.chromium.org/chromium/src/device/fido/fido_constants.cc?l=1&rcl=1efcfbeaf4e4cedf58716e1982b5702770571a75
+        https://cs.chromium.org/chromium/src/device/fido/fido_constants.h?l=1&rcl=1efcfbeaf4e4cedf58716e1982b5702770571a75
+        https://cs.chromium.org/chromium/src/device/fido/hid/fido_hid_message.cc?l=1&rcl=387f3725de2842e0e6b7175a9b2ed472b0cf781a
+        https://cs.chromium.org/chromium/src/device/fido/hid/fido_hid_message.h?rcl=1efcfbeaf4e4cedf58716e1982b5702770571a75
+        https://cs.chromium.org/chromium/src/device/fido/hid/fido_hid_packet.cc?rcl=1efcfbeaf4e4cedf58716e1982b5702770571a75
+        https://cs.chromium.org/chromium/src/device/fido/hid/fido_hid_packet.h?rcl=1efcfbeaf4e4cedf58716e1982b5702770571a75
+        https://cs.chromium.org/chromium/src/device/fido/hid/fido_hid_message_unittest.cc?rcl=1efcfbeaf4e4cedf58716e1982b5702770571a75
+
+        Covered by API tests.
+
+        * Modules/webauthn/fido/FidoConstants.cpp: Added.
+        (fido::isFidoHidDeviceCommand):
+        * Modules/webauthn/fido/FidoConstants.h: Added.
+        * Modules/webauthn/fido/FidoHidMessage.cpp: Added.
+        (fido::FidoHidMessage::create):
+        (fido::FidoHidMessage::createFromSerializedData):
+        (fido::FidoHidMessage::messageComplete const):
+        (fido::FidoHidMessage::getMessagePayload const):
+        (fido::FidoHidMessage::popNextPacket):
+        (fido::FidoHidMessage::addContinuationPacket):
+        (fido::FidoHidMessage::numPackets const):
+        (fido::FidoHidMessage::FidoHidMessage):
+        * Modules/webauthn/fido/FidoHidMessage.h: Added.
+        * Modules/webauthn/fido/FidoHidPacket.cpp: Added.
+        (fido::FidoHidPacket::FidoHidPacket):
+        (fido::FidoHidInitPacket::createFromSerializedData):
+        (fido::FidoHidInitPacket::FidoHidInitPacket):
+        (fido::FidoHidInitPacket::getSerializedData const):
+        (fido::FidoHidContinuationPacket::createFromSerializedData):
+        (fido::FidoHidContinuationPacket::FidoHidContinuationPacket):
+        (fido::FidoHidContinuationPacket::getSerializedData const):
+        * Modules/webauthn/fido/FidoHidPacket.h: Added.
+        * Modules/webauthn/fido/FidoParsingUtils.cpp: Added.
+        (fido::getInitPacketData):
+        (fido::getContinuationPacketData):
+        * Modules/webauthn/fido/FidoParsingUtils.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-10-09  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [CoordGraphics] Remove the 'previous backing store' logic

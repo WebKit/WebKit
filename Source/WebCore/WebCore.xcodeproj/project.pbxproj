@@ -1765,6 +1765,8 @@
 		57303C4620105D2F00355965 /* AuthenticatorCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C4320105B3D00355965 /* AuthenticatorCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */; };
 		5739E12F1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */; };
+		573F5332216806E10045587A /* FidoHidMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57BAF28A2167D303008E954E /* FidoHidMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		573F533721680D150045587A /* FidoParsingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 573F533521680D140045587A /* FidoParsingUtils.h */; };
 		574F55E1204F3B23002948C6 /* COSEConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 574F55DC204F3732002948C6 /* COSEConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5750A9751E68D00000705C4A /* CryptoKeyEC.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9731E68D00000705C4A /* CryptoKeyEC.h */; };
 		5750A97E1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A97D1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h */; };
@@ -1787,6 +1789,8 @@
 		57B5F7F91E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7F71E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h */; };
 		57B5F8091E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F8081E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h */; };
 		57B5F8101E5E2A4E00F34F90 /* JSAesGcmParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */; };
+		57BAF28C2167D316008E954E /* FidoConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 578A4C0B2167D29600D08F34 /* FidoConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57BAF28E2167D339008E954E /* FidoHidPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 578A4C0A2167D29600D08F34 /* FidoHidPacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57C7A68C1E56967500C67D71 /* BasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A68B1E56967500C67D71 /* BasicCredential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */; };
 		57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */; };
@@ -8562,6 +8566,8 @@
 		573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmParameters.h; sourceTree = "<group>"; };
 		5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoAlgorithmParameters.h; sourceTree = "<group>"; };
 		5739E1301DAC7FD100E14383 /* JSCryptoAlgorithmParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoAlgorithmParameters.cpp; sourceTree = "<group>"; };
+		573F533521680D140045587A /* FidoParsingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FidoParsingUtils.h; sourceTree = "<group>"; };
+		573F533621680D150045587A /* FidoParsingUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FidoParsingUtils.cpp; sourceTree = "<group>"; };
 		574AC7531DAC367D00E9744C /* CryptoAlgorithmParameters.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CryptoAlgorithmParameters.idl; sourceTree = "<group>"; };
 		574D42791D594FF6002CF50E /* GlobalCrypto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GlobalCrypto.idl; sourceTree = "<group>"; };
 		574F55DC204F3732002948C6 /* COSEConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COSEConstants.h; sourceTree = "<group>"; };
@@ -8601,6 +8607,10 @@
 		5778BD801DA4733E009E3009 /* SubtleCrypto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SubtleCrypto.idl; sourceTree = "<group>"; };
 		5778BD811DA4802C009E3009 /* SubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubtleCrypto.h; sourceTree = "<group>"; };
 		5778BD831DA4817B009E3009 /* SubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubtleCrypto.cpp; sourceTree = "<group>"; };
+		578A4C082167D29500D08F34 /* FidoHidMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FidoHidMessage.cpp; sourceTree = "<group>"; };
+		578A4C092167D29600D08F34 /* FidoHidPacket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FidoHidPacket.cpp; sourceTree = "<group>"; };
+		578A4C0A2167D29600D08F34 /* FidoHidPacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FidoHidPacket.h; sourceTree = "<group>"; };
+		578A4C0B2167D29600D08F34 /* FidoConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FidoConstants.h; sourceTree = "<group>"; };
 		5790996B1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRSA_PSS.h; sourceTree = "<group>"; };
 		5790996C1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSA_PSS.cpp; sourceTree = "<group>"; };
 		57957CA61E971DE0008072AB /* CryptoAlgorithmHKDF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmHKDF.cpp; sourceTree = "<group>"; };
@@ -8617,6 +8627,8 @@
 		57B5F80A1E5D22DA00F34F90 /* JSAesGcmParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAesGcmParams.cpp; sourceTree = "<group>"; };
 		57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAesGcmParams.h; sourceTree = "<group>"; };
 		57B5F80D1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_GCMMac.cpp; sourceTree = "<group>"; };
+		57BAF2872167D2F7008E954E /* FidoConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FidoConstants.cpp; sourceTree = "<group>"; };
+		57BAF28A2167D303008E954E /* FidoHidMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FidoHidMessage.h; sourceTree = "<group>"; };
 		57C7A6891E56946D00C67D71 /* BasicCredential.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicCredential.idl; sourceTree = "<group>"; };
 		57C7A68B1E56967500C67D71 /* BasicCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicCredential.h; sourceTree = "<group>"; };
 		57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicCredential.cpp; sourceTree = "<group>"; };
@@ -18973,6 +18985,21 @@
 			path = cbor;
 			sourceTree = "<group>";
 		};
+		578A4BFA2166AE0000D08F34 /* fido */ = {
+			isa = PBXGroup;
+			children = (
+				57BAF2872167D2F7008E954E /* FidoConstants.cpp */,
+				578A4C0B2167D29600D08F34 /* FidoConstants.h */,
+				578A4C082167D29500D08F34 /* FidoHidMessage.cpp */,
+				57BAF28A2167D303008E954E /* FidoHidMessage.h */,
+				578A4C092167D29600D08F34 /* FidoHidPacket.cpp */,
+				578A4C0A2167D29600D08F34 /* FidoHidPacket.h */,
+				573F533621680D150045587A /* FidoParsingUtils.cpp */,
+				573F533521680D140045587A /* FidoParsingUtils.h */,
+			);
+			path = fido;
+			sourceTree = "<group>";
+		};
 		57C7A6881E56946D00C67D71 /* credentialmanagement */ = {
 			isa = PBXGroup;
 			children = (
@@ -19014,6 +19041,7 @@
 			isa = PBXGroup;
 			children = (
 				57303BB32006C6ED00355965 /* cbor */,
+				578A4BFA2166AE0000D08F34 /* fido */,
 				57303C272009B2FC00355965 /* AuthenticatorAssertionResponse.h */,
 				57303C292009B2FC00355965 /* AuthenticatorAssertionResponse.idl */,
 				57303C1B2009A98600355965 /* AuthenticatorAttestationResponse.h */,
@@ -28231,6 +28259,10 @@
 				84730D8D1248F0B300D3A9C9 /* FETurbulence.h in Headers */,
 				FD31609512B026F700C1A359 /* FFTConvolver.h in Headers */,
 				FD31609712B026F700C1A359 /* FFTFrame.h in Headers */,
+				57BAF28C2167D316008E954E /* FidoConstants.h in Headers */,
+				573F5332216806E10045587A /* FidoHidMessage.h in Headers */,
+				57BAF28E2167D339008E954E /* FidoHidPacket.h in Headers */,
+				573F533721680D150045587A /* FidoParsingUtils.h in Headers */,
 				976D6C81122B8A3D001FD1F7 /* File.h in Headers */,
 				838F86DA1F509E7400E8CFC5 /* FileCallback.h in Headers */,
 				066C772B0AB603B700238CC4 /* FileChooser.h in Headers */,

@@ -254,6 +254,10 @@ Modules/webauthn/PublicKeyCredential.cpp
 Modules/webauthn/cbor/CBORReader.cpp
 Modules/webauthn/cbor/CBORValue.cpp
 Modules/webauthn/cbor/CBORWriter.cpp
+Modules/webauthn/fido/FidoConstants.cpp
+Modules/webauthn/fido/FidoHidMessage.cpp
+Modules/webauthn/fido/FidoHidPacket.cpp
+Modules/webauthn/fido/FidoParsingUtils.cpp
 
 Modules/webdatabase/ChangeVersionWrapper.cpp
 Modules/webdatabase/DOMWindowWebDatabase.cpp
