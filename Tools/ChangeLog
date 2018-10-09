@@ -1,3 +1,16 @@
+2018-10-09  Jer Noble  <jer.noble@apple.com>
+
+        Crash when closing WKWebView during enter fullscreen animation
+        https://bugs.webkit.org/show_bug.cgi?id=190412
+
+        Reviewed by Brian Burg.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/CloseWebViewDuringEnterFullscreen.mm: Added.
+        (-[CloseWebViewDuringEnterFullscreenUIDelegate _webViewWillEnterFullscreen:]):
+        (-[CloseWebViewDuringEnterFullscreenUIDelegate _webViewWillExitFullscreen:]):
+        (TestWebKitAPI::TEST):
+
 2018-10-09  Chris Dumez  <cdumez@apple.com>
 
         Anchor target should be ignored on activation when the download attribute is set

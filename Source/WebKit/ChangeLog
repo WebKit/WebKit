@@ -1,3 +1,16 @@
+2018-10-09  Jer Noble  <jer.noble@apple.com>
+
+        Crash when closing WKWebView during enter fullscreen animation
+        https://bugs.webkit.org/show_bug.cgi?id=190412
+
+        Reviewed by Brian Burg.
+
+        We need a valid _webView if, during -[NSWindow close], we catch a notification saying we failed to enter
+        fullscreen and try to replace the placeholder with the actual _webView.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController close]):
+
 2018-10-09  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r231663) loading in hidden WKWebViews stalls because WebProcess is suspended

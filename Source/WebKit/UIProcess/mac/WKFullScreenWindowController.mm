@@ -529,9 +529,9 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     if (_fullScreenState == ExitingFullScreen)
         [self finishedExitFullScreenAnimation:YES];
 
-    _webView = nil;
-
     [super close];
+
+    _webView = nil;
 }
 
 - (void)videoControlsManagerDidChange
