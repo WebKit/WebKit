@@ -1,5 +1,17 @@
 2018-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Dark Mode: canvas recording glyph is black on gray
+        https://bugs.webkit.org/show_bug.cgi?id=190367
+        <rdar://problem/45099304>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas > footer .view-recording): Added.
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings::before): Deleted.
+
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: allow multiple canvases to be recorded at the same time
         https://bugs.webkit.org/show_bug.cgi?id=190305
 

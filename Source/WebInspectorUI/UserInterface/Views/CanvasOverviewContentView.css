@@ -214,7 +214,7 @@
         color: var(--text-color-secondary);
     }
 
-    .content-view.canvas-overview .content-view.canvas > footer > .recordings::before {
+    .content-view.canvas-overview .content-view.canvas > footer .view-recording {
         filter: invert();
     }
 
