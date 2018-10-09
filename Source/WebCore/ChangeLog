@@ -1,3 +1,29 @@
+2018-10-09  Oriol Brufau  <obrufau@igalia.com>
+
+        Resolve inset properties to computed style when there is overconstraintment
+        https://bugs.webkit.org/show_bug.cgi?id=188711
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This patch makes WebKit behave closer to Blink. Specifically,
+         - In overconstrained relative or absolute positioning, inset properties resolve
+           to the computed value (absolutizing percentages) instead of to the used value.
+         - In fixed positioning, the resolved value of non-'auto' values is no longer
+           increased by the border of the containg block.
+
+        This patch can slighlty alter the resolved value if it's a long decimal number.
+
+        Tests: imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-absolute.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-fixed.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-nobox.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-relative.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-static.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-sticky.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::positionOffsetValue):
+        * rendering/RenderBox.h:
+
 2018-10-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Import CTAP HID message and packet structure from Chromium

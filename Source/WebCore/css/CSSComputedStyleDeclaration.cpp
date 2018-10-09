@@ -764,22 +764,50 @@ static LayoutUnit getOffsetUsedStyleOutOfFlowPositioned(RenderBlock& container, 
 
 static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropertyID propertyID, RenderObject* renderer)
 {
+    auto offset = getOffsetComputedLength(style, propertyID);
+
     // If the element is not displayed; return the "computed value".
     if (!renderer || !renderer->isBox())
-        return zoomAdjustedPixelValueForLength(getOffsetComputedLength(style, propertyID), style);
+        return zoomAdjustedPixelValueForLength(offset, style);
 
-    // We should return the "used value".
     auto& box = downcast<RenderBox>(*renderer);
     auto* containingBlock = box.containingBlock();
-    if (box.isRelativelyPositioned() || !containingBlock)
+
+    // Resolve a "computed value" percentage if the element is positioned.
+    // TODO: percentages for sticky positioning should be handled here (bug 189549).
+    if (containingBlock && offset.isPercentOrCalculated() && box.isPositioned() && !box.isStickilyPositioned()) {
+        bool isVerticalProperty;
+        if (propertyID == CSSPropertyTop || propertyID == CSSPropertyBottom)
+            isVerticalProperty = true;
+        else {
+            ASSERT(propertyID == CSSPropertyLeft || propertyID == CSSPropertyRight);
+            isVerticalProperty = false;
+        }
+        LayoutUnit containingBlockSize;
+        if (isVerticalProperty == containingBlock->isHorizontalWritingMode()) {
+            containingBlockSize = box.isOutOfFlowPositioned()
+                ? box.containingBlockLogicalHeightForPositioned(*containingBlock, false)
+                : box.containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+        } else {
+            containingBlockSize = box.isOutOfFlowPositioned()
+                ? box.containingBlockLogicalWidthForPositioned(*containingBlock, nullptr, false)
+                : box.containingBlockLogicalWidthForContent();
+        }
+        return zoomAdjustedPixelValue(floatValueForLength(offset, containingBlockSize), style);
+    }
+
+    // Return a "computed value" length.
+    if (!offset.isAuto())
+        return zoomAdjustedPixelValueForLength(offset, style);
+
+    // The property won't be overconstrained if its computed value is "auto", so the "used value" can be returned.
+    if (box.isRelativelyPositioned())
         return zoomAdjustedPixelValue(getOffsetUsedStyleRelative(box, propertyID), style);
-    if (renderer->isOutOfFlowPositioned())
+
+    if (containingBlock && box.isOutOfFlowPositioned())
         return zoomAdjustedPixelValue(getOffsetUsedStyleOutOfFlowPositioned(*containingBlock, box, propertyID), style);
-    // In-flow element.
-    auto offset = getOffsetComputedLength(style, propertyID);
-    if (offset.isAuto())
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
-    return zoomAdjustedPixelValueForLength(offset, style);
+
+    return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
 }
 
 RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle* style, const Color& color) const

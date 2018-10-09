@@ -1,6 +1,6 @@
 
-FAIL cubic-bezier easing with input progress greater than 1 assert_approx_equals: The left of the animation should be approximately 98.8706654939602 at 230ms expected 98.8706654939602 +/- 0.01 but got 98.890625
-FAIL cubic-bezier easing with input progress greater than 1 and where the tangent on the upper boundary is infinity assert_approx_equals: The left of the animation should be approximately 106.31755608768113 at 230ms expected 106.31755608768113 +/- 0.01 but got 106.359375
-FAIL cubic-bezier easing with input progress less than 0 assert_approx_equals: The left of the animation should be approximately -16.589193103032184 at 10ms expected -16.589193103032184 +/- 0.01 but got -17.5
-FAIL cubic-bezier easing with input progress less than 0 and where the tangent on the lower boundary is infinity assert_approx_equals: The left of the animation should be approximately 0 at 300ms expected 0 +/- 0.01 but got 512.0625
+FAIL cubic-bezier easing with input progress greater than 1 assert_approx_equals: The left of the animation should be approximately 98.8706654939602 at 230ms expected 98.8706654939602 +/- 0.01 but got 98.89859008789062
+FAIL cubic-bezier easing with input progress greater than 1 and where the tangent on the upper boundary is infinity assert_approx_equals: The left of the animation should be approximately 106.31755608768113 at 230ms expected 106.31755608768113 +/- 0.01 but got 106.3595962524414
+FAIL cubic-bezier easing with input progress less than 0 assert_approx_equals: The left of the animation should be approximately -16.589193103032184 at 10ms expected -16.589193103032184 +/- 0.01 but got -17.50836753845215
+FAIL cubic-bezier easing with input progress less than 0 and where the tangent on the lower boundary is infinity assert_approx_equals: The left of the animation should be approximately 0 at 300ms expected 0 +/- 0.01 but got 512.0774536132812
 
