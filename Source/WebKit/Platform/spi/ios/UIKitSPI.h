@@ -1121,7 +1121,11 @@ extern const NSString *UIPreviewDataDDContext;
 extern const NSString *UIPreviewDataAttachmentList;
 extern const NSString *UIPreviewDataAttachmentIndex;
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 130000
 extern NSString * const UIPreviewDataAttachmentListSourceIsManaged;
+#else
+extern NSString * const UIPreviewDataAttachmentListIsContentManaged;
+#endif
 
 UIEdgeInsets UIEdgeInsetsAdd(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
 
