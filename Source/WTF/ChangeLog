@@ -1,5 +1,24 @@
 2018-10-09  Mark Lam  <mark.lam@apple.com>
 
+        StringTypeAdapter constructor is not properly enforcing String::MaxLength.
+        https://bugs.webkit.org/show_bug.cgi?id=190392
+        <rdar://problem/45116210>
+
+        Reviewed by Saam Barati.
+
+        Previously, the StringTypeAdapter constructor for a UChar* string was summing the
+        unsigned length of the source string without an overflow check.  We now make that
+        length a size_t which removes this issue, and assert that it's within
+        String::MaxLength thereafter.
+
+        Also made the StringTypeAdapter constructor for a LChar* string behave in an
+        equivalent manner for consistency.  In both cases, we'll crash in a RELEASE_ASSERT
+        if the source string length exceeds String::MaxLength.
+
+        * wtf/text/StringConcatenate.h:
+
+2018-10-09  Mark Lam  <mark.lam@apple.com>
+
         Revert temporary asserts for debugging a mysterious ASAN bot crash.
         https://bugs.webkit.org/show_bug.cgi?id=190396
 
