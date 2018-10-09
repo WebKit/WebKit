@@ -3,8 +3,68 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
+let contextA = document.createElement("canvas").getContext("2d");
+let contextB = document.createElement("canvas").getContext("2d");
+
+function performActions() {
+    contextA.fill();
+    contextB.fill();
+
+    TestPage.dispatchEventToFrontend("TestPage-performActions");
+}
+
 function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.recording");
+
+    suite.addTestCase({
+        name: "Canvas.multipleRecording",
+        description: "Check that multiple recordings are able to be started/stopped at the same time.",
+        test(resolve, reject) {
+            let canvases = WI.canvasManager.canvases;
+            InspectorTest.assert(canvases.length === 2, "There should be two canvas contexts.");
+
+            canvases[1].awaitEvent(WI.Canvas.Event.RecordingStopped)
+            .then((event) => {
+                InspectorTest.expectThat(event.data.recording, "There should be a recording for canvas 2.");
+            })
+            .then(resolve, reject);
+
+            canvases[0].awaitEvent(WI.Canvas.Event.RecordingStopped)
+            .then((event) => {
+                InspectorTest.expectThat(event.data.recording, "There should be a recording for canvas 1.");
+
+                InspectorTest.log("Stopping the recording of canvas 2...");
+                canvases[1].stopRecording();
+            });
+
+            InspectorTest.awaitEvent("TestPage-performActions")
+            .then((event) => {
+                InspectorTest.pass("Actions performed.");
+
+                InspectorTest.log("Stopping the recording of canvas 1...");
+                canvases[0].stopRecording();
+            });
+
+            canvases[1].awaitEvent(WI.Canvas.Event.RecordingStarted)
+            .then((event) => {
+                InspectorTest.expectThat(canvases[1].recordingActive, "Recording started of canvas 2");
+
+                InspectorTest.log("Performing actions...");
+                InspectorTest.evaluateInPage(`performActions()`);
+            });
+
+            canvases[0].awaitEvent(WI.Canvas.Event.RecordingStarted)
+            .then((event) => {
+                InspectorTest.expectThat(canvases[0].recordingActive, "Recording started of canvas 1");
+
+                InspectorTest.log("Starting a recording of canvas 2...");
+                canvases[1].startRecording();
+            });
+
+            InspectorTest.log("Starting a recording of canvas 1...");
+            canvases[0].startRecording();
+        },
+    });
 
     suite.addTestCase({
         name: "Canvas.startRecording.InvalidCanvasId",

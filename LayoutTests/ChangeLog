@@ -1,3 +1,21 @@
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow multiple canvases to be recorded at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=190305
+
+        Reviewed by Brian Burg.
+
+        * inspector/canvas/recording-2d.html:
+        * inspector/canvas/recording-bitmaprenderer.html:
+        * inspector/canvas/recording-expected.html:
+        * inspector/canvas/recording-webgl.html:
+        * inspector/canvas/recording.html:
+        * inspector/canvas/resources/recording-utilities.js:
+        (TestPage.registerInitializer.window.startRecording.handleRecordingProgress):
+        (TestPage.registerInitializer.window.startRecording):
+        (TestPage.registerInitializer.window.consoleRecord):
+        (TestPage.registerInitializer):
+
 2018-10-08  Dean Jackson  <dino@apple.com>
 
         CrashTracer: backboardd at Recursion :: QuartzCore: CA::Render::Updater::prepare_sublayer0

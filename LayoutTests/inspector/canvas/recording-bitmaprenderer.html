@@ -120,7 +120,7 @@ function test() {
         name: "Canvas.recordingBitmapRenderer.Console",
         description: "Check that a recording can be triggered by console.record().",
         test(resolve, reject) {
-            consoleRecord(resolve, reject);
+            consoleRecord(WI.Canvas.ContextType.BitmapRenderer, resolve, reject);
         },
     });
 

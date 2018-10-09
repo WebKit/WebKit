@@ -452,7 +452,7 @@ function test() {
         name: "Canvas.recording2D.Console",
         description: "Check that a recording can be triggered by console.record().",
         test(resolve, reject) {
-            consoleRecord(resolve, reject);
+            consoleRecord(WI.Canvas.ContextType.Canvas2D, resolve, reject);
         },
     });
 
@@ -466,7 +466,7 @@ function test() {
                 return;
             }
 
-            WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingStopped)
+            canvas.awaitEvent(WI.Canvas.Event.RecordingStopped)
             .then((event) => {
                 let recording = event.data.recording.toJSON();
 
@@ -504,26 +504,25 @@ function test() {
 
             let eventCount = 0;
             function handleRecordingStopped(event) {
-                InspectorTest.assert(event.data.canvas === canvas, "We should have stopped recording the selected canvas.");
                 InspectorTest.assert(!event.data.recording, "The recording payload should be null.");
 
                 ++eventCount;
                 if (eventCount == 1) {
                     InspectorTest.pass("A recording should have been started and stopped once.");
 
-                    WI.canvasManager.startRecording(canvas);
-                    WI.canvasManager.stopRecording();
+                    canvas.startRecording();
+                    canvas.stopRecording();
                 } else if (eventCount >= 2) {
                     InspectorTest.pass("A recording should have been started and stopped twice.");
 
-                    WI.canvasManager.removeEventListener(handleRecordingStopped);
+                    canvas.removeEventListener(WI.Canvas.Event.RecordingStopped, handleRecordingStopped);
                     resolve();
                 }
             }
-            WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, handleRecordingStopped);
+            canvas.addEventListener(WI.Canvas.Event.RecordingStopped, handleRecordingStopped);
 
-            WI.canvasManager.startRecording(canvas);
-            WI.canvasManager.stopRecording();
+            canvas.startRecording();
+            canvas.stopRecording();
         },
     });
 

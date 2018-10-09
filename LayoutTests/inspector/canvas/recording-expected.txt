@@ -2,7 +2,21 @@ Test general cases of CanvasAgent recording calls.
 
 
 == Running test suite: Canvas.recording
+-- Running test case: Canvas.multipleRecording
+Starting a recording of canvas 1...
+PASS: Recording started of canvas 1
+Starting a recording of canvas 2...
+PASS: Recording started of canvas 2
+Performing actions...
+PASS: Actions performed.
+Stopping the recording of canvas 1...
+PASS: There should be a recording for canvas 1.
+Stopping the recording of canvas 2...
+PASS: There should be a recording for canvas 2.
+
 -- Running test case: Canvas.startRecording.InvalidCanvasId
+ERROR: No active recording for canvas
+ERROR: No active recording for canvas
 PASS: Should produce an error.
 Error: No canvas for given identifier.
 

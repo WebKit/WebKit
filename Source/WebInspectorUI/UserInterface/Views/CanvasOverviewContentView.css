@@ -43,7 +43,7 @@
     cursor: pointer;
 }
 
-.content-view.canvas-overview .content-view.canvas.is-recording {
+.content-view.canvas-overview .content-view.canvas.recording-active {
     border-color: red;
 }
 
@@ -62,7 +62,7 @@
     font-size: 13px;
 }
 
-.content-view.canvas-overview .content-view.canvas.is-recording > header {
+.content-view.canvas-overview .content-view.canvas.recording-active > header {
     background-color: red;
 }
 
@@ -84,15 +84,15 @@
     content: " — ";
 }
 
-.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .title {
+.content-view.canvas-overview .content-view.canvas.recording-active > header > .titles > .title {
     color: white;
 }
 
-.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .subtitle {
+.content-view.canvas-overview .content-view.canvas.recording-active > header > .titles > .subtitle {
     color: var(--selected-secondary-text-color);
 }
 
-.content-view.canvas-overview .content-view.canvas.is-recording > header > .navigation-bar > .item {
+.content-view.canvas-overview .content-view.canvas.recording-active > header > .navigation-bar > .item {
     filter: brightness(0) invert();
 }
 
@@ -103,30 +103,30 @@
     transition: opacity 200ms ease-in-out;
 }
 
-.content-view.canvas-overview .content-view.canvas:matches(:hover, .is-recording) > header > .navigation-bar {
+.content-view.canvas-overview .content-view.canvas:matches(:hover, .recording-active) > header > .navigation-bar {
     opacity: 1;
     transition: opacity 200ms ease-in-out;
 }
 
-.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop.disabled {
+.content-view.canvas-overview .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop.disabled {
     filter: grayscale();
     opacity: 0.5;
 }
 
-.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop:not(.disabled):hover {
+.content-view.canvas-overview .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop:not(.disabled):hover {
     filter: brightness(95%);
 }
 
-.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop:not(.disabled):active {
+.content-view.canvas-overview .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop:not(.disabled):active {
     filter: brightness(80%);
 }
 
-.content-view.canvas-overview .content-view.canvas.is-recording > .progress-view,
+.content-view.canvas-overview .content-view.canvas.recording-active > .progress-view,
 .content-view.canvas-overview .content-view.canvas > .preview {
     height: 280px;
 }
 
-.content-view.canvas-overview .content-view.canvas.is-recording > .preview {
+.content-view.canvas-overview .content-view.canvas.recording-active > .preview {
     display: none;
 }
 
@@ -196,12 +196,12 @@
         background-color: var(--background-color-secondary);
     }
 
-    .content-view.canvas-overview .content-view.canvas.is-recording {
+    .content-view.canvas-overview .content-view.canvas.recording-active {
         --recording-color: hsl(0, 100%, 39%);
         border-color: var(--recording-color);
     }
 
-    .content-view.canvas-overview .content-view.canvas.is-recording > header {
+    .content-view.canvas-overview .content-view.canvas.recording-active > header {
         background-color: var(--recording-color);
     }
 
@@ -218,7 +218,7 @@
         filter: invert();
     }
 
-    .content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .subtitle {
+    .content-view.canvas-overview .content-view.canvas.recording-active > header > .titles > .subtitle {
         color: unset;
         opacity: 0.5
     }

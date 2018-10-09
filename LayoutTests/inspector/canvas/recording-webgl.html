@@ -546,7 +546,7 @@ function test() {
         name: "Canvas.recordingWebGL.Console",
         description: "Check that a recording can be triggered by console.record().",
         test(resolve, reject) {
-            consoleRecord(resolve, reject);
+            consoleRecord(WI.Canvas.ContextType.WebGL, resolve, reject);
         },
     });
 

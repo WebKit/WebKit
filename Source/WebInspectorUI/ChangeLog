@@ -1,5 +1,98 @@
 2018-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: allow multiple canvases to be recorded at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=190305
+
+        Reviewed by Brian Burg.
+
+        Moved the logic for maintaining whether a canvas is actively recording from
+        `WI.CanvasManager` to `WI.Canvas`, meaning that each canvas can now record independently of
+        every other canvas in the page. If multiple recordings are all finished simultaneously, only
+        show the first one to be recieved by the frontend.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager):
+        (WI.CanvasManager.prototype.recordingProgress):
+        (WI.CanvasManager.prototype.recordingFinished):
+        (WI.CanvasManager.prototype.programCreated):
+        (WI.CanvasManager.prototype.programDeleted):
+        (WI.CanvasManager.prototype._removeCanvas):
+        (WI.CanvasManager.prototype._mainResourceDidChange):
+        (WI.CanvasManager.prototype.get recordingCanvas): Deleted.
+        (WI.CanvasManager.prototype.startRecording): Deleted.
+        (WI.CanvasManager.prototype.stopRecording): Deleted.
+        (WI.CanvasManager.prototype._dispatchShaderProgramRemoved): Deleted.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.prototype.get recordingFrameCount): Added.
+        (WI.Canvas.prototype.get recordingBufferUsed): Added.
+        (WI.Canvas.prototype.get recordingActive): Added.
+        (WI.Canvas.prototype.get isRecording): Deleted.
+        (WI.Canvas.prototype.startRecording): Added.
+        (WI.Canvas.prototype.stopRecording): Added.
+        (WI.Canvas.prototype.recordingProgress): Added.
+        (WI.Canvas.prototype.recordingFinished): Added.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype.detached):
+        (WI.CanvasTabContentView.prototype._recordingImportedOrStopped):
+        (WI.CanvasTabContentView.prototype._handleSpace):
+        (WI.CanvasTabContentView):
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas.recording-active): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > header): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > header > .titles > .title): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > header > .titles > .subtitle): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > header > .navigation-bar > .item): Added.
+        (.content-view.canvas-overview .content-view.canvas:matches(:hover, .recording-active) > header > .navigation-bar): Added.
+        (.content-view.canvas-overview .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop.disabled): Added.
+        (.content-view.canvas-overview .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop:not(.disabled):hover): Added.
+        (.content-view.canvas-overview .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop:not(.disabled):active): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > .progress-vie): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > .preview): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > header): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > header > .titles > .subtitle): Added.
+        (.content-view.canvas-overview .content-view.canvas.is-recording): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .title): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .subtitle): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .navigation-bar > .item): Deleted.
+        (.content-view.canvas-overview .content-view.canvas:matches(:hover, .is-recording) > header > .navigation-bar): Deleted.
+        (.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop.disabled): Deleted.
+        (.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop:not(.disabled):hover): Deleted.
+        (.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop:not(.disabled):active): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording > .progress-vie): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording > .preview): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .subtitle): Deleted.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.attached):
+        (WI.CanvasContentView.prototype.detached):
+        (WI.CanvasContentView.prototype._toggleRecording):
+        (WI.CanvasContentView.prototype._recordingProgress):
+        (WI.CanvasContentView.prototype._recordingStopped):
+        (WI.CanvasContentView.prototype._shaderProgramAdded):
+        (WI.CanvasContentView.prototype._shaderProgramRemoved):
+        (WI.CanvasContentView.prototype._updateRecordNavigationItem):
+        (WI.CanvasContentView.prototype._updateProgressView):
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+        (WI.CanvasSidebarPanel.prototype.set canvas):
+        (WI.CanvasSidebarPanel.prototype._toggleRecording):
+        (WI.CanvasSidebarPanel.prototype._updateRecordNavigationItem):
+
+        * UserInterface/Views/CanvasTreeElement.js:
+        (WI.CanvasTreeElement):
+        (WI.CanvasTreeElement.prototype._updateStatus):
+
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: replace Range.svg icon
         https://bugs.webkit.org/show_bug.cgi?id=190372
 

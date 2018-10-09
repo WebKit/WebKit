@@ -34,9 +34,8 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
 
         this.registerFolderizeSettings("shader-programs", WI.UIString("Shader Programs"), this.representedObject.shaderProgramCollection, WI.ShaderProgramTreeElement);
 
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStarted, this._updateStatus, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._updateStatus, this);
-
+        this.representedObject.addEventListener(WI.Canvas.Event.RecordingStarted, this._updateStatus, this);
+        this.representedObject.addEventListener(WI.Canvas.Event.RecordingStopped, this._updateStatus, this);
         this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, this._handleItemAdded, this);
         this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
 
@@ -137,14 +136,14 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
 
     _updateStatus()
     {
-        if (this.representedObject.isRecording) {
-            if (!this.status || !this.status[WI.CanvasTreeElement.SpinnerSymbol]) {
+        if (this.representedObject.recordingActive) {
+            if (!this.status || !this.status.__showingSpinner) {
                 let spinner = new WI.IndeterminateProgressSpinner;
                 this.status = spinner.element;
-                this.status[WI.CanvasTreeElement.SpinnerSymbol] = true;
+                this.status.__showingSpinner = true;
             }
         } else {
-            if (this.status && this.status[WI.CanvasTreeElement.SpinnerSymbol])
+            if (this.status && this.status.__showingSpinner)
                 this.status = "";
         }
     }

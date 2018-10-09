@@ -65,9 +65,6 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         this._canvasTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
         this._recordingTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
 
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStarted, this._updateRecordNavigationItem, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._updateRecordNavigationItem, this);
-
         this._recordingProcessingOptionsContainer = null;
 
         this._selectedRecordingActionIndex = NaN;
@@ -85,11 +82,15 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (this._canvas === canvas)
             return;
 
-        if (this._canvas)
+        if (this._canvas) {
+            this._canvas.removeEventListener(null, null, this);
             this._canvas.recordingCollection.removeEventListener(null, null, this);
+        }
 
         this._canvas = canvas;
         if (this._canvas) {
+            this._canvas.addEventListener(WI.Canvas.Event.RecordingStarted, this._updateRecordNavigationItem, this);
+            this._canvas.addEventListener(WI.Canvas.Event.RecordingStopped, this._updateRecordNavigationItem, this);
             this._canvas.recordingCollection.addEventListener(WI.Collection.Event.ItemAdded, this._recordingAdded, this);
             this._canvas.recordingCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._recordingRemoved, this);
         }
@@ -283,11 +284,11 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (!this._canvas)
             return;
 
-        if (this._canvas.isRecording)
-            WI.canvasManager.stopRecording();
-        else if (!WI.canvasManager.recordingCanvas) {
+        if (this._canvas.recordingActive)
+            this._canvas.stopRecording();
+        else {
             let singleFrame = event.data.nativeEvent.shiftKey;
-            WI.canvasManager.startRecording(this._canvas, singleFrame);
+            this._canvas.startRecording(singleFrame);
         }
     }
 
@@ -445,9 +446,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             return;
         }
 
-        let isRecording = this._canvas.isRecording;
-        this._recordButtonNavigationItem.enabled = isRecording || !WI.canvasManager.recordingCanvas;
-        this._recordButtonNavigationItem.toggled = isRecording;
+        this._recordButtonNavigationItem.toggled = this._canvas.recordingActive;
     }
 
     _updateRecordingScopeBar()

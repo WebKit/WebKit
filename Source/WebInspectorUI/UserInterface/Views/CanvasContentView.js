@@ -195,6 +195,11 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         super.attached();
 
         this.representedObject.addEventListener(WI.Canvas.Event.MemoryChanged, this._updateMemoryCost, this);
+        this.representedObject.addEventListener(WI.Canvas.Event.RecordingStarted, this._recordingStarted, this);
+        this.representedObject.addEventListener(WI.Canvas.Event.RecordingProgress, this._recordingProgress, this);
+        this.representedObject.addEventListener(WI.Canvas.Event.RecordingStopped, this._recordingStopped, this);
+        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, this._shaderProgramAdded, this);
+        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._shaderProgramRemoved, this);
 
         this.representedObject.requestNode().then((node) => {
             console.assert(!this._canvasNode || this._canvasNode === node);
@@ -206,25 +211,19 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this._canvasNode.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshPixelSize, this);
         });
 
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStarted, this._recordingStarted, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingProgress, this._recordingProgress, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingStopped, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.ShaderProgramAdded, this._shaderProgramAdded, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.ShaderProgramRemoved, this._shaderProgramRemoved, this);
-
         WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
     }
 
     detached()
     {
         this.representedObject.removeEventListener(null, null, this);
+        this.representedObject.shaderProgramCollection.removeEventListener(null, null, this);
 
         if (this._canvasNode) {
             this._canvasNode.removeEventListener(null, null, this);
             this._canvasNode = null;
         }
 
-        WI.canvasManager.removeEventListener(null, null, this);
         WI.settings.showImageGrid.removeEventListener(null, null, this);
 
         super.detached();
@@ -248,11 +247,11 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     _toggleRecording(event)
     {
-        if (this.representedObject.isRecording)
-            WI.canvasManager.stopRecording();
-        else if (!WI.canvasManager.recordingCanvas) {
+        if (this.representedObject.recordingActive)
+            this.representedObject.stopRecording();
+        else {
             let singleFrame = event.data.nativeEvent.shiftKey;
-            WI.canvasManager.startRecording(this.representedObject, singleFrame);
+            this.representedObject.startRecording(singleFrame);
         }
     }
 
@@ -264,41 +263,23 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     _recordingProgress(event)
     {
-        let {canvas, frameCount, bufferUsed} = event.data;
-        if (canvas !== this.representedObject)
-            return;
-
-        this._updateProgressView(frameCount, bufferUsed);
+        this._updateProgressView();
     }
 
     _recordingStopped(event)
     {
         this._updateRecordNavigationItem();
-
-        let {canvas} = event.data;
-        if (canvas !== this.representedObject)
-            return;
-
         this._updateProgressView();
-
         this._updateViewRelatedItems();
     }
 
     _shaderProgramAdded(event)
     {
-        let {shaderProgram} = event.data;
-        if (!shaderProgram || shaderProgram.canvas !== this.representedObject)
-            return;
-
         this._updateViewRelatedItems();
     }
 
     _shaderProgramRemoved(event)
     {
-        let {shaderProgram} = event.data;
-        if (!shaderProgram || shaderProgram.canvas !== this.representedObject)
-            return;
-
         this._updateViewRelatedItems();
     }
 
@@ -382,18 +363,15 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         if (!this._recordButtonNavigationItem)
             return;
 
-        let isRecording = this.representedObject.isRecording;
-        this._recordButtonNavigationItem.enabled = isRecording || !WI.canvasManager.recordingCanvas;
-        this._recordButtonNavigationItem.toggled = isRecording;
-
-        this._refreshButtonNavigationItem.enabled = !isRecording;
-
-        this.element.classList.toggle("is-recording", isRecording);
+        let recordingActive = this.representedObject.recordingActive;
+        this._recordButtonNavigationItem.toggled = recordingActive;
+        this._refreshButtonNavigationItem.enabled = !recordingActive;
+        this.element.classList.toggle("recording-active", recordingActive);
     }
 
-    _updateProgressView(frameCount, bufferUsed)
+    _updateProgressView()
     {
-        if (!this.representedObject.isRecording) {
+        if (!this.representedObject.recordingActive) {
             if (this._progressView && this._progressView.parentView) {
                 this.removeSubview(this._progressView);
                 this._progressView = null;
@@ -407,15 +385,15 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this.addSubview(this._progressView);
         }
 
-        let title;
-        if (frameCount) {
-            let formatString = frameCount === 1 ? WI.UIString("%d Frame") : WI.UIString("%d Frames");
-            title = formatString.format(frameCount);
+        let title = null;
+        if (this.representedObject.recordingFrameCount) {
+            let formatString = this.representedObject.recordingFrameCount === 1 ? WI.UIString("%d Frame") : WI.UIString("%d Frames");
+            title = formatString.format(this.representedObject.recordingFrameCount);
         } else
             title = WI.UIString("Waiting for frames…");
 
         this._progressView.title = title;
-        this._progressView.subtitle = bufferUsed ? Number.bytesToString(bufferUsed) : "";
+        this._progressView.subtitle = this.representedObject.recordingBufferUsed ? Number.bytesToString(this.representedObject.recordingBufferUsed) : "";
     }
 
     _updateViewRelatedItems()

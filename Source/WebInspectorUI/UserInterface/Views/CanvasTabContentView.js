@@ -125,7 +125,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.CanvasAdded, this._handleCanvasAdded, this);
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.CanvasRemoved, this._handleCanvasRemoved, this);
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingImported, this._recordingImportedOrStopped, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingImportedOrStopped, this);
+        WI.Canvas.addEventListener(WI.Canvas.Event.RecordingStopped, this._recordingImportedOrStopped, this);
 
         let canvases = new Set([...this._canvasCollection, ...WI.canvasManager.canvases]);
 
@@ -142,8 +142,8 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
     detached()
     {
+        WI.Canvas.removeEventListener(null, null, this);
         WI.canvasManager.removeEventListener(null, null, this);
-        WI.RecordingContentView.removeEventListener(null, null, this);
 
         super.detached();
     }
@@ -214,7 +214,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
             return;
 
         this._recordingAdded(recording, {
-            suppressShowRecording: event.data.fromConsole,
+            suppressShowRecording: event.data.fromConsole || this.contentBrowser.currentRepresentedObjects.some((representedObject) => representedObject instanceof WI.Recording),
         });
     }
 
@@ -243,11 +243,11 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         if (!canvas)
             return;
 
-        if (canvas.isRecording)
-            WI.canvasManager.stopRecording();
-        else if (!WI.canvasManager.recordingCanvas) {
+        if (canvas.recordingActive)
+            canvas.stopRecording();
+        else {
             let singleFrame = !!event.shiftKey;
-            WI.canvasManager.startRecording(canvas, singleFrame);
+            canvas.startRecording(singleFrame);
         }
 
         event.preventDefault();
