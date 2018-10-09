@@ -129,7 +129,7 @@ void PageConfiguration::setPreferences(WebPreferences* preferences)
     m_preferences = preferences;
 }
 
-WebPageProxy* PageConfiguration::relatedPage()
+WebPageProxy* PageConfiguration::relatedPage() const
 {
     return m_relatedPage.get();
 }

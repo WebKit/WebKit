@@ -72,7 +72,7 @@ public:
 
     WebKit::WebPreferencesStore::ValueMap& preferenceValues() { return m_preferenceValues; }
 
-    WebKit::WebPageProxy* relatedPage();
+    WebKit::WebPageProxy* relatedPage() const;
     void setRelatedPage(WebKit::WebPageProxy*);
 
     WebKit::VisitedLinkStore* visitedLinkStore();

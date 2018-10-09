@@ -1,3 +1,25 @@
+2018-10-09  Chris Dumez  <cdumez@apple.com>
+
+        PSON: Doing a cross-site navigation via the URL bar does not swap process on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=190378
+        <rdar://problem/45059466>
+
+        Reviewed by Geoffrey Garen.
+
+        Process swapping was sometimes not happening via URL bar navigation on iOS due to top-hit preloading,
+        which would use a new WKWebView for the speculative load and rely on the _relatedWebView SPI to use
+        the same WebContent process as the view currently on screen.
+
+        To address the issue, if the source URL is empty and the page has a related page, use the related
+        page's URL as source URL when doing the process-swap decision.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::relatedPage const):
+        (API::PageConfiguration::relatedPage): Deleted.
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
 2018-10-09  Andy Estes  <aestes@apple.com>
 
         [iOS] Replace @"UIPreviewDataAttachmentListIsContentManaged" with a UIKit constant

@@ -1,3 +1,15 @@
+2018-10-09  Chris Dumez  <cdumez@apple.com>
+
+        PSON: Doing a cross-site navigation via the URL bar does not swap process on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=190378
+        <rdar://problem/45059466>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-10-09  Jer Noble  <jer.noble@apple.com>
 
         ISOTrackEncryptionBox returns incorrect defaultKeyID

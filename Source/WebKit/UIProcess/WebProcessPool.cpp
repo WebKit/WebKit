@@ -2138,12 +2138,18 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         }
 
         bool isInitialLoadInNewWindowOpenedByDOM = page.openedByDOM() && !page.hasCommittedAnyProvisionalLoads();
-        URL url;
+        URL sourceURL;
         if (isInitialLoadInNewWindowOpenedByDOM && !navigation.requesterOrigin().isEmpty())
-            url = URL { URL(), navigation.requesterOrigin().toString() };
+            sourceURL = URL { URL(), navigation.requesterOrigin().toString() };
         else
-            url = URL { { }, page.pageLoadState().url() };
-        if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || registrableDomainsAreEqual(url, targetURL)) {
+            sourceURL = URL { { }, page.pageLoadState().url() };
+
+        if (sourceURL.isEmpty() && page.configuration().relatedPage()) {
+            sourceURL = URL { { }, page.configuration().relatedPage()->pageLoadState().url() };
+            RELEASE_LOG(ProcessSwapping, "Using related page %p's URL as source URL for process swap decision", page.configuration().relatedPage());
+        }
+
+        if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.isBlankURL() || registrableDomainsAreEqual(sourceURL, targetURL)) {
             reason = "Navigation is same-site"_s;
             return page.process();
         }
