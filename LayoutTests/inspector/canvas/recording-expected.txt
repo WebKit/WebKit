@@ -15,8 +15,6 @@ Stopping the recording of canvas 2...
 PASS: There should be a recording for canvas 2.
 
 -- Running test case: Canvas.startRecording.InvalidCanvasId
-ERROR: No active recording for canvas
-ERROR: No active recording for canvas
 PASS: Should produce an error.
 Error: No canvas for given identifier.
 

@@ -1,3 +1,14 @@
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
+        Fix inspector/canvas/recording.html after r236952
+
+        Unreviewed. Test gardening.
+
+        * inspector/canvas/recording-expected.txt:
+        * inspector/canvas/recording.html:
+        Recordings default to only capturing a single frame, so add a parameter to ensure that we
+        are capturing multiple frames.
+
 2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] [WK2] Add support for text alignment and text lists in font attributes

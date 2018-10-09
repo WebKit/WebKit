@@ -20,6 +20,8 @@ function test() {
         name: "Canvas.multipleRecording",
         description: "Check that multiple recordings are able to be started/stopped at the same time.",
         test(resolve, reject) {
+            const singleFrame = false;
+
             let canvases = WI.canvasManager.canvases;
             InspectorTest.assert(canvases.length === 2, "There should be two canvas contexts.");
 
@@ -58,11 +60,11 @@ function test() {
                 InspectorTest.expectThat(canvases[0].recordingActive, "Recording started of canvas 1");
 
                 InspectorTest.log("Starting a recording of canvas 2...");
-                canvases[1].startRecording();
+                canvases[1].startRecording(singleFrame);
             });
 
             InspectorTest.log("Starting a recording of canvas 1...");
-            canvases[0].startRecording();
+            canvases[0].startRecording(singleFrame);
         },
     });
 
