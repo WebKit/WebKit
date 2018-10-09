@@ -95,7 +95,6 @@ protected:
     virtual bool shouldTerminate() = 0;
     virtual void terminate();
 
-    virtual bool shouldCallExitWhenConnectionIsClosed() const { return true; }
     virtual void stopRunLoop();
 
 #if USE(APPKIT)

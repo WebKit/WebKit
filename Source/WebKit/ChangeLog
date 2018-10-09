@@ -1,3 +1,32 @@
+2018-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Allow behavior when the parent process IPC::Connection closes to be overridden by ChildProcess subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=190294
+
+        Reviewed by Geoffrey Garen.
+
+        Allow behavior when the parent process IPC::Connection closes to be overridden by ChildProcess subclasses.
+        This will be useful to allow the NetworkProcess to not exit if it still has pending downloads.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::callExitSoon):
+        (WebKit::NetworkProcess::initializeConnection):
+        * NetworkProcess/NetworkProcess.h:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::callExit):
+        (WebKit::PluginProcess::initializeConnection):
+        * PluginProcess/PluginProcess.h:
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::didClose):
+        (WebKit::ChildProcess::initialize):
+        (WebKit::callExitNow): Deleted.
+        (WebKit::callExitSoon): Deleted.
+        * Shared/ChildProcess.h:
+        (WebKit::ChildProcess::shouldCallExitWhenConnectionIsClosed const): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::callExit):
+        (WebKit::WebProcess::initializeConnection):
+
 2018-10-09  Jer Noble  <jer.noble@apple.com>
 
         WebDriver: thrown ObjC exception under -[WKFullScreenWindowController windowDidFailToEnterFullScreen:] when session is terminated

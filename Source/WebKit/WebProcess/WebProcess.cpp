@@ -157,6 +157,11 @@ namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
 
+NO_RETURN static void callExit(IPC::Connection*)
+{
+    _exit(EXIT_SUCCESS);
+}
+
 WebProcess& WebProcess::singleton()
 {
     static WebProcess& process = *new WebProcess;
@@ -226,6 +231,10 @@ void WebProcess::initializeProcess(const ChildProcessInitializationParameters& p
 void WebProcess::initializeConnection(IPC::Connection* connection)
 {
     ChildProcess::initializeConnection(connection);
+
+    // We call _exit() directly from the background queue in case the main thread is unresponsive
+    // and ChildProcess::didClose() does not get called.
+    connection->setDidCloseOnConnectionWorkQueueCallback(callExit);
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
     connection->setShouldExitOnSyncMessageSendFailure(true);

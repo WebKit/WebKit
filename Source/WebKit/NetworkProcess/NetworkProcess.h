@@ -246,7 +246,6 @@ private:
     void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
     void initializeConnection(IPC::Connection*) override;
     bool shouldTerminate() override;
-    bool shouldCallExitWhenConnectionIsClosed() const final { return false; } // We override didClose() and want it to be called.
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

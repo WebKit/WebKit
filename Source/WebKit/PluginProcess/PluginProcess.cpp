@@ -52,6 +52,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+NO_RETURN static void callExit(IPC::Connection*)
+{
+    _exit(EXIT_SUCCESS);
+}
+
 PluginProcess& PluginProcess::singleton()
 {
     static NeverDestroyed<PluginProcess> pluginProcess;
@@ -76,6 +81,15 @@ void PluginProcess::initializeProcess(const ChildProcessInitializationParameters
     WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
     m_pluginPath = parameters.extraInitializationData.get("plugin-path");
     platformInitializeProcess(parameters);
+}
+
+void PluginProcess::initializeConnection(IPC::Connection* connection)
+{
+    ChildProcess::initializeConnection(connection);
+
+    // We call _exit() directly from the background queue in case the main thread is unresponsive
+    // and ChildProcess::didClose() does not get called.
+    connection->setDidCloseOnConnectionWorkQueueCallback(callExit);
 }
 
 void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)

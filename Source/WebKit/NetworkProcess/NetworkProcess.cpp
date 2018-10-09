@@ -108,6 +108,21 @@
 namespace WebKit {
 using namespace WebCore;
 
+static void callExitSoon(IPC::Connection*)
+{
+    // If the connection has been closed and we haven't responded in the main thread for 10 seconds
+    // the process will exit forcibly.
+    auto watchdogDelay = 10_s;
+
+    WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, [] {
+        // We use _exit here since the watchdog callback is called from another thread and we don't want
+        // global destructors or atexit handlers to be called from this thread while the main thread is busy
+        // doing its thing.
+        RELEASE_LOG_ERROR(IPC, "Exiting process early due to unacknowledged closed-connection");
+        _exit(EXIT_FAILURE);
+    });
+}
+
 NetworkProcess& NetworkProcess::singleton()
 {
     static NeverDestroyed<NetworkProcess> networkProcess;
@@ -358,6 +373,10 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 void NetworkProcess::initializeConnection(IPC::Connection* connection)
 {
     ChildProcess::initializeConnection(connection);
+
+    // We give a chance for didClose() to get called on the main thread but forcefully call _exit() after a delay
+    // in case the main thread is unresponsive or didClose() takes too long.
+    connection->setDidCloseOnConnectionWorkQueueCallback(callExitSoon);
 
     for (auto& supplement : m_supplements.values())
         supplement->initializeConnection(connection);
