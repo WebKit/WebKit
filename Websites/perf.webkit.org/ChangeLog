@@ -1,3 +1,27 @@
+2018-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        /api/report takes 15+ minutes submitting some test results
+        https://bugs.webkit.org/show_bug.cgi?id=190382
+
+        Rubber-stamped by Alexey Proskuryakov and unofficially reviewed by Dewei Zhu.
+
+        The issue was that recursively_ensure_tests would issue thousands of dependent queries.
+
+        Since most reporting of results would be happening after all the tests and test metrics had been created,
+        simply fetch the list of all tests and test metrics upfront in memory.
+
+        This would slow-down the reporting of other test results but in practice doesn't matter (an extra few seconds
+        of overhead) but for slow reporting, it can significantly reduce the runtime from ~10 minutes to ~10 seconds.
+
+        * public/include/report-processor.php:
+        (ReportProcessor::process): Call fetch_tests before recursively_ensure_tests.
+        (ReportProcessor::fetch_tests): Added. This builds up a mapping of tests based on a parent test ID as well as
+        a mapping of metrics per test based on its name and then its aggregator's name.
+        (ReportProcessor::recursively_ensure_tests): Added. Use the in-memory maps built in fetch_tests when possible.
+        (ReportProcessor::aggregator_list_if_exists): Take a reference instead of passing it by value.
+        (TestRunsGenerator::add_aggregated_metric): Now takes metric ID. The code to add the test metric had been moved
+        to recursively_ensure_tests.
+
 2018-10-01  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add retry for test groups with failed build requests.

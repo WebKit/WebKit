@@ -38,6 +38,7 @@ class ReportProcessor {
 
         $this->ensure_aggregators();
 
+        $this->fetch_tests();
         $this->runs = new TestRunsGenerator($this->db, $this->name_to_aggregator_id, $this->report_id);
         $this->recursively_ensure_tests($report['tests']);
 
@@ -186,27 +187,72 @@ class ReportProcessor {
         $this->exit_with_error($message, $details);
     }
 
+    private function fetch_tests() {
+        $test_rows = $this->db->fetch_table('tests');
+        $tests = array();
+        $test_by_id = array();
+        foreach ($test_rows as &$test) {
+            $test_by_id[$test['test_id']] = &$test;
+            $test['metrics'] = array();
+            $parent_id = $test['test_parent'];
+            if ($parent_id == NULL)
+                $parent_id = 0;
+            $parent_array = &array_ensure_item_has_array($tests, $parent_id);
+            $parent_array[$test['test_name']] = &$test;
+        }
+        $this->tests = &$tests;
+
+        $metric_rows = $this->db->fetch_table('test_metrics');
+        foreach ($metric_rows as &$metric) {
+            $test = &$test_by_id[$metric['metric_test']];
+            $metrics_by_name = &array_ensure_item_has_array($test['metrics'], $metric['metric_name']);
+            $metrics_by_name[$metric['metric_aggregator']] = $metric['metric_id'];
+        }
+    }
+
     private function recursively_ensure_tests(&$tests, $parent_id = NULL, $level = 0) {
         foreach ($tests as $test_name => $test) {
-            $test_id = $this->db->select_or_insert_row('tests', 'test', $parent_id ? array('name' => $test_name, 'parent' => $parent_id) : array('name' => $test_name),
-                array('name' => $test_name, 'parent' => $parent_id, 'url' => array_get($test, 'url')));
+            $test_row = array_get(array_get($this->tests, $parent_id ? $parent_id : 0, array()), $test_name);
+            if ($test_row)
+                $test_id = intval($test_row['test_id']);
+            else {
+                $test_id = $this->db->select_or_insert_row('tests', 'test', $parent_id ? array('name' => $test_name, 'parent' => $parent_id) : array('name' => $test_name),
+                    array('name' => $test_name, 'parent' => $parent_id, 'url' => array_get($test, 'url')));
+            }
             if (!$test_id)
                 $this->exit_with_error('FailedToAddTest', array('name' => $test_name, 'parent' => $parent_id));
 
             if (array_key_exists('tests', $test))
                 $this->recursively_ensure_tests($test['tests'], $test_id, $level + 1);
 
-            foreach (array_get($test, 'metrics', array()) as $metric_name => $aggregators_or_config_types) {
+            foreach (array_get($test, 'metrics', array()) as $metric_name => &$aggregators_or_config_types) {
                 $aggregators = $this->aggregator_list_if_exists($aggregators_or_config_types);
                 if ($aggregators) {
-                    foreach ($aggregators as $aggregator_name)
-                        $this->runs->add_aggregated_metric($parent_id, $test_id, $test_name, $metric_name, $aggregator_name, $level);
+                    foreach ($aggregators as $aggregator_name) {
+                        $aggregator_id = array_get($this->name_to_aggregator_id, $aggregator_name, NULL);
+                        if ($aggregator_id == NULL)
+                            $this->exit_with_error('AggregatorNotFound', array('name' => $aggregator_name));
+
+                        $metrics = $test_row ? array_get($test_row['metrics'], $metric_name) : NULL;
+                        $metric_id = $metrics ? $metrics[$aggregator_id] : NULL;
+                        if (!$metric_id) {
+                            $metric_id = $this->db->select_or_insert_row('test_metrics', 'metric', array('name' => $metric_name,
+                                'test' => $test_id, 'aggregator' => $this->name_to_aggregator_id[$aggregator_name]));
+                        }
+                        if (!$metric_id)
+                            $this->exit_with_error('FailedToAddAggregatedMetric', array('name' => $metric_name, 'test' => $test_id, 'aggregator' => $aggregator_name));
+
+                        $this->runs->add_aggregated_metric($parent_id, $test_id, $test_name, $metric_id, $metric_name, $aggregator_name, $level);
+                    }
                 } else {
-                    $metric_id = $this->db->select_or_insert_row('test_metrics', 'metric', array('name' => $metric_name, 'test' => $test_id));
+                    $metrics = $test_row ? array_get($test_row['metrics'], $metric_name) : NULL;
+                    $metric_id = $metrics ? $metrics[''] : NULL;
+                    if (!$metric_id)
+                        $metric_id = $this->db->select_or_insert_row('test_metrics', 'metric', array('name' => $metric_name, 'test' => $test_id));
                     if (!$metric_id)
                         $this->exit_with_error('FailedToAddMetric', array('name' => $metric_name, 'test' => $test_id));
 
-                    foreach ($aggregators_or_config_types as $config_type => $values) {
+                    foreach ($aggregators_or_config_types as $config_type => &$values) {
                         // Some tests submit groups of iterations; e.g. [[1, 2, 3, 4], [5, 6, 7, 8]]
                         // Convert other tests to this format to simplify the computation later.
                         if (gettype($values) !== 'array')
@@ -221,7 +267,7 @@ class ReportProcessor {
         }
     }
 
-    private function aggregator_list_if_exists($aggregators_or_config_types) {
+    private function aggregator_list_if_exists(&$aggregators_or_config_types) {
         if (array_key_exists(0, $aggregators_or_config_types))
             return $aggregators_or_config_types;
         else if (array_get($aggregators_or_config_types, 'aggregators'))
@@ -254,15 +300,7 @@ class TestRunsGenerator {
         exit_with_error($message, $details);
     }
 
-    function add_aggregated_metric($parent_id, $test_id, $test_name, $metric_name, $aggregator_name, $level) {
-        array_key_exists($aggregator_name, $this->name_to_aggregator_id)
-            or $this->exit_with_error('AggregatorNotFound', array('name' => $aggregator_name));
-
-        $metric_id = $this->db->select_or_insert_row('test_metrics', 'metric', array('name' => $metric_name,
-            'test' => $test_id, 'aggregator' => $this->name_to_aggregator_id[$aggregator_name]));
-        if (!$metric_id)
-            $this->exit_with_error('FailedToAddAggregatedMetric', array('name' => $metric_name, 'test' => $test_id, 'aggregator' => $aggregator_name));
-
+    function add_aggregated_metric($parent_id, $test_id, $test_name, $metric_id, $metric_name, $aggregator_name, $level) {
         array_push($this->metrics_to_aggregate, array(
             'test_id' => $test_id,
             'parent_id' => $parent_id,
