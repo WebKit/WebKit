@@ -1,3 +1,15 @@
+2018-10-09  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r231663) loading in hidden WKWebViews stalls because WebProcess is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=190417
+        <rdar://problem/43391014>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::didChangeIsLoading):
+        Revert r321663, but keep the change to TestWKWebView.mm because that made the tests more reliable.
+
 2018-10-09  Chris Dumez  <cdumez@apple.com>
 
         Allow behavior when the parent process IPC::Connection closes to be overridden by ChildProcess subclasses

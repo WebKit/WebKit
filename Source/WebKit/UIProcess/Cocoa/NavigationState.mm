@@ -1104,14 +1104,10 @@ void NavigationState::didChangeIsLoading()
             m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
         }
     } else if (m_activityToken) {
-        if (m_webView._isBackground)
-            releaseNetworkActivityTokenAfterLoadCompletion();
-        else {
-            // The application is visible so we delay releasing the background activity for 3 seconds to give it a chance to start another navigation
-            // before suspending the WebContent process <rdar://problem/27910964>.
-            RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState will release its process network assertion soon because the page load completed", this);
-            m_releaseActivityTimer.startOneShot(3_s);
-        }
+        // The application is visible so we delay releasing the background activity for 3 seconds to give it a chance to start another navigation
+        // before suspending the WebContent process <rdar://problem/27910964>.
+        RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState will release its process network assertion soon because the page load completed", this);
+        m_releaseActivityTimer.startOneShot(3_s);
     }
 #endif
 
