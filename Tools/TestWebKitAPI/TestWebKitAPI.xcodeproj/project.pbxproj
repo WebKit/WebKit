@@ -753,6 +753,7 @@
 		CDC9442F1EF205D60059C3C4 /* mediastreamtrack-detached.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */; };
 		CDCFA7AA1E45183200C2433D /* SampleMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCFA7A91E45122F00C2433D /* SampleMap.cpp */; };
 		CDE195B51CFE0B880053D256 /* FullscreenTopContentInset.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */; };
+		CDF92237216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF92236216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm */; };
 		CE06DF9B1E1851F200E570C9 /* SecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE06DF9A1E1851F200E570C9 /* SecurityOrigin.cpp */; };
 		CE0947372063223B003C9BA0 /* SchemeRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE0947362063223B003C9BA0 /* SchemeRegistry.mm */; };
 		CE14F1A4181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE14F1A2181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html */; };
@@ -1993,6 +1994,7 @@
 		CDCFA7A91E45122F00C2433D /* SampleMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleMap.cpp; sourceTree = "<group>"; };
 		CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenTopContentInset.html; sourceTree = "<group>"; };
 		CDE195B31CFE0ADE0053D256 /* FullscreenTopContentInset.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenTopContentInset.mm; sourceTree = "<group>"; };
+		CDF92236216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CloseWebViewAfterEnterFullscreen.mm; sourceTree = "<group>"; };
 		CE06DF9A1E1851F200E570C9 /* SecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOrigin.cpp; sourceTree = "<group>"; };
 		CE0947362063223B003C9BA0 /* SchemeRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchemeRegistry.mm; sourceTree = "<group>"; };
 		CE14F1A2181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = WillPerformClientRedirectToURLCrash.html; sourceTree = "<group>"; };
@@ -2328,6 +2330,7 @@
 				1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */,
 				1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */,
 				5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */,
+				CDF92236216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm */,
 				1AAD19F51C7CE20300831E47 /* Coding.mm */,
 				7C3DB8E21D12129B00AE8CC3 /* CommandBackForward.mm */,
 				5C4A84941F7EEFD400ACFC54 /* Configuration.mm */,
@@ -3908,6 +3911,7 @@
 				5C0BF88D1DD5964D00B00328 /* MemoryPressureHandler.mm in Sources */,
 				7C83E0B71D0A64B800FEBCF3 /* MenuTypesForMouseEvents.cpp in Sources */,
 				5C0BF8941DD599C900B00328 /* MenuTypesForMouseEvents.mm in Sources */,
+				CDF92237216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm in Sources */,
 				5165FE04201EE620009F7EC3 /* MessagePortProviders.mm in Sources */,
 				A5B149DE1F5A19EA00C6DAFF /* MIMETypeRegistry.cpp in Sources */,
 				51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */,

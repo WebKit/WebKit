@@ -1,3 +1,16 @@
+2018-10-09  Jer Noble  <jer.noble@apple.com>
+
+        WebDriver: thrown ObjC exception under -[WKFullScreenWindowController windowDidFailToEnterFullScreen:] when session is terminated
+        https://bugs.webkit.org/show_bug.cgi?id=190098
+        <rdar://problem/42822671>
+
+        Reviewed by Brian Burg.
+
+        Forcibly exit fullscreen in resetState(), while the VideoFullscreenManagerProxy is still valid.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+
 2018-10-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Ignore some deprecated declarations
