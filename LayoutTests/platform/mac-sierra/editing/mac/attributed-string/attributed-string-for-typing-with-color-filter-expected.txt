@@ -3,6 +3,39 @@ Input:
 <div id="editor" style="-apple-color-filter: apple-invert-lightness(); color: rgba(20, 20, 20, 0.4); background: #ccc;" contenteditable="">Some text here</div>
 
 Output:
+NSParagraphStyle:
+Alignment 4
+    LineSpacing: 0
+    ParagraphSpacing: 0
+    ParagraphSpacingBefore: 0
+    HeadIndent: 0
+    TailIndent: 0
+    FirstLineHeadIndent: 0
+    LineHeight: 0/0
+    LineHeightMultiple: 0
+    LineBreakMode: 0
+    Tabs: (    28L,
+    56L,
+    84L,
+    112L,
+    140L,
+    168L,
+    196L,
+    224L,
+    252L,
+    280L,
+    308L,
+    336L
+)
+    DefaultTabInterval: 0
+    Blocks: (
+)
+    Lists: (
+)
+    BaseWritingDirection: -1
+    HyphenationFactor: 0
+    TighteningForTruncation: YES
+    HeaderLevel: 0
 [ ]
     NSBackgroundColor: #5c5c5c (NSCustomColorSpace)
     NSColor: rgba(239, 239, 239, 0.4) (NSCustomColorSpace)

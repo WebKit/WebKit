@@ -1,3 +1,51 @@
+2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WK2] Add support for text alignment and text lists in font attributes
+        https://bugs.webkit.org/show_bug.cgi?id=190342
+        <rdar://problem/44767118>
+
+        Reviewed by Tim Horton.
+
+        Adds support for computing and encoding information about text alignment and enclosing list elements in the font
+        attributes dictionary, exposed to the UI delegate on Cocoa platforms. This is exposed through NSParagraphStyle,
+        which contains properties for both `NSTextAlignment` and an array of enclosing `NSTextList` objects.
+
+        Test:   FontAttributes.NestedTextListsWithHorizontalAlignment
+                FontAttributes.FontAttributesAfterChangingSelection
+
+        * editing/Editor.cpp:
+        (WebCore::editableTextListsAtPositionInDescendingOrder):
+
+        Add a helper function to ascend the DOM, starting at the given position, in search of enclosing list elements.
+        For each enclosing list element we find within the scope of the editable root, we create a `TextList`
+        representing the list element.
+
+        (WebCore::Editor::fontAttributesAtSelectionStart const):
+
+        Compute and set enclosing text lists and text alignment. For text alignment, we convert the initial text-align
+        value, `start`, to NSTextAlignmentNatural (the default text alignment type on Cocoa platforms); other values
+        then map to Left, Right, Center, and Justified as expected (taking direction into account).
+
+        * editing/FontAttributes.h:
+        (WebCore::TextList::encode const):
+        (WebCore::TextList::decode):
+
+        Introduce TextList, a platform-agnostic representation of an unordered or ordered list. On Cocoa, this can be
+        used to construct a corresponding NSTextList.
+
+        * editing/cocoa/FontAttributesCocoa.mm:
+        (WebCore::cocoaTextListMarkerName):
+
+        Attempt to map a WebCore list style type to a `NSTextListMarker*` constant. While most of the Cocoa marker
+        formats have a corresponding web-exposed list style type, many web-exposed types have no Cocoa equivalent; as
+        such, fall back to default marker formats: "{disc}" for unordered lists and "{decimal}" for ordered lists.
+
+        (WebCore::TextList::createTextList const):
+        (WebCore::FontAttributes::createDictionary const):
+
+        Include an NSParagraphStyle in the dictionary of font attributes that includes information about text alignment
+        and enclosing text lists (per Cocoa convention, in order from outermost list to innermost list).
+
 2018-10-08  Justin Fan  <justin_fan@apple.com>
 
         WebGPU: Rename old WebGPU prototype to WebMetal

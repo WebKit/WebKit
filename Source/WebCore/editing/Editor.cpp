@@ -3867,6 +3867,40 @@ void Editor::platformFontAttributesAtSelectionStart(FontAttributes&, const Rende
 
 #endif
 
+static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Position& position)
+{
+    auto startContainer = makeRefPtr(position.containerNode());
+    if (!startContainer)
+        return { };
+
+    auto* editableRoot = highestEditableRoot(firstPositionInOrBeforeNode(startContainer.get()));
+    if (!editableRoot)
+        return { };
+
+    Vector<Ref<HTMLElement>> enclosingLists;
+    for (auto& ancestor : ancestorsOfType<HTMLElement>(*startContainer)) {
+        if (&ancestor == editableRoot)
+            break;
+
+        auto* renderer = ancestor.renderer();
+        if (!renderer)
+            continue;
+
+        if (is<HTMLUListElement>(ancestor) || is<HTMLOListElement>(ancestor))
+            enclosingLists.append(ancestor);
+    }
+
+    Vector<TextList> textLists;
+    textLists.reserveCapacity(enclosingLists.size());
+    for (auto iterator = enclosingLists.rbegin(); iterator != enclosingLists.rend(); ++iterator) {
+        auto& list = iterator->get();
+        bool ordered = is<HTMLOListElement>(list);
+        textLists.uncheckedAppend({ list.renderer()->style().listStyleType(), ordered ? downcast<HTMLOListElement>(list).start() : 1, ordered });
+    }
+
+    return textLists;
+}
+
 FontAttributes Editor::fontAttributesAtSelectionStart() const
 {
     FontAttributes attributes;
@@ -3905,10 +3939,36 @@ FontAttributes Editor::fontAttributesAtSelectionStart() const
     case VerticalAlign::Top:
         break;
     case VerticalAlign::Sub:
-        attributes.subscriptOrSuperscript = SubscriptOrSuperscript::Subscript;
+        attributes.subscriptOrSuperscript = FontAttributes::SubscriptOrSuperscript::Subscript;
         break;
     case VerticalAlign::Super:
-        attributes.subscriptOrSuperscript = SubscriptOrSuperscript::Superscript;
+        attributes.subscriptOrSuperscript = FontAttributes::SubscriptOrSuperscript::Superscript;
+        break;
+    }
+
+    attributes.textLists = editableTextListsAtPositionInDescendingOrder(m_frame.selection().selection().start());
+
+    switch (style->textAlign()) {
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
+        attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Right;
+        break;
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
+        attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Left;
+        break;
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
+        attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Center;
+        break;
+    case TextAlignMode::Justify:
+        attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Justify;
+        break;
+    case TextAlignMode::Start:
+        attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Natural;
+        break;
+    case TextAlignMode::End:
+        attributes.horizontalAlignment = style->isLeftToRightDirection() ? FontAttributes::HorizontalAlignment::Right : FontAttributes::HorizontalAlignment::Left;
         break;
     }
 

@@ -2980,7 +2980,8 @@ bool ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::decode(Decoder& decoder, Vec
 
 void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttributes& attributes)
 {
-    encoder << attributes.backgroundColor << attributes.foregroundColor << attributes.fontShadow << attributes.hasUnderline << attributes.hasStrikeThrough;
+    encoder << attributes.backgroundColor << attributes.foregroundColor << attributes.fontShadow << attributes.hasUnderline << attributes.hasStrikeThrough << attributes.textLists;
+    encoder.encodeEnum(attributes.horizontalAlignment);
     encoder.encodeEnum(attributes.subscriptOrSuperscript);
 #if PLATFORM(COCOA)
     bool hasFont = attributes.font;
@@ -3007,6 +3008,12 @@ std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& dec
         return std::nullopt;
 
     if (!decoder.decode(attributes.hasStrikeThrough))
+        return std::nullopt;
+
+    if (!decoder.decode(attributes.textLists))
+        return std::nullopt;
+
+    if (!decoder.decodeEnum(attributes.horizontalAlignment))
         return std::nullopt;
 
     if (!decoder.decodeEnum(attributes.subscriptOrSuperscript))

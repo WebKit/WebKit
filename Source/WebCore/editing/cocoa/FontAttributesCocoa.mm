@@ -27,8 +27,61 @@
 #import "FontAttributes.h"
 
 #import "ColorCocoa.h"
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
+
+#if PLATFORM(IOS)
+#import <pal/ios/UIKitSoftLink.h>
+#endif
 
 namespace WebCore {
+
+static NSString *cocoaTextListMarkerName(ListStyleType style, bool ordered)
+{
+    switch (style) {
+    case ListStyleType::Disc:
+        return NSTextListMarkerDisc;
+    case ListStyleType::Circle:
+        return NSTextListMarkerCircle;
+    case ListStyleType::Square:
+        return NSTextListMarkerSquare;
+    case ListStyleType::Decimal:
+        return NSTextListMarkerDecimal;
+    case ListStyleType::Octal:
+        return NSTextListMarkerOctal;
+    case ListStyleType::LowerRoman:
+        return NSTextListMarkerLowercaseRoman;
+    case ListStyleType::UpperRoman:
+        return NSTextListMarkerUppercaseRoman;
+    case ListStyleType::LowerAlpha:
+        return NSTextListMarkerLowercaseAlpha;
+    case ListStyleType::UpperAlpha:
+        return NSTextListMarkerUppercaseAlpha;
+    case ListStyleType::LowerLatin:
+        return NSTextListMarkerLowercaseLatin;
+    case ListStyleType::UpperLatin:
+        return NSTextListMarkerUppercaseLatin;
+    case ListStyleType::LowerHexadecimal:
+        return NSTextListMarkerLowercaseHexadecimal;
+    case ListStyleType::UpperHexadecimal:
+        return NSTextListMarkerUppercaseHexadecimal;
+    default:
+        // The remaining web-exposed list style types have no Cocoa equivalents.
+        // Fall back to default styles for ordered and unordered lists.
+        return ordered ? NSTextListMarkerDecimal : NSTextListMarkerDisc;
+    }
+}
+
+RetainPtr<NSTextList> TextList::createTextList() const
+{
+#if PLATFORM(MAC)
+    Class textListClass = NSTextList.class;
+#else
+    Class textListClass = PAL::get_UIKit_NSTextListClass();
+#endif
+    auto result = adoptNS([[textListClass alloc] initWithMarkerFormat:cocoaTextListMarkerName(style, ordered) options:0]);
+    [result setStartingItemNumber:startingItemNumber];
+    return result;
+}
 
 RetainPtr<NSDictionary> FontAttributes::createDictionary() const
 {
@@ -49,6 +102,40 @@ RetainPtr<NSDictionary> FontAttributes::createDictionary() const
         attributes[NSSuperscriptAttributeName] = @(-1);
     else if (subscriptOrSuperscript == SubscriptOrSuperscript::Superscript)
         attributes[NSSuperscriptAttributeName] = @1;
+
+#if PLATFORM(MAC)
+    Class paragraphStyleClass = NSParagraphStyle.class;
+#else
+    Class paragraphStyleClass = PAL::get_UIKit_NSParagraphStyleClass();
+#endif
+    auto style = adoptNS([[paragraphStyleClass defaultParagraphStyle] mutableCopy]);
+
+    switch (horizontalAlignment) {
+    case HorizontalAlignment::Left:
+        [style setAlignment:NSTextAlignmentLeft];
+        break;
+    case HorizontalAlignment::Center:
+        [style setAlignment:NSTextAlignmentCenter];
+        break;
+    case HorizontalAlignment::Right:
+        [style setAlignment:NSTextAlignmentRight];
+        break;
+    case HorizontalAlignment::Justify:
+        [style setAlignment:NSTextAlignmentJustified];
+        break;
+    case HorizontalAlignment::Natural:
+        [style setAlignment:NSTextAlignmentNatural];
+        break;
+    }
+
+    if (!textLists.isEmpty()) {
+        auto textListArray = adoptNS([[NSMutableArray alloc] initWithCapacity:textLists.size()]);
+        for (auto& textList : textLists)
+            [textListArray addObject:textList.createTextList().get()];
+        [style setTextLists:textListArray.get()];
+    }
+
+    attributes[NSParagraphStyleAttributeName] = style.get();
 
     if (hasUnderline)
         attributes[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleSingle);

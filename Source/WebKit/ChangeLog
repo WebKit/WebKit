@@ -1,3 +1,17 @@
+2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WK2] Add support for text alignment and text lists in font attributes
+        https://bugs.webkit.org/show_bug.cgi?id=190342
+        <rdar://problem/44767118>
+
+        Reviewed by Tim Horton.
+
+        Add encoding and decoding for text alignment and text lists in FontAttributes.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FontAttributes>::encode):
+        (IPC::ArgumentCoder<FontAttributes>::decode):
+
 2018-10-08  Justin Fan  <justin_fan@apple.com>
 
         WebGPU: Rename old WebGPU prototype to WebMetal

@@ -105,4 +105,20 @@ static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 - (BOOL)containsAttachments;
 @end
 
-#endif
+#endif // PLATFORM(IOS)
+
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)
+static NSString *const NSTextListMarkerCircle = @"{circle}";
+static NSString *const NSTextListMarkerDisc = @"{disc}";
+static NSString *const NSTextListMarkerSquare = @"{square}";
+static NSString *const NSTextListMarkerLowercaseHexadecimal = @"{lower-hexadecimal}";
+static NSString *const NSTextListMarkerUppercaseHexadecimal = @"{upper-hexadecimal}";
+static NSString *const NSTextListMarkerOctal = @"{octal}";
+static NSString *const NSTextListMarkerLowercaseAlpha = @"{lower-alpha}";
+static NSString *const NSTextListMarkerUppercaseAlpha = @"{upper-alpha}";
+static NSString *const NSTextListMarkerLowercaseLatin = @"{lower-latin}";
+static NSString *const NSTextListMarkerUppercaseLatin = @"{upper-latin}";
+static NSString *const NSTextListMarkerLowercaseRoman = @"{lower-roman}";
+static NSString *const NSTextListMarkerUppercaseRoman = @"{upper-roman}";
+static NSString *const NSTextListMarkerDecimal = @"{decimal}";
+#endif // PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)

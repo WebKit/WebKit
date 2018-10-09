@@ -1,3 +1,24 @@
+2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WK2] Add support for text alignment and text lists in font attributes
+        https://bugs.webkit.org/show_bug.cgi?id=190342
+        <rdar://problem/44767118>
+
+        Reviewed by Tim Horton.
+
+        * pal/ios/UIKitSoftLink.h:
+        * pal/ios/UIKitSoftLink.mm:
+
+        Add NSParagraphStyle and NSTextList to the UIKit soft link header.
+
+        * pal/spi/cocoa/NSAttributedStringSPI.h:
+        * pal/spi/ios/UIKitSPI.h:
+
+        Add some SPI declarations for NSMutableParagraphStyle and NSTextList when building with a non-internal iOS SDK,
+        and import <UIKit/NSParagraphStyle_Private.h> and <UIKit/NSTextList.h> when building with an internal iOS SDK.
+        Additionally, define some internal UIFoundation string constants that denote NSTextList marker formats. These
+        constants are API on macOS, but are neither exposed as API nor SPI on iOS.
+
 2018-10-08  Justin Fan  <justin_fan@apple.com>
 
         WebGPU: Rename old WebGPU prototype to WebMetal

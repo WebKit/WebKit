@@ -25,6 +25,8 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <UIKit/NSParagraphStyle_Private.h>
+#import <UIKit/NSTextList.h>
 #import <UIKit/UIApplicationSceneConstants.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIColor_Private.h>
@@ -58,6 +60,20 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
     UIApplicationSceneClassicModeOriginalPad = 4,
 };
+
+@interface NSParagraphStyle ()
+- (NSArray *)textLists;
+@end
+
+@interface NSMutableParagraphStyle ()
+- (void)setTextLists:(NSArray *)textLists;
+@end
+
+@interface NSTextList : NSObject
+- (instancetype)initWithMarkerFormat:(NSString *)format options:(NSUInteger)mask;
+@property (readonly, copy) NSString *markerFormat;
+@property NSInteger startingItemNumber;
+@end
 
 @interface UIApplication ()
 

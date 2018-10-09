@@ -33,7 +33,13 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <cmath>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/Optional.h>
+#import <wtf/Vector.h>
+
+#if PLATFORM(IOS)
+#import <pal/spi/ios/UIKitSPI.h>
+#endif
 
 @interface FontAttributesListener : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSDictionary *lastFontAttributes;
@@ -86,12 +92,21 @@
 #else
 #define PlatformColor UIColor
 #define PlatformFont UIFont
-static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 #endif
 
 namespace TestWebKitAPI {
 
 enum class Nullity : uint8_t { Null, NonNull };
+
+struct ListExpectation {
+    NSString *markerFormat { nil };
+    int startingItemNumber { 0 };
+};
+
+struct ParagraphStyleExpectation {
+    NSTextAlignment alignment;
+    Vector<ListExpectation> textLists;
+};
 
 struct ColorExpectation {
     ColorExpectation(CGFloat redValue, CGFloat greenValue, CGFloat blueValue, CGFloat alphaValue)
@@ -173,10 +188,25 @@ static void checkFont(PlatformFont *font, FontExpectation&& expectation)
     EXPECT_EQ(expectation.fontSize, font.pointSize);
 }
 
-static RetainPtr<TestWKWebView> webViewForTestingFontAttributes()
+static void checkParagraphStyles(NSParagraphStyle *style, ParagraphStyleExpectation&& expectation)
+{
+    EXPECT_EQ(expectation.alignment, style.alignment);
+    EXPECT_EQ(expectation.textLists.size(), style.textLists.count);
+    [style.textLists enumerateObjectsUsingBlock:^(NSTextList *textList, NSUInteger index, BOOL *stop) {
+        if (index >= expectation.textLists.size()) {
+            *stop = YES;
+            return;
+        }
+        auto& expectedList = expectation.textLists[index];
+        EXPECT_EQ(expectedList.startingItemNumber, textList.startingItemNumber);
+        EXPECT_WK_STREQ(expectedList.markerFormat, textList.markerFormat);
+    }];
+}
+
+static RetainPtr<TestWKWebView> webViewForTestingFontAttributes(NSString *testPageName)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 320, 500)]);
-    [webView synchronouslyLoadTestPageNamed:@"rich-text-attributes"];
+    [webView synchronouslyLoadTestPageNamed:testPageName];
     [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
     return webView;
 }
@@ -184,7 +214,7 @@ static RetainPtr<TestWKWebView> webViewForTestingFontAttributes()
 TEST(FontAttributes, FontAttributesAfterChangingSelection)
 {
     auto delegate = adoptNS([FontAttributesListener new]);
-    auto webView = webViewForTestingFontAttributes();
+    auto webView = webViewForTestingFontAttributes(@"rich-text-attributes");
     [webView setUIDelegate:delegate.get()];
 
     {
@@ -194,6 +224,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { 255, 199, 119, 1 });
         checkFont(attributes[NSFontAttributeName], { "Helvetica-Bold", 48 });
         checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentNatural, { } });
         EXPECT_EQ(NSUnderlineStyleSingle, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -205,6 +236,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { 255, 197, 171, 1 });
         checkFont(attributes[NSFontAttributeName], { "Helvetica-Bold", 48 });
         checkShadow(attributes[NSShadowAttributeName], { 0.470588, 5 });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentNatural, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleSingle, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -216,6 +248,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { });
         checkFont(attributes[NSFontAttributeName], { "Menlo-Italic", 18 });
         checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentCenter, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -227,6 +260,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { 0, 0, 0, 1 });
         checkFont(attributes[NSFontAttributeName], { "Avenir-Book", 24 });
         checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentCenter, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -238,6 +272,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { });
         checkFont(attributes[NSFontAttributeName], { "TimesNewRomanPS-BoldMT", 24 });
         checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentCenter, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -249,6 +284,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { });
         checkFont(attributes[NSFontAttributeName], { "Avenir-Black", 18 });
         checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentLeft, {{ NSTextListMarkerDisc, 1 }} });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -260,6 +296,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { 78, 122, 39, 1 });
         checkFont(attributes[NSFontAttributeName], { "Avenir-BookOblique", 12 });
         checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentLeft, {{ NSTextListMarkerDisc, 1 }} });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(-1, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -271,6 +308,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { });
         checkFont(attributes[NSFontAttributeName], { "Avenir-Book", 12 });
         checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentLeft, {{ NSTextListMarkerDecimal, 1 }} });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(1, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -282,6 +320,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { });
         checkFont(attributes[NSFontAttributeName], { "Georgia", 36 });
         checkShadow(attributes[NSShadowAttributeName], { 0.658824, 9 });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentLeft, {{ NSTextListMarkerDecimal, 1 }} });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
@@ -293,10 +332,60 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         checkColor(attributes[NSBackgroundColorAttributeName], { });
         checkFont(attributes[NSFontAttributeName], { "Avenir-BookOblique", 18 });
         checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentRight, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
     }
+}
+
+TEST(FontAttributes, NestedTextListsWithHorizontalAlignment)
+{
+    auto delegate = adoptNS([FontAttributesListener new]);
+    auto webView = webViewForTestingFontAttributes(@"nested-lists");
+    [webView setUIDelegate:delegate.get()];
+
+    [webView selectElementWithIdentifier:@"one"];
+    checkParagraphStyles([webView fontAttributesAfterNextPresentationUpdate][NSParagraphStyleAttributeName], {
+        NSTextAlignmentNatural,
+        {{ NSTextListMarkerDecimal, 1 }}
+    });
+
+    [webView selectElementWithIdentifier:@"two"];
+    checkParagraphStyles([webView fontAttributesAfterNextPresentationUpdate][NSParagraphStyleAttributeName], {
+        NSTextAlignmentLeft,
+        {{ NSTextListMarkerDecimal, 1 }, { NSTextListMarkerCircle, 1 }}
+    });
+
+    [webView selectElementWithIdentifier:@"three"];
+    checkParagraphStyles([webView fontAttributesAfterNextPresentationUpdate][NSParagraphStyleAttributeName], {
+        NSTextAlignmentCenter,
+        {{ NSTextListMarkerDecimal, 1 }, { NSTextListMarkerCircle, 1 }, { NSTextListMarkerUppercaseRoman, 50 }}
+    });
+
+    [webView selectElementWithIdentifier:@"four"];
+    checkParagraphStyles([webView fontAttributesAfterNextPresentationUpdate][NSParagraphStyleAttributeName], {
+        NSTextAlignmentLeft,
+        {{ NSTextListMarkerDecimal, 1 }, { NSTextListMarkerCircle, 1 }}
+    });
+
+    [webView selectElementWithIdentifier:@"five"];
+    checkParagraphStyles([webView fontAttributesAfterNextPresentationUpdate][NSParagraphStyleAttributeName], {
+        NSTextAlignmentRight,
+        {{ NSTextListMarkerDecimal, 1 }, { NSTextListMarkerCircle, 1 }, { NSTextListMarkerLowercaseLatin, 0 }}
+    });
+
+    [webView selectElementWithIdentifier:@"six"];
+    checkParagraphStyles([webView fontAttributesAfterNextPresentationUpdate][NSParagraphStyleAttributeName], {
+        NSTextAlignmentLeft,
+        {{ NSTextListMarkerDecimal, 1 }}
+    });
+
+    [webView selectElementWithIdentifier:@"seven"];
+    checkParagraphStyles([webView fontAttributesAfterNextPresentationUpdate][NSParagraphStyleAttributeName], {
+        NSTextAlignmentNatural,
+        { }
+    });
 }
 
 } // namespace TestWebKitAPI
