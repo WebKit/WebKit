@@ -40,8 +40,8 @@
 #import "WebGLLayer.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
-#if ENABLE(WEBGPU)
-#import "WebGPULayer.h"
+#if ENABLE(WEBMETAL)
+#import "WebMetalLayer.h"
 #endif
 #import "WebLayer.h"
 #import "WebSystemBackdropLayer.h"
@@ -203,8 +203,8 @@ PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(Platf
     if ([layer isKindOfClass:[WebGLLayer class]])
         return LayerTypeContentsProvidedLayer;
 
-#if ENABLE(WEBGPU)
-    if ([layer isKindOfClass:[WebGPULayer class]])
+#if ENABLE(WEBMETAL)
+    if ([layer isKindOfClass:[WebMetalLayer class]])
         return LayerTypeContentsProvidedLayer;
 #endif
 
@@ -259,7 +259,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         layerClass = getAVPlayerLayerClass();
         break;
     case LayerTypeContentsProvidedLayer:
-        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers or WebGPULayers.
+        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers or WebMetalLayers.
         ASSERT_NOT_REACHED();
         break;
     case LayerTypeShapeLayer:

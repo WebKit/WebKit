@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPULibrary.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUDevice.h"
 #import "Logging.h"
@@ -38,7 +38,7 @@ namespace WebCore {
 
 GPULibrary::GPULibrary(const GPUDevice& device, const String& sourceCode)
 {
-    LOG(WebGPU, "GPULibrary::GPULibrary()");
+    LOG(WebMetal, "GPULibrary::GPULibrary()");
 
     if (!device.metal())
         return;
@@ -46,7 +46,7 @@ GPULibrary::GPULibrary(const GPUDevice& device, const String& sourceCode)
     NSError *error = [NSError errorWithDomain:@"com.apple.WebKit.GPU" code:1 userInfo:nil];
     m_metal = adoptNS([device.metal() newLibraryWithSource:sourceCode options:nil error:&error]);
     if (!m_metal)
-        LOG(WebGPU, "Compilation error: %s", [[error localizedDescription] UTF8String]);
+        LOG(WebMetal, "Compilation error: %s", [[error localizedDescription] UTF8String]);
 }
 
 String GPULibrary::label() const

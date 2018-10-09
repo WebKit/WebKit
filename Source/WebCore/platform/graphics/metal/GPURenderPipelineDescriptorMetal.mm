@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPURenderPipelineDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUFunction.h"
 #import "GPURenderPipelineColorAttachmentDescriptor.h"
@@ -39,7 +39,7 @@ namespace WebCore {
 GPURenderPipelineDescriptor::GPURenderPipelineDescriptor()
     : m_metal { adoptNS([MTLRenderPipelineDescriptor new]) }
 {
-    LOG(WebGPU, "GPURenderPipelineDescriptor::GPURenderPipelineDescriptor()");
+    LOG(WebMetal, "GPURenderPipelineDescriptor::GPURenderPipelineDescriptor()");
 }
 
 unsigned GPURenderPipelineDescriptor::depthAttachmentPixelFormat() const

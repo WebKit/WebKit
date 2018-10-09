@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUBuffer.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 #include <JavaScriptCore/ArrayBuffer.h>
@@ -35,7 +35,7 @@ namespace WebCore {
 
 GPUBuffer::~GPUBuffer()
 {
-    LOG(WebGPU, "GPUBuffer::~GPUBuffer()");
+    LOG(WebMetal, "GPUBuffer::~GPUBuffer()");
 }
 
 unsigned GPUBuffer::length() const

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUTexture.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUDevice.h"
 #import "GPUDrawable.h"
@@ -38,7 +38,7 @@ namespace WebCore {
 
 GPUTexture::GPUTexture(const GPUDevice& device, const GPUTextureDescriptor& descriptor)
 {
-    LOG(WebGPU, "GPUTexture::GPUTexture()");
+    LOG(WebMetal, "GPUTexture::GPUTexture()");
 
     if (!descriptor.metal())
         return;
@@ -49,7 +49,7 @@ GPUTexture::GPUTexture(const GPUDevice& device, const GPUTextureDescriptor& desc
 GPUTexture::GPUTexture(const GPUDrawable& other)
     : m_metal { other.texture() }
 {
-    LOG(WebGPU, "GPUTexture::GPUTexture()");
+    LOG(WebMetal, "GPUTexture::GPUTexture()");
 }
 
 unsigned GPUTexture::width() const

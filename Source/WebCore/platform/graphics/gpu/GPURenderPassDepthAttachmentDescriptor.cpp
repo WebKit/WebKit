@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPURenderPassDepthAttachmentDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPURenderPassDepthAttachmentDescriptor::~GPURenderPassDepthAttachmentDescriptor()
 {
-    LOG(WebGPU, "GPURenderPassDepthAttachmentDescriptor::~GPURenderPassDepthAttachmentDescriptor()");
+    LOG(WebMetal, "GPURenderPassDepthAttachmentDescriptor::~GPURenderPassDepthAttachmentDescriptor()");
 }
 
 } // namespace WebCore

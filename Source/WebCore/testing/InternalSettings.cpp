@@ -111,8 +111,8 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(WEBGL2)
     , m_webGL2Enabled(RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
 #endif
-#if ENABLE(WEBGPU)
-    , m_webGPUEnabled(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
+#if ENABLE(WEBMETAL)
+    , m_webMetalEnabled(RuntimeEnabledFeatures::sharedFeatures().webMetalEnabled())
 #endif
     , m_webVREnabled(RuntimeEnabledFeatures::sharedFeatures().webVREnabled())
 #if ENABLE(MEDIA_STREAM)
@@ -216,8 +216,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(m_webGL2Enabled);
 #endif
-#if ENABLE(WEBGPU)
-    RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(m_webGPUEnabled);
+#if ENABLE(WEBMETAL)
+    RuntimeEnabledFeatures::sharedFeatures().setWebMetalEnabled(m_webMetalEnabled);
 #endif
     RuntimeEnabledFeatures::sharedFeatures().setWebVREnabled(m_webVREnabled);
 #if ENABLE(MEDIA_STREAM)
@@ -758,10 +758,10 @@ void InternalSettings::setWebGL2Enabled(bool enabled)
 #endif
 }
 
-void InternalSettings::setWebGPUEnabled(bool enabled)
+void InternalSettings::setWebMetalEnabled(bool enabled)
 {
-#if ENABLE(WEBGPU)
-    RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(enabled);
+#if ENABLE(WEBMETAL)
+    RuntimeEnabledFeatures::sharedFeatures().setWebMetalEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

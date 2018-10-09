@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPURenderPassDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPURenderPassColorAttachmentDescriptor.h"
 #import "GPURenderPassDepthAttachmentDescriptor.h"
@@ -39,7 +39,7 @@ namespace WebCore {
 GPURenderPassDescriptor::GPURenderPassDescriptor()
     : m_metal { adoptNS([MTLRenderPassDescriptor new]) }
 {
-    LOG(WebGPU, "GPURenderPassDescriptor::GPURenderPassDescriptor()");
+    LOG(WebMetal, "GPURenderPassDescriptor::GPURenderPassDescriptor()");
 }
 
 Vector<GPURenderPassColorAttachmentDescriptor> GPURenderPassDescriptor::colorAttachments() const

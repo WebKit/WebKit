@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUDrawable.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPUDrawable::~GPUDrawable()
 {
-    LOG(WebGPU, "GPUDrawable::~GPUDrawable()");
+    LOG(WebMetal, "GPUDrawable::~GPUDrawable()");
 }
 
 } // namespace WebCore

@@ -1,3 +1,358 @@
+2018-10-08  Justin Fan  <justin_fan@apple.com>
+
+        WebGPU: Rename old WebGPU prototype to WebMetal
+        https://bugs.webkit.org/show_bug.cgi?id=190325
+        <rdar://problem/44990443>
+
+        Reviewed by Dean Jackson.
+
+        Existing WebGPU tests also renamed to reflect WebGPU -> WebMetal change.
+
+        Rename WebGPU prototype files to WebMetal in preparation for implementing the new (Oct 2018) WebGPU interface.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebMetalRenderPassAttachmentDescriptorCustom.cpp: Renamed from Source/WebCore/bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSWebMetalRenderingContextCustom.cpp: Renamed from Source/WebCore/bindings/js/JSWebGPURenderingContextCustom.cpp.
+        (WebCore::JSWebMetalRenderingContext::visitAdditionalChildren):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::isWebMetalType):
+        (WebCore::HTMLCanvasElement::createContextWebMetal):
+        (WebCore::HTMLCanvasElement::getContextWebMetal):
+        (WebCore::HTMLCanvasElement::isWebGPUType): Deleted.
+        (WebCore::HTMLCanvasElement::createContextWebGPU): Deleted.
+        (WebCore::HTMLCanvasElement::getContextWebGPU): Deleted.
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::isWebMetal const):
+        (WebCore::CanvasRenderingContext::isWebGPU const): Deleted.
+        * html/canvas/WebGPURenderingContext.cpp: Removed.
+        * html/canvas/WebMetalBuffer.cpp: Renamed from Source/WebCore/html/canvas/WebGPUBuffer.cpp.
+        (WebCore::WebMetalBuffer::create):
+        (WebCore::WebMetalBuffer::WebMetalBuffer):
+        * html/canvas/WebMetalBuffer.h: Renamed from Source/WebCore/html/canvas/WebGPUBuffer.h.
+        * html/canvas/WebMetalBuffer.idl: Renamed from Source/WebCore/html/canvas/WebGPUBuffer.idl.
+        * html/canvas/WebMetalCommandBuffer.cpp: Renamed from Source/WebCore/html/canvas/WebGPUCommandBuffer.cpp.
+        (WebCore::WebMetalCommandBuffer::create):
+        (WebCore::WebMetalCommandBuffer::WebMetalCommandBuffer):
+        (WebCore::WebMetalCommandBuffer::~WebMetalCommandBuffer):
+        (WebCore::WebMetalCommandBuffer::commit):
+        (WebCore::WebMetalCommandBuffer::presentDrawable):
+        (WebCore::WebMetalCommandBuffer::createRenderCommandEncoderWithDescriptor):
+        (WebCore::WebMetalCommandBuffer::createComputeCommandEncoder):
+        (WebCore::WebMetalCommandBuffer::completed):
+        * html/canvas/WebMetalCommandBuffer.h: Renamed from Source/WebCore/html/canvas/WebGPUCommandBuffer.h.
+        * html/canvas/WebMetalCommandBuffer.idl: Renamed from Source/WebCore/html/canvas/WebGPUCommandBuffer.idl.
+        * html/canvas/WebMetalCommandQueue.cpp: Renamed from Source/WebCore/html/canvas/WebGPUCommandQueue.cpp.
+        (WebCore::WebMetalCommandQueue::create):
+        (WebCore::WebMetalCommandQueue::WebMetalCommandQueue):
+        (WebCore::WebMetalCommandQueue::createCommandBuffer):
+        * html/canvas/WebMetalCommandQueue.h: Renamed from Source/WebCore/html/canvas/WebGPUCommandQueue.h.
+        * html/canvas/WebMetalCommandQueue.idl: Renamed from Source/WebCore/html/canvas/WebGPUCommandQueue.idl.
+        * html/canvas/WebMetalComputeCommandEncoder.cpp: Renamed from Source/WebCore/html/canvas/WebGPUComputeCommandEncoder.cpp.
+        (WebCore::GPUSizeMake):
+        (WebCore::WebMetalComputeCommandEncoder::create):
+        (WebCore::WebMetalComputeCommandEncoder::WebMetalComputeCommandEncoder):
+        (WebCore::WebMetalComputeCommandEncoder::setComputePipelineState):
+        (WebCore::WebMetalComputeCommandEncoder::setBuffer):
+        (WebCore::WebMetalComputeCommandEncoder::dispatch):
+        (WebCore::WebMetalComputeCommandEncoder::endEncoding):
+        * html/canvas/WebMetalComputeCommandEncoder.h: Renamed from Source/WebCore/html/canvas/WebGPUComputeCommandEncoder.h.
+        * html/canvas/WebMetalComputeCommandEncoder.idl: Renamed from Source/WebCore/html/canvas/WebGPUComputeCommandEncoder.idl.
+        * html/canvas/WebMetalComputePipelineState.cpp: Renamed from Source/WebCore/html/canvas/WebGPUComputePipelineState.cpp.
+        (WebCore::WebMetalComputePipelineState::create):
+        (WebCore::WebMetalComputePipelineState::WebMetalComputePipelineState):
+        * html/canvas/WebMetalComputePipelineState.h: Renamed from Source/WebCore/html/canvas/WebGPUComputePipelineState.h.
+        * html/canvas/WebMetalComputePipelineState.idl: Renamed from Source/WebCore/html/canvas/WebGPUComputePipelineState.idl.
+        * html/canvas/WebMetalDepthStencilDescriptor.cpp: Renamed from Source/WebCore/html/canvas/WebGPUDepthStencilDescriptor.cpp.
+        (WebCore::WebMetalDepthStencilDescriptor::create):
+        (WebCore::WebMetalDepthStencilDescriptor::depthWriteEnabled const):
+        (WebCore::WebMetalDepthStencilDescriptor::setDepthWriteEnabled):
+        (WebCore::WebMetalDepthStencilDescriptor::depthCompareFunction const):
+        (WebCore::WebMetalDepthStencilDescriptor::setDepthCompareFunction):
+        * html/canvas/WebMetalDepthStencilDescriptor.h: Renamed from Source/WebCore/html/canvas/WebGPUDepthStencilDescriptor.h.
+        * html/canvas/WebMetalDepthStencilDescriptor.idl: Renamed from Source/WebCore/html/canvas/WebGPUDepthStencilDescriptor.idl.
+        * html/canvas/WebMetalDepthStencilState.cpp: Renamed from Source/WebCore/html/canvas/WebGPUDepthStencilState.cpp.
+        (WebCore::WebMetalDepthStencilState::create):
+        (WebCore::WebMetalDepthStencilState::WebMetalDepthStencilState):
+        (WebCore::WebMetalDepthStencilState::label const):
+        (WebCore::WebMetalDepthStencilState::setLabel):
+        * html/canvas/WebMetalDepthStencilState.h: Renamed from Source/WebCore/html/canvas/WebGPUDepthStencilState.h.
+        * html/canvas/WebMetalDepthStencilState.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineState.idl.
+        * html/canvas/WebMetalDrawable.cpp: Renamed from Source/WebCore/html/canvas/WebGPUDrawable.cpp.
+        (WebCore::WebMetalDrawable::create):
+        (WebCore::WebMetalDrawable::WebMetalDrawable):
+        * html/canvas/WebMetalDrawable.h: Renamed from Source/WebCore/html/canvas/WebGPUDrawable.h.
+        (WebCore::WebMetalDrawable::texture):
+        * html/canvas/WebMetalDrawable.idl: Renamed from Source/WebCore/html/canvas/WebGPUDrawable.idl.
+        * html/canvas/WebMetalEnums.cpp: Renamed from Source/WebCore/html/canvas/WebGPUEnums.cpp.
+        (WebCore::toWebMetalCompareFunction):
+        (WebCore::web3DCompareFunctionName):
+        (WebCore::toGPUCompareFunction):
+        * html/canvas/WebMetalEnums.h: Renamed from Source/WebCore/html/canvas/WebGPUEnums.h.
+        * html/canvas/WebMetalEnums.idl: Renamed from Source/WebCore/html/canvas/WebGPUEnums.idl.
+        * html/canvas/WebMetalFunction.cpp: Renamed from Source/WebCore/html/canvas/WebGPUFunction.cpp.
+        (WebCore::WebMetalFunction::create):
+        (WebCore::WebMetalFunction::WebMetalFunction):
+        * html/canvas/WebMetalFunction.h: Renamed from Source/WebCore/html/canvas/WebGPUFunction.h.
+        * html/canvas/WebMetalFunction.idl: Renamed from Source/WebCore/html/canvas/WebGPUFunction.idl.
+        * html/canvas/WebMetalLibrary.cpp: Renamed from Source/WebCore/html/canvas/WebGPULibrary.cpp.
+        (WebCore::WebMetalLibrary::create):
+        (WebCore::WebMetalLibrary::WebMetalLibrary):
+        (WebCore::WebMetalLibrary::functionNames const):
+        (WebCore::WebMetalLibrary::functionWithName const):
+        * html/canvas/WebMetalLibrary.h: Renamed from Source/WebCore/html/canvas/WebGPULibrary.h.
+        * html/canvas/WebMetalLibrary.idl: Renamed from Source/WebCore/html/canvas/WebGPULibrary.idl.
+        * html/canvas/WebMetalRenderCommandEncoder.cpp: Renamed from Source/WebCore/html/canvas/WebGPURenderCommandEncoder.cpp.
+        (WebCore::WebMetalRenderCommandEncoder::create):
+        (WebCore::WebMetalRenderCommandEncoder::WebMetalRenderCommandEncoder):
+        (WebCore::WebMetalRenderCommandEncoder::setRenderPipelineState):
+        (WebCore::WebMetalRenderCommandEncoder::setDepthStencilState):
+        (WebCore::WebMetalRenderCommandEncoder::setVertexBuffer):
+        (WebCore::WebMetalRenderCommandEncoder::setFragmentBuffer):
+        (WebCore::WebMetalRenderCommandEncoder::drawPrimitives):
+        (WebCore::WebMetalRenderCommandEncoder::endEncoding):
+        * html/canvas/WebMetalRenderCommandEncoder.h: Renamed from Source/WebCore/html/canvas/WebGPURenderCommandEncoder.h.
+        * html/canvas/WebMetalRenderCommandEncoder.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderCommandEncoder.idl.
+        * html/canvas/WebMetalRenderPassAttachmentDescriptor.cpp: Renamed from Source/WebCore/html/canvas/WebGPURenderPassAttachmentDescriptor.cpp.
+        (WebCore::WebMetalRenderPassAttachmentDescriptor::WebMetalRenderPassAttachmentDescriptor):
+        (WebCore::WebMetalRenderPassAttachmentDescriptor::loadAction const):
+        (WebCore::WebMetalRenderPassAttachmentDescriptor::setLoadAction):
+        (WebCore::WebMetalRenderPassAttachmentDescriptor::storeAction const):
+        (WebCore::WebMetalRenderPassAttachmentDescriptor::setStoreAction):
+        (WebCore::WebMetalRenderPassAttachmentDescriptor::texture const):
+        (WebCore::WebMetalRenderPassAttachmentDescriptor::setTexture):
+        * html/canvas/WebMetalRenderPassAttachmentDescriptor.h: Renamed from Source/WebCore/html/canvas/WebGPURenderPassAttachmentDescriptor.h.
+        * html/canvas/WebMetalRenderPassAttachmentDescriptor.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderPassAttachmentDescriptor.idl.
+        * html/canvas/WebMetalRenderPassColorAttachmentDescriptor.cpp: Renamed from Source/WebCore/html/canvas/WebGPURenderPassColorAttachmentDescriptor.cpp.
+        (WebCore::WebMetalRenderPassColorAttachmentDescriptor::create):
+        (WebCore::WebMetalRenderPassColorAttachmentDescriptor::WebMetalRenderPassColorAttachmentDescriptor):
+        (WebCore::WebMetalRenderPassColorAttachmentDescriptor::descriptor const):
+        (WebCore::WebMetalRenderPassColorAttachmentDescriptor::clearColor const):
+        (WebCore::WebMetalRenderPassColorAttachmentDescriptor::setClearColor):
+        * html/canvas/WebMetalRenderPassColorAttachmentDescriptor.h: Renamed from Source/WebCore/html/canvas/WebGPURenderPassColorAttachmentDescriptor.h.
+        * html/canvas/WebMetalRenderPassColorAttachmentDescriptor.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderPassColorAttachmentDescriptor.idl.
+        * html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.cpp: Renamed from Source/WebCore/html/canvas/WebGPURenderPassDepthAttachmentDescriptor.cpp.
+        (WebCore::WebMetalRenderPassDepthAttachmentDescriptor::create):
+        (WebCore::WebMetalRenderPassDepthAttachmentDescriptor::WebMetalRenderPassDepthAttachmentDescriptor):
+        (WebCore::WebMetalRenderPassDepthAttachmentDescriptor::clearDepth const):
+        (WebCore::WebMetalRenderPassDepthAttachmentDescriptor::setClearDepth):
+        (WebCore::WebMetalRenderPassDepthAttachmentDescriptor::descriptor const):
+        * html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.h: Renamed from Source/WebCore/html/canvas/WebGPURenderPassDepthAttachmentDescriptor.h.
+        * html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderPassDepthAttachmentDescriptor.idl.
+        * html/canvas/WebMetalRenderPassDescriptor.cpp: Renamed from Source/WebCore/html/canvas/WebGPURenderPassDescriptor.cpp.
+        (WebCore::WebMetalRenderPassDescriptor::create):
+        (WebCore::WebMetalRenderPassDescriptor::depthAttachment):
+        (WebCore::WebMetalRenderPassDescriptor::colorAttachments):
+        * html/canvas/WebMetalRenderPassDescriptor.h: Renamed from Source/WebCore/html/canvas/WebGPURenderPassDescriptor.h.
+        * html/canvas/WebMetalRenderPassDescriptor.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderPassDescriptor.idl.
+        * html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.cpp: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.cpp.
+        (WebCore::WebMetalRenderPipelineColorAttachmentDescriptor::create):
+        (WebCore::WebMetalRenderPipelineColorAttachmentDescriptor::WebMetalRenderPipelineColorAttachmentDescriptor):
+        (WebCore::WebMetalRenderPipelineColorAttachmentDescriptor::pixelFormat const):
+        (WebCore::WebMetalRenderPipelineColorAttachmentDescriptor::setPixelFormat):
+        * html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.h: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.h.
+        * html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.idl.
+        * html/canvas/WebMetalRenderPipelineDescriptor.cpp: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineDescriptor.cpp.
+        (WebCore::WebMetalRenderPipelineDescriptor::create):
+        (WebCore::WebMetalRenderPipelineDescriptor::vertexFunction const):
+        (WebCore::WebMetalRenderPipelineDescriptor::setVertexFunction):
+        (WebCore::WebMetalRenderPipelineDescriptor::fragmentFunction const):
+        (WebCore::WebMetalRenderPipelineDescriptor::setFragmentFunction):
+        (WebCore::WebMetalRenderPipelineDescriptor::colorAttachments):
+        (WebCore::WebMetalRenderPipelineDescriptor::depthAttachmentPixelFormat const):
+        (WebCore::WebMetalRenderPipelineDescriptor::setDepthAttachmentPixelFormat):
+        (WebCore::WebMetalRenderPipelineDescriptor::reset):
+        * html/canvas/WebMetalRenderPipelineDescriptor.h: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineDescriptor.h.
+        * html/canvas/WebMetalRenderPipelineDescriptor.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineDescriptor.idl.
+        * html/canvas/WebMetalRenderPipelineState.cpp: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineState.cpp.
+        (WebCore::WebMetalRenderPipelineState::create):
+        (WebCore::WebMetalRenderPipelineState::WebMetalRenderPipelineState):
+        (WebCore::WebMetalRenderPipelineState::label const):
+        (WebCore::WebMetalRenderPipelineState::setLabel):
+        * html/canvas/WebMetalRenderPipelineState.h: Renamed from Source/WebCore/html/canvas/WebGPURenderPipelineState.h.
+        * html/canvas/WebMetalRenderPipelineState.idl: Renamed from Source/WebCore/html/canvas/WebGPUDepthStencilState.idl.
+        * html/canvas/WebMetalRenderingContext.cpp: Added.
+        (WebCore::WebMetalRenderingContext::create):
+        (WebCore::WebMetalRenderingContext::WebMetalRenderingContext):
+        (WebCore::WebMetalRenderingContext::canvas const):
+        (WebCore::WebMetalRenderingContext::initializeNewContext):
+        (WebCore::WebMetalRenderingContext::clampedCanvasSize const):
+        (WebCore::WebMetalRenderingContext::hasPendingActivity const):
+        (WebCore::WebMetalRenderingContext::stop):
+        (WebCore::WebMetalRenderingContext::activeDOMObjectName const):
+        (WebCore::WebMetalRenderingContext::canSuspendForDocumentSuspension const):
+        (WebCore::WebMetalRenderingContext::platformLayer const):
+        (WebCore::WebMetalRenderingContext::markLayerComposited):
+        (WebCore::WebMetalRenderingContext::reshape):
+        (WebCore::WebMetalRenderingContext::createLibrary):
+        (WebCore::WebMetalRenderingContext::createRenderPipelineState):
+        (WebCore::WebMetalRenderingContext::createDepthStencilState):
+        (WebCore::WebMetalRenderingContext::createComputePipelineState):
+        (WebCore::WebMetalRenderingContext::createCommandQueue):
+        (WebCore::WebMetalRenderingContext::nextDrawable):
+        (WebCore::WebMetalRenderingContext::createBuffer):
+        (WebCore::WebMetalRenderingContext::createTexture):
+        * html/canvas/WebMetalRenderingContext.h: Renamed from Source/WebCore/html/canvas/WebGPURenderingContext.h.
+        * html/canvas/WebMetalRenderingContext.idl: Renamed from Source/WebCore/html/canvas/WebGPURenderingContext.idl.
+        * html/canvas/WebMetalSize.h: Renamed from Source/WebCore/html/canvas/WebGPUSize.h.
+        * html/canvas/WebMetalSize.idl: Renamed from Source/WebCore/html/canvas/WebGPUSize.idl.
+        * html/canvas/WebMetalTexture.cpp: Renamed from Source/WebCore/html/canvas/WebGPUTexture.cpp.
+        (WebCore::WebMetalTexture::create):
+        (WebCore::WebMetalTexture::WebMetalTexture):
+        * html/canvas/WebMetalTexture.h: Renamed from Source/WebCore/html/canvas/WebGPUTexture.h.
+        * html/canvas/WebMetalTexture.idl: Renamed from Source/WebCore/html/canvas/WebGPUTexture.idl.
+        * html/canvas/WebMetalTextureDescriptor.cpp: Renamed from Source/WebCore/html/canvas/WebGPUTextureDescriptor.cpp.
+        (WebCore::WebMetalTextureDescriptor::create):
+        (WebCore::WebMetalTextureDescriptor::WebMetalTextureDescriptor):
+        (WebCore::WebMetalTextureDescriptor::width const):
+        (WebCore::WebMetalTextureDescriptor::setWidth):
+        (WebCore::WebMetalTextureDescriptor::height const):
+        (WebCore::WebMetalTextureDescriptor::setHeight):
+        (WebCore::WebMetalTextureDescriptor::sampleCount const):
+        (WebCore::WebMetalTextureDescriptor::setSampleCount):
+        (WebCore::WebMetalTextureDescriptor::textureType const):
+        (WebCore::WebMetalTextureDescriptor::setTextureType):
+        (WebCore::WebMetalTextureDescriptor::storageMode const):
+        (WebCore::WebMetalTextureDescriptor::setStorageMode):
+        (WebCore::WebMetalTextureDescriptor::usage const):
+        (WebCore::WebMetalTextureDescriptor::setUsage):
+        * html/canvas/WebMetalTextureDescriptor.h: Renamed from Source/WebCore/html/canvas/WebGPUTextureDescriptor.h.
+        * html/canvas/WebMetalTextureDescriptor.idl: Renamed from Source/WebCore/html/canvas/WebGPUTextureDescriptor.idl.
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::requestContent):
+        (WebCore::contextAsScriptValue):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebMetalEnabled):
+        (WebCore::RuntimeEnabledFeatures::webMetalEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebGPUEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webGPUEnabled const): Deleted.
+        * platform/Logging.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+        * platform/graphics/cocoa/WebMetalLayer.h: Renamed from Source/WebCore/platform/graphics/cocoa/WebGPULayer.h.
+        * platform/graphics/cocoa/WebMetalLayer.mm: Renamed from Source/WebCore/platform/graphics/cocoa/WebGPULayer.mm.
+        (-[WebMetalLayer initWithGPUDevice:]):
+        * platform/graphics/gpu/GPUBuffer.cpp:
+        (WebCore::GPUBuffer::~GPUBuffer):
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUCommandBuffer.cpp:
+        (WebCore::GPUCommandBuffer::~GPUCommandBuffer):
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        * platform/graphics/gpu/GPUCommandQueue.cpp:
+        (WebCore::GPUCommandQueue::~GPUCommandQueue):
+        * platform/graphics/gpu/GPUCommandQueue.h:
+        * platform/graphics/gpu/GPUComputeCommandEncoder.cpp:
+        (WebCore::GPUComputeCommandEncoder::~GPUComputeCommandEncoder):
+        * platform/graphics/gpu/GPUComputeCommandEncoder.h:
+        * platform/graphics/gpu/GPUComputePipelineState.cpp:
+        (WebCore::GPUComputePipelineState::~GPUComputePipelineState):
+        * platform/graphics/gpu/GPUComputePipelineState.h:
+        * platform/graphics/gpu/GPUDepthStencilDescriptor.cpp:
+        (WebCore::GPUDepthStencilDescriptor::~GPUDepthStencilDescriptor):
+        * platform/graphics/gpu/GPUDepthStencilDescriptor.h:
+        * platform/graphics/gpu/GPUDepthStencilState.cpp:
+        (WebCore::GPUDepthStencilState::~GPUDepthStencilState):
+        * platform/graphics/gpu/GPUDepthStencilState.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::~GPUDevice):
+        * platform/graphics/gpu/GPUDevice.h:
+        (WebCore::GPUDevice::layer const):
+        * platform/graphics/gpu/GPUDrawable.cpp:
+        (WebCore::GPUDrawable::~GPUDrawable):
+        * platform/graphics/gpu/GPUDrawable.h:
+        * platform/graphics/gpu/GPUEnums.h:
+        * platform/graphics/gpu/GPUFunction.cpp:
+        (WebCore::GPUFunction::~GPUFunction):
+        * platform/graphics/gpu/GPUFunction.h:
+        * platform/graphics/gpu/GPULibrary.cpp:
+        (WebCore::GPULibrary::~GPULibrary):
+        * platform/graphics/gpu/GPULibrary.h:
+        * platform/graphics/gpu/GPURenderCommandEncoder.cpp:
+        (WebCore::GPURenderCommandEncoder::~GPURenderCommandEncoder):
+        * platform/graphics/gpu/GPURenderCommandEncoder.h:
+        * platform/graphics/gpu/GPURenderPassAttachmentDescriptor.cpp:
+        (WebCore::GPURenderPassAttachmentDescriptor::~GPURenderPassAttachmentDescriptor):
+        * platform/graphics/gpu/GPURenderPassAttachmentDescriptor.h:
+        * platform/graphics/gpu/GPURenderPassColorAttachmentDescriptor.cpp:
+        (WebCore::GPURenderPassColorAttachmentDescriptor::~GPURenderPassColorAttachmentDescriptor):
+        * platform/graphics/gpu/GPURenderPassColorAttachmentDescriptor.h:
+        * platform/graphics/gpu/GPURenderPassDepthAttachmentDescriptor.cpp:
+        (WebCore::GPURenderPassDepthAttachmentDescriptor::~GPURenderPassDepthAttachmentDescriptor):
+        * platform/graphics/gpu/GPURenderPassDepthAttachmentDescriptor.h:
+        * platform/graphics/gpu/GPURenderPassDescriptor.cpp:
+        (WebCore::GPURenderPassDescriptor::~GPURenderPassDescriptor):
+        * platform/graphics/gpu/GPURenderPassDescriptor.h:
+        * platform/graphics/gpu/GPURenderPipelineColorAttachmentDescriptor.cpp:
+        (WebCore::GPURenderPipelineColorAttachmentDescriptor::~GPURenderPipelineColorAttachmentDescriptor):
+        * platform/graphics/gpu/GPURenderPipelineColorAttachmentDescriptor.h:
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.cpp:
+        (WebCore::GPURenderPipelineDescriptor::~GPURenderPipelineDescriptor):
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h:
+        * platform/graphics/gpu/GPURenderPipelineState.cpp:
+        (WebCore::GPURenderPipelineState::~GPURenderPipelineState):
+        * platform/graphics/gpu/GPURenderPipelineState.h:
+        * platform/graphics/gpu/GPUSize.h:
+        * platform/graphics/gpu/GPUTexture.cpp:
+        (WebCore::GPUTexture::~GPUTexture):
+        * platform/graphics/gpu/GPUTexture.h:
+        * platform/graphics/gpu/GPUTextureDescriptor.cpp:
+        (WebCore::GPUTextureDescriptor::~GPUTextureDescriptor):
+        * platform/graphics/gpu/GPUTextureDescriptor.h:
+        * platform/graphics/metal/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::GPUBuffer):
+        * platform/graphics/metal/GPUCommandBufferMetal.mm:
+        * platform/graphics/metal/GPUCommandQueueMetal.mm:
+        * platform/graphics/metal/GPUComputeCommandEncoderMetal.mm:
+        * platform/graphics/metal/GPUComputePipelineStateMetal.mm:
+        (WebCore::GPUComputePipelineState::GPUComputePipelineState):
+        * platform/graphics/metal/GPUDepthStencilDescriptorMetal.mm:
+        * platform/graphics/metal/GPUDepthStencilStateMetal.mm:
+        (WebCore::GPUDepthStencilState::setLabel const):
+        * platform/graphics/metal/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::reshape const):
+        * platform/graphics/metal/GPUDrawableMetal.mm:
+        (WebCore::GPUDrawable::release):
+        * platform/graphics/metal/GPUFunctionMetal.mm:
+        * platform/graphics/metal/GPULibraryMetal.mm:
+        (WebCore::GPULibrary::GPULibrary):
+        * platform/graphics/metal/GPURenderCommandEncoderMetal.mm:
+        (WebCore::GPURenderCommandEncoder::GPURenderCommandEncoder):
+        * platform/graphics/metal/GPURenderPassAttachmentDescriptorMetal.mm:
+        * platform/graphics/metal/GPURenderPassColorAttachmentDescriptorMetal.mm:
+        * platform/graphics/metal/GPURenderPassDepthAttachmentDescriptorMetal.mm:
+        * platform/graphics/metal/GPURenderPassDescriptorMetal.mm:
+        * platform/graphics/metal/GPURenderPipelineColorAttachmentDescriptorMetal.mm:
+        * platform/graphics/metal/GPURenderPipelineDescriptorMetal.mm:
+        * platform/graphics/metal/GPURenderPipelineStateMetal.mm:
+        (WebCore::GPURenderPipelineState::setLabel const):
+        * platform/graphics/metal/GPUTextureDescriptorMetal.mm:
+        * platform/graphics/metal/GPUTextureMetal.mm:
+        (WebCore::GPUTexture::GPUTexture):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setWebMetalEnabled):
+        (WebCore::InternalSettings::setWebGPUEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2018-10-08  Dean Jackson  <dino@apple.com>
 
         CrashTracer: backboardd at Recursion :: QuartzCore: CA::Render::Updater::prepare_sublayer0

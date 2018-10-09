@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUComputePipelineState.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
     
 GPUComputePipelineState::~GPUComputePipelineState()
 {
-    LOG(WebGPU, "GPUComputePipelineState::~GPUComputePipelineState()");
+    LOG(WebMetal, "GPUComputePipelineState::~GPUComputePipelineState()");
 }
 
 } // namespace WebCore

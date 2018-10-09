@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>

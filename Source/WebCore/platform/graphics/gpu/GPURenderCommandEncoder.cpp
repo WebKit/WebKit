@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPURenderCommandEncoder.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPURenderCommandEncoder::~GPURenderCommandEncoder()
 {
-    LOG(WebGPU, "GPURenderCommandEncoder::~GPURenderCommandEncoder()");
+    LOG(WebMetal, "GPURenderCommandEncoder::~GPURenderCommandEncoder()");
 }
 
 } // namespace WebCore

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPURenderPassColorAttachmentDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPURenderPassColorAttachmentDescriptor::~GPURenderPassColorAttachmentDescriptor()
 {
-    LOG(WebGPU, "GPURenderPassColorAttachmentDescriptor::~GPURenderPassColorAttachmentDescriptor()");
+    LOG(WebMetal, "GPURenderPassColorAttachmentDescriptor::~GPURenderPassColorAttachmentDescriptor()");
 }
 
 } // namespace WebCore

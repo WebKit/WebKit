@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUDepthStencilState.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPUDepthStencilState::~GPUDepthStencilState()
 {
-    LOG(WebGPU, "GPUDepthStencilState::~GPUDepthStencilState()");
+    LOG(WebMetal, "GPUDepthStencilState::~GPUDepthStencilState()");
 }
 
 } // namespace WebCore

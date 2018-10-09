@@ -1,0 +1,2 @@
+PASS: WebMetal was available when enabled.
+PASS: WebMetal was not available when disabled.

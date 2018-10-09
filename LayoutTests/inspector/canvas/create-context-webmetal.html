@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/create-context-utilities.css">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/create-context-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebMetalEnabled(true);
+
+function test() {
+    let suite = initializeTestSuite("Canvas.CreateContextWebMetal");
+
+    addSimpleTestCase({
+        name: "Attached",
+        expression: `createAttachedCanvas("webmetal")`,
+        contextType: WI.Canvas.ContextType.WebMetal,
+    });
+
+    addSimpleTestCase({
+        name: "Detached",
+        expression: `createDetachedCanvas("webmetal")`,
+        contextType: WI.Canvas.ContextType.WebMetal,
+    });
+
+    addCSSCanvasTestCase(WI.Canvas.ContextType.WebMetal;
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that CanvasManager tracks creation and destruction of WebMetal canvases.</p>
+</body>
+</html>

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPURenderPassDepthAttachmentDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPURenderPassAttachmentDescriptor.h"
 #import "Logging.h"
@@ -37,7 +37,7 @@ namespace WebCore {
 GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor(MTLRenderPassDepthAttachmentDescriptor *metal)
     : GPURenderPassAttachmentDescriptor { metal }
 {
-    LOG(WebGPU, "GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor()");
+    LOG(WebMetal, "GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor()");
 }
 
 double GPURenderPassDepthAttachmentDescriptor::clearDepth() const

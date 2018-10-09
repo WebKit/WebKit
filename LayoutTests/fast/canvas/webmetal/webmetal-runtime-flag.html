@@ -1,0 +1,42 @@
+<script>
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+function getContext(name) {
+    var c = document.createElement("canvas");
+    return c.getContext(name);
+}
+
+function run() {
+    var output;
+
+    output = document.getElementById("output1");
+
+    if (!window.testRunner) {
+        output.textContent = "This test only runs inside DRT/WKTR.";
+        return;
+    }
+
+    window.internals.settings.setWebMetalEnabled(true);
+    var ctx = getContext("webmetal");
+    if (ctx)
+        output.textContent = "PASS: WebMetal was available when enabled.";
+    else
+        output.textContent = "FAIL: WebMetal was not available when enabled.";
+
+    output = document.getElementById("output2");
+
+    window.internals.settings.setWebMetalEnabled(false);
+    var ctx = getContext("webmetal");
+    if (ctx)
+        output.textContent = "FAIL: WebMetal was available when disabled.";
+    else
+        output.textContent = "PASS: WebMetal was not available when disabled.";
+}
+
+window.addEventListener("load", run, false);
+
+</script>
+<div id="output1"></div>
+<div id="output2"></div>

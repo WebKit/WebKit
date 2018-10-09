@@ -1,3 +1,29 @@
+2018-10-08  Justin Fan  <justin_fan@apple.com>
+
+        WebGPU: Rename old WebGPU prototype to WebMetal
+        https://bugs.webkit.org/show_bug.cgi?id=190325
+        <rdar://problem/44990443>
+
+        Reviewed by Dean Jackson.
+
+        Rename WebGPU prototype files to WebMetal in preparation for implementing the new (Oct 2018) WebGPU interface.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (resetWebPreferencesToConsistentValues):
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUBuffer.mm:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUCommandQueue.mm:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUDevice.mm:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUFunction.mm:
+        * TestWebKitAPI/Tests/WebCore/mac/GPULibrary.mm:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebMetalEnabled):
+        (WTR::TestRunner::setWebGPUEnabled): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2018-10-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r236941.

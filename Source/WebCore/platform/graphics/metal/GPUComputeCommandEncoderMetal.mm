@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUComputeCommandEncoder.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUBuffer.h"
 #import "GPUCommandBuffer.h"
@@ -45,7 +45,7 @@ static inline MTLSize MTLSizeMake(GPUSize size)
 GPUComputeCommandEncoder::GPUComputeCommandEncoder(const GPUCommandBuffer& buffer)
     : m_metal { [buffer.metal() computeCommandEncoder] }
 {
-    LOG(WebGPU, "GPUComputeCommandEncoder::GPUComputeCommandEncoder()");
+    LOG(WebMetal, "GPUComputeCommandEncoder::GPUComputeCommandEncoder()");
 }
 
 void GPUComputeCommandEncoder::setComputePipelineState(const GPUComputePipelineState& computePipelineState) const

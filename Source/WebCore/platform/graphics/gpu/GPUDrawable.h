@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include <wtf/RetainPtr.h>
 
@@ -46,7 +46,7 @@ public:
 #if USE(METAL)
     MTLDrawable *metal() const;
 
-    // FIXME: WebGPU - not all drawables should have this. Only the framebuffer.
+    // FIXME: WebMetal - not all drawables should have this. Only the framebuffer.
     MTLTexture *texture() const;
 #endif
 

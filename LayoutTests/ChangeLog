@@ -1,3 +1,28 @@
+2018-10-08  Justin Fan  <justin_fan@apple.com>
+
+        WebGPU: Rename old WebGPU prototype to WebMetal
+        https://bugs.webkit.org/show_bug.cgi?id=190325
+        <rdar://problem/44990443>
+
+        Reviewed by Dean Jackson.
+
+        Rename WebGPU prototype files to WebMetal in preparation for implementing the new (Oct 2018) WebGPU interface.
+
+        * fast/canvas/webgpu/webgpu-runtime-flag-expected.txt: Removed.
+        * fast/canvas/webmetal/webmetal-dispatch-expected.txt: Renamed from LayoutTests/fast/canvas/webgpu/webgpu-dispatch-expected.txt.
+        * fast/canvas/webmetal/webmetal-dispatch.html: Renamed from LayoutTests/fast/canvas/webgpu/webgpu-dispatch.html.
+        * fast/canvas/webmetal/webmetal-runtime-flag-expected.txt: Added.
+        * fast/canvas/webmetal/webmetal-runtime-flag.html: Renamed from LayoutTests/fast/canvas/webgpu/webgpu-runtime-flag.html.
+        * inspector/canvas/create-context-webmetal-expected.txt: Renamed from LayoutTests/inspector/canvas/create-context-webgpu-expected.txt.
+        * inspector/canvas/create-context-webmetal.html: Renamed from LayoutTests/inspector/canvas/create-context-webgpu.html.
+        * inspector/canvas/resolveCanvasContext-webgpu-expected.txt: Removed.
+        * inspector/canvas/resolveCanvasContext-webmetal-expected.txt: Added.
+        * inspector/canvas/resolveCanvasContext-webmetal.html: Renamed from LayoutTests/inspector/canvas/resolveCanvasContext-webgpu.html.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-10-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow multiple canvases to be recorded at the same time

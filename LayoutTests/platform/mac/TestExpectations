@@ -1042,7 +1042,7 @@ webkit.org/b/150978 fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass 
 webkit.org/b/173931 inspector/canvas/context-attributes.html [ Pass Timeout ]
 webkit.org/b/178028 inspector/canvas/create-context-2d.html [ Pass Timeout ]
 webkit.org/b/174066 inspector/canvas/create-context-webgl2.html [ Pass Timeout ]
-webkit.org/b/174066 inspector/canvas/create-context-webgpu.html [ Pass Timeout ]
+webkit.org/b/174066 inspector/canvas/create-context-webmetal.html [ Pass Timeout ]
 webkit.org/b/174272 inspector/canvas/css-canvas-clients.html [ Pass Timeout ]
 webkit.org/b/174066 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass Failure Timeout ]
 webkit.org/b/160048 [ Debug ] inspector/codemirror/prettyprinting-javascript.html [ Pass Timeout ]

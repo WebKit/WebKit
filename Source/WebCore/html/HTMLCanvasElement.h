@@ -51,7 +51,7 @@ class ImageData;
 class MediaSample;
 class MediaStream;
 class WebGLRenderingContextBase;
-class WebGPURenderingContext;
+class WebMetalRenderingContext;
 struct UncachedString;
 
 namespace DisplayList {
@@ -97,10 +97,10 @@ public:
     WebGLRenderingContextBase* createContextWebGL(const String&, WebGLContextAttributes&& = { });
     WebGLRenderingContextBase* getContextWebGL(const String&, WebGLContextAttributes&& = { });
 #endif
-#if ENABLE(WEBGPU)
-    static bool isWebGPUType(const String&);
-    WebGPURenderingContext* createContextWebGPU(const String&);
-    WebGPURenderingContext* getContextWebGPU(const String&);
+#if ENABLE(WEBMETAL)
+    static bool isWebMetalType(const String&);
+    WebMetalRenderingContext* createContextWebMetal(const String&);
+    WebMetalRenderingContext* getContextWebMetal(const String&);
 #endif
 
     static bool isBitmapRendererType(const String&);

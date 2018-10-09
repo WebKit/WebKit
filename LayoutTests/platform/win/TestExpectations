@@ -2441,8 +2441,8 @@ inspector/memory [ Skip ]
 # inspector/debugger/removeBreakpoint.html [ Skip ] # Crashing
 # inspector/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
 
-inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
+inspector/canvas/create-context-webmetal.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webmetal.html [ Skip ]
 
 ################################################################################
 #################        End Inspector Issues               ####################
@@ -3527,7 +3527,7 @@ fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
 fast/block/positioning/016.html [ Failure ]
 fast/block/positioning/025.html [ Failure ]
 fast/block/positioning/fixed-position-stacking-context.html [ Failure ]
-fast/canvas/webgpu/webgpu-runtime-flag.html [ Failure ]
+fast/canvas/webmetal/webmetal-runtime-flag.html [ Failure ]
 fast/css/getComputedStyle/computed-style-font-family.html [ Failure ]
 fast/css/getComputedStyle/computed-style-without-renderer.html [ Failure ]
 fast/css/getComputedStyle/computed-style.html [ Failure ]
@@ -3642,7 +3642,7 @@ legacy-animation-engine/animations/font-variations/font-style.html [ Skip ]
 editing/selection/caret-after-tap-in-editable-selection.html [ Skip ]
 editing/selection/character-granularity-select-text-with-click-handler.html [ Skip ]
 editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
-fast/canvas/webgpu/webgpu-dispatch.html [ Skip ]
+fast/canvas/webmetal/webmetal-dispatch.html [ Skip ]
 fast/dom/FileList-iterator-using-open-panel.html [ Skip ]
 fast/forms/file/file-input-reset-using-open-panel.html [ Skip ]
 fast/forms/file/file-reset-in-change-using-open-panel.html [ Skip ]

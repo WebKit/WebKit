@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUCommandBuffer.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUCommandQueue.h"
 #import "GPUDrawable.h"
@@ -40,7 +40,7 @@ namespace WebCore {
 GPUCommandBuffer::GPUCommandBuffer(const GPUCommandQueue& queue, Function<void()>&& completedCallback)
     : m_metal { [queue.metal() commandBuffer] }
 {
-    LOG(WebGPU, "GPUCommandBuffer::GPUCommandBuffer()");
+    LOG(WebMetal, "GPUCommandBuffer::GPUCommandBuffer()");
 
     [m_metal addCompletedHandler:BlockPtr<void (id<MTLCommandBuffer>)>::fromCallable([completedCallback = WTFMove(completedCallback)] (id<MTLCommandBuffer>) mutable {
         callOnMainThread(WTFMove(completedCallback));

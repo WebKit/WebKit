@@ -164,28 +164,28 @@ namespace WebCore {
     macro(VisualViewport) \
     macro(WebGL2RenderingContext) \
     macro(WebGLVertexArrayObject) \
-    macro(WebGPUBuffer) \
-    macro(WebGPUCommandBuffer) \
-    macro(WebGPUCommandQueue) \
-    macro(WebGPUComputeCommandEncoder) \
-    macro(WebGPUComputePipelineState) \
-    macro(WebGPUDepthStencilDescriptor) \
-    macro(WebGPUDepthStencilState) \
-    macro(WebGPUDrawable) \
-    macro(WebGPUFunction) \
-    macro(WebGPULibrary) \
-    macro(WebGPURenderCommandEncoder) \
-    macro(WebGPURenderPassAttachmentDescriptor) \
-    macro(WebGPURenderPassColorAttachmentDescriptor) \
-    macro(WebGPURenderPassDepthAttachmentDescriptor) \
-    macro(WebGPURenderPassDescriptor) \
-    macro(WebGPURenderPipelineColorAttachmentDescriptor) \
-    macro(WebGPURenderPipelineDescriptor) \
-    macro(WebGPURenderPipelineState) \
-    macro(WebGPURenderingContext) \
-    macro(WebGPUSize) \
-    macro(WebGPUTexture) \
-    macro(WebGPUTextureDescriptor) \
+    macro(WebMetalBuffer) \
+    macro(WebMetalCommandBuffer) \
+    macro(WebMetalCommandQueue) \
+    macro(WebMetalComputeCommandEncoder) \
+    macro(WebMetalComputePipelineState) \
+    macro(WebMetalDepthStencilDescriptor) \
+    macro(WebMetalDepthStencilState) \
+    macro(WebMetalDrawable) \
+    macro(WebMetalFunction) \
+    macro(WebMetalLibrary) \
+    macro(WebMetalRenderCommandEncoder) \
+    macro(WebMetalRenderPassAttachmentDescriptor) \
+    macro(WebMetalRenderPassColorAttachmentDescriptor) \
+    macro(WebMetalRenderPassDepthAttachmentDescriptor) \
+    macro(WebMetalRenderPassDescriptor) \
+    macro(WebMetalRenderPipelineColorAttachmentDescriptor) \
+    macro(WebMetalRenderPipelineDescriptor) \
+    macro(WebMetalRenderPipelineState) \
+    macro(WebMetalRenderingContext) \
+    macro(WebMetalSize) \
+    macro(WebMetalTexture) \
+    macro(WebMetalTextureDescriptor) \
     macro(WebKitMediaKeyError) \
     macro(WebKitMediaKeyMessageEvent) \
     macro(WebKitMediaKeyNeededEvent) \

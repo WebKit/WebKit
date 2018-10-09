@@ -1,8 +1,0 @@
-Tests for the Canvas.resolveCanvasContext command for WebGPU contexts.
-
-
-== Running test suite: Canvas.resolveCanvasContextWebGPU
--- Running test case: Canvas.resolveCanvasContextWebGPU.validIdentifier
-PASS: Payload should have type "object".
-PASS: Payload should have className "WebGPURenderingContext".
-

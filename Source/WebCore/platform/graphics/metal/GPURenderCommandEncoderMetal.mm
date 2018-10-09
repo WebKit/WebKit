@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPURenderCommandEncoder.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUBuffer.h"
 #import "GPUCommandBuffer.h"
@@ -40,7 +40,7 @@ namespace WebCore {
 
 GPURenderCommandEncoder::GPURenderCommandEncoder(const GPUCommandBuffer& buffer, const GPURenderPassDescriptor& descriptor)
 {
-    LOG(WebGPU, "GPURenderCommandEncoder::GPURenderCommandEncoder()");
+    LOG(WebMetal, "GPURenderCommandEncoder::GPURenderCommandEncoder()");
 
     if (!descriptor.metal())
         return;

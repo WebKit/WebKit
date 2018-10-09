@@ -25,12 +25,12 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
-OBJC_CLASS WebGPULayer;
+OBJC_CLASS WebMetalLayer;
 
 OBJC_PROTOCOL(MTLDevice);
 
@@ -46,7 +46,7 @@ public:
     void reshape(int width, int height) const;
 
 #if USE(METAL)
-    WebGPULayer *layer() const { return m_layer.get(); }
+    WebMetalLayer *layer() const { return m_layer.get(); }
     WEBCORE_EXPORT CALayer *platformLayer() const;
     MTLDevice *metal() const { return m_metal.get(); }
 #endif
@@ -57,7 +57,7 @@ private:
     void disconnect();
 
 #if USE(METAL)
-    RetainPtr<WebGPULayer> m_layer;
+    RetainPtr<WebMetalLayer> m_layer;
     RetainPtr<MTLDevice> m_metal;
 #endif
 };

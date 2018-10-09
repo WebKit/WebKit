@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUCommandQueue.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPUCommandQueue::~GPUCommandQueue()
 {
-    LOG(WebGPU, "GPUCommandQueue::~GPUCommandQueue()");
+    LOG(WebMetal, "GPUCommandQueue::~GPUCommandQueue()");
 }
 
 } // namespace WebCore

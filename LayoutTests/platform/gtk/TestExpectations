@@ -1114,10 +1114,10 @@ plugins/form-value.html [ Skip ]
 fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
 http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip ]
 
-# WebGPU is not enabled on GTK+.
-fast/canvas/webgpu [ Skip ]
-inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
+# WebMetal is not enabled on GTK+.
+fast/canvas/webmetal [ Skip ]
+inspector/canvas/create-context-webmetal.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webmetal.html [ Skip ]
 
 # We don't support APPLE_PAY.
 http/tests/ssl/applepay [ Skip ]

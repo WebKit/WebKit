@@ -790,28 +790,28 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/ImageSmoothingQuality.idl
     html/canvas/OffscreenCanvasRenderingContext2D.idl
     html/canvas/Path2D.idl
-    html/canvas/WebGPUBuffer.idl
-    html/canvas/WebGPUCommandBuffer.idl
-    html/canvas/WebGPUCommandQueue.idl
-    html/canvas/WebGPUComputeCommandEncoder.idl
-    html/canvas/WebGPUComputePipelineState.idl
-    html/canvas/WebGPUDepthStencilDescriptor.idl
-    html/canvas/WebGPUDepthStencilState.idl
-    html/canvas/WebGPUDrawable.idl
-    html/canvas/WebGPUFunction.idl
-    html/canvas/WebGPULibrary.idl
-    html/canvas/WebGPURenderCommandEncoder.idl
-    html/canvas/WebGPURenderPassAttachmentDescriptor.idl
-    html/canvas/WebGPURenderPassColorAttachmentDescriptor.idl
-    html/canvas/WebGPURenderPassDepthAttachmentDescriptor.idl
-    html/canvas/WebGPURenderPassDescriptor.idl
-    html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.idl
-    html/canvas/WebGPURenderPipelineDescriptor.idl
-    html/canvas/WebGPURenderPipelineState.idl
-    html/canvas/WebGPURenderingContext.idl
-    html/canvas/WebGPUSize.idl
-    html/canvas/WebGPUTexture.idl
-    html/canvas/WebGPUTextureDescriptor.idl
+    html/canvas/WebMetalBuffer.idl
+    html/canvas/WebMetalCommandBuffer.idl
+    html/canvas/WebMetalCommandQueue.idl
+    html/canvas/WebMetalComputeCommandEncoder.idl
+    html/canvas/WebMetalComputePipelineState.idl
+    html/canvas/WebMetalDepthStencilDescriptor.idl
+    html/canvas/WebMetalDepthStencilState.idl
+    html/canvas/WebMetalDrawable.idl
+    html/canvas/WebMetalFunction.idl
+    html/canvas/WebMetalLibrary.idl
+    html/canvas/WebMetalRenderCommandEncoder.idl
+    html/canvas/WebMetalRenderPassAttachmentDescriptor.idl
+    html/canvas/WebMetalRenderPassColorAttachmentDescriptor.idl
+    html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.idl
+    html/canvas/WebMetalRenderPassDescriptor.idl
+    html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.idl
+    html/canvas/WebMetalRenderPipelineDescriptor.idl
+    html/canvas/WebMetalRenderPipelineState.idl
+    html/canvas/WebMetalRenderingContext.idl
+    html/canvas/WebMetalSize.idl
+    html/canvas/WebMetalTexture.idl
+    html/canvas/WebMetalTextureDescriptor.idl
 
     inspector/CommandLineAPIHost.idl
     inspector/InspectorFrontendHost.idl

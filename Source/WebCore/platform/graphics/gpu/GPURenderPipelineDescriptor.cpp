@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPURenderPipelineDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPURenderPipelineDescriptor::~GPURenderPipelineDescriptor()
 {
-    LOG(WebGPU, "GPURenderPipelineDescriptor::~GPURenderPipelineDescriptor()");
+    LOG(WebMetal, "GPURenderPipelineDescriptor::~GPURenderPipelineDescriptor()");
 }
 
 } // namespace WebCore

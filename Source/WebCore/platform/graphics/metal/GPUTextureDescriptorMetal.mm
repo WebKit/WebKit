@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUTextureDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "Logging.h"
 #import <Metal/Metal.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 GPUTextureDescriptor::GPUTextureDescriptor(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped)
     : m_metal { [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:static_cast<MTLPixelFormat>(pixelFormat) width:width height:height mipmapped:mipmapped] }
 {
-    LOG(WebGPU, "GPUTextureDescriptor::GPUTextureDescriptor()");
+    LOG(WebMetal, "GPUTextureDescriptor::GPUTextureDescriptor()");
 }
 
 unsigned GPUTextureDescriptor::width() const

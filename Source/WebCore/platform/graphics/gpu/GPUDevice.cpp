@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUDevice.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPUDevice::~GPUDevice()
 {
-    LOG(WebGPU, "GPUDevice::~GPUDevice()");
+    LOG(WebMetal, "GPUDevice::~GPUDevice()");
     disconnect();
 }
 

@@ -1,0 +1,8 @@
+Tests for the Canvas.resolveCanvasContext command for WebMetal contexts.
+
+
+== Running test suite: Canvas.resolveCanvasContextWebMetal
+-- Running test case: Canvas.resolveCanvasContextWebMetal.validIdentifier
+PASS: Payload should have type "object".
+PASS: Payload should have className "WebMetalRenderingContext".
+

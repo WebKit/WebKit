@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUComputeCommandEncoder.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
     
 GPUComputeCommandEncoder::~GPUComputeCommandEncoder()
 {
-    LOG(WebGPU, "GPUComputeCommandEncoder::~GPUComputeCommandEncoder()");
+    LOG(WebMetal, "GPUComputeCommandEncoder::~GPUComputeCommandEncoder()");
 }
     
 } // namespace WebCore

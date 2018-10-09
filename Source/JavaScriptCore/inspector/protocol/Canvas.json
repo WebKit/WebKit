@@ -16,7 +16,7 @@
         {
             "id": "ContextType",
             "type": "string",
-            "enum": ["canvas-2d", "bitmaprenderer", "webgl", "webgl2", "webgpu"],
+            "enum": ["canvas-2d", "bitmaprenderer", "webgl", "webgl2", "webmetal"],
             "description": "The type of rendering context backing the canvas element."
         },
         {

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUTexture.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPUTexture::~GPUTexture()
 {
-    LOG(WebGPU, "GPUTexture::~GPUTexture()");
+    LOG(WebMetal, "GPUTexture::~GPUTexture()");
 }
 
 } // namespace WebCore

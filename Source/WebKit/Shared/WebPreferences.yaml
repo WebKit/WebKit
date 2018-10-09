@@ -1238,14 +1238,14 @@ WebGL2Enabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGL2)
 
-WebGPUEnabled:
+WebMetalEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "WebGPU"
-  humanReadableDescription: "WebGPU prototype"
+  humanReadableName: "WebMetal"
+  humanReadableDescription: "WebMetal prototype"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEBGPU)
+  condition: ENABLE(WEBMETAL)
 
 AccessibilityObjectModelEnabled:
   type: bool

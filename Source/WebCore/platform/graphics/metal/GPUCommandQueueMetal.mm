@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUCommandQueue.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUDevice.h"
 #import "Logging.h"
@@ -41,7 +41,7 @@ static NSString * const commandQueueLabelPrefix = @"com.apple.WebKit.";
 GPUCommandQueue::GPUCommandQueue(const GPUDevice& device)
     : m_metal { adoptNS([device.metal() newCommandQueue]) }
 {
-    LOG(WebGPU, "GPUCommandQueue::GPUCommandQueue()");
+    LOG(WebMetal, "GPUCommandQueue::GPUCommandQueue()");
 
     [m_metal setLabel:commandQueueDefaultLabel];
 }

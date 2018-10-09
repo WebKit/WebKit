@@ -908,7 +908,7 @@
 		314BE3A11B30F6B700141982 /* CSSNamedImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 314BE3A01B30F6B700141982 /* CSSNamedImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		314BE3A71B3103FB00141982 /* NamedImageGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */; };
 		316BDB861E6E0A2700DE0D5A /* GPUDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB851E6E0A2100DE0D5A /* GPUDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		316BDB8C1E6E153000DE0D5A /* WebGPULayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */; };
+		316BDB8C1E6E153000DE0D5A /* WebMetalLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB8A1E6E153000DE0D5A /* WebMetalLayer.h */; };
 		316BDB951E70C89700DE0D5A /* GPUFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB931E70C89700DE0D5A /* GPUFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316BDB9B1E70CBBF00DE0D5A /* GPULibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB991E70CBBF00DE0D5A /* GPULibrary.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316BDBAA1E71FA9300DE0D5A /* GPUBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBA81E71FA9300DE0D5A /* GPUBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6831,8 +6831,7 @@
 		316BDB841E6E0A2100DE0D5A /* GPUDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUDevice.cpp; sourceTree = "<group>"; };
 		316BDB851E6E0A2100DE0D5A /* GPUDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUDevice.h; sourceTree = "<group>"; };
 		316BDB881E6E141C00DE0D5A /* GPUDeviceMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUDeviceMetal.mm; sourceTree = "<group>"; };
-		316BDB891E6E153000DE0D5A /* WebGPULayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGPULayer.mm; sourceTree = "<group>"; };
-		316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPULayer.h; sourceTree = "<group>"; };
+		316BDB8A1E6E153000DE0D5A /* WebMetalLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMetalLayer.h; sourceTree = "<group>"; };
 		316BDB921E70C89700DE0D5A /* GPUFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUFunction.cpp; sourceTree = "<group>"; };
 		316BDB931E70C89700DE0D5A /* GPUFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUFunction.h; sourceTree = "<group>"; };
 		316BDB961E70CA2400DE0D5A /* GPUFunctionMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUFunctionMetal.mm; sourceTree = "<group>"; };
@@ -13596,7 +13595,72 @@
 		D000ED2611C1B9CD00C47726 /* SubframeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubframeLoader.h; sourceTree = "<group>"; };
 		D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceSplitString.cpp; sourceTree = "<group>"; };
 		D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceSplitString.h; sourceTree = "<group>"; };
+		D02F854E21682A4A0088EE74 /* WebMetalCommandQueue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalCommandQueue.idl; sourceTree = "<group>"; };
+		D02F855021682A560088EE74 /* WebMetalComputeCommandEncoder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebMetalComputeCommandEncoder.idl; sourceTree = "<group>"; };
+		D02F855121682A560088EE74 /* WebMetalComputePipelineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMetalComputePipelineState.h; sourceTree = "<group>"; };
+		D02F855221682A910088EE74 /* WebMetalRenderPipelineState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderPipelineState.h; sourceTree = "<group>"; };
+		D02F855321682A910088EE74 /* WebMetalRenderPassDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderPassDescriptor.cpp; sourceTree = "<group>"; };
+		D02F855421682A910088EE74 /* WebMetalRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderingContext.h; sourceTree = "<group>"; };
+		D02F855521682A920088EE74 /* WebMetalDepthStencilDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalDepthStencilDescriptor.h; sourceTree = "<group>"; };
+		D02F855621682A920088EE74 /* WebMetalSize.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalSize.idl; sourceTree = "<group>"; };
+		D02F855721682A930088EE74 /* WebMetalRenderPassAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderPassAttachmentDescriptor.h; sourceTree = "<group>"; };
+		D02F855821682A930088EE74 /* WebMetalTexture.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalTexture.idl; sourceTree = "<group>"; };
+		D02F855921682A940088EE74 /* WebMetalRenderPassColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderPassColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
+		D02F855A21682A940088EE74 /* WebMetalRenderingContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderingContext.idl; sourceTree = "<group>"; };
+		D02F855B21682A940088EE74 /* WebMetalComputePipelineState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalComputePipelineState.cpp; sourceTree = "<group>"; };
+		D02F855C21682A950088EE74 /* WebMetalTextureDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalTextureDescriptor.idl; sourceTree = "<group>"; };
+		D02F855D21682A950088EE74 /* WebMetalRenderPassColorAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderPassColorAttachmentDescriptor.h; sourceTree = "<group>"; };
+		D02F855E21682A960088EE74 /* WebMetalRenderPipelineDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderPipelineDescriptor.cpp; sourceTree = "<group>"; };
+		D02F855F21682A960088EE74 /* WebMetalRenderPipelineState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderPipelineState.cpp; sourceTree = "<group>"; };
+		D02F856021682A970088EE74 /* WebMetalRenderPassColorAttachmentDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderPassColorAttachmentDescriptor.idl; sourceTree = "<group>"; };
+		D02F856121682A970088EE74 /* WebMetalRenderPassAttachmentDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderPassAttachmentDescriptor.idl; sourceTree = "<group>"; };
+		D02F856221682A980088EE74 /* WebMetalRenderCommandEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderCommandEncoder.cpp; sourceTree = "<group>"; };
+		D02F856321682A980088EE74 /* WebMetalRenderCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderCommandEncoder.h; sourceTree = "<group>"; };
+		D02F856421682A980088EE74 /* WebMetalDepthStencilState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalDepthStencilState.h; sourceTree = "<group>"; };
+		D02F856521682A990088EE74 /* WebMetalDepthStencilState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalDepthStencilState.cpp; sourceTree = "<group>"; };
+		D02F856621682A990088EE74 /* WebMetalRenderPipelineColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderPipelineColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
+		D02F856721682A9A0088EE74 /* WebMetalRenderPipelineState.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderPipelineState.idl; sourceTree = "<group>"; };
+		D02F856821682A9A0088EE74 /* WebMetalRenderPassDepthAttachmentDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderPassDepthAttachmentDescriptor.idl; sourceTree = "<group>"; };
+		D02F856921682A9B0088EE74 /* WebMetalRenderPassDepthAttachmentDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderPassDepthAttachmentDescriptor.cpp; sourceTree = "<group>"; };
+		D02F856A21682A9B0088EE74 /* WebMetalTextureDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalTextureDescriptor.h; sourceTree = "<group>"; };
+		D02F856B21682A9C0088EE74 /* WebMetalRenderPassDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderPassDescriptor.h; sourceTree = "<group>"; };
+		D02F856C21682A9C0088EE74 /* WebMetalLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalLibrary.h; sourceTree = "<group>"; };
+		D02F856D21682A9C0088EE74 /* WebMetalSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalSize.h; sourceTree = "<group>"; };
+		D02F856E21682A9D0088EE74 /* WebMetalTextureDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalTextureDescriptor.cpp; sourceTree = "<group>"; };
+		D02F856F21682A9D0088EE74 /* WebMetalDrawable.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalDrawable.idl; sourceTree = "<group>"; };
+		D02F857021682A9E0088EE74 /* WebMetalEnums.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalEnums.cpp; sourceTree = "<group>"; };
+		D02F857121682A9E0088EE74 /* WebMetalRenderPassAttachmentDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderPassAttachmentDescriptor.cpp; sourceTree = "<group>"; };
+		D02F857221682A9E0088EE74 /* WebMetalLibrary.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalLibrary.idl; sourceTree = "<group>"; };
+		D02F857321682A9F0088EE74 /* WebMetalTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalTexture.h; sourceTree = "<group>"; };
+		D02F857421682A9F0088EE74 /* WebMetalEnums.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalEnums.idl; sourceTree = "<group>"; };
+		D02F857521682AA00088EE74 /* WebMetalEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalEnums.h; sourceTree = "<group>"; };
+		D02F857621682AA00088EE74 /* WebMetalDrawable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalDrawable.h; sourceTree = "<group>"; };
+		D02F857721682AA10088EE74 /* WebMetalDepthStencilState.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalDepthStencilState.idl; sourceTree = "<group>"; };
+		D02F857821682AA10088EE74 /* WebMetalDepthStencilDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalDepthStencilDescriptor.idl; sourceTree = "<group>"; };
+		D02F857921682AA20088EE74 /* WebMetalFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalFunction.cpp; sourceTree = "<group>"; };
+		D02F857A21682AA20088EE74 /* WebMetalFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalFunction.h; sourceTree = "<group>"; };
+		D02F857B21682AA20088EE74 /* WebMetalLibrary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalLibrary.cpp; sourceTree = "<group>"; };
+		D02F857C21682AA30088EE74 /* WebMetalRenderPipelineDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderPipelineDescriptor.h; sourceTree = "<group>"; };
+		D02F857D21682AA30088EE74 /* WebMetalRenderPassDepthAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderPassDepthAttachmentDescriptor.h; sourceTree = "<group>"; };
+		D02F857E21682AA40088EE74 /* WebMetalRenderPassDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderPassDescriptor.idl; sourceTree = "<group>"; };
+		D02F857F21682AA40088EE74 /* WebMetalDrawable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalDrawable.cpp; sourceTree = "<group>"; };
+		D02F858021682AA40088EE74 /* WebMetalRenderPipelineDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderPipelineDescriptor.idl; sourceTree = "<group>"; };
+		D02F858121682AA50088EE74 /* WebMetalRenderCommandEncoder.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderCommandEncoder.idl; sourceTree = "<group>"; };
+		D02F858221682AA50088EE74 /* WebMetalTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalTexture.cpp; sourceTree = "<group>"; };
+		D02F858321682AA60088EE74 /* WebMetalComputePipelineState.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalComputePipelineState.idl; sourceTree = "<group>"; };
+		D02F858421682AA60088EE74 /* WebMetalDepthStencilDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalDepthStencilDescriptor.cpp; sourceTree = "<group>"; };
+		D02F858521682AA70088EE74 /* WebMetalRenderPipelineColorAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalRenderPipelineColorAttachmentDescriptor.h; sourceTree = "<group>"; };
+		D02F858621682AA70088EE74 /* WebMetalRenderPipelineColorAttachmentDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalRenderPipelineColorAttachmentDescriptor.idl; sourceTree = "<group>"; };
+		D02F858721682AA70088EE74 /* WebMetalRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalRenderingContext.cpp; sourceTree = "<group>"; };
+		D02F858821682AA80088EE74 /* WebMetalFunction.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalFunction.idl; sourceTree = "<group>"; };
 		D036DD8D208FFC0C00F9F4B2 /* WebGLCompressedTextureASTC.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGLCompressedTextureASTC.idl; sourceTree = "<group>"; };
+		D045AD1D2168230B000A6E9B /* WebMetalLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMetalLayer.mm; sourceTree = "<group>"; };
+		D045AD1E21682449000A6E9B /* JSWebMetalRenderPassAttachmentDescriptorCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebMetalRenderPassAttachmentDescriptorCustom.cpp; sourceTree = "<group>"; };
+		D045AD1F21682449000A6E9B /* JSWebMetalRenderingContextCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebMetalRenderingContextCustom.cpp; sourceTree = "<group>"; };
+		D045AD2021682474000A6E9B /* WebMetalComputeCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalComputeCommandEncoder.h; sourceTree = "<group>"; };
+		D045AD2121682474000A6E9B /* WebMetalBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalBuffer.cpp; sourceTree = "<group>"; };
+		D045AD2221682474000A6E9B /* WebMetalCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalCommandBuffer.h; sourceTree = "<group>"; };
+		D045AD2321682475000A6E9B /* WebMetalCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalCommandQueue.cpp; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
 		D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormatBlockCommand.h; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
@@ -13615,6 +13679,12 @@
 		D0BC54481443AC4A00E105DA /* CachedStyleSheetClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedStyleSheetClient.h; sourceTree = "<group>"; };
 		D0BD4F5A1408850F006839B6 /* DictationCommandIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationCommandIOS.cpp; sourceTree = "<group>"; };
 		D0BD4F5B1408850F006839B6 /* DictationCommandIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationCommandIOS.h; sourceTree = "<group>"; };
+		D0CAAE98216824A6001C91C7 /* WebMetalBuffer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalBuffer.idl; sourceTree = "<group>"; };
+		D0CAAE9A216824A6001C91C7 /* WebMetalCommandBuffer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalCommandBuffer.idl; sourceTree = "<group>"; };
+		D0CAAE9B216824A7001C91C7 /* WebMetalCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalCommandQueue.h; sourceTree = "<group>"; };
+		D0CAAE9C216824A7001C91C7 /* WebMetalComputeCommandEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalComputeCommandEncoder.cpp; sourceTree = "<group>"; };
+		D0CAAE9D216824A7001C91C7 /* WebMetalBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalBuffer.h; sourceTree = "<group>"; };
+		D0CAAE9E216824A8001C91C7 /* WebMetalCommandBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalCommandBuffer.cpp; sourceTree = "<group>"; };
 		D0EDA772143E303C0028E383 /* CachedRawResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedRawResource.cpp; sourceTree = "<group>"; };
 		D0EDA773143E303C0028E383 /* CachedRawResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRawResource.h; sourceTree = "<group>"; };
 		D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoader.cpp; sourceTree = "<group>"; };
@@ -17631,6 +17701,74 @@
 				31A089011E737B4D003B6609 /* WebGPUTextureDescriptor.cpp */,
 				31A089021E737B4D003B6609 /* WebGPUTextureDescriptor.h */,
 				31A089031E737B4D003B6609 /* WebGPUTextureDescriptor.idl */,
+				D045AD2121682474000A6E9B /* WebMetalBuffer.cpp */,
+				D0CAAE9D216824A7001C91C7 /* WebMetalBuffer.h */,
+				D0CAAE98216824A6001C91C7 /* WebMetalBuffer.idl */,
+				D0CAAE9E216824A8001C91C7 /* WebMetalCommandBuffer.cpp */,
+				D045AD2221682474000A6E9B /* WebMetalCommandBuffer.h */,
+				D0CAAE9A216824A6001C91C7 /* WebMetalCommandBuffer.idl */,
+				D045AD2321682475000A6E9B /* WebMetalCommandQueue.cpp */,
+				D0CAAE9B216824A7001C91C7 /* WebMetalCommandQueue.h */,
+				D02F854E21682A4A0088EE74 /* WebMetalCommandQueue.idl */,
+				D0CAAE9C216824A7001C91C7 /* WebMetalComputeCommandEncoder.cpp */,
+				D045AD2021682474000A6E9B /* WebMetalComputeCommandEncoder.h */,
+				D02F855021682A560088EE74 /* WebMetalComputeCommandEncoder.idl */,
+				D02F855B21682A940088EE74 /* WebMetalComputePipelineState.cpp */,
+				D02F855121682A560088EE74 /* WebMetalComputePipelineState.h */,
+				D02F858321682AA60088EE74 /* WebMetalComputePipelineState.idl */,
+				D02F858421682AA60088EE74 /* WebMetalDepthStencilDescriptor.cpp */,
+				D02F855521682A920088EE74 /* WebMetalDepthStencilDescriptor.h */,
+				D02F857821682AA10088EE74 /* WebMetalDepthStencilDescriptor.idl */,
+				D02F856521682A990088EE74 /* WebMetalDepthStencilState.cpp */,
+				D02F856421682A980088EE74 /* WebMetalDepthStencilState.h */,
+				D02F857721682AA10088EE74 /* WebMetalDepthStencilState.idl */,
+				D02F857F21682AA40088EE74 /* WebMetalDrawable.cpp */,
+				D02F857621682AA00088EE74 /* WebMetalDrawable.h */,
+				D02F856F21682A9D0088EE74 /* WebMetalDrawable.idl */,
+				D02F857021682A9E0088EE74 /* WebMetalEnums.cpp */,
+				D02F857521682AA00088EE74 /* WebMetalEnums.h */,
+				D02F857421682A9F0088EE74 /* WebMetalEnums.idl */,
+				D02F857921682AA20088EE74 /* WebMetalFunction.cpp */,
+				D02F857A21682AA20088EE74 /* WebMetalFunction.h */,
+				D02F858821682AA80088EE74 /* WebMetalFunction.idl */,
+				D02F857B21682AA20088EE74 /* WebMetalLibrary.cpp */,
+				D02F856C21682A9C0088EE74 /* WebMetalLibrary.h */,
+				D02F857221682A9E0088EE74 /* WebMetalLibrary.idl */,
+				D02F856221682A980088EE74 /* WebMetalRenderCommandEncoder.cpp */,
+				D02F856321682A980088EE74 /* WebMetalRenderCommandEncoder.h */,
+				D02F858121682AA50088EE74 /* WebMetalRenderCommandEncoder.idl */,
+				D02F858721682AA70088EE74 /* WebMetalRenderingContext.cpp */,
+				D02F855421682A910088EE74 /* WebMetalRenderingContext.h */,
+				D02F855A21682A940088EE74 /* WebMetalRenderingContext.idl */,
+				D02F857121682A9E0088EE74 /* WebMetalRenderPassAttachmentDescriptor.cpp */,
+				D02F855721682A930088EE74 /* WebMetalRenderPassAttachmentDescriptor.h */,
+				D02F856121682A970088EE74 /* WebMetalRenderPassAttachmentDescriptor.idl */,
+				D02F855921682A940088EE74 /* WebMetalRenderPassColorAttachmentDescriptor.cpp */,
+				D02F855D21682A950088EE74 /* WebMetalRenderPassColorAttachmentDescriptor.h */,
+				D02F856021682A970088EE74 /* WebMetalRenderPassColorAttachmentDescriptor.idl */,
+				D02F856921682A9B0088EE74 /* WebMetalRenderPassDepthAttachmentDescriptor.cpp */,
+				D02F857D21682AA30088EE74 /* WebMetalRenderPassDepthAttachmentDescriptor.h */,
+				D02F856821682A9A0088EE74 /* WebMetalRenderPassDepthAttachmentDescriptor.idl */,
+				D02F855321682A910088EE74 /* WebMetalRenderPassDescriptor.cpp */,
+				D02F856B21682A9C0088EE74 /* WebMetalRenderPassDescriptor.h */,
+				D02F857E21682AA40088EE74 /* WebMetalRenderPassDescriptor.idl */,
+				D02F856621682A990088EE74 /* WebMetalRenderPipelineColorAttachmentDescriptor.cpp */,
+				D02F858521682AA70088EE74 /* WebMetalRenderPipelineColorAttachmentDescriptor.h */,
+				D02F858621682AA70088EE74 /* WebMetalRenderPipelineColorAttachmentDescriptor.idl */,
+				D02F855E21682A960088EE74 /* WebMetalRenderPipelineDescriptor.cpp */,
+				D02F857C21682AA30088EE74 /* WebMetalRenderPipelineDescriptor.h */,
+				D02F858021682AA40088EE74 /* WebMetalRenderPipelineDescriptor.idl */,
+				D02F855F21682A960088EE74 /* WebMetalRenderPipelineState.cpp */,
+				D02F855221682A910088EE74 /* WebMetalRenderPipelineState.h */,
+				D02F856721682A9A0088EE74 /* WebMetalRenderPipelineState.idl */,
+				D02F856D21682A9C0088EE74 /* WebMetalSize.h */,
+				D02F855621682A920088EE74 /* WebMetalSize.idl */,
+				D02F858221682AA50088EE74 /* WebMetalTexture.cpp */,
+				D02F857321682A9F0088EE74 /* WebMetalTexture.h */,
+				D02F855821682A930088EE74 /* WebMetalTexture.idl */,
+				D02F856E21682A9D0088EE74 /* WebMetalTextureDescriptor.cpp */,
+				D02F856A21682A9B0088EE74 /* WebMetalTextureDescriptor.h */,
+				D02F855C21682A950088EE74 /* WebMetalTextureDescriptor.idl */,
 			);
 			path = canvas;
 			sourceTree = "<group>";
@@ -24040,8 +24178,8 @@
 				CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */,
 				49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */,
 				49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */,
-				316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */,
-				316BDB891E6E153000DE0D5A /* WebGPULayer.mm */,
+				316BDB8A1E6E153000DE0D5A /* WebMetalLayer.h */,
+				D045AD1D2168230B000A6E9B /* WebMetalLayer.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -24133,6 +24271,8 @@
 				46BCBBC12085008000710638 /* JSRemoteDOMWindowBase.cpp */,
 				46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */,
 				931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */,
+				D045AD1F21682449000A6E9B /* JSWebMetalRenderingContextCustom.cpp */,
+				D045AD1E21682449000A6E9B /* JSWebMetalRenderPassAttachmentDescriptorCustom.cpp */,
 				BCBFB53A0DCD29CF0019B3E5 /* JSWindowProxy.cpp */,
 				BCBFB53B0DCD29CF0019B3E5 /* JSWindowProxy.h */,
 				E1C36D320EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp */,
@@ -31114,7 +31254,6 @@
 				0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */,
 				6F995A261A7078B100A735F4 /* WebGLVertexArrayObject.h in Headers */,
 				77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */,
-				316BDB8C1E6E153000DE0D5A /* WebGPULayer.h in Headers */,
 				A5B81CB71FAA44620037D1E6 /* WebHeapAgent.h in Headers */,
 				A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */,
 				A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */,
@@ -31136,6 +31275,7 @@
 				0709D78F1AE55554004E42F8 /* WebMediaSessionManager.h in Headers */,
 				0709D7951AE55A29004E42F8 /* WebMediaSessionManagerClient.h in Headers */,
 				0709D7931AE5557E004E42F8 /* WebMediaSessionManagerMac.h in Headers */,
+				316BDB8C1E6E153000DE0D5A /* WebMetalLayer.h in Headers */,
 				E1A3162D134BC32D007C9A4F /* WebNSAttributedStringExtras.h in Headers */,
 				CD5896E21CD2B15100B3BCC8 /* WebPlaybackControlsManager.h in Headers */,
 				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,

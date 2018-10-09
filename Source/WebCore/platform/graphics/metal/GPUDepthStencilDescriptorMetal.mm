@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUDepthStencilDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUEnums.h"
 #import "Logging.h"
@@ -37,7 +37,7 @@ namespace WebCore {
 GPUDepthStencilDescriptor::GPUDepthStencilDescriptor()
     : m_metal { adoptNS([MTLDepthStencilDescriptor new]) }
 {
-    LOG(WebGPU, "GPUDepthStencilDescriptor::GPUDepthStencilDescriptor()");
+    LOG(WebMetal, "GPUDepthStencilDescriptor::GPUDepthStencilDescriptor()");
 }
 
 bool GPUDepthStencilDescriptor::depthWriteEnabled() const

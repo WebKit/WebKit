@@ -26,23 +26,23 @@
 #import "config.h"
 #import "GPUDrawable.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUDevice.h"
 #import "Logging.h"
-#import "WebGPULayer.h"
+#import "WebMetalLayer.h"
 
 namespace WebCore {
 
 GPUDrawable::GPUDrawable(const GPUDevice& device)
     : m_metal { [device.layer() nextDrawable] }
 {
-    LOG(WebGPU, "GPUDrawable::GPUDrawable()");
+    LOG(WebMetal, "GPUDrawable::GPUDrawable()");
 }
 
 void GPUDrawable::release()
 {
-    LOG(WebGPU, "GPUDrawable::release()");
+    LOG(WebMetal, "GPUDrawable::release()");
     m_metal = nil;
 }
     

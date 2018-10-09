@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUDepthStencilState.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUDepthStencilDescriptor.h"
 #import "GPUDevice.h"
@@ -39,7 +39,7 @@ namespace WebCore {
 GPUDepthStencilState::GPUDepthStencilState(const GPUDevice& device, const GPUDepthStencilDescriptor& descriptor)
     : m_metal { adoptNS([device.metal() newDepthStencilStateWithDescriptor:descriptor.metal()]) }
 {
-    LOG(WebGPU, "GPUDepthStencilState::GPUDepthStencilState()");
+    LOG(WebMetal, "GPUDepthStencilState::GPUDepthStencilState()");
 }
 
 String GPUDepthStencilState::label() const
@@ -54,7 +54,7 @@ void GPUDepthStencilState::setLabel(const String&) const
 {
     // FIXME: The MTLDepthStencilState protocol does not allow setting the label.
     // The label has to be set on the descriptor when creating the state object.
-    // We should consider changing the WebGPU interface to not require this!
+    // We should consider changing the WebMetal interface to not require this!
 }
     
 } // namespace WebCore

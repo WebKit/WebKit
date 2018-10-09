@@ -75,8 +75,8 @@
 #include "WebGL2RenderingContext.h"
 #endif
 
-#if ENABLE(WEBGPU)
-#include "WebGPURenderingContext.h"
+#if ENABLE(WEBMETAL)
+#include "WebMetalRenderingContext.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -238,11 +238,11 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         }
 #endif
 
-#if ENABLE(WEBGPU)
-        if (m_context->isWebGPU()) {
-            if (!isWebGPUType(contextId))
+#if ENABLE(WEBMETAL)
+        if (m_context->isWebMetal()) {
+            if (!isWebMetalType(contextId))
                 return std::optional<RenderingContext> { std::nullopt };
-            return std::optional<RenderingContext> { RefPtr<WebGPURenderingContext> { &downcast<WebGPURenderingContext>(*m_context) } };
+            return std::optional<RenderingContext> { RefPtr<WebMetalRenderingContext> { &downcast<WebMetalRenderingContext>(*m_context) } };
         }
 #endif
 
@@ -287,12 +287,12 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     }
 #endif
 
-#if ENABLE(WEBGPU)
-    if (isWebGPUType(contextId)) {
-        auto context = createContextWebGPU(contextId);
+#if ENABLE(WEBMETAL)
+    if (isWebMetalType(contextId)) {
+        auto context = createContextWebMetal(contextId);
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
-        return std::optional<RenderingContext> { RefPtr<WebGPURenderingContext> { context } };
+        return std::optional<RenderingContext> { RefPtr<WebMetalRenderingContext> { context } };
     }
 #endif
 
@@ -307,9 +307,9 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
     if (HTMLCanvasElement::isBitmapRendererType(type))
         return getContextBitmapRenderer(type);
 
-#if ENABLE(WEBGPU)
-    if (HTMLCanvasElement::isWebGPUType(type) && RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
-        return getContextWebGPU(type);
+#if ENABLE(WEBMETAL)
+    if (HTMLCanvasElement::isWebMetalType(type) && RuntimeEnabledFeatures::sharedFeatures().webMetalEnabled())
+        return getContextWebMetal(type);
 #endif
 
 #if ENABLE(WEBGL)
@@ -437,43 +437,43 @@ WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(const String& type
 
 #endif // ENABLE(WEBGL)
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
-bool HTMLCanvasElement::isWebGPUType(const String& type)
+bool HTMLCanvasElement::isWebMetalType(const String& type)
 {
-    return type == "webgpu";
+    return type == "webmetal";
 }
 
-WebGPURenderingContext* HTMLCanvasElement::createContextWebGPU(const String& type)
+WebMetalRenderingContext* HTMLCanvasElement::createContextWebMetal(const String& type)
 {
-    ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
+    ASSERT_UNUSED(type, HTMLCanvasElement::isWebMetalType(type));
     ASSERT(!m_context);
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().webMetalEnabled())
         return nullptr;
 
-    m_context = WebGPURenderingContext::create(*this);
+    m_context = WebMetalRenderingContext::create(*this);
     if (m_context) {
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
     }
 
-    return static_cast<WebGPURenderingContext*>(m_context.get());
+    return static_cast<WebMetalRenderingContext*>(m_context.get());
 }
 
-WebGPURenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
+WebMetalRenderingContext* HTMLCanvasElement::getContextWebMetal(const String& type)
 {
-    ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
+    ASSERT_UNUSED(type, HTMLCanvasElement::isWebMetalType(type));
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().webMetalEnabled())
         return nullptr;
 
-    if (m_context && !m_context->isWebGPU())
+    if (m_context && !m_context->isWebMetal())
         return nullptr;
 
     if (!m_context)
-        return createContextWebGPU(type);
-    return static_cast<WebGPURenderingContext*>(m_context.get());
+        return createContextWebMetal(type);
+    return static_cast<WebMetalRenderingContext*>(m_context.get());
 }
 #endif
 

@@ -90,7 +90,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     // RuntimeEnabledFeatures.
     void setIndexedDBWorkersEnabled(boolean enabled);
     void setWebGL2Enabled(boolean enabled);
-    void setWebGPUEnabled(boolean enabled);
+    void setWebMetalEnabled(boolean enabled);
     void setWebVREnabled(boolean enabled);
     void setScreenCaptureEnabled(boolean enabled);
     void setStorageAccessPromptsEnabled(boolean enabled);

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPURenderPipelineColorAttachmentDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "Logging.h"
 #import <Metal/Metal.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor(MTLRenderPipelineColorAttachmentDescriptor *metal)
     : m_metal { metal }
 {
-    LOG(WebGPU, "GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor()");
+    LOG(WebMetal, "GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor()");
 }
 
 unsigned GPURenderPipelineColorAttachmentDescriptor::pixelFormat() const

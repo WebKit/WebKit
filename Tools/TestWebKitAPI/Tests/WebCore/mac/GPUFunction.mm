@@ -26,7 +26,7 @@
 
 #import "config.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUTest.h"
 #import "PlatformUtilities.h"

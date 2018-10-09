@@ -56,8 +56,8 @@
 #include "JSWebGL2RenderingContext.h"
 #endif
 
-#if ENABLE(WEBGPU)
-#include "JSWebGPURenderingContext.h"
+#if ENABLE(WEBMETAL)
+#include "JSWebMetalRenderingContext.h"
 #endif
 
 
@@ -199,7 +199,7 @@ void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String
 #endif
     }
 
-    // FIXME: <https://webkit.org/b/173621> Web Inspector: Support getting the content of WebGPU context;
+    // FIXME: <https://webkit.org/b/173621> Web Inspector: Support getting the content of WebMetal context;
     errorString = "Unsupported canvas context type"_s;
 }
 
@@ -230,9 +230,9 @@ static JSC::JSValue contextAsScriptValue(JSC::ExecState& state, CanvasRenderingC
     if (is<WebGL2RenderingContext>(context))
         return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<WebGL2RenderingContext>(context));
 #endif
-#if ENABLE(WEBGPU)
-    if (is<WebGPURenderingContext>(context))
-        return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<WebGPURenderingContext>(context));
+#if ENABLE(WEBMETAL)
+    if (is<WebMetalRenderingContext>(context))
+        return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<WebMetalRenderingContext>(context));
 #endif
     if (is<ImageBitmapRenderingContext>(context))
         return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<ImageBitmapRenderingContext>(context));

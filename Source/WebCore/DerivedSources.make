@@ -744,28 +744,28 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGLUniformLocation.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObject.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
-    $(WebCore)/html/canvas/WebGPUBuffer.idl \
-    $(WebCore)/html/canvas/WebGPUCommandBuffer.idl \
-    $(WebCore)/html/canvas/WebGPUCommandQueue.idl \
-	$(WebCore)/html/canvas/WebGPUComputeCommandEncoder.idl \
-	$(WebCore)/html/canvas/WebGPUComputePipelineState.idl \
-    $(WebCore)/html/canvas/WebGPUDepthStencilDescriptor.idl \
-    $(WebCore)/html/canvas/WebGPUDepthStencilState.idl \
-    $(WebCore)/html/canvas/WebGPUDrawable.idl \
-    $(WebCore)/html/canvas/WebGPUFunction.idl \
-    $(WebCore)/html/canvas/WebGPULibrary.idl \
-    $(WebCore)/html/canvas/WebGPURenderCommandEncoder.idl \
-    $(WebCore)/html/canvas/WebGPURenderingContext.idl \
-    $(WebCore)/html/canvas/WebGPURenderPassAttachmentDescriptor.idl \
-    $(WebCore)/html/canvas/WebGPURenderPassColorAttachmentDescriptor.idl \
-    $(WebCore)/html/canvas/WebGPURenderPassDepthAttachmentDescriptor.idl \
-    $(WebCore)/html/canvas/WebGPURenderPassDescriptor.idl \
-    $(WebCore)/html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.idl \
-    $(WebCore)/html/canvas/WebGPURenderPipelineDescriptor.idl \
-    $(WebCore)/html/canvas/WebGPURenderPipelineState.idl \
-	$(WebCore)/html/canvas/WebGPUSize.idl \
-    $(WebCore)/html/canvas/WebGPUTexture.idl \
-    $(WebCore)/html/canvas/WebGPUTextureDescriptor.idl \
+    $(WebCore)/html/canvas/WebMetalBuffer.idl \
+    $(WebCore)/html/canvas/WebMetalCommandBuffer.idl \
+    $(WebCore)/html/canvas/WebMetalCommandQueue.idl \
+	$(WebCore)/html/canvas/WebMetalComputeCommandEncoder.idl \
+	$(WebCore)/html/canvas/WebMetalComputePipelineState.idl \
+    $(WebCore)/html/canvas/WebMetalDepthStencilDescriptor.idl \
+    $(WebCore)/html/canvas/WebMetalDepthStencilState.idl \
+    $(WebCore)/html/canvas/WebMetalDrawable.idl \
+    $(WebCore)/html/canvas/WebMetalFunction.idl \
+    $(WebCore)/html/canvas/WebMetalLibrary.idl \
+    $(WebCore)/html/canvas/WebMetalRenderCommandEncoder.idl \
+    $(WebCore)/html/canvas/WebMetalRenderingContext.idl \
+    $(WebCore)/html/canvas/WebMetalRenderPassAttachmentDescriptor.idl \
+    $(WebCore)/html/canvas/WebMetalRenderPassColorAttachmentDescriptor.idl \
+    $(WebCore)/html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.idl \
+    $(WebCore)/html/canvas/WebMetalRenderPassDescriptor.idl \
+    $(WebCore)/html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.idl \
+    $(WebCore)/html/canvas/WebMetalRenderPipelineDescriptor.idl \
+    $(WebCore)/html/canvas/WebMetalRenderPipelineState.idl \
+	$(WebCore)/html/canvas/WebMetalSize.idl \
+    $(WebCore)/html/canvas/WebMetalTexture.idl \
+    $(WebCore)/html/canvas/WebMetalTextureDescriptor.idl \
     $(WebCore)/html/track/AudioTrack.idl \
     $(WebCore)/html/track/AudioTrackList.idl \
     $(WebCore)/html/track/DataCue.idl \

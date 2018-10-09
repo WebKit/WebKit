@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUBuffer.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUDevice.h"
 #import "Logging.h"
@@ -39,7 +39,7 @@ namespace WebCore {
 
 GPUBuffer::GPUBuffer(const GPUDevice& device, const JSC::ArrayBufferView& data)
 {
-    LOG(WebGPU, "GPUBuffer::GPUBuffer()");
+    LOG(WebMetal, "GPUBuffer::GPUBuffer()");
 
     if (!device.metal())
         return;

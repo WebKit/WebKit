@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPURenderPassDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "GPURenderPassDepthAttachmentDescriptor.h"
 #include "Logging.h"
@@ -35,7 +35,7 @@ namespace WebCore {
 
 GPURenderPassDescriptor::~GPURenderPassDescriptor()
 {
-    LOG(WebGPU, "GPURenderPassDescriptor::~GPURenderPassDescriptor()");
+    LOG(WebMetal, "GPURenderPassDescriptor::~GPURenderPassDescriptor()");
 }
 
 } // namespace WebCore

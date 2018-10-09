@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=600">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>WebMetal Hello World demo</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="https://webkit.org/wp-content/themes/webkit/style.css">
+<link rel="stylesheet" href="https://www.apple.com/wss/fonts?family=Myriad+Set+Pro&amp;v=1">
+<script src="shared.js"></script>
+<script src="hello.js"></script>
+<script id="library" type="x-shader/x-metal">
+#include <metal_stdlib>
+
+using namespace metal;
+
+struct Vertex
+{
+    float4 position [[position]];
+};
+
+vertex Vertex vertex_main(uint vid [[vertex_id]])
+{
+    Vertex v;
+    switch (vid) {
+    case 0:
+        v.position = float4(-.75, -.75, 0, 1);
+        break;
+    case 1:
+        v.position = float4(.75, -.75, 0, 1);
+        break;
+    case 2:
+        v.position = float4(0, .75, 0, 1);
+        break;
+    default:
+        v.position = float4(0, 0, 0, 1);
+    }
+    return v;
+}
+
+fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+{
+    return float4(1.0, 0.0, 0.0, 1.0);
+}
+</script>
+</head>
+<body>
+<canvas></canvas>
+<div id="error">
+    <h2>WebMetal not available</h2>
+    <p>
+        Make sure you are on a system with WebMetal enabled. In
+        Safari, first make sure the Developer Menu is visible (Preferences →
+        Advanced), then Develop → Experimental Features → Enable WebMetal.
+    </p>
+</div>
+</body>
+</html>

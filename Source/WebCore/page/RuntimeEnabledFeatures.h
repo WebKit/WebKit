@@ -252,9 +252,9 @@ public:
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
 #endif
 
-#if ENABLE(WEBGPU)
-    void setWebGPUEnabled(bool isEnabled) { m_isWebGPUEnabled = isEnabled; }
-    bool webGPUEnabled() const { return m_isWebGPUEnabled; }
+#if ENABLE(WEBMETAL)
+    void setWebMetalEnabled(bool isEnabled) { m_isWebMetalEnabled = isEnabled; }
+    bool webMetalEnabled() const { return m_isWebMetalEnabled; }
 #endif
 
 #if ENABLE(STREAMS_API)
@@ -409,8 +409,8 @@ private:
     bool m_isWebGL2Enabled { false };
 #endif
 
-#if ENABLE(WEBGPU)
-    bool m_isWebGPUEnabled { false };
+#if ENABLE(WEBMETAL)
+    bool m_isWebMetalEnabled { false };
 #endif
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)

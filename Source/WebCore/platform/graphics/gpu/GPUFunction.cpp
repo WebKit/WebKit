@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUFunction.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPUFunction::~GPUFunction()
 {
-    LOG(WebGPU, "GPUFunction::~GPUFunction()");
+    LOG(WebMetal, "GPUFunction::~GPUFunction()");
 }
 
 } // namespace WebCore

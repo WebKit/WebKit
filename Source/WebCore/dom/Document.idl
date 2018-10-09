@@ -25,8 +25,8 @@ typedef (
 #if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
     WebGL2RenderingContext or
 #endif
-#if defined(ENABLE_WEBGPU) && ENABLE_WEBGPU
-    WebGPURenderingContext or
+#if defined(ENABLE_WEBMETAL) && ENABLE_WEBMETAL
+    WebMetalRenderingContext or
 #endif
     ImageBitmapRenderingContext or 
     CanvasRenderingContext2D) RenderingContext;

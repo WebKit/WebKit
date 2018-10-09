@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPURenderPassColorAttachmentDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "FloatConversion.h"
 #import "Logging.h"
@@ -38,7 +38,7 @@ namespace WebCore {
 GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor(MTLRenderPassColorAttachmentDescriptor *metal)
     : GPURenderPassAttachmentDescriptor { metal }
 {
-    LOG(WebGPU, "GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor()");
+    LOG(WebMetal, "GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor()");
 }
 
 Vector<float> GPURenderPassColorAttachmentDescriptor::clearColor() const

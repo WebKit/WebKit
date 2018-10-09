@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPULibrary.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPULibrary::~GPULibrary()
 {
-    LOG(WebGPU, "GPULibrary::~GPULibrary()");
+    LOG(WebMetal, "GPULibrary::~GPULibrary()");
 }
 
 } // namespace WebCore

@@ -1,3 +1,39 @@
+2018-10-08  Justin Fan  <justin_fan@apple.com>
+
+        WebGPU: Rename old WebGPU prototype to WebMetal
+        https://bugs.webkit.org/show_bug.cgi?id=190325
+        <rdar://problem/44990443>
+
+        Reviewed by Dean Jackson.
+
+        Rename WebGPU prototype files to WebMetal in preparation for implementing the new (Oct 2018) WebGPU interface.
+
+        * demos/webgpu/shared.js: Removed.
+        * demos/webmetal/2d.html: Renamed from Websites/webkit.org/demos/webgpu/2d.html.
+        * demos/webmetal/2d.jpg: Renamed from Websites/webkit.org/demos/webgpu/2d.jpg.
+        * demos/webmetal/2d.js: Renamed from Websites/webkit.org/demos/webgpu/2d.js.
+        (init):
+        * demos/webmetal/circle.svg: Renamed from Websites/webkit.org/demos/webgpu/circle.svg.
+        * demos/webmetal/cubes.html: Renamed from Websites/webkit.org/demos/webgpu/cubes.html.
+        * demos/webmetal/cubes.jpg: Renamed from Websites/webkit.org/demos/webgpu/cubes.jpg.
+        * demos/webmetal/cubes.js: Renamed from Websites/webkit.org/demos/webgpu/cubes.js.
+        (init):
+        * demos/webmetal/gl-matrix-min.js: Renamed from Websites/webkit.org/demos/webgpu/gl-matrix-min.js.
+        * demos/webmetal/hello.html: Renamed from Websites/webkit.org/demos/webgpu/hello.html.
+        * demos/webmetal/hello.jpg: Renamed from Websites/webkit.org/demos/webgpu/hello.jpg.
+        * demos/webmetal/hello.js: Renamed from Websites/webkit.org/demos/webgpu/hello.js.
+        (init):
+        * demos/webmetal/index.html: Renamed from Websites/webkit.org/demos/webgpu/index.html.
+        * demos/webmetal/shared.css: Renamed from Websites/webkit.org/demos/webgpu/shared.css.
+        * demos/webmetal/shared.js: Added.
+        (const.hasWebMetal):
+        (const.checkForWebMetal):
+        * demos/webmetal/simple.html: Renamed from Websites/webkit.org/demos/webgpu/simple.html.
+        * demos/webmetal/simple.jpg: Renamed from Websites/webkit.org/demos/webgpu/simple.jpg.
+        * demos/webmetal/simple.js: Renamed from Websites/webkit.org/demos/webgpu/simple.js.
+        (init):
+        * experimental-features.html:
+
 2018-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Update code style guidelines for using namespace inside a namespace definition

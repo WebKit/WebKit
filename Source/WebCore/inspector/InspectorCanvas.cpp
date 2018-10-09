@@ -63,8 +63,8 @@
 #if ENABLE(WEBGL2)
 #include "WebGL2RenderingContext.h"
 #endif
-#if ENABLE(WEBGPU)
-#include "WebGPURenderingContext.h"
+#if ENABLE(WEBMETAL)
+#include "WebMetalRenderingContext.h"
 #endif
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/ScriptCallStack.h>
@@ -231,9 +231,9 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
     else if (is<WebGL2RenderingContext>(m_context))
         contextType = Inspector::Protocol::Canvas::ContextType::WebGL2;
 #endif
-#if ENABLE(WEBGPU)
-    else if (is<WebGPURenderingContext>(m_context))
-        contextType = Inspector::Protocol::Canvas::ContextType::WebGPU;
+#if ENABLE(WEBMETAL)
+    else if (is<WebMetalRenderingContext>(m_context))
+        contextType = Inspector::Protocol::Canvas::ContextType::WebMetal;
 #endif
     else {
         ASSERT_NOT_REACHED();

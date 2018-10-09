@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPURenderPipelineColorAttachmentDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #include "Logging.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 GPURenderPipelineColorAttachmentDescriptor::~GPURenderPipelineColorAttachmentDescriptor()
 {
-    LOG(WebGPU, "GPURenderPipelineColorAttachmentDescriptor::~GPURenderPipelineColorAttachmentDescriptor()");
+    LOG(WebMetal, "GPURenderPipelineColorAttachmentDescriptor::~GPURenderPipelineColorAttachmentDescriptor()");
 }
 
 } // namespace WebCore

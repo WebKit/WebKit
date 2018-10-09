@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPURenderPassAttachmentDescriptor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUTexture.h"
 #import "Logging.h"
@@ -38,7 +38,7 @@ namespace WebCore {
 GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor(MTLRenderPassAttachmentDescriptor *metal)
     : m_metal { metal }
 {
-    LOG(WebGPU, "GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor()");
+    LOG(WebMetal, "GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor()");
 }
 
 unsigned GPURenderPassAttachmentDescriptor::loadAction() const

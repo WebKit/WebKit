@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUComputePipelineState.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPUDevice.h"
 #import "GPUFunction.h"
@@ -37,7 +37,7 @@ namespace WebCore {
 
 GPUComputePipelineState::GPUComputePipelineState(const GPUDevice& device, const GPUFunction& function)
 {
-    LOG(WebGPU, "GPUComputePipelineState::GPUComputePipelineState()");
+    LOG(WebMetal, "GPUComputePipelineState::GPUComputePipelineState()");
 
     if (!function.metal())
         return;

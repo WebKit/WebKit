@@ -1,2 +1,0 @@
-PASS: WebGPU was available when enabled.
-PASS: WebGPU was not available when disabled.

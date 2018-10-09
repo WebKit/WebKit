@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUFunction.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "GPULibrary.h"
 #import "Logging.h"
@@ -38,7 +38,7 @@ namespace WebCore {
 GPUFunction::GPUFunction(const GPULibrary& library, const String& name)
     : m_metal { adoptNS([library.metal() newFunctionWithName:name]) }
 {
-    LOG(WebGPU, "GPUFunction::GPUFunction()");
+    LOG(WebMetal, "GPUFunction::GPUFunction()");
 }
 
 String GPUFunction::name() const

@@ -26,10 +26,10 @@
 #import "config.h"
 #import "GPUDevice.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WEBMETAL)
 
 #import "Logging.h"
-#import "WebGPULayer.h"
+#import "WebMetalLayer.h"
 #import <JavaScriptCore/ArrayBuffer.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -41,19 +41,19 @@ GPUDevice::GPUDevice()
 {
 
     if (!m_metal) {
-        LOG(WebGPU, "GPUDevice::GPUDevice -- could not create the device. This usually means Metal is not available on this hardware.");
+        LOG(WebMetal, "GPUDevice::GPUDevice -- could not create the device. This usually means Metal is not available on this hardware.");
         return;
     }
 
-    LOG(WebGPU, "GPUDevice::GPUDevice Metal device is %p", m_metal.get());
+    LOG(WebMetal, "GPUDevice::GPUDevice Metal device is %p", m_metal.get());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    m_layer = adoptNS([[WebGPULayer alloc] initWithGPUDevice:this]);
+    m_layer = adoptNS([[WebMetalLayer alloc] initWithGPUDevice:this]);
     [m_layer setOpaque:0];
-    [m_layer setName:@"WebGPU Layer"];
+    [m_layer setName:@"WebMetal Layer"];
 
-    // FIXME: WebGPU - Should this be in the WebGPULayer initializer?
+    // FIXME: WebMetal - Should this be in the WebMetalLayer initializer?
     [m_layer setDevice:m_metal.get()];
     [m_layer setPixelFormat:MTLPixelFormatBGRA8Unorm];
     [m_layer setFramebufferOnly:YES];
@@ -72,7 +72,7 @@ void GPUDevice::reshape(int width, int height) const
     [m_layer setBounds:CGRectMake(0, 0, width, height)];
     [m_layer setDrawableSize:CGSizeMake(width, height)];
 
-    // FIXME: WebGPU - Lots of reshape stuff should go here. See GC3D.
+    // FIXME: WebMetal - Lots of reshape stuff should go here. See GC3D.
 }
 
 CALayer *GPUDevice::platformLayer() const
