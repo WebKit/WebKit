@@ -1,5 +1,28 @@
 2018-10-09  Chris Dumez  <cdumez@apple.com>
 
+        Anchor target should be ignored on activation when the download attribute is set
+        https://bugs.webkit.org/show_bug.cgi?id=190408
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html: Added.
+        Add layout test coverage.
+
+        * http/tests/download/anchor-load-after-download.html:
+        * http/tests/workers/service/resources/registration-task-queue-scheduling-1.js:
+        Update existing WK2-only layout tests to call testRunner.setCanOpenWindows() since they rely on
+        opening a new window. We failed to notice the issue because these tests are not run on WK1.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip new tests on WebKit1 since the download attribute is only supported on WebKit2.
+
+2018-10-09  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html on iOS.
 
         The download attribute is not supported on iOS yet.

@@ -84,6 +84,8 @@ public:
     void didRemoveAllSessionCredentials();
     
     void dumpResourceLoadStatistics();
+
+    bool canOpenWindows() const { return m_canOpenWindows; }
     
 private:
     WKRetainPtr<WKMutableDictionaryRef> createTestSettingsDictionary();
@@ -132,6 +134,7 @@ private:
     bool m_dumpPixels { false };
     bool m_pixelResultIsPending { false };
     bool m_shouldDumpResourceLoadStatistics { false };
+    bool m_canOpenWindows { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 
     StringBuilder m_textOutput;

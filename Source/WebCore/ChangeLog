@@ -1,3 +1,31 @@
+2018-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Anchor target should be ignored on activation when the download attribute is set
+        https://bugs.webkit.org/show_bug.cgi?id=190408
+
+        Reviewed by Geoffrey Garen.
+
+        Anchor target should be ignored on activation when the download attribute is set:
+        - https://html.spec.whatwg.org/#the-a-element:downloading-hyperlinks-2
+
+        When the download attribute is set, we should use the "download the hyperlink" algorithm [1]
+        instead of the "follow the hyperlink" [2] algorithm.
+
+        Note that the "download the hyperlink" triggers a download and ignores the target attribute
+        entirely.
+
+        This is important as an anchor element with target=_blank and the download attribute set may
+        fail because of Safari's popup blocker if we do not disregard the anchor target.
+
+        [1] https://html.spec.whatwg.org/#downloading-hyperlinks
+        [2] https://html.spec.whatwg.org/#following-hyperlinks-2
+
+        Tests: fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html
+               fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+
 2018-10-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Complex text crashes with harfbuzz 1.8.8

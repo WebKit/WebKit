@@ -400,6 +400,7 @@ private:
     void didUpdateHistoryTitle(WKStringRef title, WKURLRef, WKFrameRef);
 
     static WKPageRef createOtherPage(WKPageRef, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef, const void*);
+    WKPageRef createOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef);
 
     static void runModal(WKPageRef, const void* clientInfo);
     static void runModal(PlatformWebView*);

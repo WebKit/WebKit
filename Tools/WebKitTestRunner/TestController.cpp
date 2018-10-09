@@ -242,9 +242,17 @@ static void requestPointerLock(WKPageRef page, const void*)
     WKPageDidAllowPointerLock(page);
 }
 
-WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
+WKPageRef TestController::createOtherPage(WKPageRef, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     PlatformWebView* parentView = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
+    return TestController::singleton().createOtherPage(parentView, configuration, navigationAction, windowFeatures);
+}
+
+WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures)
+{
+    // The test needs to call testRunner.setCanOpenWindows() to open new windows.
+    if (!m_currentInvocation->canOpenWindows())
+        return nullptr;
 
     PlatformWebView* view = platformCreateOtherPage(parentView, configuration, parentView->options());
     WKPageRef newPage = view->page();

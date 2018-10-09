@@ -66,7 +66,7 @@ interface TestRunner {
     // Special options.
     void keepWebHistory();
     void setAcceptsEditing(boolean value);
-    void setCanOpenWindows(boolean value);
+    void setCanOpenWindows();
     void setCloseRemainingWindowsWhenComplete(boolean value);
     void setXSSAuditorEnabled(boolean value);
     void setAllowUniversalAccessFromFileURLs(boolean value);

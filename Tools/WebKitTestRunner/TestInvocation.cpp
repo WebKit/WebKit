@@ -802,6 +802,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "GetDumpFrameLoadCallbacks"))
         return WKRetainPtr<WKTypeRef>(AdoptWK, WKBooleanCreate(m_dumpFrameLoadCallbacks));
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetCanOpenWindows")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        m_canOpenWindows = static_cast<unsigned char>(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef isKeyValue = static_cast<WKBooleanRef>(messageBody);

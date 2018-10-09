@@ -410,15 +410,11 @@ bool TestRunner::isCommandEnabled(JSStringRef name)
     return WKBundlePageIsEditingCommandEnabled(InjectedBundle::singleton().page()->page(), toWK(name).get());
 }
 
-void TestRunner::setCanOpenWindows(bool)
+void TestRunner::setCanOpenWindows()
 {
-    // The test plugins/get-url-with-blank-target.html requires that the embedding client forbid
-    // opening windows (by omitting a call to this function) so as to test that NPN_GetURL()
-    // with a blank target will return an error.
-    //
-    // It is not clear if we should implement this functionality or remove it and plugins/get-url-with-blank-target.html
-    // per the remark in <https://trac.webkit.org/changeset/64504/trunk/LayoutTests/platform/mac-wk2/Skipped>.
-    // For now, just ignore this setting.
+    WKRetainPtr<WKStringRef> messsageName(AdoptWK, WKStringCreateWithUTF8CString("SetCanOpenWindows"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(true));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), messageBody.get(), nullptr);
 }
 
 void TestRunner::setXSSAuditorEnabled(bool enabled)

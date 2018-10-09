@@ -99,7 +99,7 @@ public:
     // Special options.
     void keepWebHistory();
     void setAcceptsEditing(bool value) { m_shouldAllowEditing = value; }
-    void setCanOpenWindows(bool);
+    void setCanOpenWindows();
     void setCloseRemainingWindowsWhenComplete(bool value) { m_shouldCloseExtraWindows = value; }
     void setXSSAuditorEnabled(bool);
     void setModernMediaControlsEnabled(bool);
