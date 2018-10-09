@@ -647,7 +647,6 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
         auto& layerState = downcast<Nicosia::BackingStoreTextureMapperImpl>(m_nicosia.backingStore->impl()).layerState();
         layerState.isPurging = true;
         layerState.mainBackingStore = nullptr;
-        layerState.previousBackingStore = nullptr;
 
         m_nicosia.backingStore = nullptr;
         m_nicosia.delta.backingStoreChanged = true;
@@ -867,17 +866,10 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
         };
 
     // Address the content scale adjustment.
-    // FIXME: the previousBackingStore logic is likely possible to remove.
-    // https://bugs.webkit.org/show_bug.cgi?id=188693
     if (m_pendingContentsScaleAdjustment) {
         if (layerState.mainBackingStore && layerState.mainBackingStore->contentsScale() != effectiveContentsScale()) {
-            // Between creating the new backing store and painting the content, we do not
-            // want to drop the previous one as that might result in briefly seeing flickering
-            // as the old tiles may be dropped before something replaces them.
-            layerState.previousBackingStore = WTFMove(layerState.mainBackingStore);
-
-            // No reason to save the previous backing store for non-visible areas.
-            layerState.previousBackingStore->removeAllNonVisibleTiles(transformedVisibleRect(), IntRect(0, 0, size().width(), size().height()));
+            // Discard the TiledBackingStore object to reconstruct it with new content scale.
+            layerState.mainBackingStore = nullptr;
         }
         m_pendingContentsScaleAdjustment = false;
     }
@@ -943,12 +935,6 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
             didUpdateTileBuffers();
     }
 
-    // The previous backing store is kept around to avoid flickering between
-    // removing the existing tiles and painting the new ones. The first time
-    // the visibleRect is full painted we remove the previous backing store.
-    if (layerState.previousBackingStore && layerState.mainBackingStore->visibleAreaIsCovered())
-        layerState.previousBackingStore = nullptr;
-
     // Request a second update immediately if some tiles are still pending creation.
     if (layerState.hasPendingTileCreation) {
         setNeedsVisibleRectAdjustment();
@@ -967,7 +953,6 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
         auto& layerState = downcast<Nicosia::BackingStoreTextureMapperImpl>(m_nicosia.backingStore->impl()).layerState();
         layerState.isPurging = true;
         layerState.mainBackingStore = nullptr;
-        layerState.previousBackingStore = nullptr;
 
         m_nicosia.backingStore = nullptr;
     }

@@ -85,7 +85,6 @@ public:
         LayerState& operator=(LayerState&&) = delete;
 
         std::unique_ptr<WebCore::TiledBackingStore> mainBackingStore;
-        std::unique_ptr<WebCore::TiledBackingStore> previousBackingStore;
 
         TileUpdate update;
         bool isFlushing { false };

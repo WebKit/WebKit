@@ -1,3 +1,22 @@
+2018-10-09  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [CoordGraphics] Remove the 'previous backing store' logic
+        https://bugs.webkit.org/show_bug.cgi?id=188838
+
+        Reviewed by Žan Doberšek.
+
+        Remove previousBackingStore from LayerState, since it's not needed anymore.
+        When there is scale adjustment, we now simply discard mainBackingStore and
+        recreate a new one.
+
+        No new tests required.
+
+        * platform/graphics/nicosia/texmap/NicosiaBackingStoreTextureMapperImpl.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffers):
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+
 2018-10-09  Antti Koivisto  <antti@apple.com>
 
         [PSON] Prewarm system UI font
