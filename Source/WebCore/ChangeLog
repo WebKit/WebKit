@@ -1,3 +1,13 @@
+2018-10-09  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] r236735 has some dead ASSERTs that need to be moved
+        https://bugs.webkit.org/show_bug.cgi?id=190394
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::createOptionalParserForFormat):
+
 2018-10-09  Chris Dumez  <cdumez@apple.com>
 
         Have DOMWindow get its frame from its document

@@ -859,20 +859,20 @@ createOptionalParserForFormat(GstPad* demuxerSrcPad)
 
     if (!g_strcmp0(mediaType, "audio/x-opus")) {
         GstElement* opusparse = gst_element_factory_make("opusparse", parserName.get());
-        g_return_val_if_fail(opusparse, nullptr);
         ASSERT(opusparse);
+        g_return_val_if_fail(opusparse, nullptr);
         return GRefPtr<GstElement>(opusparse);
     }
     if (!g_strcmp0(mediaType, "audio/x-vorbis")) {
         GstElement* vorbisparse = gst_element_factory_make("vorbisparse", parserName.get());
-        g_return_val_if_fail(vorbisparse, nullptr);
         ASSERT(vorbisparse);
+        g_return_val_if_fail(vorbisparse, nullptr);
         return GRefPtr<GstElement>(vorbisparse);
     }
     if (!g_strcmp0(mediaType, "video/x-h264")) {
         GstElement* h264parse = gst_element_factory_make("h264parse", parserName.get());
-        g_return_val_if_fail(h264parse, nullptr);
         ASSERT(h264parse);
+        g_return_val_if_fail(h264parse, nullptr);
         return GRefPtr<GstElement>(h264parse);
     }
 
