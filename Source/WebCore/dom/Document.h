@@ -1525,6 +1525,7 @@ private:
     bool shouldInheritContentSecurityPolicyFromOwner() const;
 
     void updateTitleElement(Element& changingTitleElement);
+    void willDetachPage() final;
     void frameDestroyed() final;
 
     void commonTeardown();

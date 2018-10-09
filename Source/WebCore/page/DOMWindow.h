@@ -88,13 +88,11 @@ struct WindowFeatures;
 enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class IncludeTargetOrigin { No, Yes };
 
-// FIXME: DOMWindow shouldn't subclass FrameDestructionObserver and instead should get to Frame via its Document.
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
 class DOMWindow final
     : public AbstractDOMWindow
     , public CanMakeWeakPtr<DOMWindow>
     , public ContextDestructionObserver
-    , public FrameDestructionObserver
     , public Base64Utilities
     , public Supplementable<DOMWindow> {
 public:
@@ -116,6 +114,8 @@ public:
     void resetUnlessSuspendedForDocumentSuspension();
     void suspendForDocumentSuspension();
     void resumeFromDocumentSuspension();
+
+    WEBCORE_EXPORT Frame* frame() const final;
 
     RefPtr<MediaQueryList> matchMedia(const String&);
 
@@ -200,8 +200,6 @@ public:
     void disownOpener();
     WindowProxy* parent() const;
     WindowProxy* top() const;
-
-    Frame* frame() const final { return FrameDestructionObserver::frame(); }
 
     String origin() const;
 
@@ -333,11 +331,10 @@ public:
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();
 
-    void attachToFrame(Frame&);
-    void detachFromFrame();
-
     void enableSuddenTermination();
     void disableSuddenTermination();
+
+    void frameDestroyed();
 
 private:
     explicit DOMWindow(Document&);
@@ -349,9 +346,6 @@ private:
 
     Page* page();
     bool allowedToChangeWindowGeometry() const;
-
-    void frameDestroyed() final;
-    void willDetachPage() final;
 
     static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const WTF::Function<void(DOMWindow&)>& prepareDialogFunction = nullptr);
     bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);

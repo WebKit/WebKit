@@ -2332,7 +2332,19 @@ void Document::frameDestroyed()
 {
     // detachFromFrame() must be called before destroying the Frame.
     RELEASE_ASSERT(!m_frame);
+
+    if (auto* window = domWindow())
+        window->frameDestroyed();
+
     FrameDestructionObserver::frameDestroyed();
+}
+
+void Document::willDetachPage()
+{
+    FrameDestructionObserver::willDetachPage();
+
+    if (domWindow() && frame())
+        InspectorInstrumentation::frameWindowDiscarded(*frame(), domWindow());
 }
 
 void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
@@ -2341,8 +2353,6 @@ void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
     ASSERT(cachedFrame.view());
     ASSERT(m_pageCacheState == Document::InPageCache);
     observeFrame(&cachedFrame.view()->frame());
-    if (auto* window = domWindow())
-        window->attachToFrame(cachedFrame.view()->frame());
 }
 
 void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)

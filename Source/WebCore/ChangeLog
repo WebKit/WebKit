@@ -1,3 +1,85 @@
+2018-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Have DOMWindow get its frame from its document
+        https://bugs.webkit.org/show_bug.cgi?id=190389
+
+        Reviewed by Geoff Garen.
+
+        Have DOMWindow get its frame from its document instead of having its own m_frame which can potentially
+        be out-of-sync.
+
+        * dom/Document.cpp:
+        (WebCore::Document::frameDestroyed):
+        (WebCore::Document::willDetachPage):
+        (WebCore::Document::attachToCachedFrame):
+        * dom/Document.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::allowPopUp):
+        (WebCore::ContextDestructionObserver):
+        (WebCore::DOMWindow::didSecureTransitionTo):
+        (WebCore::DOMWindow::frameDestroyed):
+        (WebCore::DOMWindow::willDetachDocumentFromFrame):
+        (WebCore::DOMWindow::reconnectDOMWindowProperties):
+        (WebCore::DOMWindow::isCurrentlyDisplayedInFrame const):
+        (WebCore::DOMWindow::collectMatchingElementsInFlatTree):
+        (WebCore::DOMWindow::matchingElementInFlatTree):
+        (WebCore::DOMWindow::orientation const):
+        (WebCore::DOMWindow::console const):
+        (WebCore::DOMWindow::shouldHaveWebKitNamespaceForWorld):
+        (WebCore::DOMWindow::webkitNamespace):
+        (WebCore::DOMWindow::postMessage):
+        (WebCore::DOMWindow::postMessageTimerFired):
+        (WebCore::DOMWindow::frameElement const):
+        (WebCore::DOMWindow::focus):
+        (WebCore::DOMWindow::blur):
+        (WebCore::DOMWindow::close):
+        (WebCore::DOMWindow::print):
+        (WebCore::DOMWindow::stop):
+        (WebCore::DOMWindow::alert):
+        (WebCore::DOMWindow::confirm):
+        (WebCore::DOMWindow::prompt):
+        (WebCore::DOMWindow::find const):
+        (WebCore::DOMWindow::outerHeight const):
+        (WebCore::DOMWindow::outerWidth const):
+        (WebCore::DOMWindow::innerHeight const):
+        (WebCore::DOMWindow::innerWidth const):
+        (WebCore::DOMWindow::screenX const):
+        (WebCore::DOMWindow::screenY const):
+        (WebCore::DOMWindow::scrollX const):
+        (WebCore::DOMWindow::scrollY const):
+        (WebCore::DOMWindow::closed const):
+        (WebCore::DOMWindow::length const):
+        (WebCore::DOMWindow::name const):
+        (WebCore::DOMWindow::setName):
+        (WebCore::DOMWindow::setStatus):
+        (WebCore::DOMWindow::setDefaultStatus):
+        (WebCore::DOMWindow::self const):
+        (WebCore::DOMWindow::opener const):
+        (WebCore::DOMWindow::disownOpener):
+        (WebCore::DOMWindow::parent const):
+        (WebCore::DOMWindow::top const):
+        (WebCore::DOMWindow::getMatchedCSSRules const):
+        (WebCore::DOMWindow::devicePixelRatio const):
+        (WebCore::DOMWindow::scrollBy const):
+        (WebCore::DOMWindow::scrollTo const):
+        (WebCore::DOMWindow::allowedToChangeWindowGeometry const):
+        (WebCore::DOMWindow::moveBy const):
+        (WebCore::DOMWindow::moveTo const):
+        (WebCore::DOMWindow::resizeBy const):
+        (WebCore::DOMWindow::resizeTo const):
+        (WebCore::DOMWindow::clearTimeout):
+        (WebCore::DOMWindow::isSameSecurityOriginAsMainFrame const):
+        (WebCore::DOMWindow::finishedLoading):
+        (WebCore::DOMWindow::setLocation):
+        (WebCore::DOMWindow::open):
+        (WebCore::DOMWindow::showModalDialog):
+        (WebCore::DOMWindow::frame const):
+        (WebCore::FrameDestructionObserver): Deleted.
+        (WebCore::DOMWindow::willDetachPage): Deleted.
+        (WebCore::DOMWindow::detachFromFrame): Deleted.
+        (WebCore::DOMWindow::attachToFrame): Deleted.
+        * page/DOMWindow.h:
+
 2018-10-09  Jer Noble  <jer.noble@apple.com>
 
         ISOTrackEncryptionBox returns incorrect defaultKeyID
