@@ -1,5 +1,17 @@
 2018-10-09  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Cleanup EventHandler::passSubframeEventToSubframe()
+        https://bugs.webkit.org/show_bug.cgi?id=190390
+
+        Reviewed by Wenson Hsieh.
+
+        Unindent case statements in switch block and use more auto.
+
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+
+2018-10-09  Daniel Bates  <dabates@apple.com>
+
         Cleanup WebEvent.mm
         https://bugs.webkit.org/show_bug.cgi?id=190391
 

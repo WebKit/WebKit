@@ -366,48 +366,48 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
 
     WebEventType currentEventType = currentEvent().type;
     switch (currentEventType) {
-        case WebEventMouseMoved: {
-            // Since we're passing in currentNSEvent() here, we can call
-            // handleMouseMoveEvent() directly, since the save/restore of
-            // currentNSEvent() that mouseMoved() does would have no effect.
-            ASSERT(!m_sendingEventToSubview);
-            m_sendingEventToSubview = true;
-            subframe->eventHandler().handleMouseMoveEvent(currentPlatformMouseEvent(), hoveredNode);
-            m_sendingEventToSubview = false;
-            return true;
-        }
-        case WebEventMouseDown: {
-            Node* node = event.targetNode();
-            if (!node)
-                return false;
-            auto* renderer = node->renderer();
-            if (!is<RenderWidget>(renderer))
-                return false;
-            Widget* widget = downcast<RenderWidget>(*renderer).widget();
-            if (!widget || !widget->isFrameView())
-                return false;
-            if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer)))
-                return false;
-            m_mouseDownWasInSubframe = true;
-            return true;
-        }
-        case WebEventMouseUp: {
-            if (!m_mouseDownWasInSubframe)
-                return false;
-            ASSERT(!m_sendingEventToSubview);
-            m_sendingEventToSubview = true;
-            subframe->eventHandler().handleMouseReleaseEvent(currentPlatformMouseEvent());
-            m_sendingEventToSubview = false;
-            return true;
-        }
-        case WebEventKeyDown:
-        case WebEventKeyUp:
-        case WebEventScrollWheel:
-        case WebEventTouchBegin:
-        case WebEventTouchCancel:
-        case WebEventTouchChange:
-        case WebEventTouchEnd:
+    case WebEventMouseMoved: {
+        // Since we're passing in currentNSEvent() here, we can call
+        // handleMouseMoveEvent() directly, since the save/restore of
+        // currentNSEvent() that mouseMoved() does would have no effect.
+        ASSERT(!m_sendingEventToSubview);
+        m_sendingEventToSubview = true;
+        subframe->eventHandler().handleMouseMoveEvent(currentPlatformMouseEvent(), hoveredNode);
+        m_sendingEventToSubview = false;
+        return true;
+    }
+    case WebEventMouseDown: {
+        auto* node = event.targetNode();
+        if (!node)
             return false;
+        auto* renderer = node->renderer();
+        if (!is<RenderWidget>(renderer))
+            return false;
+        auto* widget = downcast<RenderWidget>(*renderer).widget();
+        if (!widget || !widget->isFrameView())
+            return false;
+        if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer)))
+            return false;
+        m_mouseDownWasInSubframe = true;
+        return true;
+    }
+    case WebEventMouseUp: {
+        if (!m_mouseDownWasInSubframe)
+            return false;
+        ASSERT(!m_sendingEventToSubview);
+        m_sendingEventToSubview = true;
+        subframe->eventHandler().handleMouseReleaseEvent(currentPlatformMouseEvent());
+        m_sendingEventToSubview = false;
+        return true;
+    }
+    case WebEventKeyDown:
+    case WebEventKeyUp:
+    case WebEventScrollWheel:
+    case WebEventTouchBegin:
+    case WebEventTouchCancel:
+    case WebEventTouchChange:
+    case WebEventTouchEnd:
+        return false;
     }
     END_BLOCK_OBJC_EXCEPTIONS;
 
