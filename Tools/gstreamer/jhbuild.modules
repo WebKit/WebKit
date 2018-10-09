@@ -51,7 +51,7 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch hash="sha256:13ae530eb1d4566c3aa0cff1bbb8e64c643065bb12e2e7c707f311ab4a390456" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.14.3">
+    <branch hash="sha256:f94f6696c5f05a3b3a9183e39c5f5c0b779f75a04c0efa497e7920afa985ffc7" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.14.4">
       <patch file="gstreamer-0001-protection-Add-a-new-definition-for-unspecified-syst.patch" strip="1" /> <!-- Merged as 05a3da347b3b8dbaf470793dc3f9ebb23e6fc67f -->
       <patch file="gstreamer-0002-protection-Fix-the-string-to-define-unspecified-syst.patch" strip="1" /> <!-- Merged as b89b1802df44829a0c034db5807bc893ad3c7774 -->
     </branch>
@@ -66,7 +66,7 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch hash="sha256:f0b319c36be0ffc2a00380c77ba269cdf04e2b39bbc49d30b641fc35aa0b7952" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.14.3" >
+    <branch hash="sha256:ca6139490e48863e7706d870ff4e8ac9f417b56f3b9e4b3ce490c13b09a77461" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.14.4" >
       <patch file="gst-plugins-base-0001-parsebin-Post-STREAM_COLLECTION-on-EVENT_STREAM_COLL.patch" strip="1"/> <!-- Merged as 89d0e9cc92a86aa0227ee87406737b6d31670aea -->
     </branch>
   </autotools>
@@ -77,7 +77,7 @@
       <dep package="libvpx"/>
     </dependencies>
 
-    <branch hash="sha256:5112bce6af0be62760687ca47873c90ce4d65d3fe920a3adf8145db7b07bff5d" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.14.3">
+    <branch hash="sha256:5f8b553260cb0aac56890053d8511db1528d53cae10f0287cfce2cb2acc70979" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.14.4">
       <patch file="gst-plugins-good-0002-qtdemux-add-context-for-a-preferred-protection.patch" strip="1" /> <!-- Merged as ee4b45da24cb7465b416c230597f8efc7b2c45cb -->
       <patch file="gst-plugins-good-0003-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1" /> <!-- Merged as 844423ff99e281fc831303b92861ed43ce5c1518 -->
       <patch file="gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch" strip="1" /> <!-- Merged as 3e063703b3a51b8aaa7f75f36c4660c583a60e93 -->
@@ -87,10 +87,6 @@
       <patch file="gst-plugins-good-0004-qtdemux-Add-initial-support-for-AV1-demuxing.patch" strip="1" /> <!-- Merged as b6e8c6323e01249bb3ac4f121c3adc3ea8d924bf (to be shipped in 1.16) -->
       <patch file="gst-plugins-good-0005-qtdemux-Extract-AV1-codec_data-and-put-it-in-the-cap.patch" strip="1" /> <!-- Merged as 43ee4055c3d03a9f99acdf3c05f45e154899edef (to be shipped in 1.16) -->
       <patch file="gst-plugins-good-0006-qtdemux-Recognize-more-AV1-atoms.patch" strip="1" /> <!-- Merged as e07ce9afb4edb2ea898763c7ea11f0af2704104e (to be shipped in 1.16) -->
-      <patch file="gst-plugins-good-0007-matroskademux-Allow-Matroska-headers-to-be-read-more.patch" strip="1" /> <!-- Merged as 9dc7859184d4b7ad1dd7e2b54704e994dbace329 (to be shipped in 1.14.4) -->
-      <patch file="gst-plugins-good-0008-matroskademux-Refactor-track-parsing-out-from-adding.patch" strip="1" /> <!-- Merged as f279bc5336dda19741a5996a108da42dd3201366 (to be shipped in 1.14.4) -->
-      <patch file="gst-plugins-good-0009-matroskademux-Parse-successive-Tracks-elements.patch" strip="1" /> <!-- Merged as 0e60076a390fd3ef53d350940b2c695ff7bbe008 (to be shipped in 1.14.4) -->
-      <patch file="gst-plugins-good-0010-matroskademux-Emit-no-more-pads-after-parsing-Tracks.patch" strip="1" /> <!-- Merged as 7ceefec7141069b4adf4451a874766f8760c66d6 (to be shipped in 1.14.4) -->
       <patch file="gst-plugins-good-0011-matroska-Add-the-WebM-encrypted-content-support-in-m.patch" strip="1" /> <!-- Merged as 0432826950d4d80fe2b50ffd3757dc08155de9e3 -->
       <patch file="gst-plugins-good-0012-matroskdemux-do-not-use-MapInfo.data-after-unmapping.patch" strip="1" /> <!-- Merged as defae350358660e557c74e41a4fe8a8bb327e9c8 -->
     </branch>
@@ -103,7 +99,7 @@
       <dep package="openh264"/>
       <dep package="aom"/>
     </dependencies>
-    <branch hash="sha256:b2224e5d9c1b85ad51233f6135524bb9e16a9172d395edc79c73b89094659fd5" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.14.3">
+    <branch hash="sha256:910b4e0e2e897e8b6d06767af1779d70057c309f67292f485ff988d087aa0de5" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.14.4">
       <patch file="gst-plugins-bad-0001-aomenc-Add-support-for-10-12bit-decoding.patch" strip="1" /> <!-- Merged as 1d96d9e842dd71882f54ddffbf6c1ccecdb03fcd (to be shipped in 1.16) -->
       <patch file="gst-plugins-bad-0002-aomenc-Handle-8-bit_depth-images-with-AOM_IMG_FMT_HI.patch" strip="1" /> <!-- Merged as 10a37e0c3528a721084441c37af37baef0908ddc (to be shipped in 1.16) -->
     </branch>
@@ -113,11 +109,11 @@
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch hash="sha256:9b03529bb45785ad1b6b1f4856c52a832ad5fc472285ce49174439e8015ab677" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.14.3" />
+    <branch hash="sha256:dfd78591901df7853eab7e56a86c34a1b03635da0d3d56b89aa577f1897865da" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.14.4" />
   </autotools>
 
   <autotools id="gstreamer-vaapi" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc">
-    <branch hash="sha256:8f5e65cb96aa6e44ff80926366d4a6fef9b8da68a04bab4bf2cbed93941c74f0" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.14.3" />
+    <branch hash="sha256:ce18dbfe961c6a8d31270231686075586bf7a7df62b778c8e7f5ec148251d0a3" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.14.4" />
     <dependencies>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
