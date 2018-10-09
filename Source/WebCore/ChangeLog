@@ -1,3 +1,18 @@
+2018-10-09  Daniel Bates  <dabates@apple.com>
+
+        Cleanup WebEvent.mm
+        https://bugs.webkit.org/show_bug.cgi?id=190391
+
+        Reviewed by Wenson Hsieh.
+
+        Unindent case statements in switch blocks.
+
+        * platform/ios/WebEvent.mm:
+        (-[WebEvent _typeDescription]):
+        (-[WebEvent _modiferFlagsDescription]):
+        (-[WebEvent _touchPhaseDescription:]):
+        (-[WebEvent _eventDescription]):
+
 2018-10-09  Oriol Brufau  <obrufau@igalia.com>
 
         Resolve inset properties to computed style when there is overconstraintment
