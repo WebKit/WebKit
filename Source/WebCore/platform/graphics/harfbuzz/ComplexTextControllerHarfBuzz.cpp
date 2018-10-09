@@ -193,7 +193,6 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cha
     const auto& fontPlatformData = font->platformData();
     auto features = fontFeatures(m_font, fontPlatformData.orientation());
     HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
-    hb_buffer_set_unicode_funcs(buffer.get(), hb_icu_get_unicode_funcs());
 
     for (unsigned i = 0; i < runCount; ++i) {
         auto& run = runList[m_run.rtl() ? runCount - i - 1 : i];

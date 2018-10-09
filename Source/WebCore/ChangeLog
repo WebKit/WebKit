@@ -1,3 +1,22 @@
+2018-10-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Complex text crashes with harfbuzz 1.8.8
+        https://bugs.webkit.org/show_bug.cgi?id=190409
+
+        Reviewed by Žan Doberšek.
+
+        We discovered that harfbuzz 1.8.8 breaks WebKit by changing the ownership semantics of
+        hb_icu_get_unicode_funcs() from (transfer full) to (transfer none). Our code was actually
+        expecting (transfer none), so it's not immediately clear to me why it's crashing now, but
+        doesn't matter as Behdad recommends removing this line of code because it hasn't been
+        been needed for many years.
+
+        This should be covered by all our complex text tests if the bots were upgraded to the newer
+        harfbuzz.
+
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+
 2018-10-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Cleanup EventHandler::passSubframeEventToSubframe()
