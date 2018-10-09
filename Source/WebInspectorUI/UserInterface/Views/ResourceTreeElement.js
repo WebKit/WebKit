@@ -31,7 +31,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
         const title = null;
         const subtitle = null;
-        super(resource, ["resource", WI.ResourceTreeElement.ResourceIconStyleClassName, resource.type], title, subtitle, representedObject || resource);
+        super(resource, ["resource", WI.ResourceTreeElement.ResourceIconStyleClassName, WI.Resource.classNameForResource(resource)], title, subtitle, representedObject || resource);
 
         this._updateResource(resource);
     }

@@ -174,6 +174,15 @@ WI.Resource = class Resource extends WI.SourceCode
         }
     }
 
+    static classNameForResource(resource)
+    {
+        if (resource.type === WI.Resource.Type.Other) {
+            if (resource.requestedByteRange)
+                return "resource-type-range";
+        }
+        return resource.type;
+    }
+
     static displayNameForProtocol(protocol)
     {
         switch (protocol) {

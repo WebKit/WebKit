@@ -72,7 +72,9 @@
 }
 
 .resource-icon.resource-type-ping .icon,
-.resource-icon.resource-type-beacon .icon {
+.resource-icon.resource-type-beacon .icon,
+.large .resource-icon.resource-type-ping .icon,
+.large .resource-icon.resource-type-beacon .icon {
     content: url(../Images/Beacon.svg);
 }
 
@@ -126,4 +128,8 @@
 
 .large .resource-icon.resource-type-websocket .icon {
     content: image-set(url(../Images/WebSocketLarge.png) 1x, url(../Images/WebSocketLarge@2x.png) 2x);
+}
+
+.large .resource-icon.resource-type-range .icon {
+    content: url(../Images/RangeLarge.svg);
 }

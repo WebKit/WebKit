@@ -1,5 +1,32 @@
 2018-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: replace Range.svg icon
+        https://bugs.webkit.org/show_bug.cgi?id=190372
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/Range.svg:
+        * UserInterface/Images/RangeLarge.svg: Added.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.classNameForResource): Added.
+        Create a static function for specializing the `className` of `WI.Resource` objects.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement):
+
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon.resource-type-ping .icon, .resource-icon.resource-type-beacon .icon, .large .resource-icon.resource-type-ping .icon, .large .resource-icon.resource-type-beacon .icon):
+        (.resource-icon.resource-type-range .icon):
+        (.large .resource-icon.resource-type-range .icon): Added.
+        Drive-by: added `.large` versions of `ping` and `beacon` icons for the
+        `WI.OpenResourceDialog` elements.
+
+2018-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: group media network entries by the node that triggered the request
         https://bugs.webkit.org/show_bug.cgi?id=189606
         <rdar://problem/44438527>

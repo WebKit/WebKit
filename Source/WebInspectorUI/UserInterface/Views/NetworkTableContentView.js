@@ -518,19 +518,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 cell.classList.add("grouped-by-node");
 
                 let range = resource.requestedByteRange;
-                if (range) {
-                    cell.classList.add("resource-type-range");
+                if (range)
                     nameElement.textContent = WI.UIString("Byte Range %s\u2013%s").format(range.start, range.end);
-                }
             }
         }
 
-        if (!nameElement.textContent) {
-            cell.classList.add(resource.type);
+        if (!nameElement.textContent)
             nameElement.textContent = entry.name;
-        }
 
         cell.title = resource.url;
+        cell.classList.add(WI.Resource.classNameForResource(resource));
     }
 
     _populateDomainCell(cell, entry)
