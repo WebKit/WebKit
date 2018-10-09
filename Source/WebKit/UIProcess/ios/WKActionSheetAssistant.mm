@@ -248,11 +248,13 @@ static const CGFloat presentationElementRectPadding = 15;
 {
     // Calculate the presentation rect just before showing.
     CGRect presentationRect = CGRectZero;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone) {
         presentationRect = [self initialPresentationRectInHostViewForSheet];
         if (CGRectIsEmpty(presentationRect))
             return NO;
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     return [_interactionSheet presentSheetFromRect:presentationRect];
 }

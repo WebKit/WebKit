@@ -3467,6 +3467,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     return nil;
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (UITextWritingDirection)baseWritingDirectionForPosition:(UITextPosition *)position inDirection:(UITextStorageDirection)direction
 {
     return UITextWritingDirectionLeftToRight;
@@ -3475,6 +3476,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)setBaseWritingDirection:(UITextWritingDirection)writingDirection forRange:(UITextRange *)range
 {
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (CGRect)firstRectForRange:(UITextRange *)range
 {
@@ -6531,10 +6533,12 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     return _webRect.rect;
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (UITextWritingDirection)writingDirection
 {
     return (UITextWritingDirection)_webRect.writingDirection;
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (UITextRange *)range
 {

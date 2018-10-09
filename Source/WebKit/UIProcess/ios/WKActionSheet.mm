@@ -51,12 +51,14 @@
 
     _arrowDirections = UIPopoverArrowDirectionAny;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone) {
         // Only iPads support popovers that rotate. UIActionSheets actually block rotation on iPhone/iPod Touch
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         [center addObserver:self selector:@selector(willRotate) name:UIWindowWillRotateNotification object:nil];
         [center addObserver:self selector:@selector(didRotate) name:UIWindowDidRotateNotification object:nil];
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     return self;
 }
@@ -79,11 +81,13 @@
 {
     // Calculate the presentation rect just before showing.
     CGRect presentationRect = CGRectZero;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone) {
         presentationRect = [self _presentationRectForStyle:style];
         if (CGRectIsEmpty(presentationRect))
             return NO;
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     _currentPresentationStyle = style;
     return [self presentSheetFromRect:presentationRect];

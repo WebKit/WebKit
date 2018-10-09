@@ -1,3 +1,21 @@
+2018-10-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Ignore some deprecated declarations
+        https://bugs.webkit.org/show_bug.cgi?id=190371
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet init]):
+        (-[WKActionSheet presentSheet:]):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant presentSheet]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKMultipleSelectPicker initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectTableViewController initWithView:hasGroups:]):
+
 2018-10-09  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Explicitly link against gmodule where used

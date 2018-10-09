@@ -47,6 +47,7 @@ static NSString* WKPopoverTableViewCellReuseIdentifier  = @"WKPopoverTableViewCe
 - (CGRect)contentRectForBounds:(CGRect)bounds;
 @end
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirection writingDirection, bool override)
 {
     if (![string length] || writingDirection == UITextWritingDirectionNatural)
@@ -73,6 +74,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     
     return [NSString stringWithFormat:@"%C%@%C", directionalFormattingCharacter, string, popDirectionalFormatting];
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @class WKSelectPopover;
 
@@ -122,7 +124,8 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
         }
         currentIndex++;
     }
-    
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UITextWritingDirection writingDirection = _contentView.assistedNodeInformation.isRTL ? UITextWritingDirectionRightToLeft : UITextWritingDirectionLeftToRight;
     BOOL override = NO;
     _textAlignment = (writingDirection == UITextWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
@@ -133,7 +136,8 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     if (writingDirection == UITextWritingDirectionRightToLeft)
         self.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
     [self setTitle:stringWithWritingDirection(_contentView.assistedNodeInformation.title, writingDirection, override)];
-    
+    ALLOW_DEPRECATED_DECLARATIONS_END
+
     return self;
 }
 
