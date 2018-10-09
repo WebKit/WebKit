@@ -1392,6 +1392,6 @@ InputTypeColorEnabled:
   defaultValue: true
   humanReadableName: "Color Inputs"
   humanReadableDescription: "Enable input elements of type color"
-  category: experimental
+  category: internal
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(INPUT_TYPE_COLOR)

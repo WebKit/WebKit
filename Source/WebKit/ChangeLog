@@ -1,3 +1,14 @@
+2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Followup to r236942: Make input type=color an internal feature
+        https://bugs.webkit.org/show_bug.cgi?id=189162
+
+        Rubber-stamped by Dean Jackson.
+
+        I've learned from Dean that an internal feature is more suitable than an experimental feature in this scenario.
+
+        * Shared/WebPreferences.yaml:
+
 2018-10-08  Aditya Keerthi  <akeerthi@apple.com>
 
         Make <input type=color> a runtime enabled (on-by-default) feature
