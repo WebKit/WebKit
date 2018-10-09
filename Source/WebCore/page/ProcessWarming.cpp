@@ -30,6 +30,7 @@
 #include "CommonVM.h"
 #include "Font.h"
 #include "FontCache.h"
+#include "FontCascadeDescription.h"
 #include "HTMLNames.h"
 #include "MathMLNames.h"
 #include "MediaFeatureNames.h"
@@ -70,7 +71,16 @@ void ProcessWarming::prewarmGlobally()
     
     // Prewarms JS VM.
     commonVM();
-    
+
+#if USE_PLATFORM_SYSTEM_FALLBACK_LIST
+    // Cache system UI font fallbacks. Almost every web process needs these.
+    // Initializing one size is sufficient to warm CoreText caches.
+    FontCascadeDescription systemFontDescription;
+    systemFontDescription.setOneFamily("system-ui");
+    systemFontDescription.setComputedSize(11);
+    systemFontDescription.effectiveFamilyCount();
+#endif
+
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     TelephoneNumberDetector::isSupported();
 #endif
