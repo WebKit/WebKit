@@ -1,3 +1,12 @@
+2018-10-09  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Explicitly link against gmodule where used
+        https://bugs.webkit.org/show_bug.cgi?id=190398
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformWPE.cmake:
+
 2018-10-09  Chris Dumez  <cdumez@apple.com>
 
         PSON: Doing a cross-site navigation via the URL bar does not swap process on iOS
