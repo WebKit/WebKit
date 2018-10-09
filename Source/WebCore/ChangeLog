@@ -1,3 +1,25 @@
+2018-10-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r234620): SVGLangSpace::svgAttributeChanged() should invalidate the renderer of the SVGGeometryElement descendant only
+        https://bugs.webkit.org/show_bug.cgi?id=190411
+
+        Reviewed by Simon Fraser.
+
+        Test: svg/dynamic-updates/SVGStopElement-dom-xml-lang-attrr.html
+
+        When changing the attributes of the SVGLangSpace, we should invalidate
+        the renderer of the SVGGeometryElement descendant only. Renderer of other
+        elements, like SVGStopElement, should not be invalidated because they do
+        not have geometry and they can be used as resources for drawing another
+        SVGGeometryElement.
+
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::isSVGGeometryElement const):
+        * svg/SVGGeometryElement.h:
+        (isType):
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::svgAttributeChanged):
+
 2018-10-09  Chris Dumez  <cdumez@apple.com>
 
         Anchor target should be ignored on activation when the download attribute is set

@@ -54,6 +54,7 @@ protected:
     void svgAttributeChanged(const QualifiedName&) override;
 
 private:
+    bool isSVGGeometryElement() const override { return true; }
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
 
     static void registerAttributes();
@@ -64,3 +65,8 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGGeometryElement)
+    static bool isType(const WebCore::SVGElement& element) { return element.isSVGGeometryElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -24,7 +24,7 @@
 
 #include "RenderSVGResource.h"
 #include "RenderSVGShape.h"
-#include "SVGElement.h"
+#include "SVGGeometryElement.h"
 #include "XMLNames.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -67,10 +67,13 @@ void SVGLangSpace::svgAttributeChanged(const QualifiedName& attrName)
     if (!isKnownAttribute(attrName))
         return;
 
-    if (auto* renderer = downcast<RenderSVGShape>(m_contextElement.renderer())) {
-        SVGElement::InstanceInvalidationGuard guard(m_contextElement);
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-    }
+    auto* renderer = m_contextElement.renderer();
+    if (!is<RenderSVGShape>(renderer))
+        return;
+
+    ASSERT(is<SVGGeometryElement>(m_contextElement));
+    SVGElement::InstanceInvalidationGuard guard(m_contextElement);
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
 }
