@@ -32,10 +32,11 @@ namespace WebCore {
 class ISOSchemeTypeBox;
 class ISOSchemeInformationBox;
 
-class ISOProtectionSchemeInfoBox : public ISOFullBox {
+class WEBCORE_EXPORT ISOProtectionSchemeInfoBox : public ISOBox {
 public:
     static FourCC boxTypeName() { return "sinf"; }
 
+    const ISOOriginalFormatBox& originalFormatBox() const { return m_originalFormatBox; }
     const ISOSchemeTypeBox* schemeTypeBox() const { return m_schemeTypeBox.get(); }
     const ISOSchemeInformationBox* schemeInformationBox() const { return m_schemeInformationBox.get(); }
 

@@ -37,10 +37,10 @@ namespace WebCore {
 bool ISOProtectionSchemeInfoBox::parse(DataView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
-    if (!ISOFullBox::parse(view, localOffset))
+    if (!ISOBox::parse(view, localOffset))
         return false;
 
-    if (m_originalFormatBox.read(view, localOffset))
+    if (!m_originalFormatBox.read(view, localOffset))
         return false;
 
     if (localOffset - offset == m_size) {

@@ -35,7 +35,7 @@ class DataView;
 
 namespace WebCore {
 
-class ISOBox {
+class WEBCORE_EXPORT ISOBox {
 public:
     virtual ~ISOBox() = default;
 
@@ -75,7 +75,7 @@ protected:
     Vector<uint8_t> m_extendedType;
 };
 
-class ISOFullBox : public ISOBox {
+class WEBCORE_EXPORT ISOFullBox : public ISOBox {
 public:
     uint8_t version() const { return m_version; }
     uint32_t flags() const { return m_flags; }

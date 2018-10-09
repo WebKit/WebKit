@@ -1,3 +1,14 @@
+2018-10-09  Jer Noble  <jer.noble@apple.com>
+
+        ISOTrackEncryptionBox returns incorrect defaultKeyID
+        https://bugs.webkit.org/show_bug.cgi?id=190368
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ISOBox.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2018-10-09  Philippe Normand  <pnormand@igalia.com>
 
         [JHBuild] Update to GStreamer 1.14.4
