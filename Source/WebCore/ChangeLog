@@ -1,3 +1,23 @@
+2018-10-09  Youenn Fablet  <youenn@apple.com>
+
+        Add support for IceCandidate stats
+        https://bugs.webkit.org/show_bug.cgi?id=190329
+
+        Reviewed by Eric Carlson.
+
+        Convert IceCandidate stats gathered by libwebrtc.
+        Since networkType might be sensitive information, we currently do not expose it.
+        We do not expose address either if it is a host or prflx candidate.
+
+        Test: webrtc/candidate-stats.html
+
+        * Modules/mediastream/RTCStatsReport.h:
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::iceCandidateState):
+        (WebCore::fillRTCIceCandidateStats):
+        (WebCore::LibWebRTCStatsCollector::OnStatsDelivered):
+
 2018-10-09  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Stealing cross-origin video pixel with HLS

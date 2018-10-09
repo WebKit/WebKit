@@ -1,3 +1,15 @@
+2018-10-09  Youenn Fablet  <youenn@apple.com>
+
+        Add support for IceCandidate stats
+        https://bugs.webkit.org/show_bug.cgi?id=190329
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/candidate-stats-expected.txt: Added.
+        * webrtc/candidate-stats.html: Added.
+        * webrtc/routines.js:
+        * webrtc/video-stats.html:
+
 2018-10-09  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Stealing cross-origin video pixel with HLS

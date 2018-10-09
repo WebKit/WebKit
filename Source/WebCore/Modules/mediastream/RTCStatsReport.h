@@ -177,6 +177,19 @@ public:
         unsigned long long consentResponsesSent { 0 };
     };
 
+    enum class IceCandidateType { Host, Srflx, Prflx, Relay };
+
+    struct IceCandidateStats : Stats {
+        String transportId;
+        String address;
+        std::optional<int32_t> port;
+        String protocol;
+        std::optional<IceCandidateType> candidateType;
+        std::optional<int32_t> priority;
+        String url;
+        bool deleted { false };
+    };
+
     struct CertificateStats : Stats {
         CertificateStats() { type = RTCStatsReport::Type::Certificate; }
 

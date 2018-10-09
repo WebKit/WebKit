@@ -211,3 +211,14 @@ function setCodec(sdp, codec)
         return line.indexOf('a=fmtp') === -1 && line.indexOf('a=rtcp-fb') === -1 && (line.indexOf('a=rtpmap') === -1 || line.indexOf(codec) !== -1);
     }).join('\r\n');
 }
+
+async function getTypedStats(connection, type)
+{
+    const report = await connection.getStats();
+    var stats;
+    report.forEach((statItem) => {
+        if (statItem.type === type)
+            stats = statItem;
+    });
+    return stats;
+}

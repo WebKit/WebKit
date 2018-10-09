@@ -165,6 +165,27 @@ dictionary RTCIceCandidatePairStats : RTCStats {
     // FIXME: Expose other fields once libwebrtc support them.
 };
 
+enum RTCIceCandidateType {
+    "host",
+    "srflx",
+    "prflx",
+    "relay"
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCIceCandidateStats : RTCStats {
+    DOMString transportId;
+    // FIXME: decide whether to expose networkType
+    // FIXME: Expose relayProtocol
+    DOMString address;
+    long port;
+    DOMString protocol;
+    RTCIceCandidateType candidateType;
+    long priority;
+    DOMString url;
+    boolean deleted = false;
+};
+
 [ JSGenerateToJSObject ]
 dictionary RTCCertificateStats : RTCStats {
     DOMString fingerprint;
@@ -194,4 +215,3 @@ dictionary RTCCodecStats : RTCStats {
 // FIXME 169662: missing RTCMediaStreamStats
 // FIXME 169662: missing RTCTransportStats
 // FIXME 169662: missing RTCIceCandidateStats
-// FIXME 169662: missing RTCStatsIceCandidatePairState
