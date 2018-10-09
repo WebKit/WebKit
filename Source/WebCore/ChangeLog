@@ -1,3 +1,43 @@
+2018-10-09  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r236945. rdar://problem/45133492
+
+    CrashTracer: backboardd at Recursion :: QuartzCore: CA::Render::Updater::prepare_sublayer0
+    https://bugs.webkit.org/show_bug.cgi?id=190376
+    <rdar://problem/44986520>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Very deep CoreAnimation layer trees can cause problems. Reduce our maximum
+    depth from 256 to 128.
+    
+    Modified existing test: compositing/layer-creation/deep-tree.html
+    
+    * platform/graphics/ca/GraphicsLayerCA.cpp: Cap the depth at 128.
+    
+    LayoutTests:
+    
+    * compositing/layer-creation/deep-tree.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@236945 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-10-08  Dean Jackson  <dino@apple.com>
+
+            CrashTracer: backboardd at Recursion :: QuartzCore: CA::Render::Updater::prepare_sublayer0
+            https://bugs.webkit.org/show_bug.cgi?id=190376
+            <rdar://problem/44986520>
+
+            Reviewed by Tim Horton.
+
+            Very deep CoreAnimation layer trees can cause problems. Reduce our maximum
+            depth from 256 to 128.
+
+            Modified existing test: compositing/layer-creation/deep-tree.html
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp: Cap the depth at 128.
+
 2018-10-03  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r236806. rdar://problem/44855484
