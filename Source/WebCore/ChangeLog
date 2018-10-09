@@ -1,3 +1,20 @@
+2018-10-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (Safari 12): Download of Blob URL fails
+        https://bugs.webkit.org/show_bug.cgi?id=190351
+        <rdar://problem/45091181>
+
+        Reviewed by Geoffrey Garen.
+
+        When using both the download attribute and target="_blank" on an anchor element, we would
+        mistakenly drop the download attribute after the "new window" policy decision has been made.
+        As a result, we would try to load the blob instead of downloading it.
+
+        Test: fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+
 2018-10-09  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] r236735 has some dead ASSERTs that need to be moved

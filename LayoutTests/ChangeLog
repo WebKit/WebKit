@@ -1,3 +1,16 @@
+2018-10-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (Safari 12): Download of Blob URL fails
+        https://bugs.webkit.org/show_bug.cgi?id=190351
+        <rdar://problem/45091181>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html: Added.
+
 2018-10-09  Youenn Fablet  <youenn@apple.com>
 
         Add support for IceCandidate stats

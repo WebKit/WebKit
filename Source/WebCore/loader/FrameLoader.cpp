@@ -3396,7 +3396,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
         mainFrame->document()->setReferrerPolicy(frame->document()->referrerPolicy());
     }
 
-    NavigationAction newAction { *frame->document(), request, InitiatedByMainFrame::Unknown, NavigationType::Other, action.shouldOpenExternalURLsPolicy() };
+    NavigationAction newAction { *frame->document(), request, InitiatedByMainFrame::Unknown, NavigationType::Other, action.shouldOpenExternalURLsPolicy(), nullptr, action.downloadAttribute() };
     mainFrame->loader().loadWithNavigationAction(request, WTFMove(newAction), LockHistory::No, FrameLoadType::Standard, formState, allowNavigationToInvalidURL);
 }
 
