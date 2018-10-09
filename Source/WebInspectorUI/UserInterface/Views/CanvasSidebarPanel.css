@@ -97,3 +97,9 @@
 .sidebar > .panel.navigation.canvas > .content > .recording-content > .recording-processing-options > .indeterminate-progress-spinner {
     margin-bottom: 4px;
 }
+
+@media (prefers-dark-interface) {
+    .sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled {
+        filter: grayscale() invert();
+    }
+}
