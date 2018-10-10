@@ -1,3 +1,23 @@
+2018-10-10  Tim Horton  <timothy_horton@apple.com>
+
+        Share more WKShareSheet code between macOS and iOS, and fix a few bugs
+        https://bugs.webkit.org/show_bug.cgi?id=190420
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/ios/share-expected.txt: Removed.
+        * fast/events/ios/share.html: Removed.
+        * fast/web-share/share.html: Added.
+        * fast/web-share/share-expected.txt: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.setShareSheetCompletesImmediatelyWithResolution):
+        (window.UIHelper.invokeShareSheetWithResolution): Deleted.
+        Move the existing share sheet test to fast/web-share so it runs on both macOS and iOS.
+
+        * fast/web-share/share-with-no-url.html: Added.
+        * fast/web-share/share-with-no-url-expected.txt: Added.
+        Add a new test that the sheet is successfully invoked even when a URL is not provided.
+
 2018-10-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: notify the frontend when a canvas has started recording via console.record

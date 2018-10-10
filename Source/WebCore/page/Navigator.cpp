@@ -118,11 +118,14 @@ void Navigator::share(ScriptExecutionContext& context, ShareData data, Ref<Defer
         promise->reject(TypeError);
         return;
     }
-    
-    URL url = context.completeURL(data.url);
-    if (!url.isValid()) {
-        promise->reject(TypeError);
-        return;
+
+    std::optional<URL> url;
+    if (!data.url.isEmpty()) {
+        url = context.completeURL(data.url);
+        if (!url->isValid()) {
+            promise->reject(TypeError);
+            return;
+        }
     }
     
     if (!UserGestureIndicator::processingUserGesture()) {

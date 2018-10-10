@@ -4,7 +4,7 @@
 <meta name="viewport" content="initial-scale=5, width=device-width">
 <head>
 
-    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
     <script>
         
         if (window.testRunner) {
@@ -14,16 +14,18 @@
     
         let write = (message) => output.innerHTML += (message + "<br>");
 
-        async function runTest()
+        function runTest()
         {
-            document.getElementById("target").addEventListener("click", async () => {
-                navigator.share({ title: "Example Page", url: "url", text: "text" }).then((result) => {
+            document.getElementById("target").addEventListener("click", () => {
+                navigator.share({ text: "text" }).then((result) => {
                     write("PASS: Share sheet invoked.");
                     testRunner.notifyDone();
-                });
-                UIHelper.invokeShareSheetWithResolution(true);
+                });    
             });
-            await UIHelper.activateAt(50, 50);
+            
+            UIHelper.setShareSheetCompletesImmediatelyWithResolution(true).then(() => {
+                UIHelper.activateAt(50, 50);
+            });
         }
 
     </script>

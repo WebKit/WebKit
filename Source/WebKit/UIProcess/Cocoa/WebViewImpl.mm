@@ -2758,9 +2758,8 @@ void WebViewImpl::selectionDidChange()
 #if WK_API_ENABLED
 void WebViewImpl::showShareSheet(const WebCore::ShareDataWithParsedURL& data, WTF::CompletionHandler<void(bool)>&& completionHandler, WKWebView *view)
 {
-    ASSERT(!_shareSheet);
     if (_shareSheet)
-        return;
+        [_shareSheet dismiss];
     
     ASSERT([view respondsToSelector:@selector(shareSheetDidDismiss:)]);
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:view]);

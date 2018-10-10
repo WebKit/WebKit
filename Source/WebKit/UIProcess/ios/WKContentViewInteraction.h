@@ -400,7 +400,6 @@ DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_pasteAsQuotation)
 - (void)_simulateTextEntered:(NSString *)text;
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
-- (void)invokeShareSheetWithResolution:(BOOL)resolved;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;

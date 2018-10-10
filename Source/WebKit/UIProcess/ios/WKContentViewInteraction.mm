@@ -4817,11 +4817,10 @@ static bool isAssistableInputType(InputType type)
 - (void)_showShareSheet:(const ShareDataWithParsedURL&)data completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    ASSERT(!_shareSheet);
     if (_shareSheet)
-        return;
+        [_shareSheet dismiss];
     
-    _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:self]);
+    _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:_webView]);
     [_shareSheet setDelegate:self];
     
     [_shareSheet presentWithParameters:data completionHandler:WTFMove(completionHandler)];
@@ -6007,13 +6006,6 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 #if PLATFORM(WATCHOS)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTimePickerViewController class]])
         [(WKTimePickerViewController *)_presentedFullScreenInputViewController.get() setHour:hour minute:minute];
-#endif
-}
-
-- (void)invokeShareSheetWithResolution:(BOOL)resolved
-{
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    [_shareSheet invokeShareSheetWithResolution:resolved];
 #endif
 }
 

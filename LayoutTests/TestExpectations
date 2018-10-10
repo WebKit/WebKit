@@ -420,6 +420,9 @@ fast/misc/valid-primary-screen-displayID.html [ Skip ]
 # This test currently only works for mac-wk2
 fast/events/inactive-window-no-mouse-event.html [ Skip ]
 
+# The Web Share API is currently only implemented for modern WebKit on iOS and macOS
+fast/web-share [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

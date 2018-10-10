@@ -262,9 +262,9 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(setValueScript, resolve));
     }
 
-    static invokeShareSheetWithResolution(resolved)
+    static setShareSheetCompletesImmediatelyWithResolution(resolved)
     {
-        const resolveShareSheet = `(() => uiController.invokeShareSheetWithResolution(${resolved}))()`;
+        const resolveShareSheet = `(() => uiController.setShareSheetCompletesImmediatelyWithResolution(${resolved}))()`;
         return new Promise(resolve => testRunner.runUIScript(resolveShareSheet, resolve));
     }
 

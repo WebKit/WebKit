@@ -194,7 +194,7 @@ interface UIScriptController {
     void setTimePickerValue(long hour, long minute);
 
     // Share sheet
-    void invokeShareSheetWithResolution(boolean resolved);
+    void setShareSheetCompletesImmediatelyWithResolution(boolean resolved);
 
     // <datalist>
     readonly attribute boolean isShowingDataListSuggestions;

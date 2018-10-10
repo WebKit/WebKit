@@ -170,6 +170,8 @@ struct PrintInfo;
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source;
 #endif
 
+- (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;
+
 - (WKPageRef)_pageForTesting;
 - (WebKit::WebPageProxy*)_page;
 

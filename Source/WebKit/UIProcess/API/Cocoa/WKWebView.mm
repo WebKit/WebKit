@@ -263,6 +263,8 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
 
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
 
+    std::optional<BOOL> _resolutionForShareSheetImmediateCompletionForTesting;
+
 #if PLATFORM(IOS)
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 
@@ -4252,6 +4254,11 @@ IGNORE_WARNINGS_END
     return WebCore::SchemeRegistry::isBuiltinScheme(urlScheme);
 }
 
+- (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
+{
+    return _resolutionForShareSheetImmediateCompletionForTesting;
+}
+
 @end
 
 @implementation WKWebView (WKPrivate)
@@ -6074,11 +6081,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView setTimePickerValueToHour:hour minute:minute];
 }
 
-- (void)_invokeShareSheetWithResolution:(BOOL)resolved
-{
-    [_contentView invokeShareSheetWithResolution:resolved];
-}
-
 - (void)selectFormAccessoryPickerRow:(int)rowIndex
 {
     [_contentView selectFormAccessoryPickerRow:rowIndex];
@@ -6622,6 +6624,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading
 {
     _page->setDefersLoadingForTesting(defersLoading);
+}
+
+- (void)_setShareSheetCompletesImmediatelyWithResolutionForTesting:(BOOL)resolved
+{
+    _resolutionForShareSheetImmediateCompletionForTesting = resolved;
 }
 
 - (_WKInspector *)_inspector

@@ -1,5 +1,55 @@
 2018-10-10  Tim Horton  <timothy_horton@apple.com>
 
+        Share more WKShareSheet code between macOS and iOS, and fix a few bugs
+        https://bugs.webkit.org/show_bug.cgi?id=190420
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _resolutionForShareSheetImmediateCompletionForTesting]):
+        (-[WKWebView _setShareSheetCompletesImmediatelyWithResolutionForTesting:]):
+        (-[WKWebView _invokeShareSheetWithResolution:]): Deleted.
+        Add a new mechanism to tell the share sheet up-front that it should
+        immediately dismiss with a particular resolution, for testing.
+        See the Tools ChangeLog for justification.
+        We keep the bit on WKWebView instead of WKShareSheet so that it can be
+        called prior to invoking the share sheet.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WKShareSheet.h:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet initWithView:]):
+        (-[WKShareSheet presentWithParameters:completionHandler:]):
+        (-[WKShareSheet sharingServicePicker:didChooseSharingService:]):
+        (-[WKShareSheet _didCompleteWithSuccess:]):
+        (-[WKShareSheet dismiss]):
+        (-[WKShareSheet dispatchDidDismiss]):
+        (-[WKShareSheet initWithView:initWithView:]): Deleted.
+        (-[WKShareSheet _dispatchDidDismiss]): Deleted.
+        (-[WKShareSheet _cancel]): Deleted.
+        (-[WKShareSheet _dismissDisplayAnimated:]): Deleted.
+        (-[WKShareSheet _presentFullscreenViewController:animated:]): Deleted.
+        (-[WKShareSheet invokeShareSheetWithResolution:]): Deleted.
+        Reduce the number of extraneous members, methods, and #ifdefs.
+        Try to share as much of WKShareSheet between the platforms as makes sense.
+        The interface is now totally identical on the two platforms.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showShareSheet):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showShareSheet:completionHandler:]):
+        (-[WKContentView invokeShareSheetWithResolution:]): Deleted.
+        Instead of silently failing (without even calling the completion handler!)
+        if we try to present one share sheet on top of another, dismiss the first
+        and present the new one. This is important because there are (separately
+        filed) bugs on both platforms where the completion handler is not called;
+        now, instead of a tab getting stuck forever, we'll reject the promise
+        when another share takes place.
+
+2018-10-10  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r236678): Keyboard scrolling with arrow keys doesn't work on iOS
         https://bugs.webkit.org/show_bug.cgi?id=190433
         <rdar://problem/45111986>

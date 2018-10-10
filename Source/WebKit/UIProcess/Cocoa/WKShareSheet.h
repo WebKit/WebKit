@@ -27,35 +27,22 @@
 
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && WK_API_ENABLED
 
-#import <WebCore/ShareData.h>
-#import <wtf/BlockPtr.h>
-#import <wtf/Forward.h>
-#import <wtf/Vector.h>
-#import <wtf/WeakObjCPtr.h>
-#import <wtf/text/WTFString.h>
-
-#if PLATFORM(IOS)
-#import <UIKit/UIKit.h>
-#else
-#import "WKWebView.h"
-#endif
-
-@class WKContentView;
+@class WKWebView;
 @protocol WKShareSheetDelegate;
 
-#if PLATFORM(MAC)
-@interface WKShareSheet : NSObject <NSSharingServicePickerDelegate>
-- (instancetype)initWithView:(WKWebView *)view;
-#else
+namespace WebCore {
+struct ShareDataWithParsedURL;
+}
+
 @interface WKShareSheet : NSObject
-- (instancetype)initWithView:(WKContentView *)view;
-#endif
+
+- (instancetype)initWithView:(WKWebView *)view;
 
 - (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL&)data completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
 - (void)dismiss;
-- (void)invokeShareSheetWithResolution:(BOOL)resolved;
 
 @property (nonatomic, weak) id <WKShareSheetDelegate> delegate;
+
 @end
 
 @protocol WKShareSheetDelegate <NSObject>
@@ -63,4 +50,4 @@
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet;
 @end
 
-#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && WK_API_ENABLED

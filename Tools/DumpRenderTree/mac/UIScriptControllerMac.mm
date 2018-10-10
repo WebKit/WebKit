@@ -185,6 +185,10 @@ bool UIScriptController::isShowingDataListSuggestions() const
     return false;
 }
 
+void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool)
+{
+}
+
 }
 
 #endif // PLATFORM(MAC)

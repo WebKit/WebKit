@@ -294,10 +294,6 @@ void UIScriptController::setTimePickerValue(long, long)
 {
 }
 
-void UIScriptController::invokeShareSheetWithResolution(bool)
-{
-}
-
 void UIScriptController::selectFormAccessoryPickerRow(long)
 {
 }
@@ -491,6 +487,10 @@ void UIScriptController::beginBackSwipe(JSValueRef callback)
 }
 
 void UIScriptController::completeBackSwipe(JSValueRef callback)
+{
+}
+
+void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool)
 {
 }
 

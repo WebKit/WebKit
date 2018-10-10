@@ -410,10 +410,10 @@ void UIScriptController::setTimePickerValue(long hour, long minute)
     [webView setTimePickerValueToHour:hour minute:minute];
 }
 
-void UIScriptController::invokeShareSheetWithResolution(bool resolved)
+void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool resolved)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView _invokeShareSheetWithResolution:resolved];
+    [webView _setShareSheetCompletesImmediatelyWithResolutionForTesting:resolved];
 }
     
 JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const

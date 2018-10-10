@@ -36,7 +36,7 @@ struct ShareData {
     
 struct ShareDataWithParsedURL {
     ShareData shareData;
-    URL url;
+    std::optional<URL> url;
 };
     
 }

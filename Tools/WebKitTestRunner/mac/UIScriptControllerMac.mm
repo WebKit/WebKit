@@ -270,4 +270,14 @@ bool UIScriptController::isWindowContentViewFirstResponder() const
     return [window firstResponder] == [window contentView];
 }
 
+void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool resolved)
+{
+#if WK_API_ENABLED
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView _setShareSheetCompletesImmediatelyWithResolutionForTesting:resolved];
+#else
+    UNUSED_PARAM(resolved);
+#endif
+}
+
 } // namespace WTR

@@ -101,7 +101,7 @@ public:
     JSRetainPtr<JSStringRef> formInputLabel() const;
     void setTimePickerValue(long hour, long minute);
 
-    void invokeShareSheetWithResolution(bool resolved);
+    void setShareSheetCompletesImmediatelyWithResolution(bool resolved);
 
     bool isShowingDataListSuggestions() const;
 

@@ -409,8 +409,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, readonly) NSString *formInputLabel WK_API_AVAILABLE(ios(12.0));
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute WK_API_AVAILABLE(ios(12.0));
 
-- (void)_invokeShareSheetWithResolution:(BOOL)resolved WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
 - (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString withCompletionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(ios(11.0));
 
 - (void)didStartFormControlInteraction WK_API_AVAILABLE(ios(10.3));
@@ -498,6 +496,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading;
+
+- (void)_setShareSheetCompletesImmediatelyWithResolutionForTesting:(BOOL)resolved WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) _WKInspector *_inspector WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, readonly) _WKFrameHandle *_mainFrame WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
