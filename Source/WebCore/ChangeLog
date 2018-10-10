@@ -1,3 +1,17 @@
+2018-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r236802.
+
+        Working on getting the HTML spec updated instead
+        (https://github.com/whatwg/html/pull/4079)
+
+        Reverted changeset:
+
+        "Passing noopener=NOOPENER to window.open() should cause the
+        new window to not have an opener"
+        https://bugs.webkit.org/show_bug.cgi?id=190251
+        https://trac.webkit.org/changeset/236802
+
 2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         XMLHttpRequest should use reportExtraMemoryAllocated/reportExtraMemoryVisited instead of deprecatedReportExtraMemory
