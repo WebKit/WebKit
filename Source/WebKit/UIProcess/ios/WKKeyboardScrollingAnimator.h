@@ -53,7 +53,7 @@ enum class ScrollingIncrement : uint8_t {
 - (void)willStartInteractiveScroll;
 
 - (BOOL)beginWithEvent:(::WebEvent *)event;
-- (BOOL)handleKeyEvent:(::WebEvent *)event;
+- (void)handleKeyEvent:(::WebEvent *)event;
 
 @property (nonatomic, weak) id <WKKeyboardScrollViewAnimatorDelegate> delegate;
 
@@ -64,6 +64,7 @@ enum class ScrollingIncrement : uint8_t {
 - (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator;
 - (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebKit::ScrollingIncrement)increment;
 - (void)keyboardScrollViewAnimatorWillScroll:(WKKeyboardScrollViewAnimator *)animator;
+- (void)keyboardScrollViewAnimatorDidFinishScrolling:(WKKeyboardScrollViewAnimator *)animator;
 
 @end
 

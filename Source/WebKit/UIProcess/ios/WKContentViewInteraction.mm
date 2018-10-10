@@ -3820,9 +3820,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent
 {
-    if ([_keyboardScrollingAnimator handleKeyEvent:theEvent])
-        return;
-
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
 }
 
@@ -3834,6 +3831,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
+    [_keyboardScrollingAnimator handleKeyEvent:event];
+    
     if (auto handler = WTFMove(_keyWebEventHandler)) {
         handler(event, eventWasHandled);
         return;
@@ -3950,6 +3949,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)keyboardScrollViewAnimatorWillScroll:(WKKeyboardScrollViewAnimator *)animator
 {
     [self willStartZoomOrScroll];
+}
+
+- (void)keyboardScrollViewAnimatorDidFinishScrolling:(WKKeyboardScrollViewAnimator *)animator
+{
+    [_webView _didFinishScrolling];
 }
 
 - (void)executeEditCommandWithCallback:(NSString *)commandName

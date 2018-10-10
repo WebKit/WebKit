@@ -1,5 +1,42 @@
 2018-10-10  Tim Horton  <timothy_horton@apple.com>
 
+        REGRESSION (r236935): Layout test fast/events/ios/keyboard-scrolling-distance.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=190444
+        <rdar://problem/45110698>
+
+        Reviewed by Simon Fraser.
+
+        There's a race in WKKeyboardScrollingAnimator that's exacerbated by HIDEventGenerator
+        being much faster than a human finger. We get our "begin" events from interpretKeyEvent,
+        after the Web Content process has had its way with it, but currently the
+        back-channel "handle" events (e.g. for key up, which doesn't go to interpretKeyEvent)
+        are retrieved from handleKeyWebEvent in the UI process, which is *before*
+        the Web Content process has had a swing at it.
+
+        If you lose the race (an insanely short tap like you get from HIDEventGenerator,
+        or with a very busy Web Content process), we see handle(keyDown), handle(keyUp), begin(keyDown),
+        and get stuck scrolling!
+
+        Instead, retrieve the out-of-band "handle" events from _didHandleKeyEvent,
+        so that they're sensibly and strictly ordered with respect to the timing of interpretKeyEvent/"begin".
+
+        Also, hook up didFinishScrolling, so that UIScriptController's callbacks work correctly.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView handleKeyWebEvent:]):
+        (-[WKContentView _didHandleKeyEvent:eventWasHandled:]):
+        (-[WKContentView keyboardScrollViewAnimatorDidFinishScrolling:]):
+        * UIProcess/ios/WKKeyboardScrollingAnimator.h:
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator handleKeyEvent:]):
+        (-[WKKeyboardScrollingAnimator displayLinkFired:]):
+        (-[WKKeyboardScrollViewAnimator setDelegate:]):
+        (-[WKKeyboardScrollViewAnimator handleKeyEvent:]):
+        (-[WKKeyboardScrollViewAnimator didFinishScrolling]):
+
+2018-10-10  Tim Horton  <timothy_horton@apple.com>
+
         Share more WKShareSheet code between macOS and iOS, and fix a few bugs
         https://bugs.webkit.org/show_bug.cgi?id=190420
 

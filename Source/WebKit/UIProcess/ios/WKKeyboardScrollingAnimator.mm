@@ -76,6 +76,7 @@ struct KeyboardScrollParameters {
 - (CGPoint)boundedContentOffset:(CGPoint)offset;
 - (WebCore::RectEdges<bool>)scrollableDirectionsFromOffset:(CGPoint)offset;
 - (WebCore::RectEdges<bool>)rubberbandableDirections;
+- (void)didFinishScrolling;
 
 @end
 
@@ -89,7 +90,7 @@ struct KeyboardScrollParameters {
 - (void)willStartInteractiveScroll;
 
 - (BOOL)beginWithEvent:(::WebEvent *)event;
-- (BOOL)handleKeyEvent:(::WebEvent *)event;
+- (void)handleKeyEvent:(::WebEvent *)event;
 
 @end
 
@@ -311,18 +312,16 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
     return YES;
 }
 
-- (BOOL)handleKeyEvent:(::WebEvent *)event
+- (void)handleKeyEvent:(::WebEvent *)event
 {
     if (!_hasPressedScrollingKey)
-        return NO;
+        return;
 
     auto scroll = [self keyboardScrollForEvent:event];
     if (!scroll || event.type == WebEventKeyUp) {
         [self stopAnimatedScroll];
         _hasPressedScrollingKey = NO;
     }
-
-    return NO;
 }
 
 static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCore::FloatPoint b, WebKit::ScrollingDirection direction)
@@ -437,6 +436,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     // If we've effectively stopped scrolling, and no key is pressed,
     // shut down the display link.
     if (!_hasPressedScrollingKey && _velocity.diagonalLengthSquared() < 1) {
+        [_scrollable didFinishScrolling];
         [self stopDisplayLink];
         _velocity = { };
     }
@@ -454,6 +454,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     BOOL _delegateRespondsToIsKeyboardScrollable;
     BOOL _delegateRespondsToDistanceForIncrement;
     BOOL _delegateRespondsToWillScroll;
+    BOOL _delegateRespondsToDidFinishScrolling;
 }
 
 - (instancetype)init
@@ -494,6 +495,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     _delegateRespondsToIsKeyboardScrollable = [_delegate respondsToSelector:@selector(isScrollableForKeyboardScrollViewAnimator:)];
     _delegateRespondsToDistanceForIncrement = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimator:distanceForIncrement:)];
     _delegateRespondsToWillScroll = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimatorWillScroll:)];
+    _delegateRespondsToDidFinishScrolling = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimatorDidFinishScrolling:)];
 }
 
 - (void)willStartInteractiveScroll
@@ -506,7 +508,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     return [_animator beginWithEvent:event];
 }
 
-- (BOOL)handleKeyEvent:(::WebEvent *)event
+- (void)handleKeyEvent:(::WebEvent *)event
 {
     return [_animator handleKeyEvent:event];
 }
@@ -625,6 +627,12 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     edges.setRight(edges.left());
 
     return edges;
+}
+
+- (void)didFinishScrolling
+{
+    if (_delegateRespondsToDidFinishScrolling)
+        [_delegate keyboardScrollViewAnimatorDidFinishScrolling:self];
 }
 
 @end
