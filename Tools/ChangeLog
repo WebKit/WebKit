@@ -1,3 +1,14 @@
+2018-10-09  Guillaume Emont  <guijemont@igalia.com>
+
+        Allow run-javascriptcore-tests to distribute tests between devices
+        https://bugs.webkit.org/show_bug.cgi?id=190190
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+        * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb:
+
 2018-10-09  Dean Jackson  <dino@apple.com>
 
         Update WHLSL to Metal tester with semantics

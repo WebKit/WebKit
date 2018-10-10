@@ -292,7 +292,7 @@ def prepareShellTestRunner
     FileUtils.cp SCRIPTS_PATH + "jsc-stress-test-helpers" + "shell-runner.sh", $runnerDir + "runscript"
 end
 
-def prepareMakeTestRunner
+def prepareMakeTestRunner(remoteIndex)
     # The goals of our parallel test runner are scalability and simplicity. The
     # simplicity part is particularly important. We don't want to have to have
     # a full-time contributor just philosophising about parallel testing.
@@ -330,10 +330,12 @@ def prepareMakeTestRunner
     runIndices = []
     $runlist.each {
         | plan |
-        runIndices << plan.index
+        if !$remote or plan.index % $remoteHosts.length == remoteIndex
+            runIndices << plan.index
+        end
     }
     
-    File.open($runnerDir + "Makefile", "w") {
+    File.open($runnerDir + "Makefile.#{remoteIndex}", "w") {
         | outp |
         outp.puts("all: " + runIndices.map{|v| "test_done_#{v}"}.join(' '))
         runIndices.each {
@@ -355,12 +357,12 @@ def prepareRubyTestRunner
     }
 end
 
-def testRunnerCommand
+def testRunnerCommand(remoteIndex=0)
     case $testRunnerType
     when :shell
         command = "sh runscript"
     when :make
-        command = "make -j #{$numChildProcesses.to_s} -s -f Makefile"
+        command = "make -j #{$numChildProcesses} -s -f Makefile.#{remoteIndex}"
     when :ruby
         command = "ruby runscript"
     else
