@@ -1,5 +1,16 @@
 2018-10-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r236853): Uncaught Exception: undefined is not an object (evaluating 'entry.resource')
+        https://bugs.webkit.org/show_bug.cgi?id=190442
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.reset):
+        It's unnecessary to deselect rows in the `WI.Table` when we're about to remove them.
+
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION: selection in network table is lost when new entries are added
         https://bugs.webkit.org/show_bug.cgi?id=190362
 

@@ -280,7 +280,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         if (this._table) {
             this._selectedResource = null;
-            this._table.deselectAll();
             this._table.reloadData();
             this._hidePopover();
             this._hideResourceDetailView();
