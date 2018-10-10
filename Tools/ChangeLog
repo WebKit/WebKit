@@ -1,3 +1,28 @@
+2018-10-09  Dean Jackson  <dino@apple.com>
+
+        Update WHLSL to Metal tester with semantics
+        https://bugs.webkit.org/show_bug.cgi?id=190416
+        <rdar://problem/45145139>
+
+        Reviewed by Myles Maxfield.
+
+        A few small changes to the WHLSL to Metal tools:
+        - Make it compile by adding some missing JS files :)
+        - Add semantics to the default shader
+        - Add FIXMEs to the other shaders
+        - Create an in-browser test for the WHLSLToMetal codepath
+        - Fix typos in the semantics checker
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype._checkSemantics.checkSemanticTypes):
+        (Checker.prototype._checkSemantics.checkSemanticForShaderType):
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Compiler.m:
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Default.whlsl:
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Julia.whlsl:
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Mandelbrot.whlsl:
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/WHLSL Tests.xcodeproj/project.pbxproj:
+        * WebGPUShadingLanguageRI/Metal/WhlslToMsl.html: Added.
+
 2018-10-09  Jer Noble  <jer.noble@apple.com>
 
         Crash when closing WKWebView during enter fullscreen animation

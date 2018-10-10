@@ -177,7 +177,7 @@ class Checker extends Visitor {
         function checkSemanticTypes(items) {
             for (let item of items) {
                 if (item.semantic && !item.semantic.isAcceptableType(item.type, program))
-                    throw new WTypeError(node.origin.originString, `Semantic ${item.semantic} is unnacceptable type ${item.type}`);
+                    throw new WTypeError(node.origin.originString, `Semantic ${item.semantic} is unacceptable type ${item.type}`);
             }
         }
         checkSemanticTypes(inputGatherer.result);
@@ -186,7 +186,7 @@ class Checker extends Visitor {
         function checkSemanticForShaderType(items, direction) {
             for (let item of items) {
                 if (item.semantic && !item.semantic.isAcceptableForShaderType(direction, node.shaderType))
-                    throw new WTypeError(node.origin.originString, `Semantic ${item.semantic} is unnacceptable as an ${direction} of shader type ${node.shaderType}`);
+                    throw new WTypeError(node.origin.originString, `Semantic ${item.semantic} is unacceptable as an ${direction} of shader type ${node.shaderType}`);
             }
         }
         checkSemanticForShaderType(inputGatherer.result, "input");

@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		31F11709216BFE92009A36D5 /* FuncAttribute.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F116C4216BFE90009A36D5 /* FuncAttribute.js */; };
+		31F1170A216BFE92009A36D5 /* BuiltInSemantic.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F116C5216BFE90009A36D5 /* BuiltInSemantic.js */; };
+		31F11732216BFE93009A36D5 /* ResourceSemantic.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F11704216BFE90009A36D5 /* ResourceSemantic.js */; };
+		31F11733216BFE93009A36D5 /* FuncNumThreadsAttribute.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F11705216BFE91009A36D5 /* FuncNumThreadsAttribute.js */; };
+		31F11734216BFE93009A36D5 /* Semantic.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F11706216BFE91009A36D5 /* Semantic.js */; };
+		31F11735216BFE93009A36D5 /* CheckNativeFuncStages.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F11707216BFE92009A36D5 /* CheckNativeFuncStages.js */; };
+		31F11736216BFE93009A36D5 /* SpecializationConstantSemantic.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F11708216BFE92009A36D5 /* SpecializationConstantSemantic.js */; };
+		31F11776216BFEEC009A36D5 /* StageInOutSemantic.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F11737216BFEEB009A36D5 /* StageInOutSemantic.js */; };
+		31F1179F216BFF07009A36D5 /* MSLInsertTrapParameter.js in Resources */ = {isa = PBXBuildFile; fileRef = 31F1179E216BFF07009A36D5 /* MSLInsertTrapParameter.js */; };
 		E906B04621139B7700AD1C5E /* Julia.whlsl in Resources */ = {isa = PBXBuildFile; fileRef = E906B04521139B7700AD1C5E /* Julia.whlsl */; };
 		E921D6362138C02600775099 /* OperatorAnderIndexer.js in Resources */ = {isa = PBXBuildFile; fileRef = E921D6322138C02600775099 /* OperatorAnderIndexer.js */; };
 		E921D6372138C02600775099 /* MatrixType.js in Resources */ = {isa = PBXBuildFile; fileRef = E921D6332138C02600775099 /* MatrixType.js */; };
@@ -210,6 +219,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		31F116C4216BFE90009A36D5 /* FuncAttribute.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = FuncAttribute.js; path = ../../../FuncAttribute.js; sourceTree = "<group>"; };
+		31F116C5216BFE90009A36D5 /* BuiltInSemantic.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = BuiltInSemantic.js; path = ../../../BuiltInSemantic.js; sourceTree = "<group>"; };
+		31F11704216BFE90009A36D5 /* ResourceSemantic.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = ResourceSemantic.js; path = ../../../ResourceSemantic.js; sourceTree = "<group>"; };
+		31F11705216BFE91009A36D5 /* FuncNumThreadsAttribute.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = FuncNumThreadsAttribute.js; path = ../../../FuncNumThreadsAttribute.js; sourceTree = "<group>"; };
+		31F11706216BFE91009A36D5 /* Semantic.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = Semantic.js; path = ../../../Semantic.js; sourceTree = "<group>"; };
+		31F11707216BFE92009A36D5 /* CheckNativeFuncStages.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = CheckNativeFuncStages.js; path = ../../../CheckNativeFuncStages.js; sourceTree = "<group>"; };
+		31F11708216BFE92009A36D5 /* SpecializationConstantSemantic.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = SpecializationConstantSemantic.js; path = ../../../SpecializationConstantSemantic.js; sourceTree = "<group>"; };
+		31F11737216BFEEB009A36D5 /* StageInOutSemantic.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = StageInOutSemantic.js; path = ../../../StageInOutSemantic.js; sourceTree = "<group>"; };
+		31F1179E216BFF07009A36D5 /* MSLInsertTrapParameter.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = MSLInsertTrapParameter.js; path = ../../MSLInsertTrapParameter.js; sourceTree = "<group>"; };
 		E906B04521139B7700AD1C5E /* Julia.whlsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Julia.whlsl; sourceTree = "<group>"; };
 		E921D6322138C02600775099 /* OperatorAnderIndexer.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = OperatorAnderIndexer.js; path = ../../../OperatorAnderIndexer.js; sourceTree = "<group>"; };
 		E921D6332138C02600775099 /* MatrixType.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = MatrixType.js; path = ../../../MatrixType.js; sourceTree = "<group>"; };
@@ -568,6 +586,7 @@
 				E95569B020F56CD600F5CF34 /* Break.js */,
 				E921D6342138C02600775099 /* BuiltinMatrixGetter.js */,
 				E921D6352138C02600775099 /* BuiltinMatrixSetter.js */,
+				31F116C5216BFE90009A36D5 /* BuiltInSemantic.js */,
 				E941ACB92134A5BB00392BA9 /* BuiltinVectorGetter.js */,
 				E941ACBC2134A5BB00392BA9 /* BuiltinVectorSetter.js */,
 				E95569BF20F56CD700F5CF34 /* CallExpression.js */,
@@ -577,6 +596,7 @@
 				E95569C120F56CD700F5CF34 /* Checker.js */,
 				E95569B620F56CD600F5CF34 /* CheckLiteralTypes.js */,
 				E95569B320F56CD600F5CF34 /* CheckLoops.js */,
+				31F11707216BFE92009A36D5 /* CheckNativeFuncStages.js */,
 				E94C06FA20F56CA300672992 /* CheckRecursion.js */,
 				E95569BB20F56CD600F5CF34 /* CheckRecursiveTypes.js */,
 				E95569B220F56CD600F5CF34 /* CheckReturns.js */,
@@ -613,7 +633,9 @@
 				E95569EB20F56D0500F5CF34 /* FoldConstexprs.js */,
 				E9FCEB5A20F56D93009B3629 /* ForLoop.js */,
 				E9FCEB5520F56D92009B3629 /* Func.js */,
+				31F116C4216BFE90009A36D5 /* FuncAttribute.js */,
 				E95569E820F56D0500F5CF34 /* FuncDef.js */,
+				31F11705216BFE91009A36D5 /* FuncNumThreadsAttribute.js */,
 				E95569E920F56D0500F5CF34 /* FuncParameter.js */,
 				E95569E620F56D0500F5CF34 /* FunctionLikeBlock.js */,
 				E94C06FB20F56CA300672992 /* HighZombieFinder.js */,
@@ -643,6 +665,7 @@
 				E92789AC213F3364001EA73E /* MSLFunctionDeclaration.js */,
 				E92789AB213F3364001EA73E /* MSLFunctionDefinition.js */,
 				E973E5C7213F3385005D79FC /* MSLFunctionForwardDeclaration.js */,
+				31F1179E216BFF07009A36D5 /* MSLInsertTrapParameter.js */,
 				E97ED7E1214B822900AD1140 /* MSLNameMangler.js */,
 				E97ED7E4214B822900AD1140 /* MSLNativeFunctionCall.js */,
 				E973E5C8213F3385005D79FC /* MSLStatementEmitter.js */,
@@ -677,11 +700,15 @@
 				E92D103820F56E4F00D776B2 /* ResolveOverloadImpl.js */,
 				E92D103620F56E4F00D776B2 /* ResolveProperties.js */,
 				E92D103720F56E4F00D776B2 /* ResolveTypeDefs.js */,
+				31F11704216BFE90009A36D5 /* ResourceSemantic.js */,
 				E92D103E20F56E6100D776B2 /* Return.js */,
 				E92D104020F56E6200D776B2 /* ReturnChecker.js */,
 				E92D104220F56E6200D776B2 /* ReturnException.js */,
 				E92D104120F56E6200D776B2 /* Rewriter.js */,
 				E9D7CB9D214B82B800F1C918 /* Sampler.js */,
+				31F11706216BFE91009A36D5 /* Semantic.js */,
+				31F11708216BFE92009A36D5 /* SpecializationConstantSemantic.js */,
+				31F11737216BFEEB009A36D5 /* StageInOutSemantic.js */,
 				E92D103F20F56E6200D776B2 /* StandardLibrary.js */,
 				E92D104820F56E7300D776B2 /* StatementCloner.js */,
 				E92D104920F56E7300D776B2 /* StructLayoutBuilder.js */,
@@ -733,7 +760,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E94C06EA20F56A4200672992 /* Build configuration list for PBXNativeTarget "WHLSL Tests" */;
 			buildPhases = (
-				E925653C21234AA1001A89D9 /* ShellScript */,
 				E94C06BC20F56A4000672992 /* Sources */,
 				E94C06BD20F56A4000672992 /* Frameworks */,
 				E94C06BE20F56A4000672992 /* Resources */,
@@ -785,7 +811,7 @@
 			};
 			buildConfigurationList = E94C06BB20F56A4000672992 /* Build configuration list for PBXProject "WHLSL Tests" */;
 			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = en;
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -822,6 +848,7 @@
 				E92D111F20F7060E00D776B2 /* Break.js in Resources */,
 				E921D6382138C02600775099 /* BuiltinMatrixGetter.js in Resources */,
 				E921D6392138C02600775099 /* BuiltinMatrixSetter.js in Resources */,
+				31F1170A216BFE92009A36D5 /* BuiltInSemantic.js in Resources */,
 				E941ACCA2134A5BC00392BA9 /* BuiltinVectorGetter.js in Resources */,
 				E941ACCD2134A5BC00392BA9 /* BuiltinVectorSetter.js in Resources */,
 				E92D112020F7060E00D776B2 /* CallExpression.js in Resources */,
@@ -831,6 +858,7 @@
 				E92D112320F7060E00D776B2 /* Checker.js in Resources */,
 				E92D112420F7060E00D776B2 /* CheckLiteralTypes.js in Resources */,
 				E92D112520F7060E00D776B2 /* CheckLoops.js in Resources */,
+				31F11735216BFE93009A36D5 /* CheckNativeFuncStages.js in Resources */,
 				E92D112620F7060E00D776B2 /* CheckRecursion.js in Resources */,
 				E92D112720F7060E00D776B2 /* CheckRecursiveTypes.js in Resources */,
 				E92D112820F7060E00D776B2 /* CheckReturns.js in Resources */,
@@ -868,7 +896,9 @@
 				E92D114B20F7060E00D776B2 /* FoldConstexprs.js in Resources */,
 				E92D114C20F7060E00D776B2 /* ForLoop.js in Resources */,
 				E92D114D20F7060E00D776B2 /* Func.js in Resources */,
+				31F11709216BFE92009A36D5 /* FuncAttribute.js in Resources */,
 				E92D114E20F7060E00D776B2 /* FuncDef.js in Resources */,
+				31F11733216BFE93009A36D5 /* FuncNumThreadsAttribute.js in Resources */,
 				E92D115020F7060E00D776B2 /* FuncParameter.js in Resources */,
 				E92D115120F7060E00D776B2 /* FunctionLikeBlock.js in Resources */,
 				E92D115220F7060E00D776B2 /* HighZombieFinder.js in Resources */,
@@ -901,6 +931,7 @@
 				E973E5DE213F341D005D79FC /* MSLFunctionDeclaration.js in Resources */,
 				E973E5DF213F341D005D79FC /* MSLFunctionDefinition.js in Resources */,
 				E973E5CE213F3385005D79FC /* MSLFunctionForwardDeclaration.js in Resources */,
+				31F1179F216BFF07009A36D5 /* MSLInsertTrapParameter.js in Resources */,
 				E9D7CBA8214B9E5F00F1C918 /* MSLNameMangler.js in Resources */,
 				E9D7CBA9214B9E5F00F1C918 /* MSLNativeFunctionCall.js in Resources */,
 				E973E5CF213F3385005D79FC /* MSLStatementEmitter.js in Resources */,
@@ -935,11 +966,15 @@
 				E92D118320F7060E00D776B2 /* ResolveOverloadImpl.js in Resources */,
 				E92D118420F7060E00D776B2 /* ResolveProperties.js in Resources */,
 				E92D118520F7060E00D776B2 /* ResolveTypeDefs.js in Resources */,
+				31F11732216BFE93009A36D5 /* ResourceSemantic.js in Resources */,
 				E92D118620F7060E00D776B2 /* Return.js in Resources */,
 				E92D118720F7060E00D776B2 /* ReturnChecker.js in Resources */,
 				E92D118820F7060E00D776B2 /* ReturnException.js in Resources */,
 				E92D118920F7060E00D776B2 /* Rewriter.js in Resources */,
 				E9D7CBA3214B82B800F1C918 /* Sampler.js in Resources */,
+				31F11734216BFE93009A36D5 /* Semantic.js in Resources */,
+				31F11736216BFE93009A36D5 /* SpecializationConstantSemantic.js in Resources */,
+				31F11776216BFEEC009A36D5 /* StageInOutSemantic.js in Resources */,
 				E92D118A20F7060E00D776B2 /* StandardLibrary.js in Resources */,
 				E92D118B20F7060E00D776B2 /* StatementCloner.js in Resources */,
 				E92D118C20F7060E00D776B2 /* StructLayoutBuilder.js in Resources */,
@@ -991,26 +1026,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		E925653C21234AA1001A89D9 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd \"$SRCROOT/..\"\ntsc\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E94C06BC20F56A4000672992 /* Sources */ = {

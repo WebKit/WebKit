@@ -75,7 +75,7 @@
 {
     JSValue *compileFunction = [self.context objectForKeyedSubscript:@"whlslToMsl"];
     if (compileFunction) {
-        JSValue * result = [compileFunction callWithArguments:@[whlslSource]];
+        JSValue *result = [compileFunction callWithArguments:@[whlslSource]];
         if (result) {
             if ([result hasProperty:@"_error"] && [result hasProperty:@"_metalShaderLanguageSource"] && [result hasProperty:@"_originalFunctionNameToMangledNames"]) {
                 if ([[result valueForProperty:@"_error"] isNull]) {

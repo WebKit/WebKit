@@ -1,3 +1,5 @@
+// FIXME: This won't compile. Needs semantics.
+
 struct VertexInput {
     float2 position;
     float2 uv;
