@@ -99,7 +99,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
     ParserError error;
     if (!parseScript(vm, SourceCode(result.copyRef()), error)) {
         if (errorMessage)
-            *errorMessage = OpaqueJSString::create(error.message()).leakRef();
+            *errorMessage = OpaqueJSString::tryCreate(error.message()).leakRef();
         if (errorLine)
             *errorLine = error.line();
         return nullptr;
@@ -121,7 +121,7 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
     ParserError error;
     if (!parseScript(vm, SourceCode(result.copyRef()), error)) {
         if (errorMessage)
-            *errorMessage = OpaqueJSString::create(error.message()).leakRef();
+            *errorMessage = OpaqueJSString::tryCreate(error.message()).leakRef();
         if (errorLine)
             *errorLine = error.line();
         return nullptr;

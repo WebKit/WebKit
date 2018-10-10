@@ -269,12 +269,12 @@ Memory::Memory(void* memory, PageCount initial, PageCount maximum, size_t mapped
     dataLogLnIf(verbose, "Memory::Memory allocating ", *this);
 }
 
-RefPtr<Memory> Memory::create()
+Ref<Memory> Memory::create()
 {
-    return adoptRef(new Memory());
+    return adoptRef(*new Memory());
 }
 
-RefPtr<Memory> Memory::create(PageCount initial, PageCount maximum, WTF::Function<void(NotifyPressure)>&& notifyMemoryPressure, WTF::Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
+RefPtr<Memory> Memory::tryCreate(PageCount initial, PageCount maximum, WTF::Function<void(NotifyPressure)>&& notifyMemoryPressure, WTF::Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
 {
     ASSERT(initial);
     RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.

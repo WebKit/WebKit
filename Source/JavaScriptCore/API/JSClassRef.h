@@ -37,7 +37,10 @@ struct StaticValueEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes, String& propertyName)
-    : getProperty(_getProperty), setProperty(_setProperty), attributes(_attributes), propertyNameRef(OpaqueJSString::create(propertyName))
+        : getProperty(_getProperty)
+        , setProperty(_setProperty)
+        , attributes(_attributes)
+        , propertyNameRef(OpaqueJSString::tryCreate(propertyName))
     {
     }
     

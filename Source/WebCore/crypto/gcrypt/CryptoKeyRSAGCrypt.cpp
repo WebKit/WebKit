@@ -629,7 +629,7 @@ auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
         CryptoRsaHashedKeyAlgorithm result;
         result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
         result.modulusLength = modulusLength;
-        result.publicExponent = Uint8Array::create(publicExponent.data(), publicExponent.size());
+        result.publicExponent = Uint8Array::tryCreate(publicExponent.data(), publicExponent.size());
         result.hash.name = CryptoAlgorithmRegistry::singleton().name(m_hash);
         return result;
     }
@@ -637,7 +637,7 @@ auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
     CryptoRsaKeyAlgorithm result;
     result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
     result.modulusLength = modulusLength;
-    result.publicExponent = Uint8Array::create(publicExponent.data(), publicExponent.size());
+    result.publicExponent = Uint8Array::tryCreate(publicExponent.data(), publicExponent.size());
     return result;
 }
 

@@ -59,8 +59,8 @@ public:
     enum SyncTryToReclaim { SyncTryToReclaimTag };
     enum GrowSuccess { GrowSuccessTag };
 
-    static RefPtr<Memory> create();
-    static RefPtr<Memory> create(PageCount initial, PageCount maximum, WTF::Function<void(NotifyPressure)>&& notifyMemoryPressure, WTF::Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
+    static Ref<Memory> create();
+    static RefPtr<Memory> tryCreate(PageCount initial, PageCount maximum, WTF::Function<void(NotifyPressure)>&& notifyMemoryPressure, WTF::Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
 
     ~Memory();
 

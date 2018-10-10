@@ -189,6 +189,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
             graphicsContext.drawImage(*image, IntRect(IntPoint(), imageRect.size()));
 
         RefPtr<Uint8ClampedArray> pixelArray = imageBuffer->getUnmultipliedImageData(IntRect(IntPoint(), imageRect.size()));
+        RELEASE_ASSERT(pixelArray);
         unsigned pixelArrayLength = pixelArray->length();
         unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
         uint8_t alphaPixelThreshold = threshold * 255;

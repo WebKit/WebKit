@@ -232,7 +232,7 @@ JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx)
     if (name.isNull())
         return 0;
 
-    return OpaqueJSString::create(name).leakRef();
+    return OpaqueJSString::tryCreate(name).leakRef();
 }
 
 void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name)
@@ -316,7 +316,7 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
     BacktraceFunctor functor(builder, maxStackSize);
     frame->iterate(functor);
 
-    return OpaqueJSString::create(builder.toString()).leakRef();
+    return OpaqueJSString::tryCreate(builder.toString()).leakRef();
 }
 
 bool JSGlobalContextGetRemoteInspectionEnabled(JSGlobalContextRef ctx)

@@ -100,8 +100,8 @@
 - (JSValue *)evaluateScript:(NSString *)script withSourceURL:(NSURL *)sourceURL
 {
     JSValueRef exceptionValue = nullptr;
-    auto scriptJS = OpaqueJSString::create(script);
-    auto sourceURLJS = OpaqueJSString::create([sourceURL absoluteString]);
+    auto scriptJS = OpaqueJSString::tryCreate(script);
+    auto sourceURLJS = OpaqueJSString::tryCreate([sourceURL absoluteString]);
     JSValueRef result = JSEvaluateScript(m_context, scriptJS.get(), nullptr, sourceURLJS.get(), 0, &exceptionValue);
 
     if (exceptionValue)
@@ -200,7 +200,7 @@
 
 - (void)setName:(NSString *)name
 {
-    JSGlobalContextSetName(m_context, OpaqueJSString::create(name).get());
+    JSGlobalContextSetName(m_context, OpaqueJSString::tryCreate(name).get());
 }
 
 - (BOOL)_remoteInspectionEnabled

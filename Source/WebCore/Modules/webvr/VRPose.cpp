@@ -32,7 +32,7 @@ static RefPtr<Float32Array> optionalFloat3ToJSCArray(const std::optional<VRPlatf
     if (!data)
         return nullptr;
 
-    return Float32Array::create(data->data, 3).releaseNonNull();
+    return Float32Array::create(data->data, 3);
 }
 
 RefPtr<Float32Array> VRPose::position() const
@@ -42,7 +42,7 @@ RefPtr<Float32Array> VRPose::position() const
 
     auto& position = *m_trackingInfo.position;
     float positionData[3] = { position.x(), position.y(), position.z() };
-    return Float32Array::create(positionData, 3).releaseNonNull();
+    return Float32Array::create(positionData, 3);
 }
 
 RefPtr<Float32Array> VRPose::linearVelocity() const
@@ -62,7 +62,7 @@ RefPtr<Float32Array> VRPose::orientation() const
 
     auto& orientation = *m_trackingInfo.orientation;
     float orientationData[4] = { orientation.x, orientation.y, orientation.z, orientation.w };
-    return Float32Array::create(orientationData, 4).releaseNonNull();
+    return Float32Array::create(orientationData, 4);
 }
 
 RefPtr<Float32Array> VRPose::angularVelocity() const

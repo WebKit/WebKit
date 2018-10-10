@@ -39,12 +39,11 @@ VREyeParameters::VREyeParameters(const FloatPoint3D& offset, const VRPlatformDis
 Ref<Float32Array> VREyeParameters::offset() const
 {
     auto offset = Float32Array::create(3);
-    RELEASE_ASSERT(offset);
     float* offsetData = offset->data();
     offsetData[0] = m_offset.x();
     offsetData[1] = m_offset.y();
     offsetData[2] = m_offset.z();
-    return offset.releaseNonNull();
+    return offset;
 }
 
 const VRFieldOfView& VREyeParameters::fieldOfView() const

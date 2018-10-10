@@ -126,15 +126,15 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 + (JSValue *)valueWithNewRegularExpressionFromPattern:(NSString *)pattern flags:(NSString *)flags inContext:(JSContext *)context
 {
-    auto patternString = OpaqueJSString::create(pattern);
-    auto flagsString = OpaqueJSString::create(flags);
+    auto patternString = OpaqueJSString::tryCreate(pattern);
+    auto flagsString = OpaqueJSString::tryCreate(flags);
     JSValueRef arguments[2] = { JSValueMakeString([context JSGlobalContextRef], patternString.get()), JSValueMakeString([context JSGlobalContextRef], flagsString.get()) };
     return [JSValue valueWithJSValueRef:JSObjectMakeRegExp([context JSGlobalContextRef], 2, arguments, 0) inContext:context];
 }
 
 + (JSValue *)valueWithNewErrorFromMessage:(NSString *)message inContext:(JSContext *)context
 {
-    auto string = OpaqueJSString::create(message);
+    auto string = OpaqueJSString::tryCreate(message);
     JSValueRef argument = JSValueMakeString([context JSGlobalContextRef], string.get());
     return [JSValue valueWithJSValueRef:JSObjectMakeError([context JSGlobalContextRef], 1, &argument, 0) inContext:context];
 }
@@ -151,7 +151,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 + (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context
 {
-    auto string = OpaqueJSString::create(description);
+    auto string = OpaqueJSString::tryCreate(description);
     return [JSValue valueWithJSValueRef:JSValueMakeSymbol([context JSGlobalContextRef], string.get()) inContext:context];
 }
 
@@ -292,7 +292,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     Result result;
     // If it's a NSString already, reduce indirection and just pass the NSString.
     if ([propertyKey isKindOfClass:[NSString class]]) {
-        auto name = OpaqueJSString::create((NSString *)propertyKey);
+        auto name = OpaqueJSString::tryCreate((NSString *)propertyKey);
         result = stringFunction([context JSGlobalContextRef], object, name.get(), arguments..., &exception);
     } else
         result = jsFunction([context JSGlobalContextRef], object, [[JSValue valueWithObject:propertyKey inContext:context] JSValueRef], arguments..., &exception);
@@ -520,7 +520,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     if (exception)
         return [_context valueFromNotifyException:exception];
 
-    auto name = OpaqueJSString::create(method);
+    auto name = OpaqueJSString::tryCreate(method);
     JSValueRef function = JSObjectGetProperty([_context JSGlobalContextRef], thisObject, name.get(), &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
@@ -774,7 +774,7 @@ static id containerValueToObject(JSGlobalContextRef context, JSContainerConverto
             ASSERT([current.objc isKindOfClass:[NSMutableArray class]]);
             NSMutableArray *array = (NSMutableArray *)current.objc;
         
-            auto lengthString = OpaqueJSString::create("length"_s);
+            auto lengthString = OpaqueJSString::tryCreate("length"_s);
             unsigned length = JSC::toUInt32(JSValueToNumber(context, JSObjectGetProperty(context, js, lengthString.get(), 0), 0));
 
             for (unsigned i = 0; i < length; ++i) {
@@ -984,7 +984,7 @@ static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context,
             return { object, ((JSValue *)object)->m_value, ContainerNone };
 
         if ([object isKindOfClass:[NSString class]]) {
-            auto string = OpaqueJSString::create((NSString *)object);
+            auto string = OpaqueJSString::tryCreate((NSString *)object);
             return { object, JSValueMakeString(contextRef, string.get()), ContainerNone };
         }
 
@@ -1041,7 +1041,7 @@ JSValueRef objectToValue(JSContext *context, id object)
             NSDictionary *dictionary = (NSDictionary *)current.objc;
             for (id key in [dictionary keyEnumerator]) {
                 if ([key isKindOfClass:[NSString class]]) {
-                    auto propertyName = OpaqueJSString::create((NSString *)key);
+                    auto propertyName = OpaqueJSString::tryCreate((NSString *)key);
                     JSObjectSetProperty(contextRef, js, propertyName.get(), convertor.convert([dictionary objectForKey:key]), 0, 0);
                 }
             }

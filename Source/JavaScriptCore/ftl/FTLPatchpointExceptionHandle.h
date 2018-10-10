@@ -51,7 +51,7 @@ struct OSRExitHandle;
 
 class PatchpointExceptionHandle : public ThreadSafeRefCounted<PatchpointExceptionHandle> {
 public:
-    static RefPtr<PatchpointExceptionHandle> create(
+    static Ref<PatchpointExceptionHandle> create(
         State&, OSRExitDescriptor*, DFG::NodeOrigin, unsigned offset, const HandlerInfo&);
 
     static RefPtr<PatchpointExceptionHandle> defaultHandle(State&);
@@ -89,7 +89,7 @@ private:
     PatchpointExceptionHandle(
         State&, OSRExitDescriptor*, DFG::NodeOrigin, unsigned offset, const HandlerInfo&);
 
-    RefPtr<OSRExitHandle> createHandle(ExitKind, const B3::StackmapGenerationParams&);
+    Ref<OSRExitHandle> createHandle(ExitKind, const B3::StackmapGenerationParams&);
 
     State& m_state;
     OSRExitDescriptor* m_descriptor;

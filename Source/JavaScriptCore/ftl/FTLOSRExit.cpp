@@ -63,17 +63,17 @@ void OSRExitDescriptor::validateReferences(const TrackedReferences& trackedRefer
         materialization->validateReferences(trackedReferences);
 }
 
-RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExit(
+Ref<OSRExitHandle> OSRExitDescriptor::emitOSRExit(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin, CCallHelpers& jit,
     const StackmapGenerationParams& params, unsigned offset)
 {
-    RefPtr<OSRExitHandle> handle =
+    Ref<OSRExitHandle> handle =
         prepareOSRExitHandle(state, exitKind, nodeOrigin, params, offset);
     handle->emitExitThunk(state, jit);
     return handle;
 }
 
-RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
+Ref<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin,
     const StackmapGenerationParams& params, unsigned offset)
 {
@@ -83,17 +83,17 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
         [handle, &state] (CCallHelpers& jit) {
             handle->emitExitThunk(state, jit);
         });
-    return handle;
+    return handle.releaseNonNull();
 }
 
-RefPtr<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
+Ref<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin,
     const StackmapGenerationParams& params, unsigned offset)
 {
     unsigned index = state.jitCode->osrExit.size();
     OSRExit& exit = state.jitCode->osrExit.alloc(
         this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, nodeOrigin.wasHoisted);
-    RefPtr<OSRExitHandle> handle = adoptRef(new OSRExitHandle(index, exit));
+    Ref<OSRExitHandle> handle = adoptRef(*new OSRExitHandle(index, exit));
     for (unsigned i = offset; i < params.size(); ++i)
         exit.m_valueReps.append(params[i]);
     exit.m_valueReps.shrinkToFit();

@@ -41,7 +41,7 @@ VRStageParameters::VRStageParameters(const TransformationMatrix& sittingToStandi
 Ref<Float32Array> VRStageParameters::sittingToStandingTransform() const
 {
     auto columnMajorMatrix = m_sittingToStandingTransform.toColumnMajorFloatArray();
-    return Float32Array::create(columnMajorMatrix.data(), 16).releaseNonNull();
+    return Float32Array::create(columnMajorMatrix.data(), 16);
 }
 
 float VRStageParameters::sizeX() const

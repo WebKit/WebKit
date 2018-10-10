@@ -1,3 +1,22 @@
+2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Rename createXXX to tryCreateXXX if it can return RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=190429
+
+        Reviewed by Saam Barati.
+
+        Use `tryCreate` or new `create`. If we use new `create`, we can use Ref<> and remove null check.
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringCopyJSString):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::toJSValue):
+        (WebKit::callPropertyFunction):
+        (WebKit::WebAutomationSessionProxy::scriptObjectForFrame):
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::runScriptsInPDFDocument):
+
 2018-10-10  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON): Assertion hit under WebPageProxy::didNavigateWithNavigationData()

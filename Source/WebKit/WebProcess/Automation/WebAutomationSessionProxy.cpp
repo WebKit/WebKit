@@ -88,7 +88,7 @@ static JSObjectRef toJSArray(JSContextRef context, const Vector<T>& data, JSValu
 
 static inline JSValueRef toJSValue(JSContextRef context, const String& string)
 {
-    return JSValueMakeString(context, OpaqueJSString::create(string).get());
+    return JSValueMakeString(context, OpaqueJSString::tryCreate(string).get());
 }
 
 static inline JSValueRef callPropertyFunction(JSContextRef context, JSObjectRef object, const String& propertyName, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -96,7 +96,7 @@ static inline JSValueRef callPropertyFunction(JSContextRef context, JSObjectRef 
     ASSERT_ARG(object, object);
     ASSERT_ARG(object, JSValueIsObject(context, object));
 
-    JSObjectRef function = const_cast<JSObjectRef>(JSObjectGetProperty(context, object, OpaqueJSString::create(propertyName).get(), exception));
+    JSObjectRef function = const_cast<JSObjectRef>(JSObjectGetProperty(context, object, OpaqueJSString::tryCreate(propertyName).get(), exception));
     ASSERT(JSObjectIsFunction(context, function));
 
     return JSObjectCallAsFunction(context, function, object, argumentCount, arguments, exception);
@@ -177,7 +177,7 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
 
     String script = StringImpl::createWithoutCopying(WebAutomationSessionProxyScriptSource, sizeof(WebAutomationSessionProxyScriptSource));
 
-    JSObjectRef scriptObjectFunction = const_cast<JSObjectRef>(JSEvaluateScript(context, OpaqueJSString::create(script).get(), nullptr, nullptr, 0, &exception));
+    JSObjectRef scriptObjectFunction = const_cast<JSObjectRef>(JSEvaluateScript(context, OpaqueJSString::tryCreate(script).get(), nullptr, nullptr, 0, &exception));
     ASSERT(JSValueIsObject(context, scriptObjectFunction));
 
     JSValueRef arguments[] = { sessionIdentifier, evaluateFunction, createUUIDFunction };
@@ -280,7 +280,7 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t pageID, uint
 
     String exceptionMessage;
     if (JSValueIsObject(context, exception)) {
-        JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::create("name"_s).get(), nullptr);
+        JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::tryCreate("name"_s).get(), nullptr);
         auto exceptionName = adoptRef(JSValueToStringCopy(context, nameValue, nullptr))->string();
         if (exceptionName == "NodeNotFound")
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
@@ -291,7 +291,7 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t pageID, uint
         else if (exceptionName == "InvalidSelector")
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidSelector);
 
-        JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::create("message"_s).get(), nullptr);
+        JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::tryCreate("message"_s).get(), nullptr);
         exceptionMessage = adoptRef(JSValueToStringCopy(context, messageValue, nullptr))->string();
     } else
         exceptionMessage = adoptRef(JSValueToStringCopy(context, exception, nullptr))->string();

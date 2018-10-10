@@ -412,7 +412,7 @@ RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const IntRect& logic
     if (area.hasOverflowed())
         return nullptr;
 
-    auto result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
+    auto result = Uint8ClampedArray::tryCreateUninitialized(area.unsafeGet());
     if (!result)
         return nullptr;
 

@@ -2922,7 +2922,7 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram* program, const WebG
             m_context->getUniformfv(objectOrZero(program), location, value);
         if (length == 1)
             return value[0];
-        return Float32Array::create(value, length);
+        return Float32Array::tryCreate(value, length);
     }
     case GraphicsContext3D::INT: {
         GC3Dint value[4] = {0};
@@ -2932,7 +2932,7 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram* program, const WebG
             m_context->getUniformiv(objectOrZero(program), location, value);
         if (length == 1)
             return value[0];
-        return Int32Array::create(value, length);
+        return Int32Array::tryCreate(value, length);
     }
     case GraphicsContext3D::BOOL: {
         GC3Dint value[4] = {0};
@@ -3028,7 +3028,7 @@ WebGLAny WebGLRenderingContextBase::getVertexAttrib(GC3Duint index, GC3Denum pna
     case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_TYPE:
         return state.type;
     case GraphicsContext3D::CURRENT_VERTEX_ATTRIB:
-        return Float32Array::create(m_vertexAttribValue[index].value, 4);
+        return Float32Array::tryCreate(m_vertexAttribValue[index].value, 4);
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getVertexAttrib", "invalid parameter name");
         return nullptr;
@@ -5235,7 +5235,7 @@ RefPtr<Float32Array> WebGLRenderingContextBase::getWebGLFloatArrayParameter(GC3D
     default:
         notImplemented();
     }
-    return Float32Array::create(value, length);
+    return Float32Array::tryCreate(value, length);
 }
 
 RefPtr<Int32Array> WebGLRenderingContextBase::getWebGLIntArrayParameter(GC3Denum pname)
@@ -5254,7 +5254,7 @@ RefPtr<Int32Array> WebGLRenderingContextBase::getWebGLIntArrayParameter(GC3Denum
     default:
         notImplemented();
     }
-    return Int32Array::create(value, length);
+    return Int32Array::tryCreate(value, length);
 }
 
 bool WebGLRenderingContextBase::checkTextureCompleteness(const char* functionName, bool prepareToDraw)

@@ -99,8 +99,7 @@ inline bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& 
     }
     auto length = buffer->byteLength();
     auto chunk = JSC::Uint8Array::create(WTFMove(buffer), 0, length);
-    ASSERT(chunk);
-    enqueue(state, toJS(&state, &globalObject, chunk.get()));
+    enqueue(state, toJS(&state, &globalObject, chunk.ptr()));
     scope.assertNoException();
     return true;
 }

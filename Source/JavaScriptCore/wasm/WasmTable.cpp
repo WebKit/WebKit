@@ -47,7 +47,7 @@ void Table::setLength(uint32_t length)
     ASSERT(m_mask == WTF::maskForSize(allocatedLength(length)));
 }
 
-RefPtr<Table> Table::create(uint32_t initial, std::optional<uint32_t> maximum)
+RefPtr<Table> Table::tryCreate(uint32_t initial, std::optional<uint32_t> maximum)
 {
     if (!isValidLength(initial))
         return nullptr;

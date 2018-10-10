@@ -345,7 +345,7 @@ Ref<DOMPoint> DOMMatrixReadOnly::transformPoint(DOMPointInit&& pointInit)
 
 ExceptionOr<Ref<Float32Array>> DOMMatrixReadOnly::toFloat32Array() const
 {
-    auto array32 = Float32Array::createUninitialized(16);
+    auto array32 = Float32Array::tryCreateUninitialized(16);
     if (!array32)
         return Exception { UnknownError, "Out of memory"_s };
 
@@ -371,7 +371,7 @@ ExceptionOr<Ref<Float32Array>> DOMMatrixReadOnly::toFloat32Array() const
 
 ExceptionOr<Ref<Float64Array>> DOMMatrixReadOnly::toFloat64Array() const
 {
-    auto array64 = Float64Array::createUninitialized(16);
+    auto array64 = Float64Array::tryCreateUninitialized(16);
     if (!array64)
         return Exception { UnknownError, "Out of memory"_s };
 

@@ -42,7 +42,7 @@ public:
         Canceled,
     };
 
-    static RefPtr<AsyncStackTrace> create(Ref<ScriptCallStack>&&, bool singleShot, RefPtr<AsyncStackTrace> parent);
+    static Ref<AsyncStackTrace> create(Ref<ScriptCallStack>&&, bool singleShot, RefPtr<AsyncStackTrace> parent);
 
     bool isPending() const;
     bool isLocked() const;

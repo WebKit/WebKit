@@ -819,7 +819,7 @@ JSCValue* jsc_context_evaluate(JSCContext* context, const char* code, gssize len
 
 static JSValueRef evaluateScriptInContext(JSGlobalContextRef jsContext, String&& script, const char* uri, unsigned lineNumber, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> scriptJS(Adopt, OpaqueJSString::create(WTFMove(script)).leakRef());
+    JSRetainPtr<JSStringRef> scriptJS(Adopt, OpaqueJSString::tryCreate(WTFMove(script)).leakRef());
     JSRetainPtr<JSStringRef> sourceURI = uri ? adopt(JSStringCreateWithUTF8CString(uri)) : nullptr;
     return JSEvaluateScript(jsContext, scriptJS.get(), nullptr, sourceURI.get(), lineNumber, exception);
 }

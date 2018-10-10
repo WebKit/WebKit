@@ -36,11 +36,15 @@ protected:
     GenericTypedArrayView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
 
 public:
-    static RefPtr<GenericTypedArrayView> create(unsigned length);
-    static RefPtr<GenericTypedArrayView> create(const typename Adaptor::Type* array, unsigned length);
-    static RefPtr<GenericTypedArrayView> create(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
+    static Ref<GenericTypedArrayView> create(unsigned length);
+    static Ref<GenericTypedArrayView> create(const typename Adaptor::Type* array, unsigned length);
+    static Ref<GenericTypedArrayView> create(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
+    static RefPtr<GenericTypedArrayView> tryCreate(unsigned length);
+    static RefPtr<GenericTypedArrayView> tryCreate(const typename Adaptor::Type* array, unsigned length);
+    static RefPtr<GenericTypedArrayView> tryCreate(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
     
-    static RefPtr<GenericTypedArrayView> createUninitialized(unsigned length);
+    static Ref<GenericTypedArrayView> createUninitialized(unsigned length);
+    static RefPtr<GenericTypedArrayView> tryCreateUninitialized(unsigned length);
     
     typename Adaptor::Type* data() const { return static_cast<typename Adaptor::Type*>(baseAddress()); }
     

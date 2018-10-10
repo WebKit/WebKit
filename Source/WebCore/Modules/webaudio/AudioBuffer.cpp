@@ -67,7 +67,7 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t numberOfFrames, float
     m_channels.reserveCapacity(numberOfChannels);
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channelDataArray = Float32Array::create(m_length);
+        auto channelDataArray = Float32Array::tryCreate(m_length);
         if (!channelDataArray) {
             invalidate();
             break;
@@ -86,7 +86,7 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
     unsigned numberOfChannels = bus.numberOfChannels();
     m_channels.reserveCapacity(numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channelDataArray = Float32Array::create(m_length);
+        auto channelDataArray = Float32Array::tryCreate(m_length);
         if (!channelDataArray) {
             invalidate();
             break;
@@ -115,9 +115,7 @@ ExceptionOr<Ref<Float32Array>> AudioBuffer::getChannelData(unsigned channelIndex
     if (channelIndex >= m_channels.size())
         return Exception { SyntaxError };
     auto& channelData = *m_channels[channelIndex];
-    auto array = Float32Array::create(channelData.unsharedBuffer(), channelData.byteOffset(), channelData.length());
-    RELEASE_ASSERT(array);
-    return array.releaseNonNull();
+    return Float32Array::create(channelData.unsharedBuffer(), channelData.byteOffset(), channelData.length());
 }
 
 Float32Array* AudioBuffer::channelData(unsigned channelIndex)

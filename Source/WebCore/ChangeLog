@@ -1,3 +1,114 @@
+2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Rename createXXX to tryCreateXXX if it can return RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=190429
+
+        Reviewed by Saam Barati.
+
+        Use `tryCreate` or new `create`. If we use new `create`, we can use Ref<> and remove null check.
+
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::cachedKeyForKeyID const):
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::jsValueWithDictionaryInContext):
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::AudioBuffer):
+        (WebCore::AudioBuffer::getChannelData):
+        * Modules/webvr/VREyeParameters.cpp:
+        (WebCore::VREyeParameters::offset const):
+        * Modules/webvr/VRFrameData.cpp:
+        (WebCore::matrixToArray):
+        * Modules/webvr/VRPose.cpp:
+        (WebCore::optionalFloat3ToJSCArray):
+        (WebCore::VRPose::position const):
+        (WebCore::VRPose::orientation const):
+        * Modules/webvr/VRStageParameters.cpp:
+        (WebCore::VRStageParameters::sittingToStandingTransform const):
+        * bindings/js/ReadableStreamDefaultController.h:
+        (WebCore::ReadableStreamDefaultController::enqueue):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readArrayBufferView):
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::algorithm const):
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::algorithm const):
+        * css/DOMMatrixReadOnly.cpp:
+        (WebCore::DOMMatrixReadOnly::toFloat32Array const):
+        (WebCore::DOMMatrixReadOnly::toFloat64Array const):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        * dom/TextEncoder.cpp:
+        (WebCore::TextEncoder::encode const):
+        * html/ImageData.cpp:
+        (WebCore::ImageData::ImageData):
+        * html/ImageData.h:
+        (WebCore::ImageData::data const):
+        (): Deleted.
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::bufferData):
+        (WebCore::WebGL2RenderingContext::bufferSubData):
+        (WebCore::WebGL2RenderingContext::getInternalformatParameter):
+        (WebCore::WebGL2RenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getUniform):
+        (WebCore::WebGLRenderingContextBase::getVertexAttrib):
+        (WebCore::WebGLRenderingContextBase::getWebGLFloatArrayParameter):
+        (WebCore::WebGLRenderingContextBase::getWebGLIntArrayParameter):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData):
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        (WebCore::CDMSessionAVFoundationCF::generateKeyRequest):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::shouldWaitForLoadingOfResource):
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::generateKeyRequest):
+        (WebCore::CDMSessionAVContentKeySession::releaseKeys):
+        (WebCore::CDMSessionAVContentKeySession::update):
+        (WebCore::CDMSessionAVContentKeySession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::generateKeyRequest):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::generateKeyRequest):
+        (WebCore::CDMSessionAVStreamSession::releaseKeys):
+        (WebCore::CDMSessionAVStreamSession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::getRGBAImageData const):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::getImageData):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData const):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::unmultipliedResult):
+        (WebCore::FilterEffect::premultipliedResult):
+        (WebCore::FilterEffect::copyUnmultipliedResult):
+        (WebCore::FilterEffect::copyPremultipliedResult):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::getData const):
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        (WebCore::jsValueWithDictionaryInContext):
+        * platform/mock/mediasource/MockBox.cpp:
+        (WebCore::MockBox::peekType):
+        (WebCore::MockBox::peekLength):
+        (WebCore::MockTrackBox::MockTrackBox):
+        (WebCore::MockInitializationBox::MockInitializationBox):
+        (WebCore::MockSampleBox::MockSampleBox):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        * testing/LegacyMockCDM.cpp:
+        (WebCore::initDataPrefix):
+        (WebCore::keyPrefix):
+        (WebCore::keyRequest):
+
 2018-10-10  Daniel Bates  <dabates@apple.com>
 
         [iOS] Compare input string to UIKeyInput constants using string comparison instead of pointer comparison

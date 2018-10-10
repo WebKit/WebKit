@@ -1118,7 +1118,7 @@ void PDFPlugin::runScriptsInPDFDocument()
     JSGlobalContextRef ctx = JSGlobalContextCreate(0);
     JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx);
     for (auto& script : scripts)
-        JSEvaluateScript(ctx, OpaqueJSString::create(script.get()).get(), jsPDFDoc, nullptr, 0, nullptr);
+        JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script.get()).get(), jsPDFDoc, nullptr, 0, nullptr);
     JSGlobalContextRelease(ctx);
 }
 

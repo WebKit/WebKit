@@ -43,8 +43,8 @@ class Heap;
 class JS_EXPORT_PRIVATE GCActivityCallback : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
-    static RefPtr<FullGCActivityCallback> createFullTimer(Heap*);
-    static RefPtr<GCActivityCallback> createEdenTimer(Heap*);
+    static RefPtr<FullGCActivityCallback> tryCreateFullTimer(Heap*);
+    static RefPtr<GCActivityCallback> tryCreateEdenTimer(Heap*);
 
     GCActivityCallback(Heap*);
 

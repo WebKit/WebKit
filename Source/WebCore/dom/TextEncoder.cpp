@@ -40,7 +40,7 @@ RefPtr<Uint8Array> TextEncoder::encode(String&& input) const
 {
     // FIXME: We should not need to allocate a CString to encode into a Uint8Array.
     CString utf8 = input.utf8();
-    return Uint8Array::create(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
+    return Uint8Array::tryCreate(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
 }
 
 }

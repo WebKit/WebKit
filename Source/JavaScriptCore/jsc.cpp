@@ -887,7 +887,9 @@ static RefPtr<Uint8Array> fillBufferWithContentsOfFile(FILE* file)
         return nullptr;
     if (fseek(file, 0, SEEK_SET) == -1)
         return nullptr;
-    RefPtr<Uint8Array> result = Uint8Array::create(bufferCapacity);
+    auto result = Uint8Array::tryCreate(bufferCapacity);
+    if (!result)
+        return nullptr;
     size_t readSize = fread(result->data(), 1, bufferCapacity, file);
     if (readSize != static_cast<size_t>(bufferCapacity))
         return nullptr;

@@ -326,7 +326,7 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
     JSGlobalContextRef ctx = JSGlobalContextCreate(0);
     JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx, dataSource);
     for (NSString *script in scripts)
-        JSEvaluateScript(ctx, OpaqueJSString::create(script).get(), jsPDFDoc, nullptr, 0, nullptr);
+        JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script).get(), jsPDFDoc, nullptr, 0, nullptr);
     JSGlobalContextRelease(ctx);
 
     [self setNeedsDisplay:YES];

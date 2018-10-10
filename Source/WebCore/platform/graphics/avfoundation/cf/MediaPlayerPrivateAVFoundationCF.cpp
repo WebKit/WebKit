@@ -63,6 +63,7 @@
 #include <dispatch/dispatch.h>
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include <JavaScriptCore/DataView.h>
+#include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/Uint16Array.h>
 #endif
 #include <wtf/HashMap.h>
@@ -1893,12 +1894,12 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
         RefPtr<JSC::DataView> initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, initDataBuffer->byteLength());
         initDataView->set<uint32_t>(0, keyURISize, true);
 
-        RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer.copyRef(), 4, keyURI.length());
+        auto keyURIArray = Uint16Array::create(initDataBuffer.copyRef(), 4, keyURI.length());
         keyURIArray->setRange(reinterpret_cast<const uint16_t*>(StringView(keyURI).upconvertedCharacters().get()), keyURI.length() / sizeof(unsigned char), 0);
 
         unsigned byteLength = initDataBuffer->byteLength();
-        RefPtr<Uint8Array> initData = Uint8Array::create(WTFMove(initDataBuffer), 0, byteLength);
-        if (!m_owner->player()->keyNeeded(initData.get()))
+        auto initData = Uint8Array::create(WTFMove(initDataBuffer), 0, byteLength);
+        if (!m_owner->player()->keyNeeded(initData.ptr()))
             return false;
 
         setRequestForKey(keyURI, avRequest);

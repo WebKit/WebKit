@@ -41,7 +41,7 @@ protected:
     double deathRate(Heap&) override;
 };
 
-inline RefPtr<GCActivityCallback> GCActivityCallback::createEdenTimer(Heap* heap)
+inline RefPtr<GCActivityCallback> GCActivityCallback::tryCreateEdenTimer(Heap* heap)
 {
     return s_shouldCreateGCTimer ? adoptRef(new EdenGCActivityCallback(heap)) : nullptr;
 }

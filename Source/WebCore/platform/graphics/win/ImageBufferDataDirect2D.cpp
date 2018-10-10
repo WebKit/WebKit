@@ -50,7 +50,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication, const
     if (numBytes.hasOverflowed())
         return nullptr;
 
-    auto result = Uint8ClampedArray::createUninitialized(numBytes.unsafeGet());
+    auto result = Uint8ClampedArray::tryCreateUninitialized(numBytes.unsafeGet());
     unsigned char* resultData = result ? result->data() : nullptr;
     if (!resultData)
         return nullptr;

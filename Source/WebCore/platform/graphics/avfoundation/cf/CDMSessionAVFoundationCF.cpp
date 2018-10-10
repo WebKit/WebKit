@@ -99,7 +99,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String&, U
     destinationURL = String();
 
     auto keyRequestBuffer = ArrayBuffer::create(CFDataGetBytePtr(keyRequest.get()), CFDataGetLength(keyRequest.get()));
-    return Uint8Array::create(WTFMove(keyRequestBuffer), 0, keyRequestBuffer->byteLength());
+    return Uint8Array::tryCreate(WTFMove(keyRequestBuffer), 0, keyRequestBuffer->byteLength());
 #endif
 }
 

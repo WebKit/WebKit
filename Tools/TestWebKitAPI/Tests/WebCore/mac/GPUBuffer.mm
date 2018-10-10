@@ -59,7 +59,7 @@ TEST_F(GPU, BufferCreate)
     auto data = bufferView->data();
     memset(data, 1, bufferView->byteLength());
 
-    GPUBuffer buffer { device, *bufferView };
+    GPUBuffer buffer { device, bufferView.get() };
     EXPECT_EQ(1024U, buffer.length());
 
     auto contents = buffer.contents();

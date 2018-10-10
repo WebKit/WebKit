@@ -90,7 +90,7 @@ struct OSRExitDescriptor {
     // up to the OSRExit object, which this creates. Note that it's OK to drop the OSRExitHandle object
     // on the ground. It contains information that is mostly not useful if you use this API, since after
     // this call, the OSRExit is simply ready to go.
-    RefPtr<OSRExitHandle> emitOSRExit(
+    Ref<OSRExitHandle> emitOSRExit(
         State&, ExitKind, const DFG::NodeOrigin&, CCallHelpers&, const B3::StackmapGenerationParams&,
         unsigned offset = 0);
 
@@ -102,7 +102,7 @@ struct OSRExitDescriptor {
     // This API is meant to be used for things like exception handling, where some patchpoint wants to
     // have a place to jump to for OSR exit. It doesn't care where that OSR exit is emitted so long as it
     // eventually gets access to its label.
-    RefPtr<OSRExitHandle> emitOSRExitLater(
+    Ref<OSRExitHandle> emitOSRExitLater(
         State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
         unsigned offset = 0);
 
@@ -110,7 +110,7 @@ private:
     // This is the low-level interface. It will create a handle representing the desire to emit code for
     // an OSR exit. You can call OSRExitHandle::emitExitThunk() once you have a place to emit it. Note
     // that the above two APIs are written in terms of this and OSRExitHandle::emitExitThunk().
-    RefPtr<OSRExitHandle> prepareOSRExitHandle(
+    Ref<OSRExitHandle> prepareOSRExitHandle(
         State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
         unsigned offset = 0);
 };

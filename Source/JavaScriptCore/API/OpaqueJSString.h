@@ -51,8 +51,8 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
         return adoptRef(*new OpaqueJSString(characters, length));
     }
 
-    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> create(const String&);
-    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> create(String&&);
+    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> tryCreate(const String&);
+    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> tryCreate(String&&);
 
     JS_EXPORT_PRIVATE ~OpaqueJSString();
 

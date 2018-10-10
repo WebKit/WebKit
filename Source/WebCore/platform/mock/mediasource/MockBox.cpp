@@ -49,7 +49,7 @@ MockBox::MockBox(ArrayBuffer* data)
 String MockBox::peekType(ArrayBuffer* data)
 {
     StringBuilder builder;
-    RefPtr<Int8Array> array = JSC::Int8Array::create(data, 0, 4);
+    auto array = JSC::Int8Array::create(data, 0, 4);
     for (int i = 0; i < 4; ++i)
         builder.append(array->item(i));
     return builder.toString();
@@ -57,7 +57,7 @@ String MockBox::peekType(ArrayBuffer* data)
 
 size_t MockBox::peekLength(ArrayBuffer* data)
 {
-    RefPtr<JSC::DataView> view = JSC::DataView::create(data, 0, data->byteLength());
+    auto view = JSC::DataView::create(data, 0, data->byteLength());
     return view->get<uint32_t>(4, true);
 }
 
@@ -66,11 +66,11 @@ MockTrackBox::MockTrackBox(ArrayBuffer* data)
 {
     ASSERT(m_length == 17);
 
-    RefPtr<JSC::DataView> view = JSC::DataView::create(data, 0, data->byteLength());
+    auto view = JSC::DataView::create(data, 0, data->byteLength());
     m_trackID = view->get<int32_t>(8, true);
 
     StringBuilder builder;
-    RefPtr<Int8Array> array = JSC::Int8Array::create(data, 12, 4);
+    auto array = JSC::Int8Array::create(data, 12, 4);
     for (int i = 0; i < 4; ++i)
         builder.append(array->item(i));
     m_codec = builder.toString();
@@ -89,7 +89,7 @@ MockInitializationBox::MockInitializationBox(ArrayBuffer* data)
 {
     ASSERT(m_length >= 13);
 
-    RefPtr<JSC::DataView> view = JSC::DataView::create(data, 0, data->byteLength());
+    auto view = JSC::DataView::create(data, 0, data->byteLength());
     int32_t timeValue = view->get<int32_t>(8, true);
     int32_t timeScale = view->get<int32_t>(12, true);
     m_duration = MediaTime(timeValue, timeScale);
@@ -118,7 +118,7 @@ MockSampleBox::MockSampleBox(ArrayBuffer* data)
 {
     ASSERT(m_length == 30);
 
-    RefPtr<JSC::DataView> view = JSC::DataView::create(data, 0, data->byteLength());
+    auto view = JSC::DataView::create(data, 0, data->byteLength());
     int32_t timeScale = view->get<int32_t>(8, true);
 
     int32_t timeValue = view->get<int32_t>(12, true);

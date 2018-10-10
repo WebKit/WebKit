@@ -59,7 +59,7 @@ public:
     typedef SharedTask<GeneratorFunction> Generator;
 
     template<typename Functor>
-    static RefPtr<Generator> createGenerator(const Functor& functor)
+    static Ref<Generator> createGenerator(const Functor& functor)
     {
         return createSharedTask<GeneratorFunction>(functor);
     }

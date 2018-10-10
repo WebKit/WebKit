@@ -40,7 +40,7 @@ class Instance;
 
 class Table : public ThreadSafeRefCounted<Table> {
 public:
-    static RefPtr<Table> create(uint32_t initial, std::optional<uint32_t> maximum);
+    static RefPtr<Table> tryCreate(uint32_t initial, std::optional<uint32_t> maximum);
 
     JS_EXPORT_PRIVATE ~Table();
 

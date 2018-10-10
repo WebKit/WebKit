@@ -190,7 +190,7 @@ static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSConte
         if (!value)
             continue;
 
-        auto name = OpaqueJSString::create(key);
+        auto name = OpaqueJSString::tryCreate(key);
         JSObjectSetProperty([context JSGlobalContextRef], resultObject, name.get(), [value JSValueRef], 0, &exception);
         if (exception)
             continue;

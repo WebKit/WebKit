@@ -156,7 +156,7 @@ void WebGL2RenderingContext::bufferData(GC3Denum target, const ArrayBufferView& 
         return;
     }
 
-    auto slice = Uint8Array::create(data.possiblySharedBuffer(), data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedByteLength.unsafeGet());
+    auto slice = Uint8Array::tryCreate(data.possiblySharedBuffer(), data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedByteLength.unsafeGet());
     if (!slice) {
         synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "bufferData", "Could not create intermediate ArrayBufferView");
         return;
@@ -187,7 +187,7 @@ void WebGL2RenderingContext::bufferSubData(GC3Denum target, long long offset, co
         return;
     }
 
-    auto slice = Uint8Array::create(data.possiblySharedBuffer(), data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedByteLength.unsafeGet());
+    auto slice = Uint8Array::tryCreate(data.possiblySharedBuffer(), data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedByteLength.unsafeGet());
     if (!slice) {
         synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "bufferSubData", "Could not create intermediate ArrayBufferView");
         return;
@@ -412,7 +412,7 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GC3Denum target, GC3
         params[i] = samples[i];
 #endif
 
-    return Int32Array::create(params, numValues);
+    return Int32Array::tryCreate(params, numValues);
 }
 
 void WebGL2RenderingContext::invalidateFramebuffer(GC3Denum, const Vector<GC3Denum>&)
@@ -1794,7 +1794,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::COLOR_WRITEMASK:
         return getBooleanArrayParameter(pname);
     case GraphicsContext3D::COMPRESSED_TEXTURE_FORMATS:
-        return Uint32Array::create(m_compressedTextureFormats.data(), m_compressedTextureFormats.size());
+        return Uint32Array::tryCreate(m_compressedTextureFormats.data(), m_compressedTextureFormats.size());
     case GraphicsContext3D::CULL_FACE:
         return getBooleanParameter(pname);
     case GraphicsContext3D::CULL_FACE_MODE:

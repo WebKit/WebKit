@@ -386,7 +386,7 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
         *exception = 0;
     if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
         return 0;
-    return OpaqueJSString::create(result).leakRef();
+    return OpaqueJSString::tryCreate(result).leakRef();
 }
 
 bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
@@ -434,7 +434,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 
     JSValue jsValue = toJS(exec, value);
     
-    auto stringRef(OpaqueJSString::create(jsValue.toWTFString(exec)));
+    auto stringRef(OpaqueJSString::tryCreate(jsValue.toWTFString(exec)));
     if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
         stringRef = nullptr;
     return stringRef.leakRef();

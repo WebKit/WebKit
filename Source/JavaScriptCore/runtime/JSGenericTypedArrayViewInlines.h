@@ -314,13 +314,13 @@ bool JSGenericTypedArrayView<Adaptor>::set(
 template<typename Adaptor>
 RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::possiblySharedTypedImpl()
 {
-    return Adaptor::ViewType::create(possiblySharedBuffer(), byteOffset(), length());
+    return Adaptor::ViewType::tryCreate(possiblySharedBuffer(), byteOffset(), length());
 }
 
 template<typename Adaptor>
 RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::unsharedTypedImpl()
 {
-    return Adaptor::ViewType::create(unsharedBuffer(), byteOffset(), length());
+    return Adaptor::ViewType::tryCreate(unsharedBuffer(), byteOffset(), length());
 }
 
 template<typename Adaptor>
