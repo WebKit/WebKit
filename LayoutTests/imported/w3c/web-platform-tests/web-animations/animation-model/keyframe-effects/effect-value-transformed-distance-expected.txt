@@ -6,7 +6,7 @@ PASS A step-end function on a keyframe affects the resulting style
 PASS A steps(1) function on a keyframe affects the resulting style 
 PASS A steps(1, end) function on a keyframe affects the resulting style 
 PASS A steps(2, end) function on a keyframe affects the resulting style 
-PASS A frames function on a keyframe affects the resulting style 
+FAIL A frames function on a keyframe affects the resulting style Type error
 PASS A linear function on a keyframe affects the resulting style 
 FAIL A ease function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 109.47963055884654 at 1100ms expected 109.47963055884654 +/- 0.01 but got 109.46875
 PASS A ease-in function on a keyframe affects the resulting style 
@@ -21,7 +21,7 @@ PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a 
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a steps(1) function does not alter the result 
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a steps(1, end) function does not alter the result 
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a steps(2, end) function does not alter the result 
-PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a frames function does not alter the result 
+FAIL Linear-equivalent cubic-bezier keyframe easing applied to an effect with a frames function does not alter the result Type error
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a linear function does not alter the result 
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a ease function does not alter the result 
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a ease-in function does not alter the result 

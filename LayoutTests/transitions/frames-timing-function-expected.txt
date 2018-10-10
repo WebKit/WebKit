@@ -1,6 +1,6 @@
 The box should move horizontally 200px over 1s, in 4 equal increments.
 
-PASS - "-webkit-transform.4" property for "box" element at 0.25s saw something close to: 50
-PASS - "-webkit-transform.4" property for "box" element at 0.5s saw something close to: 100
-PASS - "-webkit-transform.4" property for "box" element at 0.75s saw something close to: 150
+FAIL - "-webkit-transform.4" property for "box" element at 0.25s expected: 50 but saw: matrix(1, 0, 0, 1, 81.71330261230469, 0)
+FAIL - "-webkit-transform.4" property for "box" element at 0.5s expected: 100 but saw: matrix(1, 0, 0, 1, 160.4827880859375, 0)
+FAIL - "-webkit-transform.4" property for "box" element at 0.75s expected: 150 but saw: matrix(1, 0, 0, 1, 192.13755798339844, 0)
 

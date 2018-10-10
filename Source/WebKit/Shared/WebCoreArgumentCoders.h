@@ -88,7 +88,6 @@ class ResourceResponse;
 class SecurityOrigin;
 class SpringTimingFunction;
 class StepsTimingFunction;
-class FramesTimingFunction;
 class StickyPositionViewportConstraints;
 class TextCheckingRequestData;
 class TransformationMatrix;
@@ -215,11 +214,6 @@ template<> struct ArgumentCoder<WebCore::CubicBezierTimingFunction> {
 template<> struct ArgumentCoder<WebCore::StepsTimingFunction> {
     static void encode(Encoder&, const WebCore::StepsTimingFunction&);
     static bool decode(Decoder&, WebCore::StepsTimingFunction&);
-};
-
-template<> struct ArgumentCoder<WebCore::FramesTimingFunction> {
-    static void encode(Encoder&, const WebCore::FramesTimingFunction&);
-    static bool decode(Decoder&, WebCore::FramesTimingFunction&);
 };
 
 template<> struct ArgumentCoder<WebCore::SpringTimingFunction> {

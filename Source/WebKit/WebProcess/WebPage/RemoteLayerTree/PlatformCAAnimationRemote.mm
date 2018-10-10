@@ -192,10 +192,6 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
             encoder << *static_cast<StepsTimingFunction*>(timingFunction.get());
             break;
 
-        case TimingFunction::FramesFunction:
-            encoder << *static_cast<FramesTimingFunction*>(timingFunction.get());
-            break;
-
         case TimingFunction::SpringFunction:
             encoder << *static_cast<SpringTimingFunction*>(timingFunction.get());
             break;
@@ -284,12 +280,6 @@ std::optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::
             case TimingFunction::StepsFunction:
                 timingFunction = StepsTimingFunction::create();
                 if (!decoder.decode(*static_cast<StepsTimingFunction*>(timingFunction.get())))
-                    return std::nullopt;
-                break;
-
-            case TimingFunction::FramesFunction:
-                timingFunction = FramesTimingFunction::create();
-                if (!decoder.decode(*static_cast<FramesTimingFunction*>(timingFunction.get())))
                     return std::nullopt;
                 break;
 

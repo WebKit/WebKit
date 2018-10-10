@@ -102,7 +102,6 @@ public:
     bool isShadowValue() const { return m_classType == ShadowClass; }
     bool isCubicBezierTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass; }
     bool isStepsTimingFunctionValue() const { return m_classType == StepsTimingFunctionClass; }
-    bool isFramesTimingFunctionValue() const { return m_classType == FramesTimingFunctionClass; }
     bool isSpringTimingFunctionValue() const { return m_classType == SpringTimingFunctionClass; }
     bool isLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
     bool isCalcValue() const {return m_classType == CalculationClass; }
@@ -153,7 +152,6 @@ protected:
         // Timing function classes.
         CubicBezierTimingFunctionClass,
         StepsTimingFunctionClass,
-        FramesTimingFunctionClass,
         SpringTimingFunctionClass,
 
         // Other class types.

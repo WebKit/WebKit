@@ -1,3 +1,19 @@
+2018-10-09  Antoine Quint  <graouts@apple.com>
+
+        Remove the frames() timing function
+        https://bugs.webkit.org/show_bug.cgi?id=190034
+        <rdar://problem/44827544>
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FramesTimingFunction>::encode): Deleted.
+        (IPC::ArgumentCoder<FramesTimingFunction>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::Properties::encode const):
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+
 2018-10-09  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: m_cachesLocks.contains(sessionID) in WebKit::CacheStorageEngineConnection::dereference(PAL::SessionID, unsigned long long)

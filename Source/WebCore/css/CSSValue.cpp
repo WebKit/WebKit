@@ -197,8 +197,6 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSCubicBezierTimingFunctionValue>(*this, other);
         case StepsTimingFunctionClass:
             return compareCSSValues<CSSStepsTimingFunctionValue>(*this, other);
-        case FramesTimingFunctionClass:
-            return compareCSSValues<CSSFramesTimingFunctionValue>(*this, other);
         case SpringTimingFunctionClass:
             return compareCSSValues<CSSSpringTimingFunctionValue>(*this, other);
         case UnicodeRangeClass:
@@ -295,8 +293,6 @@ String CSSValue::cssText() const
         return downcast<CSSCubicBezierTimingFunctionValue>(*this).customCSSText();
     case StepsTimingFunctionClass:
         return downcast<CSSStepsTimingFunctionValue>(*this).customCSSText();
-    case FramesTimingFunctionClass:
-        return downcast<CSSFramesTimingFunctionValue>(*this).customCSSText();
     case SpringTimingFunctionClass:
         return downcast<CSSSpringTimingFunctionValue>(*this).customCSSText();
     case UnicodeRangeClass:
@@ -414,9 +410,6 @@ void CSSValue::destroy()
         return;
     case StepsTimingFunctionClass:
         delete downcast<CSSStepsTimingFunctionValue>(this);
-        return;
-    case FramesTimingFunctionClass:
-        delete downcast<CSSFramesTimingFunctionValue>(this);
         return;
     case SpringTimingFunctionClass:
         delete downcast<CSSSpringTimingFunctionValue>(this);

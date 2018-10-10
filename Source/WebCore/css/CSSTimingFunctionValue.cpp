@@ -67,20 +67,6 @@ bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& othe
     return m_steps == other.m_steps && m_stepAtStart == other.m_stepAtStart;
 }
 
-String CSSFramesTimingFunctionValue::customCSSText() const
-{
-    StringBuilder builder;
-    builder.appendLiteral("frames(");
-    builder.appendNumber(m_frames);
-    builder.appendLiteral(")");
-    return builder.toString();
-}
-
-bool CSSFramesTimingFunctionValue::equals(const CSSFramesTimingFunctionValue& other) const
-{
-    return m_frames == other.m_frames;
-}
-
 String CSSSpringTimingFunctionValue::customCSSText() const
 {
     StringBuilder builder;

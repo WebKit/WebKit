@@ -1,3 +1,17 @@
+2018-10-09  Antoine Quint  <graouts@apple.com>
+
+        Remove the frames() timing function
+        https://bugs.webkit.org/show_bug.cgi?id=190034
+        <rdar://problem/44827544>
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css-timing-1/frames-timing-functions-output-expected.txt:
+        * web-platform-tests/css-timing-1/frames-timing-functions-syntax-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance-expected.txt:
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/easing-expected.txt:
+        * web-platform-tests/web-animations/timing-model/time-transformations/transformed-progress-expected.txt:
+
 2018-10-09  Oriol Brufau  <obrufau@igalia.com>
 
         Resolve inset properties to computed style when there is overconstraintment

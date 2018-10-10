@@ -50,11 +50,6 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
         ts << "steps(" << function.numberOfSteps() << ", " << (function.stepAtStart() ? "start" : "end") << ")";
         break;
     }
-    case TimingFunction::FramesFunction: {
-        auto& function = downcast<FramesTimingFunction>(timingFunction);
-        ts << "frames(" << function.numberOfFrames() << ")";
-        break;
-    }
     case TimingFunction::SpringFunction: {
         auto& function = downcast<SpringTimingFunction>(timingFunction);
         ts << "spring(" << function.mass() << " " << function.stiffness() << " " <<  function.damping() << " " << function.initialVelocity() << ")";
@@ -99,16 +94,6 @@ double TimingFunction::transformTime(double inputTime, double duration, bool bef
             currentStep = steps;
         // 6. The output progress value is current step / steps.
         return currentStep / steps;
-    }
-    case TimingFunction::FramesFunction: {
-        // https://drafts.csswg.org/css-timing/#frames-timing-functions
-        auto& function = downcast<FramesTimingFunction>(*this);
-        auto numberOfFrames = function.numberOfFrames();
-        ASSERT(numberOfFrames > 1);
-        auto outputTime = std::floor(inputTime * numberOfFrames) / (numberOfFrames - 1);
-        if (inputTime <= 1 && outputTime > 1)
-            return 1;
-        return outputTime;
     }
     case TimingFunction::SpringFunction: {
         auto& function = downcast<SpringTimingFunction>(*this);
@@ -169,10 +154,6 @@ RefPtr<TimingFunction> TimingFunction::createFromCSSValue(const CSSValue& value)
     if (is<CSSStepsTimingFunctionValue>(value)) {
         auto& stepsTimingFunction = downcast<CSSStepsTimingFunctionValue>(value);
         return StepsTimingFunction::create(stepsTimingFunction.numberOfSteps(), stepsTimingFunction.stepAtStart());
-    }
-    if (is<CSSFramesTimingFunctionValue>(value)) {
-        auto& framesTimingFunction = downcast<CSSFramesTimingFunctionValue>(value);
-        return FramesTimingFunction::create(framesTimingFunction.numberOfFrames());
     }
     if (is<CSSSpringTimingFunctionValue>(value)) {
         auto& springTimingFunction = downcast<CSSSpringTimingFunctionValue>(value);

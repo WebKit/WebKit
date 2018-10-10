@@ -1,3 +1,41 @@
+2018-10-09  Antoine Quint  <graouts@apple.com>
+
+        Remove the frames() timing function
+        https://bugs.webkit.org/show_bug.cgi?id=190034
+        <rdar://problem/44827544>
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createTimingFunctionValue):
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSFramesTimingFunctionValue::customCSSText const): Deleted.
+        (WebCore::CSSFramesTimingFunctionValue::equals const): Deleted.
+        * css/CSSTimingFunctionValue.h:
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals const):
+        (WebCore::CSSValue::cssText const):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isStepsTimingFunctionValue const):
+        (WebCore::CSSValue::isFramesTimingFunctionValue const): Deleted.
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeAnimationTimingFunction):
+        (WebCore::consumeFrames): Deleted.
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::operator<<):
+        (WebCore::TimingFunction::transformTime const):
+        (WebCore::TimingFunction::createFromCSSValue):
+        * platform/animation/TimingFunction.h:
+        (WebCore::TimingFunction::isStepsTimingFunction const):
+        (WebCore::TimingFunction::isFramesTimingFunction const): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::animationCanBeAccelerated const):
+        (WebCore::animationHasFramesTimingFunction): Deleted.
+
 2018-10-09  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: show redirect requests in Network and Timelines tabs

@@ -1475,27 +1475,6 @@ static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
     return CSSStepsTimingFunctionValue::create(steps->intValue(), stepAtStart);
 }
 
-static RefPtr<CSSValue> consumeFrames(CSSParserTokenRange& range)
-{
-    ASSERT(range.peek().functionId() == CSSValueFrames);
-    CSSParserTokenRange rangeCopy = range;
-    CSSParserTokenRange args = consumeFunction(rangeCopy);
-    
-    RefPtr<CSSPrimitiveValue> frames = consumePositiveInteger(args);
-    if (!frames)
-        return nullptr;
-
-    auto numberOfFrames = frames->intValue();
-    if (numberOfFrames < 2)
-        return nullptr;
-    
-    if (!args.atEnd())
-        return nullptr;
-    
-    range = rangeCopy;
-    return CSSFramesTimingFunctionValue::create(numberOfFrames);
-}
-
 static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueCubicBezier);
@@ -1566,8 +1545,6 @@ static RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& rang
         return consumeCubicBezier(range);
     if (function == CSSValueSteps)
         return consumeSteps(range);
-    if (function == CSSValueFrames)
-        return consumeFrames(range);
     if (context.springTimingFunctionEnabled && function == CSSValueSpring)
         return consumeSpringFunction(range);
     return nullptr;

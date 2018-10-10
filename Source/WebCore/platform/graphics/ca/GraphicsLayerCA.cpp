@@ -286,21 +286,6 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
     return false;
 }
 
-static bool animationHasFramesTimingFunction(const KeyframeValueList& valueList, const Animation* anim)
-{
-    if (is<FramesTimingFunction>(anim->timingFunction()))
-        return true;
-    
-    for (unsigned i = 0; i < valueList.size(); ++i) {
-        if (const TimingFunction* timingFunction = valueList.at(i).timingFunction()) {
-            if (is<FramesTimingFunction>(timingFunction))
-                return true;
-        }
-    }
-
-    return false;
-}
-
 static inline bool supportsAcceleratedFilterAnimations()
 {
 #if PLATFORM(COCOA)
@@ -1004,9 +989,6 @@ bool GraphicsLayerCA::animationCanBeAccelerated(const KeyframeValueList& valueLi
         return false;
 
     if (animationHasStepsTimingFunction(valueList, anim))
-        return false;
-
-    if (animationHasFramesTimingFunction(valueList, anim))
         return false;
 
     return true;

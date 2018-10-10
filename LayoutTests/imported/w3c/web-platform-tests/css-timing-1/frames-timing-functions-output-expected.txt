@@ -1,10 +1,10 @@
 
-PASS For an input progress of 0.0, the output of a frames timing function is the first frame 
-PASS At a frame boundary, the output of a frames timing function is the next frame 
-PASS For an input progress of 1.0, the output of a frames timing function is the final frame 
-PASS The number of frames is correctly reflected in the frames timing function output 
-PASS The number of frames is correctly reflected in the frames timing function output on CSS Transitions 
-PASS frames easing with input progress greater than 1 
-PASS frames easing with input progress greater than 1.5 
-PASS frames easing with input progress less than 0 
+FAIL For an input progress of 0.0, the output of a frames timing function is the first frame assert_equals: expected "0px" but got "auto"
+FAIL At a frame boundary, the output of a frames timing function is the next frame assert_equals: expected "0px" but got "auto"
+FAIL For an input progress of 1.0, the output of a frames timing function is the final frame assert_equals: expected "100px" but got "auto"
+FAIL The number of frames is correctly reflected in the frames timing function output assert_equals: expected "0px" but got "auto"
+FAIL The number of frames is correctly reflected in the frames timing function output on CSS Transitions assert_equals: expected "0px" but got "100px"
+FAIL frames easing with input progress greater than 1 Type error
+FAIL frames easing with input progress greater than 1.5 Type error
+FAIL frames easing with input progress less than 0 Type error
 

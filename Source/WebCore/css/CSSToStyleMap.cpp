@@ -500,9 +500,6 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSVa
     } else if (is<CSSStepsTimingFunctionValue>(value)) {
         auto& stepsTimingFunction = downcast<CSSStepsTimingFunctionValue>(value);
         animation.setTimingFunction(StepsTimingFunction::create(stepsTimingFunction.numberOfSteps(), stepsTimingFunction.stepAtStart()));
-    } else if (is<CSSFramesTimingFunctionValue>(value)) {
-        auto& framesTimingFunction = downcast<CSSFramesTimingFunctionValue>(value);
-        animation.setTimingFunction(FramesTimingFunction::create(framesTimingFunction.numberOfFrames()));
     } else if (is<CSSSpringTimingFunctionValue>(value)) {
         auto& springTimingFunction = downcast<CSSSpringTimingFunctionValue>(value);
         animation.setTimingFunction(SpringTimingFunction::create(springTimingFunction.mass(), springTimingFunction.stiffness(), springTimingFunction.damping(), springTimingFunction.initialVelocity()));

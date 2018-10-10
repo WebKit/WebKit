@@ -7,7 +7,7 @@ PASS step-end function
 PASS steps(1) function 
 PASS steps(1, end) function 
 PASS steps(2, end) function 
-PASS frames function 
+FAIL frames function Type error
 PASS linear function 
 PASS ease function 
 PASS ease-in function 
@@ -52,6 +52,6 @@ PASS Canonical easing 'ease-in-out' is returned as set
 PASS Canonical easing 'cubic-bezier(0.1, 5, 0.23, 0)' is returned as set 
 PASS Canonical easing 'steps(3, start)' is returned as set 
 PASS Canonical easing 'steps(3)' is returned as set 
-PASS Canonical easing 'frames(3)' is returned as set 
+FAIL Canonical easing 'frames(3)' is returned as set Type error
 PASS Allows the easing to be changed while the animation is in progress 
 

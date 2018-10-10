@@ -220,10 +220,10 @@ PASS style.transitionTimingFunction is 'steps(5, start)'
 PASS computedStyle.transitionTimingFunction is 'steps(5, start)'
 PASS style.webkitTransitionTimingFunction is 'steps(5, start)'
 PASS computedStyle.webkitTransitionTimingFunction is 'steps(5, start)'
-PASS style.transitionTimingFunction is 'frames(2)'
-PASS computedStyle.transitionTimingFunction is 'frames(2)'
-PASS style.webkitTransitionTimingFunction is 'frames(2)'
-PASS computedStyle.webkitTransitionTimingFunction is 'frames(2)'
+FAIL style.transitionTimingFunction should be frames(2). Was steps(5, start).
+FAIL computedStyle.transitionTimingFunction should be frames(2). Was steps(5, start).
+FAIL style.webkitTransitionTimingFunction should be frames(2). Was steps(5, start).
+FAIL computedStyle.webkitTransitionTimingFunction should be frames(2). Was steps(5, start).
 PASS style.transitionTimingFunction is 'ease-in-out, ease-in'
 PASS computedStyle.transitionTimingFunction is 'ease-in-out, ease-in'
 PASS style.webkitTransitionTimingFunction is 'ease-in-out, ease-in'

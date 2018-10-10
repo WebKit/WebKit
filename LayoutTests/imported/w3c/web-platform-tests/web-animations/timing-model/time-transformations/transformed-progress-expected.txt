@@ -6,7 +6,7 @@ PASS Transformed progress for step-end function
 PASS Transformed progress for steps(1) function 
 PASS Transformed progress for steps(1, end) function 
 PASS Transformed progress for steps(2, end) function 
-PASS Transformed progress for frames function 
+FAIL Transformed progress for frames function Type error
 PASS Transformed progress for linear function 
 PASS Transformed progress for ease function 
 PASS Transformed progress for ease-in function 
@@ -25,6 +25,6 @@ PASS Test bounds point of step-start easing with alternate-reverse direction
 PASS Test bounds point of step-end easing 
 PASS Test bounds point of step-end easing with iterationStart and delay 
 PASS Test bounds point of step-end easing with iterationStart not at a transition point 
-PASS Test bounds point of frames easing 
-PASS Test bounds point of frames easing with iterationStart and delay 
+FAIL Test bounds point of frames easing Type error
+FAIL Test bounds point of frames easing with iterationStart and delay Type error
 

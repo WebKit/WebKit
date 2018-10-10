@@ -505,25 +505,6 @@ bool ArgumentCoder<StepsTimingFunction>::decode(Decoder& decoder, StepsTimingFun
     return true;
 }
 
-void ArgumentCoder<FramesTimingFunction>::encode(Encoder& encoder, const FramesTimingFunction& timingFunction)
-{
-    encoder.encodeEnum(timingFunction.type());
-    
-    encoder << timingFunction.numberOfFrames();
-}
-
-bool ArgumentCoder<FramesTimingFunction>::decode(Decoder& decoder, FramesTimingFunction& timingFunction)
-{
-    // Type is decoded by the caller.
-    int numFrames;
-    if (!decoder.decode(numFrames))
-        return false;
-
-    timingFunction.setNumberOfFrames(numFrames);
-
-    return true;
-}
-
 void ArgumentCoder<SpringTimingFunction>::encode(Encoder& encoder, const SpringTimingFunction& timingFunction)
 {
     encoder.encodeEnum(timingFunction.type());
