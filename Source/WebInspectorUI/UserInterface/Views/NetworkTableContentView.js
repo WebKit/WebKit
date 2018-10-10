@@ -481,6 +481,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let domNode = entry.domNode;
         if (domNode) {
+            this._table.element.classList.add("grouped");
+
+            cell.classList.add("parent");
+
             let disclosureElement = cell.appendChild(document.createElement("img"));
             disclosureElement.classList.add("disclosure");
             disclosureElement.classList.toggle("expanded", !!entry.expanded);
@@ -515,7 +519,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (WI.settings.groupByDOMNode.value && resource.initiatorNode) {
             let nodeEntry = this._domNodeEntries.get(resource.initiatorNode);
             if (nodeEntry.initiatedResourceEntries.length > 1) {
-                cell.classList.add("grouped-by-node");
+                cell.classList.add("child");
 
                 let range = resource.requestedByteRange;
                 if (range)
@@ -1619,6 +1623,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _handleGroupByDOMNodeCheckedDidChange(event)
     {
         WI.settings.groupByDOMNode.value = this._groupByDOMNodeNavigationItem.checked;
+
+        if (!WI.settings.groupByDOMNode.value)
+            this._table.element.classList.remove("grouped");
 
         this._updateSortAndFilteredEntries();
         this._table.reloadData();

@@ -69,16 +69,17 @@ body[dir=rtl] .network-table .cell.dom-node.name .disclosure {
     content: url(../Images/DisclosureTriangles.svg#open-selected);
 }
 
-.network-table .cell.grouped-by-node.name {
+.network-table.grouped .data-container .cell.name {
     --item-padding-start: 19px;
+    --item-disclosure-width: 11px;
 }
 
-body[dir=ltr] .network-table .cell.grouped-by-node.name {
-    padding-left: var(--item-padding-start);
+.network-table.grouped .data-container .cell:not(.parent).name {
+    -webkit-padding-start: var(--item-padding-start);
 }
 
-body[dir=rtl] .network-table .cell.grouped-by-node.name {
-    padding-right: var(--item-padding-start);
+.network-table.grouped .data-container .cell.child.name {
+    -webkit-padding-start: calc(var(--item-padding-start) + var(--item-disclosure-width));
 }
 
 .network-table li:not(.selected) .cell:matches(.cache-type, .multiple) {
