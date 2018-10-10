@@ -1,3 +1,10 @@
+2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, add missing headers for inline functions
+        https://bugs.webkit.org/show_bug.cgi?id=190429
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+
 2018-10-10  Tim Horton  <timothy_horton@apple.com>
 
         Share more WKShareSheet code between macOS and iOS, and fix a few bugs
