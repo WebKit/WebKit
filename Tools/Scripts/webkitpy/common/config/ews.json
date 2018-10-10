@@ -62,6 +62,15 @@
             "guijemont@igalia.com"
         ]
     },
+    "JSC Armv7 EWS": {
+        "port": "jsc-only",
+        "name": "jsc-armv7-ews",
+        "group": "jsc",
+        "runTests": true,
+        "watchers": [
+            "guijemont@igalia.com"
+        ]
+    },
     "Bindings EWS": {
         "port": "mac",
         "name": "bindings-ews",

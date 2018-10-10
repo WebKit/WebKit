@@ -213,6 +213,7 @@ MOCK: update_status: %(name)s Checked relevance of patch
             'ios-sim-ews',
             'jsc-ews',
             'jsc-mips-ews',
+            'jsc-armv7-ews',
             'mac-32bit-ews',
             'mac-debug-ews',
             'mac-ews',

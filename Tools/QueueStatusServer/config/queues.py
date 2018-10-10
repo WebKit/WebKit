@@ -39,6 +39,7 @@ all_queue_names = [
     "bindings-ews",
     "jsc-ews",
     "jsc-mips-ews",
+    "jsc-armv7-ews",
     "mac-ews",
     "mac-wk2-ews",
     "mac-debug-ews",

@@ -1,3 +1,20 @@
+2018-10-10  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSCOnly Add an armv7 JSCOnly EWS that runs tests
+        https://bugs.webkit.org/show_bug.cgi?id=190191
+
+        Reviewed by Michael Catanzaro.
+
+        * QueueStatusServer/config/queues.py:
+        * Scripts/webkitpy/common/config/ews.json:
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.run_javascriptcore_tests_command):
+        Add the possibility to pass arguments to run-javascriptcore-tests with
+        the JSCTESTS_OPTIONS environment variable
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (test_ews_name):
+
+
 2018-10-09  Guillaume Emont  <guijemont@igalia.com>
 
         Allow run-javascriptcore-tests to distribute tests between devices
