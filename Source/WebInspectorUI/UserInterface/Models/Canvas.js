@@ -275,7 +275,12 @@ WI.Canvas = class Canvas extends WI.Object
                 return;
             }
 
-            this._recordingState = WI.Canvas.RecordingState.Active;
+            this._recordingState = WI.Canvas.RecordingState.ActiveFrontend;
+
+            // COMPATIBILITY (iOS 12.1): Canvas.event.recordingStarted did not exist yet
+            if (CanvasAgent.hasEvent("recordingStarted"))
+                return;
+
             this._recordingFrames = [];
             this._recordingBufferUsed = 0;
 
@@ -321,6 +326,23 @@ WI.Canvas = class Canvas extends WI.Object
         this.dispatchEventToListeners(WI.Canvas.Event.CSSCanvasClientNodesChanged);
     }
 
+    recordingStarted(initiator)
+    {
+        // Called from WI.CanvasManager.
+
+        if (initiator === WI.Recording.Initiator.Console)
+            this._recordingState = WI.Canvas.RecordingState.ActiveConsole;
+        else {
+            console.assert(initiator === WI.Recording.Initiator.Frontend);
+            this._recordingState = WI.Canvas.RecordingState.ActiveFrontend;
+        }
+
+        this._recordingFrames = [];
+        this._recordingBufferUsed = 0;
+
+        this.dispatchEventToListeners(WI.Canvas.Event.RecordingStarted);
+    }
+
     recordingProgress(framesPayload, bufferUsed)
     {
         // Called from WI.CanvasManager.
@@ -336,7 +358,11 @@ WI.Canvas = class Canvas extends WI.Object
     {
         // Called from WI.CanvasManager.
 
-        let fromConsole = !this.recordingActive;
+        let fromConsole = this._recordingState === WI.Canvas.RecordingState.ActiveConsole;
+
+        // COMPATIBILITY (iOS 12.1): Canvas.event.recordingStarted did not exist yet
+        if (!fromConsole && !CanvasAgent.hasEvent("recordingStarted"))
+            fromConsole = !this.recordingActive;
 
         let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload, this._recordingFrames) : null;
         if (recording) {
@@ -377,7 +403,8 @@ WI.Canvas.ContextType = {
 
 WI.Canvas.RecordingState = {
     Inactive: "canvas-recording-state-inactive",
-    Active: "canvas-recording-state-active",
+    ActiveFrontend: "canvas-recording-state-active-frontend",
+    ActiveConsole: "canvas-recording-state-active-console",
 };
 
 WI.Canvas.Event = {

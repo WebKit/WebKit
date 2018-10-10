@@ -1,5 +1,23 @@
 2018-10-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: notify the frontend when a canvas has started recording via console.record
+        https://bugs.webkit.org/show_bug.cgi?id=190306
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WI.CanvasObserver.prototype.recordingStarted): Added.
+
+        * UserInterface/Protocol/CanvasManager.js:
+        (WI.CanvasManager.prototype.recordingStarted): Added.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.prototype.startRecording):
+        (WI.Canvas.prototype.recordingStarted): Added.
+        (WI.Canvas.prototype.recordingFinished):
+
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: indent all network entries when "Group by Node" is checked
         https://bugs.webkit.org/show_bug.cgi?id=190388
 

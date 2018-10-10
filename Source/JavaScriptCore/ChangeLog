@@ -1,3 +1,16 @@
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: notify the frontend when a canvas has started recording via console.record
+        https://bugs.webkit.org/show_bug.cgi?id=190306
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Canvas.json:
+        Add `recordingStarted` event.
+
+        * inspector/protocol/Recording.json:
+        Add `Initiator` enum for determining who started the recording.
+
 2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Rename createXXX to tryCreateXXX if it can return RefPtr

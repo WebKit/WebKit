@@ -127,6 +127,18 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         canvas.cssCanvasClientNodesChanged();
     }
 
+    recordingStarted(canvasIdentifier, initiator)
+    {
+        // Called from WI.CanvasObserver.
+
+        let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
+        console.assert(canvas);
+        if (!canvas)
+            return;
+
+        canvas.recordingStarted(initiator);
+    }
+
     recordingProgress(canvasIdentifier, framesPayload, bufferUsed)
     {
         // Called from WI.CanvasObserver.

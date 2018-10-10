@@ -81,6 +81,24 @@ TestPage.registerInitializer(() => {
             return;
         }
 
+        let stopped = false;
+        let swizzled = false;
+        let lastFrame = false;
+
+        InspectorTest.awaitEvent("LastFrame")
+        .then((event) => {
+            lastFrame = true;
+
+            if (!stopped)
+                CanvasAgent.stopRecording(canvas.identifier).catch(reject);
+            else {
+                InspectorTest.evaluateInPage(`cancelActions()`).catch(reject);
+
+                if (swizzled)
+                    resolve();
+            }
+        });
+
         let bufferUsed = 0;
         let frameCount = 0;
         function handleRecordingProgress(event) {
@@ -93,9 +111,9 @@ TestPage.registerInitializer(() => {
         canvas.addEventListener(WI.Canvas.Event.RecordingProgress, handleRecordingProgress);
 
         canvas.awaitEvent(WI.Canvas.Event.RecordingStopped).then((event) => {
-            canvas.removeEventListener(WI.Canvas.Event.RecordingProgress, handleRecordingProgress);
+            stopped = true;
 
-            InspectorTest.evaluateInPage(`cancelActions()`);
+            canvas.removeEventListener(WI.Canvas.Event.RecordingProgress, handleRecordingProgress);
 
             let recording = event.data.recording;
             InspectorTest.assert(recording.source === canvas, "Recording should be of the given canvas.");
@@ -103,21 +121,23 @@ TestPage.registerInitializer(() => {
             InspectorTest.assert(recording.source.recordingCollection.has(recording), "Recording should be in the canvas' list of recordings.");
             InspectorTest.assert(recording.frames.length === frameCount, `Recording should have ${frameCount} frames.`)
 
-            return Promise.all(recording.actions.map((action) => action.swizzle(recording))).then(() => {
+            Promise.all(recording.actions.map((action) => action.swizzle(recording))).then(() => {
+                swizzled = true;
+
                 logRecording(recording, type);
+
+                if (lastFrame) {
+                    InspectorTest.evaluateInPage(`cancelActions()`)
+                    .then(resolve, reject);
+                }
             });
-        }).then(resolve, reject);
-
-        CanvasAgent.startRecording(canvas.identifier, singleFrame, memoryLimit, (error) => {
-            if (error) {
-                reject(error);
-                return;
-            }
-
-            InspectorTest.evaluateInPage(`performActions()`);
         });
 
-        return canvas;
+        canvas.awaitEvent(WI.Canvas.Event.RecordingStarted).then((event) => {
+            InspectorTest.evaluateInPage(`performActions()`).catch(reject);
+        });
+
+        CanvasAgent.startRecording(canvas.identifier, singleFrame, memoryLimit).catch(reject);
     };
 
     window.consoleRecord = function(type, resolve, reject) {

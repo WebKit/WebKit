@@ -486,6 +486,11 @@ WI.Recording.Type = {
     CanvasWebGL: "canvas-webgl",
 };
 
+WI.Recording.Initiator = {
+    Frontend: "frontend",
+    Console: "console",
+};
+
 // Keep this in sync with WebCore::RecordingSwizzleTypes.
 WI.Recording.Swizzle = {
     None: 0,

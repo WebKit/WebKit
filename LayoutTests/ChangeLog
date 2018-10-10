@@ -1,3 +1,19 @@
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: notify the frontend when a canvas has started recording via console.record
+        https://bugs.webkit.org/show_bug.cgi?id=190306
+
+        Reviewed by Brian Burg.
+
+        * inspector/canvas/recording-2d.html:
+        * inspector/canvas/recording-bitmaprenderer.html:
+        * inspector/canvas/recording-webgl-snapshots.html:
+        * inspector/canvas/recording-webgl.html:
+        * inspector/canvas/resources/recording-utilities.js:
+        (TestPage.registerInitializer.window.startRecording):
+        Wait to complete the test until the "LastFrame" event is fired, ensuring that any running
+        commands don't affect the next test case.
+
 2018-10-09  Antoine Quint  <graouts@apple.com>
 
         Remove the frames() timing function

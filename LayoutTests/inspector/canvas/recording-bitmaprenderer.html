@@ -95,16 +95,7 @@ function test() {
         name: "Canvas.recordingBitmapRenderer.multipleFrames",
         description: "Check that recording data is serialized correctly for multiple frames.",
         test(resolve, reject) {
-            let canvas = startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {singleFrame: false});
-
-            InspectorTest.singleFireEventListener("LastFrame", () => {
-                CanvasAgent.stopRecording(canvas.identifier, (error) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-                });
-            });
+            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {singleFrame: false});
         },
     });
 

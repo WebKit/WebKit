@@ -116,7 +116,7 @@ private:
     MonotonicTime m_currentFrameStartTime { MonotonicTime::nan() };
     size_t m_bufferLimit { 100 * 1024 * 1024 };
     size_t m_bufferUsed { 0 };
-    bool m_singleFrame { true };
+    bool m_singleFrame { false };
 };
 
 } // namespace WebCore

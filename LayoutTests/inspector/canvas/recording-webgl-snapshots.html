@@ -45,6 +45,10 @@ function load() {
     runTest();
 }
 
+function cancelActions() {
+    // This function is expected by "resources/recording-utilities.js".
+}
+
 function performActions() {
     context.useProgram(program);
 
@@ -83,6 +87,10 @@ function performActions() {
     clearContext();
     drawElements();
     clearContext();
+
+    setTimeout(() => {
+        TestPage.dispatchEventToFrontend("LastFrame");
+    }, 0);
 }
 
 function test() {

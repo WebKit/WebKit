@@ -9,6 +9,11 @@
             "description": "The type of the recording."
         },
         {
+            "id": "Initiator",
+            "type": "string",
+            "enum": ["frontend", "console"]
+        },
+        {
             "id": "InitialState",
             "type": "object",
             "description": "Information about the initial state of the recorded object.",

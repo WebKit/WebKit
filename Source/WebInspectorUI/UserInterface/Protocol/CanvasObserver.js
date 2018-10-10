@@ -47,6 +47,11 @@ WI.CanvasObserver = class CanvasObserver
         WI.canvasManager.cssCanvasClientNodesChanged(canvasId);
     }
 
+    recordingStarted(canvasId, initiator)
+    {
+        WI.canvasManager.recordingStarted(canvasId, initiator);
+    }
+
     recordingProgress(canvasId, frames, bufferUsed)
     {
         WI.canvasManager.recordingProgress(canvasId, frames, bufferUsed);

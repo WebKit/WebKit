@@ -191,6 +191,13 @@
             ]
         },
         {
+            "name": "recordingStarted",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "initiator", "$ref": "Recording.Initiator" }
+            ]
+        },
+        {
             "name": "recordingProgress",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" },

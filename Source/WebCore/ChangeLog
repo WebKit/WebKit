@@ -1,3 +1,24 @@
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: notify the frontend when a canvas has started recording via console.record
+        https://bugs.webkit.org/show_bug.cgi?id=190306
+
+        Reviewed by Brian Burg.
+
+        Updated existing tests: LayoutTests/inspector/canvas/recording-2d.html
+                                LayoutTests/inspector/canvas/recording-bitmaprenderer.html
+                                LayoutTests/inspector/canvas/recording-webgl-snapshots.html
+                                LayoutTests/inspector/canvas/recording-webgl.html
+
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::startRecording):
+        (WebCore::InspectorCanvasAgent::consoleStartRecordingCanvas):
+
+        * inspector/InspectorCanvas.h:
+        Default `singleFrame` to false to better match the default behaviour of other `console`
+        functions (`profile` doesn't stop until `profileEnd` is called, so the same should be true
+        of `record` and `recordEnd`).
+
 2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Rename createXXX to tryCreateXXX if it can return RefPtr

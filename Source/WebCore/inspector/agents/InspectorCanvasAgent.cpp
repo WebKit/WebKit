@@ -279,6 +279,8 @@ void InspectorCanvasAgent::startRecording(ErrorString& errorString, const String
         inspectorCanvas->setBufferLimit(*memoryLimit);
 
     inspectorCanvas->context().setCallTracingActive(true);
+
+    m_frontendDispatcher->recordingStarted(inspectorCanvas->identifier(), Inspector::Protocol::Recording::Initiator::Frontend);
 }
 
 void InspectorCanvasAgent::stopRecording(ErrorString& errorString, const String& canvasId)
@@ -577,6 +579,8 @@ void InspectorCanvasAgent::consoleStartRecordingCanvas(CanvasRenderingContext& c
     }
 
     inspectorCanvas->context().setCallTracingActive(true);
+
+    m_frontendDispatcher->recordingStarted(inspectorCanvas->identifier(), Inspector::Protocol::Recording::Initiator::Console);
 }
 
 #if ENABLE(WEBGL)
