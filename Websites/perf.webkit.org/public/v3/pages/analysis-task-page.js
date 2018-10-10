@@ -369,11 +369,14 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
             this._testGroupMap.get(currentGroup).listItem.classList.add('selected');
 
         if (currentGroup) {
-            this.part('retry-form').setRepetitionCount(currentGroup.repetitionCount());
-            this.part('bisect-form').setRepetitionCount(currentGroup.repetitionCount());
+            this.part('retry-form').setRepetitionCount(currentGroup.initialRepetitionCount());
+            this.part('bisect-form').setRepetitionCount(currentGroup.initialRepetitionCount());
+            const summary = `${currentGroup.initialRepetitionCount()} requested, ${currentGroup.repetitionCount() - currentGroup.initialRepetitionCount()} added due to failures.`;
+            this.content('status-summary').innerHTML = summary;
         }
         this.content('retry-form').style.display = currentGroup ? null : 'none';
         this.content('bisect-form').style.display = currentGroup && this._bisectingCommitSetByTestGroup.get(currentGroup) ? null : 'none';
+        this.content('status-summary').style.display = currentGroup && currentGroup.repetitionCount() > currentGroup.initialRepetitionCount() ? null : 'none';
 
         const hideButton = this.content('hide-button');
         hideButton.textContent = currentGroup && currentGroup.isHidden() ? 'Unhide' : 'Hide';
@@ -389,6 +392,7 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
             <div id="test-group-details">
                 <test-group-results-viewer id="results-viewer"></test-group-results-viewer>
                 <test-group-revision-table id="revision-table"></test-group-revision-table>
+                <div id="status-summary" class="summary"></div>
                 <test-group-form id="retry-form">Retry</test-group-form>
                 <test-group-form id="bisect-form">Bisect</test-group-form>
                 <button id="hide-button">Hide</button>
@@ -449,6 +453,10 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
 
             li:not(.selected) > a:hover {
                 background: #eee;
+            }
+
+            div.summary {
+                padding-left: 1rem;
             }
 
             #test-group-details {

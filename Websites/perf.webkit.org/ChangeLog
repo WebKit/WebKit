@@ -1,3 +1,18 @@
+2018-10-09  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Performance dashboard should show added iterations due failed build requests.
+        https://bugs.webkit.org/show_bug.cgi?id=190419
+
+        Reviewed by Ryosuke Niwa.
+
+        Added UI to show added build requests due to previous failed build requests.
+        Updated the retry/bisect button to default to initial repetition count when test group is created.
+
+        * public/v3/pages/analysis-task-page.js: Added a div to show added build requests.
+        Retry and bisect button should default to initial repetion count.
+        (AnalysisTaskTestGroupPane.prototype._renderCurrentTestGroup):
+        (AnalysisTaskTestGroupPane.cssTemplate):
+
 2018-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         ManifestGenerator shouldn't need more than 1GB of memory or run for 30 seconds
