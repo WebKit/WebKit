@@ -588,7 +588,7 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::VENDOR:
         return String { "WebKit"_s };
     case GraphicsContext3D::VERSION:
-        return "WebGL 1.0 (" + m_context->getString(GraphicsContext3D::VERSION) + ")";
+        return String { "WebGL 1.0" };
     case GraphicsContext3D::VIEWPORT:
         return getWebGLIntArrayParameter(pname);
     case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives

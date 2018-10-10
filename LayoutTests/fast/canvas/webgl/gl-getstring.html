@@ -17,6 +17,8 @@ description("This test checks getParameter returns strings in the correct format
 debug("");
 debug("Canvas.getContext");
 
+var webGLVersion = "WebGL 1.0";
+
 var gl = create3DContext(document.getElementById("canvas"));
 if (!gl) {
   testFailed("context does not exist");
@@ -24,7 +26,8 @@ if (!gl) {
   testPassed("context exists");
 
   debug("");
-  checkPrefix("WebGL 1.0", "VERSION");
+  checkPrefix(webGLVersion, "VERSION");
+  shouldBe("gl.getParameter(gl.VERSION)", "webGLVersion");
   checkPrefix("WebGL GLSL ES 1.0", "SHADING_LANGUAGE_VERSION");
   shouldBeNonNull("gl.getParameter(gl.VENDOR)");
   shouldBeNonNull("gl.getParameter(gl.RENDERER)");

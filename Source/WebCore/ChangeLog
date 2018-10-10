@@ -1,3 +1,23 @@
+2018-10-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Only report the supported WebGL version
+        https://bugs.webkit.org/show_bug.cgi?id=190434
+        <rdar://problem/45024677>
+
+        Reviewed by Dean Jackson.
+
+        Tested by fast/canvas/webgl/gl-getstring.html
+
+        Revise getParameter(gl.VERSION) to only return the WebGL version without the hardware and
+        driver-specific details available through the low-level OpenGL driver interface. These details
+        are not needed for WebGL use and expose information about the user's system that we do not
+        need to share.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getParameter):
+
 2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, add missing headers for inline functions

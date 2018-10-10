@@ -7,6 +7,7 @@ Canvas.getContext
 PASS context exists
 
 PASS getParameter(gl.VERSION) correctly started with WebGL 1.0
+PASS gl.getParameter(gl.VERSION) is webGLVersion
 PASS getParameter(gl.SHADING_LANGUAGE_VERSION) correctly started with WebGL GLSL ES 1.0
 PASS gl.getParameter(gl.VENDOR) is non-null.
 PASS gl.getParameter(gl.RENDERER) is non-null.

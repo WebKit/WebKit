@@ -1938,7 +1938,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::VENDOR:
         return String { "WebKit"_s };
     case GraphicsContext3D::VERSION:
-        return "WebGL 2.0 (" + m_context->getString(GraphicsContext3D::VERSION) + ")";
+        return String { "WebGL 2.0" };
     case GraphicsContext3D::VIEWPORT:
         return getWebGLIntArrayParameter(pname);
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
