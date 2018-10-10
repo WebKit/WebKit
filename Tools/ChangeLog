@@ -1,3 +1,15 @@
+2018-10-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        build-webkit --inspector-frontend shouldn't have a nonzero exit code
+        https://bugs.webkit.org/show_bug.cgi?id=190430
+
+        Reviewed by Brian Burg.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        --inspector-frontend should only be popped off of argv by determineIsInspectorFrontend;
+        it shouldn't be re-inserted as a CLI option by argumentsForConfiguration.
+
 2018-10-10  Tim Horton  <timothy_horton@apple.com>
 
         Share more WKShareSheet code between macOS and iOS, and fix a few bugs

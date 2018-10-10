@@ -494,7 +494,6 @@ sub argumentsForConfiguration()
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
     push(@args, '--wincairo') if isWinCairo();
-    push(@args, '--inspector-frontend') if isInspectorFrontend();
     return @args;
 }
 
