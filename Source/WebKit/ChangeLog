@@ -1,3 +1,20 @@
+2018-10-09  Youenn Fablet  <youenn@apple.com>
+
+        ASSERTION FAILED: m_cachesLocks.contains(sessionID) in WebKit::CacheStorageEngineConnection::dereference(PAL::SessionID, unsigned long long)
+        https://bugs.webkit.org/show_bug.cgi?id=190373
+        <rdar://problem/45106402>
+
+        Reviewed by Alex Christensen.
+
+        This assertion can be hit if:
+        - WebProcess has a DOMCache
+        - NetworkProcess crashes
+        - WebProcess navigates and dereference DOMCache.
+        Remove this assertion as it is hit when a test is using testRunner.terminateNetworkProcess().
+
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::dereference):
+
 2018-10-09  Jer Noble  <jer.noble@apple.com>
 
         Crash when closing WKWebView during enter fullscreen animation

@@ -132,7 +132,6 @@ void CacheStorageEngineConnection::reference(PAL::SessionID sessionID, uint64_t 
 void CacheStorageEngineConnection::dereference(PAL::SessionID sessionID, uint64_t cacheIdentifier)
 {
     RELEASE_LOG_IF_ALLOWED("dereference cache %" PRIu64, cacheIdentifier);
-    ASSERT(m_cachesLocks.contains(sessionID));
     auto& references = m_cachesLocks.ensure(sessionID, []() {
         return HashMap<CacheIdentifier, LockCount> { };
     }).iterator->value;
