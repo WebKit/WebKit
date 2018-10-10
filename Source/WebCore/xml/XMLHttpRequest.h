@@ -125,6 +125,8 @@ public:
     using RefCounted<XMLHttpRequest>::ref;
     using RefCounted<XMLHttpRequest>::deref;
 
+    size_t memoryCost() const;
+
 private:
     explicit XMLHttpRequest(ScriptExecutionContext&);
 
@@ -166,7 +168,6 @@ private:
 
     void changeState(State);
     void callReadyStateChangeListener();
-    void dropProtection();
 
     // Returns false when cancelling the loader within internalAbort() triggers an event whose callback creates a new loader. 
     // In that case, the function calling internalAbort should exit.

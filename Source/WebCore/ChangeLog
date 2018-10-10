@@ -1,3 +1,28 @@
+2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        XMLHttpRequest should use reportExtraMemoryAllocated/reportExtraMemoryVisited instead of deprecatedReportExtraMemory
+        https://bugs.webkit.org/show_bug.cgi?id=190279
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch switches deprecatedReportExtraMemory to reportExtraMemoryAllocated/reportExtraMemoryVisited
+        in XMLHttpRequest. We report extra memory allocation when the readyState becomes DONE. And memoryCost
+        function returns the memory cost which is based on the readyState and m_responseBuilder.
+        We annotate XMLHttpRequest with ReportExtraMemoryCost to use reportExtraMemoryVisited automatically with
+        memoryCost() function.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::changeState):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::internalAbort):
+        (WebCore::XMLHttpRequest::networkErrorTimerFired):
+        (WebCore::XMLHttpRequest::memoryCost const):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didReachTimeout):
+        (WebCore::XMLHttpRequest::dropProtection): Deleted.
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+
 2018-10-09  Antoine Quint  <graouts@apple.com>
 
         Remove the frames() timing function

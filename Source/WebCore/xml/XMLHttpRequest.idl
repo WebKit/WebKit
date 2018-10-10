@@ -47,6 +47,7 @@ enum XMLHttpRequestResponseType {
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
+    ReportExtraMemoryCost,
 ] interface XMLHttpRequest : XMLHttpRequestEventTarget {
     // event handler
     attribute EventHandler onreadystatechange;
