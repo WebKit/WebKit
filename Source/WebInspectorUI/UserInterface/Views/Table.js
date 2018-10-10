@@ -237,6 +237,8 @@ WI.Table = class Table extends WI.View
     reloadData()
     {
         this._cachedRows.clear();
+
+        this._selectedRowIndex = NaN;
         this._selectedRows.clear();
 
         this._previousRevealedRowCount = NaN;

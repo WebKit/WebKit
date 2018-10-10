@@ -1,5 +1,35 @@
 2018-10-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: selection in network table is lost when new entries are added
+        https://bugs.webkit.org/show_bug.cgi?id=190362
+
+        Reviewed by Matt Baker.
+
+        The `_selectedRows` list is cleared each time `reloadData` is called, meaning that
+        `WI.Table` expects its "owner" to restore the selection (since it doesn't know how). As a
+        result, `WI.NetworkTableContentView` needs to call `selectRow` _after_ `reloadData` is
+        called, not before.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.tableSortChanged):
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        (WI.NetworkTableContentView.prototype._processPendingEntries):
+        (WI.NetworkTableContentView.prototype._insertResourceAndReloadTable):
+        (WI.NetworkTableContentView.prototype._updateSort): Added.
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._reloadTable): Added.
+        (WI.NetworkTableContentView.prototype._resetFilters):
+        (WI.NetworkTableContentView.prototype._typeFilterScopeBarSelectionChanged):
+        (WI.NetworkTableContentView.prototype._handleGroupByDOMNodeCheckedDidChange):
+        (WI.NetworkTableContentView.prototype._urlFilterDidChange):
+        (WI.NetworkTableContentView.prototype._updateSortAndFilteredEntries): Deleted.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.reloadData):
+        Ensure that the `_selectedRowIndex` is also reset.
+
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: notify the frontend when a canvas has started recording via console.record
         https://bugs.webkit.org/show_bug.cgi?id=190306
 

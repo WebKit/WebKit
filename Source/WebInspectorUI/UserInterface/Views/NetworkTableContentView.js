@@ -332,10 +332,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         for (let nodeEntry of this._domNodeEntries.values())
             nodeEntry.initiatedResourceEntries.sort(this._entriesSortComparator);
 
-        this._entries.sort(this._entriesSortComparator);
-
+        this._updateSort();
         this._updateFilteredEntries();
-        this._table.reloadData();
+        this._reloadTable();
     }
 
     // Table delegate
@@ -492,7 +491,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 entry.expanded = !entry.expanded;
 
                 this._updateFilteredEntries();
-                this._table.reloadData();
+                this._reloadTable();
             });
 
             createIconElement();
@@ -1057,8 +1056,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._pendingFilter = false;
 
-        this._updateSortAndFilteredEntries();
-        this._table.reloadData();
+        this._updateSort();
+        this._updateFilteredEntries();
+        this._reloadTable();
     }
 
     _populateWithInitialResourcesIfNeeded()
@@ -1394,7 +1394,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             if (this._filteredEntries.lastValue === resourceEntry)
                 this._table.reloadDataAddedToEndOnly();
             else
-                this._table.reloadData();
+                this._reloadTable();
         }
     }
 
@@ -1503,12 +1503,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             && this._passURLFilter(entry);
     }
 
-    _updateSortAndFilteredEntries()
+    _updateSort()
     {
         if (this._entriesSortComparator)
             this._entries = this._entries.sort(this._entriesSortComparator);
-
-        this._updateFilteredEntries();
     }
 
     _updateFilteredEntries()
@@ -1549,10 +1547,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             });
         }
 
-        this._restoreSelectedRow();
-
         this._updateURLFilterActiveIndicator();
         this._updateEmptyFilterResultsMessage();
+    }
+
+    _reloadTable()
+    {
+        this._table.reloadData();
+        this._restoreSelectedRow();
     }
 
     _generateTypeFilter()
@@ -1583,7 +1585,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         console.assert(!this._hasActiveFilter());
 
         this._updateFilteredEntries();
-        this._table.reloadData();
+        this._reloadTable();
     }
 
     _areFilterListsIdentical(listA, listB)
@@ -1617,7 +1619,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._activeTypeFilters = newFilter;
         this._updateFilteredEntries();
-        this._table.reloadData();
+        this._reloadTable();
     }
 
     _handleGroupByDOMNodeCheckedDidChange(event)
@@ -1627,8 +1629,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (!WI.settings.groupByDOMNode.value)
             this._table.element.classList.remove("grouped");
 
-        this._updateSortAndFilteredEntries();
-        this._table.reloadData();
+        this._updateSort();
+        this._updateFilteredEntries();
+        this._reloadTable();
     }
 
     _urlFilterDidChange(event)
@@ -1648,7 +1651,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._activeURLFilterResources.clear();
 
             this._updateFilteredEntries();
-            this._table.reloadData();
+            this._reloadTable();
             return;
         }
 
@@ -1662,7 +1665,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._checkURLFilterAgainstResource(entry.resource);
 
         this._updateFilteredEntries();
-        this._table.reloadData();
+        this._reloadTable();
     }
 
     _restoreSelectedRow()
