@@ -146,19 +146,19 @@ static NSString* normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 {
     auto makeNSStringWithCharacter = [] (unichar c) { return [NSString stringWithCharacters:&c length:1]; };
 
-    if (characters == UIKeyInputUpArrow)
+    if ([characters isEqualToString:UIKeyInputUpArrow])
         return makeNSStringWithCharacter(NSUpArrowFunctionKey);
-    if (characters == UIKeyInputDownArrow)
+    if ([characters isEqualToString:UIKeyInputDownArrow])
         return makeNSStringWithCharacter(NSDownArrowFunctionKey);
-    if (characters == UIKeyInputLeftArrow)
+    if ([characters isEqualToString:UIKeyInputLeftArrow])
         return makeNSStringWithCharacter(NSLeftArrowFunctionKey);
-    if (characters == UIKeyInputRightArrow)
+    if ([characters isEqualToString:UIKeyInputRightArrow])
         return makeNSStringWithCharacter(NSRightArrowFunctionKey);
-    if (characters == UIKeyInputPageUp)
+    if ([characters isEqualToString:UIKeyInputPageUp])
         return makeNSStringWithCharacter(NSPageUpFunctionKey);
-    if (characters == UIKeyInputPageDown)
+    if ([characters isEqualToString:UIKeyInputPageDown])
         return makeNSStringWithCharacter(NSPageDownFunctionKey);
-    if (characters == UIKeyInputEscape)
+    if ([characters isEqualToString:UIKeyInputEscape])
         return @"\x1B";
     if ([characters isEqualToString:@"\x1B"]) // Num Lock / Clear
         return makeNSStringWithCharacter(NSClearLineFunctionKey);

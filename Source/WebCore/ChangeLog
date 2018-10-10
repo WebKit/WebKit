@@ -1,3 +1,16 @@
+2018-10-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Compare input string to UIKeyInput constants using string comparison instead of pointer comparison
+        https://bugs.webkit.org/show_bug.cgi?id=190432
+
+        Reviewed by Tim Horton.
+
+        Pointer comparision is brittle. We should be more forgiving and perform string comparision
+        of an input string to a UIKeyInput constant.
+
+        * platform/ios/WebEvent.mm:
+        (normalizedStringWithAppKitCompatibilityMapping):
+
 2018-10-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r236802.
