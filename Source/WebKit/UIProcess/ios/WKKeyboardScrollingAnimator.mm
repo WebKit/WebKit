@@ -31,6 +31,7 @@
 #import "UIKitSPI.h"
 #import <QuartzCore/CADisplayLink.h>
 #import <WebCore/FloatPoint.h>
+#import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/RectEdges.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/UIKitSPI.h>
@@ -190,21 +191,25 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
     enum class Key : uint8_t { Other, LeftArrow, RightArrow, UpArrow, DownArrow, PageUp, PageDown, Space };
     
     auto key = ^{
-        if ([charactersIgnoringModifiers isEqualToString:UIKeyInputLeftArrow])
+        auto firstCharacter = [charactersIgnoringModifiers characterAtIndex:0];
+        switch (firstCharacter) {
+        case NSLeftArrowFunctionKey:
             return Key::LeftArrow;
-        if ([charactersIgnoringModifiers isEqualToString:UIKeyInputRightArrow])
+        case NSRightArrowFunctionKey:
             return Key::RightArrow;
-        if ([charactersIgnoringModifiers isEqualToString:UIKeyInputUpArrow])
+        case NSUpArrowFunctionKey:
             return Key::UpArrow;
-        if ([charactersIgnoringModifiers isEqualToString:UIKeyInputDownArrow])
+        case NSDownArrowFunctionKey:
             return Key::DownArrow;
-        if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageDown])
+        case NSPageDownFunctionKey:
             return Key::PageDown;
-        if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageUp])
+        case NSPageUpFunctionKey:
             return Key::PageUp;
-        if ([charactersIgnoringModifiers characterAtIndex:0] == kWebSpaceKey)
+        case kWebSpaceKey:
             return Key::Space;
-        return Key::Other;
+        default:
+            return Key::Other;
+        };
     }();
     
     if (key == Key::Other)
