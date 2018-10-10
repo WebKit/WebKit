@@ -710,7 +710,7 @@ void WebPageProxy::reattachToWebProcess()
     finishAttachingToWebProcess();
 }
 
-SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& process, API::Navigation& navigation)
+SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& process, API::Navigation& navigation, uint64_t mainFrameID)
 {
     ASSERT(!m_suspendedPage || m_suspendedPage->process() != &process);
 
@@ -720,7 +720,7 @@ SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& proc
         return nullptr;
     }
 
-    m_suspendedPage = std::make_unique<SuspendedPageProxy>(*this, process, *currentItem);
+    m_suspendedPage = std::make_unique<SuspendedPageProxy>(*this, process, *currentItem, mainFrameID);
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), m_suspendedPage->loggingString(), process.processIdentifier(), currentItem->itemID().logString());
 
@@ -733,7 +733,7 @@ void WebPageProxy::suspendedPageClosed(SuspendedPageProxy& page)
     m_suspendedPage = nullptr;
 }
 
-void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation& navigation)
+void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation& navigation, std::optional<uint64_t> mainFrameIDInPreviousProcess)
 {
     ASSERT(!m_isClosed);
     RELEASE_LOG_IF_ALLOWED(Process, "%p WebPageProxy::swapToWebProcess\n", this);
@@ -741,7 +741,8 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
     // If the process we're attaching to is kept alive solely by our current suspended page,
     // we need to maintain that by temporarily keeping the suspended page alive.
     auto currentSuspendedPage = WTFMove(m_suspendedPage);
-    m_process->suspendWebPageProxy(*this, navigation);
+    if (mainFrameIDInPreviousProcess)
+        m_process->suspendWebPageProxy(*this, navigation, *mainFrameIDInPreviousProcess);
 
     m_process = WTFMove(process);
     m_isValid = true;
@@ -752,9 +753,8 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
     // already exists and already has a main frame.
     if (currentSuspendedPage && currentSuspendedPage->process() == m_process.ptr()) {
         ASSERT(!m_mainFrame);
-        ASSERT(m_mainFrameID);
-        m_mainFrame = WebFrameProxy::create(this, *m_mainFrameID);
-        m_process->frameCreated(*m_mainFrameID, *m_mainFrame);
+        m_mainFrame = WebFrameProxy::create(this, currentSuspendedPage->mainFrameID());
+        m_process->frameCreated(currentSuspendedPage->mainFrameID(), *m_mainFrame);
     }
 
     finishAttachingToWebProcess();
@@ -2537,15 +2537,13 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString());
 
     Ref<WebProcessProxy> previousProcess = m_process.copyRef();
-    std::optional<uint64_t> navigatedFrameIdentifierInPreviousProcess;
-    if (m_mainFrame)
-        navigatedFrameIdentifierInPreviousProcess = m_mainFrame->frameID();
+    std::optional<uint64_t> mainFrameIDInPreviousProcess = m_mainFrame ? std::make_optional(m_mainFrame->frameID()) : std::nullopt;
 
     ASSERT(m_process.ptr() != process.ptr());
 
     processDidTerminate(ProcessTerminationReason::NavigationSwap);
 
-    swapToWebProcess(WTFMove(process), navigation);
+    swapToWebProcess(WTFMove(process), navigation, mainFrameIDInPreviousProcess);
 
     if (auto* item = navigation.targetItem()) {
         LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
@@ -2584,13 +2582,13 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
     }
 
     bool isInitialNavigationInNewWindow = openedByDOM() && !hasCommittedAnyProvisionalLoads();
-    if (!isInitialNavigationInNewWindow || !navigatedFrameIdentifierInPreviousProcess)
+    if (!isInitialNavigationInNewWindow || !mainFrameIDInPreviousProcess)
         return;
 
-    m_mainFrameWindowCreationHandler = [this, previousProcess = WTFMove(previousProcess), navigatedFrameIdentifierInPreviousProcess = *navigatedFrameIdentifierInPreviousProcess](const GlobalWindowIdentifier& windowIdentifier) {
+    m_mainFrameWindowCreationHandler = [this, previousProcess = WTFMove(previousProcess), mainFrameIDInPreviousProcess = *mainFrameIDInPreviousProcess](const GlobalWindowIdentifier& windowIdentifier) {
         ASSERT(m_mainFrame);
         GlobalFrameIdentifier navigatedFrameIdentifierInNewProcess { pageID(), m_mainFrame->frameID() };
-        previousProcess->send(Messages::WebPage::FrameBecameRemote(navigatedFrameIdentifierInPreviousProcess, navigatedFrameIdentifierInNewProcess, windowIdentifier), pageID());
+        previousProcess->send(Messages::WebPage::FrameBecameRemote(mainFrameIDInPreviousProcess, navigatedFrameIdentifierInNewProcess, windowIdentifier), pageID());
     };
 }
 
@@ -3415,7 +3413,6 @@ void WebPageProxy::didCreateMainFrame(uint64_t frameID)
     MESSAGE_CHECK(m_process->canCreateFrame(frameID));
 
     m_mainFrame = WebFrameProxy::create(this, frameID);
-    m_mainFrameID = frameID;
 
     // Add the frame to the process wide map.
     m_process->frameCreated(frameID, *m_mainFrame);

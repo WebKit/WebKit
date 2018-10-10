@@ -1354,7 +1354,7 @@ public:
 
     WebPreferencesStore preferencesStore() const;
 
-    SuspendedPageProxy* maybeCreateSuspendedPage(WebProcessProxy&, API::Navigation&);
+    SuspendedPageProxy* maybeCreateSuspendedPage(WebProcessProxy&, API::Navigation&, uint64_t mainFrameID);
     SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
     void suspendedPageClosed(SuspendedPageProxy&);
 
@@ -1525,7 +1525,7 @@ private:
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
     void reattachToWebProcess();
-    void swapToWebProcess(Ref<WebProcessProxy>&&, API::Navigation&);
+    void swapToWebProcess(Ref<WebProcessProxy>&&, API::Navigation&, std::optional<uint64_t> mainFrameIDInPreviousProcess);
     void finishAttachingToWebProcess();
 
     RefPtr<API::Navigation> reattachToWebProcessForReload();
@@ -1894,7 +1894,6 @@ private:
     Ref<WebsiteDataStore> m_websiteDataStore;
 
     RefPtr<WebFrameProxy> m_mainFrame;
-    std::optional<uint64_t> m_mainFrameID;
     Function<void()> m_mainFrameCreationHandler;
     Function<void(const WebCore::GlobalWindowIdentifier&)> m_mainFrameWindowCreationHandler;
 

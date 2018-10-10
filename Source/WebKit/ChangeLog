@@ -1,3 +1,39 @@
+2018-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON): Assertion hit under WebPageProxy::didNavigateWithNavigationData()
+        https://bugs.webkit.org/show_bug.cgi?id=190418
+        <rdar://problem/45059769>
+
+        Reviewed by Geoffrey Garen.
+
+        When process swapping and "suspending" the previous WebProcess in a SuspendedPageProxy,
+        we need to keep around the main frame's ID that still exists on in this process. This
+        is needed so that we can re-create a UI-side WebFrameProxy for the WebFrame that exists
+        in the WebProcess, if we ever swap back to this suspended process (see login in
+        WebPageProxy::swapToWebProcess()).
+
+        The bug was that the main frame ID was stored on the WebPageProxy via m_mainFrameID instead of the
+        SuspendedPageProxy. This means that m_mainFrameID would get overriden when navigating in the new
+        WebProcess with the value 1 (because WebFrame identifiers start at 1 and are per-WebProcess).
+        This would lead to us constructing a WebFrameProxy with the wrong frame identifier in
+        WebPageProxy::swapToWebProcess(), which would override an existing unrelated WebFrame in the
+        WebProcessProxy's HashMap of frames. This would lead to crashes later on as the WebFrame
+        would not be associated to the WebPageProxy we expect.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/SuspendedPageProxy.h:
+        (WebKit::SuspendedPageProxy::mainFrameID const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeCreateSuspendedPage):
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::suspendWebPageProxy):
+        * UIProcess/WebProcessProxy.h:
+
 2018-10-10  Antti Koivisto  <antti@apple.com>
 
         Do domain prewarming for processes for new tabs

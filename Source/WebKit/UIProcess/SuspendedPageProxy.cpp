@@ -74,9 +74,10 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
-SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, WebBackForwardListItem& item)
+SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, WebBackForwardListItem& item, uint64_t mainFrameID)
     : m_page(page)
     , m_process(WTFMove(process))
+    , m_mainFrameID(mainFrameID)
     , m_origin(SecurityOriginData::fromURL({ { }, item.url() }))
 {
     item.setSuspendedPage(*this);

@@ -208,7 +208,7 @@ public:
     void didCommitProvisionalLoad() { m_hasCommittedAnyProvisionalLoads = true; }
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
 
-    void suspendWebPageProxy(WebPageProxy&, API::Navigation&);
+    void suspendWebPageProxy(WebPageProxy&, API::Navigation&, uint64_t mainFrameID);
     void suspendedPageWasDestroyed(SuspendedPageProxy&);
 
 #if PLATFORM(WATCHOS)

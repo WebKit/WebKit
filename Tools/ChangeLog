@@ -1,3 +1,15 @@
+2018-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON): Assertion hit under WebPageProxy::didNavigateWithNavigationData()
+        https://bugs.webkit.org/show_bug.cgi?id=190418
+        <rdar://problem/45059769>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-10-10  Guillaume Emont  <guijemont@igalia.com>
 
         [JSCOnly Add an armv7 JSCOnly EWS that runs tests

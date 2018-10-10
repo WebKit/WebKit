@@ -438,9 +438,9 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID)
     updateBackgroundResponsivenessTimer();
 }
 
-void WebProcessProxy::suspendWebPageProxy(WebPageProxy& webPage, API::Navigation& navigation)
+void WebProcessProxy::suspendWebPageProxy(WebPageProxy& webPage, API::Navigation& navigation, uint64_t mainFrameID)
 {
-    if (auto* suspendedPage = webPage.maybeCreateSuspendedPage(*this, navigation)) {
+    if (auto* suspendedPage = webPage.maybeCreateSuspendedPage(*this, navigation, mainFrameID)) {
         LOG(ProcessSwapping, "WebProcessProxy pid %i added suspended page %s", processIdentifier(), suspendedPage->loggingString());
         m_suspendedPageMap.set(webPage.pageID(), suspendedPage);
     }
