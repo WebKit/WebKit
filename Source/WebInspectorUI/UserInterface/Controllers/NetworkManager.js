@@ -239,9 +239,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
         if (resource) {
             // This is an existing request which is being redirected, update the resource.
-            console.assert(redirectResponse);
+            console.assert(resource.parentFrame.id === frameIdentifier);
+            console.assert(resource.loaderIdentifier === loaderIdentifier);
             console.assert(!targetId);
-            resource.updateForRedirectResponse(request.url, request.headers, elapsedTime);
+            resource.updateForRedirectResponse(request, redirectResponse, elapsedTime, walltime);
             return;
         }
 

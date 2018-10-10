@@ -186,9 +186,17 @@ body[dir=rtl] .network-table .cell.name > .status {
     height: 18px;
 }
 
+.waterfall .block.filler {
+    top: 9px;
+    height: 2px;
+    background-color: lightgrey;
+}
+
+.waterfall .block.redirect {
+    background-color: var(--network-redirect-color);
+}
+
 .waterfall .block.queue {
-    min-width: 3px;
-    -webkit-margin-start: -1px;
     background-color: var(--network-queue-color);
 }
 

@@ -38,14 +38,18 @@
             "type": "object",
             "description": "Timing information for the request.",
             "properties": [
-                { "name": "startTime", "type": "number", "description": "Timing's startTime is a baseline in seconds, while the other numbers are ticks in milliseconds relatively to this." },
-                { "name": "domainLookupStart", "type": "number", "description": "Started DNS address resolve." },
-                { "name": "domainLookupEnd", "type": "number", "description": "Finished DNS address resolve." },
-                { "name": "connectStart", "type": "number", "description": "Started connecting to the remote host." },
-                { "name": "connectEnd", "type": "number", "description": "Connected to the remote host." },
-                { "name": "secureConnectionStart", "type": "number", "description": "Started SSL handshake." },
-                { "name": "requestStart", "type": "number", "description": "Started sending request." },
-                { "name": "responseStart", "type": "number", "description": "Started receiving response headers." }
+                { "name": "startTime", "$ref": "Timestamp", "description": "Request is initiated" },
+                { "name": "redirectStart", "$ref": "Timestamp", "description": "Started redirect resolution." },
+                { "name": "redirectEnd", "$ref": "Timestamp", "description": "Finished redirect resolution." },
+                { "name": "fetchStart", "$ref": "Timestamp", "description": "Resource fetching started." },
+                { "name": "domainLookupStart", "type": "number", "description": "Started DNS address resolve in milliseconds relative to fetchStart." },
+                { "name": "domainLookupEnd", "type": "number", "description": "Finished DNS address resolve in milliseconds relative to fetchStart." },
+                { "name": "connectStart", "type": "number", "description": "Started connecting to the remote host in milliseconds relative to fetchStart." },
+                { "name": "connectEnd", "type": "number", "description": "Connected to the remote host in milliseconds relative to fetchStart." },
+                { "name": "secureConnectionStart", "type": "number", "description": "Started SSL handshake in milliseconds relative to fetchStart." },
+                { "name": "requestStart", "type": "number", "description": "Started sending request in milliseconds relative to fetchStart." },
+                { "name": "responseStart", "type": "number", "description": "Started receiving response headers in milliseconds relative to fetchStart." },
+                { "name": "responseEnd", "type": "number", "description": "Finished receiving response headers in milliseconds relative to fetchStart." }
             ]
         },
         {

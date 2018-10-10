@@ -29,12 +29,17 @@ WI.ResourceTimingData = class ResourceTimingData
     {
         data = data || {};
 
+        console.assert(isNaN(data.startTime) || data.startTime <= data.fetchStart);
+        console.assert(isNaN(data.redirectStart) === isNaN(data.redirectEnd));
         console.assert(isNaN(data.domainLookupStart) === isNaN(data.domainLookupEnd));
         console.assert(isNaN(data.connectStart) === isNaN(data.connectEnd));
 
         this._resource = resource;
 
         this._startTime = data.startTime || NaN;
+        this._redirectStart = data.redirectStart || NaN;
+        this._redirectEnd = data.redirectEnd || NaN;
+        this._fetchStart = data.fetchStart || NaN;
         this._domainLookupStart = data.domainLookupStart || NaN;
         this._domainLookupEnd = data.domainLookupEnd || NaN;
         this._connectStart = data.connectStart || NaN;
@@ -62,12 +67,30 @@ WI.ResourceTimingData = class ResourceTimingData
         if (typeof payload.navigationStart === "number")
             payload = {};
 
+        // COMPATIBILITY (iOS 12.0): Resource Timing data was based on startTime, not fetchStart.
+        let startTime = payload.startTime;
+        let fetchStart = payload.fetchStart;
+        let redirectStart = payload.redirectStart;
+        let redirectEnd = payload.redirectEnd;
+
+        if (isNaN(fetchStart) || fetchStart < startTime)
+            fetchStart = startTime;
+
+        if (redirectStart < startTime || redirectStart > fetchStart || redirectStart > redirectEnd)
+            redirectStart = NaN;
+
+        if (redirectEnd < startTime || redirectEnd > fetchStart || redirectEnd < redirectStart)
+            redirectEnd = NaN;
+
         function offsetToTimestamp(offset) {
-            return offset > 0 ? payload.startTime + (offset / 1000) : NaN;
+            return offset > 0 ? fetchStart + (offset / 1000) : NaN;
         }
 
         let data = {
-            startTime: payload.startTime,
+            startTime,
+            redirectStart,
+            redirectEnd,
+            fetchStart,
             domainLookupStart: offsetToTimestamp(payload.domainLookupStart),
             domainLookupEnd: offsetToTimestamp(payload.domainLookupEnd),
             connectStart: offsetToTimestamp(payload.connectStart),
@@ -88,6 +111,9 @@ WI.ResourceTimingData = class ResourceTimingData
     // Public
 
     get startTime() { return this._startTime || this._resource.requestSentTimestamp; }
+    get redirectStart() { return this._redirectStart; }
+    get redirectEnd() { return this._redirectEnd; }
+    get fetchStart() { return this._fetchStart; }
     get domainLookupStart() { return this._domainLookupStart; }
     get domainLookupEnd() { return this._domainLookupEnd; }
     get connectStart() { return this._connectStart; }

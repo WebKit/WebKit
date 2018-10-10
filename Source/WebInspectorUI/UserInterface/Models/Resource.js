@@ -58,7 +58,6 @@ WI.Resource = class Resource extends WI.SourceCode
         this._requestSentTimestamp = requestSentTimestamp || NaN;
         this._requestSentWalltime = requestSentWalltime || NaN;
         this._responseReceivedTimestamp = NaN;
-        this._lastRedirectReceivedTimestamp = NaN;
         this._lastDataReceivedTimestamp = NaN;
         this._finishedOrFailedTimestamp = NaN;
         this._finishThenRequestContentPromise = null;
@@ -76,6 +75,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._remoteAddress = null;
         this._connectionIdentifier = null;
         this._target = targetId ? WI.targetManager.targetForIdentifier(targetId) : WI.mainTarget;
+        this._redirects = [];
 
         // Exact sizes if loaded over the network or cache.
         this._requestHeadersTransferSize = NaN;
@@ -319,7 +319,6 @@ WI.Resource = class Resource extends WI.SourceCode
     get responseHeaders() { return this._responseHeaders; }
     get requestSentTimestamp() { return this._requestSentTimestamp; }
     get requestSentWalltime() { return this._requestSentWalltime; }
-    get lastRedirectReceivedTimestamp() { return this._lastRedirectReceivedTimestamp; }
     get responseReceivedTimestamp() { return this._responseReceivedTimestamp; }
     get lastDataReceivedTimestamp() { return this._lastDataReceivedTimestamp; }
     get finishedOrFailedTimestamp() { return this._finishedOrFailedTimestamp; }
@@ -329,6 +328,7 @@ WI.Resource = class Resource extends WI.SourceCode
     get responseHeadersTransferSize() { return this._responseHeadersTransferSize; }
     get responseBodyTransferSize() { return this._responseBodyTransferSize; }
     get cachedResponseBodySize() { return this._cachedResponseBodySize; }
+    get redirects() { return this._redirects; }
 
     get urlComponents()
     {
@@ -465,6 +465,11 @@ WI.Resource = class Resource extends WI.SourceCode
     get requestSentDate()
     {
         return isNaN(this._requestSentWalltime) ? null : new Date(this._requestSentWalltime * 1000);
+    }
+
+    get lastRedirectReceivedTimestamp()
+    {
+        return this._redirects.length ? this._redirects.lastValue.timestamp : NaN;
     }
 
     get firstTimestamp()
@@ -624,22 +629,23 @@ WI.Resource = class Resource extends WI.SourceCode
         return null;
     }
 
-    updateForRedirectResponse(url, requestHeaders, elapsedTime)
+    updateForRedirectResponse(request, response, elapsedTime, walltime)
     {
         console.assert(!this._finished);
         console.assert(!this._failed);
         console.assert(!this._canceled);
 
-        var oldURL = this._url;
+        let oldURL = this._url;
+        let oldHeaders = this._requestHeaders;
 
-        if (url)
-            this._url = url;
+        if (request.url)
+            this._url = request.url;
 
-        this._requestHeaders = requestHeaders || {};
+        this._requestHeaders = request.headers || {};
         this._requestCookies = null;
-        this._lastRedirectReceivedTimestamp = elapsedTime || NaN;
+        this._redirects.push(new WI.Redirect(oldURL, request.method, oldHeaders, response.status, response.statusText, response.headers, elapsedTime));
 
-        if (oldURL !== url) {
+        if (oldURL !== request.url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
             this._urlComponents = null;
 

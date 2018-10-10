@@ -396,9 +396,14 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
                 }
             };
 
+            if (resource.timingData.redirectEnd - resource.timingData.redirectStart) {
+                // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
+                popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("Redirects"), resource.timingData.redirectStart, resource.timingData.redirectEnd, graphDataSource));
+            }
+
             let secondTimestamp = resource.timingData.domainLookupStart || resource.timingData.connectStart || resource.timingData.requestStart;
-            if (secondTimestamp - resource.timingData.startTime)
-                popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("Stalled"), resource.timingData.startTime, secondTimestamp, graphDataSource));
+            if (secondTimestamp - resource.timingData.fetchStart)
+                popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("Stalled"), resource.timingData.fetchStart, secondTimestamp, graphDataSource));
             if (resource.timingData.domainLookupStart)
                 popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("DNS"), resource.timingData.domainLookupStart, resource.timingData.domainLookupEnd, graphDataSource));
             if (resource.timingData.connectStart)

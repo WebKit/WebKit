@@ -101,7 +101,7 @@ WI.ResourceTimingBreakdownView = class ResourceTimingBreakdownView extends WI.Vi
     {
         super.initialLayout();
 
-        let {startTime, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, responseStart, responseEnd} = this._resource.timingData;
+        let {startTime, redirectStart, redirectEnd, fetchStart, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, responseStart, responseEnd} = this._resource.timingData;
 
         this._tableElement = this.element.appendChild(document.createElement("table"));
         this._tableElement.className = "waterfall";
@@ -111,7 +111,13 @@ WI.ResourceTimingBreakdownView = class ResourceTimingBreakdownView extends WI.Vi
         this._graphDuration = this._graphEndTime - this._graphStartTime;
 
         this._appendHeaderRow(WI.UIString("Scheduling:"));
-        this._appendRow(WI.UIString("Queued"), "queue", startTime, domainLookupStart || connectStart || requestStart);
+
+        if (redirectEnd - redirectStart) {
+            // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
+            this._appendRow(WI.UIString("Redirects"), "redirect", redirectStart, redirectEnd);
+        }
+
+        this._appendRow(WI.UIString("Queued"), "queue", fetchStart, domainLookupStart || connectStart || requestStart);
 
         if (domainLookupStart || connectStart) {
             this._appendEmptyRow();

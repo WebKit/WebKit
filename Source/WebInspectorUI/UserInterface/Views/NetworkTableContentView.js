@@ -651,8 +651,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
-        let {startTime, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, responseStart, responseEnd} = resource.timingData;
-        if (isNaN(startTime)) {
+        let {startTime, redirectStart, redirectEnd, fetchStart, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, responseStart, responseEnd} = resource.timingData;
+        if (isNaN(startTime) || isNaN(responseEnd)) {
             cell.textContent = zeroWidthSpace;
             return;
         }
@@ -674,9 +674,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let container = cell.appendChild(document.createElement("div"));
         container.className = "waterfall-container";
 
-        function appendBlock(startTime, endTime, className) {
-            let startOffset = (startTime - graphStartTime) / secondsPerPixel;
-            let width = (endTime - startTime) / secondsPerPixel;
+        function appendBlock(startTimestamp, endTimestamp, className) {
+            if (isNaN(startTimestamp) || isNaN(endTimestamp) || endTimestamp - startTimestamp <= 0)
+                return null;
+
+            let startOffset = (startTimestamp - graphStartTime) / secondsPerPixel;
+            let width = (endTimestamp - startTimestamp) / secondsPerPixel;
             let block = container.appendChild(document.createElement("div"));
             block.classList.add("block", className);
             let styleAttribute = WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR ? "left" : "right";
@@ -702,16 +705,20 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
-        // Each component.
+        appendBlock(startTime, responseEnd, "filler");
+
+        // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
+        appendBlock(redirectStart, redirectEnd, "redirect");
+
         if (domainLookupStart) {
-            appendBlock(startTime, domainLookupStart, "queue");
-            appendBlock(domainLookupStart, connectStart || requestStart, "dns");
+            appendBlock(fetchStart, domainLookupStart, "queue");
+            appendBlock(domainLookupStart, domainLookupEnd || connectStart || requestStart, "dns");
         } else if (connectStart)
-            appendBlock(startTime, connectStart, "queue");
+            appendBlock(fetchStart, connectStart, "queue");
         else if (requestStart)
-            appendBlock(startTime, requestStart, "queue");
+            appendBlock(fetchStart, requestStart, "queue");
         if (connectStart)
-            appendBlock(connectStart, connectEnd, "connect");
+            appendBlock(connectStart, secureConnectionStart || connectEnd, "connect");
         if (secureConnectionStart)
             appendBlock(secureConnectionStart, connectEnd, "secure");
         appendBlock(requestStart, responseStart, "request");
@@ -1089,8 +1096,17 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _checkURLFilterAgainstResource(resource)
     {
-        if (this._urlFilterSearchRegex.test(resource.url))
+        if (this._urlFilterSearchRegex.test(resource.url)) {
             this._activeURLFilterResources.add(resource);
+            return;
+        }
+
+        for (let redirect of resource.redirects) {
+            if (this._urlFilterSearchRegex.test(redirect.url)) {
+                this._activeURLFilterResources.add(resource);
+                return;
+            }
+        }
     }
 
     _rowIndexForResource(resource)
@@ -1689,7 +1705,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let contentElement = document.createElement("div");
         contentElement.className = "waterfall-popover-content";
 
-        if (!resource.hasResponse() || !resource.timingData.startTime || !resource.timingData.responseEnd) {
+        if (!resource.hasResponse() || !resource.firstTimestamp || !resource.lastTimestamp) {
             contentElement.textContent = WI.UIString("Resource has no timing data");
             return contentElement;
         }

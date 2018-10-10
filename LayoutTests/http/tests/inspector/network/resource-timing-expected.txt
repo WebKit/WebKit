@@ -1,13 +1,14 @@
 Tests that a resource has timing information.
 
 
-== Running test suite: ResourceTimingData
--- Running test case: CheckResourceTimingInformationForResource
+== Running test suite: Resource.TimingData
+-- Running test case: Resource.TimingData.Basic
 PASS: Resource should be created.
 PASS: Added Resource received a response.
 PASS: Added Resource did finish loading.
 PASS: Newly added resource should have a resource timing model.
 PASS: Resource should have a start time.
+PASS: Resource should have a fetch start time.
 PASS: Resource should have a request start time.
 PASS: Resource should have a response start time.
 PASS: domainLookupStart and domainLookupEnd should both be NaN or a number.
@@ -16,4 +17,10 @@ PASS: requestStart should come after startTime.
 PASS: A secure connection should be reused or secureConnectionStart should come after connectStart.
 PASS: responseStart should come after requestStart.
 PASS: responseEnd should come after responseStart.
+
+-- Running test case: Resource.TimingData.Redirect
+PASS: Start time should be before redirect start time.
+PASS: Redirect start time should be before redirect end time.
+PASS: Redirect duration should be at least a few milliseconds.
+PASS: Redirect end time should be before fetch start time.
 

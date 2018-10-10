@@ -46,10 +46,13 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._automaticallyRevealFirstSearchResult = false;
         this._bouncyHighlightElement = null;
 
+        this._redirectDetailsSections = [];
+
         this.element.classList.add("resource-details", "resource-headers");
         this.element.tabIndex = 0;
 
         this._needsSummaryRefresh = false;
+        this._needsRedirectHeadersRefresh = false;
         this._needsRequestHeadersRefresh = false;
         this._needsResponseHeadersRefresh = false;
     }
@@ -64,11 +67,11 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this.element.appendChild(this._summarySection.element);
         this._refreshSummarySection();
 
+        this._refreshRedirectHeadersSections();
+
         this._requestHeadersSection = new WI.ResourceDetailsSection(WI.UIString("Request"), "headers");
         this.element.appendChild(this._requestHeadersSection.element);
         this._refreshRequestHeadersSection();
-
-        // FIXME: <https://webkit.org/b/150005> Web Inspector: Redirect requests are not shown in either Network or Timeline tabs
 
         this._responseHeadersSection = new WI.ResourceDetailsSection(WI.UIString("Response"), "headers");
         this.element.appendChild(this._responseHeadersSection.element);
@@ -87,6 +90,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         }
 
         this._needsSummaryRefresh = false;
+        this._needsRedirectHeadersRefresh = false;
         this._needsRequestHeadersRefresh = false;
         this._needsResponseHeadersRefresh = false;
     }
@@ -98,6 +102,11 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         if (this._needsSummaryRefresh) {
             this._refreshSummarySection();
             this._needsSummaryRefresh = false;
+        }
+
+        if (this._needsRedirectHeadersRefresh) {
+            this._refreshRedirectHeadersSections();
+            this._needsRedirectHeadersRefresh = false;
         }
 
         if (this._needsRequestHeadersRefresh) {
@@ -266,7 +275,9 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
         this._summarySection.toggleError(this._resource.hadLoadingError());
 
-        this._appendKeyValuePair(detailsElement, WI.UIString("URL"), this._resource.url.insertWordBreakCharacters());
+        for (let redirect of this._resource.redirects)
+            this._appendKeyValuePair(detailsElement, WI.UIString("URL"), redirect.url.insertWordBreakCharacters(), "url");
+        this._appendKeyValuePair(detailsElement, WI.UIString("URL"), this._resource.url.insertWordBreakCharacters(), "url");
 
         let status = emDash;
         if (!isNaN(this._resource.statusCode))
@@ -280,6 +291,37 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
         if (this._resource.remoteAddress)
             this._appendKeyValuePair(detailsElement, WI.UIString("Address"), this._resource.remoteAddress);
+    }
+
+    _refreshRedirectHeadersSections()
+    {
+        let referenceElement = this._redirectDetailsSections.length ? this._redirectDetailsSections.lastValue.element : this._summarySection.element;
+
+        for (let i = this._redirectDetailsSections.length; i < this._resource.redirects.length; ++i) {
+            let redirect = this._resource.redirects[i];
+
+            let redirectRequestSection = new WI.ResourceDetailsSection(WI.UIString("Request"), "redirect");
+
+            // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
+            this._appendKeyValuePair(redirectRequestSection.detailsElement, `${redirect.requestMethod} ${redirect.urlComponents.path}`, null, "h1-status");
+
+            for (let key in redirect.requestHeaders)
+                this._appendKeyValuePair(redirectRequestSection.detailsElement, key, redirect.requestHeaders[key], "header");
+
+            referenceElement = this.element.insertBefore(redirectRequestSection.element, referenceElement.nextElementSibling);
+            this._redirectDetailsSections.push(redirectRequestSection);
+
+            let redirectResponseSection = new WI.ResourceDetailsSection(WI.UIString("Redirect Response"), "redirect");
+
+            // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
+            this._appendKeyValuePair(redirectResponseSection.detailsElement, `${redirect.responseStatusCode} ${redirect.responseStatusText}`, null, "h1-status");
+
+            for (let key in redirect.responseHeaders)
+                this._appendKeyValuePair(redirectResponseSection.detailsElement, key, redirect.responseHeaders[key], "header");
+
+            referenceElement = this.element.insertBefore(redirectResponseSection.element, referenceElement.nextElementSibling);
+            this._redirectDetailsSections.push(redirectResponseSection);
+        }
     }
 
     _refreshRequestHeadersSection()
@@ -476,6 +518,8 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
     _resourceRequestHeadersDidChange(event)
     {
+        this._needsSummaryRefresh = true;
+        this._needsRedirectHeadersRefresh = true;
         this._needsRequestHeadersRefresh = true;
         this.needsLayout();
     }

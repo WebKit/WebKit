@@ -1,3 +1,14 @@
+2018-10-09  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: show redirect requests in Network and Timelines tabs
+        https://bugs.webkit.org/show_bug.cgi?id=150005
+        <rdar://problem/5378164>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Network.json:
+        Add missing fields to `ResourceTiming`.
+
 2018-10-09  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Explicitly link against gmodule where used

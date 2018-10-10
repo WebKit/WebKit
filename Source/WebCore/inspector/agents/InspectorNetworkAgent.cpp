@@ -197,11 +197,17 @@ static Ref<JSON::Object> buildObjectForHeaders(const HTTPHeaderMap& headers)
 
 Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
 {
-    MonotonicTime startTime = resourceLoader.loadTiming().startTime();
-    Seconds startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSince(startTime);
+    auto& loadTiming = resourceLoader.loadTiming();
+
+    auto elapsedTimeSince = [&] (const MonotonicTime& time) {
+        return m_environment.executionStopwatch()->elapsedTimeSince(time).seconds();
+    };
 
     return Inspector::Protocol::Network::ResourceTiming::create()
-        .setStartTime(startTimeInInspector.seconds())
+        .setStartTime(elapsedTimeSince(loadTiming.startTime()))
+        .setRedirectStart(elapsedTimeSince(loadTiming.redirectStart()))
+        .setRedirectEnd(elapsedTimeSince(loadTiming.redirectEnd()))
+        .setFetchStart(elapsedTimeSince(loadTiming.fetchStart()))
         .setDomainLookupStart(timing.domainLookupStart.milliseconds())
         .setDomainLookupEnd(timing.domainLookupEnd.milliseconds())
         .setConnectStart(timing.connectStart.milliseconds())
@@ -209,6 +215,7 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
         .setSecureConnectionStart(timing.secureConnectionStart.milliseconds())
         .setRequestStart(timing.requestStart.milliseconds())
         .setResponseStart(timing.responseStart.milliseconds())
+        .setResponseEnd(timing.responseEnd.milliseconds())
         .release();
 }
 
@@ -506,9 +513,9 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
 
     double elapsedFinishTime;
     if (resourceLoader && networkLoadMetrics.isComplete()) {
-        MonotonicTime startTime = resourceLoader->loadTiming().startTime();
-        Seconds startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSince(startTime);
-        elapsedFinishTime = (startTimeInInspector + networkLoadMetrics.responseEnd).seconds();
+        MonotonicTime fetchStart = resourceLoader->loadTiming().fetchStart();
+        Seconds fetchStartInInspector = m_environment.executionStopwatch()->elapsedTimeSince(fetchStart);
+        elapsedFinishTime = (fetchStartInInspector + networkLoadMetrics.responseEnd).seconds();
     } else
         elapsedFinishTime = timestamp();
 

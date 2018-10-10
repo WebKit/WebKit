@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-body[dir] .resource-headers > section > .details {
+body[dir] .resource-headers > section.summary > .details {
     border-color: var(--network-system-color);
 }
 
-body[dir] .resource-headers > section.headers > .details {
+body[dir] .resource-headers > section:matches(.redirect, .headers) > .details {
     border-color: var(--network-header-color);
 }
 
@@ -55,13 +55,20 @@ body[dir=rtl] .resource-headers .details .pair {
 }
 
 .resource-headers .details .key {
-    color: var(--network-system-color);
     font-weight: 500;
     -webkit-margin-start: calc(var(--resource-headers-value-indent) * -1);
 }
 
 .resource-headers .value {
     color: var(--text-color);
+}
+
+.resource-headers .url + .url > .key {
+    color: transparent;
+}
+
+.resource-headers .summary .key {
+    color: var(--network-system-color);
 }
 
 .resource-headers .header > .key {

@@ -1,5 +1,78 @@
 2018-10-09  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: show redirect requests in Network and Timelines tabs
+        https://bugs.webkit.org/show_bug.cgi?id=150005
+        <rdar://problem/5378164>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/Variables.css:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.resourceRequestWillBeSent):
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource):
+        (WI.Resource.prototype.get redirects): Added.
+        (WI.Resource.prototype.get lastRedirectReceivedTimestamp):
+        (WI.Resource.prototype.updateForRedirectResponse):
+        Save each redirect in an array instead of just remembering the last timestamp.
+
+        * UserInterface/Models/ResourceTimingData.js:
+        (WI.ResourceTimingData):
+        (WI.ResourceTimingData.fromPayload.offsetToTimestamp):
+        (WI.ResourceTimingData.fromPayload):
+        (WI.ResourceTimingData.prototype.get redirectStart): Added.
+        (WI.ResourceTimingData.prototype.get redirectEnd): Added.
+        (WI.ResourceTimingData.prototype.get fetchStart): Added.
+        Add missing fields for `Network.types.ResourceTiming`.
+
+        * UserInterface/Models/Redirect.js: Added.
+        (WI.Redirect):
+        (WI.Redirect.prototype.get url):
+        (WI.Redirect.prototype.get requestMethod):
+        (WI.Redirect.prototype.get requestHeaders):
+        (WI.Redirect.prototype.get responseStatusCode):
+        (WI.Redirect.prototype.get responseStatusText):
+        (WI.Redirect.prototype.get responseHeaders):
+        (WI.Redirect.prototype.get timestamp):
+        (WI.Redirect.prototype.get urlComponents):
+
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView):
+        (WI.ResourceHeadersContentView.prototype.initialLayout):
+        (WI.ResourceHeadersContentView.prototype.layout):
+        (WI.ResourceHeadersContentView.prototype._refreshRedirectHeadersSections): Added.
+        (WI.ResourceHeadersContentView.prototype._resourceRequestHeadersDidChange):
+        * UserInterface/Views/ResourceHeadersContentView.css:
+        (body[dir] .resource-headers > section.summary > .details): Added.
+        (body[dir] .resource-headers > section:matches(.redirect, .headers) > .details): Added.
+        (.resource-headers .details .key):
+        (.resource-headers .summary .key):
+        (body[dir] .resource-headers > section > .details): Deleted.
+        (body[dir] .resource-headers > section.headers > .details): Deleted.
+        (.resource-headers .value): Deleted.
+        Add a request/response header section for each redirect.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.appendBlock):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph):
+        (WI.NetworkTableContentView.prototype._checkURLFilterAgainstResource):
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForResource):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.waterfall .block.redirect): Added.
+        (.waterfall .block.queue):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WI.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar):
+        * UserInterface/Views/ResourceTimingBreakdownView.js:
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout):
+        Add timeline/waterfall entries for total redirect time.
+
+2018-10-09  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas Tab: grayed out Record button in navigator is nearly invisible
         https://bugs.webkit.org/show_bug.cgi?id=190365
         <rdar://problem/45097739>

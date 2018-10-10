@@ -113,6 +113,7 @@
     --network-pseudo-header-color: hsl(312, 35%, 51%);
     --network-error-color: hsl(0, 54%, 50%);
 
+    --network-redirect-color: lightgrey;
     --network-queue-color: hsl(0, 0%, 54%);
     --network-dns-color: hsl(265, 82%, 60%);
     --network-connect-color: hsl(46, 92%, 62%);

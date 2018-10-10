@@ -4,18 +4,24 @@
 <meta charset="utf-8">
 <script src="../resources/inspector-test.js"></script>
 <script>
-function createRequest() {
+function createImageRequest() {
     let img = document.createElement("img");
     img.src = "https://localhost:8443/resources/square100.png";
     document.body.appendChild(img);
 }
 
+function createRedirectRequest(delay) {
+    let iframe = document.createElement("iframe");
+    iframe.src = `resources/delay.php?delay=${delay}`;
+    document.body.appendChild(iframe);
+}
+
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("ResourceTimingData");
+    let suite = InspectorTest.createAsyncSuite("Resource.TimingData");
 
     suite.addTestCase({
-        name: "CheckResourceTimingInformationForResource",
+        name: "Resource.TimingData.Basic",
         description: "Check if a resource has timing information.",
         test(resolve, reject) {
             Promise.all([
@@ -32,21 +38,49 @@ function test()
 
                 let timingData = resource.timingData;
                 InspectorTest.expectThat(timingData instanceof WI.ResourceTimingData, "Newly added resource should have a resource timing model.");
-                InspectorTest.expectThat(timingData.startTime > 0, "Resource should have a start time.");
-                InspectorTest.expectThat(timingData.requestStart > 0, "Resource should have a request start time.");
-                InspectorTest.expectThat(timingData.responseStart > 0, "Resource should have a response start time.");
+                InspectorTest.expectGreaterThan(timingData.startTime, 0, "Resource should have a start time.");
+                InspectorTest.expectGreaterThan(timingData.fetchStart, 0, "Resource should have a fetch start time.");
+                InspectorTest.expectGreaterThan(timingData.requestStart, 0, "Resource should have a request start time.");
+                InspectorTest.expectGreaterThan(timingData.responseStart, 0, "Resource should have a response start time.");
 
                 InspectorTest.expectThat(typeof timingData.domainLookupStart === "number" && typeof timingData.domainLookupEnd === "number", "domainLookupStart and domainLookupEnd should both be NaN or a number.");
                 InspectorTest.expectThat(typeof timingData.connectStart === "number" && typeof timingData.connectStart === "number", "connectStart and connectEnd should both be NaN or a number.");
 
-                InspectorTest.expectThat(timingData.startTime <= timingData.requestStart, "requestStart should come after startTime.");
+                InspectorTest.expectLessThanOrEqual(timingData.startTime, timingData.requestStart, "requestStart should come after startTime.");
                 InspectorTest.expectThat(isNaN(timingData.secureConnectionStart) || timingData.connectStart <= timingData.secureConnectionStart, "A secure connection should be reused or secureConnectionStart should come after connectStart.");
-                InspectorTest.expectThat(timingData.requestStart <= timingData.responseStart, "responseStart should come after requestStart.");
-                InspectorTest.expectThat(timingData.responseStart <= timingData.responseEnd, "responseEnd should come after responseStart.");
+                InspectorTest.expectLessThanOrEqual(timingData.requestStart, timingData.responseStart, "responseStart should come after requestStart.");
+                InspectorTest.expectLessThanOrEqual(timingData.responseStart, timingData.responseEnd, "responseEnd should come after responseStart.");
             })
             .then(resolve, reject);
 
-            InspectorTest.evaluateInPage("createRequest()");
+            InspectorTest.evaluateInPage(`createImageRequest()`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Resource.TimingData.Redirect",
+        description: "Check if a redirected resource has timing information.",
+        test(resolve, reject) {
+            const delay = 100;
+
+            WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
+            .then((event) => {
+                let resource = event.target;
+
+                let timingData = resource.timingData;
+                InspectorTest.assert(timingData.startTime >= 0, "Resource should have a start time.");
+                InspectorTest.assert(timingData.redirectStart >= 0, "Resource should have a redirect start time.");
+                InspectorTest.assert(timingData.redirectEnd >= 0, "Resource should have a redirect end time.");
+                InspectorTest.assert(timingData.fetchStart >= 0, "Resource should have a fetch start time.");
+
+                InspectorTest.expectLessThanOrEqual(timingData.startTime, timingData.redirectStart, "Start time should be before redirect start time.");
+                InspectorTest.expectLessThan(timingData.redirectStart, timingData.redirectEnd, "Redirect start time should be before redirect end time.");
+                InspectorTest.expectGreaterThanOrEqual(timingData.redirectEnd - timingData.redirectStart, (delay / 2) / 1000, "Redirect duration should be at least a few milliseconds.");
+                InspectorTest.expectLessThanOrEqual(timingData.redirectEnd, timingData.fetchStart, "Redirect end time should be before fetch start time.");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`createRedirectRequest(${delay})`);
         }
     });
 
