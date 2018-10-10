@@ -1,3 +1,12 @@
+2018-10-10  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip JSC test stress/sampling-profiler-richards.js on armv7/linux
+        https://bugs.webkit.org/show_bug.cgi?id=190426
+
+        Unreviewed gardening.
+
+        * stress/sampling-profiler-richards.js:
+
 2018-10-06  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "|"
