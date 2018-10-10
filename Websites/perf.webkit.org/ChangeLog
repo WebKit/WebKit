@@ -1,3 +1,33 @@
+2018-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ManifestGenerator shouldn't need more than 1GB of memory or run for 30 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=190393
+
+        Reviewed by Antti Koivisto and unofficially reviewed by Dewei Zhu.
+
+        This patch reduces the runtime of /api/manifest from 13s to 7s and reduces the memory requirement from
+        1GB to 400MB for the internal dashboard in my local testing.
+
+        The biggest perf win comes from avoid running a complex query over test_configurations to compute
+        the latest modified date across different test configuration types ("current" vs. "baseline").
+        Instead, we now fetch the entire table row by row and compute the latest modified date in memory.
+
+        Also call intval in many more places to avoid generating double quotes, which is a pretty significant
+        proportion of the JSON file size at this point.
+
+        Finally, use references in more places to avoid deep copying of arrays.
+
+        * public/include/manifest-generator.php:
+        (ManifestGenerator::generate): Skip the generation of "dashboard" since it's only used by v1 UI.
+        (ManifestGenerator::tests): Don't copy each row.
+        (ManifestGenerator::metrics): Ditto.
+        (ManifestGenerator::platforms): Implement the aforementioned optimization. Instead of grouping
+        test configurations for a given metric and platform together, fetch them all and do in-memory
+        processing in PHP. Avoid more copying as well.
+        (ManifestGenerator::repositories): Avoid more copying.
+        (ManifestGenerator::bug_trackers): Ditto.
+        (ManifestGenerator::fetch_triggerables): Ditto.
+
 2018-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         /api/report takes 15+ minutes submitting some test results
