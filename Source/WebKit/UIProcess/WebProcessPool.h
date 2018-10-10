@@ -523,6 +523,8 @@ private:
     void addProcessToOriginCacheSet(WebPageProxy&);
     void removeProcessFromOriginCacheSet(WebProcessProxy&);
 
+    void tryPrewarmWithDomainInformation(WebProcessProxy&, const WebCore::URL&);
+
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
     IPC::MessageReceiverMap m_messageReceiverMap;

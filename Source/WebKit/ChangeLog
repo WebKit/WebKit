@@ -1,3 +1,36 @@
+2018-10-10  Antti Koivisto  <antti@apple.com>
+
+        Do domain prewarming for processes for new tabs
+        https://bugs.webkit.org/show_bug.cgi?id=190425
+
+        Reviewed by Chris Dumez.
+
+        We currently only do domain prewarming for navigation process swaps.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
+        Do domain prewarming when using an existing but so far unused process.
+
+        (WebKit::WebProcessPool::tryPrewarmWithDomainInformation):
+
+        Factor into a function.
+
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+
+        This didn't usually get invoked.
+
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::didFinishLoad):
+
+        Update prewarm information when a top level load finishes.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::sendPrewarmInformation):
+        * WebProcess/WebProcess.h:
+
 2018-10-09  Antoine Quint  <graouts@apple.com>
 
         Remove the frames() timing function

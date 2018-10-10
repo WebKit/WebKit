@@ -1173,11 +1173,8 @@ void WebPage::close()
     m_isClosed = true;
 
     // If there is still no URL, then we never loaded anything in this page, so nothing to report.
-    if (!mainWebFrame()->url().isEmpty()) {
+    if (!mainWebFrame()->url().isEmpty())
         reportUsedFeatures();
-
-        WebProcess::singleton().sendPrewarmInformation(toRegistrableDomain(mainWebFrame()->url()));
-    }
 
     if (pageGroup()->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
         WebProcess::singleton().injectedBundle()->willDestroyPage(this);
@@ -2877,7 +2874,7 @@ void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, Po
         ASSERT(frame == m_mainFrame);
         setIsSuspended(true);
 
-        WebProcess::singleton().sendPrewarmInformation(toRegistrableDomain(mainWebFrame()->url()));
+        WebProcess::singleton().sendPrewarmInformation(mainWebFrame()->url());
     }
     frame->didReceivePolicyDecision(listenerID, policyAction, navigationID, downloadID, WTFMove(websitePolicies));
 }
@@ -5385,10 +5382,12 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
 void WebPage::didFinishLoad(WebFrame* frame)
 {
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     if (!frame->isMainFrame())
         return;
 
+    WebProcess::singleton().sendPrewarmInformation(frame->url());
+
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     m_readyToFindPrimarySnapshottedPlugin = true;
     LOG(Plugins, "Primary Plug-In Detection: triggering detection from didFinishLoad (marking as ready to detect).");
     m_determinePrimarySnapshottedPlugInTimer.startOneShot(0_s);

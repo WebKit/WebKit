@@ -201,7 +201,7 @@ public:
     void cancelPrepareToSuspend();
     void processDidResume();
 
-    void sendPrewarmInformation(const String& registrableDomain);
+    void sendPrewarmInformation(const WebCore::URL&);
 
 #if PLATFORM(IOS)
     void resetAllGeolocationPermissions();

@@ -2073,6 +2073,8 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
 
 Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, PolicyAction& action, String& reason)
 {
+    auto& targetURL = navigation.currentRequest().url();
+
     if (!m_configuration->processSwapsOnNavigation() && processSwapRequestedByClient == ProcessSwapRequestedByClient::No) {
         reason = "Feature is disabled"_s;
         return page.process();
@@ -2090,6 +2092,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
 
     if (!page.process().hasCommittedAnyProvisionalLoads()) {
         reason = "Process has not yet committed any provisional loads"_s;
+        tryPrewarmWithDomainInformation(page.process(), targetURL);
         return page.process();
     }
 
@@ -2130,7 +2133,6 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         }
     }
 
-    auto targetURL = navigation.currentRequest().url();
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::No) {
         if (navigation.treatAsSameOriginNavigation()) {
             reason = "The treatAsSameOriginNavigation flag is set"_s;
@@ -2182,9 +2184,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
     action = PolicyAction::Suspend;
 
     if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore())) {
-        if (auto* prewarmInformation = m_prewarmInformationPerRegistrableDomain.get(toRegistrableDomain(targetURL)))
-            process->send(Messages::WebProcess::PrewarmWithDomainInformation(*prewarmInformation), 0);
-
+        tryPrewarmWithDomainInformation(*process, targetURL);
         return process.releaseNonNull();
     }
 
@@ -2272,6 +2272,14 @@ void WebProcessPool::didCollectPrewarmInformation(const String& registrableDomai
     }).iterator->value;
 
     *value = prewarmInformation;
+}
+
+void WebProcessPool::tryPrewarmWithDomainInformation(WebProcessProxy& process, const WebCore::URL& url)
+{
+    auto* prewarmInformation = m_prewarmInformationPerRegistrableDomain.get(toRegistrableDomain(url));
+    if (!prewarmInformation)
+        return;
+    process.send(Messages::WebProcess::PrewarmWithDomainInformation(*prewarmInformation), 0);
 }
 
 } // namespace WebKit
