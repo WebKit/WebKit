@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 26: SyntaxError: Unexpected token '}'. Expected ')' to end a compound expression.
-CONSOLE MESSAGE: line 21: SyntaxError: Unexpected token '}'. Expected ')' to end a compound expression.
+CONSOLE MESSAGE: line 24: SyntaxError: Parser error
+CONSOLE MESSAGE: line 21: SyntaxError: Parser error
 
 FAIL Invalid uncompiled raw handlers should only be compiled when about to call them. assert_array_equals: lengths differ, expected 3 got 4
 

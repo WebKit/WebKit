@@ -1,3 +1,16 @@
+2018-10-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] JSC should have "parseFunction" to optimize Function constructor
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        Reviewed by Mark Lam.
+
+        * fast/dom/attribute-event-listener-errors-expected.txt:
+        * fast/events/attribute-listener-deletion-crash-expected.txt:
+        * fast/events/window-onerror-syntax-error-in-attr-expected.txt:
+        * js/dom/invalid-syntax-for-function-expected.txt:
+        * js/dom/script-start-end-locations-expected.txt:
+
 2018-10-11  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Support arbitrary video resolution in getUserMedia API

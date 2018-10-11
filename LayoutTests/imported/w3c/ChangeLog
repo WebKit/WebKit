@@ -1,3 +1,15 @@
+2018-10-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] JSC should have "parseFunction" to optimize Function constructor
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        Reviewed by Mark Lam.
+
+        * web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-attribute-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-body-onerror-expected.txt:
+
 2018-10-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r236802.

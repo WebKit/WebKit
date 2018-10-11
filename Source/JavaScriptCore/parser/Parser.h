@@ -859,10 +859,8 @@ private:
     unsigned m_index;
 };
 
-enum class ArgumentType {
-    Normal,
-    Spread
-};
+enum class ArgumentType { Normal, Spread };
+enum class ParsingContext { Program, FunctionConstructor, Eval };
 
 template <typename LexerType>
 class Parser {
@@ -874,7 +872,7 @@ public:
     ~Parser();
 
     template <class ParsedNode>
-    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, SourceParseMode);
+    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, SourceParseMode, ParsingContext, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     JSTokenLocation locationBeforeLastToken() const { return m_lexer->lastTokenLocation(); }
@@ -1312,7 +1310,8 @@ private:
     }
 
     Parser();
-    String parseInner(const Identifier&, SourceParseMode);
+
+    String parseInner(const Identifier&, SourceParseMode, ParsingContext, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
 
     void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, CodeFeatures, int);
 
@@ -1524,13 +1523,14 @@ private:
     template <class TreeBuilder> TreeSourceElements parseGeneratorFunctionSourceElements(TreeBuilder&, const Identifier& name, SourceElementsMode);
     template <class TreeBuilder> TreeSourceElements parseAsyncFunctionSourceElements(TreeBuilder&, SourceParseMode, bool isArrowFunctionBodyExpression, SourceElementsMode);
     template <class TreeBuilder> TreeSourceElements parseAsyncGeneratorFunctionSourceElements(TreeBuilder&, SourceParseMode, bool isArrowFunctionBodyExpression, SourceElementsMode);
+    template <class TreeBuilder> TreeSourceElements parseSingleFunction(TreeBuilder&, std::optional<int> functionConstructorParametersEndPosition);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
     enum class ExportType { Exported, NotExported };
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard);
-    template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard);
+    template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
     template <class TreeBuilder> TreeStatement parseFunctionDeclarationStatement(TreeBuilder&, bool isAsync, bool parentAllowsFunctionDeclarationAsStatement);
-    template <class TreeBuilder> TreeStatement parseAsyncFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard);
+    template <class TreeBuilder> TreeStatement parseAsyncFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
     template <class TreeBuilder> NEVER_INLINE bool maybeParseAsyncFunctionDeclarationStatement(TreeBuilder& context, TreeStatement& result, bool parentAllowsFunctionDeclarationAsStatement);
     template <class TreeBuilder> TreeStatement parseVariableDeclaration(TreeBuilder&, DeclarationType, ExportType = ExportType::NotExported);
     template <class TreeBuilder> TreeStatement parseDoWhileStatement(TreeBuilder&);
@@ -1599,7 +1599,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression createResolveAndUseVariable(TreeBuilder&, const Identifier*, bool isEval, const JSTextPosition&, const JSTokenLocation&);
 
     enum class FunctionDefinitionType { Expression, Declaration, Method };
-    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, SourceParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType);
+    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, SourceParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
     
     ALWAYS_INLINE bool isArrowFunctionParameters();
     
@@ -1848,7 +1848,7 @@ private:
 
 template <typename LexerType>
 template <class ParsedNode>
-std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const Identifier& calleeName, SourceParseMode parseMode)
+std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const Identifier& calleeName, SourceParseMode parseMode, ParsingContext parsingContext, std::optional<int> functionConstructorParametersEndPosition)
 {
     int errLine;
     String errMsg;
@@ -1865,7 +1865,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
     ASSERT(m_source->startColumn() > OrdinalNumber::beforeFirst());
     unsigned startColumn = m_source->startColumn().zeroBasedInt();
 
-    String parseError = parseInner(calleeName, parseMode);
+    String parseError = parseInner(calleeName, parseMode, parsingContext, functionConstructorParametersEndPosition);
 
     int lineNumber = m_lexer->lineNumber();
     bool lexError = m_lexer->sawError();
@@ -1960,7 +1960,7 @@ std::unique_ptr<ParsedNode> parse(
     std::unique_ptr<ParsedNode> result;
     if (source.provider()->source().is8Bit()) {
         Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKind, derivedContextType, isEvalNode<ParsedNode>(), evalContextType, debuggerParseData);
-        result = parser.parse<ParsedNode>(error, name, parseMode);
+        result = parser.parse<ParsedNode>(error, name, parseMode, isEvalNode<ParsedNode>() ? ParsingContext::Eval : ParsingContext::Program);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
         if (builtinMode == JSParserBuiltinMode::Builtin) {
@@ -1973,7 +1973,7 @@ std::unique_ptr<ParsedNode> parse(
     } else {
         ASSERT_WITH_MESSAGE(defaultConstructorKind == ConstructorKind::None, "BuiltinExecutables::createDefaultConstructor should always use a 8-bit string");
         Parser<Lexer<UChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKind, derivedContextType, isEvalNode<ParsedNode>(), evalContextType, debuggerParseData);
-        result = parser.parse<ParsedNode>(error, name, parseMode);
+        result = parser.parse<ParsedNode>(error, name, parseMode, isEvalNode<ParsedNode>() ? ParsingContext::Eval : ParsingContext::Program);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     }
@@ -1986,5 +1986,38 @@ std::unique_ptr<ParsedNode> parse(
 
     return result;
 }
+
+inline std::unique_ptr<ProgramNode> parseFunctionForFunctionConstructor(VM& vm, const SourceCode& source, ParserError& error, JSTextPosition* positionBeforeLastNewline, std::optional<int> functionConstructorParametersEndPosition)
+{
+    ASSERT(!source.provider()->source().isNull());
+
+    MonotonicTime before;
+    if (UNLIKELY(Options::reportParseTimes()))
+        before = MonotonicTime::now();
+
+    Identifier name;
+    bool isEvalNode = false;
+    std::unique_ptr<ProgramNode> result;
+    if (source.provider()->source().is8Bit()) {
+        Parser<Lexer<LChar>> parser(&vm, source, JSParserBuiltinMode::NotBuiltin, JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, ConstructorKind::None, DerivedContextType::None, isEvalNode, EvalContextType::None, nullptr);
+        result = parser.parse<ProgramNode>(error, name, SourceParseMode::ProgramMode, ParsingContext::FunctionConstructor, functionConstructorParametersEndPosition);
+        if (positionBeforeLastNewline)
+            *positionBeforeLastNewline = parser.positionBeforeLastNewline();
+    } else {
+        Parser<Lexer<UChar>> parser(&vm, source, JSParserBuiltinMode::NotBuiltin, JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, ConstructorKind::None, DerivedContextType::None, isEvalNode, EvalContextType::None, nullptr);
+        result = parser.parse<ProgramNode>(error, name, SourceParseMode::ProgramMode, ParsingContext::FunctionConstructor, functionConstructorParametersEndPosition);
+        if (positionBeforeLastNewline)
+            *positionBeforeLastNewline = parser.positionBeforeLastNewline();
+    }
+
+    if (UNLIKELY(Options::reportParseTimes())) {
+        MonotonicTime after = MonotonicTime::now();
+        ParseHash hash(source);
+        dataLogLn(result ? "Parsed #" : "Failed to parse #", hash.hashForCall(), "/#", hash.hashForConstruct(), " in ", (after - before).milliseconds(), " ms.");
+    }
+
+    return result;
+}
+
 
 } // namespace
