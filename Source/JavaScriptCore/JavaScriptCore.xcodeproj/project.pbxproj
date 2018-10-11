@@ -9972,7 +9972,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${CURRENT_ARCH}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${CURRENT_ARCH}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\"\n";
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\"\n";
 		};
 		1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10666,7 +10666,7 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
-					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${CURRENT_ARCH}\"",
+					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
 					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
 					"$(inherited)",
 				);
@@ -10679,7 +10679,7 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
-					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${CURRENT_ARCH}\"",
+					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
 					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
 					"$(inherited)",
 				);
@@ -10692,7 +10692,7 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
-					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${CURRENT_ARCH}\"",
+					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
 					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
 					"$(inherited)",
 				);
@@ -10705,7 +10705,7 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
-					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${CURRENT_ARCH}\"",
+					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
 					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
 					"$(inherited)",
 				);

@@ -3198,8 +3198,8 @@
 				9398100D0824BF01008DF038 /* Headers */,
 				A13EE61D185AE82700556064 /* Postprocess Headers */,
 				939810B20824BF01008DF038 /* Resources */,
-				939810BB0824BF01008DF038 /* Sources */,
 				1C395DE20C6BE8E0000D1E52 /* Generate Export Files */,
+				939810BB0824BF01008DF038 /* Sources */,
 				939811270824BF01008DF038 /* Frameworks */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
@@ -3282,10 +3282,6 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/mac/WebKit.exp",
-				"$(SRCROOT)/ios/WebKit.iOS.exp",
-				"$(SRCROOT)/mac/WebKit.mac.exp",
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_$(CURRENT_ARCH).exp",
 			);
 			name = "Generate Export Files";
 			outputPaths = (
@@ -3295,7 +3291,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy\"\n\nif [[ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]]; then\n    cat \"${PROJECT_DIR}/mac/WebKit.exp\" \"${PROJECT_DIR}/ios/WebKit.iOS.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp\"\nelse\n    cat \"${PROJECT_DIR}/mac/WebKit.exp\" \"${PROJECT_DIR}/mac/WebKit.mac.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp\"\nfi\n\nif [ -f \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_${CURRENT_ARCH}.exp\" ]; then\n    cat \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_${CURRENT_ARCH}.exp\" >> \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp\"\nfi\n\n# exclude Carbon functions on 64-bit\nsed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebKitLegacy.LP64.exp\"\n\n# exclude OBJC_IVAR for i386\ngrep -v \"_OBJC_IVAR\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebKitLegacy.i386.exp\"";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy\"\n\nfor WK_CURRENT_ARCH in ${ARCHS}; do\n    if [[ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]]; then\n        EXP_GENERATED=\"${EXPORTED_SYMBOLS_FILE_cocoatouch}\"\n        EXP_WEBKIT_PLATFORM=\"${PROJECT_DIR}/ios/WebKit.iOS.exp\"\n    else\n        eval EXP_GENERATED=\"\\${EXPORTED_SYMBOLS_FILE_${WK_CURRENT_ARCH}}\"\n        EXP_WEBKIT_PLATFORM=\"${PROJECT_DIR}/mac/WebKit.mac.exp\"\n    fi\n\n    [[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\n    cat \"${PROJECT_DIR}/mac/WebKit.exp\" > \"${EXP_GENERATED}\"\n    cat \"${EXP_WEBKIT_PLATFORM}\" >> \"${EXP_GENERATED}\"\n\n    EXP_REEXPORTED=\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_${WK_CURRENT_ARCH}.exp\"\n    [[ -f \"${EXP_REEXPORTED}\" ]] && cat \"${EXP_REEXPORTED}\" >> \"${EXP_GENERATED}\"\n\n    if [[ \"${WK_CURRENT_ARCH}\" == \"i386\" ]]; then\n        # exclude OBJC_IVAR for i386\n        sed -e 's/.*_OBJC_IVAR.*//' -i \"\" \"${EXP_GENERATED}\"\n    elif [[ \"${WK_CURRENT_ARCH}\" == \"x86_64\" ]]; then\n        # exclude Carbon functions on 64-bit\n        sed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// -i \"\" \"${EXP_GENERATED}\"\n    fi\ndone\n";
 		};
 		1C6CB0510AA63EB000D23BFD /* Migrate Headers */ = {
 			isa = PBXShellScriptBuildPhase;

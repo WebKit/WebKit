@@ -67,8 +67,8 @@ HEADERS += \
     $(PRIVATE_HEADERS_DIR)/WebEventRegion.h
 endif
 
-.PHONY : all
-all : $(HEADERS)
+.PHONY : migrate_headers
+migrate_headers : $(HEADERS)
 
 WEBCORE_HEADER_REPLACE_RULES = -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/"
 WEBCORE_HEADER_MIGRATE_CMD = sed -E $(WEBCORE_HEADER_REPLACE_RULES) $< > $@; touch $(PRIVATE_HEADERS_DIR)
@@ -80,13 +80,15 @@ $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)
 
 ifneq ($(WK_PLATFORM_NAME), macosx)
-REEXPORT_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_$(CURRENT_ARCH).exp
 
-all : $(REEXPORT_FILE)
+REEXPORT_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_$(WK_CURRENT_ARCH).exp
+
+.PHONY : reexport_headers
+reexport_headers : $(REEXPORT_FILE)
 
 TAPI_PATH = $(strip $(shell xcrun --find tapi 2>/dev/null))
 ifneq (,$(TAPI_PATH))
-REEXPORT_COMMAND = $(TAPI_PATH) reexport -arch $(CURRENT_ARCH) -$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)) -isysroot $(SDK_DIR) $(HEADER_FLAGS) $(FRAMEWORK_FLAGS) $^ -o $@
+REEXPORT_COMMAND = $(TAPI_PATH) reexport -arch $(WK_CURRENT_ARCH) -$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)) -isysroot $(SDK_DIR) $(HEADER_FLAGS) $(FRAMEWORK_FLAGS) $^ -o $@
 else
 # Temporary stub for SDKs that don't have the tapi command, <rdar://problem/24582471>.
 REEXPORT_COMMAND = touch $@
@@ -94,4 +96,10 @@ endif
 
 $(REEXPORT_FILE) : $(HEADERS)
 	$(REEXPORT_COMMAND)
+
+else
+
+.PHONY : reexport_headers
+reexport_headers :
+
 endif

@@ -29,10 +29,14 @@ mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy"
 
 # If we didn't build WebCore, use the production copy of the headers
 if [ ! -d "${WEBCORE_PRIVATE_HEADERS_DIR}" ]; then
-    export WEBCORE_PRIVATE_HEADERS_DIR="`eval 'echo ${WEBCORE_PRIVATE_HEADERS_DIR_Production}'`"
+    export WEBCORE_PRIVATE_HEADERS_DIR="${WEBCORE_PRIVATE_HEADERS_DIR_Production}"
 fi
 
 if [ "${ACTION}" = "build" -o "${ACTION}" = "install" -o "${ACTION}" = "installhdrs" -o "${ACTION}" = "installapi" ]; then
     ln -sfh "${WEBCORE_PRIVATE_HEADERS_DIR}" "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebCorePrivateHeaders"
-    make -C mac -f "MigrateHeaders.make" -j `/usr/sbin/sysctl -n hw.activecpu`
+
+    make -C mac -f "MigrateHeaders.make" -j `/usr/sbin/sysctl -n hw.activecpu` migrate_headers
+    for WK_CURRENT_ARCH in ${ARCHS}; do
+        make -C mac -f "MigrateHeaders.make" -j `/usr/sbin/sysctl -n hw.activecpu` WK_CURRENT_ARCH=${WK_CURRENT_ARCH} reexport_headers
+    done
 fi

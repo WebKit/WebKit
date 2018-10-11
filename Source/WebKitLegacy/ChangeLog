@@ -1,3 +1,23 @@
+2018-10-11  Keith Rollin  <krollin@apple.com>
+
+        CURRENT_ARCH should not be used in Run Script phase.
+        https://bugs.webkit.org/show_bug.cgi?id=190407
+        <rdar://problem/45133556>
+
+        Reviewed by Alexey Proskuryakov.
+
+        CURRENT_ARCH is used in a number of Xcode Run Script phases. However,
+        CURRENT_ARCH is not well-defined during this phase (and may even have
+        the value "undefined") since this phase is run just once per build
+        rather than once per supported architecture. Migrate away from
+        CURRENT_ARCH in favor of ARCHS, either by iterating over ARCHS and
+        performing an operation for each value, or by picking the first entry
+        in ARCHS and using that as a representative value.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj: When generating
+        WebKitLegacy.*.exp, generate both 32- and 64-bit versions for
+        macosx platforms.
+
 2018-10-04  Dan Bernstein  <mitz@apple.com>
 
         WebKitLegacy part of [Xcode] Update some build settings as recommended by Xcode 10
