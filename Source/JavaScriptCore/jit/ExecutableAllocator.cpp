@@ -91,7 +91,7 @@ static const size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL
 #elif CPU(ARM)
 static const size_t fixedExecutableMemoryPoolSize = 16 * 1024 * 1024;
 #elif CPU(ARM64)
-static const size_t fixedExecutableMemoryPoolSize = 64 * 1024 * 1024;
+static const size_t fixedExecutableMemoryPoolSize = 128 * 1024 * 1024;
 #elif CPU(X86_64)
 static const size_t fixedExecutableMemoryPoolSize = 1024 * 1024 * 1024;
 #else
