@@ -1,3 +1,12 @@
+2018-10-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Semaphore.h conflicts with POSIX header
+        https://bugs.webkit.org/show_bug.cgi?id=190486
+
+        Reviewed by Yusuke Suzuki.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+
 2018-10-11  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Support arbitrary video resolution in getUserMedia API

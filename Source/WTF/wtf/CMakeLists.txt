@@ -197,7 +197,6 @@ set(WTF_PUBLIC_HEADERS
     ScopedLambda.h
     Seconds.h
     SegmentedVector.h
-    Semaphore.h
     SentinelLinkedList.h
     SetForScope.h
     SharedTask.h
@@ -254,6 +253,7 @@ set(WTF_PUBLIC_HEADERS
     Variant.h
     Vector.h
     VectorTraits.h
+    WTFSemaphore.h
     WallTime.h
     WeakPtr.h
     WeakRandom.h

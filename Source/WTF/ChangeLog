@@ -1,3 +1,16 @@
+2018-10-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Semaphore.h conflicts with POSIX header
+        https://bugs.webkit.org/show_bug.cgi?id=190486
+
+        Reviewed by Yusuke Suzuki.
+
+        Rename Semaphore.h to WTFSemaphore.h to avoid conflict with POSIX semaphore.h on case-insensitive file systems.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/WTFSemaphore.h: Renamed from wtf/Semaphore.h.
+
 2018-10-10  Mark Lam  <mark.lam@apple.com>
 
         Changes towards allowing use of the ASAN detect_stack_use_after_return option.
