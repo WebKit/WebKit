@@ -1,3 +1,27 @@
+2018-10-11  Antti Koivisto  <antti@apple.com>
+
+        Use finer grained locking in FontDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=190467
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/FontCache.h:
+
+        Also use ListHashSet for prewarming info so we can prewarm in the same order the fonts were
+        seen last time.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily):
+
+        Only hold the lock when accessing the hashmap. There is no need to hold it during font construction
+        which can take a long time.
+
+        (WebCore::FontDatabase::fontForPostScriptName):
+
+        This is currently not prewarmed from a thread so no need for locking.
+
+        (WebCore::FontDatabase::clear):
+
 2018-10-11  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Fix race condition in GStreamerVideoDecoder

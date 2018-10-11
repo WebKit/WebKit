@@ -887,10 +887,15 @@ public:
 
     const InstalledFontFamily& collectionForFamily(const String& familyName)
     {
-        std::lock_guard<Lock> locker(m_descriptorMapLock);
-
         auto folded = familyName.foldCase();
-        return m_familyNameToFontDescriptors.ensure(folded, [&] {
+        {
+            std::lock_guard<Lock> locker(m_familyNameToFontDescriptorsLock);
+            auto it = m_familyNameToFontDescriptors.find(folded);
+            if (it != m_familyNameToFontDescriptors.end())
+                return it->value;
+        }
+
+        auto installedFontFamily = [&] {
             auto familyNameString = folded.createCFString();
             auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             CFDictionaryAddValue(attributes.get(), kCTFontFamilyNameAttribute, familyNameString.get());
@@ -908,13 +913,14 @@ public:
                 return InstalledFontFamily(WTFMove(result));
             }
             return InstalledFontFamily();
-        }).iterator->value;
+        }();
+
+        std::lock_guard<Lock> locker(m_familyNameToFontDescriptorsLock);
+        return m_familyNameToFontDescriptors.add(folded.isolatedCopy(), installedFontFamily).iterator->value;
     }
 
     const InstalledFont& fontForPostScriptName(const AtomicString& postScriptName)
     {
-        std::lock_guard<Lock> locker(m_descriptorMapLock);
-
         const auto& folded = FontCascadeDescription::foldedFamilyName(postScriptName);
         return m_postScriptNameToFontDescriptors.ensure(folded, [&] {
             auto postScriptNameString = folded.createCFString();
@@ -936,9 +942,10 @@ public:
 
     void clear()
     {
-        std::lock_guard<Lock> locker(m_descriptorMapLock);
-
-        m_familyNameToFontDescriptors.clear();
+        {
+            std::lock_guard<Lock> locker(m_familyNameToFontDescriptorsLock);
+            m_familyNameToFontDescriptors.clear();
+        }
         m_postScriptNameToFontDescriptors.clear();
     }
 
@@ -950,7 +957,7 @@ private:
     {
     }
 
-    Lock m_descriptorMapLock;
+    Lock m_familyNameToFontDescriptorsLock;
     HashMap<String, InstalledFontFamily> m_familyNameToFontDescriptors;
     HashMap<String, InstalledFont> m_postScriptNameToFontDescriptors;
     AllowUserInstalledFonts m_allowUserInstalledFonts;

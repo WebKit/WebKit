@@ -36,6 +36,7 @@
 #include <array>
 #include <limits.h>
 #include <wtf/Forward.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
@@ -264,7 +265,7 @@ private:
     bool m_shouldMockBoldSystemFontForAccessibility { false };
 
 #if PLATFORM(COCOA)
-    HashSet<String> m_seenFamiliesForPrewarming;
+    ListHashSet<String> m_seenFamiliesForPrewarming;
     RefPtr<WorkQueue> m_prewarmQueue;
 
     friend class ComplexTextController;
