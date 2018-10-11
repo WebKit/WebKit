@@ -1,5 +1,16 @@
 2018-10-11  Daniel Bates  <dabates@apple.com>
 
+        Support building WebKit for macOS Mojave using a newer SDK
+        https://bugs.webkit.org/show_bug.cgi?id=190431
+
+        Reviewed by Andy Estes.
+
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::coreSameSitePolicy):
+        (WebCore::nsSameSitePolicy):
+
+2018-10-11  Daniel Bates  <dabates@apple.com>
+
         [iOS] Add typedef for WebEvent keyboard flags
         https://bugs.webkit.org/show_bug.cgi?id=190435
 

@@ -89,10 +89,12 @@ static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nulla
 {
     if (!policy)
         return Cookie::SameSitePolicy::None;
+    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([policy isEqualToString:NSHTTPCookieSameSiteLax])
         return Cookie::SameSitePolicy::Lax;
     if ([policy isEqualToString:NSHTTPCookieSameSiteStrict])
         return Cookie::SameSitePolicy::Strict;
+    ALLOW_NEW_API_WITHOUT_GUARDS_END
     ASSERT_NOT_REACHED();
     return Cookie::SameSitePolicy::None;
 }
@@ -102,10 +104,12 @@ static NSHTTPCookieStringPolicy _Nullable nsSameSitePolicy(Cookie::SameSitePolic
     switch (policy) {
     case Cookie::SameSitePolicy::None:
         return nil;
+    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     case Cookie::SameSitePolicy::Lax:
         return NSHTTPCookieSameSiteLax;
     case Cookie::SameSitePolicy::Strict:
         return NSHTTPCookieSameSiteStrict;
+    ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 }
 #endif
@@ -125,8 +129,10 @@ Cookie::Cookie(NSHTTPCookie *cookie)
     , ports { portVectorFromList(cookie.portList) }
 {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([cookie respondsToSelector:@selector(sameSitePolicy)])
         sameSite = coreSameSitePolicy(cookie.sameSitePolicy);
+    ALLOW_NEW_API_WITHOUT_GUARDS_END
 #endif
 }
 
