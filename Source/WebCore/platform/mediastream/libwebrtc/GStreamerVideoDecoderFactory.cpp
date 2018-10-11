@@ -34,6 +34,8 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/video/video.h>
 #include <mutex>
+#include <wtf/Lock.h>
+#include <wtf/StdMap.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/WTFString.h>
 
@@ -163,7 +165,10 @@ public:
             inputImage._size));
         GST_BUFFER_DTS(buffer.get()) = (static_cast<guint64>(inputImage._timeStamp) * GST_MSECOND) - m_firstBufferDts;
         GST_BUFFER_PTS(buffer.get()) = (static_cast<guint64>(renderTimeMs) * GST_MSECOND) - m_firstBufferPts;
-        m_dtsPtsMap[GST_BUFFER_PTS(buffer.get())] = inputImage._timeStamp;
+        {
+            auto locker = holdLock(m_bufferMapLock);
+            m_dtsPtsMap[GST_BUFFER_PTS(buffer.get())] = inputImage._timeStamp;
+        }
 
         GST_LOG_OBJECT(pipeline(), "%ld Decoding: %" GST_PTR_FORMAT, renderTimeMs, buffer.get());
         auto sample = adoptGRef(gst_sample_new(buffer.get(), GetCapsForFrame(inputImage), nullptr, nullptr));
@@ -223,10 +228,13 @@ public:
         auto sample = gst_app_sink_pull_sample(GST_APP_SINK(sink));
         auto buffer = gst_sample_get_buffer(sample);
 
-        // Make sure that the frame.timestamp == previsouly input_frame._timeStamp
-        // as it is required by the VideoDecoder baseclass.
-        GST_BUFFER_DTS(buffer) = m_dtsPtsMap[GST_BUFFER_PTS(buffer)];
-        m_dtsPtsMap.erase(GST_BUFFER_PTS(buffer));
+        {
+            auto locker = holdLock(m_bufferMapLock);
+            // Make sure that the frame.timestamp == previsouly input_frame._timeStamp
+            // as it is required by the VideoDecoder baseclass.
+            GST_BUFFER_DTS(buffer) = m_dtsPtsMap[GST_BUFFER_PTS(buffer)];
+            m_dtsPtsMap.erase(GST_BUFFER_PTS(buffer));
+        }
         auto frame(LibWebRTCVideoFrameFromGStreamerSample(sample, webrtc::kVideoRotation_0));
         GST_BUFFER_DTS(buffer) = GST_CLOCK_TIME_NONE;
         GST_LOG_OBJECT(pipeline(), "Output decoded frame! %d -> %" GST_PTR_FORMAT,
@@ -258,7 +266,8 @@ private:
     GstVideoInfo m_info;
     webrtc::DecodedImageCallback* m_imageReadyCb;
 
-    std::map<GstClockTime, GstClockTime> m_dtsPtsMap;
+    Lock m_bufferMapLock;
+    StdMap<GstClockTime, GstClockTime> m_dtsPtsMap;
     GstClockTime m_firstBufferPts;
     GstClockTime m_firstBufferDts;
 };
