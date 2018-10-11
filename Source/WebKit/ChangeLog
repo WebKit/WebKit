@@ -1,5 +1,19 @@
 2018-10-10  Tim Horton  <timothy_horton@apple.com>
 
+        Safari crashes when attempting to share a YouTube video while in full-screen
+        https://bugs.webkit.org/show_bug.cgi?id=190456
+        <rdar://problem/45130748>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet presentWithParameters:completionHandler:]):
+        Allow the share sheet to present centered, since we don't have enough
+        context to put it in a more sensible place.
+
+2018-10-10  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r236935): Layout test fast/events/ios/keyboard-scrolling-distance.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=190444
         <rdar://problem/45110698>

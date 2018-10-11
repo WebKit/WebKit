@@ -52,6 +52,7 @@
 #import <UIKit/UIPeripheralHost_Private.h>
 #import <UIKit/UIPickerContentView_Private.h>
 #import <UIKit/UIPickerView_Private.h>
+#import <UIKit/UIPopoverPresentationController_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScrollView_Private.h>
@@ -1001,6 +1002,10 @@ typedef NSInteger UICompositingMode;
 
 @interface UIBlurEffect ()
 + (UIBlurEffect *)effectWithBlurRadius:(CGFloat)blurRadius;
+@end
+
+@interface UIPopoverPresentationController ()
+@property (assign, nonatomic, setter=_setCentersPopoverIfSourceViewNotSet:, getter=_centersPopoverIfSourceViewNotSet) BOOL _centersPopoverIfSourceViewNotSet;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

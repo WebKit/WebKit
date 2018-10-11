@@ -95,22 +95,28 @@
         return;
     }
     
+    WKWebView *webView = _webView.getAutoreleased();
+    
 #if PLATFORM(MAC)
     _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:shareDataArray.get()]);
     _sharingServicePicker.get().delegate = self;
     
     NSPoint location = [NSEvent mouseLocation];
     NSRect mouseLocationRect = NSMakeRect(location.x, location.y, 1.0, 1.0);
-    NSRect mouseLocationInWindow = [[_webView window] convertRectFromScreen:mouseLocationRect];
-    NSRect mouseLocationInView = [_webView convertRect:mouseLocationInWindow fromView:nil];
-    [_sharingServicePicker showRelativeToRect:mouseLocationInView ofView:_webView.getAutoreleased() preferredEdge:NSMinYEdge];
+    NSRect mouseLocationInWindow = [webView.window convertRectFromScreen:mouseLocationRect];
+    NSRect mouseLocationInView = [webView convertRect:mouseLocationInWindow fromView:nil];
+    [_sharingServicePicker showRelativeToRect:mouseLocationInView ofView:webView preferredEdge:NSMinYEdge];
 #else
     _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:shareDataArray.get() applicationActivities:nil]);
     [_shareSheetViewController setCompletionWithItemsHandler:^(NSString *, BOOL completed, NSArray *, NSError *) {
         [self _didCompleteWithSuccess:completed];
         [self dispatchDidDismiss];
     }];
-    _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_webView.getAutoreleased()];
+    
+    UIPopoverPresentationController *popoverController = [_shareSheetViewController popoverPresentationController];
+    popoverController._centersPopoverIfSourceViewNotSet = YES;
+    
+    _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:webView];
     [_presentationViewController presentViewController:_shareSheetViewController.get() animated:YES completion:nil];
 #endif
 }
