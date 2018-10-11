@@ -27,7 +27,9 @@ LOAD_BUILDBOT_DATA([
                     "GTK Linux 64-bit Release (Tests)", 
                     "GTK Linux 64-bit Release Wayland (Tests)", 
                     "WPE Linux 64-bit Debug (Tests)", 
-                    "WPE Linux 64-bit Release (Tests)"
+                    "WPE Linux 64-bit Release (Tests)", 
+                    "WinCairo 64-bit WKL Debug (Tests)", 
+                    "WinCairo 64-bit WKL Release (Tests)"
                 ]
             }
         }, 

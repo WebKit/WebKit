@@ -87,6 +87,9 @@ var PLATFORMS = {
         subPlatforms: {
             'LINUX': { fallbackPlatforms: ['WPE', 'WK2'] }
         }
+    },
+    'WINCAIRO': {
+        expectationsDirectory: 'wincairo',
     }
 };
 
@@ -349,6 +352,9 @@ function determineBuilderPlatform(builderNameUpperCase)
         return 'GTK_LINUX';
     if (string.contains(builderNameUpperCase, 'WPE LINUX'))
         return 'WPE_LINUX';
+
+    if (string.contains(builderNameUpperCase, 'WINCAIRO'))
+        return 'WINCAIRO';
 
     if (string.contains(builderNameUpperCase, 'MOJAVE'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_MOJAVE');
