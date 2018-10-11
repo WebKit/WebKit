@@ -396,6 +396,7 @@ UIProcess/ios/WKPDFView.mm
 UIProcess/ios/WKScrollView.mm
 UIProcess/ios/WKSyntheticClickTapGestureRecognizer.m
 UIProcess/ios/WKSystemPreviewView.mm
+UIProcess/ios/WKWebEvent.mm
 
 UIProcess/Launcher/mac/ProcessLauncherMac.mm
 

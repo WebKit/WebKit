@@ -31,8 +31,11 @@
 #import "APIUIClient.h"
 #import "FindClient.h"
 #import "PDFKitSPI.h"
+#import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
+#import "WKKeyboardScrollingAnimator.h"
 #import "WKUIDelegatePrivate.h"
+#import "WKWebEvent.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "_WKWebViewPrintFormatterInternal.h"
@@ -65,6 +68,7 @@
     WebKit::InteractionInformationAtPosition _positionInformation;
     RetainPtr<NSString> _suggestedFilename;
     WeakObjCPtr<WKWebView> _webView;
+    RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
 }
 
 - (void)dealloc
@@ -72,7 +76,18 @@
     [_actionSheetAssistant cleanupSheet];
     [[_hostViewController view] removeFromSuperview];
     [_pageNumberIndicator removeFromSuperview];
+    [_keyboardScrollingAnimator invalidate];
     [super dealloc];
+}
+
+- (BOOL)web_handleKeyEvent:(::UIEvent *)event
+{
+    auto webEvent = adoptNS([[WKWebEvent alloc] initWithEvent:event]);
+
+    if ([_keyboardScrollingAnimator beginWithEvent:webEvent.get()])
+        return YES;
+    [_keyboardScrollingAnimator handleKeyEvent:webEvent.get()];
+    return NO;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -98,6 +113,8 @@
 
     self.backgroundColor = UIColor.grayColor;
     webView.scrollView.backgroundColor = UIColor.grayColor;
+
+    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:webView.scrollView]);
 
     _webView = webView;
     return self;

@@ -187,7 +187,6 @@ typedef enum {
 } UIKeyboardInputFlags;
 
 @interface UIEvent ()
-@property (nonatomic, readonly) UIKeyboardInputFlags _inputFlags;
 - (void *)_hidEvent;
 - (NSString *)_unmodifiedInput;
 - (NSString *)_modifiedInput;
@@ -1014,6 +1013,7 @@ typedef NSInteger UICompositingMode;
 @end
 
 @interface UIPhysicalKeyboardEvent ()
+@property (nonatomic, readonly) UIKeyboardInputFlags _inputFlags;
 - (UIPhysicalKeyboardEvent *)_cloneEvent NS_RETURNS_RETAINED;
 @property (nonatomic, readonly) CFIndex _keyCode;
 @end

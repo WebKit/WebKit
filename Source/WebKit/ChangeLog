@@ -1,3 +1,42 @@
+2018-10-11  Tim Horton  <timothy_horton@apple.com>
+
+        Hardware keyboard arrow keys/spacebar don't scroll PDFs (works for web content)
+        https://bugs.webkit.org/show_bug.cgi?id=190495
+        <rdar://problem/22734616>
+
+        Reviewed by Andy Estes.
+
+        Hook up WKKeyboardScrollViewAnimator to the scroll view when
+        WKPDFView is installed.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Move _inputFlags to the IPI section so we can remove it
+        from WKContentViewInteraction.
+
+        * SourcesCocoa.txt:
+        * UIProcess/ios/WKWebEvent.h:
+        * UIProcess/ios/WKWebEvent.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView handleKeyEvent:]):
+        (-[WKWebEvent dealloc]): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        Move WKWebEvent out of WKContentViewInteraction.
+        We tend to prefer one file per class.
+        Also, move the code to make a WKWebEvent from a UIEvent into
+        -initWithEvent:, instead of being ad-hoc in WKContentViewInteraction.
+        Adopt RetainPtr for the WKWebEvent's uiEvent property.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _handleKeyUIEvent:]):
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        Plumb hardware keyboard events to custom content views, if they want them.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView dealloc]):
+        (-[WKPDFView web_handleKeyEvent:]):
+        (-[WKPDFView web_initWithFrame:webView:mimeType:]):
+        Install a WKKeyboardScrollViewAnimator and plumb key events to it.
+
 2018-10-11  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Allow iOS to also control toggling Web Animations CSS Integration

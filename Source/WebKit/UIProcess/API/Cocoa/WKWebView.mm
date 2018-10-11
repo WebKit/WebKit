@@ -1525,6 +1525,21 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     _page->didLayoutForCustomContentProvider();
 }
 
+- (void)_handleKeyUIEvent:(::UIEvent *)event
+{
+    // We only want to handle key events from the hardware keyboard when we are
+    // first responder and a custom content view is installed; otherwise,
+    // WKContentView will be the first responder and expects to get key events directly.
+    if ([self isFirstResponder] && event._hidEvent) {
+        if ([_customContentView respondsToSelector:@selector(web_handleKeyEvent:)]) {
+            if ([_customContentView web_handleKeyEvent:event])
+                return;
+        }
+    }
+
+    [super _handleKeyUIEvent:event];
+}
+
 - (void)_willInvokeUIScrollViewDelegateCallback
 {
     _delayUpdateVisibleContentRects = YES;

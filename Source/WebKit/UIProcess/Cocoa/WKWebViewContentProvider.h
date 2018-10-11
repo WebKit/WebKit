@@ -33,6 +33,7 @@
 #import <WebKit/_WKFindOptions.h>
 
 @class NSData;
+@class UIEvent;
 @class UIScrollView;
 @class UIView;
 @class WKWebView;
@@ -60,6 +61,7 @@ struct UIEdgeInsets;
 - (void)web_scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
 - (void)web_scrollViewDidZoom:(UIScrollView *)scrollView;
 - (void)web_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock;
+- (BOOL)web_handleKeyEvent:(UIEvent *)event;
 @property (nonatomic, readonly) NSData *web_dataRepresentation;
 @property (nonatomic, readonly) NSString *web_suggestedFilename;
 @property (nonatomic, readonly) BOOL web_isBackground;

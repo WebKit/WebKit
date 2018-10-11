@@ -56,6 +56,7 @@
 #import "WKTextInputListViewController.h"
 #import "WKTimePickerViewController.h"
 #import "WKUIDelegatePrivate.h"
+#import "WKWebEvent.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
@@ -121,24 +122,6 @@
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKPlatformFileUploadPanel.mm>)
 #import <WebKitAdditions/WKPlatformFileUploadPanel.mm>
 #endif
-
-@interface UIEvent (UIEventInternal)
-@property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;
-@end
-
-@interface WKWebEvent : WebEvent
-@property (nonatomic, retain) UIEvent *uiEvent;
-@end
-
-@implementation WKWebEvent
-
-- (void)dealloc
-{
-    [_uiEvent release];
-    [super dealloc];
-}
-
-@end
 
 #if PLATFORM(WATCHOS)
 
@@ -3794,28 +3777,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (event == _uiEventBeingResent)
         return;
 
-    uint16_t keyCode;
-    BOOL isHardwareKeyboardEvent = !!event._hidEvent;
-    if (!isHardwareKeyboardEvent)
-        keyCode = 0;
-    else {
-        UIPhysicalKeyboardEvent *keyEvent = (UIPhysicalKeyboardEvent *)event;
-        keyCode = keyEvent._keyCode;
-        event = [[keyEvent _cloneEvent] autorelease]; // UIKit uses a singleton for hardware keyboard events.
-    }
-    WKWebEvent *webEvent = [[[WKWebEvent alloc] initWithKeyEventType:(event._isKeyDown) ? WebEventKeyDown : WebEventKeyUp
-                                                           timeStamp:event.timestamp
-                                                          characters:event._modifiedInput
-                                         charactersIgnoringModifiers:event._unmodifiedInput
-                                                           modifiers:event._modifierFlags
-                                                         isRepeating:(event._inputFlags & kUIKeyboardInputRepeat)
-                                                           withFlags:event._inputFlags
-                                                             keyCode:keyCode
-                                                            isTabKey:[event._modifiedInput isEqualToString:@"\t"]
-                                                        characterSet:WebEventCharacterSetUnicode] autorelease];
-    webEvent.uiEvent = event;
+    auto webEvent = adoptNS([[WKWebEvent alloc] initWithEvent:event]);
     
-    [self handleKeyWebEvent:webEvent];    
+    [self handleKeyWebEvent:webEvent.get()];
 }
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent
