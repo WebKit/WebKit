@@ -1,3 +1,15 @@
+2018-10-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Allow iOS to also control toggling Web Animations CSS Integration
+        https://bugs.webkit.org/show_bug.cgi?id=190489
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setWebAnimationsCSSIntegrationEnabled:]):
+        (-[WKPreferences _webAnimationsCSSIntegrationEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2018-10-11  Keith Rollin  <krollin@apple.com>
 
         CURRENT_ARCH should not be used in Run Script phase.
