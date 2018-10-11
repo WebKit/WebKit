@@ -34,7 +34,10 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 class CommandsTest(TestCase):
     def assert_execute_outputs(self, command, args=[], expected_stdout="", expected_stderr="", expected_exception=None, expected_logs=None, options=MockOptions(), tool=MockTool()):
         options.blocks = None
-        options.cc = 'MOCK cc'
+        if getattr(options, "cc", None) == None:
+            options.cc = 'MOCK cc'
+        if getattr(options, "cc_radar", None) == None:
+            options.cc_radar = False
         options.component = 'MOCK component'
         options.confirm = True
         options.email = 'MOCK email'

@@ -461,6 +461,7 @@ class CreateBug(Command):
     def __init__(self):
         options = [
             steps.Options.cc,
+            steps.Options.cc_radar,
             steps.Options.component,
             make_option("--no-prompt", action="store_false", dest="prompt", default=True, help="Do not prompt for bug title and comment; use commit log instead."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
@@ -526,6 +527,11 @@ class CreateBug(Command):
         return (bug_title, comment_text)
 
     def execute(self, options, args, tool):
+        if options.cc_radar:
+            if options.cc:
+                options.cc = "webkit-bug-importer@group.apple.com,%s" % options.cc
+            else:
+                options.cc = "webkit-bug-importer@group.apple.com"
         if len(args):
             if (not tool.scm().supports_local_commits()):
                 _log.error("Extra arguments not supported; patch is taken from working directory.")

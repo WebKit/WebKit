@@ -115,6 +115,31 @@ MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_rev
         expected_logs = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\ncomponent: MOCK component\ncc: MOCK cc\n"
         self.assert_execute_outputs(Prepare(), [], expected_logs=expected_logs, options=options)
 
+    def test_prepare_with_cc(self):
+        options = MockOptions()
+        options.cc = "a@example.com,b@example.com"
+        options.sort_xcode_project = False
+        options.non_interactive = True
+        expected_logs = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\ncomponent: MOCK component\ncc: a@example.com,b@example.com\n"
+        self.assert_execute_outputs(Prepare(), [], expected_logs=expected_logs, options=options)
+
+    def test_prepare_with_radar(self):
+        options = MockOptions()
+        options.cc_radar = True
+        options.sort_xcode_project = False
+        options.non_interactive = True
+        expected_logs = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\ncomponent: MOCK component\ncc: webkit-bug-importer@group.apple.com,MOCK cc\n"
+        self.assert_execute_outputs(Prepare(), [], expected_logs=expected_logs, options=options)
+
+    def test_prepare_with_cc_and_radar(self):
+        options = MockOptions()
+        options.cc = "a@example.com,b@example.com"
+        options.cc_radar = True
+        options.sort_xcode_project = False
+        options.non_interactive = True
+        expected_logs = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\ncomponent: MOCK component\ncc: webkit-bug-importer@group.apple.com,a@example.com,b@example.com\n"
+        self.assert_execute_outputs(Prepare(), [], expected_logs=expected_logs, options=options)
+
     def test_upload(self):
         options = MockOptions()
         options.cc = None

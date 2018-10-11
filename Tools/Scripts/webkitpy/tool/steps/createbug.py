@@ -35,6 +35,7 @@ class CreateBug(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.cc,
+            Options.cc_radar,
             Options.component,
             Options.blocks,
         ]
@@ -46,6 +47,12 @@ class CreateBug(AbstractStep):
         cc = self._options.cc
         if not cc:
             cc = state.get("bug_cc")
+        cc_radar = self._options.cc_radar
+        if cc_radar:
+            if cc:
+                cc = "webkit-bug-importer@group.apple.com,%s" % cc
+            else:
+                cc = "webkit-bug-importer@group.apple.com"
         if self._options.blocks:
             blocked_bugs = [int(self._options.blocks)]
         else:

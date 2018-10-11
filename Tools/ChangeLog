@@ -1,3 +1,29 @@
+2018-10-10  Dean Jackson  <dino@apple.com>
+
+        Add --cc-radar option to webkit-patch bug creation
+        https://bugs.webkit.org/show_bug.cgi?id=190451
+        <rdar://problem/45176671>
+
+        Reviewed by Antoine Quint.
+
+        Add a new command line option to automatically
+        CC radar to new or updated bugs.
+
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        (CommandsTest.assert_execute_outputs):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (CreateBug.__init__):
+        (CreateBug.execute):
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (test_prepare_with_cc):
+        (test_prepare_with_radar):
+        (test_prepare_with_cc_and_radar):
+        * Scripts/webkitpy/tool/steps/createbug.py:
+        (CreateBug.options):
+        (CreateBug.run):
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+
 2018-10-11  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GStreamer] Do not build gstgtk plugins
