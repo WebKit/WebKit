@@ -1,3 +1,12 @@
+2018-10-11  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test fast/forms/fieldset/fieldset-elements-htmlcollection.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190472
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-10-11  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Add mediaDevices.enumerateDevices support

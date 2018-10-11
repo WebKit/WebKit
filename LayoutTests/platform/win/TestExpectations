@@ -4221,3 +4221,4 @@ imported/w3c/web-platform-tests/mediacapture-record/BlobEvent-constructor.html [
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-constructor.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
 
+webkit.org/b/190472 fast/forms/fieldset/fieldset-elements-htmlcollection.html [ Failure ]
