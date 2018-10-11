@@ -28,6 +28,7 @@
 #define StackBounds_h
 
 #include <algorithm>
+#include <wtf/StackPointer.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {
@@ -146,7 +147,7 @@ private:
     void checkConsistency() const
     {
 #if !ASSERT_DISABLED
-        void* currentPosition = &currentPosition;
+        void* currentPosition = currentStackPointer();
         ASSERT(m_origin != m_bound);
         ASSERT(isGrowingDownward()
             ? (currentPosition < m_origin && currentPosition > m_bound)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-namespace JSC {
-
-struct ExceptionEventLocation {
-    ExceptionEventLocation() { }
-    ExceptionEventLocation(void* stackPosition, const char* functionName, const char* file, unsigned line)
-        : stackPosition(stackPosition)
-        , functionName(functionName)
-        , file(file)
-        , line(line)
-    { }
-    
-    void* stackPosition { nullptr }; // Needed for ASAN detect_stack_use_after_return.
-    const char* functionName { nullptr };
-    const char* file { nullptr };
-    unsigned line { 0 };
-};
-
-} // namespace JSC
+#include "config.h"
+#include "StackPointer.h"
 
 namespace WTF {
-    
-class PrintStream;
 
-void printInternal(PrintStream&, JSC::ExceptionEventLocation);
-    
+#if USE(GENERIC_CURRENT_STACK_POINTER)
+constexpr size_t sizeOfFrameHeader = 2 * sizeof(void*);
+
+SUPPRESS_ASAN NEVER_INLINE
+void* currentStackPointer()
+{
+#if COMPILER(GCC_COMPATIBLE)
+    return reinterpret_cast<uint8_t*>(__builtin_frame_address(0)) + sizeOfFrameHeader;
+#else
+    // Make sure that sp is the only local variable declared in this function.
+    void* sp = reinterpret_cast<uint8_t*>(&sp) + sizeOfFrameHeader + sizeof(sp);
+    return sp;
+#endif
+}
+#endif // USE(GENERIC_CURRENT_STACK_POINTER)
+
 } // namespace WTF

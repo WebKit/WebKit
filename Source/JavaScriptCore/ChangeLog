@@ -1,3 +1,50 @@
+2018-10-10  Mark Lam  <mark.lam@apple.com>
+
+        Changes towards allowing use of the ASAN detect_stack_use_after_return option.
+        https://bugs.webkit.org/show_bug.cgi?id=190405
+        <rdar://problem/45131464>
+
+        Reviewed by Michael Saboff.
+
+        The ASAN detect_stack_use_after_return option checks for use of stack variables
+        after they have been freed.  It does this by allocating relevant stack variables
+        in heap memory (instead of on the stack) if the code ever takes the address of
+        those stack variables.  Unfortunately, this is a common idiom that we use to
+        compute the approximate stack pointer value.  As a result, on such ASAN runs, the
+        computed approximate stack pointer value will point into the heap instead of the
+        stack.  This breaks the VM's expectations and wreaks havoc.
+
+        To fix this, we use the newly introduced WTF::currentStackPointer() instead of
+        taking the address of stack variables.
+
+        We also need to enhance ExceptionScopes to be able to work with ASAN
+        detect_stack_use_after_return which will allocated the scope in the heap.  We
+        work around this by passing the current stack pointer of the instantiating calling
+        frame into the scope constructor, and using that for the position check in
+        ~ThrowScope() instead.
+
+        The above is only a start towards enabling ASAN detect_stack_use_after_return on
+        the VM.  There are still other issues to be resolved before we can run with this
+        ASAN option.
+
+        * runtime/CatchScope.h:
+        * runtime/ExceptionEventLocation.h:
+        (JSC::ExceptionEventLocation::ExceptionEventLocation):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::stackPosition const):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/ThrowScope.cpp:
+        (JSC::ThrowScope::~ThrowScope):
+        * runtime/ThrowScope.h:
+        * runtime/VM.h:
+        (JSC::VM::needExceptionCheck const):
+        (JSC::VM::isSafeToRecurse const):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::isSafeToRecurse const):
+
 2018-10-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create special Network waterfall for media events

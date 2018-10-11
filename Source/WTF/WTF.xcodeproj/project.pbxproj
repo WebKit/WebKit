@@ -158,6 +158,7 @@
 		FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */; };
 		FE85416E1FBE285D008DA5DA /* Poisoned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE85416C1FBE285B008DA5DA /* Poisoned.cpp */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
+		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -660,6 +661,8 @@
 		FEB6B035201BE0B600B958C1 /* PointerPreparations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerPreparations.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
+		FEEA4DF7216D608C00AC0602 /* StackPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackPointer.h; sourceTree = "<group>"; };
+		FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackPointer.cpp; sourceTree = "<group>"; };
 		FEF295BF20B49DCB00CF283A /* UTF8ConversionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8ConversionError.h; sourceTree = "<group>"; };
 		FF0A436588954F3CB07DBECA /* StdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdList.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1086,6 +1089,8 @@
 				A8A4730D151A825B004123FF /* Spectrum.h */,
 				A8A4730E151A825B004123FF /* StackBounds.cpp */,
 				A8A4730F151A825B004123FF /* StackBounds.h */,
+				FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */,
+				FEEA4DF7216D608C00AC0602 /* StackPointer.h */,
 				0F9DAA041FD1C37B0079C5B2 /* StackShot.h */,
 				0F9DAA051FD1C37B0079C5B2 /* StackShotProfiler.h */,
 				FEDACD3B1630F83F00C69634 /* StackStats.cpp */,
@@ -1542,6 +1547,7 @@
 				51F1752C1F3D486000C74950 /* PersistentDecoder.cpp in Sources */,
 				51F1752D1F3D486000C74950 /* PersistentEncoder.cpp in Sources */,
 				FE85416E1FBE285D008DA5DA /* Poisoned.cpp in Sources */,
+				FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */,
 				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
 				7AF023B52061E17000A8EFD6 /* ProcessPrivilege.cpp in Sources */,
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,

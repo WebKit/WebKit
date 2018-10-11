@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "VM.h"
+#include <wtf/StackPointer.h>
 
 namespace JSC {
     
@@ -37,6 +38,12 @@ class Exception;
 #define EXCEPTION_ASSERT_UNUSED(variable, assertion) RELEASE_ASSERT(assertion)
 #define EXCEPTION_ASSERT_WITH_MESSAGE(assertion, message) RELEASE_ASSERT_WITH_MESSAGE(assertion, message)
 
+#if ASAN_ENABLED && COMPILER(GCC_COMPATIBLE)
+#define EXCEPTION_SCOPE_POSITION_FOR_ASAN currentStackPointer()
+#else
+#define EXCEPTION_SCOPE_POSITION_FOR_ASAN nullptr
+#endif
+
 class ExceptionScope {
 public:
     VM& vm() const { return m_vm; }
@@ -45,6 +52,12 @@ public:
 
     ALWAYS_INLINE void assertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
+
+#if ASAN_ENABLED
+    const void* stackPosition() const {  return m_location.stackPosition; }
+#else
+    const void* stackPosition() const {  return this; }
+#endif
 
 protected:
     ExceptionScope(VM&, ExceptionEventLocation);

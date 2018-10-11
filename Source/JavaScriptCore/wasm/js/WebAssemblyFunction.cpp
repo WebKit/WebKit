@@ -44,6 +44,7 @@
 #include "WasmMemory.h"
 #include "WasmSignatureInlines.h"
 #include <wtf/FastTLS.h>
+#include <wtf/StackPointer.h>
 #include <wtf/SystemTracing.h>
 
 namespace JSC {
@@ -135,7 +136,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     {
         // We do the stack check here for the wrapper function because we don't
         // want to emit a stack check inside every wrapper function.
-        const intptr_t sp = bitwise_cast<intptr_t>(&sp); // A proxy for the current stack pointer.
+        const intptr_t sp = bitwise_cast<intptr_t>(currentStackPointer());
         const intptr_t frameSize = (boxedArgs.size() + CallFrame::headerSizeInRegisters) * sizeof(Register);
         const intptr_t stackSpaceUsed = 2 * frameSize; // We're making two calls. One to the wrapper, and one to the actual wasm code.
         if (UNLIKELY((sp < stackSpaceUsed) || ((sp - stackSpaceUsed) < bitwise_cast<intptr_t>(vm.softStackLimit()))))

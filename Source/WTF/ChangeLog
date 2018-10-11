@@ -1,3 +1,21 @@
+2018-10-10  Mark Lam  <mark.lam@apple.com>
+
+        Changes towards allowing use of the ASAN detect_stack_use_after_return option.
+        https://bugs.webkit.org/show_bug.cgi?id=190405
+        <rdar://problem/45131464>
+
+        Reviewed by Michael Saboff.
+
+        Introduce WTF::currentStackPointer() which computes its caller's stack pointer value.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::checkConsistency const):
+        * wtf/StackPointer.cpp: Added.
+        (WTF::currentStackPointer):
+        * wtf/StackPointer.h: Added.
+
 2018-10-09  Mark Lam  <mark.lam@apple.com>
 
         StringTypeAdapter constructor is not properly enforcing String::MaxLength.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,37 @@
 
 #pragma once
 
-namespace JSC {
-
-struct ExceptionEventLocation {
-    ExceptionEventLocation() { }
-    ExceptionEventLocation(void* stackPosition, const char* functionName, const char* file, unsigned line)
-        : stackPosition(stackPosition)
-        , functionName(functionName)
-        , file(file)
-        , line(line)
-    { }
-    
-    void* stackPosition { nullptr }; // Needed for ASAN detect_stack_use_after_return.
-    const char* functionName { nullptr };
-    const char* file { nullptr };
-    unsigned line { 0 };
-};
-
-} // namespace JSC
-
 namespace WTF {
-    
-class PrintStream;
 
-void printInternal(PrintStream&, JSC::ExceptionEventLocation);
-    
+#if defined(NDEBUG) && COMPILER(GCC_COMPATIBLE) \
+    && (CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL))
+
+// We can only use the inline asm implementation on release builds because it
+// needs to be inlinable in order to be correct.
+ALWAYS_INLINE void* currentStackPointer()
+{
+    void* stackPointer = nullptr;
+#if CPU(X86_64)
+    __asm__ volatile ("movq %%rsp, %0" : "=r"(stackPointer) ::);
+#elif CPU(X86)
+    __asm__ volatile ("movl %%esp, %0" : "=r"(stackPointer) ::);
+#elif CPU(ARM64) && defined(__ILP32__)
+    uint64_t stackPointerRegister = 0;
+    __asm__ volatile ("mov %0, sp" : "=r"(stackPointerRegister) ::);
+    stackPointer = reinterpret_cast<void*>(stackPointerRegister);
+#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
+    __asm__ volatile ("mov %0, sp" : "=r"(stackPointer) ::);
+#endif
+    return stackPointer;
+}
+
+#else
+
+#define USE_GENERIC_CURRENT_STACK_POINTER 1
+WTF_EXPORT_PRIVATE void* currentStackPointer();
+
+#endif
+
 } // namespace WTF
+
+using WTF::currentStackPointer;

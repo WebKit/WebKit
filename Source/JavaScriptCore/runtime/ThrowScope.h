@@ -62,7 +62,7 @@ private:
 };
 
 #define DECLARE_THROW_SCOPE(vm__) \
-    JSC::ThrowScope((vm__), JSC::ExceptionEventLocation(__FUNCTION__, __FILE__, __LINE__))
+    JSC::ThrowScope((vm__), JSC::ExceptionEventLocation(EXCEPTION_SCOPE_POSITION_FOR_ASAN, __FUNCTION__, __FILE__, __LINE__))
 
 #define throwScopePrintIfNeedCheck(scope__) \
     scope__.printIfNeedCheck(__FUNCTION__, __FILE__, __LINE__)

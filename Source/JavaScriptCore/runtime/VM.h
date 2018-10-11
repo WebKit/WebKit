@@ -64,6 +64,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StackBounds.h>
+#include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSpecific.h>
@@ -884,6 +885,7 @@ public:
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     StackTrace* nativeStackTraceOfLastThrow() const { return m_nativeStackTraceOfLastThrow.get(); }
     Thread* throwingThread() const { return m_throwingThread.get(); }
+    bool needExceptionCheck() const { return m_needExceptionCheck; }
 #endif
 
 #if USE(CF)
@@ -903,7 +905,7 @@ private:
     bool isSafeToRecurse(void* stackLimit) const
     {
         ASSERT(Thread::current().stack().isGrowingDownward());
-        void* curr = reinterpret_cast<void*>(&curr);
+        void* curr = currentStackPointer();
         return curr >= stackLimit;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ namespace JSC {
 // top of the function (as early as possible) using the DECLARE_CATCH_SCOPE macro.
 // Declaring a CatchScope in a function means that the function intends to clear
 // pending exceptions before returning to its caller.
-    
+
 class CatchScope : public ExceptionScope {
 public:
     JS_EXPORT_PRIVATE CatchScope(VM&, ExceptionEventLocation);
@@ -48,7 +48,7 @@ public:
 };
 
 #define DECLARE_CATCH_SCOPE(vm__) \
-    JSC::CatchScope((vm__), JSC::ExceptionEventLocation(__FUNCTION__, __FILE__, __LINE__))
+    JSC::CatchScope((vm__), JSC::ExceptionEventLocation(EXCEPTION_SCOPE_POSITION_FOR_ASAN, __FUNCTION__, __FILE__, __LINE__))
 
 #else // not ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 

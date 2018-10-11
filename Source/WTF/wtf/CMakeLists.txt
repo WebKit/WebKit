@@ -210,6 +210,7 @@ set(WTF_PUBLIC_HEADERS
     SoftLinking.h
     Spectrum.h
     StackBounds.h
+    StackPointer.h
     StackShot.h
     StackShotProfiler.h
     StackStats.h
@@ -384,6 +385,7 @@ set(WTF_SOURCES
     Seconds.cpp
     SixCharacterHash.cpp
     StackBounds.cpp
+    StackPointer.cpp
     StackStats.cpp
     StackTrace.cpp
     StringPrintStream.cpp
