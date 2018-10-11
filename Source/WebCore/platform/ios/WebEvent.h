@@ -75,6 +75,12 @@ typedef enum {
     WebEventCharacterSetFunctionKeys    = 254,
 } WebEventCharacterSet;
 
+// These enum values are copied directly from UIKit for compatibility.
+typedef enum {
+    WebEventKeyboardInputRepeat = 1 << 0,
+} WebKeyboardInputFlagValues;
+typedef NSUInteger WebKeyboardInputFlags;
+
 WEBCORE_EXPORT @interface WebEvent : NSObject {
 @private
     WebEventType _type;
@@ -86,7 +92,7 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
     NSString *_charactersIgnoringModifiers;
     WebEventFlags _modifierFlags;
     BOOL _keyRepeating;
-    NSUInteger _keyboardFlags;
+    WebKeyboardInputFlags _keyboardFlags;
     NSString *_inputManagerHint;
     uint16_t _keyCode;
     BOOL _tabKey;
@@ -133,7 +139,7 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
        charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
                          modifiers:(WebEventFlags)modifiers
                        isRepeating:(BOOL)repeating
-                         withFlags:(NSUInteger)flags
+                         withFlags:(WebKeyboardInputFlags)flags
                            keyCode:(uint16_t)keyCode
                           isTabKey:(BOOL)tabKey
                       characterSet:(WebEventCharacterSet)characterSet;
@@ -144,7 +150,7 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
        charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
                          modifiers:(WebEventFlags)modifiers
                        isRepeating:(BOOL)repeating
-                         withFlags:(NSUInteger)flags
+                         withFlags:(WebKeyboardInputFlags)flags
               withInputManagerHint:(NSString *)hint
                            keyCode:(uint16_t)keyCode
                           isTabKey:(BOOL)tabKey;
@@ -162,7 +168,7 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
 @property(nonatomic, readonly, getter = isKeyRepeating) BOOL keyRepeating;
 @property(nonatomic, readonly, retain) NSString *inputManagerHint;
 
-@property(nonatomic, readonly) NSUInteger keyboardFlags;
+@property(nonatomic, readonly) WebKeyboardInputFlags keyboardFlags;
 @property(nonatomic, readonly) uint16_t keyCode;
 @property(nonatomic, readonly, getter = isTabKey) BOOL tabKey;
 

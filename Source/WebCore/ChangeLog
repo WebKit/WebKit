@@ -1,3 +1,19 @@
+2018-10-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add typedef for WebEvent keyboard flags
+        https://bugs.webkit.org/show_bug.cgi?id=190435
+
+        Reviewed by Wenson Hsieh.
+
+        Currently WebEvent and UIKit SPI are intertwined when it comes to keyboard flags. It seems sufficient
+        to have WebEvent defined its own keyboard flags so that callers do not need to be aware of UIKit SPI.
+
+        No functionality changed. So, no new tests.
+
+        * platform/ios/WebEvent.h:
+        * platform/ios/WebEvent.mm:
+        (-[WebEvent keyboardFlags]):
+
 2018-10-11  Antti Koivisto  <antti@apple.com>
 
         Use finer grained locking in FontDatabase

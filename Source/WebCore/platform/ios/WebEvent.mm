@@ -427,7 +427,7 @@ static NSString* normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     return _keyRepeating;
 }
 
-- (NSUInteger)keyboardFlags
+- (WebKeyboardInputFlags)keyboardFlags
 {
     ASSERT(_type == WebEventKeyDown || _type == WebEventKeyUp);
     return _keyboardFlags;
