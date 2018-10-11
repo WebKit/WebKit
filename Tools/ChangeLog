@@ -1,3 +1,11 @@
+2018-10-11  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r237037): Cannot use webkit-patch upload, always fails with unknown 'cc_radar'
+
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+        Fix the name of the variable that the --cc-radar option writes into.
+
 2018-10-10  Dean Jackson  <dino@apple.com>
 
         Add --cc-radar option to webkit-patch bug creation
