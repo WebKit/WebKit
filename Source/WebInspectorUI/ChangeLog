@@ -1,3 +1,14 @@
+2018-10-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: detail view is not re-shown after sorting the Network table
+        https://bugs.webkit.org/show_bug.cgi?id=190330
+        <rdar://problem/45089607>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._restoreSelectedRow):
+
 2018-10-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create special Network waterfall for media events

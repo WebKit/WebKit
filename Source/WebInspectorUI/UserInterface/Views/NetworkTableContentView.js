@@ -1775,6 +1775,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         this._table.selectRow(rowIndex);
+        this._showDetailView(this._selectedObject);
     }
 
     _HARResources()
