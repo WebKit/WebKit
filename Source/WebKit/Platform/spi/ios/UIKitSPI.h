@@ -1038,6 +1038,7 @@ typedef NSInteger UICompositingMode;
 - (BOOL)_canScrollY;
 - (void)_setContentOffsetWithDecelerationAnimation:(CGPoint)contentOffset;
 - (CGPoint)_adjustedContentOffsetForContentOffset:(CGPoint)contentOffset;
+- (void)_flashScrollIndicatorsPersistingPreviousFlashes:(BOOL)persisting;
 @end
 
 @interface UIPeripheralHost (IPI)

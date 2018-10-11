@@ -1,5 +1,23 @@
 2018-10-11  Tim Horton  <timothy_horton@apple.com>
 
+        iOS: Scrolling using the arrow keys doesn't show the scroll indicator like it does on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=190478
+        <rdar://problem/22194031>
+
+        Reviewed by Megan Gardner.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Add some SPI.
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollViewAnimator scrollToContentOffset:animated:]):
+        Do a persistent flash when scrolling continuously.
+
+        (-[WKKeyboardScrollViewAnimator scrollWithScrollToExtentAnimationTo:]):
+        Do a single flash when doing a scroll-to-top/bottom.
+
+2018-10-11  Tim Horton  <timothy_horton@apple.com>
+
         Clicking on bookmarklet crashes at NavigationState::willRecordNavigationSnapshot
         https://bugs.webkit.org/show_bug.cgi?id=190476
         <rdar://problem/32757191>
