@@ -103,9 +103,9 @@ private:
     Document& m_document;
 
     void appendText(StringBuilder&, const Text&) override;
-    void appendElement(StringBuilder&, const Element&, Namespaces*) override;
+    void appendStartTag(StringBuilder&, const Element&, Namespaces*) override;
     void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) override;
-    void appendEndElement(StringBuilder&, const Element&) override;
+    void appendEndTag(StringBuilder&, const Element&) override;
 };
 
 PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer& serializer, Document& document, Vector<Node*>* nodes)
@@ -125,10 +125,10 @@ void PageSerializer::SerializerMarkupAccumulator::appendText(StringBuilder& out,
         MarkupAccumulator::appendText(out, text);
 }
 
-void PageSerializer::SerializerMarkupAccumulator::appendElement(StringBuilder& out, const Element& element, Namespaces* namespaces)
+void PageSerializer::SerializerMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& element, Namespaces* namespaces)
 {
     if (!shouldIgnoreElement(element))
-        MarkupAccumulator::appendElement(out, element, namespaces);
+        MarkupAccumulator::appendStartTag(out, element, namespaces);
 
     if (element.hasTagName(HTMLNames::headTag)) {
         out.appendLiteral("<meta charset=\"");
@@ -158,10 +158,10 @@ void PageSerializer::SerializerMarkupAccumulator::appendCustomAttributes(StringB
     appendAttribute(out, element, Attribute(frameOwnerURLAttributeName(frameOwner), url.string()), namespaces);
 }
 
-void PageSerializer::SerializerMarkupAccumulator::appendEndElement(StringBuilder& out, const Element& element)
+void PageSerializer::SerializerMarkupAccumulator::appendEndTag(StringBuilder& out, const Element& element)
 {
     if (!shouldIgnoreElement(element))
-        MarkupAccumulator::appendEndElement(out, element);
+        MarkupAccumulator::appendEndTag(out, element);
 }
 
 PageSerializer::PageSerializer(Vector<PageSerializer::Resource>& resources)

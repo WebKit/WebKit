@@ -1,3 +1,43 @@
+2018-10-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename MarkupAccumulator::appendStartTag, appendElement, etc... for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=190308
+
+        Reviewed by Darin Adler.
+
+        Renamed appendStartTag and appendEndTag to startAppendingNode and endAppendingNode since serialize any node,
+        not just elements which produce start and end tags.
+
+        Renamed appendElement and appendEndElement to appendStartTag and appendEndTag since that's what they do.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::elementCannotHaveEndTag): Made this a static local function.
+        (WebCore::shouldSelfClose): Ditto.
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces):
+        (WebCore::MarkupAccumulator::startAppendingNode): Renamed from appendStartTag.
+        (WebCore::MarkupAccumulator::endAppendingNode): Renamed from appendEndElement and merged appendEndMarkup here.
+        (WebCore::MarkupAccumulator::appendTextSubstring): Deleted. This was only used by StyledMarkupAccumulator.
+        (WebCore::MarkupAccumulator::appendStringView): Added.
+        (WebCore::MarkupAccumulator::appendStartTag): Renamed from appendElement.
+        (WebCore::MarkupAccumulator::appendCloseTag):
+        (WebCore::MarkupAccumulator::appendNonElementNode): Renamed from appendStartMarkup. No longer serializes
+        an element. StyledMarkupAccumulator had a check before calling this function already so this clarifies
+        the purpose of this function.
+        (WebCore::MarkupAccumulator::appendElement): Deleted.
+        (WebCore::MarkupAccumulator::appendEndMarkup): Deleted. Merged into appendEndTag.
+        * editing/MarkupAccumulator.h:
+        (WebCore::MarkupAccumulator::appendNodeEnd): Renamed from appendEndTag.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::wrapWithNode):
+        (WebCore::StyledMarkupAccumulator::appendStartTag): Renamed from appendElement.
+        (WebCore::StyledMarkupAccumulator::appendEndTag): Renamed from appendEndElement.
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+        (WebCore::StyledMarkupAccumulator::appendNodeToPreserveMSOList): Use String::substring directly instead of
+        going through appendTextSubstring which has been deleted.
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::SerializerMarkupAccumulator::appendStartTag): Renamed from appendElement.
+        (WebCore::PageSerializer::SerializerMarkupAccumulator::appendEndTag): Renamed from appendEndElement.
+
 2018-10-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, attempt to fix the build with current SDKs.

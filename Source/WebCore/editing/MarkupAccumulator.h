@@ -73,25 +73,24 @@ protected:
     void concatenateMarkup(StringBuilder&);
 
     void appendString(const String&);
-    void appendEndTag(const Node& node)
+    void appendStringView(StringView);
+
+    void startAppendingNode(const Node&, Namespaces* = nullptr);
+    void endAppendingNode(const Node& node)
     {
         if (is<Element>(node))
-            appendEndElement(m_markup, downcast<Element>(node));
+            appendEndTag(m_markup, downcast<Element>(node));
     }
 
-    virtual void appendEndElement(StringBuilder&, const Element&);
+    virtual void appendStartTag(StringBuilder&, const Element&, Namespaces*);
+    virtual void appendEndTag(StringBuilder&, const Element&);
     virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*);
     virtual void appendText(StringBuilder&, const Text&);
-    virtual void appendElement(StringBuilder&, const Element&, Namespaces*);
-
-    void appendStartTag(const Node&, Namespaces* = nullptr);
-
-    void appendTextSubstring(const Text&, unsigned start, unsigned length);
 
     void appendOpenTag(StringBuilder&, const Element&, Namespaces*);
     void appendCloseTag(StringBuilder&, const Element&);
 
-    void appendStartMarkup(StringBuilder&, const Node&, Namespaces*);
+    void appendNonElementNode(StringBuilder&, const Node&, Namespaces*);
     void appendEndMarkup(StringBuilder&, const Element&);
 
     void appendAttributeValue(StringBuilder&, const String&, bool isSerializingHTML);
@@ -104,8 +103,6 @@ protected:
 
     bool shouldAddNamespaceElement(const Element&);
     bool shouldAddNamespaceAttribute(const Attribute&, Namespaces&);
-    bool shouldSelfClose(const Element&);
-    bool elementCannotHaveEndTag(const Node&);
     EntityMask entityMaskForText(const Text&) const;
 
     Vector<Node*>* const m_nodes;

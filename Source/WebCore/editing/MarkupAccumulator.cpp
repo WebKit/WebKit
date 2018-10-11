@@ -85,6 +85,61 @@ static const uint8_t entityMap[maximumEscapedentityCharacter + 1] = {
     EntitySubstitutionNbspIndex // noBreakSpace.
 };
 
+static bool elementCannotHaveEndTag(const Node& node)
+{
+    if (!is<HTMLElement>(node))
+        return false;
+
+    // From https://html.spec.whatwg.org/#serialising-html-fragments:
+    // If current node is an area, base, basefont, bgsound, br, col, embed, frame, hr, img,
+    // input, keygen, link, meta, param, source, track or wbr element, then continue on to
+    // the next child node at this point.
+    static const AtomicStringImpl* localNames[] = {
+        areaTag->localName().impl(),
+        baseTag->localName().impl(),
+        basefontTag->localName().impl(),
+        bgsoundTag->localName().impl(),
+        brTag->localName().impl(),
+        colTag->localName().impl(),
+        embedTag->localName().impl(),
+        frameTag->localName().impl(),
+        hrTag->localName().impl(),
+        imgTag->localName().impl(),
+        inputTag->localName().impl(),
+        keygenTag->localName().impl(),
+        linkTag->localName().impl(),
+        metaTag->localName().impl(),
+        paramTag->localName().impl(),
+        sourceTag->localName().impl(),
+        trackTag->localName().impl(),
+        wbrTag->localName().impl()
+    };
+
+    auto* elementName = downcast<HTMLElement>(node).localName().impl();
+    for (auto* name : localNames) {
+        if (name == elementName)
+            return true;
+    }
+
+    return false;
+}
+
+// Rules of self-closure
+// 1. No elements in HTML documents use the self-closing syntax.
+// 2. Elements w/ children never self-close because they use a separate end tag.
+// 3. HTML elements which do not have a "forbidden" end tag will close with a separate end tag.
+// 4. Other elements self-close.
+static bool shouldSelfClose(const Element& element, SerializationSyntax syntax)
+{
+    if (syntax != SerializationSyntax::XML && element.document().isHTMLDocument())
+        return false;
+    if (element.hasChildNodes())
+        return false;
+    if (element.isHTMLElement() && !elementCannotHaveEndTag(element))
+        return false;
+    return true;
+}
+
 template<typename CharacterType>
 static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& result, const String& source, unsigned offset, unsigned length, EntityMask entityMask)
 {
@@ -150,7 +205,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
     }
 
     if (root == SerializedNodes::SubtreeIncludingNode)
-        appendStartTag(targetNode, &namespaceHash);
+        startAppendingNode(targetNode, &namespaceHash);
 
     if (targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(targetNode))
         return;
@@ -160,7 +215,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
         serializeNodesWithNamespaces(*current, SerializedNodes::SubtreeIncludingNode, &namespaceHash, tagNamesToSkip);
 
     if (root == SerializedNodes::SubtreeIncludingNode)
-        appendEndTag(targetNode);
+        endAppendingNode(targetNode);
 }
 
 String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
@@ -185,22 +240,30 @@ void MarkupAccumulator::appendString(const String& string)
     m_markup.append(string);
 }
 
-void MarkupAccumulator::appendStartTag(const Node& node, Namespaces* namespaces)
+void MarkupAccumulator::appendStringView(StringView view)
 {
-    appendStartMarkup(m_markup, node, namespaces);
+    m_markup.append(view);
+}
+
+void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)
+{
+    if (is<Element>(node))
+        appendStartTag(m_markup, downcast<Element>(node), namespaces);
+    else
+        appendNonElementNode(m_markup, node, namespaces);
+
     if (m_nodes)
         m_nodes->append(const_cast<Node*>(&node));
 }
 
-void MarkupAccumulator::appendEndElement(StringBuilder& out, const Element& element)
+void MarkupAccumulator::appendEndTag(StringBuilder& result, const Element& element)
 {
-    appendEndMarkup(out, element);
-}
-
-void MarkupAccumulator::appendTextSubstring(const Text& text, unsigned start, unsigned length)
-{
-    ASSERT(start + length <= text.data().length());
-    appendCharactersReplacingEntities(m_markup, text.data(), start, length, entityMaskForText(text));
+    if (shouldSelfClose(element, m_serializationSyntax) || (!element.hasChildNodes() && elementCannotHaveEndTag(element)))
+        return;
+    result.append('<');
+    result.append('/');
+    result.append(element.nodeNamePreservingCase());
+    result.append('>');
 }
 
 size_t MarkupAccumulator::totalLength(const Vector<String>& strings)
@@ -410,7 +473,7 @@ void MarkupAccumulator::appendProcessingInstruction(StringBuilder& result, const
     result.append('>');
 }
 
-void MarkupAccumulator::appendElement(StringBuilder& result, const Element& element, Namespaces* namespaces)
+void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
     appendOpenTag(result, element, namespaces);
 
@@ -444,7 +507,7 @@ void MarkupAccumulator::appendOpenTag(StringBuilder& result, const Element& elem
 
 void MarkupAccumulator::appendCloseTag(StringBuilder& result, const Element& element)
 {
-    if (shouldSelfClose(element)) {
+    if (shouldSelfClose(element, m_serializationSyntax)) {
         if (element.isHTMLElement())
             result.append(' '); // XHTML 1.0 <-> HTML compatibility.
         result.append('/');
@@ -530,7 +593,7 @@ void MarkupAccumulator::appendCDATASection(StringBuilder& result, const String& 
     result.appendLiteral("]]>");
 }
 
-void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& node, Namespaces* namespaces)
+void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& node, Namespaces* namespaces)
 {
     if (namespaces)
         namespaces->checkConsistency();
@@ -554,7 +617,7 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
         appendProcessingInstruction(result, downcast<ProcessingInstruction>(node).target(), downcast<ProcessingInstruction>(node).data());
         break;
     case Node::ELEMENT_NODE:
-        appendElement(result, downcast<Element>(node), namespaces);
+        ASSERT_NOT_REACHED();
         break;
     case Node::CDATA_SECTION_NODE:
         appendCDATASection(result, downcast<CDATASection>(node).data());
@@ -563,53 +626,6 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
         ASSERT_NOT_REACHED();
         break;
     }
-}
-
-// Rules of self-closure
-// 1. No elements in HTML documents use the self-closing syntax.
-// 2. Elements w/ children never self-close because they use a separate end tag.
-// 3. HTML elements which do not have a "forbidden" end tag will close with a separate end tag.
-// 4. Other elements self-close.
-bool MarkupAccumulator::shouldSelfClose(const Element& element)
-{
-    if (!inXMLFragmentSerialization() && element.document().isHTMLDocument())
-        return false;
-    if (element.hasChildNodes())
-        return false;
-    if (element.isHTMLElement() && !elementCannotHaveEndTag(element))
-        return false;
-    return true;
-}
-
-bool MarkupAccumulator::elementCannotHaveEndTag(const Node& node)
-{
-    if (!is<HTMLElement>(node))
-        return false;
-
-    // From https://html.spec.whatwg.org/#serialising-html-fragments:
-    // If current node is an area, base, basefont, bgsound, br, col, embed, frame, hr, img,
-    // input, keygen, link, meta, param, source, track or wbr element, then continue on to
-    // the next child node at this point.
-    static const HTMLQualifiedName* tags[] = { &areaTag.get(), &baseTag.get(), &basefontTag.get(), &bgsoundTag.get(),
-        &brTag.get(), &colTag.get(), &embedTag.get(), &frameTag.get(), &hrTag.get(), &imgTag.get(), &inputTag.get(),
-        &keygenTag.get(), &linkTag.get(), &metaTag.get(), &paramTag.get(), &sourceTag.get(), &trackTag.get(), &wbrTag.get() };
-    auto& element = downcast<HTMLElement>(node);
-    for (auto* tag : tags) {
-        if (element.hasTagName(*tag))
-            return true;
-    }
-    return false;
-}
-
-void MarkupAccumulator::appendEndMarkup(StringBuilder& result, const Element& element)
-{
-    if (shouldSelfClose(element) || (!element.hasChildNodes() && elementCannotHaveEndTag(element)))
-        return;
-
-    result.append('<');
-    result.append('/');
-    result.append(element.nodeNamePreservingCase());
-    result.append('>');
 }
 
 }
