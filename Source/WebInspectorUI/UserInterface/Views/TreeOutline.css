@@ -118,7 +118,7 @@ body[dir=rtl] .tree-outline .item .disclosure-button {
     display: block;
 }
 
-.tree-outline:matches(:focus, .force-focus) .item.selected .disclosure-button {
+.tree-outline:focus .item.selected .disclosure-button {
     background-image: url(../Images/DisclosureTriangles.svg#closed-selected) !important;
 }
 
@@ -126,7 +126,7 @@ body[dir=rtl] .tree-outline .item .disclosure-button {
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
-.tree-outline:matches(:focus, .force-focus) .item.selected.expanded .disclosure-button {
+.tree-outline:focus .item.selected.expanded .disclosure-button {
     background-image: url(../Images/DisclosureTriangles.svg#open-selected) !important;
 }
 
@@ -182,7 +182,7 @@ body[dir=rtl] .tree-outline .item .status {
     background-color: var(--selected-background-color-unfocused);
 }
 
-.tree-outline:matches(:focus, .force-focus) .item.selected {
+.tree-outline:focus .item.selected {
     color: var(--selected-foreground-color);
     background-color: var(--selected-background-color);
 }
@@ -227,7 +227,7 @@ body[dir=rtl] .tree-outline .item .status {
     font-size: 9px;
 }
 
-.tree-outline:matches(:focus, .force-focus) .item.selected .subtitle {
+.tree-outline:focus .item.selected .subtitle {
     color: hsla(0, 0%, 100%, 0.9);
 }
 
@@ -242,7 +242,7 @@ body[dir=rtl] .tree-outline .item .status {
     height: 14px;
 }
 
-.tree-outline:not(.large):matches(:focus, .force-focus) .item.selected .status .indeterminate-progress-spinner {
+.tree-outline:not(.large):focus .item.selected .status .indeterminate-progress-spinner {
     filter: invert();
 }
 

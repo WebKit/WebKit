@@ -49,7 +49,7 @@
     color: hsl(0, 0%, 60%);
 }
 
-.profile > .data-grid:matches(:focus, .force-focus) tr.selected td .location {
+.profile > .data-grid:focus tr.selected td .location {
     color: hsl(0, 0%, 85%);
 }
 

@@ -52,7 +52,7 @@ body[dir=rtl] .item.action::before {
     margin-left: var(--tree-outline-icon-margin-end);
 }
 
-.tree-outline:matches(:focus, .force-focus) .item.action.selected:not(.initial-state, .invalid) > .icon {
+.tree-outline:focus .item.action.selected:not(.initial-state, .invalid) > .icon {
     filter: invert();
     opacity: 1;
 }
@@ -67,8 +67,8 @@ body[dir=rtl] .item.action::before {
     font-style: italic;
 }
 
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:matches(:focus, .force-focus) .item.action.selected > .titles .parameter.swizzled,
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:matches(:focus, .force-focus) .item.action.selected::before {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.action.selected > .titles .parameter.swizzled,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.action.selected::before {
     color: var(--selected-secondary-text-color);
 }
 

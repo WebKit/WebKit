@@ -73,20 +73,20 @@ body[dir=rtl] .timeline-record-bar.unfinished > .segment {
     border-bottom-left-radius: 0 !important;
 }
 
-:matches(:focus, .force-focus) .selected .timeline-record-bar > .segment {
+:focus .selected .timeline-record-bar > .segment {
     background-color: white !important;
     border: none !important;
 }
 
-:matches(:focus, .force-focus) .selected .timeline-record-bar > .segment.inactive {
+:focus .selected .timeline-record-bar > .segment.inactive {
     background-color: hsl(215, 63%, 85%) !important;
 }
 
-body[dir=ltr] :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+body[dir=ltr] :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
     border-left: var(--timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start);
 }
 
-body[dir=rtl] :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+body[dir=rtl] :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
     border-right: var(--timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start);
 }
 

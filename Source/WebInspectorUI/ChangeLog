@@ -1,3 +1,90 @@
+2018-10-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: remove unused  TreeOutline style .force-focus
+        https://bugs.webkit.org/show_bug.cgi?id=190480
+        <rdar://problem/45203484>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline:focus .item.call-frame.selected .status > .status-image):
+        (.tree-outline:matches(:focus, .force-focus) .item.call-frame.selected .status > .status-image): Deleted.
+
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:focus .item.processing.selected .subtitle > progress):
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:matches(:focus, .force-focus) .item.processing.selected .subtitle > progress): Deleted.
+
+        * UserInterface/Views/DataGrid.css:
+        (body[dir=ltr] .data-grid:focus tr.selected td:not(:last-child)):
+        (body[dir=rtl] .data-grid:focus tr.selected td:not(:last-child)):
+        (.data-grid:focus tr.parent.selected td.disclosure::before):
+        (.data-grid:focus tr.parent.expanded.selected td.disclosure::before):
+        (.data-grid:focus tr.selected):
+        (.data-grid:focus tr.selected td .subtitle):
+        (body:not(.window-inactive, .window-docked-inactive) .data-grid:focus tr.editable.selected .cell-content > input):
+        (@media (prefers-dark-interface)):
+        (body[dir=ltr] .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child)): Deleted.
+        (body[dir=rtl] .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child)): Deleted.
+        (.data-grid:matches(:focus, .force-focus) tr.parent.selected td.disclosure::before): Deleted.
+        (.data-grid:matches(:focus, .force-focus) tr.parent.expanded.selected td.disclosure::before): Deleted.
+        (.data-grid:matches(:focus, .force-focus) tr.selected): Deleted.
+        (.data-grid:matches(:focus, .force-focus) tr.selected td .subtitle): Deleted.
+        (body:not(.window-inactive, .window-docked-inactive) .data-grid:matches(:focus, .force-focus) tr.editable.selected .cell-content > input): Deleted.
+
+        * UserInterface/Views/Main.css:
+        (:focus .selected .go-to-arrow):
+        (:focus .selected .go-to-arrow:active):
+        (:matches(:focus, .force-focus) .selected .go-to-arrow): Deleted.
+        (:matches(:focus, .force-focus) .selected .go-to-arrow:active): Deleted.
+
+        * UserInterface/Views/ProfileView.css:
+        (.profile > .data-grid:focus tr.selected td .location):
+        (.profile > .data-grid:matches(:focus, .force-focus) tr.selected td .location): Deleted.
+
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.tree-outline:focus .item.action.selected:not(.initial-state, .invalid) > .icon):
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.action.selected > .titles .parameter.swizzled,):
+        (.tree-outline:matches(:focus, .force-focus) .item.action.selected:not(.initial-state, .invalid) > .icon): Deleted.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:matches(:focus, .force-focus) .item.action.selected > .titles .parameter.swizzled,): Deleted.
+
+        * UserInterface/Views/ScriptDetailsTimelineView.css:
+        (.tree-outline:focus .item.selected .alternate-subtitle):
+        (.tree-outline:matches(:focus, .force-focus) .item.selected .alternate-subtitle): Deleted.
+
+        * UserInterface/Views/ShaderProgramTreeElement.css:
+        (.tree-outline:focus .item.shader-program.selected .status > img):
+        (.tree-outline:matches(:focus, .force-focus) .item.shader-program.selected .status > img): Deleted.
+
+        * UserInterface/Views/ThreadTreeElement.css:
+        (.tree-outline:focus > .item.thread.selected .status-button.resume):
+        (.tree-outline:matches(:focus, .force-focus) > .item.thread.selected .status-button.resume): Deleted.
+
+        * UserInterface/Views/TimelineRecordBar.css:
+        (:focus .selected .timeline-record-bar > .segment):
+        (:focus .selected .timeline-record-bar > .segment.inactive):
+        (body[dir=ltr] :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (body[dir=rtl] :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (:matches(:focus, .force-focus) .selected .timeline-record-bar > .segment): Deleted.
+        (:matches(:focus, .force-focus) .selected .timeline-record-bar > .segment.inactive): Deleted.
+        (body[dir=ltr] :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)): Deleted.
+        (body[dir=rtl] :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)): Deleted.
+
+        * UserInterface/Views/TreeElementStatusButton.css:
+        (:focus .item.selected > .status > .status-button):
+        (:matches(:focus, .force-focus) .item.selected > .status > .status-button): Deleted.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline:focus .item.selected .disclosure-button):
+        (.tree-outline:focus .item.selected.expanded .disclosure-button):
+        (.tree-outline:focus .item.selected):
+        (.tree-outline:focus .item.selected .subtitle):
+        (.tree-outline:not(.large):focus .item.selected .status .indeterminate-progress-spinner):
+        (.tree-outline:matches(:focus, .force-focus) .item.selected .disclosure-button): Deleted.
+        (.tree-outline:matches(:focus, .force-focus) .item.selected.expanded .disclosure-button): Deleted.
+        (.tree-outline:matches(:focus, .force-focus) .item.selected): Deleted.
+        (.tree-outline:matches(:focus, .force-focus) .item.selected .subtitle): Deleted.
+        (.tree-outline:not(.large):matches(:focus, .force-focus) .item.selected .status .indeterminate-progress-spinner): Deleted.
+
 2018-10-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: detail view is not re-shown after sorting the Network table
