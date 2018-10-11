@@ -1,3 +1,20 @@
+2018-10-10  Dean Jackson  <dino@apple.com>
+
+        [WHSL -> MSL] Annotate semantics correctly in generated MSL
+        https://bugs.webkit.org/show_bug.cgi?id=190452
+        <rdar://problem/45178272>
+
+        Reviewed by Myles Maxfield.
+
+        Correctly label the appropriate semantics as [[position]]
+        and [[color(N)]].
+
+        * WebGPUShadingLanguageRI/Metal/MSLBackend.js: Identify position
+        and color attributes. Also use the semantic's index rather than
+        a counter.
+        * WebGPUShadingLanguageRI/Metal/WhlslToMsl.html: Use a <pre> for
+        output, and only include the actual shader code.
+
 2018-10-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         build-webkit --inspector-frontend shouldn't have a nonzero exit code

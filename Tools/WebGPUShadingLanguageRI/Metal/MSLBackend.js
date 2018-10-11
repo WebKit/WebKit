@@ -325,18 +325,17 @@ class MSLBackend {
         const structTypeAttributes = this._allTypeAttributes.attributesForType(structType);
         let src = `struct ${this._typeUnifier.uniqueTypeId(structType)} {\n`;
 
-        let index = 0;
         for (let [fieldName, field] of structType.fieldMap) {
             const mangledFieldName = structTypeAttributes.mangledFieldName(fieldName);
             src += `    ${this._typeUnifier.uniqueTypeId(field.type)} ${mangledFieldName}`;
 
             const annotations = [];
             if (structTypeAttributes.isVertexAttribute)
-                annotations.push(`attribute(${index++})`);
-            if (structTypeAttributes.isVertexOutputOrFragmentInput && fieldName === "wsl_Position")
+                annotations.push(`attribute(${field._semantic._index})`);
+            if (structTypeAttributes.isVertexOutputOrFragmentInput && field._semantic._name === "SV_Position")
                 annotations.push("position");
-            if (structTypeAttributes.isFragmentOutput && fieldName === "wsl_Color")
-                annotations.push("color(0)");
+            if (structTypeAttributes.isFragmentOutput && field._semantic._name == "SV_Target")
+                annotations.push(`color(${field._semantic._extraArguments[0]})`);
             if (annotations.length)
                 src += ` [[${annotations.join(", ")}]]`;
             src += `; // ${fieldName} (${field.type}) \n`;

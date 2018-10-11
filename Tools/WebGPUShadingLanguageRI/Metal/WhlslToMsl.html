@@ -240,7 +240,11 @@ function compile() {
     let output = document.querySelector("#output");
     output.textContent = "Compiling...";
     let result = whlslToMsl(source);
-    output.textContent = JSON.stringify(result);
+    if (!result._error) {
+        output.textContent = result._metalShaderLanguageSource;
+    } else {
+        output.textContent = `Error: ${result._error.originString}\n${result._error.syntaxErrorMessage}`;
+    }
 }
 
 window.addEventListener("load", init, false);
@@ -285,9 +289,9 @@ fragment FragmentOutput fragmentShader(FragmentInput fragmentInput) {
     return result;
 }
 </textarea>
-<div id="output">
+<pre id="output">
 No compiled output.
-</div>
+</pre>
 <div id="controls">
 <button>Compile</button>
 </div>
