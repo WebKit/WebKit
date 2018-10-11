@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.resource-details {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+WI.NetworkDOMNodeDetailView = class NetworkDOMNodeDetailView extends WI.NetworkDetailView
+{
+    constructor(domNode, delegate, {startTimestamp} = {})
+    {
+        console.assert(domNode instanceof WI.DOMNode);
 
-    padding: 12px 20px 0 20px;
-    overflow: scroll;
+        super(domNode, delegate);
 
-    -webkit-user-select: text;
-    white-space: nowrap;
-}
+        this._startTimestamp = startTimestamp || 0;
+
+        this.element.classList.add("dom-node");
+
+        this._domEventsContentView = null;
+    }
+
+    // Protected
+
+    initialLayout()
+    {
+        this.createDetailNavigationItem("dom-events", WI.UIString("DOM Events"));
+
+        super.initialLayout();
+    }
+
+    // Private
+
+    showContentViewForIdentifier(identifier)
+    {
+        super.showContentViewForIdentifier(identifier);
+
+        switch (identifier) {
+        case "dom-events":
+            if (!this._domEventsContentView) {
+                this._domEventsContentView = new WI.DOMNodeEventsContentView(this.representedObject, {
+                    startTimestamp: this._startTimestamp,
+                });
+            }
+            this._contentBrowser.showContentView(this._domEventsContentView, this._contentViewCookie);
+            break;
+        }
+    }
+};

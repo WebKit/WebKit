@@ -40,9 +40,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._table = null;
         this._nameColumnWidthSetting = new WI.Setting("network-table-content-view-name-column-width", 250);
 
-        this._selectedResource = null;
-        this._resourceDetailView = null;
-        this._resourceDetailViewMap = new Map;
+        this._selectedObject = null;
+        this._detailView = null;
+        this._detailViewMap = new Map;
 
         this._domNodeEntries = new Map;
 
@@ -223,8 +223,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         super.shown();
 
-        if (this._resourceDetailView)
-            this._resourceDetailView.shown();
+        if (this._detailView)
+            this._detailView.shown();
 
         if (this._table)
             this._table.restoreScrollPosition();
@@ -234,22 +234,22 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         this._hidePopover();
 
-        if (this._resourceDetailView)
-            this._resourceDetailView.hidden();
+        if (this._detailView)
+            this._detailView.hidden();
 
         super.hidden();
     }
 
     closed()
     {
-        for (let detailView of this._resourceDetailViewMap.values())
+        for (let detailView of this._detailViewMap.values())
             detailView.dispose();
-        this._resourceDetailViewMap.clear();
+        this._detailViewMap.clear();
 
         this._domNodeEntries.clear();
 
         this._hidePopover();
-        this._hideResourceDetailView();
+        this._hideDetailView();
 
         WI.Frame.removeEventListener(null, null, this);
         WI.Resource.removeEventListener(null, null, this);
@@ -267,9 +267,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._filteredEntries = [];
         this._pendingInsertions = [];
 
-        for (let detailView of this._resourceDetailViewMap.values())
+        for (let detailView of this._detailViewMap.values())
             detailView.dispose();
-        this._resourceDetailViewMap.clear();
+        this._detailViewMap.clear();
 
         this._domNodeEntries.clear();
 
@@ -282,7 +282,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._selectedResource = null;
             this._table.reloadData();
             this._hidePopover();
-            this._hideResourceDetailView();
+            this._hideDetailView();
         }
     }
 
@@ -290,11 +290,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         console.assert(representedObject instanceof WI.Resource);
 
-        let rowIndex = this._rowIndexForResource(representedObject);
+        let rowIndex = this._rowIndexForRepresentedObject(representedObject);
         if (rowIndex === -1) {
             this._selectedResource = null;
             this._table.deselectAll();
-            this._hideResourceDetailView();
+            this._hideDetailView();
             return;
         }
 
@@ -303,13 +303,13 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._showingRepresentedObjectCookie = null;
     }
 
-    // NetworkResourceDetailView delegate
+    // NetworkDetailView delegate
 
-    networkResourceDetailViewClose(resourceDetailView)
+    networkDetailViewClose(networkDetailView)
     {
         this._selectedResource = null;
         this._table.deselectAll();
-        this._hideResourceDetailView();
+        this._hideDetailView();
     }
 
     // Table dataSource
@@ -326,7 +326,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (!this._entriesSortComparator)
             return;
 
-        this._hideResourceDetailView();
+        this._hideDetailView();
 
         for (let nodeEntry of this._domNodeEntries.values())
             nodeEntry.initiatedResourceEntries.sort(this._entriesSortComparator);
@@ -362,20 +362,20 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         let rowIndex = table.selectedRow;
         if (isNaN(rowIndex)) {
-            this._selectedResource = null;
-            this._hideResourceDetailView();
+            this._selectedObject = null;
+            this._hideDetailView();
             return;
         }
 
         let entry = this._filteredEntries[rowIndex];
-        if (entry.resource === this._selectedResource)
+        if (entry.resource === this._selectedObject || entry.domNode === this._selectedObject)
             return;
 
-        this._selectedResource = entry.resource;
-        if (this._selectedResource)
-            this._showResourceDetailView(this._selectedResource);
+        this._selectedObject = entry.resource || entry.domNode;
+        if (this._selectedObject)
+            this._showDetailView(this._selectedObject);
         else
-            this._hideResourceDetailView();
+            this._hideDetailView();
     }
 
     tablePopulateCell(table, cell, column, rowIndex)
@@ -516,7 +516,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         if (WI.settings.groupByDOMNode.value && resource.initiatorNode) {
             let nodeEntry = this._domNodeEntries.get(resource.initiatorNode);
-            if (nodeEntry.initiatedResourceEntries.length > 1) {
+            if (nodeEntry.initiatedResourceEntries.length > 1 || nodeEntry.domNode.domEvents.length) {
                 cell.classList.add("child");
 
                 let range = resource.requestedByteRange;
@@ -641,9 +641,83 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         cell.removeChildren();
 
+        let container = cell.appendChild(document.createElement("div"));
+        container.className = "waterfall-container";
+
+        let graphStartTime = this._waterfallTimelineRuler.startTime;
+        let secondsPerPixel = this._waterfallTimelineRuler.secondsPerPixel;
+
+        function positionByStartOffset(element, timestamp) {
+            let styleAttribute = WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR ? "left" : "right";
+            element.style.setProperty(styleAttribute, ((timestamp - graphStartTime) / secondsPerPixel) + "px");
+        }
+
+        function setWidthForDuration(element, startTimestamp, endTimestamp) {
+            element.style.setProperty("width", ((endTimestamp - startTimestamp) / secondsPerPixel) + "px");
+        }
+
         let domNode = entry.domNode;
         if (domNode) {
-            // FIXME: <https://webkit.org/b/189773> Web Inspector: create special Network waterfall for media events
+            const domEventElementSize = 8; // Keep this in sync with `--node-waterfall-dom-event-size`.
+
+            let groupedDOMEvents = domNode.domEvents.reduce((accumulator, current) => {
+                if (!accumulator.length || (current.timestamp - accumulator.lastValue.endTimestamp) >= (domEventElementSize * secondsPerPixel)) {
+                    accumulator.push({
+                        startTimestamp: current.timestamp,
+                        domEvents: [],
+                    });
+                }
+                accumulator.lastValue.endTimestamp = current.timestamp;
+                accumulator.lastValue.domEvents.push(current);
+                return accumulator;
+            }, []);
+
+            let playing = false;
+
+            function createDOMEventLine(domEvents, startTimestamp, endTimestamp) {
+                if (domEvents.lastValue.eventName === "ended")
+                    return;
+
+                for (let i = domEvents.length - 1; i >= 0; --i) {
+                    let domEvent = domEvents[i];
+                    if (domEvent.eventName === "play" || domEvent.eventName === "playing" || domEvent.eventName === "timeupdate") {
+                        playing = true;
+                        break;
+                    }
+
+                    if (domEvent.eventName === "pause" || domEvent.eventName === "stall") {
+                        playing = false;
+                        break;
+                    }
+                }
+
+                let lineElement = container.appendChild(document.createElement("div"));
+                lineElement.classList.add("dom-activity");
+                lineElement.classList.toggle("playing", playing);
+                positionByStartOffset(lineElement, startTimestamp);
+                setWidthForDuration(lineElement, startTimestamp, endTimestamp);
+            }
+
+            for (let [a, b] of groupedDOMEvents.adjacencies())
+                createDOMEventLine(a.domEvents, a.endTimestamp, b.startTimestamp);
+
+            if (groupedDOMEvents.length)
+                createDOMEventLine(groupedDOMEvents.lastValue.domEvents, groupedDOMEvents.lastValue.endTimestamp, this._waterfallEndTime);
+
+            for (let {startTimestamp, endTimestamp, domEvents} of groupedDOMEvents) {
+                let paddingForCentering = domEventElementSize * secondsPerPixel / 2;
+
+                let eventElement = container.appendChild(document.createElement("div"));
+                eventElement.classList.add("dom-event");
+                positionByStartOffset(eventElement, startTimestamp - paddingForCentering);
+                setWidthForDuration(eventElement, startTimestamp, endTimestamp + paddingForCentering);
+                eventElement.addEventListener("mousedown", (event) => {
+                    if (event.button !== 0 || event.ctrlKey)
+                        return;
+                    this._handleNodeEntryMousedownWaterfall(eventElement, entry, domEvents);
+                });
+            }
+
             return;
         }
 
@@ -659,7 +733,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
-        let graphStartTime = this._waterfallTimelineRuler.startTime;
         if (responseEnd < graphStartTime) {
             cell.textContent = zeroWidthSpace;
             return;
@@ -671,22 +744,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
-        let secondsPerPixel = this._waterfallTimelineRuler.secondsPerPixel;
-
-        let container = cell.appendChild(document.createElement("div"));
-        container.className = "waterfall-container";
-
         function appendBlock(startTimestamp, endTimestamp, className) {
             if (isNaN(startTimestamp) || isNaN(endTimestamp) || endTimestamp - startTimestamp <= 0)
                 return null;
 
-            let startOffset = (startTimestamp - graphStartTime) / secondsPerPixel;
-            let width = (endTimestamp - startTimestamp) / secondsPerPixel;
             let block = container.appendChild(document.createElement("div"));
             block.classList.add("block", className);
-            let styleAttribute = WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR ? "left" : "right";
-            block.style[styleAttribute] = startOffset + "px";
-            block.style.width = width + "px";
+            positionByStartOffset(block, startTimestamp);
+            setWidthForDuration(block, startTimestamp, endTimestamp);
             return block;
         }
 
@@ -696,7 +761,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         mouseBlock.addEventListener("mousedown", (event) => {
             if (event.button !== 0 || event.ctrlKey)
                 return;
-            this._handleMousedownWaterfall(mouseBlock, entry, event);
+            this._handleResourceEntryMousedownWaterfall(mouseBlock, entry);
         });
 
         // Super small visualization.
@@ -1049,8 +1114,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
         this._pendingInsertions = [];
 
-        for (let resource of this._pendingUpdates)
-            this._updateEntryForResource(resource);
+        for (let updateObject of this._pendingUpdates) {
+            if (updateObject instanceof WI.Resource)
+                this._updateEntryForResource(updateObject);
+        }
         this._pendingUpdates = [];
 
         this._pendingFilter = false;
@@ -1112,9 +1179,15 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
     }
 
-    _rowIndexForResource(resource)
+    _rowIndexForRepresentedObject(object)
     {
-        return this._filteredEntries.findIndex((x) => x.resource === resource);
+        return this._filteredEntries.findIndex((x) => {
+            if (x.resource === object)
+                return true;
+            if (x.domNode === object)
+                return true;
+            return false;
+        });
     }
 
     _updateEntryForResource(resource)
@@ -1132,7 +1205,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let entry = this._entryForResource(resource);
         updateExistingEntry(this._entries[index], entry);
 
-        let rowIndex = this._rowIndexForResource(resource);
+        let rowIndex = this._rowIndexForRepresentedObject(resource);
         if (rowIndex === -1)
             return;
 
@@ -1145,43 +1218,50 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._waterfallPopover.dismiss();
     }
 
-    _hideResourceDetailView()
+    _hideDetailView()
     {
-        if (!this._resourceDetailView)
+        if (!this._detailView)
             return;
 
         this.element.classList.remove("showing-detail");
         this._table.scrollContainer.style.removeProperty("width");
 
-        this.removeSubview(this._resourceDetailView);
+        this.removeSubview(this._detailView);
 
-        this._resourceDetailView.hidden();
-        this._resourceDetailView = null;
+        this._detailView.hidden();
+        this._detailView = null;
 
         this._table.resize();
         this._table.reloadVisibleColumnCells(this._waterfallColumn);
     }
 
-    _showResourceDetailView(resource)
+    _showDetailView(object)
     {
-        let oldResourceDetailView = this._resourceDetailView;
+        let oldDetailView = this._detailView;
 
-        this._resourceDetailView = this._resourceDetailViewMap.get(resource);
-        if (!this._resourceDetailView) {
-            this._resourceDetailView = new WI.NetworkResourceDetailView(resource, this);
-            this._resourceDetailViewMap.set(resource, this._resourceDetailView);
+        this._detailView = this._detailViewMap.get(object);
+        if (!this._detailView) {
+            if (object instanceof WI.Resource)
+                this._detailView = new WI.NetworkResourceDetailView(object, this);
+            else if (object instanceof WI.DOMNode) {
+                this._detailView = new WI.NetworkDOMNodeDetailView(object, this, {
+                    startTimestamp: this._waterfallStartTime,
+                });
+            }
+
+            this._detailViewMap.set(object, this._detailView);
         }
 
-        if (oldResourceDetailView) {
-            oldResourceDetailView.hidden();
-            this.replaceSubview(oldResourceDetailView, this._resourceDetailView);
+        if (oldDetailView) {
+            oldDetailView.hidden();
+            this.replaceSubview(oldDetailView, this._detailView);
         } else
-            this.addSubview(this._resourceDetailView);
+            this.addSubview(this._detailView);
 
         if (this._showingRepresentedObjectCookie)
-            this._resourceDetailView.willShowWithCookie(this._showingRepresentedObjectCookie);
+            this._detailView.willShowWithCookie(this._showingRepresentedObjectCookie);
 
-        this._resourceDetailView.shown();
+        this._detailView.shown();
 
         this.element.classList.add("showing-detail");
         this._table.scrollContainer.style.width = this._nameColumn.width + "px";
@@ -1194,11 +1274,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _positionDetailView()
     {
-        if (!this._resourceDetailView)
+        if (!this._detailView)
             return;
 
         let side = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left";
-        this._resourceDetailView.element.style[side] = this._nameColumn.width + "px";
+        this._detailView.element.style[side] = this._nameColumn.width + "px";
         this._table.scrollContainer.style.width = this._nameColumn.width + "px";
     }
 
@@ -1331,7 +1411,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let entry = this._entries[index];
         entry.transferSize = !isNaN(resource.networkTotalTransferSize) ? resource.networkTotalTransferSize : resource.estimatedTotalTransferSize;
 
-        let rowIndex = this._rowIndexForResource(resource);
+        let rowIndex = this._rowIndexForRepresentedObject(resource);
         if (rowIndex === -1)
             return;
 
@@ -1444,6 +1524,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (!nodeEntry) {
             nodeEntry = this._entryForDOMNode(resource.initiatorNode, Object.keys(resourceEntry));
             this._domNodeEntries.set(resource.initiatorNode, nodeEntry);
+
+            resource.initiatorNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleNodeDidFireEvent, this);
         }
 
         if (!this._entriesSortComparator)
@@ -1464,6 +1546,19 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 accumulator.add(value);
             return accumulator;
         }, new Set);
+    }
+
+    _handleNodeDidFireEvent(event)
+    {
+        let domNode = event.target;
+        let {domEvent} = event.data;
+
+        this._pendingUpdates.push(domNode);
+
+        if (domEvent.timestamp > this._waterfallEndTime)
+            this._waterfallEndTime = domEvent.timestamp + (this._waterfallTimelineRuler.secondsPerPixel * 10);
+
+        this.needsLayout();
     }
 
     _hasTypeFilter()
@@ -1517,7 +1612,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         if (WI.settings.groupByDOMNode.value) {
             for (let nodeEntry of this._domNodeEntries.values()) {
-                if (nodeEntry.initiatedResourceEntries.length < 2)
+                if (nodeEntry.initiatedResourceEntries.length < 2 && !nodeEntry.domNode.domEvents.length)
                     continue;
 
                 let firstIndex = Infinity;
@@ -1614,7 +1709,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
 
         // Even if the selected resource would still be visible, lets close the detail view if a filter changes.
-        this._hideResourceDetailView();
+        this._hideDetailView();
 
         this._activeTypeFilters = newFilter;
         this._updateFilteredEntries();
@@ -1640,7 +1735,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
 
         // Even if the selected resource would still be visible, lets close the detail view if a filter changes.
-        this._hideResourceDetailView();
+        this._hideDetailView();
 
         // Search cleared.
         if (!searchQuery) {
@@ -1669,10 +1764,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _restoreSelectedRow()
     {
-        if (!this._selectedResource)
+        if (!this._selectedObject)
             return;
 
-        let rowIndex = this._rowIndexForResource(this._selectedResource);
+        let rowIndex = this._rowIndexForRepresentedObject(this._selectedObject);
         if (rowIndex === -1) {
             this._selectedResource = null;
             this._table.deselectAll();
@@ -1709,11 +1804,18 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }).catch(handlePromiseException);
     }
 
-    _waterfallPopoverContentForResource(resource)
+    _waterfallPopoverContent()
     {
         let contentElement = document.createElement("div");
-        contentElement.className = "waterfall-popover-content";
+        contentElement.classList.add("waterfall-popover-content");
+        return contentElement;
+    }
 
+    _waterfallPopoverContentForResourceEntry(resourceEntry)
+    {
+        let contentElement = this._waterfallPopoverContent();
+
+        let resource = resourceEntry.resource;
         if (!resource.hasResponse() || !resource.firstTimestamp || !resource.lastTimestamp) {
             contentElement.textContent = WI.UIString("Resource has no timing data");
             return contentElement;
@@ -1726,7 +1828,32 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         return contentElement;
     }
 
-    _handleMousedownWaterfall(mouseBlock, entry, event)
+    _waterfallPopoverContentForNodeEntry(nodeEntry, domEvents)
+    {
+        let contentElement = this._waterfallPopoverContent();
+
+        let breakdownView = new WI.DOMEventsBreakdownView(domEvents, {
+            startTimestamp: this._waterfallStartTime,
+        });
+        contentElement.appendChild(breakdownView.element);
+        breakdownView.updateLayout();
+
+        return contentElement;
+    }
+
+    _handleResourceEntryMousedownWaterfall(targetElement, resourceEntry)
+    {
+        let popoverContentElement = this._waterfallPopoverContentForResourceEntry(resourceEntry);
+        this._handleMousedownWaterfall(resourceEntry, targetElement, popoverContentElement);
+    }
+
+    _handleNodeEntryMousedownWaterfall(targetElement, nodeEntry, domEvents)
+    {
+        let popoverContentElement = this._waterfallPopoverContentForNodeEntry(nodeEntry, domEvents);
+        this._handleMousedownWaterfall(nodeEntry, targetElement, popoverContentElement);
+    }
+
+    _handleMousedownWaterfall(entry, targetElement, popoverContentElement)
     {
         if (!this._waterfallPopover) {
             this._waterfallPopover = new WI.Popover;
@@ -1737,7 +1864,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
 
         let calculateTargetFrame = () => {
-            let rowIndex = this._rowIndexForResource(entry.resource);
+            if (!entry.resource)
+                return WI.Rect.rectFromClientRect(targetElement.getBoundingClientRect());
+
+            let rowIndex = this._rowIndexForRepresentedObject(entry.resource);
             let cell = this._table.cellForRowAndColumn(rowIndex, this._waterfallColumn);
             if (!cell) {
                 this._waterfallPopover.dismiss();
@@ -1767,7 +1897,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 this._waterfallPopover.present(bounds, preferredEdges);
         };
 
-        let popoverContentElement = this._waterfallPopoverContentForResource(entry.resource);
         this._waterfallPopover.presentNewContentWithFrame(popoverContentElement, targetFrame, preferredEdges);
     }
 

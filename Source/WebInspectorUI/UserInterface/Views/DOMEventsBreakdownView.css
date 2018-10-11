@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.resource-details {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    padding: 12px 20px 0 20px;
-    overflow: scroll;
-
+.waterfall-popover-content .dom-events-breakdown {
     -webkit-user-select: text;
-    white-space: nowrap;
+    max-height: 210px;
+    overflow-y: scroll;
+}
+
+.dom-events-breakdown {
+    margin: 5px;
+}
+
+.dom-events-breakdown table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dom-events-breakdown tr > :matches(th, td) {
+    padding: 2px 4px;
+    text-align: start;
+}
+
+.dom-events-breakdown tbody > tr {
+    /* FIXME: <https://webkit.org/b/94128> */
+    border-top: 1px solid lightgrey;
+}
+
+.dom-events-breakdown .graph {
+    position: relative;
+    width: 100%;
+    border-right: var(--point-size) solid transparent;
+    border-left: var(--point-size) solid transparent;
+
+    --point-size: 8px;
+}
+
+.dom-events-breakdown .graph > :matches(.point, .area) {
+    position: absolute;
+}
+
+.dom-events-breakdown .graph > .point {
+    top: calc(50% - (var(--point-size) / 2));
+    width: var(--point-size);
+    height: var(--point-size);
+    background-color: var(--selected-background-color);
+    border-radius: 50%;
+}
+
+.dom-events-breakdown .time {
+    text-align: end;
 }

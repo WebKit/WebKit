@@ -1,0 +1,10 @@
+Tests that listeners registered by InspectorDOMAgent::addEventListenersToNode are working.
+
+
+
+== Running test suite: DOM.didFireEvent
+-- Running test case: DOM.didFireEvent
+Adding video source "resources/white.mp4"...
+PASS: Should recieve a "loadstart" event.
+PASS: Event timestamp should be greater than 0.
+

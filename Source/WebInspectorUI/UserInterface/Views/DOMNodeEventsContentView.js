@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.resource-details {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+WI.DOMNodeEventsContentView = class DOMNodeEventsContentView extends WI.ContentView
+{
+    constructor(domNode, {startTimestamp} = {})
+    {
+        console.assert(domNode instanceof WI.DOMNode);
 
-    padding: 12px 20px 0 20px;
-    overflow: scroll;
+        const representedObject = null;
+        super(representedObject);
 
-    -webkit-user-select: text;
-    white-space: nowrap;
-}
+        this._domNode = domNode;
+        this._startTimestamp = startTimestamp || 0;
+
+        this.element.classList.add("dom-node-details", "dom-events");
+
+        this._breakdownView = null;
+    }
+
+    // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        this._breakdownView = new WI.DOMEventsBreakdownView(this._domNode.domEvents.slice(), {
+            includeGraph: true,
+            startTimestamp: this._startTimestamp,
+        });
+        this.addSubview(this._breakdownView);
+
+        this._domNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
+    }
+
+    closed()
+    {
+        this._domNode.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
+    // Private
+
+    _handleDOMNodeDidFireEvent(event)
+    {
+        let {domEvent} = event.data;
+
+        if (this._breakdownView)
+            this._breakdownView.addEvent(domEvent);
+    }
+};

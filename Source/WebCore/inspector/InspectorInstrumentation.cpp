@@ -135,6 +135,12 @@ int InspectorInstrumentation::identifierForNodeImpl(InstrumentingAgents& instrum
     return 0;
 }
 
+void InspectorInstrumentation::addEventListenersToNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
+{
+    if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
+        domAgent->addEventListenersToNode(node);
+}
+
 void InspectorInstrumentation::willInsertDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& parent)
 {
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())

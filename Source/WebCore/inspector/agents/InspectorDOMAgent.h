@@ -158,6 +158,7 @@ public:
 
     // InspectorInstrumentation
     int identifierForNode(Node&);
+    void addEventListenersToNode(Node&);
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willModifyDOMAttr(Element&, const AtomicString& oldValue, const AtomicString& newValue);
@@ -315,6 +316,8 @@ private:
             return true;
         }
     };
+
+    friend class EventFiredCallback;
 
     HashMap<int, InspectorEventListener> m_eventListenerEntries;
     int m_lastEventListenerId { 1 };

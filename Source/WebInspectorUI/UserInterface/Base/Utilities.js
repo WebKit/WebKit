@@ -464,6 +464,14 @@ Object.defineProperty(Array.prototype, "lastValue",
     }
 });
 
+Object.defineProperty(Array.prototype, "adjacencies",
+{
+    value: function*() {
+        for (let i = 1; i < this.length; ++i)
+            yield [this[i - 1], this[i]];
+    }
+});
+
 Object.defineProperty(Array.prototype, "remove",
 {
     value(value)

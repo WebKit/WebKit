@@ -1,3 +1,17 @@
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create special Network waterfall for media events
+        https://bugs.webkit.org/show_bug.cgi?id=189773
+        <rdar://problem/44626605>
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/inspector/dom/didFireEvent-expected.txt: Added.
+        * http/tests/inspector/dom/didFireEvent.html: Added.
+
+        * inspector/unit-tests/array-utilities-expected.txt:
+        * inspector/unit-tests/array-utilities.html:
+
 2018-10-10  Brent Fulgham  <bfulgham@apple.com>
 
         Only report the supported WebGL version

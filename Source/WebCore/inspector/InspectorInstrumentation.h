@@ -107,6 +107,7 @@ public:
     static bool isDebuggerPaused(Frame*);
 
     static int identifierForNode(Node&);
+    static void addEventListenersToNode(Node&);
     static void willInsertDOMNode(Document&, Node& parent);
     static void didInsertDOMNode(Document&, Node&);
     static void willRemoveDOMNode(Document&, Node&);
@@ -292,6 +293,7 @@ private:
     static bool isDebuggerPausedImpl(InstrumentingAgents&);
 
     static int identifierForNodeImpl(InstrumentingAgents&, Node&);
+    static void addEventListenersToNodeImpl(InstrumentingAgents&, Node&);
     static void willInsertDOMNodeImpl(InstrumentingAgents&, Node& parent);
     static void didInsertDOMNodeImpl(InstrumentingAgents&, Node&);
     static void willRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
@@ -478,6 +480,13 @@ inline int InspectorInstrumentation::identifierForNode(Node& node)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(node.document()))
         return identifierForNodeImpl(*instrumentingAgents, node);
     return 0;
+}
+
+inline void InspectorInstrumentation::addEventListenersToNode(Node& node)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForDocument(node.document()))
+        addEventListenersToNodeImpl(*instrumentingAgents, node);
 }
 
 inline void InspectorInstrumentation::willInsertDOMNode(Document& document, Node& parent)

@@ -164,6 +164,23 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Array.prototype.adjacencies",
+        test() {
+            function logAdjacencies(array) {
+                InspectorTest.log(JSON.stringify(array) + " => " + JSON.stringify(Array.from(array.adjacencies())));
+            }
+
+            logAdjacencies([]);
+            logAdjacencies([1]);
+            logAdjacencies([1, 2]);
+            logAdjacencies([1, 2, 3]);
+            logAdjacencies([1, 2, 3, 4]);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "Array.prototype.remove",
         test() {
             let arr1 = [1, 2, 3, 1];

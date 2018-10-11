@@ -243,6 +243,7 @@ localizedStrings["Custom"] = "Custom";
 localizedStrings["DNS"] = "DNS";
 localizedStrings["DOM Content Loaded \u2014 %s"] = "DOM Content Loaded \u2014 %s";
 localizedStrings["DOM Event"] = "DOM Event";
+localizedStrings["DOM Events"] = "DOM Events";
 localizedStrings["Damping"] = "Damping";
 localizedStrings["Data"] = "Data";
 localizedStrings["Data returned from the database is too large."] = "Data returned from the database is too large.";

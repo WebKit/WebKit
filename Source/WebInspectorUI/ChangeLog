@@ -1,5 +1,163 @@
 2018-10-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: create special Network waterfall for media events
+        https://bugs.webkit.org/show_bug.cgi?id=189773
+        <rdar://problem/44626605>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Base/Utilities.js:
+
+        * UserInterface/Protocol/DOMObserver.js:
+        (WI.DOMObserver.prototype.didFireEvent): Added.
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.didFireEvent): Added.
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode):
+        (WI.DOMNode.prototype.get domEvents): Added.
+        (WI.DOMNode.prototype.didFireEvent): Added.
+        (WI.DOMNode.prototype._addDOMEvent): Added.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.shown):
+        (WI.NetworkTableContentView.prototype.hidden):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.showRepresentedObject):
+        (WI.NetworkTableContentView.prototype.networkDetailViewClose): Added.
+        (WI.NetworkTableContentView.prototype.tableSortChanged):
+        (WI.NetworkTableContentView.prototype.tableSelectionDidChange):
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.positionByStartOffset): Added.
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.setWidthForDuration): Added.
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.createDOMEventLine): Added.
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.appendBlock):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph):
+        (WI.NetworkTableContentView.prototype._processPendingEntries):
+        (WI.NetworkTableContentView.prototype._rowIndexForRepresentedObject): Added.
+        (WI.NetworkTableContentView.prototype._updateEntryForResource):
+        (WI.NetworkTableContentView.prototype._hideDetailView): Added.
+        (WI.NetworkTableContentView.prototype._showDetailView): Added.
+        (WI.NetworkTableContentView.prototype._positionDetailView): Added.
+        (WI.NetworkTableContentView.prototype._resourceTransferSizeDidChange):
+        (WI.NetworkTableContentView.prototype._tryLinkResourceToDOMNode):
+        (WI.NetworkTableContentView.prototype._handleNodeDidFireEvent): Added.
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._typeFilterScopeBarSelectionChanged):
+        (WI.NetworkTableContentView.prototype._urlFilterDidChange):
+        (WI.NetworkTableContentView.prototype._restoreSelectedRow):
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContent): Added.
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForResourceEntry): Added.
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForNodeEntry): Added.
+        (WI.NetworkTableContentView.prototype._handleResourceEntryMousedownWaterfall): Added.
+        (WI.NetworkTableContentView.prototype._handleNodeEntryMousedownWaterfall): Added.
+        (WI.NetworkTableContentView.prototype._handleMousedownWaterfall): Added.
+        (WI.NetworkTableContentView.prototype.networkResourceDetailViewClose): Deleted.
+        (WI.NetworkTableContentView.prototype._rowIndexForResource): Deleted.
+        (WI.NetworkTableContentView.prototype._hideResourceDetailView): Deleted.
+        (WI.NetworkTableContentView.prototype._showResourceDetailView): Deleted.
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForResource): Deleted.
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.network .network-table): Added.
+        (.network-table :not(.header) .cell.waterfall .waterfall-container > .dom-event): Added.
+        (.network-table :not(.header) .cell.waterfall .waterfall-container > .dom-activity): Added.
+        (.network-table :not(.header) .cell.waterfall .waterfall-container > .dom-activity.playing): Added.
+
+        * UserInterface/Views/NetworkDOMNodeDetailView.js: Added.
+        (WI.NetworkDOMNodeDetailView):
+        (WI.NetworkDOMNodeDetailView.prototype.initialLayout):
+        (WI.NetworkDOMNodeDetailView.prototype.showContentViewForIdentifier):
+
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (.content-view.resource-details):
+        (.network-resource-detail): Deleted.
+        (.network-resource-detail .navigation-bar): Deleted.
+        (.network-resource-detail .item.close > .glyph): Deleted.
+        (.network-resource-detail .item.close > .glyph:hover): Deleted.
+        (.network-resource-detail .item.close > .glyph:active): Deleted.
+        (.network .network-resource-detail .navigation-bar .item.radio.button.text-only): Deleted.
+        (.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected): Deleted.
+        (.network-resource-detail > .content-browser): Deleted.
+        (@media (prefers-dark-interface)): Deleted.
+        * UserInterface/Views/NetworkResourceDetailView.js:
+        (WI.NetworkResourceDetailView):
+        (WI.NetworkResourceDetailView.prototype.shown):
+        (WI.NetworkResourceDetailView.prototype.headersContentViewGoToRequestData):
+        (WI.NetworkResourceDetailView.prototype.sizesContentViewGoToHeaders):
+        (WI.NetworkResourceDetailView.prototype.sizesContentViewGoToRequestBody):
+        (WI.NetworkResourceDetailView.prototype.sizesContentViewGoToResponseBody):
+        (WI.NetworkResourceDetailView.prototype.initialLayout):
+        (WI.NetworkResourceDetailView.prototype.showContentViewForIdentifier):
+        (WI.NetworkResourceDetailView.prototype.get resource): Deleted.
+        (WI.NetworkResourceDetailView.prototype.hidden): Deleted.
+        (WI.NetworkResourceDetailView.prototype.dispose): Deleted.
+        (WI.NetworkResourceDetailView.prototype.willShowWithCookie): Deleted.
+        (WI.NetworkResourceDetailView.prototype.initialLayout): Deleted.
+        (WI.NetworkResourceDetailView.prototype._showPreferredContentView): Deleted.
+        (WI.NetworkResourceDetailView.prototype._showContentViewForNavigationItem): Deleted.
+        (WI.NetworkResourceDetailView.prototype._navigationItemSelected): Deleted.
+        (WI.NetworkResourceDetailView.prototype._handleCloseButton): Deleted.
+
+        * UserInterface/Views/NetworkDetailView.js: Added.
+        (WI.NetworkDetailView):
+        (WI.NetworkDetailView.prototype.get representedObject):
+        (WI.NetworkDetailView.prototype.shown):
+        (WI.NetworkDetailView.prototype.hidden):
+        (WI.NetworkDetailView.prototype.dispose):
+        (WI.NetworkDetailView.prototype.willShowWithCookie):
+        (WI.NetworkDetailView.prototype.initialLayout):
+        (WI.NetworkDetailView.prototype.createDetailNavigationItem):
+        (WI.NetworkDetailView.prototype.detailNavigationItemForIdentifier):
+        (WI.NetworkDetailView.prototype.showContentViewForIdentifier):
+        (WI.NetworkDetailView.prototype._showPreferredContentView):
+        (WI.NetworkDetailView.prototype._navigationItemSelected):
+        (WI.NetworkDetailView.prototype._handleCloseButton):
+        * UserInterface/Views/NetworkDetailView.css: Added.
+        (.network-detail):
+        (.network-detail .navigation-bar):
+        (.network-detail .item.close > .glyph):
+        (.network-detail .item.close > .glyph:hover):
+        (.network-detail .item.close > .glyph:active):
+        (.network .network-detail .navigation-bar .item.radio.button.text-only):
+        (.network .network-detail .navigation-bar .item.radio.button.text-only.selected):
+        (.network-detail > .content-browser):
+        (@media (prefers-dark-interface)):
+        Create base class for detail views shown in the Network tab.
+
+        * UserInterface/Views/DOMNodeEventsContentView.js: Added.
+        (WI.DOMNodeEventsContentView):
+        (WI.DOMNodeEventsContentView.prototype.initialLayout):
+        (WI.DOMNodeEventsContentView.prototype.closed):
+        (WI.DOMNodeEventsContentView.prototype._handleDOMNodeDidFireEvent):
+        * UserInterface/Views/DOMNodeEventsContentView.css: Added.
+        (.dom-node-details.dom-events):
+
+        * UserInterface/Views/DOMEventsBreakdownView.js: Added.
+        (WI.DOMEventsBreakdownView):
+        (WI.DOMEventsBreakdownView.prototype.addEvent):
+        (WI.DOMEventsBreakdownView.prototype.initialLayout):
+        (WI.DOMEventsBreakdownView.prototype._populateTable.percentOfTotalTime):
+        (WI.DOMEventsBreakdownView.prototype._populateTable):
+        * UserInterface/Views/DOMEventsBreakdownView.css: Added.
+        (.waterfall-popover-content .dom-events-breakdown):
+        (.dom-events-breakdown):
+        (.dom-events-breakdown table):
+        (.dom-events-breakdown tr > :matches(th, td)):
+        (.dom-events-breakdown tbody > tr):
+        (.dom-events-breakdown .graph):
+        (.dom-events-breakdown .graph > :matches(.point, .area)):
+        (.dom-events-breakdown .graph > .point):
+        (.dom-events-breakdown .time):
+
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (.resource-timing-breakdown > table > tr.header:not(.total-row) > td): Added.
+        (.popover.waterfall-popover): Deleted.
+
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r236853): Uncaught Exception: undefined is not an object (evaluating 'entry.resource')
         https://bugs.webkit.org/show_bug.cgi?id=190442
 

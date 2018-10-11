@@ -122,6 +122,17 @@ WI.DOMManager = class DOMManager extends WI.Object
         node.dispatchEventToListeners(WI.DOMNode.Event.EventListenersChanged);
     }
 
+    didFireEvent(nodeId, eventName, timestamp)
+    {
+        // Called from WI.DOMObserver.
+
+        let node = this._idToDOMNode[nodeId];
+        if (!node)
+            return;
+
+        node.didFireEvent(eventName, timestamp);
+    }
+
     // Private
 
     _wrapClientCallback(callback)

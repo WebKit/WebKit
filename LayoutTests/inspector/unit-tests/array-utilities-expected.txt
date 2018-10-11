@@ -74,6 +74,13 @@ PASS: shallowEqual of non-arrays should be false.
 PASS: lastValue of a nonempty array should be the last value.
 PASS: lastValue of an empty array should be undefined.
 
+-- Running test case: Array.prototype.adjacencies
+[] => []
+[1] => []
+[1,2] => [[1,2]]
+[1,2,3] => [[1,2],[2,3]]
+[1,2,3,4] => [[1,2],[2,3],[3,4]]
+
 -- Running test case: Array.prototype.remove
 PASS: remove should only remove the first matching value.
 PASS: remove should only remove values that strictly match.

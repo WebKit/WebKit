@@ -61,6 +61,7 @@
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
@@ -219,6 +220,42 @@ private:
     RefPtr<Node> m_node;
 };
 
+class EventFiredCallback final : public EventListener {
+public:
+    static Ref<EventFiredCallback> create(InspectorDOMAgent& domAgent)
+    {
+        return adoptRef(*new EventFiredCallback(domAgent));
+    }
+
+    bool operator==(const EventListener& other) const final
+    {
+        return this == &other;
+    }
+
+    void handleEvent(ScriptExecutionContext&, Event& event) final
+    {
+        if (!is<Node>(event.target()))
+            return;
+
+        auto* node = downcast<Node>(event.target());
+        int nodeId = m_domAgent.pushNodePathToFrontend(node);
+        if (!nodeId)
+            return;
+
+        auto timestamp = m_domAgent.m_environment.executionStopwatch()->elapsedTime().seconds();
+        m_domAgent.m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp);
+    }
+
+private:
+    EventFiredCallback(InspectorDOMAgent& domAgent)
+        : EventListener(EventListener::CPPEventListenerType)
+        , m_domAgent(domAgent)
+    {
+    }
+
+    InspectorDOMAgent& m_domAgent;
+};
+
 String InspectorDOMAgent::toErrorString(ExceptionCode ec)
 {
     return ec ? String(DOMException::name(ec)) : emptyString();
@@ -252,6 +289,9 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
 
     m_instrumentingAgents.setInspectorDOMAgent(this);
     m_document = m_pageAgent->mainFrame().document();
+
+    for (auto* mediaElement : HTMLMediaElement::allMediaElements())
+        addEventListenersToNode(*mediaElement);
 
     if (m_nodeToFocus)
         focusNode();
@@ -2088,6 +2128,39 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
 int InspectorDOMAgent::identifierForNode(Node& node)
 {
     return pushNodePathToFrontend(&node);
+}
+
+void InspectorDOMAgent::addEventListenersToNode(Node& node)
+{
+    auto callback = EventFiredCallback::create(*this);
+
+    auto createEventListener = [&] (const AtomicString& eventName) {
+        node.addEventListener(eventName, callback.copyRef(), false);
+    };
+
+    if (is<HTMLMediaElement>(node)) {
+        createEventListener(eventNames().abortEvent);
+        createEventListener(eventNames().canplayEvent);
+        createEventListener(eventNames().canplaythroughEvent);
+        createEventListener(eventNames().durationchangeEvent);
+        createEventListener(eventNames().emptiedEvent);
+        createEventListener(eventNames().endedEvent);
+        createEventListener(eventNames().errorEvent);
+        createEventListener(eventNames().loadeddataEvent);
+        createEventListener(eventNames().loadedmetadataEvent);
+        createEventListener(eventNames().loadstartEvent);
+        createEventListener(eventNames().pauseEvent);
+        createEventListener(eventNames().playEvent);
+        createEventListener(eventNames().playingEvent);
+        createEventListener(eventNames().ratechangeEvent);
+        createEventListener(eventNames().seekedEvent);
+        createEventListener(eventNames().seekingEvent);
+        createEventListener(eventNames().stalledEvent);
+        createEventListener(eventNames().suspendEvent);
+        createEventListener(eventNames().timeupdateEvent);
+        createEventListener(eventNames().volumechangeEvent);
+        createEventListener(eventNames().waitingEvent);
+    }
 }
 
 void InspectorDOMAgent::didInsertDOMNode(Node& node)

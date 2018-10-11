@@ -659,6 +659,15 @@
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId" }
             ]
+        },
+        {
+            "name": "didFireEvent",
+            "description": "Called when an event is fired on a node.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId" },
+                { "name": "eventName", "type": "string" },
+                { "name": "timestamp", "$ref": "Network.Timestamp", "description": "Time when the event was fired" }
+            ]
         }
     ]
 }

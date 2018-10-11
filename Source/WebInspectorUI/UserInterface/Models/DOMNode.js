@@ -137,9 +137,13 @@ WI.DOMNode = class DOMNode extends WI.Object
             this.name = payload.name;
             this.value = payload.value;
         }
+
+        this._domEvents = [];
     }
 
     // Public
+
+    get domEvents() { return this._domEvents; }
 
     get frameIdentifier()
     {
@@ -697,6 +701,23 @@ WI.DOMNode = class DOMNode extends WI.Object
         return !!this.ownerSVGElement;
     }
 
+    didFireEvent(eventName, timestamp)
+    {
+        // Called from WI.DOMManager.
+
+        this._addDOMEvent({
+            eventName,
+            timestamp: WI.timelineManager.computeElapsedTime(timestamp),
+        });
+    }
+
+    _addDOMEvent(domEvent)
+    {
+        this._domEvents.push(domEvent);
+
+        this.dispatchEventToListeners(WI.DOMNode.Event.DidFireEvent, {domEvent});
+    }
+
     _setAttributesPayload(attrs)
     {
         this._attributes = [];
@@ -844,6 +865,7 @@ WI.DOMNode.Event = {
     AttributeModified: "dom-node-attribute-modified",
     AttributeRemoved: "dom-node-attribute-removed",
     EventListenersChanged: "dom-node-event-listeners-changed",
+    DidFireEvent: "dom-node-did-fire-event",
 };
 
 WI.DOMNode.PseudoElementType = {

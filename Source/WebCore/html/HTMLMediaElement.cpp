@@ -53,6 +53,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
+#include "InspectorInstrumentation.h"
 #include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSHTMLMediaElement.h"
@@ -522,6 +523,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     ALWAYS_LOG(LOGIDENTIFIER);
 
     setHasCustomStyleResolveCallbacks();
+
+    InspectorInstrumentation::addEventListenersToNode(*this);
 }
 
 void HTMLMediaElement::finishInitialization()

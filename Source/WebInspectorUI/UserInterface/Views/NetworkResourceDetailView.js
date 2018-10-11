@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,73 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
+WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.NetworkDetailView
 {
     constructor(resource, delegate)
     {
-        super();
-
         console.assert(resource instanceof WI.Resource);
 
-        this._resource = resource;
-        this._delegate = delegate || null;
+        super(resource, delegate);
 
-        this.element.classList.add("network-resource-detail");
+        this.element.classList.add("resource");
 
-        this._contentBrowser = null;
         this._resourceContentView = null;
         this._headersContentView = null;
         this._cookiesContentView = null;
         this._sizesContentView = null;
         this._timingContentView = null;
-
-        this._contentViewCookie = null;
     }
 
     // Public
 
-    get resource() { return this._resource; }
-
     shown()
     {
-        if (!this._contentBrowser)
-            return;
+        if (this._contentBrowser && this._contentViewCookie && "lineNumber" in this._contentViewCookie && "columnNumber" in this._contentViewCookie)
+            this._contentBrowser.navigationBar.selectedNavigationItem = this.detailNavigationItemForIdentifier("preview");
 
-        this._showPreferredContentView();
-
-        if (this._contentViewCookie) {
-            if ("lineNumber" in this._contentViewCookie && "columnNumber" in this._contentViewCookie)
-                this._contentBrowser.navigationBar.selectedNavigationItem = this._previewNavigationItem;
-
-            this._contentBrowser.showContentView(this._contentBrowser.currentContentView, this._contentViewCookie);
-            this._contentViewCookie = null;
-        }
-
-        this._contentBrowser.shown();
-    }
-
-    hidden()
-    {
-        this._contentBrowser.hidden();
-    }
-
-    dispose()
-    {
-        this._delegate = null;
-
-        this._contentBrowser.contentViewContainer.closeAllContentViews();
-    }
-
-    willShowWithCookie(cookie)
-    {
-        this._contentViewCookie = cookie;
+        super.shown();
     }
 
     // ResourceHeadersContentView delegate
 
     headersContentViewGoToRequestData(headersContentView)
     {
-        this._contentBrowser.navigationBar.selectedNavigationItem = this._previewNavigationItem;
+        this._contentBrowser.navigationBar.selectedNavigationItem = this.detailNavigationItemForIdentifier("preview");
 
         this._resourceContentView.showRequest();
     }
@@ -98,19 +63,19 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
 
     sizesContentViewGoToHeaders(metricsContentView)
     {
-        this._contentBrowser.navigationBar.selectedNavigationItem = this._headersNavigationItem;
+        this._contentBrowser.navigationBar.selectedNavigationItem = this.detailNavigationItemForIdentifier("headers");
     }
 
     sizesContentViewGoToRequestBody(metricsContentView)
     {
-        this._contentBrowser.navigationBar.selectedNavigationItem = this._previewNavigationItem;
+        this._contentBrowser.navigationBar.selectedNavigationItem = this.detailNavigationItemForIdentifier("preview");
 
         this._resourceContentView.showRequest();
     }
 
     sizesContentViewGoToResponseBody(metricsContentView)
     {
-        this._contentBrowser.navigationBar.selectedNavigationItem = this._previewNavigationItem;
+        this._contentBrowser.navigationBar.selectedNavigationItem = this.detailNavigationItemForIdentifier("preview");
 
         this._resourceContentView.showResponse();
     }
@@ -119,123 +84,52 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
 
     initialLayout()
     {
-        let closeNavigationItem = new WI.ButtonNavigationItem("close", WI.UIString("Close detail view"), "Images/CloseLarge.svg", 16, 16);
-        closeNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCloseButton.bind(this));
-        closeNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+        this.createDetailNavigationItem("preview", WI.UIString("Preview"));
+        this.createDetailNavigationItem("headers", WI.UIString("Headers"));
+        this.createDetailNavigationItem("cookies", WI.UIString("Cookies"));
+        this.createDetailNavigationItem("sizes", WI.UIString("Sizes"));
+        this.createDetailNavigationItem("timing", WI.UIString("Timing"));
 
-        let contentViewNavigationItemsGroup = new WI.GroupNavigationItem;
-        let contentViewNavigationItemsFlexItem = new WI.FlexibleSpaceNavigationItem(contentViewNavigationItemsGroup, WI.FlexibleSpaceNavigationItem.Align.End);
-        contentViewNavigationItemsFlexItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-
-        const disableBackForward = true;
-        const disableFindBanner = false;
-        this._contentBrowser = new WI.ContentBrowser(null, this, disableBackForward, disableFindBanner, contentViewNavigationItemsFlexItem, contentViewNavigationItemsGroup);
-
-        this._previewNavigationItem = new WI.RadioButtonNavigationItem("preview", WI.UIString("Preview"));
-        this._headersNavigationItem = new WI.RadioButtonNavigationItem("headers", WI.UIString("Headers"));
-        this._cookiesNavigationItem = new WI.RadioButtonNavigationItem("cookies", WI.UIString("Cookies"));
-        this._sizesNavigationItem = new WI.RadioButtonNavigationItem("sizes", WI.UIString("Sizes"));
-        this._timingNavigationItem = new WI.RadioButtonNavigationItem("timing", WI.UIString("Timing"));
-
-        // Insert all of our custom navigation items at the start of the ContentBrowser's NavigationBar.
-        let index = 0;
-        this._contentBrowser.navigationBar.insertNavigationItem(closeNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(new WI.FlexibleSpaceNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(this._previewNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(this._headersNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(this._cookiesNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(this._sizesNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(this._timingNavigationItem, index++);
-        this._contentBrowser.navigationBar.addEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
-
-        this.addSubview(this._contentBrowser);
-
-        this._showPreferredContentView();
+        super.initialLayout();
     }
 
     // Private
 
-    _showPreferredContentView()
+    showContentViewForIdentifier(identifier)
     {
-        // Restore the preferred navigation item.
-        let firstNavigationItem = null;
-        let defaultIdentifier = WI.settings.selectedNetworkDetailContentViewIdentifier.value;
-        for (let navigationItem of this._contentBrowser.navigationBar.navigationItems) {
-            if (!(navigationItem instanceof WI.RadioButtonNavigationItem))
-                continue;
+        super.showContentViewForIdentifier(identifier);
 
-            if (navigationItem !== this._previewNavigationItem
-                && navigationItem !== this._headersNavigationItem
-                && navigationItem !== this._cookiesNavigationItem
-                && navigationItem !== this._sizesNavigationItem
-                && navigationItem !== this._timingNavigationItem)
-                continue;
-
-            if (!firstNavigationItem)
-                firstNavigationItem = navigationItem;
-
-            if (navigationItem.identifier === defaultIdentifier) {
-                this._contentBrowser.navigationBar.selectedNavigationItem = navigationItem;
-                return;
-            }
-        }
-
-        console.assert(firstNavigationItem, "Should have found at least one navigation item above");
-        this._contentBrowser.navigationBar.selectedNavigationItem = firstNavigationItem;
-    }
-
-    _showContentViewForNavigationItem(navigationItem)
-    {
-        let identifier = navigationItem.identifier;
         if (this._contentViewCookie && "lineNumber" in this._contentViewCookie && "columnNumber" in this._contentViewCookie)
-            identifier = this._previewNavigationItem.identifier;
+            identifier = "preview";
 
         switch (identifier) {
         case "preview":
             if (!this._resourceContentView)
-                this._resourceContentView = this._contentBrowser.showContentViewForRepresentedObject(this._resource);
+                this._resourceContentView = this._contentBrowser.showContentViewForRepresentedObject(this.representedObject);
             this._contentBrowser.showContentView(this._resourceContentView, this._contentViewCookie);
             break;
         case "headers":
             if (!this._headersContentView)
-                this._headersContentView = new WI.ResourceHeadersContentView(this._resource, this);
+                this._headersContentView = new WI.ResourceHeadersContentView(this.representedObject, this);
             this._contentBrowser.showContentView(this._headersContentView, this._contentViewCookie);
             break;
         case "cookies":
             if (!this._cookiesContentView)
-                this._cookiesContentView = new WI.ResourceCookiesContentView(this._resource);
+                this._cookiesContentView = new WI.ResourceCookiesContentView(this.representedObject);
             this._contentBrowser.showContentView(this._cookiesContentView, this._contentViewCookie);
             break;
         case "sizes":
             if (!this._sizesContentView)
-                this._sizesContentView = new WI.ResourceSizesContentView(this._resource, this);
+                this._sizesContentView = new WI.ResourceSizesContentView(this.representedObject, this);
             this._contentBrowser.showContentView(this._sizesContentView, this._contentViewCookie);
             break;
         case "timing":
             if (!this._timingContentView)
-                this._timingContentView = new WI.ResourceTimingContentView(this._resource);
+                this._timingContentView = new WI.ResourceTimingContentView(this.representedObject);
             this._contentBrowser.showContentView(this._timingContentView, this._contentViewCookie);
             break;
         }
 
         this._contentViewCookie = null;
-    }
-
-    _navigationItemSelected(event)
-    {
-        let navigationItem = event.target.selectedNavigationItem;
-        if (!(navigationItem instanceof WI.RadioButtonNavigationItem))
-            return;
-
-        this._showContentViewForNavigationItem(navigationItem);
-
-        console.assert(navigationItem.identifier);
-        WI.settings.selectedNetworkDetailContentViewIdentifier.value = navigationItem.identifier;
-    }
-
-    _handleCloseButton(event)
-    {
-        if (this._delegate && this._delegate.networkResourceDetailViewClose)
-            this._delegate.networkResourceDetailViewClose(this);
     }
 };

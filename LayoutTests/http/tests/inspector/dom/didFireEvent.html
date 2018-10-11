@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadSource(url, type) {
+    let sourceElement = document.createElement("source");
+    sourceElement.type = type;
+    sourceElement.src = url;
+
+    document.getElementById("video").appendChild(sourceElement);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.didFireEvent");
+
+    let videoNode = null;
+
+    suite.addTestCase({
+        name: "DOM.didFireEvent",
+        description: "Check that HTMLMediaElement events work.",
+        test(resolve, reject) {
+            const file = "white.mp4";
+
+            let listener = videoNode.addEventListener(WI.DOMNode.Event.DidFireEvent, (event) => {
+                let {domEvent} = event.data;
+                if (domEvent.eventName !== "loadstart")
+                    return;
+
+                InspectorTest.pass(`Should recieve a "loadstart" event.`)
+                InspectorTest.expectGreaterThan(domEvent.timestamp, 0, "Event timestamp should be greater than 0.");
+
+                videoNode.removeEventListener(WI.DOMNode.Event.DidFireEvent, listener);
+                resolve();
+            });
+
+            InspectorTest.log(`Adding video source "resources/${file}"...`);
+            InspectorTest.evaluateInPage(`loadSource("resources/${file}", "video/mp4")`);
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "#video", (videoNodeId) => {
+            videoNode = WI.domManager.nodeForId(videoNodeId);
+            if (videoNode)
+                suite.runTestCasesAndFinish();
+            else {
+                InspectorTest.fail(`DOM node for "#video" not found.`);
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that listeners registered by InspectorDOMAgent::addEventListenersToNode are working.</p>
+    <video id="video" muted autoplay></video>
+</body>
+</html>

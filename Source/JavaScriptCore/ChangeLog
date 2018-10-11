@@ -1,3 +1,15 @@
+2018-10-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create special Network waterfall for media events
+        https://bugs.webkit.org/show_bug.cgi?id=189773
+        <rdar://problem/44626605>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/DOM.json:
+        Add `didFireEvent` event that is fired when specific event listeners added by
+        `InspectorInstrumentation::addEventListenersToNode` are fired.
+
 2018-10-10  Michael Saboff  <msaboff@apple.com>
 
         Increase executable memory pool from 64MB to 128MB for ARM64
