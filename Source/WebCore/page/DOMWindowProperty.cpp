@@ -48,17 +48,17 @@ DOMWindowProperty::~DOMWindowProperty()
     m_window = nullptr;
 }
 
-void DOMWindowProperty::disconnectFrameForDocumentSuspension()
+void DOMWindowProperty::suspendForPageCache()
 {
     ASSERT(m_window);
 }
 
-void DOMWindowProperty::reconnectFrameFromDocumentSuspension(Frame* frame)
+void DOMWindowProperty::resumeFromPageCache()
 {
     // If this property is being reconnected to its Frame to enter the PageCache, it must have
     // been disconnected from its Frame in the first place and it should still have an associated DOMWindow.
-    ASSERT_UNUSED(frame, frame);
-    ASSERT(frame->document()->domWindow() == m_window);
+    ASSERT(frame());
+    ASSERT(frame()->document()->domWindow() == m_window);
 }
 
 void DOMWindowProperty::willDestroyGlobalObjectInCachedFrame()

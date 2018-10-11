@@ -545,33 +545,20 @@ void DOMWindow::resetUnlessSuspendedForDocumentSuspension()
     resetDOMWindowProperties();
 }
 
-void DOMWindow::suspendForDocumentSuspension()
+void DOMWindow::suspendForPageCache()
 {
-    disconnectDOMWindowProperties();
+    for (auto& property : copyToVector(m_properties))
+        property->suspendForPageCache();
+
     m_suspendedForDocumentSuspension = true;
 }
 
-void DOMWindow::resumeFromDocumentSuspension()
+void DOMWindow::resumeFromPageCache()
 {
-    reconnectDOMWindowProperties();
+    for (auto& property : copyToVector(m_properties))
+        property->resumeFromPageCache();
+
     m_suspendedForDocumentSuspension = false;
-}
-
-void DOMWindow::disconnectDOMWindowProperties()
-{
-    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
-    // unregister themselves from the DOMWindow as a result of the call to disconnectFrameForDocumentSuspension.
-    for (auto& property : copyToVector(m_properties))
-        property->disconnectFrameForDocumentSuspension();
-}
-
-void DOMWindow::reconnectDOMWindowProperties()
-{
-    ASSERT(m_suspendedForDocumentSuspension);
-    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
-    // unregister themselves from the DOMWindow as a result of the call to reconnectFromPageCache.
-    for (auto& property : copyToVector(m_properties))
-        property->reconnectFrameFromDocumentSuspension(frame());
 }
 
 void DOMWindow::resetDOMWindowProperties()

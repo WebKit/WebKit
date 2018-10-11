@@ -2277,7 +2277,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
         m_frame.setDocument(document);
     }
 
-    document->domWindow()->resumeFromDocumentSuspension();
+    document->domWindow()->resumeFromPageCache();
 
     updateFirstPartyForCookies();
 

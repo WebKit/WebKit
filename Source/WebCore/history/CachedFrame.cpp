@@ -152,7 +152,7 @@ CachedFrame::CachedFrame(Frame& frame)
 
     m_cachedFrameScriptData = std::make_unique<ScriptCachedFrameData>(frame);
 
-    m_document->domWindow()->suspendForDocumentSuspension();
+    m_document->domWindow()->suspendForPageCache();
 
     // Clear FrameView to reset flags such as 'firstVisuallyNonEmptyLayoutCallbackPending' so that the
     // 'DidFirstVisuallyNonEmptyLayout' callback gets called against when restoring from PageCache.

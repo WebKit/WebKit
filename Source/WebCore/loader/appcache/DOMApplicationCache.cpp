@@ -41,16 +41,16 @@ DOMApplicationCache::DOMApplicationCache(DOMWindow& window)
         host->setDOMApplicationCache(this);
 }
 
-void DOMApplicationCache::disconnectFrameForDocumentSuspension()
+void DOMApplicationCache::suspendForPageCache()
 {
     if (auto* host = applicationCacheHost())
         host->setDOMApplicationCache(nullptr);
-    DOMWindowProperty::disconnectFrameForDocumentSuspension();
+    DOMWindowProperty::suspendForPageCache();
 }
 
-void DOMApplicationCache::reconnectFrameFromDocumentSuspension(Frame* frame)
+void DOMApplicationCache::resumeFromPageCache()
 {
-    DOMWindowProperty::reconnectFrameFromDocumentSuspension(frame);
+    DOMWindowProperty::resumeFromPageCache();
     if (auto* host = applicationCacheHost())
         host->setDOMApplicationCache(this);
 }

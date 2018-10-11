@@ -55,8 +55,8 @@ private:
     EventTargetInterface eventTargetInterface() const final { return DOMApplicationCacheEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    void disconnectFrameForDocumentSuspension() final;
-    void reconnectFrameFromDocumentSuspension(Frame*) final;
+    void suspendForPageCache() final;
+    void resumeFromPageCache() final;
     void willDestroyGlobalObjectInFrame() final;
 
     ApplicationCacheHost* applicationCacheHost() const;

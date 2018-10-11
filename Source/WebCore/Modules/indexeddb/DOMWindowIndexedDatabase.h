@@ -45,8 +45,8 @@ public:
 
     WEBCORE_EXPORT static IDBFactory* indexedDB(DOMWindow&);
 
-    void disconnectFrameForDocumentSuspension() override;
-    void reconnectFrameFromDocumentSuspension(Frame*) override;
+    void suspendForPageCache() override;
+    void resumeFromPageCache() override;
     void willDestroyGlobalObjectInCachedFrame() override;
     void willDestroyGlobalObjectInFrame() override;
     void willDetachGlobalObjectFromFrame() override;

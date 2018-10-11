@@ -112,8 +112,8 @@ public:
     void unregisterProperty(DOMWindowProperty&);
 
     void resetUnlessSuspendedForDocumentSuspension();
-    void suspendForDocumentSuspension();
-    void resumeFromDocumentSuspension();
+    void suspendForPageCache();
+    void resumeFromPageCache();
 
     WEBCORE_EXPORT Frame* frame() const final;
 
@@ -351,8 +351,6 @@ private:
     bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
 
     void resetDOMWindowProperties();
-    void disconnectDOMWindowProperties();
-    void reconnectDOMWindowProperties();
     void willDestroyDocumentInFrame();
 
     bool isSameSecurityOriginAsMainFrame() const;

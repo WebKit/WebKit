@@ -1,3 +1,63 @@
+2018-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Rename a couple of DOMWindowProperty virtual functions
+        https://bugs.webkit.org/show_bug.cgi?id=190458
+
+        Reviewed by Geoffrey Garen.
+
+        Rename a couple of DOMWindowProperty virtual functions as the current naming no longer makes
+        sense after recent refactoring.
+
+        disconnectFrameForDocumentSuspension() was renamed to suspendForPageCache(), and
+        reconnectFrameFromDocumentSuspension(Frame*) was renamed to resumeFromPageCache().
+        DOMWindowProperty objects no longer need to disconnect / reconnect from their
+        frame since they now get their frame from their associated Window. However, some
+        DOMWindowProperty subclasses do have some page cache suspension / resuming logic
+        implemented of overrides of these functions.
+
+        Also drop the disconnectDOMWindowProperties() / reconnectDOMWindowProperties()
+        methods in DOMWindow. The naming made little sense as it does not really
+        disconnect those properties in any way. Instead, inline them in
+        DOMWindow's suspendForPageCache() / resumeFromPageCache() since these are
+        the only callers.
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::suspendForPageCache):
+        (WebCore::DOMWindowIndexedDatabase::resumeFromPageCache):
+        (WebCore::DOMWindowIndexedDatabase::disconnectFrameForDocumentSuspension): Deleted.
+        (WebCore::DOMWindowIndexedDatabase::reconnectFrameFromDocumentSuspension): Deleted.
+        * Modules/indexeddb/DOMWindowIndexedDatabase.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::suspendForPageCache):
+        (WebCore::DOMApplicationCache::resumeFromPageCache):
+        (WebCore::DOMApplicationCache::disconnectFrameForDocumentSuspension): Deleted.
+        (WebCore::DOMApplicationCache::reconnectFrameFromDocumentSuspension): Deleted.
+        * loader/appcache/DOMApplicationCache.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::suspendForPageCache):
+        (WebCore::DOMWindow::resumeFromPageCache):
+        (WebCore::DOMWindow::suspendForDocumentSuspension): Deleted.
+        (WebCore::DOMWindow::resumeFromDocumentSuspension): Deleted.
+        (WebCore::DOMWindow::disconnectDOMWindowProperties): Deleted.
+        (WebCore::DOMWindow::reconnectDOMWindowProperties): Deleted.
+        * page/DOMWindow.h:
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::suspendForPageCache):
+        (WebCore::DOMWindowExtension::resumeFromPageCache):
+        (WebCore::DOMWindowExtension::disconnectFrameForDocumentSuspension): Deleted.
+        (WebCore::DOMWindowExtension::reconnectFrameFromDocumentSuspension): Deleted.
+        * page/DOMWindowExtension.h:
+        * page/DOMWindowProperty.cpp:
+        (WebCore::DOMWindowProperty::suspendForPageCache):
+        (WebCore::DOMWindowProperty::resumeFromPageCache):
+        (WebCore::DOMWindowProperty::disconnectFrameForDocumentSuspension): Deleted.
+        (WebCore::DOMWindowProperty::reconnectFrameFromDocumentSuspension): Deleted.
+        * page/DOMWindowProperty.h:
+
 2018-10-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create special Network waterfall for media events

@@ -60,15 +60,15 @@ DOMWindowIndexedDatabase* DOMWindowIndexedDatabase::from(DOMWindow* window)
     return supplement;
 }
 
-void DOMWindowIndexedDatabase::disconnectFrameForDocumentSuspension()
+void DOMWindowIndexedDatabase::suspendForPageCache()
 {
     m_suspendedIDBFactory = WTFMove(m_idbFactory);
-    DOMWindowProperty::disconnectFrameForDocumentSuspension();
+    DOMWindowProperty::suspendForPageCache();
 }
 
-void DOMWindowIndexedDatabase::reconnectFrameFromDocumentSuspension(Frame* frame)
+void DOMWindowIndexedDatabase::resumeFromPageCache()
 {
-    DOMWindowProperty::reconnectFrameFromDocumentSuspension(frame);
+    DOMWindowProperty::resumeFromPageCache();
     m_idbFactory = WTFMove(m_suspendedIDBFactory);
 }
 

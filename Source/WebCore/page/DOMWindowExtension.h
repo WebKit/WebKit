@@ -42,8 +42,8 @@ public:
         return adoptRef(*new DOMWindowExtension(window, world));
     }
 
-    void disconnectFrameForDocumentSuspension() override;
-    void reconnectFrameFromDocumentSuspension(Frame*) override;
+    void suspendForPageCache() override;
+    void resumeFromPageCache() override;
     void willDestroyGlobalObjectInCachedFrame() override;
     void willDestroyGlobalObjectInFrame() override;
     void willDetachGlobalObjectFromFrame() override;
