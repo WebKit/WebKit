@@ -121,7 +121,7 @@ std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
     }
 
-    return std::make_optional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioNumerator) / static_cast<float>(pixelAspectRatioDenominator))));
+    return std::make_optional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioDenominator) / static_cast<float>(pixelAspectRatioNumerator))));
 }
 
 bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)

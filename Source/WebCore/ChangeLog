@@ -1,3 +1,16 @@
+2018-10-11  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][MSE] Fix height calculation for streams with source aspect ratio
+        https://bugs.webkit.org/show_bug.cgi?id=190464
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch is authored by Nikola Veljkovic <Nikola.Veljkovic@zenterio.com>
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::getVideoResolutionFromCaps): Reverse the SAR adjustment to "undo" it
+        instead of applying it twice.
+
 2018-10-11  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Add mediaDevices.enumerateDevices support
