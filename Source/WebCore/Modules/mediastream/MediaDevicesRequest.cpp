@@ -81,16 +81,12 @@ void MediaDevicesRequest::contextDestroyed()
 
 void MediaDevicesRequest::filterDeviceList(Vector<Ref<MediaDeviceInfo>>& devices)
 {
-#if !PLATFORM(COCOA)
-    UNUSED_PARAM(devices);
-#else
-
 #if PLATFORM(IOS)
     static const int defaultCameraCount = 2;
-#endif
-#if PLATFORM(MAC)
+#else
     static const int defaultCameraCount = 1;
 #endif
+
     static const int defaultMicrophoneCount = 1;
 
     int cameraCount = 0;
@@ -103,8 +99,6 @@ void MediaDevicesRequest::filterDeviceList(Vector<Ref<MediaDeviceInfo>>& devices
 
         return false;
     });
-
-#endif
 }
 
 void MediaDevicesRequest::start()

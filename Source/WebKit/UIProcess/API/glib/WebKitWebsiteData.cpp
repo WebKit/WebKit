@@ -76,7 +76,8 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
 #if ENABLE(NETSCAPE_PLUGIN_API)
         WebsiteDataType::PlugInData,
 #endif
-        WebsiteDataType::Cookies
+        WebsiteDataType::Cookies,
+        WebsiteDataType::DeviceIdHashSalt
     });
 }
 
@@ -103,6 +104,8 @@ static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType
 #endif
     if (types.contains(WebsiteDataType::Cookies))
         returnValue |= WEBKIT_WEBSITE_DATA_COOKIES;
+    if (types.contains(WebsiteDataType::DeviceIdHashSalt))
+        returnValue |= WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT;
     return static_cast<WebKitWebsiteDataTypes>(returnValue);
 }
 

@@ -1,3 +1,119 @@
+2018-10-11  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Add mediaDevices.enumerateDevices support
+        https://bugs.webkit.org/show_bug.cgi?id=185761
+
+        Reviewed by Youenn Fablet.
+
+        Implemented the enumerateDevices API using a new WebKit class
+        (DeviceIdHashSaltStorage) that generates and stores the device ids
+        hash salts per origin, used to avoid fingerprinting in the
+        webpages.
+
+        The patch also adds a new type of data for the WebsiteDataStore.
+        That way the users can call the WebsiteDataStore to show what
+        origins have hash salt generated and remove them at some point.
+
+        For the moment just GTK+ and WPE ports are using this class to
+        generate the hash salts. The patch adds code to the
+        checkUserMediaPermissionForOrigin API implementation, it was empty
+        until now for these ports. In this function we create an instance
+        of a new class WebKitDeviceInfoPermissionRequest that implements
+        the WebKitPermissionRequestIface interface, that allows the ports
+        to use the current permission managers implemented in the
+        embedders to handle this new kind of request the way they like
+        it. The default implementation is deny.
+
+        The class WebKitDeviceInfoPermissionRequest takes care of
+        contacting the DeviceIdHashSaltStorage and request/regenerate the
+        hash salts accordingly.
+
+        Persistency is still not implemented, we will add it in a
+        future patch.
+
+        * Shared/WebsiteData/WebsiteDataType.h: Added the new type of
+        webside data: DeviceIdHashSalt.
+        * Sources.txt: Added new files to compilation.
+        * SourcesGTK.txt: Ditto.
+        * SourcesWPE.txt: Ditto.
+        * UIProcess/API/glib/WebKitDeviceInfoPermissionRequest.cpp: Added
+        this class to represent a request of permission to access the
+        devices information. This is specific for glib ports and implements
+        the policies regarding the hash salts when the embedder allows or
+        denies the access using the DeviceIdHashSaltStorage class.
+        (webkitDeviceInfoPermissionRequestAllow): Get the device hash salt
+        when the origin is allowed and set it in the original request.
+        (webkitDeviceInfoPermissionRequestDeny): Regenerate the device id
+        hash salt when the user does not allow to access the device information.
+        (webkit_permission_request_interface_init):
+        (webkitDeviceInfoPermissionRequestDispose):
+        (webkit_device_info_permission_request_class_init):
+        (webkitDeviceInfoPermissionRequestCreate): Create the class using
+        the proxy request from the webprocess and a reference to the
+        DeviceIdHashSaltStorage.
+        * UIProcess/API/glib/WebKitDeviceInfoPermissionRequestPrivate.h:
+        Ditto.
+        * UIProcess/API/glib/WebKitUIClient.cpp: Added the implementation
+        for the checkUserMediaPermissionForOrigin API for the glib ports,
+        it creates the device info request and calls the permission
+        request API.
+        * UIProcess/API/glib/WebKitWebsiteData.cpp:
+        (recordContainsSupportedDataTypes): Added the DeviceIdHashSalt
+        type.
+        (toWebKitWebsiteDataTypes): Added the conversion from the WebKit
+        types to the glib types for the WebsiteDataType::DeviceIdHashSalt.
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (toWebsiteDataTypes): Added the conversion from the glib type
+        WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT to the WebKit type.
+        (webkit_website_data_manager_remove): Make sure we remote the
+        DeviceIdHashSalt if the Cookies are selected.
+        * UIProcess/API/gtk/WebKitDeviceInfoPermissionRequest.h: Added
+        this new class that represents a permission request for the device
+        information in the GTK+ port.
+        * UIProcess/API/gtk/WebKitWebsiteData.h: Added the new type of
+        website that in the GTK+ port:
+        WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT.
+        * UIProcess/API/wpe/WebKitDeviceInfoPermissionRequest.h: Added
+        this new class that represents a permission request for the device
+        information in the WPE port.
+        * UIProcess/API/wpe/WebKitWebsiteData.h: Added the new type of
+        website that in the WPE port:
+        WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT.
+        * UIProcess/DeviceIdHashSaltStorage.cpp: Added this new class that
+        handles how to generate and store the hash salts inside
+        WebKit. Persistency is still not implemented, we will add it in a
+        future patch.
+        (WebKit::DeviceIdHashSaltStorage::create):
+        (WebKit::DeviceIdHashSaltStorage::deviceIdentifierHashSaltForOrigin):
+        Check the map to get the hash salt for an origin, if there is none
+        create a new random one.
+        (WebKit::DeviceIdHashSaltStorage::regenerateDeviceIdentifierHashSaltForOrigin):
+        Delete the hash salt of an origin if it already exists and create a new one.
+        (WebKit::DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins):
+        Returns the list of origins that have a hash salt generated for
+        them. It is used in the WebsiteDataStore.
+        (WebKit::DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins):
+        Deletes the hash salts in the map for an origin.
+        (WebKit::DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince):
+        Delete the origins that have not been modified since a time.
+        * UIProcess/DeviceIdHashSaltStorage.h: Ditto.
+        * UIProcess/UserMediaPermissionCheckProxy.h: Remove uneeded class
+        definition.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp: Added support to
+        return and remove the origins with a generate hash salt used to
+        generate the device ids.
+        (WebKit::WebsiteDataStore::WebsiteDataStore): Added the new
+        reference to the DeviceIdHashSaltStorage class, used to handle the
+        hash salts.
+        (WebKit::WebsiteDataStore::fetchDataAndApply): Get the list of
+        origins with a hash salts in the DeviceIdHashSaltStorage.
+        (WebKit::WebsiteDataStore::removeData): Remove the hash salts in
+        DeviceIdHashSaltStorage for an origin.
+        * UIProcess/WebsiteData/WebsiteDataStore.h: Ditto.
+        (WebKit::WebsiteDataStore::deviceIdHashSaltStorage):
+        * WebKit.xcodeproj/project.pbxproj: Added the
+        DeviceIdHashSaltStorage to the compilation.
+
 2018-10-10  Tim Horton  <timothy_horton@apple.com>
 
         Safari crashes when attempting to share a YouTube video while in full-screen

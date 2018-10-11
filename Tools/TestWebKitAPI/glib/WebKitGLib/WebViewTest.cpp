@@ -48,10 +48,15 @@ WebViewTest::~WebViewTest()
 void WebViewTest::initializeWebView()
 {
     g_assert(!m_webView);
+
+    WebKitSettings* webkitSettings = webkit_settings_new();
+    webkit_settings_set_enable_media_stream(webkitSettings, TRUE);
+
     m_webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
 #if PLATFORM(WPE)
         "backend", Test::createWebViewBackend(),
 #endif
+        "settings", webkitSettings,
         "web-context", m_webContext.get(),
         "user-content-manager", m_userContentManager.get(),
         nullptr));

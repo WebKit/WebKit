@@ -21,6 +21,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <glib/gstdio.h>
 
 static WebKitTestServer* kServer;
 
@@ -59,6 +60,11 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/localstorage")) {
         const char* localStorageHTML = "<html><body onload=\"localStorage.foo = 'bar';\"></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, localStorageHTML, strlen(localStorageHTML));
+        soup_message_body_complete(message->response_body);
+        soup_message_set_status(message, SOUP_STATUS_OK);
+    } else if (g_str_equal(path, "/enumeratedevices")) {
+        const char* enumerateDevicesHTML = "<html><body onload=\"navigator.mediaDevices.enumerateDevices().then(function(devices) { document.title = 'Finished'; })\"></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, enumerateDevicesHTML, strlen(enumerateDevicesHTML));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
     } else
@@ -163,7 +169,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 
     // Clear all persistent caches, since the data dir is common to all test cases.
     static const WebKitWebsiteDataTypes persistentCaches = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DISK_CACHE | WEBKIT_WEBSITE_DATA_LOCAL_STORAGE
-        | WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
+        | WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
     test->clear(persistentCaches, 0);
     g_assert(!test->fetch(persistentCaches));
 
@@ -517,6 +523,53 @@ static void testWebsiteDataCookies(WebsiteDataTest* test, gconstpointer)
     g_assert(!dataList);
 }
 
+static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer)
+{
+    test->clear(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT, 0);
+
+    GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+    g_assert(!dataList);
+
+    test->loadURI(kServer->getURIForPath("/enumeratedevices").data());
+    test->waitUntilTitleChangedTo("Finished");
+
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+    g_assert(dataList);
+
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
+    g_assert(data);
+    WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
+    g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
+    webkit_security_origin_unref(origin);
+    g_assert_cmpuint(webkit_website_data_get_types(data), ==, WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+
+    GList removeList = { data, nullptr, nullptr };
+    test->remove(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT, &removeList);
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+    g_assert(!dataList);
+
+    // Test removing the cookies.
+    test->loadURI(kServer->getURIForPath("/enumeratedevices").data());
+    test->waitUntilTitleChangedTo("Finished");
+
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+    g_assert(dataList);
+    data = static_cast<WebKitWebsiteData*>(dataList->data);
+    g_assert(data);
+
+    GList removeCookieList = { data, nullptr, nullptr };
+    test->remove(WEBKIT_WEBSITE_DATA_COOKIES, &removeCookieList);
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+    g_assert(!dataList);
+
+    // Clear all.
+    static const WebKitWebsiteDataTypes cacheAndAppcacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+    test->clear(cacheAndAppcacheTypes, 0);
+    dataList = test->fetch(cacheAndAppcacheTypes);
+    g_assert(!dataList);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -529,6 +582,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "databases", testWebsiteDataDatabases);
     WebsiteDataTest::add("WebKitWebsiteData", "appcache", testWebsiteDataAppcache);
     WebsiteDataTest::add("WebKitWebsiteData", "cookies", testWebsiteDataCookies);
+    WebsiteDataTest::add("WebKitWebsiteData", "deviceidhashsalt", testWebsiteDataDeviceIdHashSalt);
 }
 
 void afterAll()

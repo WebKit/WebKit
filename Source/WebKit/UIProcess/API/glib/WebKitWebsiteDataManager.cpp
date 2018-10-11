@@ -649,6 +649,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
 #endif
     if (types & WEBKIT_WEBSITE_DATA_COOKIES)
         returnValue.add(WebsiteDataType::Cookies);
+    if (types & WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT)
+        returnValue.add(WebsiteDataType::DeviceIdHashSalt);
     return returnValue;
 }
 
@@ -732,7 +734,12 @@ void webkit_website_data_manager_remove(WebKitWebsiteDataManager* manager, WebKi
     for (GList* item = websiteData; item; item = g_list_next(item)) {
         WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(item->data);
 
-        if (webkit_website_data_get_types(data) & types)
+        // We have to remove the hash salts when cookies are removed.
+        auto dataTypes = webkit_website_data_get_types(data);
+        if (dataTypes & WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT)
+            dataTypes = static_cast<WebKitWebsiteDataTypes>(dataTypes | WEBKIT_WEBSITE_DATA_COOKIES);
+
+        if (dataTypes & types)
             records.append(webkitWebsiteDataGetRecord(data));
     }
 

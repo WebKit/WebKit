@@ -228,6 +228,7 @@ UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/GeolocationPermissionRequestProxy.cpp
 UIProcess/PageLoadState.cpp
+UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/RemoteWebInspectorProxy.cpp

@@ -36,8 +36,6 @@ class SecurityOrigin;
 
 namespace WebKit {
 
-class UserMediaPermissionRequestManagerProxy;
-
 class UserMediaPermissionCheckProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionCheck> {
 public:
 
