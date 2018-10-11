@@ -1,3 +1,10 @@
+2018-10-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix the build with current SDKs.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::getPublicKeyComponents):
+
 2018-10-10  Brent Fulgham  <bfulgham@apple.com>
 
         Only report the supported WebGL version

@@ -62,7 +62,10 @@ static CCCryptorStatus getPublicKeyComponents(CCRSACryptorRef rsaKey, Vector<uin
 {
     ASSERT(CCRSAGetKeyType(rsaKey) == ccRSAKeyPublic || CCRSAGetKeyType(rsaKey) == ccRSAKeyPrivate);
     bool keyIsPublic = CCRSAGetKeyType(rsaKey) == ccRSAKeyPublic;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CCRSACryptorRef publicKey = keyIsPublic ? rsaKey : CCRSACryptorGetPublicKeyFromPrivateKey(rsaKey);
+#pragma clang diagnostic pop
 
     modulus.resize(16384);
     size_t modulusLength = modulus.size();
