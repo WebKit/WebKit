@@ -92,7 +92,7 @@
     </branch>
   </autotools>
 
-  <autotools id="gst-plugins-bad" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc --disable-introspection">
+  <autotools id="gst-plugins-bad" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc --disable-introspection --disable-gtk3">
     <dependencies>
       <dep package="graphene"/>
       <dep package="gst-plugins-base"/>

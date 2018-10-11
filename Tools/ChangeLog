@@ -1,3 +1,16 @@
+2018-10-11  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GStreamer] Do not build gstgtk plugins
+        https://bugs.webkit.org/show_bug.cgi?id=190463
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        These plugins pull a GTK+ dependency that, at least in WPE,
+        is unnecessary. The GTK+ port doesn't need it either, as far
+        as I can tell.
+
+        * gstreamer/jhbuild.modules: Disable gstgtk plugins
+
 2018-10-11  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Add mediaDevices.enumerateDevices support
