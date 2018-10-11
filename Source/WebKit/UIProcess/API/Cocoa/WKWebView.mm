@@ -4987,6 +4987,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_saveBackForwardSnapshotForItem:(WKBackForwardListItem *)item
 {
+    if (!item)
+        return;
     _page->recordNavigationSnapshot(item._item);
 }
 

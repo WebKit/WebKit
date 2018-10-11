@@ -1,5 +1,20 @@
 2018-10-11  Tim Horton  <timothy_horton@apple.com>
 
+        Clicking on bookmarklet crashes at NavigationState::willRecordNavigationSnapshot
+        https://bugs.webkit.org/show_bug.cgi?id=190476
+        <rdar://problem/32757191>
+
+        Reviewed by Megan Gardner.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _saveBackForwardSnapshotForItem:]):
+        The WKBackForwardListItem can be nil. Then we retrieve a reference from it.
+        An Objective-C method that returns a reference is a great way to get
+        a null reference. Other code then assumes it's not null and crashes.
+        Add a nil check.
+
+2018-10-11  Tim Horton  <timothy_horton@apple.com>
+
         Hardware keyboard arrow keys/spacebar don't scroll PDFs (works for web content)
         https://bugs.webkit.org/show_bug.cgi?id=190495
         <rdar://problem/22734616>

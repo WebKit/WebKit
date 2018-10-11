@@ -205,4 +205,10 @@ TEST(SnapshotStore, SnapshotsForNeverLoadedPagesDoNotChangeUponNavigation)
     EXPECT_TRUE(imagesAreEqual(initialSnapshot.get(), snapshotAfterNavigation.get()));
 }
 
+TEST(SnapshotStore, SnapshottingNullBackForwardItemShouldNotCrash)
+{
+    RetainPtr<SnapshotTestWKWebView> webView = adoptNS([[SnapshotTestWKWebView alloc] init]);
+    [webView _saveBackForwardSnapshotForItem:nil];
+}
+
 #endif // WK_API_ENABLED && PLATFORM(MAC)
