@@ -52,6 +52,19 @@ static void initializeGStreamerDebug()
     });
 }
 
+class GStreamerVideoPreset : public VideoPreset {
+public:
+    static Ref<GStreamerVideoPreset> create(IntSize size, Vector<FrameRateRange>&& framerates)
+    {
+        return adoptRef(*new GStreamerVideoPreset(size, WTFMove(framerates)));
+    }
+
+    GStreamerVideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges)
+        : VideoPreset(size, WTFMove(frameRateRanges), GStreamer)
+    {
+    }
+};
+
 class GStreamerVideoCaptureSourceFactory final : public VideoCaptureFactory {
 public:
     CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
@@ -110,14 +123,14 @@ DisplayCaptureFactory& GStreamerVideoCaptureSource::displayFactory()
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const gchar *source_factory)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+    : RealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
     , m_capturer(std::make_unique<GStreamerVideoCapturer>(source_factory))
 {
     initializeGStreamerDebug();
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice device, String&& hashSalt)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
+    : RealtimeVideoSource(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
     , m_capturer(std::make_unique<GStreamerVideoCapturer>(device))
 {
     initializeGStreamerDebug();
@@ -168,86 +181,12 @@ void GStreamerVideoCaptureSource::stopProducingData()
 
 const RealtimeMediaSourceCapabilities& GStreamerVideoCaptureSource::capabilities()
 {
-    if (m_capabilities)
-        return m_capabilities.value();
-
     RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
-    GRefPtr<GstCaps> caps = adoptGRef(m_capturer->caps());
-    int32_t minWidth = G_MAXINT32, maxWidth = 0, minHeight = G_MAXINT32, maxHeight = 0;
-    double minFramerate = G_MAXDOUBLE, maxFramerate = G_MINDOUBLE;
 
-    for (guint i = 0; i < gst_caps_get_size(caps.get()); i++) {
-        GstStructure* str = gst_caps_get_structure(caps.get(), i);
+    capabilities.setDeviceId(hashedId());
+    updateCapabilities(capabilities);
 
-        // Only accept raw video for now.
-        if (!gst_structure_has_name(str, "video/x-raw"))
-            continue;
-
-        int32_t tmpMinWidth, tmpMinHeight, tmpMinFPSNumerator, tmpMinFPSDenominator;
-        int32_t tmpMaxWidth, tmpMaxHeight, tmpMaxFPSNumerator, tmpMaxFPSDenominator;
-        double tmpMinFramerate = G_MAXDOUBLE, tmpMaxFramerate = G_MINDOUBLE;
-
-        if (!gst_structure_get(str, "width", GST_TYPE_INT_RANGE, &tmpMinWidth, &tmpMaxWidth, "height", GST_TYPE_INT_RANGE, &tmpMinHeight, &tmpMaxHeight, nullptr)) {
-            if (!gst_structure_get(str, "width", G_TYPE_INT, &tmpMinWidth, "height", G_TYPE_INT, &tmpMinHeight, nullptr))
-                continue;
-
-            tmpMaxWidth = tmpMinWidth;
-            tmpMaxHeight = tmpMinHeight;
-        }
-
-        if (gst_structure_get(str, "framerate", GST_TYPE_FRACTION_RANGE, &tmpMinFPSNumerator, &tmpMinFPSDenominator, &tmpMaxFPSNumerator, &tmpMaxFPSDenominator, nullptr)) {
-            gst_util_fraction_to_double(tmpMinFPSNumerator, tmpMinFPSDenominator, &tmpMinFramerate);
-            gst_util_fraction_to_double(tmpMaxFPSNumerator, tmpMaxFPSDenominator, &tmpMaxFramerate);
-        } else if (gst_structure_get(str,
-            "framerate", GST_TYPE_FRACTION, &tmpMinFPSNumerator, &tmpMinFPSDenominator, nullptr)) {
-            tmpMaxFPSNumerator = tmpMinFPSNumerator;
-            tmpMaxFPSDenominator = tmpMinFPSDenominator;
-            gst_util_fraction_to_double(tmpMinFPSNumerator, tmpMinFPSDenominator, &tmpMinFramerate);
-            gst_util_fraction_to_double(tmpMaxFPSNumerator, tmpMaxFPSDenominator, &tmpMaxFramerate);
-        } else {
-            const GValue* frameRates(gst_structure_get_value(str, "framerate"));
-            tmpMinFramerate = G_MAXDOUBLE;
-            tmpMaxFramerate = 0.0;
-
-            guint frameRatesLength = static_cast<guint>(gst_value_list_get_size(frameRates)) - 1;
-
-            for (guint i = 0; i < frameRatesLength; i++) {
-                double tmpFrameRate;
-                const GValue* val = gst_value_list_get_value(frameRates, i);
-
-                ASSERT(G_VALUE_TYPE(val) == GST_TYPE_FRACTION);
-                gst_util_fraction_to_double(gst_value_get_fraction_numerator(val),
-                    gst_value_get_fraction_denominator(val), &tmpFrameRate);
-
-                tmpMinFramerate = std::min(tmpMinFramerate, tmpFrameRate);
-                tmpMaxFramerate = std::max(tmpMaxFramerate, tmpFrameRate);
-            }
-
-            if (i > 0) {
-                minWidth = std::min(tmpMinWidth, minWidth);
-                minHeight = std::min(tmpMinHeight, minHeight);
-                minFramerate = std::min(tmpMinFramerate, minFramerate);
-
-                maxWidth = std::max(tmpMaxWidth, maxWidth);
-                maxHeight = std::max(tmpMaxHeight, maxHeight);
-                maxFramerate = std::max(tmpMaxFramerate, maxFramerate);
-            } else {
-                minWidth = tmpMinWidth;
-                minHeight = tmpMinHeight;
-                minFramerate = tmpMinFramerate;
-
-                maxWidth = tmpMaxWidth;
-                maxHeight = tmpMaxHeight;
-                maxFramerate = tmpMaxFramerate;
-            }
-        }
-
-        capabilities.setDeviceId(hashedId());
-        capabilities.setWidth(CapabilityValueOrRange(minWidth, maxWidth));
-        capabilities.setHeight(CapabilityValueOrRange(minHeight, maxHeight));
-        capabilities.setFrameRate(CapabilityValueOrRange(minFramerate, maxFramerate));
-        m_capabilities = WTFMove(capabilities);
-    }
+    m_capabilities = WTFMove(capabilities);
 
     return m_capabilities.value();
 }
@@ -276,6 +215,69 @@ const RealtimeMediaSourceSettings& GStreamerVideoCaptureSource::settings()
     m_currentSettings->setAspectRatio(aspectRatio());
     m_currentSettings->setFacingMode(facingMode());
     return m_currentSettings.value();
+}
+
+void GStreamerVideoCaptureSource::generatePresets()
+{
+    Vector<Ref<VideoPreset>> presets;
+    GRefPtr<GstCaps> caps = adoptGRef(m_capturer->caps());
+    for (unsigned i = 0; i < gst_caps_get_size(caps.get()); i++) {
+        GstStructure* str = gst_caps_get_structure(caps.get(), i);
+
+        // Only accept raw video for now.
+        if (!gst_structure_has_name(str, "video/x-raw"))
+            continue;
+
+        int32_t width, height;
+        if (!gst_structure_get(str, "width", G_TYPE_INT, &width, "height", G_TYPE_INT, &height, nullptr)) {
+            GST_INFO("Could not find discret height and width values in %" GST_PTR_FORMAT, str);
+            continue;
+        }
+
+        IntSize size = { width, height };
+        double framerate;
+        Vector<FrameRateRange> frameRates;
+        int32_t minFrameRateNumerator, minFrameRateDenominator, maxFrameRateNumerator, maxFrameRateDenominator, framerateNumerator, framerateDenominator;
+        if (gst_structure_get(str, "framerate", GST_TYPE_FRACTION_RANGE, &minFrameRateNumerator, &minFrameRateDenominator, &maxFrameRateNumerator, &maxFrameRateDenominator, nullptr)) {
+            FrameRateRange range;
+
+            gst_util_fraction_to_double(minFrameRateNumerator, minFrameRateDenominator, &range.minimum);
+            gst_util_fraction_to_double(maxFrameRateNumerator, maxFrameRateDenominator, &range.maximum);
+
+            frameRates.append(range);
+        } else if (gst_structure_get(str, "framerate", GST_TYPE_FRACTION, &framerateNumerator, &framerateDenominator, nullptr)) {
+            gst_util_fraction_to_double(framerateNumerator, framerateDenominator, &framerate);
+            frameRates.append({ framerate, framerate});
+        } else {
+            const GValue* frameRateValues(gst_structure_get_value(str, "framerate"));
+            unsigned frameRatesLength = static_cast<unsigned>(gst_value_list_get_size(frameRateValues));
+
+            for (unsigned j = 0; j < frameRatesLength; j++) {
+                const GValue* val = gst_value_list_get_value(frameRateValues, j);
+
+                ASSERT(val && G_VALUE_TYPE(val) == GST_TYPE_FRACTION);
+                gst_util_fraction_to_double(gst_value_get_fraction_numerator(val),
+                    gst_value_get_fraction_denominator(val), &framerate);
+
+                frameRates.append({ framerate, framerate});
+            }
+        }
+
+        presets.append(GStreamerVideoPreset::create(size, WTFMove(frameRates)));
+    }
+
+    if (presets.isEmpty()) {
+        GST_INFO("Could not find any presets for caps: %" GST_PTR_FORMAT " just let anything go out.", caps.get());
+
+        for (auto& size : standardVideoSizes()) {
+            Vector<FrameRateRange> frameRates;
+
+            frameRates.append({ 0, G_MAXDOUBLE});
+            presets.append(GStreamerVideoPreset::create(size, WTFMove(frameRates)));
+        }
+    }
+
+    setSupportedPresets(WTFMove(presets));
 }
 
 } // namespace WebCore

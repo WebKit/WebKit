@@ -67,6 +67,7 @@ protected:
     double observedFrameRate() const { return m_observedFrameRate; }
 
     void dispatchMediaSampleToObservers(MediaSample&);
+    const Vector<IntSize>& standardVideoSizes();
 
 private:
     struct CaptureSizeAndFrameRate {

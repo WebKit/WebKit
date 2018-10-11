@@ -46,6 +46,7 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # The webrtc implementation is not fully completed yet
+webkit.org/b/189567 webrtc/video-addLegacyTransceiver.html [ Failure ]
 webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
 webkit.org/b/187064 webrtc/video-with-receiver.html
 webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
@@ -82,10 +83,6 @@ webkit.org/b/186933 webrtc/getUserMedia-webaudio-autoplay.html
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout ]
-webkit.org/b/189734 fast/mediastream/MediaStreamTrack-getCapabilities.html [ Failure ]
-webkit.org/b/189734 fast/mediastream/apply-constraints-advanced.html [ Failure ]
-webkit.org/b/189734 fast/mediastream/apply-constraints-video.html [ Failure ]
-webkit.org/b/189734 fast/mediastream/getUserMedia-default.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-dtmf.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Failure Crash ]

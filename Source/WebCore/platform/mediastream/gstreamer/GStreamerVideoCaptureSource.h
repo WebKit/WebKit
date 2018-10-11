@@ -23,11 +23,11 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "GStreamerVideoCapturer.h"
-#include "RealtimeMediaSource.h"
+#include "RealtimeVideoSource.h"
 
 namespace WebCore {
 
-class GStreamerVideoCaptureSource : public RealtimeMediaSource {
+class GStreamerVideoCaptureSource : public RealtimeVideoSource {
 public:
     static CaptureSourceOrError create(String&& deviceID, String&& hashSalt, const MediaConstraints*);
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
@@ -46,6 +46,9 @@ protected:
     virtual ~GStreamerVideoCaptureSource();
     void startProducingData() override;
     void stopProducingData() override;
+    bool canResizeVideoFrames() const final { return true; }
+    void generatePresets() final;
+
 
     mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;

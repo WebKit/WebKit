@@ -91,7 +91,7 @@ void RealtimeVideoSource::setSupportedPresets(const Vector<Ref<VideoPreset>>& pr
     }
 }
 
-static const Vector<IntSize>& standardVideoSizes()
+const Vector<IntSize>& RealtimeVideoSource::standardVideoSizes()
 {
     static const auto sizes = makeNeverDestroyed([] {
         static IntSize videoSizes[] = {

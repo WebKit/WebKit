@@ -107,7 +107,8 @@ public:
 
     enum VideoPresetType {
         Base,
-        AVCapture
+        AVCapture,
+        GStreamer
     };
 
     IntSize size;

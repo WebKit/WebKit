@@ -1,3 +1,32 @@
+2018-10-11  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Support arbitrary video resolution in getUserMedia API
+        https://bugs.webkit.org/show_bug.cgi?id=189734
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement arbitrary video resolution for the getUserMedia API in GStreamer.
+
+        Fix the MockRealtimeMediaSource device list to make devices properties match
+        test expectations.
+
+        Reactivate tests that were failling because of that.
+
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::standardVideoSizes):
+        (WebCore::standardVideoSizes): Deleted.
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/VideoPreset.h:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoPreset::create):
+        (WebCore::GStreamerVideoPreset::GStreamerVideoPreset):
+        (WebCore::GStreamerVideoCaptureSource::GStreamerVideoCaptureSource):
+        (WebCore::GStreamerVideoCaptureSource::capabilities):
+        (WebCore::GStreamerVideoCaptureSource::generatePresets):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::defaultDevices):
+
 2018-10-11  Keith Rollin  <krollin@apple.com>
 
         CURRENT_ARCH should not be used in Run Script phase.
