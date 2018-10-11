@@ -1,3 +1,14 @@
+2018-10-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Fix non-existent define `CPU(JSVALUE64)`
+        https://bugs.webkit.org/show_bug.cgi?id=190479
+
+        Reviewed by Yusuke Suzuki.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        Correct CPU(JSVALUE64) to USE(JSVALUE64).
+
 2018-10-11  Keith Rollin  <krollin@apple.com>
 
         CURRENT_ARCH should not be used in Run Script phase.
