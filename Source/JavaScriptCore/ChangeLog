@@ -1,3 +1,26 @@
+2018-10-12  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Separate configuration extraction from offset extraction
+        https://bugs.webkit.org/show_bug.cgi?id=189708
+
+        Reviewed by Keith Miller.
+
+        Instead of generating a file with all offsets for every combination of
+        configurations, we first generate a file with only the configuration
+        indices and pass that to the offset extractor. The offset extractor then
+        only generates the offsets for valid configurations
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * llint/LLIntOffsetsExtractor.cpp:
+        (JSC::LLIntOffsetsExtractor::dummy):
+        * llint/LLIntSettingsExtractor.cpp: Added.
+        (main):
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/generate_settings_extractor.rb: Added.
+        * offlineasm/offsets.rb:
+        * offlineasm/settings.rb:
+
 2018-10-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237063.

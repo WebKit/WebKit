@@ -90,7 +90,6 @@ end
 
 def forSettings(concreteSettings, ast)
     # Check which architectures this combinator claims to support.
-    numClaimedBackends = 0
     selectedBackend = nil
     BACKENDS.each {
         | backend |

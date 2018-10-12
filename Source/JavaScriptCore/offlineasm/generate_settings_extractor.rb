@@ -37,83 +37,43 @@ require "transform"
 IncludeFile.processIncludeOptions()
 
 inputFlnm = ARGV.shift
-settingsFlnm = ARGV.shift
 outputFlnm = ARGV.shift
 
 validBackends = canonicalizeBackendNames(ARGV.shift.split(/[,\s]+/))
 includeOnlyBackends(validBackends)
 
-begin
-    configurationList = configurationIndices(settingsFlnm)
-rescue MissingMagicValuesException
-    $stderr.puts "OffsetExtractor: No magic values found. Skipping offsets extractor file generation."
-    exit 1
-end
-
-def emitMagicNumber
-    OFFSET_MAGIC_NUMBERS.each {
-        | number |
-        $output.puts "unsigned(#{number}),"
-    }
-end
-
-configurationHash = Digest::SHA1.hexdigest(configurationList.join(' '))
-inputHash = "// OffsetExtractor input hash: #{parseHash(inputFlnm)} #{configurationHash} #{selfHash}"
+inputHash = "// SettingsExtractor input hash: #{parseHash(inputFlnm)} #{selfHash}"
 
 if FileTest.exist? outputFlnm
     File.open(outputFlnm, "r") {
         | inp |
         firstLine = inp.gets
         if firstLine and firstLine.chomp == inputHash
-            $stderr.puts "OffsetExtractor: Nothing changed."
+            $stderr.puts "SettingsExtractor: Nothing changed."
             exit 0
         end
     }
 end
 
-ast = parse(inputFlnm)
-settingsCombinations = computeSettingsCombinations(ast)
+originalAST = parse(inputFlnm)
+prunedAST = Sequence.new(originalAST.codeOrigin, originalAST.filter(Setting))
 
 File.open(outputFlnm, "w") {
     | outp |
     $output = outp
     outp.puts inputHash
 
-    outp.puts "static const int64_t offsetExtractorTable[] = {"
-    configurationList.each {
-        | configIndex |
-        forSettings(settingsCombinations[configIndex], ast) {
-            | concreteSettings, lowLevelAST, backend |
+    settingsCombinations = computeSettingsCombinations(prunedAST)
+    length = settingsCombinations.size * (1 + OFFSET_HEADER_MAGIC_NUMBERS.size)
 
-            offsetsList = offsetsList(lowLevelAST)
-            sizesList = sizesList(lowLevelAST)
-            constsList = constsList(lowLevelAST)
-
-            emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {
-                OFFSET_HEADER_MAGIC_NUMBERS.each {
-                    | number |
-                    outp.puts "unsigned(#{number}),"
-                }
-
-                emitMagicNumber
-                outp.puts "#{configIndex},"
-                offsetsList.each {
-                    | offset |
-                    emitMagicNumber
-                    outp.puts "OFFLINE_ASM_OFFSETOF(#{offset.struct}, #{offset.field}),"
-                }
-                sizesList.each {
-                    | sizeof |
-                    emitMagicNumber
-                    outp.puts "sizeof(#{sizeof.struct}),"
-                }
-                constsList.each {
-                    | const |
-                    emitMagicNumber
-                    outp.puts "static_cast<int64_t>(#{const.value}),"
-                }
-            }
+    outp.puts "static const int64_t settingsExtractorTable[#{length}] = {"
+    emitCodeInAllConfigurations(prunedAST) {
+        | settings, ast, backend, index |
+        OFFSET_HEADER_MAGIC_NUMBERS.each {
+            | number |
+            $output.puts "unsigned(#{number}),"
         }
+        outp.puts "#{index},"
     }
     outp.puts "};"
 

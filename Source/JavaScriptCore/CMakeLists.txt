@@ -238,10 +238,17 @@ else ()
 endif ()
 
 add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredSettings.h
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb
+    DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
+    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb -I${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredSettings.h ${OFFLINE_ASM_BACKEND}
+    VERBATIM)
+
+add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb
-    DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND}
+    DEPENDS LLIntSettingsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
+    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntSettingsExtractor> ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND}
     VERBATIM)
 
 # We add the header files directly to the ADD_EXECUTABLE call instead of setting the
@@ -253,10 +260,18 @@ add_custom_command(
 # Additionally, setting the OBJECT_DEPENDS property will make the .h files a Makefile
 # dependency of both LLIntOffsetsExtractor and LLIntOffsetsExtractor.cpp, so the command will
 # actually be run multiple times!
+add_executable(LLIntSettingsExtractor
+    ${JAVASCRIPTCORE_DIR}/llint/LLIntSettingsExtractor.cpp
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredSettings.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
+)
+
 add_executable(LLIntOffsetsExtractor
     ${JAVASCRIPTCORE_DIR}/llint/LLIntOffsetsExtractor.cpp
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
 )
+
+target_link_libraries(LLIntSettingsExtractor WTF)
+add_dependencies(LLIntSettingsExtractor JavaScriptCoreForwardingHeaders)
 target_link_libraries(LLIntOffsetsExtractor WTF)
 add_dependencies(LLIntOffsetsExtractor JavaScriptCoreForwardingHeaders)
 
@@ -1218,6 +1233,12 @@ WEBKIT_MAKE_FORWARDING_HEADERS(JavaScriptCore
     DERIVED_SOURCE_DIRECTORIES ${DERIVED_SOURCES_DIR}/JavaScriptCore ${DERIVED_SOURCES_DIR}/JavaScriptCore/inspector
     FLATTENED
 )
+
+target_include_directories(LLIntSettingsExtractor PRIVATE
+    ${JavaScriptCore_INCLUDE_DIRECTORIES}
+    ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES}
+)
+target_include_directories(LLIntSettingsExtractor SYSTEM PRIVATE ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
 
 target_include_directories(LLIntOffsetsExtractor PRIVATE
     ${JavaScriptCore_INCLUDE_DIRECTORIES}
