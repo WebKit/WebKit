@@ -1,3 +1,26 @@
+2018-10-11  Youenn Fablet  <youenn@apple.com>
+
+        IOS 12 - Service worker cache not shared when added to homescreen
+        https://bugs.webkit.org/show_bug.cgi?id=190269
+        <rdar://problem/45009961>
+
+        Reviewed by Alex Christensen.
+
+        NetworkProcessProxy does not always have all its stores in its hash map.
+        Make sure to check for the default web process pool store when grabbing cache storage parameters from a given session ID.
+
+        Add a way to remove the default website data for testing.
+        This is used in the new API test.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::deleteDefaultDataStoreForTesting):
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _deleteDefaultDataStoreForTesting]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+
 2018-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Hide RenderLayer z-order and normal flow lists behind iterators

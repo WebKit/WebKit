@@ -244,8 +244,8 @@ public:
     WEBCORE_EXPORT String domainForCachePartition() const;
     void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTFMove(domain); }
 
-#if ENABLE(SERVICE_WORKER)
     bool hasServiceWorkerScheme();
+#if ENABLE(SERVICE_WORKER)
     ServiceWorker* activeServiceWorker() const;
     void setActiveServiceWorker(RefPtr<ServiceWorker>&&);
 

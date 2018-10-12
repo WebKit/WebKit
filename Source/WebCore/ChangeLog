@@ -1,3 +1,19 @@
+2018-10-11  Youenn Fablet  <youenn@apple.com>
+
+        IOS 12 - Service worker cache not shared when added to homescreen
+        https://bugs.webkit.org/show_bug.cgi?id=190269
+        <rdar://problem/45009961>
+
+        Reviewed by Alex Christensen.
+
+        Expose Cache Storage API when Service Worker API is exposed.
+        This is used for API tests.
+
+        * dom/ScriptExecutionContext.h: Make hasServiceWorkerScheme
+        available outside SERVICE_WORKER compilation flag since used by DOMWindowCaches.
+        * dom/ScriptExecutionContext.cpp: Ditto.
+        * Modules/cache/DOMWindowCaches.idl:
+
 2018-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Hide RenderLayer z-order and normal flow lists behind iterators

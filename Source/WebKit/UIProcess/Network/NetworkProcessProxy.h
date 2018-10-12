@@ -165,6 +165,8 @@ private:
     void establishWorkerContextConnectionToNetworkProcessForExplicitSession(WebCore::SecurityOriginData&&, PAL::SessionID);
 #endif
 
+    WebsiteDataStore* websiteDataStoreFromSessionID(PAL::SessionID);
+
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 

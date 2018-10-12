@@ -528,13 +528,13 @@ String ScriptExecutionContext::domainForCachePartition() const
     return m_domainForCachePartition.isNull() ? topOrigin().domainForCachePartition() : m_domainForCachePartition;
 }
 
-#if ENABLE(SERVICE_WORKER)
-
 bool ScriptExecutionContext::hasServiceWorkerScheme()
 {
     ASSERT(securityOrigin());
     return SchemeRegistry::isServiceWorkerContainerCustomScheme(securityOrigin()->protocol());
 }
+
+#if ENABLE(SERVICE_WORKER)
 
 ServiceWorker* ScriptExecutionContext::activeServiceWorker() const
 {
