@@ -401,7 +401,7 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url, Completi
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
         return;
     }
@@ -417,7 +417,7 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const URL& url, Comple
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
         return;
     }
@@ -433,7 +433,7 @@ void WebResourceLoadStatisticsStore::hasHadUserInteraction(const URL& url, Compl
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler(false);
         return;
     }
@@ -450,7 +450,7 @@ void WebResourceLoadStatisticsStore::setLastSeen(const URL& url, Seconds seconds
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
         return;
     }
@@ -466,7 +466,7 @@ void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url, Comple
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
         return;
     }
@@ -482,7 +482,7 @@ void WebResourceLoadStatisticsStore::setVeryPrevalentResource(const URL& url, Co
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
         return;
     }
@@ -510,7 +510,7 @@ void WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url, Complet
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler(false);
         return;
     }
@@ -527,7 +527,7 @@ void WebResourceLoadStatisticsStore::isVeryPrevalentResource(const URL& url, Com
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler(false);
         return;
     }
@@ -580,7 +580,7 @@ void WebResourceLoadStatisticsStore::clearPrevalentResource(const URL& url, Comp
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
         return;
     }
@@ -596,7 +596,7 @@ void WebResourceLoadStatisticsStore::setGrandfathered(const URL& url, bool value
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty())
+    if (url.protocolIsAbout() || url.isEmpty())
         return;
 
     postTask([this, primaryDomain = isolatedPrimaryDomain(url), value] {
@@ -609,7 +609,7 @@ void WebResourceLoadStatisticsStore::isGrandfathered(const URL& url, CompletionH
 {
     ASSERT(RunLoop::isMain());
 
-    if (url.isBlankURL() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler(false);
         return;
     }
@@ -626,7 +626,7 @@ void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const URL& s
 {
     ASSERT(RunLoop::isMain());
 
-    if (subframe.isBlankURL() || subframe.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
+    if (subframe.protocolIsAbout() || subframe.isEmpty() || topFrame.protocolIsAbout() || topFrame.isEmpty())
         return;
 
     postTask([this, primaryTopFrameDomain = isolatedPrimaryDomain(topFrame), primarySubFrameDomain = isolatedPrimaryDomain(subframe)] {
@@ -639,7 +639,7 @@ void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const URL
 {
     ASSERT(RunLoop::isMain());
 
-    if (subresource.isBlankURL() || subresource.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
+    if (subresource.protocolIsAbout() || subresource.isEmpty() || topFrame.protocolIsAbout() || topFrame.isEmpty())
         return;
 
     postTask([this, primaryTopFrameDomain = isolatedPrimaryDomain(topFrame), primarySubresourceDomain = isolatedPrimaryDomain(subresource)] {
@@ -652,7 +652,7 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const URL& s
 {
     ASSERT(RunLoop::isMain());
 
-    if (subresource.isBlankURL() || subresource.isEmpty() || hostNameRedirectedTo.isBlankURL() || hostNameRedirectedTo.isEmpty())
+    if (subresource.protocolIsAbout() || subresource.isEmpty() || hostNameRedirectedTo.protocolIsAbout() || hostNameRedirectedTo.isEmpty())
         return;
 
     postTask([this, primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedTo), primarySubresourceDomain = isolatedPrimaryDomain(subresource)] {
@@ -665,7 +665,7 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom(const URL&
 {
     ASSERT(RunLoop::isMain());
 
-    if (subresource.isBlankURL() || subresource.isEmpty() || hostNameRedirectedFrom.isBlankURL() || hostNameRedirectedFrom.isEmpty())
+    if (subresource.protocolIsAbout() || subresource.isEmpty() || hostNameRedirectedFrom.protocolIsAbout() || hostNameRedirectedFrom.isEmpty())
         return;
     
     postTask([this, primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedFrom), primarySubresourceDomain = isolatedPrimaryDomain(subresource)] {
@@ -678,7 +678,7 @@ void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo(const URL& topF
 {
     ASSERT(RunLoop::isMain());
 
-    if (topFrameHostName.isBlankURL() || topFrameHostName.isEmpty() || hostNameRedirectedTo.isBlankURL() || hostNameRedirectedTo.isEmpty())
+    if (topFrameHostName.protocolIsAbout() || topFrameHostName.isEmpty() || hostNameRedirectedTo.protocolIsAbout() || hostNameRedirectedTo.isEmpty())
         return;
     
     postTask([this, primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedTo), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHostName)] {
@@ -691,7 +691,7 @@ void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom(const URL& to
 {
     ASSERT(RunLoop::isMain());
 
-    if (topFrameHostName.isBlankURL() || topFrameHostName.isEmpty() || hostNameRedirectedFrom.isBlankURL() || hostNameRedirectedFrom.isEmpty())
+    if (topFrameHostName.protocolIsAbout() || topFrameHostName.isEmpty() || hostNameRedirectedFrom.protocolIsAbout() || hostNameRedirectedFrom.isEmpty())
         return;
     
     postTask([this, primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedFrom), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHostName)] {

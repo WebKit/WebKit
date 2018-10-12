@@ -74,7 +74,7 @@ NavigationAction& NavigationAction::operator=(NavigationAction&&) = default;
 
 static bool shouldTreatAsSameOriginNavigation(const Document& document, const URL& url)
 {
-    return url.isBlankURL() || url.protocolIsData() || (url.protocolIsBlob() && document.securityOrigin().canRequest(url));
+    return url.protocolIsAbout() || url.protocolIsData() || (url.protocolIsBlob() && document.securityOrigin().canRequest(url));
 }
 
 static std::optional<NavigationAction::UIEventWithKeyStateData> keyStateDataForFirstEventWithKeyState(Event* event)

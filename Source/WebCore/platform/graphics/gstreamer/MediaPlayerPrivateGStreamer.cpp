@@ -262,7 +262,7 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar*
         return;
 
     URL url(URL(), urlString);
-    if (url.isBlankURL())
+    if (url.protocolIsAbout())
         return;
 
     if (!m_pipeline)

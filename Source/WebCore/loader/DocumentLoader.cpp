@@ -1219,7 +1219,7 @@ uint64_t DocumentLoader::loadApplicationManifest()
     if (!m_frame->isMainFrame())
         return 0;
 
-    if (document->url().isEmpty() || document->url().isBlankURL())
+    if (document->url().isEmpty() || document->url().protocolIsAbout())
         return 0;
 
     auto head = document->head();
@@ -1913,7 +1913,7 @@ void DocumentLoader::startIconLoading()
     if (!m_frame->isMainFrame())
         return;
 
-    if (document->url().isEmpty() || document->url().isBlankURL())
+    if (document->url().isEmpty() || document->url().protocolIsAbout())
         return;
 
     m_linkIcons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });

@@ -150,7 +150,7 @@ void PageSerializer::SerializerMarkupAccumulator::appendCustomAttributes(StringB
         return;
 
     URL url = frame->document()->url();
-    if (url.isValid() && !url.isBlankURL())
+    if (url.isValid() && !url.protocolIsAbout())
         return;
 
     // We need to give a fake location to blank frames so they can be referenced by the serialized frame.
@@ -178,7 +178,7 @@ void PageSerializer::serializeFrame(Frame* frame)
 {
     Document* document = frame->document();
     URL url = document->url();
-    if (!url.isValid() || url.isBlankURL()) {
+    if (!url.isValid() || url.protocolIsAbout()) {
         // For blank frames we generate a fake URL so they can be referenced by their containing frame.
         url = urlForBlankFrame(frame);
     }

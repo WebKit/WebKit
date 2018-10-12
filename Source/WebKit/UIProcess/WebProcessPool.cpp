@@ -2151,7 +2151,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
             RELEASE_LOG(ProcessSwapping, "Using related page %p's URL as source URL for process swap decision", page.configuration().relatedPage());
         }
 
-        if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.isBlankURL() || registrableDomainsAreEqual(sourceURL, targetURL)) {
+        if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || registrableDomainsAreEqual(sourceURL, targetURL)) {
             reason = "Navigation is same-site"_s;
             return page.process();
         }

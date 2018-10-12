@@ -677,7 +677,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
     if (m_networkLoadChecker) {
         // FIXME: We should be doing this check when receiving the redirection and not allow about protocol as per fetch spec.
-        if (!newRequest.url().protocolIsInHTTPFamily() && !newRequest.url().isBlankURL() && m_redirectCount) {
+        if (!newRequest.url().protocolIsInHTTPFamily() && !newRequest.url().protocolIsAbout() && m_redirectCount) {
             didFailLoading(ResourceError { String { }, 0, newRequest.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
             return;
         }

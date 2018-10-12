@@ -865,7 +865,7 @@ const URL& blankURL()
     return staticBlankURL;
 }
 
-bool URL::isBlankURL() const
+bool URL::protocolIsAbout() const
 {
     return protocolIs("about");
 }

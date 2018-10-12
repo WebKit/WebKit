@@ -1,3 +1,39 @@
+2018-10-12  Rob Buis  <rbuis@igalia.com>
+
+        Solve the confusion around blankURL() and isBlankURL() in URL
+        https://bugs.webkit.org/show_bug.cgi?id=158988
+
+        Reviewed by Alex Christensen.
+
+        The name isBlankURL is not accurate as the function tests the
+        protocol, not the full URL. Choose protocolIsAbout to align with
+        exisiting protocolIsData, protocolIsBlob etc.
+
+        No tests as no change in functionality.
+
+        * WebCore.order:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::loadApplicationManifest):
+        (WebCore::DocumentLoader::startIconLoading):
+        * loader/NavigationAction.cpp:
+        (WebCore::shouldTreatAsSameOriginNavigation):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::SerializerMarkupAccumulator::appendCustomAttributes):
+        (WebCore::PageSerializer::serializeFrame):
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFrame const):
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForObjectSource const):
+        * platform/URL.cpp:
+        (WebCore::URL::protocolIsAbout const):
+        (WebCore::URL::isBlankURL const): Deleted.
+        * platform/URL.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+
 2018-10-12  Youenn Fablet  <youenn@apple.com>
 
         DOMCache should dereference itself as soon as stopped

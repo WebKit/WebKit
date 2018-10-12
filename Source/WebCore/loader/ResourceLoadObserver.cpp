@@ -163,7 +163,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
         return;
 
     auto& url = document.url();
-    if (url.isBlankURL() || url.isEmpty())
+    if (url.protocolIsAbout() || url.isEmpty())
         return;
 
     auto domain = primaryDomain(url);

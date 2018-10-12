@@ -135,9 +135,9 @@ public:
     bool protocolIs(StringView) const;
     bool protocolIsBlob() const { return protocolIs("blob"); }
     bool protocolIsData() const { return protocolIs("data"); }
+    WEBCORE_EXPORT bool protocolIsAbout() const;
     bool protocolIsInHTTPFamily() const;
     WEBCORE_EXPORT bool isLocalFile() const;
-    WEBCORE_EXPORT bool isBlankURL() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
 
     WEBCORE_EXPORT bool isMatchingDomain(const String&) const;
