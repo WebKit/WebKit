@@ -1,3 +1,16 @@
+2018-10-11  Don Olmstead  <don.olmstead@sony.com>
+
+        Add Houdini specs to features.json
+        https://bugs.webkit.org/show_bug.cgi?id=190494
+        <rdar://problem/45211879>
+
+        Unreviewed fix.
+
+        Specifications should not reference other specifications. Also
+        move Worklet into the specifications section.
+
+        * features.json:
+
 2018-10-11  Youenn Fablet  <youenn@apple.com>
 
         IOS 12 - Service worker cache not shared when added to homescreen

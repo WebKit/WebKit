@@ -44,7 +44,6 @@
             "status": "Under Consideration"
         },
         "url": "https://drafts.css-houdini.org/css-animationworklet/",
-        "specification": "Houdini",
         "keywords": ["css", "houdini", "animation", "worklet"],
         "category": "css"
     },
@@ -123,7 +122,6 @@
             "status": "Under Consideration"
         },
         "url": "https://drafts.css-houdini.org/css-layout-api/",
-        "specification": "Houdini",
         "keywords": ["css", "houdini", "layout", "worklet"],
         "category": "css"
     },
@@ -139,7 +137,6 @@
             "status": "Under Consideration"
         },
         "url": "https://drafts.css-houdini.org/css-paint-api/",
-        "specification": "Houdini",
         "keywords": ["css", "houdini", "worklet"],
         "category": "css"
     },
@@ -156,7 +153,6 @@
         },
         "url": "https://drafts.css-houdini.org/css-properties-values-api/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=189692",
-        "specification": "Houdini",
         "keywords": ["css", "houdini", "custom properties"],
         "description": "An API for registering new CSS properties. Properties registered using this API are provided with a parse syntax that defines a type, inheritance behaviour, and an initial value.",
         "category": "css"
@@ -225,7 +221,6 @@
             "status": "Under Consideration"
         },
         "url": "https://drafts.css-houdini.org/css-typed-om/",
-        "specification": "Houdini",
         "keywords": ["css", "houdini"],
         "category": "css",
         "description": "Exposes CSS values as typed JavaScript objects to facilitate their performant manipulation."
@@ -384,12 +379,6 @@
         "url": "https://html.spec.whatwg.org",
         "keywords": ["html", "html5", "html5.1"],
         "category": "html"
-    },
-    {
-        "name": "Houdini",
-        "url": "https://drafts.css-houdini.org/",
-        "keywords": ["css", "houdini"],
-        "category": "css"
     },
     {
         "name": "Indexed Database",
@@ -707,6 +696,15 @@
             "twitter": "@svillarsenin",
             "email": "svillar@igalia.com"
         }
+    },
+    {
+        "name": "Worklets Level 1",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://drafts.css-houdini.org/worklets/",
+        "keywords": ["houdini", "worklet"],
+        "description": "An API for running scripts in stages of the rendering pipeline independent of the main javascript execution environment"
     }
     ],
 
@@ -1297,16 +1295,6 @@
         "url": "https://wicg.github.io/webusb/",
         "keywords": ["USB"],
         "description": "An an API for securely providing access to Universal Serial Bus devices from web pages."
-    },
-    {
-        "name": "Worklets Level 1",
-        "status": {
-            "status": "Under Consideration"
-        },
-        "url": "https://drafts.css-houdini.org/worklets/",
-        "specification": "Houdini",
-        "keywords": ["houdini", "worklet"],
-        "description": "An API for running scripts in stages of the rendering pipeline independent of the main javascript execution environment"
     },
     {
         "name": "requestIdleCallback",
