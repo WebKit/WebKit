@@ -806,10 +806,11 @@ failedJSONP:
     ProgramCodeBlock* codeBlock;
     {
         CodeBlock* tempCodeBlock;
-        JSObject* error = program->prepareForExecution<ProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
+        std::optional<Exception*> error = program->prepareForExecution<ProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() == error.value_or(nullptr));
+
         if (UNLIKELY(error))
-            return checkedReturn(error);
+            return checkedReturn(*error);
         codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);
     }
 
@@ -864,10 +865,10 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     if (isJSCall) {
         // Compile the callee:
-        JSObject* compileError = callData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(function), scope, CodeForCall, newCodeBlock);
-        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
+        std::optional<Exception*> compileError = callData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(function), scope, CodeForCall, newCodeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() == compileError.value_or(nullptr));
         if (UNLIKELY(!!compileError))
-            return checkedReturn(compileError);
+            return checkedReturn(*compileError);
 
         ASSERT(!!newCodeBlock);
         newCodeBlock->m_shouldAlwaysBeInlined = false;
@@ -931,10 +932,10 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     if (isJSConstruct) {
         // Compile the callee:
-        JSObject* compileError = constructData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(constructor), scope, CodeForConstruct, newCodeBlock);
-        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
+        std::optional<Exception*> compileError = constructData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(constructor), scope, CodeForConstruct, newCodeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() == compileError.value_or(nullptr));
         if (UNLIKELY(!!compileError))
-            return checkedReturn(compileError);
+            return checkedReturn(*compileError);
 
         ASSERT(!!newCodeBlock);
         newCodeBlock->m_shouldAlwaysBeInlined = false;
@@ -979,8 +980,8 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
 
     // Compile the callee:
     CodeBlock* newCodeBlock;
-    JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, CodeForCall, newCodeBlock);
-    EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
+    std::optional<Exception*> error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, CodeForCall, newCodeBlock);
+    EXCEPTION_ASSERT(throwScope.exception() == error.value_or(nullptr));
     if (UNLIKELY(error))
         return CallFrameClosure();
     newCodeBlock->m_shouldAlwaysBeInlined = false;
@@ -1037,10 +1038,10 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     EvalCodeBlock* codeBlock;
     {
         CodeBlock* tempCodeBlock;
-        JSObject* compileError = eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
+        std::optional<Exception*> compileError = eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() == compileError.value_or(nullptr));
         if (UNLIKELY(!!compileError))
-            return checkedReturn(compileError);
+            return checkedReturn(*compileError);
         codeBlock = jsCast<EvalCodeBlock*>(tempCodeBlock);
     }
 
@@ -1160,10 +1161,10 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, C
     ModuleProgramCodeBlock* codeBlock;
     {
         CodeBlock* tempCodeBlock;
-        JSObject* compileError = executable->prepareForExecution<ModuleProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
+        std::optional<Exception*> compileError = executable->prepareForExecution<ModuleProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() == compileError.value_or(nullptr));
         if (UNLIKELY(!!compileError))
-            return checkedReturn(compileError);
+            return checkedReturn(*compileError);
         codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);
     }
 

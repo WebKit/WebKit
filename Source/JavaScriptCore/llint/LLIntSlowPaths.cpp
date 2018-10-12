@@ -1484,10 +1484,10 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             LLINT_CALL_THROW(exec, createNotAConstructorError(exec, callee));
 
         CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
-        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
-        EXCEPTION_ASSERT(throwScope.exception() == error);
+        std::optional<Exception*> error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
+        EXCEPTION_ASSERT(throwScope.exception() == error.value_or(nullptr));
         if (UNLIKELY(error))
-            LLINT_CALL_THROW(exec, error);
+            LLINT_CALL_THROW(exec, *error);
         codeBlock = *codeBlockSlot;
         ASSERT(codeBlock);
         ArityCheckMode arity;

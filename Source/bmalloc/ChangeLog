@@ -1,3 +1,21 @@
+2018-10-11  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Remove gcc warnings on mips and armv7
+        https://bugs.webkit.org/show_bug.cgi?id=188598
+
+        Reviewed by Mark Lam.
+
+        Add bitwise_cast (from WTF) and use it instead of reinterpret_cast in
+        a couple places where reinterpret_cast triggers a warning about
+        alignment even though we know that alignment is correct.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::bitwise_cast): Copied from WTF/wtf/StdLibextras.h
+        * bmalloc/IsoDirectoryPageInlines.h:
+        (bmalloc::IsoDirectoryPage<Config>::pageFor):
+        * bmalloc/IsoPageInlines.h:
+        (bmalloc::IsoPage<Config>::startAllocating):
+
 2018-10-03  Dan Bernstein  <mitz@apple.com>
 
         bmalloc part of [Xcode] Update some build settings as recommended by Xcode 10

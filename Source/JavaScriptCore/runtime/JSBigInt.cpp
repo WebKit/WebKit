@@ -1550,7 +1550,10 @@ JSBigInt* JSBigInt::parseInt(ExecState* exec, VM& vm, CharType* data, unsigned l
 
 inline JSBigInt::Digit* JSBigInt::dataStorage()
 {
-    return reinterpret_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
+    // offsetOfData() makes sure that its return value is aligned to the size
+    // of Digit, so even though we cast to char* for pointer arithmetics, the
+    // bitwise_cast to Digit* is correct and properly aligned.
+    return bitwise_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
 }
 
 inline JSBigInt::Digit JSBigInt::digit(unsigned n)

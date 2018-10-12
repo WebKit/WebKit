@@ -1040,8 +1040,8 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
         }
 
         CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
-        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, callee, scope, kind, *codeBlockSlot);
-        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
+        std::optional<Exception*> error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, callee, scope, kind, *codeBlockSlot);
+        EXCEPTION_ASSERT(throwScope.exception() == error.value_or(nullptr));
         if (error)
             return handleThrowException();
         codeBlock = *codeBlockSlot;
@@ -1096,8 +1096,8 @@ void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLi
 
         RELEASE_ASSERT(isCall(kind) || functionExecutable->constructAbility() != ConstructAbility::CannotConstruct);
         
-        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, callee, scope, kind, codeBlock);
-        EXCEPTION_ASSERT_UNUSED(throwScope, throwScope.exception() == reinterpret_cast<Exception*>(error));
+        std::optional<Exception*> error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, callee, scope, kind, codeBlock);
+        EXCEPTION_ASSERT_UNUSED(throwScope, throwScope.exception() == error.value_or(nullptr));
         if (error)
             return;
         unsigned argumentStackSlots = callLinkInfo->maxNumArguments();
@@ -1145,8 +1145,8 @@ inline SlowPathReturnType virtualForWithFunction(
         }
 
         CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
-        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, function, scope, kind, *codeBlockSlot);
-        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
+        std::optional<Exception*> error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, function, scope, kind, *codeBlockSlot);
+        EXCEPTION_ASSERT(throwScope.exception() == error.value_or(nullptr));
         if (error) {
             return encodeResult(
                 vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode<JSEntryPtrTag>().executableAddress(),

@@ -1,3 +1,46 @@
+2018-10-11  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Remove gcc warnings on mips and armv7
+        https://bugs.webkit.org/show_bug.cgi?id=188598
+
+        Reviewed by Mark Lam.
+
+        Fix many gcc/clang warnings that are false positives, mostly alignment
+        issues.
+
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printMemory):
+        Use bitwise_cast instead of reinterpret_cast.
+        * assembler/testmasm.cpp:
+        (JSC::floatOperands):
+        marked as potentially unused as it is not used on all platforms.
+        (JSC::testProbeModifiesStackValues):
+        modifiedFlags is not used on mips, so don't declare it.
+        * bytecode/CodeBlock.h:
+        Make ScriptExecutable::prepareForExecution() return an
+        std::optional<Exception*> instead of a JSObject*.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        Update calling code for the prototype change of
+        ScriptExecutable::prepareForExecution().
+        * jit/JITOperations.cpp: Same as for Interpreter.cpp.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall): Same as for Interpreter.cpp.
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::dataStorage):
+        Use bitwise_cast instead of reinterpret_cast.
+        * runtime/ScriptExecutable.cpp:
+        * runtime/ScriptExecutable.h:
+        Make ScriptExecutable::prepareForExecution() return an
+        std::optional<Exception*> instead of a JSObject*.
+        * tools/JSDollarVM.cpp:
+        (JSC::codeBlockFromArg): Use bitwise_cast instead of reinterpret_cast.
+
 2018-10-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Use currentStackPointer more
