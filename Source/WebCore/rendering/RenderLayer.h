@@ -353,27 +353,66 @@ public:
     // itself, if it is a stacking container.
     RenderLayer* enclosingStackingContext() { return isStackingContext() ? this : stackingContext(); }
 
+    void dirtyNormalFlowList();
+
     void dirtyZOrderLists();
     void dirtyStackingContextZOrderLists();
+    
+    class LayerList {
+        friend class RenderLayer;
+    public:
+        using iterator = RenderLayer**;
+        using const_iterator = RenderLayer * const *;
+        using reverse_iterator = std::reverse_iterator<iterator>;
+        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-    Vector<RenderLayer*>* posZOrderList() const
+        iterator begin() { return m_layerList ? m_layerList->begin() : nullptr; }
+        iterator end() { return m_layerList ? m_layerList->end() : nullptr; }
+
+        reverse_iterator rbegin() { return reverse_iterator(end()); }
+        reverse_iterator rend() { return reverse_iterator(begin()); }
+
+        const_iterator begin() const { return m_layerList ? m_layerList->begin() : nullptr; }
+        const_iterator end() const { return m_layerList ? m_layerList->end() : nullptr; }
+
+        const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+        const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
+
+        size_t size() const { return m_layerList ? m_layerList->size() : 0; }
+
+    private:
+        LayerList(Vector<RenderLayer*>* layerList)
+            : m_layerList(layerList)
+        {
+        }
+        
+        Vector<RenderLayer*>* m_layerList;
+    };
+
+    LayerList normalFlowLayers() const
+    {
+        ASSERT(!m_normalFlowListDirty);
+        return LayerList(m_normalFlowList.get());
+    }
+
+    LayerList positiveZOrderLayers() const
     {
         ASSERT(!m_zOrderListsDirty);
         ASSERT(isStackingContext() || !m_posZOrderList);
-        return m_posZOrderList.get();
+        return LayerList(m_posZOrderList.get());
     }
 
-    bool hasNegativeZOrderList() const { return negZOrderList() && negZOrderList()->size(); }
+    bool hasNegativeZOrderLayers() const
+    {
+        return m_negZOrderList && m_negZOrderList->size();
+    }
 
-    Vector<RenderLayer*>* negZOrderList() const
+    LayerList negativeZOrderLayers() const
     {
         ASSERT(!m_zOrderListsDirty);
         ASSERT(isStackingContext() || !m_negZOrderList);
-        return m_negZOrderList.get();
+        return LayerList(m_negZOrderList.get());
     }
-
-    void dirtyNormalFlowList();
-    Vector<RenderLayer*>* normalFlowList() const { ASSERT(!m_normalFlowListDirty); return m_normalFlowList.get(); }
 
     // Update our normal and z-index lists.
     void updateLayerListsIfNeeded();
@@ -730,6 +769,7 @@ private:
     void updateZOrderLists();
     void rebuildZOrderLists();
     void rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&);
+    void collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&);
     void clearZOrderLists();
 
     void updateNormalFlowList();
@@ -785,8 +825,6 @@ private:
 
     LayoutPoint renderBoxLocation() const { return is<RenderBox>(renderer()) ? downcast<RenderBox>(renderer()).location() : LayoutPoint(); }
 
-    void collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&);
-
     void updateCompositingAndLayerListsIfNeeded();
 
     bool setupFontSubpixelQuantization(GraphicsContext&, bool& didQuantizeFonts);
@@ -806,7 +844,7 @@ private:
     void paintLayerContentsAndReflection(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
     void paintLayerByApplyingTransform(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayoutSize& translationOffset = LayoutSize());
     void paintLayerContents(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
-    void paintList(Vector<RenderLayer*>*, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
+    void paintList(LayerList, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
 
     void updatePaintingInfoForFragments(LayerFragments&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, bool shouldPaintContent, const LayoutSize& offsetFromRoot);
     void paintBackgroundForFragments(const LayerFragments&, GraphicsContext&, GraphicsContext& transparencyLayerContext,
@@ -823,13 +861,13 @@ private:
     RenderLayer* transparentPaintingAncestor();
     void beginTransparencyLayers(GraphicsContext&, const LayerPaintingInfo&, const LayoutRect& dirtyRect);
 
-    RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
+    RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, bool appliedTransform,
         const HitTestingTransformState* = nullptr, double* zOffset = nullptr);
     RenderLayer* hitTestLayerByApplyingTransform(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState* = nullptr, double* zOffset = nullptr,
         const LayoutSize& translationOffset = LayoutSize());
-    RenderLayer* hitTestList(Vector<RenderLayer*>*, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
+    RenderLayer* hitTestList(LayerList, RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&,
         const HitTestingTransformState*, double* zOffsetForDescendants, double* zOffset,
         const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
@@ -845,7 +883,7 @@ private:
     RenderLayer* hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState* = nullptr, double* zOffset = nullptr);
 
-    bool listBackgroundIsKnownToBeOpaqueInRect(const Vector<RenderLayer*>*, const LayoutRect&) const;
+    bool listBackgroundIsKnownToBeOpaqueInRect(const LayerList&, const LayoutRect&) const;
 
     void computeScrollDimensions();
     bool hasHorizontalOverflow() const;

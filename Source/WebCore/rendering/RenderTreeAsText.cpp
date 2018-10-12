@@ -706,20 +706,20 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     layer.updateLayerListsIfNeeded();
 
     bool shouldPaint = (behavior & RenderAsTextShowAllLayers) ? true : layer.intersectsDamageRect(layerBounds, damageRect.rect(), &rootLayer, layer.offsetFromAncestor(&rootLayer));
-    auto* negativeZOrderList = layer.negZOrderList();
-    bool paintsBackgroundSeparately = negativeZOrderList && negativeZOrderList->size() > 0;
+    auto negativeZOrderLayers = layer.negativeZOrderLayers();
+    bool paintsBackgroundSeparately = negativeZOrderLayers.size() > 0;
     if (shouldPaint && paintsBackgroundSeparately) {
         writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, behavior);
         writeLayerRenderers(ts, layer, LayerPaintPhaseBackground, behavior);
     }
         
-    if (negativeZOrderList) {
+    if (negativeZOrderLayers.size()) {
         if (behavior & RenderAsTextShowLayerNesting) {
-            ts << indent << " negative z-order list(" << negativeZOrderList->size() << ")\n";
+            ts << indent << " negative z-order list(" << negativeZOrderLayers.size() << ")\n";
             ts.increaseIndent();
         }
         
-        for (auto* currLayer : *negativeZOrderList)
+        for (auto* currLayer : negativeZOrderLayers)
             writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
         if (behavior & RenderAsTextShowLayerNesting)
@@ -745,29 +745,31 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
         writeLayerRenderers(ts, layer, paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, behavior);
     }
     
-    if (auto* normalFlowList = layer.normalFlowList()) {
+    auto normalFlowLayers = layer.normalFlowLayers();
+    if (normalFlowLayers.size()) {
         if (behavior & RenderAsTextShowLayerNesting) {
-            ts << indent << " normal flow list(" << normalFlowList->size() << ")\n";
+            ts << indent << " normal flow list(" << normalFlowLayers.size() << ")\n";
             ts.increaseIndent();
         }
         
-        for (auto* currLayer : *normalFlowList)
+        for (auto* currLayer : normalFlowLayers)
             writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
         if (behavior & RenderAsTextShowLayerNesting)
             ts.decreaseIndent();
     }
 
-    if (auto* positiveZOrderList = layer.posZOrderList()) {
-        size_t layerCount = positiveZOrderList->size();
+    auto positiveZOrderLayers = layer.positiveZOrderLayers();
+    if (positiveZOrderLayers.size()) {
+        size_t layerCount = positiveZOrderLayers.size();
 
         if (layerCount) {
             if (behavior & RenderAsTextShowLayerNesting) {
-                ts << indent << " positive z-order list(" << positiveZOrderList->size() << ")\n";
+                ts << indent << " positive z-order list(" << layerCount << ")\n";
                 ts.increaseIndent();
             }
 
-            for (auto* currLayer : *positiveZOrderList)
+            for (auto* currLayer : positiveZOrderLayers)
                 writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
             if (behavior & RenderAsTextShowLayerNesting)

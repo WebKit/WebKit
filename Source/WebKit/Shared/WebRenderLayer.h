@@ -29,7 +29,7 @@
 #include "WebRenderObject.h"
 
 namespace WebCore {
-    class RenderLayer;
+class RenderLayer;
 }
 
 namespace WebKit {
@@ -59,8 +59,6 @@ public:
 private:
     explicit WebRenderLayer(WebCore::RenderLayer*);
     WebRenderLayer(RefPtr<WebRenderObject>&& renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, RefPtr<API::Array>&& negativeZOrderList, RefPtr<API::Array>&& normalFlowList, RefPtr<API::Array>&& positiveZOrderList, RefPtr<WebRenderLayer>&& frameContentsLayer);
-
-    static RefPtr<API::Array> createArrayFromLayerList(Vector<WebCore::RenderLayer*>*);
 
     RefPtr<WebRenderObject> m_renderer;
     bool m_isReflection;

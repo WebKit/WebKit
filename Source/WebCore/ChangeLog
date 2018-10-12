@@ -1,3 +1,37 @@
+2018-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Hide RenderLayer z-order and normal flow lists behind iterators
+        https://bugs.webkit.org/show_bug.cgi?id=190457
+
+        Reviewed by Zalan Bujtas.
+
+        Expose the positive z-order, negative z-order and normal flow lists
+        from RenderLayer as iterators rather than vectors of raw pointers.
+        
+        This hides the fact that the vectors can be null, and allows for easier casting in future.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::update3DTransformedDescendantStatus):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::traverseVisibleNonCompositedDescendantLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry):
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry):
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayer):
+        (WebCore::RenderLayerCompositor::needsContentsCompositingLayer const):
+        (WebCore::RenderLayerCompositor::layerHas3DContent const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
 2018-10-11  Don Olmstead  <don.olmstead@sony.com>
 
         Add Houdini specs to features.json

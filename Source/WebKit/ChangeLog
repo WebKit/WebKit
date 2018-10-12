@@ -1,3 +1,21 @@
+2018-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Hide RenderLayer z-order and normal flow lists behind iterators
+        https://bugs.webkit.org/show_bug.cgi?id=190457
+
+        Reviewed by Zalan Bujtas.
+
+        Expose the positive z-order, negative z-order and normal flow lists
+        from RenderLayer as iterators rather than vectors of raw pointers.
+        
+        Use a lambda function to get access to the private constructor, while not having
+        to refer to the nested RenderLayer::LayerIterator class in the header.
+
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        (WebKit::WebRenderLayer::createArrayFromLayerList): Deleted.
+        * Shared/WebRenderLayer.h:
+
 2018-10-11  Tim Horton  <timothy_horton@apple.com>
 
         iOS: Scrolling using the arrow keys doesn't show the scroll indicator like it does on macOS

@@ -2083,47 +2083,41 @@ static LayerTraversal traverseVisibleNonCompositedDescendantLayers(RenderLayer& 
     LayerListMutationDetector mutationChecker(&parent);
 #endif
 
-    if (auto* normalFlowList = parent.normalFlowList()) {
-        for (auto* childLayer : *normalFlowList) {
-            if (compositedWithOwnBackingStore(*childLayer))
-                continue;
+    for (auto* childLayer : parent.normalFlowLayers()) {
+        if (compositedWithOwnBackingStore(*childLayer))
+            continue;
 
-            if (layerFunc(*childLayer) == LayerTraversal::Stop)
-                return LayerTraversal::Stop;
-            
-            if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
-                return LayerTraversal::Stop;
-        }
+        if (layerFunc(*childLayer) == LayerTraversal::Stop)
+            return LayerTraversal::Stop;
+        
+        if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
+            return LayerTraversal::Stop;
     }
 
     if (parent.isStackingContext() && !parent.hasVisibleDescendant())
         return LayerTraversal::Continue;
 
     // Use the m_hasCompositingDescendant bit to optimize?
-    if (auto* negZOrderList = parent.negZOrderList()) {
-        for (auto* childLayer : *negZOrderList) {
-            if (compositedWithOwnBackingStore(*childLayer))
-                continue;
+    for (auto* childLayer : parent.negativeZOrderLayers()) {
+        if (compositedWithOwnBackingStore(*childLayer))
+            continue;
 
-            if (layerFunc(*childLayer) == LayerTraversal::Stop)
-                return LayerTraversal::Stop;
+        if (layerFunc(*childLayer) == LayerTraversal::Stop)
+            return LayerTraversal::Stop;
 
-            if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
-                return LayerTraversal::Stop;
-        }
+        if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
+            return LayerTraversal::Stop;
     }
 
-    if (auto* posZOrderList = parent.posZOrderList()) {
-        for (auto* childLayer : *posZOrderList) {
-            if (compositedWithOwnBackingStore(*childLayer))
-                continue;
+    for (auto* childLayer : parent.positiveZOrderLayers()) {
+        if (compositedWithOwnBackingStore(*childLayer))
+            continue;
 
-            if (layerFunc(*childLayer) == LayerTraversal::Stop)
-                return LayerTraversal::Stop;
+        if (layerFunc(*childLayer) == LayerTraversal::Stop)
+            return LayerTraversal::Stop;
 
-            if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
-                return LayerTraversal::Stop;
-        }
+        if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
+            return LayerTraversal::Stop;
     }
 
     return LayerTraversal::Continue;

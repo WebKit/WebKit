@@ -65,20 +65,6 @@ Ref<WebRenderLayer> WebRenderLayer::create(RefPtr<WebRenderObject>&& renderer, b
     return adoptRef(*new WebRenderLayer(WTFMove(renderer), isReflection, isClipping, isClipped, type, absoluteBoundingBox, backingStoreMemoryEstimate, WTFMove(negativeZOrderList), WTFMove(normalFlowList), WTFMove(positiveZOrderList), WTFMove(frameContentsLayer)));
 }
 
-RefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<WebCore::RenderLayer*>* list)
-{
-    if (!list || !list->size())
-        return nullptr;
-
-    Vector<RefPtr<API::Object>> layers;
-    layers.reserveInitialCapacity(list->size());
-
-    for (const auto& layer : *list)
-        layers.uncheckedAppend(adoptRef(new WebRenderLayer(layer)));
-
-    return API::Array::create(WTFMove(layers));
-}
-
 WebRenderLayer::WebRenderLayer(WebCore::RenderLayer* layer)
 {
     m_renderer = WebRenderObject::create(&layer->renderer());
@@ -113,9 +99,22 @@ WebRenderLayer::WebRenderLayer(WebCore::RenderLayer* layer)
 
     m_absoluteBoundingBox = layer->absoluteBoundingBox();
 
-    m_negativeZOrderList = createArrayFromLayerList(layer->negZOrderList());
-    m_normalFlowList = createArrayFromLayerList(layer->normalFlowList());
-    m_positiveZOrderList = createArrayFromLayerList(layer->posZOrderList());
+    auto createArrayFromLayerList = [] (WebCore::RenderLayer::LayerList list) -> RefPtr<API::Array> {
+        if (!list.size())
+            return nullptr;
+
+        Vector<RefPtr<API::Object>> layers;
+        layers.reserveInitialCapacity(list.size());
+
+        for (auto* layer : list)
+            layers.uncheckedAppend(adoptRef(new WebRenderLayer(layer)));
+
+        return API::Array::create(WTFMove(layers));
+    };
+
+    m_negativeZOrderList = createArrayFromLayerList(layer->negativeZOrderLayers());
+    m_normalFlowList = createArrayFromLayerList(layer->normalFlowLayers());
+    m_positiveZOrderList = createArrayFromLayerList(layer->positiveZOrderLayers());
 
     if (is<WebCore::RenderWidget>(layer->renderer())) {
         if (WebCore::Document* contentDocument = downcast<WebCore::RenderWidget>(layer->renderer()).frameOwnerElement().contentDocument()) {

@@ -1100,16 +1100,12 @@ bool RenderLayer::update3DTransformedDescendantStatus()
 
         // Transformed or preserve-3d descendants can only be in the z-order lists, not
         // in the normal flow list, so we only need to check those.
-        if (auto* positiveZOrderList = posZOrderList()) {
-            for (auto* layer : *positiveZOrderList)
-                m_has3DTransformedDescendant |= layer->update3DTransformedDescendantStatus();
-        }
+        for (auto* layer : positiveZOrderLayers())
+            m_has3DTransformedDescendant |= layer->update3DTransformedDescendantStatus();
 
         // Now check our negative z-index children.
-        if (auto* negativeZOrderList = negZOrderList()) {
-            for (auto* layer : *negativeZOrderList)
-                m_has3DTransformedDescendant |= layer->update3DTransformedDescendantStatus();
-        }
+        for (auto* layer : negativeZOrderLayers())
+            m_has3DTransformedDescendant |= layer->update3DTransformedDescendantStatus();
         
         m_3DTransformedDescendantStatusDirty = false;
     }
@@ -4104,7 +4100,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         // Now walk the sorted list of children with negative z-indices.
         if ((isPaintingScrollingContent && isPaintingOverflowContents) || (!isPaintingScrollingContent && isPaintingCompositedBackground))
-            paintList(negZOrderList(), currentContext, localPaintingInfo, localPaintFlags);
+            paintList(negativeZOrderLayers(), currentContext, localPaintingInfo, localPaintFlags);
         
         if (isPaintingCompositedForeground) {
             if (shouldPaintContent) {
@@ -4118,10 +4114,10 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         if (isPaintingCompositedForeground) {
             // Paint any child layers that have overflow.
-            paintList(m_normalFlowList.get(), currentContext, localPaintingInfo, localPaintFlags);
+            paintList(normalFlowLayers(), currentContext, localPaintingInfo, localPaintFlags);
         
             // Now walk the sorted list of children with positive z-indices.
-            paintList(posZOrderList(), currentContext, localPaintingInfo, localPaintFlags);
+            paintList(positiveZOrderLayers(), currentContext, localPaintingInfo, localPaintFlags);
         }
 
         if (isPaintingOverlayScrollbars && hasScrollbars())
@@ -4212,9 +4208,9 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     context.setCTM(oldTransfrom);
 }
 
-void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
+void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
 {
-    if (!list)
+    if (layerIterator.begin() == layerIterator.end())
         return;
 
     if (!hasSelfPaintingLayerDescendant())
@@ -4224,7 +4220,7 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext& context
     LayerListMutationDetector mutationChecker(this);
 #endif
 
-    for (auto* childLayer : *list)
+    for (auto* childLayer : layerIterator)
         childLayer->paintLayer(context, paintingInfo, paintFlags);
 }
 
@@ -4826,7 +4822,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 #endif
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
-    auto* hitLayer = hitTestList(posZOrderList(), rootLayer, request, result, hitTestRect, hitTestLocation,
+    auto* hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation,
                                         localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
     if (hitLayer) {
         if (!depthSortDescendants)
@@ -4835,7 +4831,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Now check our overflow objects.
-    hitLayer = hitTestList(m_normalFlowList.get(), rootLayer, request, result, hitTestRect, hitTestLocation,
+    hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, result, hitTestRect, hitTestLocation,
                            localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
     if (hitLayer) {
         if (!depthSortDescendants)
@@ -4874,7 +4870,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Now check our negative z-index children.
-    hitLayer = hitTestList(negZOrderList(), rootLayer, request, result, hitTestRect, hitTestLocation,
+    hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation,
         localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
     if (hitLayer) {
         if (!depthSortDescendants)
@@ -5039,7 +5035,7 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
     return true;
 }
 
-RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* rootLayer,
+RenderLayer* RenderLayer::hitTestList(LayerList layerIterator, RenderLayer* rootLayer,
                                       const HitTestRequest& request, HitTestResult& result,
                                       const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation,
                                       const HitTestingTransformState* transformState, 
@@ -5047,18 +5043,19 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
                                       const HitTestingTransformState* unflattenedTransformState,
                                       bool depthSortDescendants)
 {
-    if (!list)
+    if (layerIterator.begin() == layerIterator.end())
         return nullptr;
 
     if (!hasSelfPaintingLayerDescendant())
         return nullptr;
 
     RenderLayer* resultLayer = nullptr;
-    for (size_t i = list->size(); i > 0; --i) {
-        RenderLayer* childLayer = list->at(i - 1);
-        RenderLayer* hitLayer = nullptr;
+
+    for (auto iter = layerIterator.rbegin(); iter != layerIterator.rend(); ++iter) {
+        auto* childLayer = *iter;
+
         HitTestResult tempResult(result.hitTestLocation());
-        hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
+        auto* hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
 
         // If it is a list-based test, we can safely append the temporary result since it might had hit
         // nodes but not necesserily had hitLayer set.
@@ -5597,7 +5594,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         }
     }
     
-    ASSERT(isStackingContext() || (!posZOrderList() || !posZOrderList()->size()));
+    ASSERT(isStackingContext() || !positiveZOrderLayers().size());
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(this));
@@ -5612,20 +5609,14 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         unionBounds.checkedUnite(childBounds);
     };
 
-    if (auto* negZOrderList = this->negZOrderList()) {
-        for (auto* childLayer : *negZOrderList)
-            computeLayersUnion(*childLayer);
-    }
+    for (auto* childLayer : negativeZOrderLayers())
+        computeLayersUnion(*childLayer);
 
-    if (auto* posZOrderList = this->posZOrderList()) {
-        for (auto* childLayer : *posZOrderList)
-            computeLayersUnion(*childLayer);
-    }
+    for (auto* childLayer : positiveZOrderLayers())
+        computeLayersUnion(*childLayer);
 
-    if (auto* normalFlowList = this->normalFlowList()) {
-        for (auto* childLayer : *normalFlowList)
-            computeLayersUnion(*childLayer);
-    }
+    for (auto* childLayer : normalFlowLayers())
+        computeLayersUnion(*childLayer);
 
     // FIXME: We can optimize the size of the composited layers, by not enlarging
     // filtered areas with the outsets if we know that the filter is going to render in hardware.
@@ -5792,18 +5783,18 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
     if (renderer().hasOverflowClip())
         return false;
     
-    return listBackgroundIsKnownToBeOpaqueInRect(posZOrderList(), localRect)
-        || listBackgroundIsKnownToBeOpaqueInRect(negZOrderList(), localRect)
-        || listBackgroundIsKnownToBeOpaqueInRect(normalFlowList(), localRect);
+    return listBackgroundIsKnownToBeOpaqueInRect(positiveZOrderLayers(), localRect)
+        || listBackgroundIsKnownToBeOpaqueInRect(negativeZOrderLayers(), localRect)
+        || listBackgroundIsKnownToBeOpaqueInRect(normalFlowLayers(), localRect);
 }
 
-bool RenderLayer::listBackgroundIsKnownToBeOpaqueInRect(const Vector<RenderLayer*>* list, const LayoutRect& localRect) const
+bool RenderLayer::listBackgroundIsKnownToBeOpaqueInRect(const LayerList& list, const LayoutRect& localRect) const
 {
-    if (!list || list->isEmpty())
+    if (list.begin() == list.end())
         return false;
 
-    for (auto iter = list->rbegin(); iter != list->rend(); ++iter) {
-        const RenderLayer* childLayer = *iter;
+    for (auto iter = list.rbegin(); iter != list.rend(); ++iter) {
+        const auto* childLayer = *iter;
         if (childLayer->isComposited())
             continue;
 
