@@ -212,11 +212,11 @@
       "platform": "ios-simulator-11",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews", "ios-11-sim-tests-ews"],
+      "triggers": ["api-tests-ios-sim-ews", "ios-11-sim-wk2-tests-ews"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
-      "name": "iOS-11-Simulator-Tests-EWS",
+      "name": "iOS-11-Simulator-WK2-Tests-EWS",
       "factory": "iOSTestsFactory",
       "platform": "ios-simulator-11",
       "configuration": "release",
@@ -349,9 +349,9 @@
     },
     {
       "type": "Triggerable",
-      "name": "ios-11-sim-tests-ews",
+      "name": "ios-11-sim-wk2-tests-ews",
       "builderNames": [
-        "iOS-11-Simulator-Tests-EWS"
+        "iOS-11-Simulator-WK2-Tests-EWS"
       ]
     },
     {
