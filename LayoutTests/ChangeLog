@@ -1,3 +1,12 @@
+2018-10-12  Dawei Fenton  <realdawei@apple.com>
+
+        [Mojave Wk2] Layout Test http/tests/cache/disk-cache/disk-cache-validation-attachment.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190323
+
+        Unreviewed, mark test as Flaky.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-10-12  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html is failing
