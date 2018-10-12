@@ -1,3 +1,38 @@
+2018-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Cache API tests are flaky due to file writing failing from time to time
+        https://bugs.webkit.org/show_bug.cgi?id=190321
+
+        Reviewed by Chris Dumez.
+
+        Make NetworkCache::Storage::store callback return an error in case of writing failure.
+        Use this to surface this error at Cache API level.
+
+        Minor clean-up to make Storage::clear take a completion handler.
+
+        Make also sure to create the folder before writing the file in CacheStorageEngine.
+        As can be seen from some logging, it does happen that writing the 'origin' file sometimes fail with Posix error 9,
+        which might mean the folder is not present.
+
+        Changes are covered by current tests, flaky tests like http/wpt/cache-storage/cache-put-keys.https.any.worker.html
+        will show a "failed writing data to the file system" error message.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::writeFile):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::storeOrigin):
+        (WebKit::CacheStorage::Caches::writeCachesToDisk):
+        (WebKit::CacheStorage::Caches::writeRecord):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::WriteOperation::WriteOperation):
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        (WebKit::NetworkCache::Storage::finishWriteOperation):
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::clear):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::store):
+
 2018-10-11  Youenn Fablet  <youenn@apple.com>
 
         IOS 12 - Service worker cache not shared when added to homescreen

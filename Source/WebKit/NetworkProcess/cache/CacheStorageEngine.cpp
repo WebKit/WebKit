@@ -391,7 +391,12 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
     }
 
     m_pendingWriteCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
-    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()] () mutable {
+    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()]() mutable {
+
+        String directoryPath = WebCore::FileSystem::directoryName(filename);
+        if (!WebCore::FileSystem::fileExists(directoryPath))
+            WebCore::FileSystem::makeAllDirectories(directoryPath);
+
         auto channel = IOChannel::open(filename, IOChannel::Type::Create);
         channel->write(0, data, nullptr, [this, weakThis = WTFMove(weakThis), identifier](int error) mutable {
             ASSERT(RunLoop::isMain());

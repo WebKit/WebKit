@@ -502,7 +502,12 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
         return;
     }
 
-    m_storage->store(Cache::encode(recordInformation, record), { }, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)]() {
+    m_storage->store(Cache::encode(recordInformation, record), { }, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](int error) {
+        if (error) {
+            RELEASE_LOG_ERROR(CacheStorage, "Caches::writeRecord failed with error %d", error);
+            callback(Error::WriteDisk);
+            return;
+        }
         callback(std::nullopt);
     });
 }

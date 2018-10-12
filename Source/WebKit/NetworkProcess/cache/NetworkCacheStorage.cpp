@@ -106,7 +106,7 @@ bool Storage::ReadOperation::finish()
 struct Storage::WriteOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WriteOperation(Storage& storage, const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void()>&& completionHandler)
+    WriteOperation(Storage& storage, const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void(int)>&& completionHandler)
         : storage(storage)
         , record(record)
         , mappedBodyHandler(WTFMove(mappedBodyHandler))
@@ -116,7 +116,7 @@ public:
 
     const Record record;
     const MappedBodyHandler mappedBodyHandler;
-    CompletionHandler<void()> completionHandler;
+    CompletionHandler<void(int)> completionHandler;
 
     std::atomic<unsigned> activeCount { 0 };
 };
@@ -822,14 +822,14 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
         channel->write(0, recordData, nullptr, [this, &writeOperation, recordSize](int error) {
             // On error the entry still stays in the contents filter until next synchronization.
             m_approximateRecordsSize += recordSize;
-            finishWriteOperation(writeOperation);
+            finishWriteOperation(writeOperation, error);
 
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
         });
     });
 }
 
-void Storage::finishWriteOperation(WriteOperation& writeOperation)
+void Storage::finishWriteOperation(WriteOperation& writeOperation, int error)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(writeOperation.activeCount);
@@ -841,7 +841,7 @@ void Storage::finishWriteOperation(WriteOperation& writeOperation)
     auto protectedThis = makeRef(*this);
 
     if (writeOperation.completionHandler)
-        writeOperation.completionHandler();
+        writeOperation.completionHandler(error);
 
     m_activeWriteOperations.remove(&writeOperation);
     dispatchPendingWriteOperations();
@@ -879,7 +879,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     dispatchPendingReadOperations();
 }
 
-void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void()>&& completionHandler)
+void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void(int)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!record.key.isNull());
