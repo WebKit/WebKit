@@ -1,5 +1,14 @@
 2018-10-12  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Gardening: Build fix after r237084.
+        https://bugs.webkit.org/show_bug.cgi?id=189708
+
+        Unreviewd.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2018-10-12  Tadeu Zagallo  <tzagallo@apple.com>
+
         Separate configuration extraction from offset extraction
         https://bugs.webkit.org/show_bug.cgi?id=189708
 

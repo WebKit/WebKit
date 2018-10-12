@@ -3224,7 +3224,6 @@
 		14BD5A2D0A3E91F600BAF59C /* testapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = testapi.c; path = API/tests/testapi.c; sourceTree = "<group>"; };
 		14BD688E215191310050DAFF /* JSCLLIntSettingsExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JSCLLIntSettingsExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
 		14BD689C215191B30050DAFF /* LLIntSettingsExtractor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntSettingsExtractor.cpp; path = llint/LLIntSettingsExtractor.cpp; sourceTree = "<group>"; };
-		14BD689F2151923F0050DAFF /* LLIntDesiredSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntDesiredSettings.h; path = LLIntOffsets/LLIntDesiredSettings.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		14BE7D3217135CF400D1807A /* WeakInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakInlines.h; sourceTree = "<group>"; };
 		14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMap.h; sourceTree = "<group>"; };
 		14CA958A16AB50DE00938A06 /* StaticPropertyAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticPropertyAnalyzer.h; sourceTree = "<group>"; };
@@ -3578,7 +3577,6 @@
 		5C4E8E951DBEBDA20036F1FC /* JSONParseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONParseTest.h; path = API/tests/JSONParseTest.h; sourceTree = "<group>"; };
 		5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libedit.dylib; path = /usr/lib/libedit.dylib; sourceTree = "<absolute>"; };
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
-		5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntDesiredOffsets.h; path = LLIntOffsets/LLIntDesiredOffsets.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
 		623A37EB1B87A7BD00754209 /* RegisterMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterMap.h; sourceTree = "<group>"; };
 		627673211B680C1E00FD9F2E /* CallMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallMode.cpp; sourceTree = "<group>"; };
@@ -5073,8 +5071,6 @@
 				0F4680C514BBB16900BFE272 /* LLIntCommon.h */,
 				0F4680CE14BBB3D100BFE272 /* LLIntData.cpp */,
 				0F4680CF14BBB3D100BFE272 /* LLIntData.h */,
-				5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */,
-				14BD689F2151923F0050DAFF /* LLIntDesiredSettings.h */,
 				0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */,
 				0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */,
 				0F46809D14BA7F8200BFE272 /* LLIntExceptions.cpp */,
