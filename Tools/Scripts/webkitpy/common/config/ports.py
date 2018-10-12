@@ -117,7 +117,7 @@ class DeprecatedPort(object):
         command = self.script_shell_command("run-javascriptcore-tests")
         command.append("--no-fail-fast")
         if 'JSCTESTS_OPTIONS' in os.environ:
-            command.append(os.environ['JSCTESTS_OPTIONS'])
+            command += os.environ['JSCTESTS_OPTIONS'].split()
         return self._append_build_style_flag(command, build_style)
 
     def run_webkit_tests_command(self, build_style=None):

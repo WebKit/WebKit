@@ -1,3 +1,17 @@
+2018-10-12  Guillaume Emont  <guijemont@igalia.com>
+
+        [Tools][webkitpy] fix handling of JSCTESTS_OPTIONS
+        https://bugs.webkit.org/show_bug.cgi?id=190537
+
+        Reviewed by Alexey Proskuryakov.
+
+        In DeprecatedPort.run_javascriptcore_tests_command() JSCTESTS_OPTIONS
+        needs to be split before adding it to the command since it is treated
+        as a list of args.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.run_javascriptcore_tests_command):
+
 2018-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Allow SPI clients to lay out at arbitrarily scaled sizes and scale to fit the view
