@@ -1,3 +1,14 @@
+2018-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Dark Mode: Highlight text in Network Headers search is too dark
+        https://bugs.webkit.org/show_bug.cgi?id=190510
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ResourceHeadersContentView.css:
+        (.resource-headers.showing-find-banner .search-highlight):
+        Use adaptive text-color.
+
 2018-10-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: wrong color used for "goto arrow" for selected DOM breakpoint tree element

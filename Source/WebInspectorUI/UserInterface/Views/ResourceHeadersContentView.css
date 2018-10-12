@@ -86,7 +86,7 @@ body[dir=rtl] .resource-headers .details .pair {
 }
 
 .resource-headers.showing-find-banner .search-highlight {
-    color: black;
+    color: var(--text-color);
     background-color: hsla(53, 83%, 53%, 0.2);
     border-bottom: 1px solid hsl(47, 82%, 60%);
 }
