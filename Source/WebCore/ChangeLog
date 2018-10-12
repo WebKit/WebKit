@@ -1,3 +1,10 @@
+2018-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Address the review comment which was meant to be addressed in r237025.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::elementCannotHaveEndTag):
+
 2018-10-12  Youenn Fablet  <youenn@apple.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Refresh libwebrtc up to 343f4144be

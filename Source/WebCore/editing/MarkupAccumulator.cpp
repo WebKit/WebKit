@@ -94,7 +94,7 @@ static bool elementCannotHaveEndTag(const Node& node)
     // If current node is an area, base, basefont, bgsound, br, col, embed, frame, hr, img,
     // input, keygen, link, meta, param, source, track or wbr element, then continue on to
     // the next child node at this point.
-    static const AtomicStringImpl* localNames[] = {
+    static const AtomicStringImpl* const localNames[] = {
         areaTag->localName().impl(),
         baseTag->localName().impl(),
         basefontTag->localName().impl(),
@@ -115,7 +115,7 @@ static bool elementCannotHaveEndTag(const Node& node)
         wbrTag->localName().impl()
     };
 
-    auto* elementName = downcast<HTMLElement>(node).localName().impl();
+    auto* const elementName = downcast<HTMLElement>(node).localName().impl();
     for (auto* name : localNames) {
         if (name == elementName)
             return true;
