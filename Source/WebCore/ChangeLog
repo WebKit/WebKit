@@ -1,3 +1,21 @@
+2018-10-12  Jer Noble  <jer.noble@apple.com>
+
+        WebAVSampleBufferErrorListener's parent should be a WeakPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=190524
+        <rdar://problem/44359307>
+
+        Reviewed by Eric Carlson.
+
+        Once WebAVSampleBufferErrorListener's parent is a WeakPtr, we no longer need to pass
+        protectedSelf into the callOnMainThread lambdas; we can pass in the parent itself.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVSampleBufferErrorListener initWithParent:]):
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebAVSampleBufferErrorListener layerFailedToDecode:]):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::destroyRenderers):
+
 2018-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Address the review comment which was meant to be addressed in r237025.
