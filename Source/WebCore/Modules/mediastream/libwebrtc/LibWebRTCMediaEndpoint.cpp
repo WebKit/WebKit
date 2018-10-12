@@ -415,13 +415,13 @@ static inline void setExistingReceiverSourceTrack(RealtimeMediaSource& existingS
     case cricket::MEDIA_TYPE_AUDIO: {
         ASSERT(existingSource.type() == RealtimeMediaSource::Type::Audio);
         rtc::scoped_refptr<webrtc::AudioTrackInterface> audioTrack = static_cast<webrtc::AudioTrackInterface*>(rtcReceiver.track().get());
-        static_cast<RealtimeIncomingAudioSource&>(existingSource).setSourceTrack(WTFMove(audioTrack));
+        downcast<RealtimeIncomingAudioSource>(existingSource).setSourceTrack(WTFMove(audioTrack));
         return;
     }
     case cricket::MEDIA_TYPE_VIDEO: {
         ASSERT(existingSource.type() == RealtimeMediaSource::Type::Video);
         rtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack = static_cast<webrtc::VideoTrackInterface*>(rtcReceiver.track().get());
-        static_cast<RealtimeIncomingVideoSource&>(existingSource).setSourceTrack(WTFMove(videoTrack));
+        downcast<RealtimeIncomingVideoSource>(existingSource).setSourceTrack(WTFMove(videoTrack));
         return;
     }
     case cricket::MEDIA_TYPE_DATA:

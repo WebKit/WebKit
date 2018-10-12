@@ -69,10 +69,16 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
 
+    bool isIncomingVideoSource() const final { return true; }
+
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RealtimeIncomingVideoSource)
+static bool isType(const WebCore::RealtimeMediaSource& source) { return source.isIncomingVideoSource(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // USE(LIBWEBRTC)

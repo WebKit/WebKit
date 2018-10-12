@@ -66,10 +66,16 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
 
+    bool isIncomingAudioSource() const final { return true; }
+
     RealtimeMediaSourceSettings m_currentSettings;
     rtc::scoped_refptr<webrtc::AudioTrackInterface> m_audioTrack;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RealtimeIncomingAudioSource)
+    static bool isType(const WebCore::RealtimeMediaSource& source) { return source.isIncomingAudioSource(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // USE(LIBWEBRTC)

@@ -1,3 +1,21 @@
+2018-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Use downcast for use of RealtimeMediaSource in LibWebRTCMediaEndpoint
+        https://bugs.webkit.org/show_bug.cgi?id=190533
+
+        Reviewed by Chris Dumez.
+
+        Clean-up work.
+        No change of behavior.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::setExistingReceiverSourceTrack):
+        * platform/mediastream/RealtimeIncomingAudioSource.h:
+        (isType):
+        * platform/mediastream/RealtimeIncomingVideoSource.h:
+        (isType):
+        * platform/mediastream/RealtimeMediaSource.h:
+
 2018-10-12  Jer Noble  <jer.noble@apple.com>
 
         WebAVSampleBufferErrorListener's parent should be a WeakPtr.

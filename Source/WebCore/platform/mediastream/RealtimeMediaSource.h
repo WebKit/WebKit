@@ -162,6 +162,9 @@ public:
 
     virtual void captureFailed();
 
+    virtual bool isIncomingAudioSource() const { return false; }
+    virtual bool isIncomingVideoSource() const { return false; }
+
     // Testing only
     virtual void delaySamples(Seconds) { };
 
