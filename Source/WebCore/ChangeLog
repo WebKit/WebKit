@@ -1,3 +1,18 @@
+2018-10-12  Youenn Fablet  <youenn@apple.com>
+
+        DOMCache should dereference itself as soon as stopped
+        https://bugs.webkit.org/show_bug.cgi?id=190441
+
+        Reviewed by Chris Dumez.
+
+        Dereference the DOMCache as soon as its context is stopped instead of waiting for garbage collection.
+        This allows freeing resources sooner in the network process.
+        No observable change of behavior since the DOMCache becomes no-op when its context is stopped.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::~DOMCache):
+        (WebCore::DOMCache::stop):
+
 2018-10-12  Jer Noble  <jer.noble@apple.com>
 
         CRASH in WebCore::MediaPlayerPrivateAVFoundation::setPreload

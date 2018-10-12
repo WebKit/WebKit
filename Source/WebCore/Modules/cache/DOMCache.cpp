@@ -51,7 +51,8 @@ DOMCache::DOMCache(ScriptExecutionContext& context, String&& name, uint64_t iden
 
 DOMCache::~DOMCache()
 {
-    m_connection->dereference(m_identifier);
+    if (!m_isStopped)
+        m_connection->dereference(m_identifier);
 }
 
 void DOMCache::match(RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
@@ -570,7 +571,10 @@ void DOMCache::updateRecords(Vector<Record>&& records)
 
 void DOMCache::stop()
 {
+    if (m_isStopped)
+        return;
     m_isStopped = true;
+    m_connection->dereference(m_identifier);
 }
 
 const char* DOMCache::activeDOMObjectName() const
