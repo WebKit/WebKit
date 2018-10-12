@@ -1,3 +1,18 @@
+2018-10-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Add PLATFORM(IOS_FAMILY) and OS(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190477
+
+        Reviewed by Tim Horton.
+
+        Currently, PLATFORM(IOS) and OS(IOS) are true when building for any
+        TARGET_OS_IPHONE target, which is quite confusing. Add a better named alternative,
+        as a first step towards mass replacing PLATFORM(IOS). Can't so it all at once
+        because of dependencies in other source repositories.
+
+        * wtf/Platform.h: Changed to the new name in this file though. Kept a few
+        instances that actually target iOS only, having a version check.
+
 2018-10-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Use currentStackPointer more
