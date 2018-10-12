@@ -42,12 +42,12 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
     get canvases()
     {
-        return [...this._canvasIdentifierMap.values()];
+        return Array.from(this._canvasIdentifierMap.values());
     }
 
     get shaderPrograms()
     {
-        return [...this._shaderProgramIdentifierMap.values()];
+        return Array.from(this._shaderProgramIdentifierMap.values());
     }
 
     importRecording()

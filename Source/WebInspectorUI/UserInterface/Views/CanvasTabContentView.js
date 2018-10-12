@@ -127,10 +127,10 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingImported, this._recordingImportedOrStopped, this);
         WI.Canvas.addEventListener(WI.Canvas.Event.RecordingStopped, this._recordingImportedOrStopped, this);
 
-        let canvases = new Set([...this._canvasCollection, ...WI.canvasManager.canvases]);
+        let canvases = WI.canvasManager.canvases;
 
         for (let canvas of this._canvasCollection) {
-            if (!canvases.has(canvas))
+            if (!canvases.includes(canvas))
                 this._removeCanvas(canvas);
         }
 

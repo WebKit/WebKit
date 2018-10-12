@@ -1,3 +1,18 @@
+2018-10-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: previews aren't removed when the parent view is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=190525
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype.attached):
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.get canvases):
+        (WI.CanvasManager.prototype.get shaderPrograms):
+        Drive-by: simplify these getters.
+
 2018-10-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Dark Mode: Highlight text in Network Headers search is too dark
