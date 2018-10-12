@@ -1,3 +1,12 @@
+2018-10-12  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190520
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-10-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSC should have "parseFunction" to optimize Function constructor

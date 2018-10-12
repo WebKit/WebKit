@@ -4222,3 +4222,5 @@ imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-constructor.ht
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
 
 webkit.org/b/190472 fast/forms/fieldset/fieldset-elements-htmlcollection.html [ Failure ]
+
+webkit.org/b/190520 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
