@@ -80,9 +80,6 @@ std::optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
 
 namespace WTF {
 
-template<typename> struct EnumTraits;
-template<typename E, E...> struct EnumValues;
-
 template<> struct EnumTraits<WebCore::PasteboardItemPresentationStyle> {
     using values = EnumValues<
         WebCore::PasteboardItemPresentationStyle,

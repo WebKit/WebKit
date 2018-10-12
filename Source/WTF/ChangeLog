@@ -1,3 +1,12 @@
+2018-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Allow encoding of small enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=190531
+
+        Reviewed by Tim Horton.
+
+        * wtf/Forward.h:
+
 2018-10-11  Alexey Proskuryakov  <ap@apple.com>
 
         Add PLATFORM(IOS_FAMILY) and OS(IOS_FAMILY)

@@ -35,7 +35,7 @@ class Navigation;
 namespace WebCore {
 class ResourceRequest;
 
-enum class FrameLoadType;
+enum class FrameLoadType : uint8_t;
 }
 
 namespace WebKit {

@@ -177,7 +177,7 @@ class ValidationBubble;
 enum SelectionDirection : uint8_t;
 
 enum class AutoplayEvent;
-enum class HasInsecureContent;
+enum class HasInsecureContent : uint8_t;
 enum class NotificationDirection;
 enum class ShouldSample;
 enum class ShouldTreatAsContinuingLoad;

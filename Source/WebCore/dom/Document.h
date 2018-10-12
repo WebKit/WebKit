@@ -200,7 +200,7 @@ class XPathResult;
 template<typename> class ExceptionOr;
 
 enum CollectionType;
-enum class ShouldOpenExternalURLsPolicy;
+enum class ShouldOpenExternalURLsPolicy : uint8_t;
 
 enum class RouteSharingPolicy;
 

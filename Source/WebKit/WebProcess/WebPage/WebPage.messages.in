@@ -140,7 +140,7 @@ messages -> WebPage LegacyReceiver {
     ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
     CenterSelectionInVisibleArea()
 
-    GoToBackForwardItem(uint64_t navigationID, struct WebCore::BackForwardItemIdentifier backForwardItemID, enum WebCore::FrameLoadType backForwardType, enum WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
+    GoToBackForwardItem(uint64_t navigationID, struct WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
     TryRestoreScrollPosition()
 
     LoadURLInFrame(WebCore::URL url, uint64_t frameID)
@@ -161,7 +161,7 @@ messages -> WebPage LegacyReceiver {
     DidRemoveBackForwardItem(struct WebCore::BackForwardItemIdentifier backForwardItemID)
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
-    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, enum WebCore::PolicyAction policyAction, uint64_t navigationID, WebKit::DownloadID downloadID, std::optional<WebKit::WebsitePoliciesData> websitePolicies)
+    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, enum:uint8_t WebCore::PolicyAction policyAction, uint64_t navigationID, WebKit::DownloadID downloadID, std::optional<WebKit::WebsitePoliciesData> websitePolicies)
     ContinueWillSubmitForm(uint64_t frameID, uint64_t listenerID)
 
     ClearSelection()

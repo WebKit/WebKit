@@ -26,7 +26,6 @@
 #pragma once
 
 #include <pal/SessionID.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 

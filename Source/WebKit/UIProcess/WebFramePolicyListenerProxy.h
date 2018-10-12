@@ -34,7 +34,7 @@ class WebsitePolicies;
 }
 
 namespace WebCore {
-enum class PolicyAction;
+enum class PolicyAction : uint8_t;
 }
 
 namespace WebKit {

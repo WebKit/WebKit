@@ -27,7 +27,6 @@
 
 #include "Color.h"
 #include "FontShadow.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 

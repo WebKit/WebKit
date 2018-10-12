@@ -62,6 +62,9 @@ template<typename, typename = void> class StringTypeAdapter;
 template<typename> struct DefaultHash { using Hash = void; };
 template<typename> struct HashTraits;
 
+template<typename> struct EnumTraits;
+template<typename E, E...> struct EnumValues;
+
 template<typename...> class Variant;
 template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16> class Vector;
 template<typename Value, typename = typename DefaultHash<Value>::Hash, typename = HashTraits<Value>> class HashCountedSet;

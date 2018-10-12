@@ -1,3 +1,13 @@
+2018-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Allow encoding of small enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=190531
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (-[WebFramePolicyListener dealloc]):
+
 2018-10-11  Keith Rollin  <krollin@apple.com>
 
         CURRENT_ARCH should not be used in Run Script phase.

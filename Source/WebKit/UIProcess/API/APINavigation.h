@@ -33,7 +33,7 @@
 #include <wtf/Ref.h>
 
 namespace WebCore {
-enum class FrameLoadType;
+enum class FrameLoadType : uint8_t;
 }
 
 namespace WebKit {

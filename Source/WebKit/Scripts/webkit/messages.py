@@ -86,7 +86,7 @@ def function_parameter_type(type, kind):
     if type in builtin_types:
         return type
 
-    if kind == 'enum':
+    if kind.startswith('enum'):
         return type
 
     return 'const %s&' % type
@@ -151,8 +151,8 @@ def forward_declaration(namespace, kind_and_type):
     qualified_name = '%s::%s' % (namespace, type)
     if kind == 'struct':
         return 'struct %s' % type
-    elif kind == 'enum':
-        return 'enum class %s' % type
+    elif kind.startswith('enum'):
+        return 'enum class %s %s' % (type, kind[4:])
     else:
         return 'class %s' % type
 

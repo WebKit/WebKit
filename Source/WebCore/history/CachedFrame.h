@@ -38,7 +38,7 @@ class Document;
 class DocumentLoader;
 class FrameView;
 class Node;
-enum class HasInsecureContent;
+enum class HasInsecureContent : uint8_t;
 
 class CachedFrameBase {
 public:

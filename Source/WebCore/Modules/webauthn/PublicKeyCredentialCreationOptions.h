@@ -31,7 +31,6 @@
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
